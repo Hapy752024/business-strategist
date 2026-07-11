@@ -1,0 +1,27 @@
+{
+  "comment_count": 0,
+  "comment_fetch_status": "ok",
+  "cost_note": "Default YouTube quota is quota-unit based. Search and comment reads consume quota; confirm current costs in Google docs.",
+  "credential_source": "YOUTUBE_API_KEY",
+  "docs": "https://developers.google.com/youtube/v3/getting-started",
+  "fields": [
+    "etag",
+    "items",
+    "items[].etag",
+    "items[].id",
+    "items[].kind",
+    "items[].snippet",
+    "kind",
+    "nextPageToken",
+    "pageInfo",
+    "pageInfo.resultsPerPage",
+    "pageInfo.totalResults",
+    "regionCode"
+  ],
+  "http_status": 200,
+  "provider": "youtube",
+  "query": "project management pain points",
+  "status": "ok",
+  "validated_at": "2026-07-10T07:06:47Z",
+  "video_count": 3
+}

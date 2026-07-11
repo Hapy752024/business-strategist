@@ -1,0 +1,7 @@
+{
+  "error": "missing credentials",
+  "required_env": [
+    "TIKTOK_CLIENT_KEY",
+    "TIKTOK_CLIENT_SECRET"
+  ]
+}

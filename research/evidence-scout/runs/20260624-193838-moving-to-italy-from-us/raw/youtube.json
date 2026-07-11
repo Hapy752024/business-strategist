@@ -1,0 +1,1013 @@
+{
+  "comments": [
+    {
+      "response": {
+        "body": {
+          "etag": "5eMn1nSnYX_rYLB7qAUnMj4m_so",
+          "items": [
+            {
+              "etag": "jbhPiewwfPwHEOwPHxEtowS8WLQ",
+              "id": "UgydWD39ecPjy1doVZR4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "x1GEBKLt__QISFsIm3F0QxD8YFY",
+                  "id": "UgydWD39ecPjy1doVZR4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UC37BJeHINjs3o-tNwaA_cSg"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@LegendaryNova%E3%83%83",
+                    "authorDisplayName": "@LegendaryNova\u30c3",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/_NbWVBP3Lv-liXMDcMKoi91G4acA8EW2Wrxw7YoSIf-cNUgD5ogXvItAaE47OcCIr-HrSxGVYQ=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                    "likeCount": 0,
+                    "publishedAt": "2026-06-21T05:20:37Z",
+                    "textDisplay": "As a 60% wanna move to naples really bad for 3 reasons.\n\n1. Tho i have been born in United states it doesn't feel home just talking about italy feels like home\n\n2. Culture and they way people live. Italians like me and my dad we are so funny but yet so serious and kind feels italian. Culture wise is about the food there it sounds fresh well made while here in america everything is preceeded. \n\n3. Its my dream. Its my dream to take my dad and live in this beautiful country also im learning Italian. Also funny enough my name is Giovanni :) I Love Italy!! \ud83c\uddee\ud83c\uddf9\ud83d\udc9a\ud83e\udd0d\u2764\ufe0f",
+                    "textOriginal": "As a 60% wanna move to naples really bad for 3 reasons.\n\n1. Tho i have been born in United states it doesn't feel home just talking about italy feels like home\n\n2. Culture and they way people live. Italians like me and my dad we are so funny but yet so serious and kind feels italian. Culture wise is about the food there it sounds fresh well made while here in america everything is preceeded. \n\n3. Its my dream. Its my dream to take my dad and live in this beautiful country also im learning Italian. Also funny enough my name is Giovanni :) I Love Italy!! \ud83c\uddee\ud83c\uddf9\ud83d\udc9a\ud83e\udd0d\u2764\ufe0f",
+                    "updatedAt": "2026-06-21T05:20:37Z",
+                    "videoId": "md0ecPawGkM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "md0ecPawGkM"
+              }
+            },
+            {
+              "etag": "COa0fOSN3pGWjlci_pCAfdTB_mQ",
+              "id": "UgwHDJLtWeAjDCNac1R4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "Gp-dK5aXbrA-yDnd7ljjDF0xImE",
+                  "id": "UgwHDJLtWeAjDCNac1R4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCkTeG4dI2-XH6pq8dGjbDyQ"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@PiedmontScout",
+                    "authorDisplayName": "@PiedmontScout",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/jwT7RSo59wklngTg86oM2O0awYdxdAuH0Hu48BQMuAfNI92qDoAuLhaRjIZGbtwZeadbIQWFqw=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                    "likeCount": 0,
+                    "publishedAt": "2026-06-19T12:59:06Z",
+                    "textDisplay": "I personally love small towns in Northern Italy. it\u2019s not too hot and too cold, not too many tourists and very cheap property prices in Piedmont example \ud83d\ude0a And delicious food and amazing scenery!",
+                    "textOriginal": "I personally love small towns in Northern Italy. it\u2019s not too hot and too cold, not too many tourists and very cheap property prices in Piedmont example \ud83d\ude0a And delicious food and amazing scenery!",
+                    "updatedAt": "2026-06-19T12:59:06Z",
+                    "videoId": "md0ecPawGkM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "md0ecPawGkM"
+              }
+            },
+            {
+              "etag": "C1qq1U-gjJvo1MEUA3miyjLmizo",
+              "id": "Ugx8urK7stdvWdCIiCZ4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "r8mP8wy7lfZ5BS5huGKG9i2Z258",
+                  "id": "Ugx8urK7stdvWdCIiCZ4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UChgVLF_GjhMM8XRn8OEzFtA"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@newyawkgiant86",
+                    "authorDisplayName": "@newyawkgiant86",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_muR2rSlXoNO2IHn-Pb-nZJXZV29ONaRh3u-YJNOVNvQP0R=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                    "likeCount": 0,
+                    "publishedAt": "2026-05-24T04:19:38Z",
+                    "textDisplay": "Finally picking up and making the move from NY and retired thank God at 39!  Have family all over Italy and literally cannot wait to get there and check places out!  Where did you pick up and move from?",
+                    "textOriginal": "Finally picking up and making the move from NY and retired thank God at 39!  Have family all over Italy and literally cannot wait to get there and check places out!  Where did you pick up and move from?",
+                    "updatedAt": "2026-05-24T04:19:38Z",
+                    "videoId": "md0ecPawGkM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "md0ecPawGkM"
+              }
+            },
+            {
+              "etag": "TavlSsomvnLiZ_hNz-kjoRMOhqw",
+              "id": "Ugycr5UTjhNG9uhU8q94AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "XbJD_Yp4ZEAFVnUN09O4NXuusVc",
+                  "id": "Ugycr5UTjhNG9uhU8q94AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCmWkqs9vPhGMCjv4HfUyPaQ"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@AndreaMartinez-s4n",
+                    "authorDisplayName": "@AndreaMartinez-s4n",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/cZVLO7UlCpR3YU51E9ZrONFC9qGjFpybEzl5Sc6--cAsVvUPEIjrRlr3ip9m1YK2kfgDg7xM=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                    "likeCount": 0,
+                    "publishedAt": "2026-05-09T03:23:49Z",
+                    "textDisplay": "Hi girly ! If you are hiring I would love to touch base \u2764\u2764\u2764\u2764",
+                    "textOriginal": "Hi girly ! If you are hiring I would love to touch base \u2764\u2764\u2764\u2764",
+                    "updatedAt": "2026-05-09T03:23:49Z",
+                    "videoId": "md0ecPawGkM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "md0ecPawGkM"
+              }
+            },
+            {
+              "etag": "PJxdAwuVnQXr9p0MSzX-gEgTvS0",
+              "id": "UgxZf-CoZC_R-tJ7G_p4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "Gs1_jr-fUtoxJByG9hHJzoMkDPg",
+                  "id": "UgxZf-CoZC_R-tJ7G_p4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCNiPg-xeQf_7LQju31PtyKQ"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@RosieMadness",
+                    "authorDisplayName": "@RosieMadness",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/xHzio_-X4WaUY6xP53pUWx8gnNZ-_QLHXgtUO2kA-0EBbcsqxefCDBZt_QKObtgyL1LrQJ4YuA=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                    "likeCount": 0,
+                    "publishedAt": "2026-03-08T05:10:15Z",
+                    "textDisplay": "Hello I will be moving to Italy in few months can someone tell me about thier education system like high school pls so I can know everything thx",
+                    "textOriginal": "Hello I will be moving to Italy in few months can someone tell me about thier education system like high school pls so I can know everything thx",
+                    "updatedAt": "2026-03-08T05:10:15Z",
+                    "videoId": "md0ecPawGkM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "md0ecPawGkM"
+              }
+            }
+          ],
+          "kind": "youtube#commentThreadListResponse",
+          "nextPageToken": "***",
+          "pageInfo": {
+            "resultsPerPage": 5,
+            "totalResults": 5
+          }
+        },
+        "headers": {
+          "Accept-Ranges": "none",
+          "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "Connection": "close",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Wed, 24 Jun 2026 19:38:47 GMT",
+          "Server": "scaffolding on HTTPServer2",
+          "Transfer-Encoding": "chunked",
+          "Vary": "Origin,Accept-Encoding",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "0"
+        },
+        "ok": true,
+        "status_code": 200
+      },
+      "video_id": "md0ecPawGkM"
+    },
+    {
+      "response": {
+        "body": {
+          "etag": "d13--pN1IHuh_33p74LlqRWUSbU",
+          "items": [
+            {
+              "etag": "JuQiGkW4scnMXYdVDFIVsFwM-5I",
+              "id": "Ugw4pjFRJpzwnkV0vN94AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "ik-UJSDxL1g--dG7tDlsv4hIgmg",
+                  "id": "Ugw4pjFRJpzwnkV0vN94AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UClKY7MNEc9vLpE0B80w9ZWA"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@deenibeeniable",
+                    "authorDisplayName": "@deenibeeniable",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/3sZVTWzQyNtTiJx8bW8A4zvY_YNk8Z6Sic_AMuyMc4jMc8OPUGw9fqxkEvGEEgIxoNgH-ef80Q=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-06-18T12:27:50Z",
+                    "textDisplay": "stop flipping your hair.",
+                    "textOriginal": "stop flipping your hair.",
+                    "updatedAt": "2026-06-18T12:27:50Z",
+                    "videoId": "1i080eoRq1c",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "1i080eoRq1c"
+              }
+            },
+            {
+              "etag": "HBpYdHt60bV_2dxiae19no_vKYI",
+              "id": "UgxieRS8Z6vxkm2rDTB4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "Lo1ZSx_TKs8DH9aoNSmgdXKCD-o",
+                  "id": "UgxieRS8Z6vxkm2rDTB4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCLK_GhnCaO_wUOzfqVtnhyQ"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@MikeGraziosi",
+                    "authorDisplayName": "@MikeGraziosi",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_kAvXwKhF9W-758960a9XjLrXxvSdrZkX4XZl0vZ0CotMcCwuJe0HKveyMX8NMWQ9UFfw=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-05-01T07:33:25Z",
+                    "textDisplay": "he i really hope you see this because im seroisly considerig movig to italy im an italina citizen but what you ioion",
+                    "textOriginal": "he i really hope you see this because im seroisly considerig movig to italy im an italina citizen but what you ioion",
+                    "updatedAt": "2026-05-01T07:33:25Z",
+                    "videoId": "1i080eoRq1c",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "1i080eoRq1c"
+              }
+            },
+            {
+              "etag": "WMZJSd2LVUtx7mtkK3YMuCAORUY",
+              "id": "UgyPJoBqksR814lhTMJ4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "bH_mMeUIG49LAGu1CsV0iXK7WLM",
+                  "id": "UgyPJoBqksR814lhTMJ4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCYeg2zCqgx1peDbqLmPXTfQ"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@quartuscorporation7258",
+                    "authorDisplayName": "@quartuscorporation7258",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_mcBNuL5JTtbnmYpWAipbLgeEtx03rVJJYXvej228saDg=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-02-19T00:26:47Z",
+                    "textDisplay": "Ty we would love to visit & are considering Italy & the Mediterranean life. \ud83e\udd70\ud83e\udd70\ud83d\ude18",
+                    "textOriginal": "Ty we would love to visit & are considering Italy & the Mediterranean life. \ud83e\udd70\ud83e\udd70\ud83d\ude18",
+                    "updatedAt": "2026-02-19T00:26:47Z",
+                    "videoId": "1i080eoRq1c",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 1,
+                "videoId": "1i080eoRq1c"
+              }
+            },
+            {
+              "etag": "t4hQVxunZONHLpwyzy5kl86-ltc",
+              "id": "UgzJH68hL5HJYS67YM54AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "YSmpzqAMxybG1-FR_avEBH9nF8U",
+                  "id": "UgzJH68hL5HJYS67YM54AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCqZvBG2Z8BBepUEONdzDGUw"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@CarloBruno-s9y",
+                    "authorDisplayName": "@CarloBruno-s9y",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_nBDeZ9mqdIFB9ZVjY1L_Zestnzoo5Sf1l4wqCS9M9x7GOn4Ieia6TOKEF-97zhMtLXgw=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-02-12T00:07:09Z",
+                    "textDisplay": "Living in Italy is not just a money problem. It's not easy as shown in this video.\nThere are cultural requirements to be met.\n\nA recent ruling by the Italian Constitutional Court changed the language requirement for Italian citizenship by marriage and residency applications. This article will outline what was stated in the ruling and review the eligibility requirements to apply for Italian citizenship through marriage or residence.\n\nItalian long term visa requires knowledge of Italian language at A2 level.\n\nItalian Citizenship by Naturalization\n\nItalian citizenship by marriage, or jure matrimonii, falls under the category of naturalization, regulated by Articles 5, 6, 7, and 8 of Law 91 of 1992. In order to apply, it\u2019s necessary to have been married to an Italian citizen for 2 years (if residing in Italy), or married for 3 years (if residing abroad). These terms are reduced by half if the couple has children under the age of 18 or when children are legally adopted by the couple. Civil unions are also recognized in Italy, including same-sex marriages celebrated with a legally recognized civil union.\n\nTo apply for Italian citizenship by residency, non-EU citizens living in Italy on a valid residence permit are required a period of continuous legal residence in Italy of 10 years. EU citizens residing in Italy can apply for naturalization after a reduced residence requirement of 4 years. Also, if you have Italian ancestry to the second degree (parent or grandparent) but maybe don\u2019t qualify for Italian citizenship by descent, you would be eligible to apply for naturalization after a 3-year period of legal residence. In addition, the current residence requirement is 5 years for those who are stateless, a refugee, or were over the age of 18 when adopted by an Italian national.\n\nCurrent Language Requirement\n\nLaw December 1, 2018 n. 132 introduced a language requirement for applications for Italian citizenship by naturalization (marriage and residence). Applications presented after December 4, 2018 must include documentation certifying knowledge of the Italian language at the B1 level, which is considered an intermediate level according to the Common European Framework of Reference for Languages (CEFR). It can be demonstrated with a certificate issued by an educational institution approved by the Italian Ministry of Education (\u201cMIUR\u201d) or Ministry of Foreign Affairs (\u201cMAECI\u201d), or a degree earned by attending an Italian public educational institution recognized by the MIUR and MAECI. \n\nSchools that offer the B1 certification approved for the citizenship application include:\n\nUniversit\u00e0 per Stranieri di Siena\nUniversit\u00e0 per Stranieri di Perugia\nSociet\u00e0 Dante Alighieri\nUniversit\u00e0 Degli Studi Roma Tre\nAdditional schools offering certification may be specified by your local consulate, so it\u2019s advised to check on the website for further instructions.\n\nItalian Citizenship by Marriage Application\n\nIn addition to meeting the language requirement, another step in the preparation of a citizenship by marriage application will be to ensure that your Italian spouse is registered with AIRE (Registry of Italian Citizens Residing Abroad) (if you are living abroad). Registration is available through the Italian consulate that covers the jurisdiction of your current legal address. Additionally, if the couple is residing abroad, the marriage or civil union record (legalized with apostille) needs to be registered through the consulate, who will then register the record in Italy.\n\nIt is also required to submit background check certificates from the US states where you have resided since the age of 14, in addition to the federal FBI background check. It\u2019s worth noting that the background checks have a 6-month validity, so be sure that the other documentation is already prepared before you request them.\n\nOther records that will be required include a transcript of the marriage certificate registered in Italy and a certified copy of your foreign birth certificate. All foreign documents, including criminal background checks, must be legalized by means of an apostille and translated into Italian.\n\nItalian Constitutional Court Ruling 25/2025\n\nOn March 7, 2025, the Italian Constitutional Court ruled that article 9.1 of Law no. 91 of February 5, 1992, which requires the knowledge of Italian at the intermediate level for any foreigner applying for citizenship through marriage or naturalization, is unconstitutional. The ruling states that the principle of equality is violated by not having provided exclusions for those affected by serious limitations in the ability to learn the language. It recognizes the \u201cindirect discrimination\u201d in the law against individuals who are unable to learn the language due to disability, illness, or advanced age. Furthermore, it adds that the law is creating an obstacle to the acquisition of citizenship for this specific category of vulnerable people. The court specified this mandate is contrary to the principle of ad impossibilia nemo tenetur, which is Latin for \u201cno one should be held to do the impossible\u201d. This ruling will now lead to a change in the legislation to include explicit exemptions for the Italian language requirement for citizenship by marriage and naturalization applications",
+                    "textOriginal": "Living in Italy is not just a money problem. It's not easy as shown in this video.\nThere are cultural requirements to be met.\n\nA recent ruling by the Italian Constitutional Court changed the language requirement for Italian citizenship by marriage and residency applications. This article will outline what was stated in the ruling and review the eligibility requirements to apply for Italian citizenship through marriage or residence.\n\nItalian long term visa requires knowledge of Italian language at A2 level.\n\nItalian Citizenship by Naturalization\n\nItalian citizenship by marriage, or jure matrimonii, falls under the category of naturalization, regulated by Articles 5, 6, 7, and 8 of Law 91 of 1992. In order to apply, it\u2019s necessary to have been married to an Italian citizen for 2 years (if residing in Italy), or married for 3 years (if residing abroad). These terms are reduced by half if the couple has children under the age of 18 or when children are legally adopted by the couple. Civil unions are also recognized in Italy, including same-sex marriages celebrated with a legally recognized civil union.\n\nTo apply for Italian citizenship by residency, non-EU citizens living in Italy on a valid residence permit are required a period of continuous legal residence in Italy of 10 years. EU citizens residing in Italy can apply for naturalization after a reduced residence requirement of 4 years. Also, if you have Italian ancestry to the second degree (parent or grandparent) but maybe don\u2019t qualify for Italian citizenship by descent, you would be eligible to apply for naturalization after a 3-year period of legal residence. In addition, the current residence requirement is 5 years for those who are stateless, a refugee, or were over the age of 18 when adopted by an Italian national.\n\nCurrent Language Requirement\n\nLaw December 1, 2018 n. 132 introduced a language requirement for applications for Italian citizenship by naturalization (marriage and residence). Applications presented after December 4, 2018 must include documentation certifying knowledge of the Italian language at the B1 level, which is considered an intermediate level according to the Common European Framework of Reference for Languages (CEFR). It can be demonstrated with a certificate issued by an educational institution approved by the Italian Ministry of Education (\u201cMIUR\u201d) or Ministry of Foreign Affairs (\u201cMAECI\u201d), or a degree earned by attending an Italian public educational institution recognized by the MIUR and MAECI. \n\nSchools that offer the B1 certification approved for the citizenship application include:\n\nUniversit\u00e0 per Stranieri di Siena\nUniversit\u00e0 per Stranieri di Perugia\nSociet\u00e0 Dante Alighieri\nUniversit\u00e0 Degli Studi Roma Tre\nAdditional schools offering certification may be specified by your local consulate, so it\u2019s advised to check on the website for further instructions.\n\nItalian Citizenship by Marriage Application\n\nIn addition to meeting the language requirement, another step in the preparation of a citizenship by marriage application will be to ensure that your Italian spouse is registered with AIRE (Registry of Italian Citizens Residing Abroad) (if you are living abroad). Registration is available through the Italian consulate that covers the jurisdiction of your current legal address. Additionally, if the couple is residing abroad, the marriage or civil union record (legalized with apostille) needs to be registered through the consulate, who will then register the record in Italy.\n\nIt is also required to submit background check certificates from the US states where you have resided since the age of 14, in addition to the federal FBI background check. It\u2019s worth noting that the background checks have a 6-month validity, so be sure that the other documentation is already prepared before you request them.\n\nOther records that will be required include a transcript of the marriage certificate registered in Italy and a certified copy of your foreign birth certificate. All foreign documents, including criminal background checks, must be legalized by means of an apostille and translated into Italian.\n\nItalian Constitutional Court Ruling 25/2025\n\nOn March 7, 2025, the Italian Constitutional Court ruled that article 9.1 of Law no. 91 of February 5, 1992, which requires the knowledge of Italian at the intermediate level for any foreigner applying for citizenship through marriage or naturalization, is unconstitutional. The ruling states that the principle of equality is violated by not having provided exclusions for those affected by serious limitations in the ability to learn the language. It recognizes the \u201cindirect discrimination\u201d in the law against individuals who are unable to learn the language due to disability, illness, or advanced age. Furthermore, it adds that the law is creating an obstacle to the acquisition of citizenship for this specific category of vulnerable people. The court specified this mandate is contrary to the principle of ad impossibilia nemo tenetur, which is Latin for \u201cno one should be held to do the impossible\u201d. This ruling will now lead to a change in the legislation to include explicit exemptions for the Italian language requirement for citizenship by marriage and naturalization applications",
+                    "updatedAt": "2026-02-12T08:56:13Z",
+                    "videoId": "1i080eoRq1c",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "1i080eoRq1c"
+              }
+            },
+            {
+              "etag": "tl2k0F1h9oVSfKXID2oqxPQ8ZIU",
+              "id": "Ugxt9NPpqeXggVYIj8J4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "KhRdREHPUbQBXXWJMMyR0KK7KD8",
+                  "id": "Ugxt9NPpqeXggVYIj8J4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCpGod65-yJK1swuF5CZgZDA"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@HP-fj2mi",
+                    "authorDisplayName": "@HP-fj2mi",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_nMiRKacTi5UlC1cYqIjDDBC7coIV_OSHsTbGpFkVhUBUw=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                    "likeCount": 1,
+                    "publishedAt": "2026-02-01T03:07:48Z",
+                    "textDisplay": "I love Italy! It\u2019s such a beautiful country. The culture and strong family values really resonate with me as a Mexican American. I\u2019m learning Italian and currently working in tech in the U.S., and I\u2019d love to visit the cities you mentioned. Maybe move there someday and connect with other Americans or foreigners living there. Thanks for such an informative video. \ud83d\ude0a\u2764 I just subscribed to your channel!",
+                    "textOriginal": "I love Italy! It\u2019s such a beautiful country. The culture and strong family values really resonate with me as a Mexican American. I\u2019m learning Italian and currently working in tech in the U.S., and I\u2019d love to visit the cities you mentioned. Maybe move there someday and connect with other Americans or foreigners living there. Thanks for such an informative video. \ud83d\ude0a\u2764 I just subscribed to your channel!",
+                    "updatedAt": "2026-02-01T03:07:48Z",
+                    "videoId": "1i080eoRq1c",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 2,
+                "videoId": "1i080eoRq1c"
+              }
+            }
+          ],
+          "kind": "youtube#commentThreadListResponse",
+          "nextPageToken": "***",
+          "pageInfo": {
+            "resultsPerPage": 5,
+            "totalResults": 5
+          }
+        },
+        "headers": {
+          "Accept-Ranges": "none",
+          "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "Connection": "close",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Wed, 24 Jun 2026 19:38:47 GMT",
+          "Server": "scaffolding on HTTPServer2",
+          "Transfer-Encoding": "chunked",
+          "Vary": "Origin,Accept-Encoding",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "0"
+        },
+        "ok": true,
+        "status_code": 200
+      },
+      "video_id": "1i080eoRq1c"
+    },
+    {
+      "response": {
+        "body": {
+          "etag": "iGbkskLAZa5s0yk2Ntzxcb_Pz3I",
+          "items": [
+            {
+              "etag": "tIa-anMpgyYfFu3watrrYp1QSB4",
+              "id": "UgxNTs1hL_S-NsRhL0R4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "CuNDTlo1-Oirj3iWS3o-OWrZCdo",
+                  "id": "UgxNTs1hL_S-NsRhL0R4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCOXyfKNF2mAIV-sYMASNSyg"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@misstiataylor_",
+                    "authorDisplayName": "@misstiataylor_",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/hW_Uw9HcxqTzIsK8R0o0enDi8bS_ueKnD9bqxQyswdaTBgkda3mQtV0g9yVRP38JskQExf39=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                    "likeCount": 12,
+                    "publishedAt": "2025-07-06T15:25:00Z",
+                    "textDisplay": "Especially if you\u2019ve lived here or considered it, what surprised you the most about life in Italy? What do you wish people told you before moving?",
+                    "textOriginal": "Especially if you\u2019ve lived here or considered it, what surprised you the most about life in Italy? What do you wish people told you before moving?",
+                    "updatedAt": "2025-07-06T15:25:00Z",
+                    "videoId": "D34xTyX-Mhk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 5,
+                "videoId": "D34xTyX-Mhk"
+              }
+            },
+            {
+              "etag": "asHlqfGjxxgr48Ce05cGqooaMng",
+              "id": "Ugx8mnRXYJQe8N7Re8l4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "H1cNUKHOWpTUZy5fwBOPZvLk_lo",
+                  "id": "Ugx8mnRXYJQe8N7Re8l4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCe1uhFhx_pmkGQHFGTFsPpw"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@Alessandro-pi7bw",
+                    "authorDisplayName": "@Alessandro-pi7bw",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/EDkTmT9gNNirlHmgBdAmOUGbOBrAbVfUDH8U7ufKtG9XX91ZRg8CWOl-5ESWVMzQAHI_Zo__8g=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                    "likeCount": 1,
+                    "publishedAt": "2026-06-21T12:28:30Z",
+                    "textDisplay": "60% tax? Are you crazy? There's no tax rate that high in Europe! 42% is the highest in Italy.",
+                    "textOriginal": "60% tax? Are you crazy? There's no tax rate that high in Europe! 42% is the highest in Italy.",
+                    "updatedAt": "2026-06-21T12:28:30Z",
+                    "videoId": "D34xTyX-Mhk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 2,
+                "videoId": "D34xTyX-Mhk"
+              }
+            },
+            {
+              "etag": "M_I-Y40EwPMOnDZTD5Bsy-ihr5E",
+              "id": "UgyVf92DuD95SsNH-XN4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "3lCNHEt8xp4L3QlLVsgQ_1O5Qy0",
+                  "id": "UgyVf92DuD95SsNH-XN4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCkUHxaqNwTsqSG3AwSIr_vg"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@Truecrimewatcher",
+                    "authorDisplayName": "@Truecrimewatcher",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ggC0ZG7_HySCSkIQ9eo_P0OmVg6ThkQ1dnihdIQf9WkoPfcaFbSeFbK5O_tv-l3JAsUrxhTPJoU=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                    "likeCount": 0,
+                    "publishedAt": "2026-05-10T18:32:41Z",
+                    "textDisplay": "Do pensioners pay taxes?",
+                    "textOriginal": "Do pensioners pay taxes?",
+                    "updatedAt": "2026-05-10T18:32:41Z",
+                    "videoId": "D34xTyX-Mhk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 2,
+                "videoId": "D34xTyX-Mhk"
+              }
+            },
+            {
+              "etag": "uMKihSWNNNByYxWqXQdQzec2YVE",
+              "id": "UgzFqquFFr_UWcXTiFZ4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "Mwl-1BZsF6K83mHbL_4_oscARvs",
+                  "id": "UgzFqquFFr_UWcXTiFZ4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCkUHxaqNwTsqSG3AwSIr_vg"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@Truecrimewatcher",
+                    "authorDisplayName": "@Truecrimewatcher",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ggC0ZG7_HySCSkIQ9eo_P0OmVg6ThkQ1dnihdIQf9WkoPfcaFbSeFbK5O_tv-l3JAsUrxhTPJoU=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                    "likeCount": 0,
+                    "publishedAt": "2026-05-10T18:31:06Z",
+                    "textDisplay": "Past culture begin with an \u201cm\u201d??\ud83d\ude02",
+                    "textOriginal": "Past culture begin with an \u201cm\u201d??\ud83d\ude02",
+                    "updatedAt": "2026-05-10T18:31:06Z",
+                    "videoId": "D34xTyX-Mhk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "D34xTyX-Mhk"
+              }
+            },
+            {
+              "etag": "7aS8GHD3qNuUIpCII51nE1aJVC8",
+              "id": "UgwynC7wxteXwaiWL6V4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "L6zsMc6iYG_z3KwB5RMj8uIPsdY",
+                  "id": "UgwynC7wxteXwaiWL6V4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCkUHxaqNwTsqSG3AwSIr_vg"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@Truecrimewatcher",
+                    "authorDisplayName": "@Truecrimewatcher",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ggC0ZG7_HySCSkIQ9eo_P0OmVg6ThkQ1dnihdIQf9WkoPfcaFbSeFbK5O_tv-l3JAsUrxhTPJoU=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                    "likeCount": 0,
+                    "publishedAt": "2026-05-10T18:26:51Z",
+                    "textDisplay": "Scarce, with a long \u2018a\u2019. Omg-u taught English?  lol.  Scarce dz not sound like the word \u2018car\u2019.  \nEspecially since u teach English, pls learn the language cuz the folks u r teaching don\u2019t know it\u2019s wrong. Then they come to USA and get made fun of. And they will say-but an American taught me-no American will believe them. \ud83d\ude02\ud83d\ude02\ud83d\ude02\ud83d\ude02 good story tho to take bk to USA\u2026..",
+                    "textOriginal": "Scarce, with a long \u2018a\u2019. Omg-u taught English?  lol.  Scarce dz not sound like the word \u2018car\u2019.  \nEspecially since u teach English, pls learn the language cuz the folks u r teaching don\u2019t know it\u2019s wrong. Then they come to USA and get made fun of. And they will say-but an American taught me-no American will believe them. \ud83d\ude02\ud83d\ude02\ud83d\ude02\ud83d\ude02 good story tho to take bk to USA\u2026..",
+                    "updatedAt": "2026-05-10T18:27:35Z",
+                    "videoId": "D34xTyX-Mhk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "D34xTyX-Mhk"
+              }
+            }
+          ],
+          "kind": "youtube#commentThreadListResponse",
+          "nextPageToken": "***",
+          "pageInfo": {
+            "resultsPerPage": 5,
+            "totalResults": 5
+          }
+        },
+        "headers": {
+          "Accept-Ranges": "none",
+          "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "Connection": "close",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Wed, 24 Jun 2026 19:38:48 GMT",
+          "Server": "scaffolding on HTTPServer2",
+          "Transfer-Encoding": "chunked",
+          "Vary": "Origin,Accept-Encoding",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "0"
+        },
+        "ok": true,
+        "status_code": 200
+      },
+      "video_id": "D34xTyX-Mhk"
+    },
+    {
+      "response": {
+        "body": {
+          "etag": "EBaPvgLIkte7_uB9b-FaL7SCdsw",
+          "items": [
+            {
+              "etag": "juwI3AeDAkBvU1cU0mrx6fe_3Tc",
+              "id": "UgzzMGwGUifSfhyBf394AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "goJNlpSvP4kGktA1JqUGH_NkGUs",
+                  "id": "UgzzMGwGUifSfhyBf394AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCxQXJ8y-dOQaOXIddBRKNdQ"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@Carlo-s9b",
+                    "authorDisplayName": "@Carlo-s9b",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_njv5bj96nXZPdVSGWFsAya7ecRhM4u_78FX5cOyq1Aefxs0LYhy-CVDYRCpSNnYeaQwA=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-06-23T16:16:37Z",
+                    "textDisplay": "Dear Tax Evader: Of course if you import valuables that are you own property to the US, you have to pay customs charges.   That happen everywhere in the world. Ever heard about that?",
+                    "textOriginal": "Dear Tax Evader: Of course if you import valuables that are you own property to the US, you have to pay customs charges.   That happen everywhere in the world. Ever heard about that?",
+                    "updatedAt": "2026-06-23T16:16:37Z",
+                    "videoId": "iKkACGtu7Tk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "iKkACGtu7Tk"
+              }
+            },
+            {
+              "etag": "bRzGF_td5lzkCqQV5wza7BmUS94",
+              "id": "UgzHtWL-IHkD79M3RHB4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "KntIYuou6D5p8GwwZ5WQHFxoxZw",
+                  "id": "UgzHtWL-IHkD79M3RHB4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UC84C6oXNmNBe7zJyE4uP0Tw"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@pau96ish",
+                    "authorDisplayName": "@pau96ish",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_novteU5oZPP0T1I4X9KwHF1dax_wEuRLr_j5mGMAj3j0HU=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-06-21T02:44:00Z",
+                    "textDisplay": "I'm moving to Naples in a few months, I'm nervouuus \ud83d\ude05",
+                    "textOriginal": "I'm moving to Naples in a few months, I'm nervouuus \ud83d\ude05",
+                    "updatedAt": "2026-06-21T02:44:00Z",
+                    "videoId": "iKkACGtu7Tk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "iKkACGtu7Tk"
+              }
+            },
+            {
+              "etag": "vQoIt_j_PFfivvOAgyOfYL5Kq8I",
+              "id": "Ugxa2Vvhv07kqBScZYJ4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "e30HTAxAenP6A0T0kk7qwujBuec",
+                  "id": "Ugxa2Vvhv07kqBScZYJ4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UC6a43tbwr_FwNYzPrhL2FcA"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@galinawronkowska7248",
+                    "authorDisplayName": "@galinawronkowska7248",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_lTtiIQ1cg8dLGngYGCMYkywQs4fPbb_PtMQWJksKqraPM=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-06-08T20:12:48Z",
+                    "textDisplay": "Thank you for this very useful information!",
+                    "textOriginal": "Thank you for this very useful information!",
+                    "updatedAt": "2026-06-08T20:12:48Z",
+                    "videoId": "iKkACGtu7Tk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "iKkACGtu7Tk"
+              }
+            },
+            {
+              "etag": "J59n4Zmf9zVSPNjtsFetZKAhrU0",
+              "id": "Ugzk8T74wzJNSW9Dht94AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "rlnwuYIHtfM4LMkDv42AcBXUOpA",
+                  "id": "Ugzk8T74wzJNSW9Dht94AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCDuHaJgo3TPP2bePWvLD_Ww"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@gearbox3773",
+                    "authorDisplayName": "@gearbox3773",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_khNIL63eZmFYj7PoJoTMgjh78Omh4r34gaZltvKv6QFPk=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-06-08T09:18:05Z",
+                    "textDisplay": "Hello I'm Italian. Life is complicated like elsewhere. Your video has several errors. We don't work for the goverment. Taxes pay the services. If You need an ambulance in case of emergency, You will not pay for the ambulance.",
+                    "textOriginal": "Hello I'm Italian. Life is complicated like elsewhere. Your video has several errors. We don't work for the goverment. Taxes pay the services. If You need an ambulance in case of emergency, You will not pay for the ambulance.",
+                    "updatedAt": "2026-06-08T09:18:05Z",
+                    "videoId": "iKkACGtu7Tk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "iKkACGtu7Tk"
+              }
+            },
+            {
+              "etag": "SEQyoEAfKc-8_2rjQv-I8ue8EDA",
+              "id": "UgzKhRz0PsrF2xKrTTN4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "hT0iM1Iute-iDZrVYbYQprD_aoI",
+                  "id": "UgzKhRz0PsrF2xKrTTN4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCIKRriNTm6rEBID6CnNKgNQ"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@TheRaspberry82",
+                    "authorDisplayName": "@TheRaspberry82",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_nlcWCGHX1owlr9kZdCpPZv30eg0az-k-V-gjYoDyc=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-06-06T00:13:07Z",
+                    "textDisplay": "It is a different country.  Get Over yourself. WTF ???",
+                    "textOriginal": "It is a different country.  Get Over yourself. WTF ???",
+                    "updatedAt": "2026-06-06T00:13:07Z",
+                    "videoId": "iKkACGtu7Tk",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "iKkACGtu7Tk"
+              }
+            }
+          ],
+          "kind": "youtube#commentThreadListResponse",
+          "nextPageToken": "***",
+          "pageInfo": {
+            "resultsPerPage": 5,
+            "totalResults": 5
+          }
+        },
+        "headers": {
+          "Accept-Ranges": "none",
+          "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "Connection": "close",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Wed, 24 Jun 2026 19:38:48 GMT",
+          "Server": "scaffolding on HTTPServer2",
+          "Transfer-Encoding": "chunked",
+          "Vary": "Origin,Accept-Encoding",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "0"
+        },
+        "ok": true,
+        "status_code": 200
+      },
+      "video_id": "iKkACGtu7Tk"
+    }
+  ],
+  "credential_source": "YOUTUBE_API_KEY",
+  "searches": [
+    {
+      "query": "moving to Italy from US",
+      "response": {
+        "body": {
+          "etag": "GKq16-YR7txhZItwm98eP467sAU",
+          "items": [
+            {
+              "etag": "ngk71bfyjFzdzCxVYAb6r4sSPHo",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "md0ecPawGkM"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UC6YQoRyxlWZOF7J7Pys48bA",
+                "channelTitle": "Sammi - life in Rome ",
+                "description": "Living in Italy looks like a dream\u2014gelato, sunsets, and endless pasta. But after 8 years here, I've learned that the reality is a little ...",
+                "liveBroadcastContent": "none",
+                "publishTime": "2025-02-26T19:19:46Z",
+                "publishedAt": "2025-02-26T19:19:46Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/md0ecPawGkM/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/md0ecPawGkM/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/md0ecPawGkM/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "Moving to Italy? The honest truth you need to know before you do."
+              }
+            },
+            {
+              "etag": "l-V8lOWBYU81bZIbHyuKjx0Y9oA",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "1i080eoRq1c"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UCDQBuc3jpFYSSbb_Xolz2xw",
+                "channelTitle": "Wander Onwards",
+                "description": "If you're wondering how to move to italy as an American, then you're in the right place! I've been living abroad for the last 11 years ...",
+                "liveBroadcastContent": "none",
+                "publishTime": "2024-04-26T09:21:44Z",
+                "publishedAt": "2024-04-26T09:21:44Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/1i080eoRq1c/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/1i080eoRq1c/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/1i080eoRq1c/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "How to move to Italy as an American (Cost of moving, Visa options, and where to live in Italy)"
+              }
+            },
+            {
+              "etag": "n5ekbbkvQ1BtZICB5xJAU1MwBeg",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "D34xTyX-Mhk"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UCOXyfKNF2mAIV-sYMASNSyg",
+                "channelTitle": "Tia Taylor",
+                "description": "Thinking of moving to Italy? In this video, I share the real truth about living in Italy after 11 years here \u2014 the good, the bad, ...",
+                "liveBroadcastContent": "none",
+                "publishTime": "2025-07-06T15:24:19Z",
+                "publishedAt": "2025-07-06T15:24:19Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/D34xTyX-Mhk/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/D34xTyX-Mhk/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/D34xTyX-Mhk/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "The Cons About Italy You Need to Know BEFORE Moving"
+              }
+            },
+            {
+              "etag": "74SLd_LBkzoJ34Uk-UhFGf5pE4g",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "iKkACGtu7Tk"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UCEuMk4IKONpXpe9gBphqVUw",
+                "channelTitle": "Shayna Terese Taylor ",
+                "description": "If you've ever dreamed of moving to Italy \u2014 the food, the beauty, the slower pace of life \u2014 I get it. But after three years of actually ...",
+                "liveBroadcastContent": "none",
+                "publishTime": "2025-07-09T14:01:09Z",
+                "publishedAt": "2025-07-09T14:01:09Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/iKkACGtu7Tk/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/iKkACGtu7Tk/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/iKkACGtu7Tk/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "The Truth About Moving to Italy No One Tells You | My 3-Year Reality Check"
+              }
+            },
+            {
+              "etag": "Wxm1KwT2-AmDRc9bacsYCcIfrY4",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "x95qXJ3Crsw"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UCSI9LMlGq2eKMlDdMLZ4THg",
+                "channelTitle": "Shea Jordan",
+                "description": "",
+                "liveBroadcastContent": "none",
+                "publishTime": "2025-07-31T21:00:58Z",
+                "publishedAt": "2025-07-31T21:00:58Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/x95qXJ3Crsw/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/x95qXJ3Crsw/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/x95qXJ3Crsw/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "Moving to Italy - The Reality"
+              }
+            }
+          ],
+          "kind": "youtube#searchListResponse",
+          "nextPageToken": "***",
+          "pageInfo": {
+            "resultsPerPage": 5,
+            "totalResults": 1000000
+          },
+          "regionCode": "CH"
+        },
+        "headers": {
+          "Accept-Ranges": "none",
+          "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "Connection": "close",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Wed, 24 Jun 2026 19:38:47 GMT",
+          "Server": "scaffolding on HTTPServer2",
+          "Transfer-Encoding": "chunked",
+          "Vary": "Origin,Accept-Encoding",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "0"
+        },
+        "ok": true,
+        "status_code": 200
+      }
+    }
+  ]
+}

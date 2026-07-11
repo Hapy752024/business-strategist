@@ -1,0 +1,1798 @@
+[
+  {
+    "business_model_hint": "insurer",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "direct_insurer_candidate",
+    "confidence_score": 0.95,
+    "domain": "ottonova.de",
+    "entity_type_hint": "direct_insurer_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Private health insurance Germany | ottonova English-speaking experts that can guide you through the German health insurance jungle. A super easy App which allows you to manage all aspects of your ...",
+      "Private health insurance Germany | ottonova English-speaking experts that can guide you through the German health insurance jungle. Fair rates and a super fast reimbursement of your medical bills.",
+      "Private health insurance Germany | ottonova The ottonova private health insurance offers attractive rates tailored to your individual needs. Find out everything about costs, requirements and benefits."
+    ],
+    "first_seen_at": "2026-06-28T15:02:26Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "mentioned_in_search_evidence",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Ottonova",
+    "needs_human_review": true,
+    "page_title": "Private health insurance Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.ottonova.de/en/v/private-health-insurance"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "firecrawl",
+        "url": "https://www.ottonova.de/en/v/private-health-insurance"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "firecrawl",
+        "url": "https://www.ottonova.de/en/v/private-health-insurance"
+      },
+      {
+        "query": "Ottonova",
+        "source": "known_competitors_input",
+        "url": "https://www.ottonova.de/private-krankenversicherung"
+      }
+    ],
+    "url": "https://www.ottonova.de/private-krankenversicherung"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "service_substitute_candidate",
+    "confidence_score": 0.95,
+    "domain": "axaglobalhealthcare.com",
+    "entity_type_hint": "service_substitute_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Germany Health & Medical Insurance for Foreign Expats: AXA Get quotes for health &amp; medical insurance in Germany with <strong>AXA \u2013 Global Healthcare</strong>. Our flexible plans support expat professionals, families &amp; retirees abroad.",
+      "Germany Health & Medical Insurance for Foreign Expats: AXA Germany\u2019s private healthcare cover offers a similar standard of care as the public system, but it provides a wider choice of medical and dental options, shorter waiting times and often a higher level of service. While the cost of the public GKV is determined by your salary, the cost of private PKV is based on medical risk.",
+      "Germany Health & Medical Insurance for Foreign Expats: AXA This can either be the government-regulated public health insurance scheme, the gesetzliche krankenversicherung (GKV)1, or private healthcare cover. For German residents, the local private health insurance is called PKV (private Krankenversicherung) but, as an expat, you can opt for global healthcare cover instead if you wish."
+    ],
+    "first_seen_at": "2026-06-28T15:02:06Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Axaglobalhealthcare",
+    "needs_human_review": true,
+    "page_title": "Germany Health & Medical Insurance for Foreign Expats",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.axaglobalhealthcare.com/en/international-health-insurance/germany/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.axaglobalhealthcare.com/en/international-health-insurance/germany/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.axaglobalhealthcare.com/en/international-health-insurance/germany/"
+      }
+    ],
+    "url": "https://www.axaglobalhealthcare.com/en/international-health-insurance/germany/"
+  },
+  {
+    "business_model_hint": "broker",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "feather-insurance.com",
+    "entity_type_hint": "direct_broker_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "The 4 cheapest public health insurance companies in Germany TK (Techniker Krankenkasse) is the standout choice: it offers full English-language customer service, an English app, and is the largest public ..."
+    ],
+    "first_seen_at": "2026-06-28T15:02:29Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Feather Insurance",
+    "needs_human_review": true,
+    "page_title": "The 4 cheapest public health insurance companies in Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "firecrawl",
+        "url": "https://feather-insurance.com/blog/cheapest-health-insurance"
+      },
+      {
+        "query": "Feather",
+        "source": "known_competitors_input",
+        "url": "https://feather-insurance.com/private-health-insurance"
+      }
+    ],
+    "url": "https://feather-insurance.com/private-health-insurance"
+  },
+  {
+    "business_model_hint": "insurer",
+    "competitor_type_hint": "direct_insurer_candidate",
+    "confidence_score": 0.91,
+    "domain": "allianz.de",
+    "entity_type_hint": "direct_insurer_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Private Krankenversicherung (PKV): Infos & Tarife | Allianz Quelle: PKV-Verband ... Wechseln Sie jetzt zur Allianz Privaten Kranken\u00adversicherung und steigen Sie mit einer attraktiven Beitrags\u00adr\u00fcckerstattung ein. Und das ab dem ersten Jahr, in dem Sie privat kranken\u00adversichert sind und keine Leistungen in Anspruch nehmen!"
+    ],
+    "first_seen_at": "2026-06-28T15:02:40Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Allianz",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung (PKV): Infos & Tarife",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "Allianz PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.allianz.de/gesundheit/private-krankenversicherung/"
+      },
+      {
+        "query": "Allianz",
+        "source": "known_competitors_input",
+        "url": "https://www.allianz.de/gesundheit/private-krankenversicherung/"
+      }
+    ],
+    "url": "https://www.allianz.de/gesundheit/private-krankenversicherung/"
+  },
+  {
+    "business_model_hint": "broker",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "indirect_broker_candidate",
+    "confidence_score": 0.86,
+    "domain": "clark.de",
+    "entity_type_hint": "indirect_broker_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Private Krankenversicherung einfach & sicher abschlie\u00dfen Unser Algorithmus vergleicht tausende Tarife von \u00fcber 180 Versicherern, um die beste private Kranken\u00adversicherung (PKV) zu finden, die ideal zu dir passt. Angebot erhalten ... CLARK pr\u00fcft und bewertet deine bestehenden Vertr\u00e4ge \u2013 unabh\u00e4ngig und transparent.",
+      "Private Krankenversicherung & Kosten: Alle wichtigen Infos f\u00fcr dich \u2013 CLARK In der privaten Kranken\u00adversicherung (PKV) wird jedes Kind einzeln versichert. Die Tarife bieten viele Extraleistungen f\u00fcr die beste medizinische Versorgung. ... *Auszeichnung \u201cVon Nutzern empfohlen\u201d CLARK wurde im Rahmen einer unabh\u00e4ngigen Online-Befragung von ServiceValue in Kooperation mit FOCUS-MONEY mehrfach ausgezeichnet \u2013 u.",
+      "Voraussetzungen f\u00fcr die PKV: Ab wann bekomme ich eine private Krankenversicherung? \u2013 CLARK Allerdings kannst du den Bedarf nach Extraleistungen mit privaten Krankenzusatz\u00adversicherungen gut und kosteng\u00fcnstig abdecken. Die CLARK Expert:innen beraten dich gerne, welche Versicherungen hier empfehlenswert sind. F\u00fcr die PKV ist es unwichtig, wie hoch dein Gewinn beziehungsweise dein ..."
+    ],
+    "first_seen_at": "2026-06-28T15:02:34Z",
+    "job_fit_hint": "partial",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Clark",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung einfach & sicher abschlie\u00dfen",
+    "segment_fit_hint": "unknown",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "CLARK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.clark.de/private-krankenversicherung/"
+      },
+      {
+        "query": "CLARK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.clark.de/private-krankenversicherung/kosten/"
+      },
+      {
+        "query": "CLARK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.clark.de/private-krankenversicherung/voraussetzungen/"
+      },
+      {
+        "query": "CLARK",
+        "source": "known_competitors_input",
+        "url": "https://www.clark.de/private-krankenversicherung/"
+      }
+    ],
+    "url": "https://www.clark.de/private-krankenversicherung/"
+  },
+  {
+    "business_model_hint": "broker",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "indirect_broker_candidate",
+    "confidence_score": 0.86,
+    "domain": "hellogetsafe.com",
+    "entity_type_hint": "indirect_broker_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Private Krankenversicherung | Getsafe Verdienst du \u00fcber der Jahresgrenze oder willst mehr Leistung, ist die PKV die Alternative: oft k\u00fcrzere Wartezeiten, erweiterte Leistungen, englischer Service.",
+      "Getsafe | Alle Versicherungen in einer App \u2013 digital, einfach, fair Verdienst du \u00fcber der Jahresgrenze oder willst mehr Leistung, ist die PKV die Alternative: oft k\u00fcrzere Wartezeiten, erweiterte Leistungen, englischer Service."
+    ],
+    "first_seen_at": "2026-06-28T15:02:35Z",
+    "job_fit_hint": "partial",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Hellogetsafe",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung",
+    "segment_fit_hint": "unknown",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "Getsafe PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de"
+      },
+      {
+        "query": "Getsafe PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.hellogetsafe.com/de-de"
+      },
+      {
+        "query": "Getsafe",
+        "source": "known_competitors_input",
+        "url": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de"
+      }
+    ],
+    "url": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de"
+  },
+  {
+    "business_model_hint": "broker",
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.82,
+    "domain": "stayinsured.de",
+    "entity_type_hint": "direct_broker_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents Best private health insurance (PKV) Germany 2026: honest provider comparison, real costs by age, and how to choose the right plan as an international resident."
+    ],
+    "first_seen_at": "2026-06-28T15:02:07Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Stayinsured",
+    "needs_human_review": true,
+    "page_title": "Best Private Health Insurance Germany 2026",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "blog_or_resource_page",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      }
+    ],
+    "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "service_substitute_candidate",
+    "confidence_score": 0.64,
+    "domain": "tk-lex.tk.de",
+    "entity_type_hint": "service_substitute_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Krankenversicherung firmenkunden.tk.de \u00b7 Detailansicht \u00b7 Verwandte Dokumente"
+    ],
+    "first_seen_at": "2026-06-28T15:02:39Z",
+    "job_fit_hint": "partial",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Tk Lex",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "Techniker Krankenkasse PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.tk-lex.tk.de/web/guest/externalcontent?_leongshared_serviceId=2010&_leongshared_externalcontentid=HI523895"
+      }
+    ],
+    "url": "https://www.tk-lex.tk.de/web/guest/externalcontent?_leongshared_serviceId=2010&_leongshared_externalcontentid=HI523895"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "how-to-germany.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Best German Health Insurance: Public vs. Private Plans 2026 Learn more about the differences between statutory health insurance (GKV) and private health insurance (PKV), find options for expats, students, and families, and discover supplementary insurance such as dental insurance. ... Janine El-Saghir Janine El Saghir is an editor at How-to-Germany.com, where she specializes in the practical aspects of daily life and integration for expatriates. With years of... Read more ... Health insurance is",
+      "German Private Health Insurance: Providers & Process 2026 Considering private health insurance (PKV) in Germany? For many high-earning expats, freelancers, and students, it offers superior flexibility and more extensive coverage than the standard public system. But is it the right strategic choice for you?",
+      "Best German Health Insurance: Public vs. Private Plans 2026 Learn more about the differences between statutory health insurance (GKV) and private health insurance (PKV), find options for expats, students, and families, and discover supplementary insurance such as dental insurance. ... Janine El-Saghir Janine El Saghir is an editor at How-to-Germany.com, where she specializes in the practical aspects of daily life and integration for expatriates. With years of... Read more ... Health insurance is",
+      "German Private Health Insurance: Providers & Process 2026 The following points are critical, finding good private health insurance providers and tariffs: ... Reimbursement of costs for dental and vision care according to the maximum rates of the medical fee scales (dentures: at least 75%) Reimbursement of costs for medical aids \u2014 for example, wheelchairs or prostheses \u2014 not according to lists, but to medical necessity",
+      "German Supplementary Health Insurance: Expat Guide 2026 People insured under GKV \u2014 including expats \u2014 are eligible to purchase supplementary insurance. Depending on your situation and personal needs, a single plan or a combination of policies may be the best option for you. While private health insurance (PKV) already includes broader coverage, some services may still be excluded or limited.",
+      "Best German Health Insurance: Public vs. Private Plans 2026 Learn more about the differences between statutory health insurance (GKV) and private health insurance (PKV), find options for expats, students, and families, and discover supplementary insurance such as dental insurance. ... Janine El-Saghir Janine El Saghir is an editor at How-to-Germany.com, where she specializes in the practical aspects of daily life and integration for expatriates. With years of... Read more ... Health insurance is",
+      "German Private Health Insurance: Providers Comparison 2026 Digital brokers such as Getsafe follow the same principle but combine market-wide comparisons with a more streamlined, digital-first approach. For expats, this can be a practical solution, as advice is typically available online and by phone, often in English, while the overall selection process remains structured and transparent.",
+      "Best German Health Insurance: Public vs. Private Plans 2026 Learn more about the differences between statutory health insurance (GKV) and private health insurance (PKV), find options for expats, students, and families, and discover supplementary insurance such as dental insurance. ... Janine El-Saghir Janine El Saghir is an editor at How-to-Germany.com, where she specializes in the practical aspects of daily life and integration for expatriates. With years of... Read more ... Health insurance is",
+      "German Private Health Insurance: Providers & Process 2026 The following points are critical, finding good private health insurance providers and tariffs: ... Reimbursement of costs for dental and vision care according to the maximum rates of the medical fee scales (dentures: at least 75%) Reimbursement of costs for medical aids \u2014 for example, wheelchairs or prostheses \u2014 not according to lists, but to medical necessity \u00b7 Reimbursement of costs for alternative practitioner treatments (if desired)",
+      "Best German Health Insurance: Public vs. Private Plans 2026 It explains the basic structure of health insurance, guides you through the process of choosing between <strong>statutory (GKV) and private health insurance (PKV),</strong> and provides specific information for different situations \u2013 whether you are coming ...",
+      "German Health Insurance: GKV vs. PKV Comparison 2026 Contributions depend on the chosen tariff, the insured person\u2019s age and health status at the start of the contract, and the selected deductible. Young, healthy applicants generally receive more favorable premiums, while additional modules or higher coverage levels increase the cost. Freelancers and self-employed individuals pay the full premium, as there is no employer contribution. Private insurers are required to build age-related reserves t",
+      "German Private Health Insurance: Providers & Process 2026 But is it the right strategic choice for you? Find out with our guide to the best private healthcare options, plans, and eligibility requirements for expats considering PKV. ... Janine El-Saghir Janine El Saghir is an editor at How-to-Germany.com, where she specializes in the practical aspects of daily life and integration for expatriates.",
+      "Best German Health Insurance: Public vs. Private Plans 2026 It explains the basic structure of health insurance, guides you through the process of choosing between statutory (GKV) and private health insurance (PKV), and provides specific information for different situations \u2013 whether you are coming to Germany as an employee, self-employed person, student, or with your family. Yes, absolutely. In Germany, everyone is required by law to have health insurance, whether they are permanent or temporar",
+      "German Private Health Insurance: Providers & Process 2026 Private health insurance companies will not increase individual premiums due to frequent, long-term or serious illness. To keep premiums stable for older people, private health insurance providers must build up old-age provisions of at least 10% of the monthly premium. By comparing different private health insurance providers and tariffs, you can find a policy that best meets your needs. Expert advice can be helpful here, as there are som",
+      "Best German Health Insurance: Public vs. Private Plans 2026 Learn more about the differences between statutory health insurance (GKV) and private health insurance (PKV), find options for expats, students, and families, and discover supplementary insurance such as dental insurance. ... Janine El-Saghir Janine El Saghir is an editor at How-to-Germany.com, where she specializes in the practical aspects of daily life and integration for expatriates. With years of... Read more ... Health insurance is",
+      "German Health Insurance: GKV vs. PKV Comparison 2026 Contributions depend on the chosen tariff, the insured person\u2019s age and health status at the start of the contract, and the selected deductible. Young, healthy applicants generally receive more favorable premiums, while additional modules or higher coverage levels increase the cost. Freelancers and self-employed individuals pay the full premium, as there is no employer contribution. Private insurers are required to build age-related reserves t",
+      "Best German Health Insurance: Public vs. Private Plans 2026 Understand Germany\u2019s health insurance system: GKV vs. PKV explained. Compare options for expats, students, and families.",
+      "Best German Health Insurance: Public vs. Private Plans 2026 Learn more about the differences between statutory health insurance (GKV) and private health insurance (PKV), find options for expats, students, and families, and discover supplementary insurance such as dental insurance. ... Janine El-Saghir Janine El Saghir is an editor at How-to-Germany.com, where she specializes in the practical aspects of daily life and integration for expatriates. With years of... Read more ... Health insurance is",
+      "Best German Health Insurance: Public vs. Private Plans 2026 The Two Pillars: Statutory (GKV) vs. Private (PKV) Health Insurance ... In Germany, health insurance is mandatory. This means everyone in the country must have health insurance, regardless of origin, profession, or residence status. For expats, this is often one of the first hurdles they face upon arrival: How does the system work?",
+      "German Supplementary Health Insurance: Expat Guide 2026 Understand supplementary health insurance in Germany and find top coverage for expats to fill the gaps in statutory insuraance."
+    ],
+    "first_seen_at": "2026-06-28T15:02:04Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "mentioned_in_search_evidence",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "How To Germany",
+    "needs_human_review": true,
+    "page_title": "Best German Health Insurance",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/supplementary-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/providers-comparison/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/gkv-vs-pkv-comparison/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/gkv-vs-pkv-comparison/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/providers-comparison/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/supplementary-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/supplementary-insurance/"
+      }
+    ],
+    "url": "https://www.how-to-germany.com/health-insurance/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "health-insurance-in-germany.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Health Insurance in Germany (PKV) for Expats 2026 Significant life changes (e.g. unemployment) Return to a salaried job under the income threshold ... Digital nomads Ensure policies meet German residency requirements. Freelancers and the self-employed can deduct PKV contributions as business expenses, potentially reducing the net cost significantly.",
+      "Self-Employed Health Insurance Germany Guide 2026 <strong>It compares public (GKV) and private (PKV) insurance options, outlines legal obligations, and provides expert tips, real-life examples, and strategies to manage costs</strong>. Whether you&#x27;re a freelancer, creative, or digital nomad, this guide helps ...",
+      "Private Health Insurance in Germany (PKV) for Expats 2026 PKV refers to health insurance provided by private companies in Germany. Unlike statutory health insurance (GKV), which is income-based and universal, <strong>PKV policies are tailored contracts with individualized benefits</strong>.",
+      "Private Health Insurance in Germany (PKV) for Expats 2026 Private health insurance (PKV \u2013 Private Krankenversicherung) offers top-tier services and flexible coverage options, but it isn\u2019t suitable for everyone. For expats navigating the complexities of the German healthcare system, understanding the ins and outs of PKV is crucial. This guide provides an in-depth look at what private health insurance entails, who qualifies, the pros and cons, and how to make the best decision for your needs. PKV ",
+      "Private Health Insurance in Germany (PKV) for Expats 2026 Discover health insurance options in Germany for expat families. Compare GKV vs PKV, costs, coverage, and tips for choosing the right plan.",
+      "Self-Employed Health Insurance Germany Guide 2026 Higher deductibles mean lower premiums, but more out-of-pocket risk. Understand co-payments and coverage caps. Health insurance is mandatory in Germany, with distinct paths for freelancers. GKV offers predictability; PKV offers customization. Each option has serious financial and legal implications. Evaluate your age, income, and family situation. Use expat-friendly platforms for advice and comparison.",
+      "Self-Employed Health Insurance Germany Guide 2026 Health insurance is mandatory in Germany, with distinct paths for freelancers. <strong>GKV offers predictability; PKV offers customization</strong>. Each option has serious financial and legal implications.",
+      "Private Health Insurance in Germany (PKV) for Expats 2026 Private health insurance (PKV \u2013 Private Krankenversicherung) offers top-tier services and flexible coverage options, but it isn\u2019t suitable for everyone. For expats navigating the complexities of the German healthcare system, understanding the ins and outs of PKV is crucial. This guide provides an in-depth look at what private health insurance entails, who qualifies, the pros and cons, and how to make the best decision for your needs. PKV ",
+      "Private Health Insurance in Germany (PKV) for Expats 2026 <strong>PKV refers to health insurance provided by private companies in Germany</strong>. Unlike statutory health insurance (GKV), which is income-based and universal, PKV policies are tailored contracts with individualized benefits."
+    ],
+    "first_seen_at": "2026-06-28T15:02:04Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Health Insurance In Germany",
+    "needs_human_review": true,
+    "page_title": "Private Health Insurance in Germany (PKV) for Expats 2026",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      },
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      }
+    ],
+    "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "germany-visa.org",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Germany Private Health Insurance: List of Providers, and Requirements Self-employed professionals, freelancers, and business owners can choose private health insurance regardless of income level (exceptions apply to artists, publicists, and farmers). High-income earner. Individuals earning above the income threshold, which as of 2026 is set at \u20ac77,400 by the statutory health insurance (Gesetzliche Krankenversicherung or GKV) system, can opt for private health insurance.",
+      "Germany Private Health Insurance: List of Providers, and Requirements Private health insurance in Germany, known as \u201cPrivate Krankenversicherung\u201d (PKV), is an alternative to the public or statutory health insurance system. It is primarily available to self-employed individuals, high-income earners, civil servants, and specific professional groups.",
+      "Germany Private Health Insurance: List of Providers, and Requirements <strong>Private health insurance in Germany, known as \u201cPrivate Krankenversicherung\u201d (PKV), is an alternative to the public or statutory health insurance system</strong>. It is primarily available to self-employed individuals, high-income earners, civil servants, and specific professional groups.",
+      "Germany Private Health Insurance: List of Providers, and Requirements You request a personalized free quote here. There are over 30 accredited private health insurance companies, as listed below, from which you can pick out if you are eligible for private health insurance in Germany: Private health insurance (Private Krankenversicherung or PKV) in Germany covers the following:",
+      "Germany Private Health Insurance: List of Providers, and Requirements Private health insurance in Germany (2026): requirements, costs, benefits, and top providers. Learn if private insurance (PKV) is right for you.",
+      "Germany Private Health Insurance: List of Providers, and Requirements Since not everyone is eligible for private health insurance in Germany, residents are obligated to enroll in public insurance. However, if you are eligible for private health insurance, you can review your options and enroll here immediately. Check here whether you are eligible for private health insurance: ... To sign up for private health insurance in Germany, you can simply buy your policy and be a registered beneficiary, b",
+      "Germany Private Health Insurance: List of Providers, and Requirements Since not everyone is eligible for private health insurance in Germany, residents are obligated to enroll in public insurance. However, if you are eligible for private health insurance, you can review your options and enroll here immediately. Check here whether you are eligible for private health insurance: ... To sign up for private health insurance in Germany, you can simply buy your policy and be a registered beneficiary, b",
+      "Germany Private Health Insurance: List of Providers, and Requirements Since not everyone is eligible for private health insurance in Germany, residents are obligated to enroll in public insurance. However, if you are eligible for private health insurance, you can review your options and enroll here immediately. Check here whether you are eligible for private health insurance: ... To sign up for private health insurance in Germany, you can simply buy your policy and be a registered beneficiary, b"
+    ],
+    "first_seen_at": "2026-06-28T15:02:04Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Germany Visa",
+    "needs_human_review": true,
+    "page_title": "Germany Private Health Insurance",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "AWP Consult private health insurance Germany",
+        "source": "known_competitor_lookup",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      }
+    ],
+    "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "instagram.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Health insurance is a key requirement for obtaining and maintaining ... In this video, Senior Manager Sumejja Handzo outlines important considerations for foreign nationals relocating to Germany, including statutory ...",
+      "Travel Insurance from Germany \u2708\ufe0f (Reisekrankenversicherung ... 1\ufe0f\u20e3 Haftpflicht (Personal Liability) ~\u20ac5-8/month. The absolute must-have. Covers accidental damage you cause to others or their property. 2\ufe0f\u20e3 ...",
+      "\ufe0f Public Health Insurance \u2192 most common for employees ... Health insurance in Germany can feel impossible to compare. Stay helps international residents check their options in plain English - public, ..."
+    ],
+    "first_seen_at": "2026-06-28T15:02:24Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Instagram",
+    "needs_human_review": true,
+    "page_title": "Health insurance is a key requirement for obtaining and maintaining ...",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/reel/DY0DfCECWP9/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/reel/DVJZglBivyr/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/p/DTxnxJYjPFu/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/reel/DY0DfCECWP9/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/p/DTxnxJYjPFu/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/reel/DY0DfCECWP9/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/p/DTxnxJYjPFu/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/reel/DY0DfCECWP9/"
+      }
+    ],
+    "url": "https://www.instagram.com/reel/DY0DfCECWP9/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "germanprivatehealthinsurance.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "German Private Health Insurance | Expert PKV Guidance & Quotes Expert guidance on German Private Health Insurance (PKV). Compare plans, costs, and benefits for expats, freelancers, and families. Get your personalized quote today.",
+      "German Private Health Insurance | Expert PKV Guidance & Quotes Navigate German Private Health Insurance (PKV) with confidence. Compare plans, understand costs, and secure comprehensive coverage designed for expatriates, freelancers, and professionals. ... Germany&#x27;s healthcare system offers two distinct pathways: public health insurance (Gesetzliche Krankenversicherung, GKV) and private health insurance (Private Krankenversicherung, PKV)."
+    ],
+    "first_seen_at": "2026-06-28T15:02:04Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Germanprivatehealthinsurance",
+    "needs_human_review": true,
+    "page_title": "German Private Health Insurance",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "brave_search",
+        "url": "https://germanprivatehealthinsurance.com/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://germanprivatehealthinsurance.com/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://germanprivatehealthinsurance.com/"
+      },
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://germanprivatehealthinsurance.com/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://germanprivatehealthinsurance.com/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://germanprivatehealthinsurance.com/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://germanprivatehealthinsurance.com/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://germanprivatehealthinsurance.com/"
+      }
+    ],
+    "url": "https://germanprivatehealthinsurance.com/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "iamexpat.de",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "GKV versus PKV 2025: Health insurance for expats in Germany explained Confused about German health insurance in 2025? Discover GKV vs. PKV, eligibility rules, costs, and family cover options for expats living in Germany.",
+      "Private health insurance in Germany (private Krankenversicherung) You are a foreign student (exceptions ... health insurance policies for expats in Germany: <strong>KLforExpats (Highly Rated Multi-Provider Brokerage for Expert Professionals)</strong>..."
+    ],
+    "first_seen_at": "2026-06-28T15:02:07Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Iamexpat",
+    "needs_human_review": true,
+    "page_title": "GKV versus PKV 2025",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/germany-news/gkv-versus-pkv-2025-health-insurance-expats-germany-explained"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/germany-news/gkv-versus-pkv-2025-health-insurance-expats-germany-explained"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/germany-news/gkv-versus-pkv-2025-health-insurance-expats-germany-explained"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/german-health-insurance/private-health-insurance-germany"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness comparison",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/germany-news/gkv-versus-pkv-2025-health-insurance-expats-germany-explained"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/germany-news/gkv-versus-pkv-2025-health-insurance-expats-germany-explained"
+      }
+    ],
+    "url": "https://www.iamexpat.de/expat-info/germany-news/gkv-versus-pkv-2025-health-insurance-expats-germany-explained"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "jarniascyril.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Expat Health Insurance in Germany: Complete Guide to GKV and PKV Coverage Complete guide to the German healthcare system for expats: understand mandatory insurance, compare public (GKV) and private (PKV) plans, costs, coverage, and get practical tips to choose the right plan.",
+      "Expat Health Insurance in Germany: Complete Guide to GKV and PKV Coverage \u2013 <strong>alternative medicine and supplements (homeopathy, osteopathy, acupuncture</strong>): heavily restricted or not covered, except for specific programs; \u2013 complex dental work: significant out-of-pocket costs, hence the rise of supplementary insurance.",
+      "Expat Health Insurance in Germany: Complete Guide to GKV and PKV Coverage \u2013 Young freelancer without immediate family plans: PKV may seem attractive, but you must plan for the future (rising premiums, impossibility of returning to GKV later). \u2013 Student: student GKV until 30 is often the best security/price ratio. \u2013 Digital nomad or highly mobile stays: an international health insurance contract can complement, or even substitute for the local system depending on the administrative situation. Bey"
+    ],
+    "first_seen_at": "2026-06-28T15:02:06Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Jarniascyril",
+    "needs_human_review": true,
+    "page_title": "Expat Health Insurance in Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.jarniascyril.com/expatriation/install-germany-expat-complete-guide/healthcare-expats-germany-guide-insurance-gkv-pkv/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://www.jarniascyril.com/expatriation/install-germany-expat-complete-guide/healthcare-expats-germany-guide-insurance-gkv-pkv/"
+      },
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://www.jarniascyril.com/expatriation/install-germany-expat-complete-guide/healthcare-expats-germany-guide-insurance-gkv-pkv/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://www.jarniascyril.com/expatriation/install-germany-expat-complete-guide/healthcare-expats-germany-guide-insurance-gkv-pkv/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://www.jarniascyril.com/expatriation/install-germany-expat-complete-guide/healthcare-expats-germany-guide-insurance-gkv-pkv/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.jarniascyril.com/expatriation/install-germany-expat-complete-guide/healthcare-expats-germany-guide-insurance-gkv-pkv/"
+      }
+    ],
+    "url": "https://www.jarniascyril.com/expatriation/install-germany-expat-complete-guide/healthcare-expats-germany-guide-insurance-gkv-pkv/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "expatica.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Guide to getting health insurance in Germany in 2026 | Expatica Explore the best expat health insurance options for Germany in 2026, including <strong>public insurance (GKV) and private coverage (PKV).</strong>",
+      "Guide to getting health insurance in Germany in 2026 | Expatica Explore the best expat health insurance options for Germany in 2026, including eligibility for public insurance (GKV) and private coverage (PKV). ... Everyone living and working in Germany must have health insurance, and it\u2019s essential to have the right coverage so you can avoid pricey medical bills. The country\u2019s healthcare system ranks among the world\u2019s best, but navigating the public and private insurance options as an internatio",
+      "Guide to getting health insurance in Germany in 2026 | Expatica Explore the best expat health insurance options for Germany in 2026, including eligibility for public insurance (GKV) and private coverage (PKV). ... Everyone living and working in Germany must have health insurance, and it\u2019s essential to have the right coverage so you can avoid pricey medical bills. The country\u2019s healthcare system ranks among the world\u2019s best, but navigating the public and private insurance options as an internatio",
+      "Guide to getting health insurance in Germany in 2026 | Expatica Explore the best expat health insurance options for Germany in 2026, including public insurance (GKV) and private coverage (PKV).",
+      "Guide to getting health insurance in Germany in 2026 | Expatica Private health insurance (private Krankenversicherung): referred to as PKV. ... <strong>All German residents must have medical insurance, and statutory health insurance (GKV) is mandatory for most</strong>."
+    ],
+    "first_seen_at": "2026-06-28T15:02:11Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Expatica",
+    "needs_human_review": true,
+    "page_title": "Guide to getting health insurance in Germany in 2026",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://www.expatica.com/de/healthcare/healthcare-basics/a-guide-to-german-health-insurance-693463/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness marketplace",
+        "source": "brave_search",
+        "url": "https://www.expatica.com/de/healthcare/healthcare-basics/a-guide-to-german-health-insurance-693463/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness spreadsheet template",
+        "source": "brave_search",
+        "url": "https://www.expatica.com/de/healthcare/healthcare-basics/a-guide-to-german-health-insurance-693463/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.expatica.com/de/healthcare/healthcare-basics/a-guide-to-german-health-insurance-693463/"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.expatica.com/de/healthcare/healthcare-basics/a-guide-to-german-health-insurance-693463/"
+      }
+    ],
+    "url": "https://www.expatica.com/de/healthcare/healthcare-basics/a-guide-to-german-health-insurance-693463/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "findenglish.de",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Health Insurance in Germany for Expats: GKV vs PKV Guide (2026) Should you get Feather (private) or TK/AOK (public)? Compare costs, coverage and English support for expats in Germany. Which is right for your situation?",
+      "Health Insurance in Germany for Expats: GKV vs PKV Guide (2026) Quick Summary Health insurance is mandatory in Germany from your first day of residence. You must have it before you can register with a doctor, get a residence permit, or start work. There are two systems: public (GKV) and private (PKV). Most employed expats earning under \u20ac77,400 per year (2026 threshold) are required to use public insurance.",
+      "Health Insurance in Germany for Expats: GKV vs PKV Guide (2026) <strong>116 117</strong> is for urgent but non-life-threatening situations: high fever outside surgery hours, persistent pain, minor injuries, urgent prescription needs. Available 24/7 including weekends and holidays, can arrange house visits."
+    ],
+    "first_seen_at": "2026-06-28T15:02:10Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Findenglish",
+    "needs_human_review": true,
+    "page_title": "Health Insurance in Germany for Expats",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "blog_or_resource_page",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.findenglish.de/blog/german-health-insurance-healthcare-for-expats"
+      },
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://www.findenglish.de/blog/german-health-insurance-healthcare-for-expats"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.findenglish.de/blog/german-health-insurance-healthcare-for-expats"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.findenglish.de/blog/german-health-insurance-healthcare-for-expats"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.findenglish.de/blog/german-health-insurance-healthcare-for-expats"
+      }
+    ],
+    "url": "https://www.findenglish.de/blog/german-health-insurance-healthcare-for-expats"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "tk.de",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Wie hoch ist der Arbeitgeberzuschuss bei Mitarbeitenden, die \u00fcber die PKV versichert sind? | Die Techniker - Firmenkunden 2026 betr\u00e4gt der <strong>monatliche H\u00f6chstzuschuss zur gesetzlichen Krankenversicherung 502,49 Euro</strong>. Er gilt f\u00fcr Besch\u00e4ftigte, die freiwillig gesetzlich bei der TK krankenversichert sind.",
+      "Freiwillig versichert: Lohnt sich ein Wechsel in die PKV? - Die Techniker <strong>Wer als Arbeitnehmerin oder Arbeitnehmer eine bestimmte Einkommensgrenze \u00fcberschreitet, k\u00f6nnte von der gesetzlichen (GKV) in die private Krankenversicherung (PKV) wechseln</strong>. Selbstst\u00e4ndige und Freiberufler k\u00f6nnen grunds\u00e4tzlich zwischen beiden ...",
+      "Eine freiwillige Krankenversicherung bei der TK bietet viele Vorteile - Die Techniker <strong>Wer als Arbeitnehmerin oder Arbeitnehmer eine bestimmte Einkommensgrenze \u00fcberschreitet, k\u00f6nnte von der gesetzlichen (GKV) in die private Krankenversicherung (PKV) wechseln</strong>. Selbstst\u00e4ndige und Freiberufler k\u00f6nnen grunds\u00e4tzlich zwischen beiden ...",
+      "Gefahren der PKV: Wechsel nur in Ausnahmen m\u00f6glich - Die Techniker Einstiegspr\u00e4mien zu Versicherungsbeginn. Allerdings sollten sich Versicherte bei ihrer Entscheidung f\u00fcr einen Wechsel von der GKV in die PKV bewusst sein, dass diese Wahl meist eine Entscheidung f\u00fcrs Leben ist."
+    ],
+    "first_seen_at": "2026-06-28T15:02:37Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Tk",
+    "needs_human_review": true,
+    "page_title": "Wie hoch ist der Arbeitgeberzuschuss bei Mitarbeitenden, die \u00fcber die PKV versic",
+    "segment_fit_hint": "unknown",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "TK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.tk.de/firmenkunden/versicherung/beitraege-faq/arbeitsentgelt/hoehe-arbeitgeberzuschuss-zur-privaten-krankenversicherung-2034496"
+      },
+      {
+        "query": "TK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.tk.de/techniker/aktionen/vorteile-der-gesetzlichen-krankenversicherung/freiwillig-versichert-2183364"
+      },
+      {
+        "query": "TK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.tk.de/techniker/freiwillige-krankenversicherung-2026406"
+      },
+      {
+        "query": "Techniker Krankenkasse PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.tk.de/techniker/aktionen/vorteile-der-gesetzlichen-krankenversicherung/risiken-der-pkv-2183374"
+      },
+      {
+        "query": "TK",
+        "source": "known_competitors_input",
+        "url": "https://www.tk.de/firmenkunden/versicherung/beitraege-faq/arbeitsentgelt/hoehe-arbeitgeberzuschuss-zur-privaten-krankenversicherung-2034496"
+      }
+    ],
+    "url": "https://www.tk.de/firmenkunden/versicherung/beitraege-faq/arbeitsentgelt/hoehe-arbeitgeberzuschuss-zur-privaten-krankenversicherung-2034496"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "myhealthcarebroker.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Health Insurance in Germany: 2026 Guide Your 2026 guide to private health insurance in Germany: eligibility, costs, switching from public cover, and how to choose the right plan. Free expert advice.",
+      "Exploring Germany's Health Insurance for Expats - Private Health Insurance Germany Unlike public health insurance, which operates on a broad and generalized system, PKV provides the opportunity for personalized plans. This means access to broader medical services, quicker appointments with specialists, and the convenience of obtaining treatment in comfortable private hospital rooms. For those with a gross annual income above \u20ac69,300, private health insurance in Germany not only becomes an option",
+      "The guide to german health insurance for foreigners - Private Health Insurance Germany A: Yes, health insurance is mandatory for all residents in Germany, including foreigners. Q: Can I get German health insurance as a tourist? A: Tourists are typically not eligible for German health insurance and should obtain travel insurance instead. Q: How much does private health insurance cost for expats in Germany? A: Costs vary based on age and chosen coverage, but typically range from \u20ac200 to \u20ac400 per m",
+      "The guide to german health insurance for foreigners - Private Health Insurance Germany Germany offers two main types of health insurance: public (gesetzliche Krankenversicherung or GKV) and private (private Krankenversicherung or PKV). Let&#x27;s compare them: Comprehensive Coverage: From dental care to alternative treatments \u00b7 Faster Access: Reduced wait times for specialists and procedures \u00b7 English-Speaking Doctors: Easier communication for non-German speakers"
+    ],
+    "first_seen_at": "2026-06-28T15:02:11Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Myhealthcarebroker",
+    "needs_human_review": true,
+    "page_title": "Private Health Insurance in Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "blog_or_resource_page",
+    "sources": [
+      {
+        "query": "best personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness for Chinese and other non-native residents in Germany needing German personal insurance advice",
+        "source": "brave_search",
+        "url": "https://myhealthcarebroker.com/blog/private-health-insurance-in-germany-2026"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/blog/exploring-germany-s-health-insurance-for-expats"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness agency service",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/blog/the-guide-to-german-health-insurance-for-foreigners"
+      },
+      {
+        "query": "Chinese and other non-native residents in Germany needing German personal insurance advice manual workflow personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/blog/the-guide-to-german-health-insurance-for-foreigners"
+      }
+    ],
+    "url": "https://myhealthcarebroker.com/blog/private-health-insurance-in-germany-2026"
+  },
+  {
+    "business_model_hint": "marketplace_comparison_portal",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "marketplace_comparison_portal",
+    "confidence_score": 0.55,
+    "domain": "verivox.de",
+    "entity_type_hint": "marketplace_comparison_portal",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Krankenversicherung (PKV): Vergleich 2026 Monatliche Ersparnis: 517,40 \u20ac. Quelle: Verivox Vergleichsrechner f\u00fcr private Krankenversicherung, Stand: 05/2026. ... <strong>Eine private Krankenversicherung (PKV) bietet Ihnen erweiterte und ma\u00dfgeschneiderte Gesundheitsleistungen</strong>.",
+      "Private Krankenversicherung Kosten 2026 Die PKV-Tarife beim Verivox-Vergleich starten f\u00fcr 30-J\u00e4hrige bei <strong>166,57 \u20ac f\u00fcr Angestellte und 307,76 \u20ac f\u00fcr Selbstst\u00e4ndige</strong>. Jetzt mehr erfahren.",
+      "Krankenversicherung Rechner | VERIVOX G\u00fcnstigster PKV-Tarif: NK select S3000 inkl. Pflegepflichtversicherung; Arbeitnehmeranteil: 138,84 \u20ac pro Monat. Beitrag GKV (BKK Firmus): Arbeitnehmeranteil: 627,17 \u20ac pro Monat. Monatliche Ersparnis: 488,33 \u20ac. Quelle: Verivox Vergleichsrechner f\u00fcr private Krankenversicherung, Stand: 12/2025."
+    ],
+    "first_seen_at": "2026-06-28T15:02:33Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Verivox",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung (PKV)",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "Verivox PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.verivox.de/private-krankenversicherung/"
+      },
+      {
+        "query": "Verivox PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.verivox.de/private-krankenversicherung/kosten/"
+      },
+      {
+        "query": "Verivox PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.verivox.de/krankenversicherung/rechner/"
+      },
+      {
+        "query": "Verivox",
+        "source": "known_competitors_input",
+        "url": "https://www.verivox.de/private-krankenversicherung/"
+      }
+    ],
+    "url": "https://www.verivox.de/private-krankenversicherung/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "expats.de",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Best Public Health Insurance Germany (GKV) 2026 | expats.de <strong>TK targets the expat, startup, and international student demographic</strong>. They built the best English-language infrastructure in the German healthcare system.",
+      "Best Public Health Insurance Germany (GKV) 2026 | expats.de <strong>TK</strong> targets the expat, startup, and international student demographic. They built the best English-language infrastructure in the German healthcare system.",
+      "Best Public Health Insurance Germany (GKV) 2026 | expats.de Their slightly higher monthly fee pays for itself if you actively use their bonus programs and alternative medicine allowances. ... You earn well above the mandatory threshold, you are healthy, and you don&#x27;t have a large dependent family. Your Move: Stop looking at Public Insurance. Read our guide on Private Health Insurance (PKV) to see if you can save hundreds of euros a month while getting VIP medical treatment."
+    ],
+    "first_seen_at": "2026-06-28T15:02:04Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Expats",
+    "needs_human_review": true,
+    "page_title": "Best Public Health Insurance Germany (GKV) 2026",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "brave_search",
+        "url": "https://expats.de/en/insurance/best-public-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany competitors",
+        "source": "brave_search",
+        "url": "https://expats.de/en/insurance/best-public-health-insurance/"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness alternatives",
+        "source": "brave_search",
+        "url": "https://expats.de/en/insurance/best-public-health-insurance/"
+      }
+    ],
+    "url": "https://expats.de/en/insurance/best-public-health-insurance/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "richmondblackwood.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private vs Public Healthcare in Germany: How it works and 2026 changes - Richmond Blackwood It requires a long-term financial strategy, considering future income, family needs, and retirement planning. At <strong>Richmond Blackwood</strong>, we help freelancers and business owners navigate these complex decisions with tailored financial strategies.",
+      "Private vs Public Healthcare in Germany: How it works and 2026 changes - Richmond Blackwood Unlike employees, who are automatically enrolled in statutory health insurance unless they exceed a defined income threshold, self-employed individuals must actively choose between <strong>statutory health insurance (GKV) and private health insurance (PKV).</strong>"
+    ],
+    "first_seen_at": "2026-06-28T15:02:04Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Richmondblackwood",
+    "needs_human_review": true,
+    "page_title": "Private vs Public Healthcare in Germany: How it works and 2026 changes",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "blog_or_resource_page",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "brave_search",
+        "url": "https://www.richmondblackwood.com/en/guides/healthcare-in-germany-how-it-works-and-2025-changes"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "brave_search",
+        "url": "https://www.richmondblackwood.com/en/guides/healthcare-in-germany-how-it-works-and-2025-changes"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness vs",
+        "source": "brave_search",
+        "url": "https://www.richmondblackwood.com/en/guides/healthcare-in-germany-how-it-works-and-2025-changes"
+      }
+    ],
+    "url": "https://www.richmondblackwood.com/en/guides/healthcare-in-germany-how-it-works-and-2025-changes"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "similarweb.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "check24.de Competitors - Top Sites Like check24.de | Similarweb According to Similarweb data of monthly visits, check24.de\u2019s top competitor in November 2024 is finanztip.de with 4.3M visits. check24.de 2nd most similar site is verivox.de, with 5.4M visits in November 2024, and closing off the top 3 is huk.de with 5M. leasingtime.de ranks as the 4th most similar website to check24.de and allianz.de ranks fifth.",
+      "check24.com Competitors - Top Sites Like check24.com | Similarweb According to Similarweb data of monthly visits, check24.com\u2019s top competitor in April 2026 is verivox.de. check24.com 2nd most similar site is comparethemarket.com, and closing off the top 3 is finanztip.de. finanzfluss.de ranks as the 4th most similar website to check24.com and pricewise.nl ranks fifth in April 2026."
+    ],
+    "first_seen_at": "2026-06-28T15:02:19Z",
+    "job_fit_hint": "partial",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Similarweb",
+    "needs_human_review": true,
+    "page_title": "check24.de Competitors - Top Sites Like check24.de",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "CHECK24 alternatives",
+        "source": "brave_search",
+        "url": "https://www.similarweb.com/website/check24.de/competitors/"
+      },
+      {
+        "query": "CHECK24 alternatives",
+        "source": "brave_search",
+        "url": "https://www.similarweb.com/website/check24.com/competitors/"
+      },
+      {
+        "query": "CHECK24 competitors",
+        "source": "brave_search",
+        "url": "https://www.similarweb.com/website/check24.com/competitors/"
+      }
+    ],
+    "url": "https://www.similarweb.com/website/check24.de/competitors/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "owler.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "CHECK24\u2019s Competitors, Revenue, Number of Employees, Funding, Acquisitions & News - Owler Company Profile CHECK24\u2019s Profile, Revenue and Employees. Check24 is a provider of online price comparison services for consumer financial products. CHECK24\u2019s primary competitors include <strong>ab-in-den-urlaub, HolidayCheck, Weg.de</strong> and 4 more.",
+      "CHECK24 Competitors and Alternatives - Owler CHECK24&#x27;s top competitors include <strong>ab-in-den-urlaub, HolidayCheck and Weg.de</strong>. See the full list of CHECK24 alternatives and competitive updates on Owler, the world\u2019s largest community-based business insights platform."
+    ],
+    "first_seen_at": "2026-06-28T15:02:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Owler",
+    "needs_human_review": true,
+    "page_title": "CHECK24\u2019s Competitors, Revenue, Number of Employees, Funding, Acquisitions & New",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "CHECK24 alternatives",
+        "source": "brave_search",
+        "url": "https://www.owler.com/company/check24"
+      },
+      {
+        "query": "CHECK24 competitors",
+        "source": "brave_search",
+        "url": "https://www.owler.com/company/check24"
+      },
+      {
+        "query": "CHECK24 competitors",
+        "source": "brave_search",
+        "url": "https://www.owler.com/company/check24/competitors"
+      }
+    ],
+    "url": "https://www.owler.com/company/check24"
+  },
+  {
+    "business_model_hint": "marketplace_comparison_portal",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "marketplace_comparison_portal",
+    "confidence_score": 0.55,
+    "domain": "check24.de",
+    "entity_type_hint": "marketplace_comparison_portal",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Krankenversicherung Vergleich 2026 Vergleich der monatlichen Kosten von PKV (bei von uns empfohlener Selbstbeteiligung &amp; Leistung) und GKV (Zusatzbeitrag: 2,9 Prozent, inkl. Beitrag zur Pflegeversicherung) f\u00fcr einen kinderlosen Versicherten aus dem CHECK24 Vergleich, Stand: 01/2026",
+      "Krankenversicherungs-Vergleich mit h\u00f6chster Kompetenz | CHECK24 W\u00e4hrend die gesetzliche Krankenversicherung ein staatliches Solidarsystem darstellt, handelt es sich bei der PKV um eine <strong>private Versicherung mit vertraglich garantierten Leistungen</strong>."
+    ],
+    "first_seen_at": "2026-06-28T15:02:32Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Check24",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung Vergleich 2026",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "CHECK24 PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.check24.de/private-krankenversicherung/"
+      },
+      {
+        "query": "CHECK24 PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.check24.de/krankenversicherung/"
+      },
+      {
+        "query": "CHECK24",
+        "source": "known_competitors_input",
+        "url": "https://www.check24.de/private-krankenversicherung/"
+      }
+    ],
+    "url": "https://www.check24.de/private-krankenversicherung/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "mlp.de",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Krankenversicherung: Ihre Vorteile auf einen Blick | MLP Eine PKV bietet Ihnen alle Leistungen ganz flexible und individuell nach Ihren W\u00fcnschen und Bed\u00fcrfnissen. Aufgrund der gro\u00dfen Unterschiede bei den Beitr\u00e4gen und Tarifen ist es unerl\u00e4sslich, die private Krankenversicherung einem Vergleich zu unterziehen. Verlassen Sie sich auf MLP und unseren jahrelangen Erfahrungen im Bereich Partner- und Produktauswahl.",
+      "Versicherungen im \u00dcberblick \u2013 Schutz mit MLP Eine private Krankenversicherung hat viele Vorteile: Deutlich bessere Leistungen und eine individuelle Leistungs- und Beitragswahl. Doch f\u00fcr wen lohnt sich die PKV wirklich? Informieren Sie sich bei MLP."
+    ],
+    "first_seen_at": "2026-06-28T15:02:41Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Mlp",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung: Ihre Vorteile auf einen Blick",
+    "segment_fit_hint": "unknown",
+    "source_page_type_hint": "product_or_comparison_page",
+    "sources": [
+      {
+        "query": "MLP PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://mlp.de/finanzen-versicherungen/versicherung/krankenversicherung/private-krankenversicherung/"
+      },
+      {
+        "query": "MLP PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://mlp.de/finanzprodukte/versicherung/"
+      },
+      {
+        "query": "MLP",
+        "source": "known_competitors_input",
+        "url": "https://mlp.de/finanzen-versicherungen/versicherung/krankenversicherung/private-krankenversicherung/"
+      }
+    ],
+    "url": "https://mlp.de/finanzen-versicherungen/versicherung/krankenversicherung/private-krankenversicherung/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "connectedfinancialplanning.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "\u200bUnderstanding Health Insurance in Germany: A Guide for U.S. ... This guide aims to provide US expats with a comprehensive overview of how health insurance works in Germany, helping you make informed decisions about your ..."
+    ],
+    "first_seen_at": "2026-06-28T15:02:24Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Connectedfinancialplanning",
+    "needs_human_review": true,
+    "page_title": "\u200bUnderstanding Health Insurance in Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany software",
+        "source": "firecrawl",
+        "url": "https://www.connectedfinancialplanning.com/health-insurance-germany"
+      },
+      {
+        "query": "personal insurance advice and brokerage for non-native speakers in Germany for health PKV GKV BU life critical illness Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.connectedfinancialplanning.com/health-insurance-germany"
+      }
+    ],
+    "url": "https://www.connectedfinancialplanning.com/health-insurance-germany"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "known_competitor_unverified",
+    "confidence_score": 0.35,
+    "domain": "",
+    "entity_type_hint": "known_competitor_unverified",
+    "evidence_quality": "weak",
+    "evidence_snippets": [
+      "Known competitor supplied by user: Dr. Walter"
+    ],
+    "first_seen_at": "2026-06-28T15:02:43Z",
+    "job_fit_hint": "not_checked",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Dr. Walter",
+    "needs_human_review": true,
+    "page_title": "Dr. Walter",
+    "segment_fit_hint": "not_checked",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "Dr. Walter",
+        "source": "known_competitors_input",
+        "url": ""
+      }
+    ],
+    "url": ""
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "known_competitor_unverified",
+    "confidence_score": 0.35,
+    "domain": "",
+    "entity_type_hint": "known_competitor_unverified",
+    "evidence_quality": "weak",
+    "evidence_snippets": [
+      "Known competitor supplied by user: Techniker Krankenkasse"
+    ],
+    "first_seen_at": "2026-06-28T15:02:43Z",
+    "job_fit_hint": "not_checked",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Techniker Krankenkasse",
+    "needs_human_review": true,
+    "page_title": "Techniker Krankenkasse",
+    "segment_fit_hint": "not_checked",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "Techniker Krankenkasse",
+        "source": "known_competitors_input",
+        "url": ""
+      }
+    ],
+    "url": ""
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "known_competitor_unverified",
+    "confidence_score": 0.35,
+    "domain": "",
+    "entity_type_hint": "known_competitor_unverified",
+    "evidence_quality": "weak",
+    "evidence_snippets": [
+      "Known competitor supplied by user: AWP Consult"
+    ],
+    "first_seen_at": "2026-06-28T15:02:43Z",
+    "job_fit_hint": "not_checked",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "AWP Consult",
+    "needs_human_review": true,
+    "page_title": "AWP Consult",
+    "segment_fit_hint": "not_checked",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "AWP Consult",
+        "source": "known_competitors_input",
+        "url": ""
+      }
+    ],
+    "url": ""
+  }
+]

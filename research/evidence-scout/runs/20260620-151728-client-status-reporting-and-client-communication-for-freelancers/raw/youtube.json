@@ -1,0 +1,410 @@
+{
+  "comments": [
+    {
+      "response": {
+        "body": {
+          "etag": "nAdlaWk3bjX5Y9WOIj0-K0L-EpA",
+          "items": [
+            {
+              "etag": "ybR25IxufaHvdfe3KOUgYd4CKZQ",
+              "id": "UgyhgSZ-B4lEjycVEax4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "_cBW9gfKE8uA5O4yUyChFLOl5xc",
+                  "id": "UgyhgSZ-B4lEjycVEax4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCBI55TSXRWGiYZUdeZF2bkw"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@jordanross8F",
+                    "authorDisplayName": "@jordanross8F",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/GnH67kNEBSzQE0WgqWvpI-vVMydJEWf5LilOREOfasedquSijeow0qdyQjWaOf96Zf2JScmZ8A=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                    "likeCount": 0,
+                    "publishedAt": "2025-03-07T09:59:31Z",
+                    "textDisplay": "Interested in predicting your growth? Download our free Growth Calculator to find how to scale your business https://constraintcalculator.scoreapp.com/",
+                    "textOriginal": "Interested in predicting your growth? Download our free Growth Calculator to find how to scale your business https://constraintcalculator.scoreapp.com/",
+                    "updatedAt": "2025-03-07T09:59:31Z",
+                    "videoId": "quU5qI621eM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "quU5qI621eM"
+              }
+            },
+            {
+              "etag": "NZuZPTsEcpUzb1ztG5Tg5ZmJoes",
+              "id": "UgzTw6PyTPH6NijyPst4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "nU3PXDxcXgM-KRYMRA8hLlnKpJg",
+                  "id": "UgzTw6PyTPH6NijyPst4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCTD5HtkH9_lX_W1opr5ILSA"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@cinovasyon",
+                    "authorDisplayName": "@cinovasyon",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/KAnMMIGI3b6xtxHgVpdoA-gZgjdii940o69FczpDcBzC5ZN2Vs9x42Y-7ePPDTzQO4uRigLW=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                    "likeCount": 0,
+                    "publishedAt": "2026-03-19T13:05:38Z",
+                    "textDisplay": "useless",
+                    "textOriginal": "useless",
+                    "updatedAt": "2026-03-19T13:05:38Z",
+                    "videoId": "quU5qI621eM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "quU5qI621eM"
+              }
+            },
+            {
+              "etag": "vTI6NtgTOCCGBdH4Y-nwEhRMWBg",
+              "id": "UgzeyOkcJ25QI3f11zt4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "0Wt_CVSgtFVk0oLlQdqDy2z3Hgs",
+                  "id": "UgzeyOkcJ25QI3f11zt4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UClkYgUgTqWnyM8Iqw29L5qQ"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@AnyaTrang",
+                    "authorDisplayName": "@AnyaTrang",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_k489dbUjVHiavMXCVBLGMHjuZ1MbGhFgMATRJyE25ZAk1KhQl3s6Hf7REnBDXFhbKjBA=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                    "likeCount": 1,
+                    "publishedAt": "2025-11-21T18:43:46Z",
+                    "textDisplay": "We have one internal task database for all clients and we create filtered linked views for each client portal. The problem is that clients can still click \u201cView data source\u201d and access the full internal database, including other clients\u2019 tasks.\nIs there a Notion-safe way to link the database while preventing clients from seeing data that doesn\u2019t belong to them?",
+                    "textOriginal": "We have one internal task database for all clients and we create filtered linked views for each client portal. The problem is that clients can still click \u201cView data source\u201d and access the full internal database, including other clients\u2019 tasks.\nIs there a Notion-safe way to link the database while preventing clients from seeing data that doesn\u2019t belong to them?",
+                    "updatedAt": "2025-11-21T18:43:46Z",
+                    "videoId": "quU5qI621eM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "quU5qI621eM"
+              }
+            },
+            {
+              "etag": "MPJ93FQ1xPnHykO_F4-6pIKfhsU",
+              "id": "UgwDzJ0-oN1hkmRJ5yt4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "EiD5D5dmdoYmXD2UAnm9jS__GhM",
+                  "id": "UgwDzJ0-oN1hkmRJ5yt4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCvtFKklHXrmebxloI6meG-w"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@ChristianBassey-d5q",
+                    "authorDisplayName": "@ChristianBassey-d5q",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/GoSpvSyaaWSnOWtGIv56AczPKhD082aT4NMMTn8jZOZGhu2ZehJGYpnvqPMkisn082t7rnqBVg=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                    "likeCount": 0,
+                    "publishedAt": "2025-10-25T07:06:25Z",
+                    "textDisplay": "Too fast",
+                    "textOriginal": "Too fast",
+                    "updatedAt": "2025-10-25T07:06:25Z",
+                    "videoId": "quU5qI621eM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "quU5qI621eM"
+              }
+            },
+            {
+              "etag": "ZjYJW-Ak8W8WCPWhZs6T5MeYE1M",
+              "id": "UgybpOetoakQGpqAr8l4AaABAg",
+              "kind": "youtube#commentThread",
+              "snippet": {
+                "canReply": true,
+                "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                "isPublic": true,
+                "topLevelComment": {
+                  "etag": "qOlLrW0NOeFcEp5bmYcmNWySALo",
+                  "id": "UgybpOetoakQGpqAr8l4AaABAg",
+                  "kind": "youtube#comment",
+                  "snippet": {
+                    "authorChannelId": {
+                      "value": "UCIWpXn3kkoNv_0K42Vt_W6w"
+                    },
+                    "authorChannelUrl": "http://www.youtube.com/@DrJohnPollard",
+                    "authorDisplayName": "@DrJohnPollard",
+                    "authorProfileImageUrl": "https://yt3.ggpht.com/7atQJek_VqOe1heb-ZIBbNPTJwV3FM8P8XdOuscLNfqII4HnuL_xRR1eTagz-eHcySlksfpISA=s48-c-k-c0x00ffffff-no-rj",
+                    "canRate": true,
+                    "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                    "likeCount": 1,
+                    "publishedAt": "2025-09-30T12:10:26Z",
+                    "textDisplay": "Random Nonsense.",
+                    "textOriginal": "Random Nonsense.",
+                    "updatedAt": "2025-09-30T12:10:26Z",
+                    "videoId": "quU5qI621eM",
+                    "viewerRating": "none"
+                  }
+                },
+                "totalReplyCount": 0,
+                "videoId": "quU5qI621eM"
+              }
+            }
+          ],
+          "kind": "youtube#commentThreadListResponse",
+          "nextPageToken": "***",
+          "pageInfo": {
+            "resultsPerPage": 5,
+            "totalResults": 5
+          }
+        },
+        "headers": {
+          "Accept-Ranges": "none",
+          "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "Connection": "close",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Sat, 20 Jun 2026 15:17:34 GMT",
+          "Server": "scaffolding on HTTPServer2",
+          "Transfer-Encoding": "chunked",
+          "Vary": "Origin,Accept-Encoding",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "0"
+        },
+        "ok": true,
+        "status_code": 200
+      },
+      "video_id": "quU5qI621eM"
+    }
+  ],
+  "credential_source": "YOUTUBE_API_KEY",
+  "searches": [
+    {
+      "query": "client status reporting and client communication for freelancers solo freelancers managing multiple clients",
+      "response": {
+        "body": {
+          "etag": "Lv2sfuO_oxmPA0jxRs5hpxrlYz0",
+          "items": [
+            {
+              "etag": "VHN9uKGWzYvYD5QudyvKq6WTJLQ",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "quU5qI621eM"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UCBI55TSXRWGiYZUdeZF2bkw",
+                "channelTitle": "Jordan Ross",
+                "description": "Free Skool Community: https://www.skool.com/the-8f-community-8411/about \u25b6\ufe0f Start diagnosing & fixing what's holding your ...",
+                "liveBroadcastContent": "none",
+                "publishTime": "2024-11-23T14:01:00Z",
+                "publishedAt": "2024-11-23T14:01:00Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/quU5qI621eM/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/quU5qI621eM/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/quU5qI621eM/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "Making a Client Tracker and Client Portal in Notion"
+              }
+            },
+            {
+              "etag": "xnDru5l2zVDjzngVCoornbSBKmw",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "lsEeLSVn4oo"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UCLjgYurnKRGCCF6bCq-mC0A",
+                "channelTitle": "Chris Pieta",
+                "description": "",
+                "liveBroadcastContent": "none",
+                "publishTime": "2023-10-09T19:17:13Z",
+                "publishedAt": "2023-10-09T19:17:13Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/lsEeLSVn4oo/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/lsEeLSVn4oo/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/lsEeLSVn4oo/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "My Client Management System"
+              }
+            },
+            {
+              "etag": "NznbDnLEpyLJ9xgqevYrOd_FZOQ",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "iDBxY9140KE"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UC8iN8jdZISR6W6gVOgcebPA",
+                "channelTitle": "Ellen Mackenzie | Dishing up Digital",
+                "description": "If I had to start my social media management journey again from scratch, this is exactly how I'd set up my social media ...",
+                "liveBroadcastContent": "none",
+                "publishTime": "2026-02-14T18:30:00Z",
+                "publishedAt": "2026-02-14T18:30:00Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/iDBxY9140KE/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/iDBxY9140KE/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/iDBxY9140KE/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "Social Media Management Client Workflow (step-by-step) \ud83d\udcf2"
+              }
+            },
+            {
+              "etag": "OJlxrJ70Fbai9RKO29-vzuaKDuc",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "uktTCaw23xk"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UC_pbmvMVt1Y4G9T64IjmhXA",
+                "channelTitle": "Jamie Brindle",
+                "description": "Subscribe for PRACTICAL freelancing tips Starting a freelance business isn't complicated, this is how freelancers get their first ...",
+                "liveBroadcastContent": "none",
+                "publishTime": "2022-10-11T18:33:47Z",
+                "publishedAt": "2022-10-11T18:33:47Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/uktTCaw23xk/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/uktTCaw23xk/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/uktTCaw23xk/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "How to Get Your FIRST Freelance Client"
+              }
+            },
+            {
+              "etag": "W1NCPAy5ho2Sg02u-WiWPlFA7Lc",
+              "id": {
+                "kind": "youtube#video",
+                "videoId": "72N-m5BJac0"
+              },
+              "kind": "youtube#searchResult",
+              "snippet": {
+                "channelId": "UCD2Xhzch7uhW4sWlLyX4XXw",
+                "channelTitle": "Iman Gadzhi Moments",
+                "description": "shorts Instagram: @imangadzhi Twitter: @GadzhiIman YouTube: Iman Gadzhi.",
+                "liveBroadcastContent": "none",
+                "publishTime": "2022-12-12T04:00:03Z",
+                "publishedAt": "2022-12-12T04:00:03Z",
+                "thumbnails": {
+                  "default": {
+                    "height": 90,
+                    "url": "https://i.ytimg.com/vi/72N-m5BJac0/default.jpg",
+                    "width": 120
+                  },
+                  "high": {
+                    "height": 360,
+                    "url": "https://i.ytimg.com/vi/72N-m5BJac0/hqdefault.jpg",
+                    "width": 480
+                  },
+                  "medium": {
+                    "height": 180,
+                    "url": "https://i.ytimg.com/vi/72N-m5BJac0/mqdefault.jpg",
+                    "width": 320
+                  }
+                },
+                "title": "How To SIGN Clients For Your Agency | Iman Gadzhi"
+              }
+            }
+          ],
+          "kind": "youtube#searchListResponse",
+          "nextPageToken": "***",
+          "pageInfo": {
+            "resultsPerPage": 5,
+            "totalResults": 3852
+          },
+          "regionCode": "CH"
+        },
+        "headers": {
+          "Accept-Ranges": "none",
+          "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "Connection": "close",
+          "Content-Type": "application/json; charset=UTF-8",
+          "Date": "Sat, 20 Jun 2026 15:17:34 GMT",
+          "Server": "scaffolding on HTTPServer2",
+          "Transfer-Encoding": "chunked",
+          "Vary": "Origin,Accept-Encoding",
+          "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "0"
+        },
+        "ok": true,
+        "status_code": 200
+      }
+    }
+  ]
+}

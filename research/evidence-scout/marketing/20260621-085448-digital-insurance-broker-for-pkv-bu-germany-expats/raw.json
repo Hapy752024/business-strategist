@@ -1,0 +1,109 @@
+{
+  "scrapes": [
+    {
+      "response": {
+        "body": {
+          "error": "Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value.",
+          "success": false
+        },
+        "error": "HTTP Error 402: Payment Required",
+        "headers": {
+          "Access-Control-Allow-Origin": "*",
+          "Connection": "close",
+          "Content-Length": "202",
+          "Content-Type": "application/json; charset=utf-8",
+          "Date": "Sun, 21 Jun 2026 08:54:49 GMT",
+          "Etag": "W/\"ca-BaJ1/eYq/Zqq51D7f8DdAEQw0CE\"",
+          "X-Response-Time": "170.681ms"
+        },
+        "ok": false,
+        "status_code": 402
+      },
+      "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+    },
+    {
+      "response": {
+        "body": {
+          "error": "Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value.",
+          "success": false
+        },
+        "error": "HTTP Error 402: Payment Required",
+        "headers": {
+          "Access-Control-Allow-Origin": "*",
+          "Connection": "close",
+          "Content-Length": "202",
+          "Content-Type": "application/json; charset=utf-8",
+          "Date": "Sun, 21 Jun 2026 08:54:50 GMT",
+          "Etag": "W/\"ca-BaJ1/eYq/Zqq51D7f8DdAEQw0CE\"",
+          "X-Response-Time": "93.577ms"
+        },
+        "ok": false,
+        "status_code": 402
+      },
+      "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+    },
+    {
+      "response": {
+        "body": {
+          "error": "Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value.",
+          "success": false
+        },
+        "error": "HTTP Error 402: Payment Required",
+        "headers": {
+          "Access-Control-Allow-Origin": "*",
+          "Connection": "close",
+          "Content-Length": "202",
+          "Content-Type": "application/json; charset=utf-8",
+          "Date": "Sun, 21 Jun 2026 08:54:51 GMT",
+          "Etag": "W/\"ca-BaJ1/eYq/Zqq51D7f8DdAEQw0CE\"",
+          "X-Response-Time": "149.725ms"
+        },
+        "ok": false,
+        "status_code": 402
+      },
+      "url": "https://www.insurancy.de/en/expats/best-insurance/"
+    },
+    {
+      "response": {
+        "body": {
+          "error": "Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value.",
+          "success": false
+        },
+        "error": "HTTP Error 402: Payment Required",
+        "headers": {
+          "Access-Control-Allow-Origin": "*",
+          "Connection": "close",
+          "Content-Length": "202",
+          "Content-Type": "application/json; charset=utf-8",
+          "Date": "Sun, 21 Jun 2026 08:54:53 GMT",
+          "Etag": "W/\"ca-BaJ1/eYq/Zqq51D7f8DdAEQw0CE\"",
+          "X-Response-Time": "1405.918ms"
+        },
+        "ok": false,
+        "status_code": 402
+      },
+      "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+    },
+    {
+      "response": {
+        "body": {
+          "error": "Insufficient credits to perform this request. For more credits, you can upgrade your plan at https://firecrawl.dev/pricing or try changing the request limit to a lower value.",
+          "success": false
+        },
+        "error": "HTTP Error 402: Payment Required",
+        "headers": {
+          "Access-Control-Allow-Origin": "*",
+          "Connection": "close",
+          "Content-Length": "202",
+          "Content-Type": "application/json; charset=utf-8",
+          "Date": "Sun, 21 Jun 2026 08:54:53 GMT",
+          "Etag": "W/\"ca-BaJ1/eYq/Zqq51D7f8DdAEQw0CE\"",
+          "X-Response-Time": "111.374ms"
+        },
+        "ok": false,
+        "status_code": 402
+      },
+      "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+    }
+  ]
+}

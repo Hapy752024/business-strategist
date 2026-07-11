@@ -1,0 +1,163 @@
+{
+  "artifacts": [
+    "README.md",
+    "intake/startup-thesis.md",
+    "canvases/business-model-canvas.md",
+    "canvases/value-proposition-consumers-evaluating-and-buying-services.md",
+    "source_registry.csv",
+    "playbooks/research-synthesis.md",
+    ".agents/skills/service-customer-perspective-challenger/SKILL.md"
+  ],
+  "blocked_reason": "",
+  "created_at": "2026-07-06T07:23:27Z",
+  "current_stage": "synthesis",
+  "events": [
+    {
+      "event": "topic_workspace_created",
+      "ts": "2026-07-06T07:23:27Z"
+    },
+    {
+      "event": "service_customer_perspective_skill_created",
+      "ts": "2026-07-06T07:42:09Z"
+    }
+  ],
+  "gate_result": "conditional_pass",
+  "next_action": "Run the service-customer-perspective-challenger on a concrete idea and replace regional hypotheses with segment behavior.",
+  "open_blockers": [],
+  "schema_version": "1.0",
+  "stages": {
+    "business_model_draft": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "business_model_draft",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "channel_validation": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "channel_validation",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "competitor_discovery": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "competitor_discovery",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "competitor_marketing": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "competitor_marketing",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "customer_profile": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "customer_profile",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "evidence_collection": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "evidence_collection",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "final_decision": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "final_decision",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "first_customers": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "first_customers",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "intake": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "intake",
+      "status": "in_progress",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "mvp_or_pilot": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "mvp_or_pilot",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "offer_validation": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "offer_validation",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "operator_playbook": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "operator_playbook",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "opportunity_risk": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "opportunity_risk",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "problem_validation": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "problem_validation",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "retention": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "retention",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "scale_readiness": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "scale_readiness",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "segment_selection": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "segment_selection",
+      "status": "pending",
+      "timestamp": "2026-07-06T07:23:27Z"
+    },
+    "synthesis": {
+      "artifacts": [
+        "source_registry.csv",
+        "playbooks/research-synthesis.md",
+        ".agents/skills/service-customer-perspective-challenger/SKILL.md"
+      ],
+      "gate_result": "conditional_pass",
+      "stage": "synthesis",
+      "status": "completed",
+      "timestamp": "2026-07-06T07:42:09Z"
+    }
+  },
+  "topic": "European German US service customer psychology",
+  "topic_slug": "european-german-us-service-customer-psychology",
+  "updated_at": "2026-07-06T07:42:09Z"
+}

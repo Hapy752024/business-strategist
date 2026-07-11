@@ -1,0 +1,643 @@
+[
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "service_substitute_candidate",
+    "confidence_score": 0.95,
+    "domain": "icontainers.com",
+    "entity_type_hint": "service_substitute_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "International Moving to Italy - iContainers Relocate to Italy with ease. Expert door-to-door moving services including full packing, customs clearance, and delivery. Get your free quote today.",
+      "International Moving to Italy Relocate to Italy with ease. Expert door-to-door moving services including full packing, customs clearance, and delivery. Get your free quote today."
+    ],
+    "first_seen_at": "2026-06-24T19:43:18Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Icontainers",
+    "needs_human_review": true,
+    "page_title": "International Moving to Italy",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "firecrawl",
+        "url": "https://www.icontainers.com/moving-overseas/moving-to-italy/"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "firecrawl",
+        "url": "https://www.icontainers.com/moving-overseas/moving-to-italy/"
+      },
+      {
+        "query": "moving to Italy from US relocation service alternatives",
+        "source": "firecrawl",
+        "url": "https://www.icontainers.com/moving-overseas/moving-to-italy/"
+      }
+    ],
+    "url": "https://www.icontainers.com/moving-overseas/moving-to-italy/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "service_substitute_candidate",
+    "confidence_score": 0.95,
+    "domain": "arlettipartners.com",
+    "entity_type_hint": "service_substitute_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Relocation Services to Italy The team at <strong>Studio Arletti &amp; Partners</strong> is made up of over 50 highly qualified and multilingual professionals, specialized in global mobility and tax consultancy, including worker postings, Italian and international taxation, and immigration ...",
+      "Relocation Services to Italy The team at Studio Arletti &amp; Partners is made up of over 50 highly qualified and multilingual professionals, specialized in global mobility and tax consultancy, including worker postings, Italian and international taxation, and immigration procedures both in Italy and abroad. ... Find out why investing in a professional relocation service when planning to move to Italy for professional or private reasons."
+    ],
+    "first_seen_at": "2026-06-24T19:43:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Arlettipartners",
+    "needs_human_review": true,
+    "page_title": "Relocation Services to Italy",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://arlettipartners.com/services/relocation-services-move-to-italy/"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "brave_search",
+        "url": "https://arlettipartners.com/services/relocation-services-move-to-italy/"
+      }
+    ],
+    "url": "https://arlettipartners.com/services/relocation-services-move-to-italy/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "direct_candidate",
+    "confidence_score": 0.95,
+    "domain": "euromovers.com",
+    "entity_type_hint": "direct_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Moving to Italy Hassle-Free - EUROMOVERS Worldwide Alliance EUROMOVERS Worldwide Alliance connects experienced moving companies that coordinate international moving to Italy from the United States through trusted origin",
+      "Moving to Italy Hassle-Free - EUROMOVERS Worldwide Alliance Moving to Italy? EUROMOVERS Worldwide Alliance connects trusted international movers to coordinate packing, shipping, and relocation seamlessly worldwide."
+    ],
+    "first_seen_at": "2026-06-24T19:43:18Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Euromovers",
+    "needs_human_review": true,
+    "page_title": "Moving to Italy Hassle",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "firecrawl",
+        "url": "https://www.euromovers.com/international/moving-to-italy/"
+      },
+      {
+        "query": "moving to Italy from US relocation service alternatives",
+        "source": "firecrawl",
+        "url": "https://www.euromovers.com/international/moving-to-italy/"
+      }
+    ],
+    "url": "https://www.euromovers.com/international/moving-to-italy/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "indirect_candidate",
+    "confidence_score": 0.95,
+    "domain": "schumachercargo.com",
+    "entity_type_hint": "indirect_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Moving to Italy - International Movers to Italy from USA Need help moving to Italy? With over 40 years experience, we can move your belongings to any Italian destination. Get a free quote today!"
+    ],
+    "first_seen_at": "2026-06-24T19:43:21Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Schumachercargo",
+    "needs_human_review": true,
+    "page_title": "Moving to Italy",
+    "segment_fit_hint": "unknown",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "firecrawl",
+        "url": "https://www.schumachercargo.com/it/moving-to-italy-from-us.html"
+      },
+      {
+        "query": "moving to Italy from US relocation service alternatives",
+        "source": "firecrawl",
+        "url": "https://www.schumachercargo.com/it/moving-to-italy-from-us.html"
+      }
+    ],
+    "url": "https://www.schumachercargo.com/it/moving-to-italy-from-us.html"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "service_substitute_candidate",
+    "confidence_score": 0.95,
+    "domain": "jkmoving.com",
+    "entity_type_hint": "service_substitute_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Moving to Italy From the US | JK Moving Services We\u2019ll make your relocation to Italy easy and stress-free. With over 40 years of experience, choose <strong>JK Moving</strong> for your move to Italy from the US. Our comprehensive relocation services include full packing, secure transportation, and timely delivery.",
+      "Moving to Italy From the US | JK Moving Services Whether you\u2019re relocating to Italy or any other country, <strong>JK Moving</strong>\u2019s International Moving Services provide expert guidance and seamless logistics to ensure a smooth and stress-free transition."
+    ],
+    "first_seen_at": "2026-06-24T19:43:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "mentioned_in_search_evidence",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Jkmoving",
+    "needs_human_review": true,
+    "page_title": "Moving to Italy From the US",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://www.jkmoving.com/residential-moving-services/international/moving-to-italy-from-us"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "brave_search",
+        "url": "https://www.jkmoving.com/residential-moving-services/international/moving-to-italy-from-us"
+      }
+    ],
+    "url": "https://www.jkmoving.com/residential-moving-services/international/moving-to-italy-from-us"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "service_substitute_candidate",
+    "confidence_score": 0.95,
+    "domain": "internationalmoving.com",
+    "entity_type_hint": "service_substitute_candidate",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Moving To Italy From US We provide comprehensive solutions to meet all your relocation needs, from packing and transport to documentation and delivery. Whether you need packing services for overseas shipping, fine art shipping, international piano movers, or car shipping services, our experienced team ensures each item is handled with the highest level of care and delivered safely to your new home in Italy."
+    ],
+    "first_seen_at": "2026-06-24T19:43:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Internationalmoving",
+    "needs_human_review": true,
+    "page_title": "Moving To Italy From US",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://internationalmoving.com/moving-to-italy/"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "brave_search",
+        "url": "https://internationalmoving.com/moving-to-italy/"
+      }
+    ],
+    "url": "https://internationalmoving.com/moving-to-italy/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "direct_candidate",
+    "confidence_score": 0.92,
+    "domain": "arpinintl.com",
+    "entity_type_hint": "direct_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Moving From The USA to Italy Planning a move from the USA to Italy? Our expert international movers handle everything from packing to customs clearance. Get a FREE quote today!"
+    ],
+    "first_seen_at": "2026-06-24T19:43:21Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Arpinintl",
+    "needs_human_review": true,
+    "page_title": "Moving From The USA to Italy",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "firecrawl",
+        "url": "https://www.arpinintl.com/moving-from-the-usa-to-italy-trusted-international-movers/"
+      }
+    ],
+    "url": "https://www.arpinintl.com/moving-from-the-usa-to-italy-trusted-international-movers/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "service_substitute_candidate",
+    "confidence_score": 0.92,
+    "domain": "relocatetoitaly.com",
+    "entity_type_hint": "service_substitute_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "A white-glove home & relocation service to Italy Navigating the housing market in ... your dream home abroad might be, be it stylish student quarters to palatial living. So <strong>dream away</strong> and let us ......"
+    ],
+    "first_seen_at": "2026-06-24T19:43:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Relocatetoitaly",
+    "needs_human_review": true,
+    "page_title": "A white",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://www.relocatetoitaly.com/"
+      }
+    ],
+    "url": "https://www.relocatetoitaly.com/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "smartmoveitaly.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Italy Relocation and Visa Services | Smart Move Italy We are based in Florence, Tuscany. ... Download our App! \u00a92023 <strong>smart move italy</strong> S.A.S 07090580486 Info@smartmoveitaly.com ... We&#x27;d love to hear from you! We aim to answer all emails within our normal business hours of M-F, 9-5pm.",
+      "How to Move to Italy \u201cWe tried to apply in person on our own, which did not work out at all. We found <strong>Smart Move Italy</strong> and we are now Italian Citizens!",
+      "Italy Relocation and Visa Services | Smart Move Italy Expert services for visas, citizenship, property, and relocation in Italy. Get clear guidance, trusted support, and a team dedicated to making your move easier.",
+      "How to Move to Italy Move to Italy Visas, Citizenship, and Property Services for Every Budget."
+    ],
+    "first_seen_at": "2026-06-24T19:43:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Smartmoveitaly",
+    "needs_human_review": true,
+    "page_title": "Italy Relocation and Visa Services",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://smartmoveitaly.com/services22"
+      },
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://smartmoveitaly.com/"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "brave_search",
+        "url": "https://smartmoveitaly.com/services22"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "brave_search",
+        "url": "https://smartmoveitaly.com/"
+      },
+      {
+        "query": "moving to Italy from US relocation service competitors",
+        "source": "brave_search",
+        "url": "https://smartmoveitaly.com/"
+      },
+      {
+        "query": "Smart Move Italy",
+        "source": "known_competitors_input",
+        "url": "https://smartmoveitaly.com/services22"
+      }
+    ],
+    "url": "https://smartmoveitaly.com/services22"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "earthrelocation.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Moving to Italy from US: Best Relocation Tips from Experts Moving to Italy from US? Get expert relocation tips for a smooth transition. Trust <strong>EarthRelo&#x27;s international moving services</strong> from New York and California.",
+      "Moving To Italy from US | Best Moving Services to Italy Are you looking to relocate to Italy from the US? We will help you in moving to Italy from the US. Contact us for the <strong>US To Italy Movers</strong>. Contact us today!",
+      "Moving to Italy from US: Best Relocation Tips from Experts Moving to Italy from US? Get expert relocation tips for a smooth transition. Trust EarthRelo&#x27;s international moving services from New York and California.",
+      "Moving To Italy from US | Best Moving Services to Italy With extensive experience in international relocations, we handle every detail of your move with precision. We offer flexible moving solutions, from full-service packing to secure shipping and storage. Our team manages all necessary paperwork, ensuring a smooth entry for your belongings into Italy. We use professional packing techniques and trusted carriers to keep your items secure throughout transit."
+    ],
+    "first_seen_at": "2026-06-24T19:43:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Earthrelocation",
+    "needs_human_review": true,
+    "page_title": "Moving to Italy from US",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "blog_or_resource_page",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://earthrelocation.com/blog/moving-to-italy-from-us/"
+      },
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://earthrelocation.com/moving-to-italy-from-us/"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "brave_search",
+        "url": "https://earthrelocation.com/blog/moving-to-italy-from-us/"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "brave_search",
+        "url": "https://earthrelocation.com/moving-to-italy-from-us/"
+      }
+    ],
+    "url": "https://earthrelocation.com/blog/moving-to-italy-from-us/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "expatseverywhere.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "ExpatsEverywhere expats moving to Portugal ExpatsEverywhere has many video resources from our YouTube channels that you can get familiar with right here on our website.",
+      "Contact \u2014 ExpatsEverywhere Moving To Portugal After years of working as a B to C expat consulting business, we decided to follow our passions and attempt to reach more people by focusing all of our time, energy, and effort into content creation. We\u2019ve set out on a journey to become the number one resource for expat life video content. Along the way, we share our lives with you and take you traveling with us. It doesn\u2019t matter if you\u2019re an Expat or Traveler, you belong at ExpatsEverywhere."
+    ],
+    "first_seen_at": "2026-06-24T19:43:26Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Expatseverywhere",
+    "needs_human_review": true,
+    "page_title": "ExpatsEverywhere expats moving to Portugal",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "ExpatsEverywhere PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.expatseverywhere.com/"
+      },
+      {
+        "query": "ExpatsEverywhere PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.expatseverywhere.com/contact"
+      },
+      {
+        "query": "ExpatsEverywhere",
+        "source": "known_competitors_input",
+        "url": "https://www.expatseverywhere.com/"
+      }
+    ],
+    "url": "https://www.expatseverywhere.com/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "nilsonvan.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Moving to Italy from USA | Best Relocation Services to Italy When you choose <strong>Nilson Van and Storage</strong> as your international moving to Italy from USA, you gain a partner that balances inspiration with precision. We combine decades of international moving experience with a clear understanding of Italian customs ...",
+      "Moving to Italy from USA | Best Relocation Services to Italy Export Packing at Origin: Your goods are professionally packed using export-grade materials suitable for long ocean transit. International Transit &amp; Customs Coordination: Your shipment moves via sea or air freight while documentation and customs clearance Italy procedures are managed. Shuttle Delivery &amp; Unpacking in Italy: Final delivery may involve shuttle services for tight access locations. Unpacking and debris removal are a"
+    ],
+    "first_seen_at": "2026-06-24T19:43:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Nilsonvan",
+    "needs_human_review": true,
+    "page_title": "Moving to Italy from USA",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service software",
+        "source": "brave_search",
+        "url": "https://nilsonvan.com/services/moving-to-italy/"
+      },
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "brave_search",
+        "url": "https://nilsonvan.com/services/moving-to-italy/"
+      }
+    ],
+    "url": "https://nilsonvan.com/services/moving-to-italy/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "move.org",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "How to Move to Italy from the US How much does it cost to relocate to Italy? Expect to spend somewhere between $6,000 and $13,000 (or more in some cases) to ship your household ...",
+      "How to Move to Italy from the US Expect to spend somewhere between $6,000 and $13,000 (or more in some cases) to ship your household goods from the US to Italy."
+    ],
+    "first_seen_at": "2026-06-24T19:43:21Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Move",
+    "needs_human_review": true,
+    "page_title": "How to Move to Italy from the US",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service tools",
+        "source": "firecrawl",
+        "url": "https://www.move.org/how-to-move-to-italy/"
+      },
+      {
+        "query": "moving to Italy from US relocation service alternatives",
+        "source": "firecrawl",
+        "url": "https://www.move.org/how-to-move-to-italy/"
+      }
+    ],
+    "url": "https://www.move.org/how-to-move-to-italy/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "collineallemontagne.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Italy Travel Planner and Expat Guide \u2022 Colline alle Montagne Are you looking for an Italian Travel Planner or Expat Guide to help you Uncover Authentic Italy and go beyond la dolce vita? Then you\u2019re in the right place!"
+    ],
+    "first_seen_at": "2026-06-24T19:43:24Z",
+    "job_fit_hint": "partial",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Collineallemontagne",
+    "needs_human_review": true,
+    "page_title": "Italy Travel Planner and Expat Guide \u2022 Colline alle Montagne",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "collineallemontagne PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://collineallemontagne.com/"
+      },
+      {
+        "query": "collineallemontagne",
+        "source": "known_competitors_input",
+        "url": "https://collineallemontagne.com/"
+      }
+    ],
+    "url": "https://collineallemontagne.com/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "suddath.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "International Movers Italy | Best Moving Company To and From Italy So, when you want to choose the best of the international moving companies in Italy, you can proceed with confidence with Suddath. Trusted movers since 1919, we successfully complete 16,000 overseas moves annually, offering the full range of relocation services."
+    ],
+    "first_seen_at": "2026-06-24T19:43:16Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Suddath",
+    "needs_human_review": true,
+    "page_title": "International Movers Italy",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "moving to Italy from US relocation service competitors",
+        "source": "brave_search",
+        "url": "https://suddath.com/moving-company/international-movers/to-and-from-italy/"
+      }
+    ],
+    "url": "https://suddath.com/moving-company/international-movers/to-and-from-italy/"
+  }
+]

@@ -1,0 +1,2963 @@
+{
+  "credential_source": "SERPAPI_API_KEY",
+  "response": {
+    "body": {
+      "interest_over_time": {
+        "averages": [
+          {
+            "query": "Private Krankenversicherung",
+            "value": 49
+          },
+          {
+            "query": "private Krankenversicherung Kosten",
+            "value": 2
+          },
+          {
+            "query": "PKV Kosten",
+            "value": 1
+          },
+          {
+            "query": "PKV Vergleich",
+            "value": 0
+          },
+          {
+            "query": "PKV Rechner",
+            "value": 0
+          }
+        ],
+        "timeline_data": [
+          {
+            "date": "Mar 21, 2026",
+            "timestamp": "1774051200",
+            "values": [
+              {
+                "extracted_value": 37,
+                "query": "Private Krankenversicherung",
+                "value": "37"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 22, 2026",
+            "timestamp": "1774137600",
+            "values": [
+              {
+                "extracted_value": 37,
+                "query": "Private Krankenversicherung",
+                "value": "37"
+              },
+              {
+                "extracted_value": 6,
+                "query": "private Krankenversicherung Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 23, 2026",
+            "timestamp": "1774224000",
+            "values": [
+              {
+                "extracted_value": 58,
+                "query": "Private Krankenversicherung",
+                "value": "58"
+              },
+              {
+                "extracted_value": 7,
+                "query": "private Krankenversicherung Kosten",
+                "value": "7"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 24, 2026",
+            "timestamp": "1774310400",
+            "values": [
+              {
+                "extracted_value": 63,
+                "query": "Private Krankenversicherung",
+                "value": "63"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 25, 2026",
+            "timestamp": "1774396800",
+            "values": [
+              {
+                "extracted_value": 62,
+                "query": "Private Krankenversicherung",
+                "value": "62"
+              },
+              {
+                "extracted_value": 7,
+                "query": "private Krankenversicherung Kosten",
+                "value": "7"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 26, 2026",
+            "timestamp": "1774483200",
+            "values": [
+              {
+                "extracted_value": 59,
+                "query": "Private Krankenversicherung",
+                "value": "59"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 9,
+                "query": "PKV Kosten",
+                "value": "9"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 27, 2026",
+            "timestamp": "1774569600",
+            "values": [
+              {
+                "extracted_value": 51,
+                "query": "Private Krankenversicherung",
+                "value": "51"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 28, 2026",
+            "timestamp": "1774656000",
+            "values": [
+              {
+                "extracted_value": 42,
+                "query": "Private Krankenversicherung",
+                "value": "42"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 29, 2026",
+            "timestamp": "1774742400",
+            "values": [
+              {
+                "extracted_value": 41,
+                "query": "Private Krankenversicherung",
+                "value": "41"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 30, 2026",
+            "timestamp": "1774828800",
+            "values": [
+              {
+                "extracted_value": 77,
+                "query": "Private Krankenversicherung",
+                "value": "77"
+              },
+              {
+                "extracted_value": 8,
+                "query": "private Krankenversicherung Kosten",
+                "value": "8"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Mar 31, 2026",
+            "timestamp": "1774915200",
+            "values": [
+              {
+                "extracted_value": 57,
+                "query": "Private Krankenversicherung",
+                "value": "57"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 1, 2026",
+            "timestamp": "1775001600",
+            "values": [
+              {
+                "extracted_value": 57,
+                "query": "Private Krankenversicherung",
+                "value": "57"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 2, 2026",
+            "timestamp": "1775088000",
+            "values": [
+              {
+                "extracted_value": 45,
+                "query": "Private Krankenversicherung",
+                "value": "45"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 3, 2026",
+            "timestamp": "1775174400",
+            "values": [
+              {
+                "extracted_value": 41,
+                "query": "Private Krankenversicherung",
+                "value": "41"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 4, 2026",
+            "timestamp": "1775260800",
+            "values": [
+              {
+                "extracted_value": 30,
+                "query": "Private Krankenversicherung",
+                "value": "30"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 5, 2026",
+            "timestamp": "1775347200",
+            "values": [
+              {
+                "extracted_value": 37,
+                "query": "Private Krankenversicherung",
+                "value": "37"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 6,
+                "query": "PKV Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 6, 2026",
+            "timestamp": "1775433600",
+            "values": [
+              {
+                "extracted_value": 46,
+                "query": "Private Krankenversicherung",
+                "value": "46"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 7, 2026",
+            "timestamp": "1775520000",
+            "values": [
+              {
+                "extracted_value": 44,
+                "query": "Private Krankenversicherung",
+                "value": "44"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 8, 2026",
+            "timestamp": "1775606400",
+            "values": [
+              {
+                "extracted_value": 47,
+                "query": "Private Krankenversicherung",
+                "value": "47"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 9, 2026",
+            "timestamp": "1775692800",
+            "values": [
+              {
+                "extracted_value": 48,
+                "query": "Private Krankenversicherung",
+                "value": "48"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Vergleich",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 10, 2026",
+            "timestamp": "1775779200",
+            "values": [
+              {
+                "extracted_value": 50,
+                "query": "Private Krankenversicherung",
+                "value": "50"
+              },
+              {
+                "extracted_value": 6,
+                "query": "private Krankenversicherung Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 11, 2026",
+            "timestamp": "1775865600",
+            "values": [
+              {
+                "extracted_value": 35,
+                "query": "Private Krankenversicherung",
+                "value": "35"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 12, 2026",
+            "timestamp": "1775952000",
+            "values": [
+              {
+                "extracted_value": 34,
+                "query": "Private Krankenversicherung",
+                "value": "34"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 13, 2026",
+            "timestamp": "1776038400",
+            "values": [
+              {
+                "extracted_value": 67,
+                "query": "Private Krankenversicherung",
+                "value": "67"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 14, 2026",
+            "timestamp": "1776124800",
+            "values": [
+              {
+                "extracted_value": 50,
+                "query": "Private Krankenversicherung",
+                "value": "50"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 15, 2026",
+            "timestamp": "1776211200",
+            "values": [
+              {
+                "extracted_value": 54,
+                "query": "Private Krankenversicherung",
+                "value": "54"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 16, 2026",
+            "timestamp": "1776297600",
+            "values": [
+              {
+                "extracted_value": 100,
+                "query": "Private Krankenversicherung",
+                "value": "100"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 17, 2026",
+            "timestamp": "1776384000",
+            "values": [
+              {
+                "extracted_value": 64,
+                "query": "Private Krankenversicherung",
+                "value": "64"
+              },
+              {
+                "extracted_value": 6,
+                "query": "private Krankenversicherung Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Rechner",
+                "value": "5"
+              }
+            ]
+          },
+          {
+            "date": "Apr 18, 2026",
+            "timestamp": "1776470400",
+            "values": [
+              {
+                "extracted_value": 47,
+                "query": "Private Krankenversicherung",
+                "value": "47"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 19, 2026",
+            "timestamp": "1776556800",
+            "values": [
+              {
+                "extracted_value": 46,
+                "query": "Private Krankenversicherung",
+                "value": "46"
+              },
+              {
+                "extracted_value": 6,
+                "query": "private Krankenversicherung Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 20, 2026",
+            "timestamp": "1776643200",
+            "values": [
+              {
+                "extracted_value": 61,
+                "query": "Private Krankenversicherung",
+                "value": "61"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 21, 2026",
+            "timestamp": "1776729600",
+            "values": [
+              {
+                "extracted_value": 63,
+                "query": "Private Krankenversicherung",
+                "value": "63"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 22, 2026",
+            "timestamp": "1776816000",
+            "values": [
+              {
+                "extracted_value": 70,
+                "query": "Private Krankenversicherung",
+                "value": "70"
+              },
+              {
+                "extracted_value": 7,
+                "query": "private Krankenversicherung Kosten",
+                "value": "7"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 23, 2026",
+            "timestamp": "1776902400",
+            "values": [
+              {
+                "extracted_value": 69,
+                "query": "Private Krankenversicherung",
+                "value": "69"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Vergleich",
+                "value": "5"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Rechner",
+                "value": "5"
+              }
+            ]
+          },
+          {
+            "date": "Apr 24, 2026",
+            "timestamp": "1776988800",
+            "values": [
+              {
+                "extracted_value": 53,
+                "query": "Private Krankenversicherung",
+                "value": "53"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 25, 2026",
+            "timestamp": "1777075200",
+            "values": [
+              {
+                "extracted_value": 35,
+                "query": "Private Krankenversicherung",
+                "value": "35"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 6,
+                "query": "PKV Vergleich",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 26, 2026",
+            "timestamp": "1777161600",
+            "values": [
+              {
+                "extracted_value": 43,
+                "query": "Private Krankenversicherung",
+                "value": "43"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 27, 2026",
+            "timestamp": "1777248000",
+            "values": [
+              {
+                "extracted_value": 92,
+                "query": "Private Krankenversicherung",
+                "value": "92"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 28, 2026",
+            "timestamp": "1777334400",
+            "values": [
+              {
+                "extracted_value": 69,
+                "query": "Private Krankenversicherung",
+                "value": "69"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 29, 2026",
+            "timestamp": "1777420800",
+            "values": [
+              {
+                "extracted_value": 85,
+                "query": "Private Krankenversicherung",
+                "value": "85"
+              },
+              {
+                "extracted_value": 7,
+                "query": "private Krankenversicherung Kosten",
+                "value": "7"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 9,
+                "query": "PKV Vergleich",
+                "value": "9"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Apr 30, 2026",
+            "timestamp": "1777507200",
+            "values": [
+              {
+                "extracted_value": 56,
+                "query": "Private Krankenversicherung",
+                "value": "56"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 1, 2026",
+            "timestamp": "1777593600",
+            "values": [
+              {
+                "extracted_value": 56,
+                "query": "Private Krankenversicherung",
+                "value": "56"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 2, 2026",
+            "timestamp": "1777680000",
+            "values": [
+              {
+                "extracted_value": 39,
+                "query": "Private Krankenversicherung",
+                "value": "39"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 3, 2026",
+            "timestamp": "1777766400",
+            "values": [
+              {
+                "extracted_value": 41,
+                "query": "Private Krankenversicherung",
+                "value": "41"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 4, 2026",
+            "timestamp": "1777852800",
+            "values": [
+              {
+                "extracted_value": 91,
+                "query": "Private Krankenversicherung",
+                "value": "91"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 5, 2026",
+            "timestamp": "1777939200",
+            "values": [
+              {
+                "extracted_value": 55,
+                "query": "Private Krankenversicherung",
+                "value": "55"
+              },
+              {
+                "extracted_value": 4,
+                "query": "private Krankenversicherung Kosten",
+                "value": "4"
+              },
+              {
+                "extracted_value": 6,
+                "query": "PKV Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 6, 2026",
+            "timestamp": "1778025600",
+            "values": [
+              {
+                "extracted_value": 78,
+                "query": "Private Krankenversicherung",
+                "value": "78"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 7, 2026",
+            "timestamp": "1778112000",
+            "values": [
+              {
+                "extracted_value": 51,
+                "query": "Private Krankenversicherung",
+                "value": "51"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 6,
+                "query": "PKV Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 8, 2026",
+            "timestamp": "1778198400",
+            "values": [
+              {
+                "extracted_value": 58,
+                "query": "Private Krankenversicherung",
+                "value": "58"
+              },
+              {
+                "extracted_value": 7,
+                "query": "private Krankenversicherung Kosten",
+                "value": "7"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 9, 2026",
+            "timestamp": "1778284800",
+            "values": [
+              {
+                "extracted_value": 34,
+                "query": "Private Krankenversicherung",
+                "value": "34"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 10, 2026",
+            "timestamp": "1778371200",
+            "values": [
+              {
+                "extracted_value": 36,
+                "query": "Private Krankenversicherung",
+                "value": "36"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 6,
+                "query": "PKV Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 11, 2026",
+            "timestamp": "1778457600",
+            "values": [
+              {
+                "extracted_value": 51,
+                "query": "Private Krankenversicherung",
+                "value": "51"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 5,
+                "query": "PKV Rechner",
+                "value": "5"
+              }
+            ]
+          },
+          {
+            "date": "May 12, 2026",
+            "timestamp": "1778544000",
+            "values": [
+              {
+                "extracted_value": 53,
+                "query": "Private Krankenversicherung",
+                "value": "53"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 13, 2026",
+            "timestamp": "1778630400",
+            "values": [
+              {
+                "extracted_value": 80,
+                "query": "Private Krankenversicherung",
+                "value": "80"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 14, 2026",
+            "timestamp": "1778716800",
+            "values": [
+              {
+                "extracted_value": 45,
+                "query": "Private Krankenversicherung",
+                "value": "45"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 15, 2026",
+            "timestamp": "1778803200",
+            "values": [
+              {
+                "extracted_value": 49,
+                "query": "Private Krankenversicherung",
+                "value": "49"
+              },
+              {
+                "extracted_value": 6,
+                "query": "private Krankenversicherung Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 16, 2026",
+            "timestamp": "1778889600",
+            "values": [
+              {
+                "extracted_value": 26,
+                "query": "Private Krankenversicherung",
+                "value": "26"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 17, 2026",
+            "timestamp": "1778976000",
+            "values": [
+              {
+                "extracted_value": 36,
+                "query": "Private Krankenversicherung",
+                "value": "36"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 18, 2026",
+            "timestamp": "1779062400",
+            "values": [
+              {
+                "extracted_value": 54,
+                "query": "Private Krankenversicherung",
+                "value": "54"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 19, 2026",
+            "timestamp": "1779148800",
+            "values": [
+              {
+                "extracted_value": 49,
+                "query": "Private Krankenversicherung",
+                "value": "49"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 20, 2026",
+            "timestamp": "1779235200",
+            "values": [
+              {
+                "extracted_value": 52,
+                "query": "Private Krankenversicherung",
+                "value": "52"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 21, 2026",
+            "timestamp": "1779321600",
+            "values": [
+              {
+                "extracted_value": 51,
+                "query": "Private Krankenversicherung",
+                "value": "51"
+              },
+              {
+                "extracted_value": 6,
+                "query": "private Krankenversicherung Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 22, 2026",
+            "timestamp": "1779408000",
+            "values": [
+              {
+                "extracted_value": 43,
+                "query": "Private Krankenversicherung",
+                "value": "43"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 23, 2026",
+            "timestamp": "1779494400",
+            "values": [
+              {
+                "extracted_value": 30,
+                "query": "Private Krankenversicherung",
+                "value": "30"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 24, 2026",
+            "timestamp": "1779580800",
+            "values": [
+              {
+                "extracted_value": 22,
+                "query": "Private Krankenversicherung",
+                "value": "22"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 25, 2026",
+            "timestamp": "1779667200",
+            "values": [
+              {
+                "extracted_value": 35,
+                "query": "Private Krankenversicherung",
+                "value": "35"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 26, 2026",
+            "timestamp": "1779753600",
+            "values": [
+              {
+                "extracted_value": 47,
+                "query": "Private Krankenversicherung",
+                "value": "47"
+              },
+              {
+                "extracted_value": 6,
+                "query": "private Krankenversicherung Kosten",
+                "value": "6"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 27, 2026",
+            "timestamp": "1779840000",
+            "values": [
+              {
+                "extracted_value": 49,
+                "query": "Private Krankenversicherung",
+                "value": "49"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 28, 2026",
+            "timestamp": "1779926400",
+            "values": [
+              {
+                "extracted_value": 55,
+                "query": "Private Krankenversicherung",
+                "value": "55"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 29, 2026",
+            "timestamp": "1780012800",
+            "values": [
+              {
+                "extracted_value": 52,
+                "query": "Private Krankenversicherung",
+                "value": "52"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 30, 2026",
+            "timestamp": "1780099200",
+            "values": [
+              {
+                "extracted_value": 38,
+                "query": "Private Krankenversicherung",
+                "value": "38"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "May 31, 2026",
+            "timestamp": "1780185600",
+            "values": [
+              {
+                "extracted_value": 42,
+                "query": "Private Krankenversicherung",
+                "value": "42"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Jun 1, 2026",
+            "timestamp": "1780272000",
+            "values": [
+              {
+                "extracted_value": 52,
+                "query": "Private Krankenversicherung",
+                "value": "52"
+              },
+              {
+                "extracted_value": 4,
+                "query": "private Krankenversicherung Kosten",
+                "value": "4"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Jun 2, 2026",
+            "timestamp": "1780358400",
+            "values": [
+              {
+                "extracted_value": 50,
+                "query": "Private Krankenversicherung",
+                "value": "50"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 4,
+                "query": "PKV Vergleich",
+                "value": "4"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Jun 3, 2026",
+            "timestamp": "1780444800",
+            "values": [
+              {
+                "extracted_value": 51,
+                "query": "Private Krankenversicherung",
+                "value": "51"
+              },
+              {
+                "extracted_value": 5,
+                "query": "private Krankenversicherung Kosten",
+                "value": "5"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Jun 4, 2026",
+            "timestamp": "1780531200",
+            "values": [
+              {
+                "extracted_value": 46,
+                "query": "Private Krankenversicherung",
+                "value": "46"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Jun 5, 2026",
+            "timestamp": "1780617600",
+            "values": [
+              {
+                "extracted_value": 31,
+                "query": "Private Krankenversicherung",
+                "value": "31"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Jun 6, 2026",
+            "timestamp": "1780704000",
+            "values": [
+              {
+                "extracted_value": 33,
+                "query": "Private Krankenversicherung",
+                "value": "33"
+              },
+              {
+                "extracted_value": 0,
+                "query": "private Krankenversicherung Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Kosten",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Rechner",
+                "value": "0"
+              }
+            ]
+          },
+          {
+            "date": "Jun 7, 2026",
+            "timestamp": "1780790400",
+            "values": [
+              {
+                "extracted_value": 30,
+                "query": "Private Krankenversicherung",
+                "value": "30"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Kosten",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 8, 2026",
+            "timestamp": "1780876800",
+            "values": [
+              {
+                "extracted_value": 43,
+                "query": "Private Krankenversicherung",
+                "value": "43"
+              },
+              {
+                "extracted_value": 3,
+                "query": "private Krankenversicherung Kosten",
+                "value": "3"
+              },
+              {
+                "extracted_value": 2,
+                "query": "PKV Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 9, 2026",
+            "timestamp": "1780963200",
+            "values": [
+              {
+                "extracted_value": 46,
+                "query": "Private Krankenversicherung",
+                "value": "46"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 2,
+                "query": "PKV Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 10, 2026",
+            "timestamp": "1781049600",
+            "values": [
+              {
+                "extracted_value": 41,
+                "query": "Private Krankenversicherung",
+                "value": "41"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 2,
+                "query": "PKV Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 11, 2026",
+            "timestamp": "1781136000",
+            "values": [
+              {
+                "extracted_value": 38,
+                "query": "Private Krankenversicherung",
+                "value": "38"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 2,
+                "query": "PKV Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 12, 2026",
+            "timestamp": "1781222400",
+            "values": [
+              {
+                "extracted_value": 37,
+                "query": "Private Krankenversicherung",
+                "value": "37"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 2,
+                "query": "PKV Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 13, 2026",
+            "timestamp": "1781308800",
+            "values": [
+              {
+                "extracted_value": 26,
+                "query": "Private Krankenversicherung",
+                "value": "26"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Kosten",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 14, 2026",
+            "timestamp": "1781395200",
+            "values": [
+              {
+                "extracted_value": 24,
+                "query": "Private Krankenversicherung",
+                "value": "24"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Kosten",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 15, 2026",
+            "timestamp": "1781481600",
+            "values": [
+              {
+                "extracted_value": 54,
+                "query": "Private Krankenversicherung",
+                "value": "54"
+              },
+              {
+                "extracted_value": 3,
+                "query": "private Krankenversicherung Kosten",
+                "value": "3"
+              },
+              {
+                "extracted_value": 2,
+                "query": "PKV Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 16, 2026",
+            "timestamp": "1781568000",
+            "values": [
+              {
+                "extracted_value": 39,
+                "query": "Private Krankenversicherung",
+                "value": "39"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 2,
+                "query": "PKV Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 17, 2026",
+            "timestamp": "1781654400",
+            "values": [
+              {
+                "extracted_value": 36,
+                "query": "Private Krankenversicherung",
+                "value": "36"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Kosten",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 18, 2026",
+            "timestamp": "1781740800",
+            "values": [
+              {
+                "extracted_value": 39,
+                "query": "Private Krankenversicherung",
+                "value": "39"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 2,
+                "query": "PKV Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 19, 2026",
+            "timestamp": "1781827200",
+            "values": [
+              {
+                "extracted_value": 31,
+                "query": "Private Krankenversicherung",
+                "value": "31"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Kosten",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Vergleich",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 20, 2026",
+            "timestamp": "1781913600",
+            "values": [
+              {
+                "extracted_value": 23,
+                "query": "Private Krankenversicherung",
+                "value": "23"
+              },
+              {
+                "extracted_value": 1,
+                "query": "private Krankenversicherung Kosten",
+                "value": "1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Kosten",
+                "value": "1"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "<1"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          },
+          {
+            "date": "Jun 21, 2026",
+            "partial_data": true,
+            "timestamp": "1782000000",
+            "values": [
+              {
+                "extracted_value": 26,
+                "query": "Private Krankenversicherung",
+                "value": "26"
+              },
+              {
+                "extracted_value": 2,
+                "query": "private Krankenversicherung Kosten",
+                "value": "2"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Kosten",
+                "value": "1"
+              },
+              {
+                "extracted_value": 0,
+                "query": "PKV Vergleich",
+                "value": "0"
+              },
+              {
+                "extracted_value": 1,
+                "query": "PKV Rechner",
+                "value": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "search_metadata": {
+        "created_at": "2026-06-21 14:19:33 UTC",
+        "google_trends_url": "https://trends.google.com/trends/embed/explore/TIMESERIES?hl=en&tz=420&req=%7B%22comparisonItem%22%3A%5B%7B%22keyword%22%3A%22Private+Krankenversicherung%22%2C%22geo%22%3A%22DE%22%2C%22time%22%3A%22today+3-m%22%7D%2C%7B%22keyword%22%3A%22private+Krankenversicherung+Kosten%22%2C%22geo%22%3A%22DE%22%2C%22time%22%3A%22today+3-m%22%7D%2C%7B%22keyword%22%3A%22PKV+Kosten%22%2C%22geo%22%3A%22DE%22%2C%22time%22%3A%22today+3-m%22%7D%2C%7B%22keyword%22%3A%22PKV+Vergleich%22%2C%22geo%22%3A%22DE%22%2C%22time%22%3A%22today+3-m%22%7D%2C%7B%22keyword%22%3A%22PKV+Rechner%22%2C%22geo%22%3A%22DE%22%2C%22time%22%3A%22today+3-m%22%7D%5D%2C%22category%22%3A0%2C%22property%22%3A%22%22%7D",
+        "id": "6a37f2f54a0898a41a305b01",
+        "json_endpoint": "https://serpapi.com/searches/4Px3gqFvkf5NDW1B-dtNrQ/6a37f2f54a0898a41a305b01.json",
+        "prettify_html_file": "https://serpapi.com/searches/4Px3gqFvkf5NDW1B-dtNrQ/6a37f2f54a0898a41a305b01.prettify",
+        "processed_at": "2026-06-21 14:19:33 UTC",
+        "raw_html_file": "https://serpapi.com/searches/4Px3gqFvkf5NDW1B-dtNrQ/6a37f2f54a0898a41a305b01.html",
+        "status": "Success",
+        "total_time_taken": 3.15
+      },
+      "search_parameters": {
+        "data_type": "TIMESERIES",
+        "date": "today 3-m",
+        "engine": "google_trends",
+        "geo": "DE",
+        "hl": "en",
+        "q": "Private Krankenversicherung,private Krankenversicherung Kosten,PKV Kosten,PKV Vergleich,PKV Rechner",
+        "tz": "420"
+      }
+    },
+    "headers": {
+      "Accept-Ranges": "bytes",
+      "CF-RAY": "a0f3a620dac8ef5b-ZRH",
+      "Connection": "close",
+      "Content-Length": "72207",
+      "Content-Type": "application/json; charset=utf-8",
+      "Date": "Sun, 21 Jun 2026 14:19:37 GMT",
+      "Server": "cloudflare",
+      "Vary": "accept-encoding",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cache-control": "max-age=3600, public",
+      "cf-cache-status": "MISS",
+      "etag": "W/\"bd8f998987922b2085b880b1aefe088b\"",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "serpapi-search-id": "6a37f2f54a0898a41a305b01",
+      "x-content-type-options": "nosniff",
+      "x-download-options": "noopen",
+      "x-frame-options": "SAMEORIGIN",
+      "x-permitted-cross-domain-policies": "none",
+      "x-request-id": "6cdf8dc9-9d12-40a7-82ea-94ef4ae496f3",
+      "x-robots-tag": "noindex, nofollow",
+      "x-runtime": "3.186156",
+      "x-xss-protection": "1; mode=block"
+    },
+    "ok": true,
+    "status_code": 200
+  }
+}

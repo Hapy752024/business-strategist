@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evidence-record.schema.json",
+  "title": "Evidence Record",
+  "description": "Normalized evidence record from any provider source.",
+  "type": "object",
+  "required": ["source", "retrieved_at", "evidence_type", "text", "strength"],
+  "properties": {
+    "source": {
+      "type": "string",
+      "enum": ["reddit", "youtube", "youtube_comment", "google_trends", "forum", "web_search", "x", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu"]
+    },
+    "source_url": { "type": "string", "format": "uri" },
+    "retrieved_at": { "type": "string", "format": "date-time" },
+    "query": { "type": "string" },
+    "customer_segment": { "type": "string" },
+    "hypothesis_id": { "type": "string" },
+    "evidence_type": {
+      "type": "string",
+      "enum": ["pain", "workaround", "switching_cost", "spend", "search_demand", "counter_evidence", "community", "competitor_gap", "decision_uncertainty", "irrelevant"]
+    },
+    "text": { "type": "string", "minLength": 1 },
+    "verbatim_quote": { "type": "string" },
+    "author_context": { "type": "string" },
+    "engagement": {
+      "type": "object",
+      "properties": {
+        "upvotes": { "type": ["integer", "null"] },
+        "comments": { "type": ["integer", "null"] },
+        "views": { "type": ["integer", "null"] },
+        "likes": { "type": ["integer", "null"] }
+      }
+    },
+    "strength": {
+      "type": "string",
+      "enum": ["strong", "medium", "weak", "negative", "irrelevant"]
+    },
+    "confidence_notes": { "type": "string" }
+  }
+}

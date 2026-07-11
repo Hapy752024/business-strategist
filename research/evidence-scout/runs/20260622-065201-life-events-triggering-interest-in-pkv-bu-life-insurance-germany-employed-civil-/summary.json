@@ -1,0 +1,172 @@
+{
+  "customer_segment": "employees above JAEG, Beamte or Referendare, and self-employed people in Germany considering PKV BU or life insurance",
+  "days": 365,
+  "geo": "DE",
+  "hypothesis_id": "H-LIFE-TRIGGERS",
+  "irrelevant_count": 24,
+  "language": "de",
+  "needs_user_attention": [],
+  "outputs": {
+    "assumptions": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260622-065201-life-events-triggering-interest-in-pkv-bu-life-insurance-germany-employed-civil-/assumptions.md",
+    "evidence_jsonl": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260622-065201-life-events-triggering-interest-in-pkv-bu-life-insurance-germany-employed-civil-/evidence.jsonl",
+    "irrelevant_jsonl": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260622-065201-life-events-triggering-interest-in-pkv-bu-life-insurance-germany-employed-civil-/irrelevant.jsonl",
+    "raw_dir": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260622-065201-life-events-triggering-interest-in-pkv-bu-life-insurance-germany-employed-civil-/raw",
+    "report": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260622-065201-life-events-triggering-interest-in-pkv-bu-life-insurance-germany-employed-civil-/report.md",
+    "research_plan": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260622-065201-life-events-triggering-interest-in-pkv-bu-life-insurance-germany-employed-civil-/research_plan.md",
+    "user_review_plan": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260622-065201-life-events-triggering-interest-in-pkv-bu-life-insurance-germany-employed-civil-/user_review_plan.md"
+  },
+  "providers": {
+    "brave_search": {
+      "fields": [
+        "credential_source",
+        "searches",
+        "searches[].query",
+        "searches[].response"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 24,
+      "status": "ok"
+    },
+    "firecrawl": {
+      "fields": [
+        "credential_source",
+        "searches",
+        "searches[].query",
+        "searches[].response"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 23,
+      "status": "ok"
+    },
+    "reddit": {
+      "fields": [
+        "searches",
+        "searches[].query",
+        "searches[].response",
+        "token",
+        "token.body",
+        "token.body.access_token",
+        "token.body.expires_in",
+        "token.body.scope",
+        "token.body.token_type",
+        "token.headers",
+        "token.headers.Accept-Ranges",
+        "token.headers.Connection",
+        "token.headers.Content-Length",
+        "token.headers.Date",
+        "token.headers.NEL",
+        "token.headers.Report-To",
+        "token.headers.Server",
+        "token.headers.Set-Cookie",
+        "token.headers.Strict-Transport-Security",
+        "token.headers.Vary",
+        "token.headers.Via",
+        "token.headers.X-Content-Type-Options",
+        "token.headers.X-Frame-Options",
+        "token.headers.X-XSS-Protection",
+        "token.headers.cache-control",
+        "token.headers.content-type",
+        "token.headers.expires",
+        "token.headers.server-timing",
+        "token.headers.x-reddit-loid",
+        "token.ok",
+        "token.status_code"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 24,
+      "status": "ok"
+    },
+    "scrapecreators": {
+      "fields": [
+        "calls",
+        "calls[].endpoint",
+        "calls[].params",
+        "calls[].response",
+        "calls[].source",
+        "credential_source"
+      ],
+      "irrelevant_count": 15,
+      "record_count": 9,
+      "status": "ok"
+    },
+    "serpapi_google_trends": {
+      "fields": [
+        "credential_source",
+        "response",
+        "response.body",
+        "response.body.interest_over_time",
+        "response.body.search_metadata",
+        "response.body.search_parameters",
+        "response.headers",
+        "response.headers.Accept-Ranges",
+        "response.headers.CF-RAY",
+        "response.headers.Connection",
+        "response.headers.Content-Length",
+        "response.headers.Content-Type",
+        "response.headers.Date",
+        "response.headers.Server",
+        "response.headers.Vary",
+        "response.headers.alt-svc",
+        "response.headers.cache-control",
+        "response.headers.cf-cache-status",
+        "response.headers.etag",
+        "response.headers.referrer-policy",
+        "response.headers.serpapi-search-id",
+        "response.headers.x-content-type-options",
+        "response.headers.x-download-options",
+        "response.headers.x-frame-options",
+        "response.headers.x-permitted-cross-domain-policies",
+        "response.headers.x-request-id",
+        "response.headers.x-robots-tag",
+        "response.headers.x-runtime",
+        "response.headers.x-xss-protection",
+        "response.ok",
+        "response.status_code"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 1,
+      "status": "ok"
+    },
+    "x": {
+      "fields": [
+        "credential_source",
+        "searches",
+        "searches[].query",
+        "searches[].response"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 0,
+      "status": "ok"
+    },
+    "youtube": {
+      "fields": [
+        "comments",
+        "comments[].response",
+        "comments[].video_id",
+        "credential_source",
+        "searches",
+        "searches[].query",
+        "searches[].response"
+      ],
+      "irrelevant_count": 9,
+      "record_count": 15,
+      "status": "ok"
+    }
+  },
+  "providers_requested": [
+    "reddit",
+    "serpapi_google_trends",
+    "youtube",
+    "firecrawl",
+    "brave_search",
+    "x",
+    "scrapecreators"
+  ],
+  "quality_flags": [
+    "Most relevant records are weak (88/96); use this run to shape interviews, not to validate purchase intent.",
+    "x API worked but produced zero relevant records."
+  ],
+  "record_count": 96,
+  "run_dir": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260622-065201-life-events-triggering-interest-in-pkv-bu-life-insurance-germany-employed-civil-",
+  "topic": "life events triggering interest in PKV BU life insurance Germany employed civil servant self employed"
+}

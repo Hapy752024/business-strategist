@@ -1,0 +1,139 @@
+{
+  "customer_segment": "high-income employees and self-employed professionals in Germany considering PKV or BU",
+  "days": 90,
+  "geo": "DE",
+  "hypothesis_id": "SURELIUS-H1",
+  "irrelevant_count": 7,
+  "language": "de",
+  "needs_user_attention": [],
+  "outputs": {
+    "evidence_jsonl": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260621-102020-digital-insurance-advice-for-pkv-bu-germany/evidence.jsonl",
+    "irrelevant_jsonl": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260621-102020-digital-insurance-advice-for-pkv-bu-germany/irrelevant.jsonl",
+    "raw_dir": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260621-102020-digital-insurance-advice-for-pkv-bu-germany/raw",
+    "report": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260621-102020-digital-insurance-advice-for-pkv-bu-germany/report.md"
+  },
+  "providers": {
+    "brave_search": {
+      "fields": [
+        "credential_source",
+        "searches",
+        "searches[].query",
+        "searches[].response"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 10,
+      "status": "ok"
+    },
+    "firecrawl": {
+      "fields": [
+        "credential_source",
+        "searches",
+        "searches[].query",
+        "searches[].response"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 13,
+      "status": "ok"
+    },
+    "reddit": {
+      "fields": [
+        "searches",
+        "searches[].query",
+        "searches[].response",
+        "token",
+        "token.body",
+        "token.body.access_token",
+        "token.body.expires_in",
+        "token.body.scope",
+        "token.body.token_type",
+        "token.headers",
+        "token.headers.Accept-Ranges",
+        "token.headers.Connection",
+        "token.headers.Content-Length",
+        "token.headers.Date",
+        "token.headers.NEL",
+        "token.headers.Report-To",
+        "token.headers.Server",
+        "token.headers.Set-Cookie",
+        "token.headers.Strict-Transport-Security",
+        "token.headers.Vary",
+        "token.headers.Via",
+        "token.headers.X-Content-Type-Options",
+        "token.headers.X-Frame-Options",
+        "token.headers.X-XSS-Protection",
+        "token.headers.cache-control",
+        "token.headers.content-type",
+        "token.headers.expires",
+        "token.headers.server-timing",
+        "token.headers.x-reddit-loid",
+        "token.ok",
+        "token.status_code"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 4,
+      "status": "ok"
+    },
+    "serpapi_google_trends": {
+      "fields": [
+        "credential_source",
+        "response",
+        "response.body",
+        "response.body.interest_over_time",
+        "response.body.search_metadata",
+        "response.body.search_parameters",
+        "response.headers",
+        "response.headers.Accept-Ranges",
+        "response.headers.CF-RAY",
+        "response.headers.Connection",
+        "response.headers.Content-Length",
+        "response.headers.Content-Type",
+        "response.headers.Date",
+        "response.headers.Server",
+        "response.headers.Vary",
+        "response.headers.alt-svc",
+        "response.headers.cache-control",
+        "response.headers.cf-cache-status",
+        "response.headers.etag",
+        "response.headers.referrer-policy",
+        "response.headers.serpapi-search-id",
+        "response.headers.x-content-type-options",
+        "response.headers.x-download-options",
+        "response.headers.x-frame-options",
+        "response.headers.x-permitted-cross-domain-policies",
+        "response.headers.x-request-id",
+        "response.headers.x-robots-tag",
+        "response.headers.x-runtime",
+        "response.headers.x-xss-protection",
+        "response.ok",
+        "response.status_code"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 1,
+      "status": "ok"
+    },
+    "youtube": {
+      "fields": [
+        "comments",
+        "comments[].response",
+        "comments[].video_id",
+        "credential_source",
+        "searches",
+        "searches[].query",
+        "searches[].response"
+      ],
+      "irrelevant_count": 7,
+      "record_count": 13,
+      "status": "ok"
+    }
+  },
+  "providers_requested": [
+    "reddit",
+    "serpapi_google_trends",
+    "youtube",
+    "firecrawl",
+    "brave_search"
+  ],
+  "record_count": 41,
+  "run_dir": "/mnt/c/coding/general/market_researcher/research/evidence-scout/runs/20260621-102020-digital-insurance-advice-for-pkv-bu-germany",
+  "topic": "digital insurance advice for PKV BU Germany"
+}

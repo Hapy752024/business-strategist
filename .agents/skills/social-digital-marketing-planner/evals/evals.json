@@ -1,0 +1,29 @@
+{
+  "skill_name": "social-digital-marketing-planner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a detailed social and digital marketing plan for a new local Thai massage studio. Budget is $1,500/month, goal is bookings, and we only have Instagram and Google Business Profile right now.",
+      "expected_output": "A practical local-services plan with audience, platform-role map, organic cadence, paid/local search ideas, creative tests, booking KPIs, risk checks, 7-day actions, and 30/60/90-day roadmap.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We are launching a B2B SaaS product for finance teams. Give us a LinkedIn-heavy digital marketing plan that creates qualified pipeline, not just leads.",
+      "expected_output": "A B2B plan emphasizing buyer triggers, thought leadership, proof assets, LinkedIn platform role, paid/organic mix, lead quality metrics, sales handoff, and experiment thresholds.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our founder wants to copy Duolingo's unhinged TikTok style for a healthcare compliance product. Build the plan.",
+      "expected_output": "A skeptical response that explains transferability limits, brand-safety risk, regulated-market constraints, safer creative alternatives, testing plan, and approval checklist.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "We have $10k to spend on Meta and TikTok ads next month for an ecommerce skincare brand. Create the campaign plan.",
+      "expected_output": "A paid-social plan with offer/conversion assumptions, creative testing matrix, platform-specific creative guidance, budget allocation, fatigue management, measurement, stop/scale rules, and compliance checks for skincare claims.",
+      "files": []
+    }
+  ]
+}

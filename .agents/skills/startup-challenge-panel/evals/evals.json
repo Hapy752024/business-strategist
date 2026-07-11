@@ -1,0 +1,17 @@
+{
+  "skill_name": "startup-challenge-panel",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Challenge our plan to hire salespeople and spend on ads after collecting 2,000 waitlist signups but before paid usage.",
+      "expected_output": "Bounded independent critiques, explicit unsupported demand claims, disagreement synthesis, and a conversion/retention decision gate rather than a vote.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Run a challenge panel on an AI insurance recommendation service that wants to launch with live customer data next month.",
+      "expected_output": "Customer, model, distribution, and regulatory challenges with authoritative-source requirements, safer staged tests, and an arbiter stop or conditional verdict.",
+      "files": []
+    }
+  ]
+}

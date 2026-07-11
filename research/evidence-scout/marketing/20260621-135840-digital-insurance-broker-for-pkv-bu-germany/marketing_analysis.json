@@ -1,0 +1,1019 @@
+[
+  {
+    "button_like_ctas": [
+      "Skip to main content",
+      "Zoom",
+      "Get a free quote",
+      "Excellent",
+      "Rated 5 out of 5 stars",
+      "Trustpilot",
+      "Family smiling together",
+      "DKV"
+    ],
+    "cta_language": [
+      "- Seamless Digital Experience Manage everything digitally, no paperwork needed [Get a free quote](https://myhealthcarebroker.com/quote) ![Excellent](https://myhealthcarebroker.com/images/trustpilot-excellent.svg)![Rated 5 out of 5 stars](https://myhealthcarebr",
+      "less Digital Experience Manage everything digitally, no paperwork needed [Get a free quote](https://myhealthcarebroker.com/quote) ![Excellent](https://myhealthcarebroker.com/images/trustpilot-excellent.svg)![Rated 5 out of 5 stars](https://myhealthcarebroker.c"
+    ],
+    "description": "Private health insurance for international residents in Germany. Independent comparison, honest advice in English, free quote with no obligation.",
+    "detected_audiences": [
+      "freelancer",
+      "self-employed",
+      "team",
+      "expat"
+    ],
+    "distribution_clues": [],
+    "domain": "myhealthcarebroker.com",
+    "feature_language": [
+      "ll providers instead of being limited to just one - Seamless Digital Experience Manage everything digitally, no paperwork needed [Get a free quote](https://myhealthcarebroker.com/quote) ![Excellent](https://myhealthcarebroker.com/images/trustpilot-excellent.sv"
+    ],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "product_changes"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [
+        "annually"
+      ],
+      "currency_amounts": [
+        {
+          "currency": "EUR",
+          "raw": "3,900 \u20ac",
+          "value": 3900.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac77,400",
+          "value": 77400.0
+        }
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [],
+      "savings_claims": [
+        "Save"
+      ],
+      "tariff_terms": [
+        "Premium"
+      ]
+    },
+    "page_type": "homepage",
+    "pain_language": [],
+    "positioning_headline": "Health Insurance Broker in Germany - Independent Advice in English",
+    "pricing_language": [
+      "lth InsuranceBroker in Germany - Premium Benefits, Lower Costs Save up to 3,900 \u20ac annually compared to statutory insurance rates - Live ![Zoom](https://myhealthcarebroker.com/_next/image?url=%2Fimages%2Fpages%2Fhome%2Fzoom-logo.png&w=256&q=75) Comparison Compa",
+      "tful, tailored options without any pressure. Their knowledge, patience, and transparency gave me full confidence that I was making the right decisions. Honestly, if I could give 6 stars, I absolutely would\u2014but since 5 is the maximum, they'll have to settle for"
+    ],
+    "pricing_posture": "transparent_pricing_signal",
+    "product_change_clues": [],
+    "retrieved_at": "2026-06-21T13:58:43Z",
+    "seo_content_clues": [
+      "ceBroker in Germany - Premium Benefits, Lower Costs Save up to 3,900 \u20ac annually compared to statutory insurance rates - Live ![Zoom](https://myhealthcarebroker.com/_next/image?url=%2Fimages%2Fpages%2Fhome%2Fzoom-logo.png&w=256&q=75) Comparison Compare all prov"
+    ],
+    "source_pages": [
+      {
+        "title": "Health Insurance Broker in Germany - Independent Advice in English",
+        "url": "https://www.myhealthcarebroker.com/"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [
+        "annually"
+      ],
+      "currency_amounts": [
+        "3,900 \u20ac",
+        "\u20ac77,400"
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [],
+      "savings_claims": [
+        "Save"
+      ],
+      "tariff_terms": [
+        "Premium"
+      ]
+    },
+    "title": "Health Insurance Broker in Germany - Independent Advice in English",
+    "trust_proof_language": [
+      "![Trustpilot](https://myhealthcarebroker.com/images/trustpilot-logo.svg) ## Our customerslove what we do Read why clients trust us with their healthcare needs. Discover authentic testimonials highlighting our excellent service and support. [GET A FREE QUOTE](h",
+      "yhealthcarebroker.com/quote) ![Excellent](https://myhealthcarebroker.com/images/trustpilot-excellent.svg)![Rated 5 out of 5 stars](https://myhealthcarebroker.com/images/trustpilot-stars.svg)![Trustpilot](https://myhealthcarebroker.com/images/trustpilot-logo.sv"
+    ],
+    "url": "https://www.myhealthcarebroker.com/"
+  },
+  {
+    "button_like_ctas": [
+      "flag of Germany",
+      "Excellent\\\\ \\\\ 4.7 out of 5 star rating on Trustpilot\\\\ \\\\ Trustpilot",
+      "Get a quote & sign up",
+      "Book a call",
+      "Feather icon with check mark",
+      "Two people having an appointment at doctor's office.",
+      "Calendar page showing January with a highlighted date \"18\".",
+      "discount"
+    ],
+    "cta_language": [
+      "ance in Germany ## Faster care, better coverage, all in English. [Get a quote & sign up](https://app.feather-insurance.com/policies/private-health/signup/welcome) [Book a call](https://forms.feather-insurance.com/private-health-advice) ![Feather icon with chec"
+    ],
+    "description": "Private health insurance in Germany: faster appointments, better care, and more affordable than public. Get your quote online for free with Feather.",
+    "detected_audiences": [
+      "self-employed"
+    ],
+    "distribution_clues": [],
+    "domain": "feather-insurance.com",
+    "feature_language": [],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [],
+    "normalized_price_tokens": {
+      "annual_terms": [
+        "per year"
+      ],
+      "currency_amounts": [
+        {
+          "currency": "EUR",
+          "raw": "\u20ac0",
+          "value": 0.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac1,200",
+          "value": 1200.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac3,000",
+          "value": 3000.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac3,491",
+          "value": 3491.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac4,000",
+          "value": 4000.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac150",
+          "value": 150.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac300",
+          "value": 300.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac450",
+          "value": 450.0
+        }
+      ],
+      "deductible_terms": [
+        "Deductible"
+      ],
+      "monthly_terms": [
+        "monthly",
+        "per month"
+      ],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": [
+        "premium",
+        "Premium"
+      ]
+    },
+    "page_type": "product_page",
+    "pain_language": [],
+    "positioning_headline": "Private health insurance in Germany: Get a quote | Feather",
+    "pricing_language": [
+      "im. ## See our prices and coverage You Spouse Child Year of birth Yearly income \u20ac Occupation Employed Self-employed Other ## \u20ac\u2014/mo You're seeing our private short-term plan Since you've been in Germany for less than 4 years, we're offering you a slightly diffe",
+      "/media/globe.8271549a.svg)Outside of Germany #### Worldwide coverage outside of Europe up to 1 month #### EU-wide coverage Including EEA Partially covered #### Repatriation costs Not covered ![chevron left for moving review carousel to previous page](https://f",
+      "nsportation 100% 100% 100% 100% #### Income protection Up to 100% of net income per month Up to 100% of net income per month Up to 100% of net income per month Limited to \u20ac3,491 per month #### Digital health apps 80%-100% 80%-100% 80%-100% Certified apps ####",
+      "le Available Available #### Dependents coverage Optional Optional Optional #### Deductible \u20ac0 / \u20ac1,200 / \u20ac3,000 Adjustable \u20ac0 / \u20ac1,200 / \u20ac3,000 Adjustable \u20ac0 / \u20ac1,200 / \u20ac3,000 Adjustable ![heart icon](https://feather-insurance.com/_next/static/media/heart.da82"
+    ],
+    "pricing_posture": "transparent_pricing_signal",
+    "product_change_clues": [
+      "://feather-insurance.com/_next/static/media/rate.f621b617.svg)Treatment and therapies #### Preventive care treatments 100% 100% 100% Partially covered #### Therapeutic measures E.g. physiotherapy or speech therapy 80% 80% 100% 90% #### Mental health therapy 70"
+    ],
+    "retrieved_at": "2026-06-21T13:58:43Z",
+    "seo_content_clues": [
+      "url=https%3A%2F%2Fcms.cdn.feather-insurance.com%2Fprivate_de_text_image_private_vs_public_0dea8a8977%2Fprivate_de_text_image_private_vs_public_0dea8a8977.png&w=828&q=75) ## More affordable than public Since private health insurance takes on customers based on"
+    ],
+    "source_pages": [
+      {
+        "title": "Private health insurance in Germany: Get a quote | Feather",
+        "url": "https://feather-insurance.com/private-health-insurance"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [
+        "per year"
+      ],
+      "currency_amounts": [
+        "\u20ac0",
+        "\u20ac1,200",
+        "\u20ac3,000",
+        "\u20ac3,491",
+        "\u20ac4,000",
+        "\u20ac150",
+        "\u20ac300",
+        "\u20ac450"
+      ],
+      "deductible_terms": [
+        "Deductible"
+      ],
+      "monthly_terms": [
+        "monthly",
+        "per month"
+      ],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": [
+        "premium",
+        "Premium"
+      ]
+    },
+    "title": "Private health insurance in Germany: Get a quote | Feather",
+    "trust_proof_language": [
+      "28&q=75) ## More affordable than public Since private health insurance takes on customers based on their health, it is more affordable than public health insurance, especially if you sign up when young and healthy. Once signed up, your monthly rate is protecte",
+      "d422c%2Fprivate_health_insurance_germany_hero_image_a9443d422c.png&w=3840&q=75) Trustpilot Custom Widget [Excellent\\\\ \\\\ 4.7 out of 5 star rating on Trustpilot\\\\ \\\\ Trustpilot](https://www.trustpilot.com/review/feather-insurance.com?utm_medium=trustbox&utm_sou"
+    ],
+    "url": "https://feather-insurance.com/private-health-insurance"
+  },
+  {
+    "button_like_ctas": [
+      "Health insurance in germany.com Logo",
+      "Latest News",
+      "Providers",
+      "Health Insurance",
+      "Calculator",
+      "The Ultimate Guide to Health Insurance for the Self-Employed in Germany",
+      "Public Insurance (GKV)",
+      "Private Insurance (PKV)"
+    ],
+    "cta_language": [],
+    "description": "Explore health insurance options in Germany for the self-employed. Compare GKV vs PKV, costs, tips, and legal essentials for freelancers.",
+    "detected_audiences": [
+      "freelancer",
+      "freiberufler",
+      "self-employed",
+      "expat"
+    ],
+    "distribution_clues": [],
+    "domain": "health-insurance-in-germany.com",
+    "feature_language": [
+      "al obligations, and provides expert tips, real-life examples, and strategies to manage costs. Whether you're a freelancer, creative, or digital nomad, this guide helps you navigate Germany\u2019s complex healthcare system confidently and compliantly. Last updated o"
+    ],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "cta",
+      "trust_proof"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        {
+          "currency": "EUR",
+          "raw": "\u20ac400",
+          "value": 400.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac300",
+          "value": 300.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac1,000",
+          "value": 1000.0
+        }
+      ],
+      "deductible_terms": [
+        "deductible"
+      ],
+      "monthly_terms": [],
+      "salary_thresholds": [
+        "income threshold"
+      ],
+      "savings_claims": [],
+      "tariff_terms": [
+        "Premium",
+        "premium"
+      ]
+    },
+    "page_type": "comparison_article",
+    "pain_language": [],
+    "positioning_headline": "Self-Employed Health Insurance Germany Guide 2026",
+    "pricing_language": [
+      "ife Scenarios ### Case: GKV Freelancer - Initially paid minimum contribution of \u20ac400/month. - Adjusted to lower rate after proving actual income. - Spouse added at no extra cost. ### Case: PKV Digital Nomad - Paid \u20ac300/month with high deductible. - Enjoyed pri",
+      "has allowed more freelancers to choose PKV. - Recent reforms have improved transparency in contribution adjustments. ## Health Insurance Options in Germany ### [Public Insurance (GKV)](https://www.health-insurance-in-germany.com/health-insurance/public/) - Co",
+      "s to Cut Costs - Declare accurate income for GKV contributions. - Choose higher deductibles in PKV for lower premiums. - Use tax deductions for insurance premiums. ### Switching Between Plans - Understand cancellation policies and deadlines. - Avoid switching"
+    ],
+    "pricing_posture": "transparent_pricing_signal",
+    "product_change_clues": [
+      "oid surprises. ### Choosing PKV Based on Price Alone - Risks underinsurance or rapid premium growth. - Always assess long-term costs. ### Misunderstanding Deductibles - Higher de"
+    ],
+    "retrieved_at": "2026-06-21T13:58:44Z",
+    "seo_content_clues": [
+      "](https://www.health-insurance-in-germany.com/health-insurance/) # The Ultimate Guide to Health Insurance for the Self-Employed in Germany This comprehensive guide explains everything self-employed individuals need to know about health insurance in Germany. It",
+      "ng self-employed individuals need to know about health insurance in Germany. It compares public (GKV) and private (PKV) insurance options, outlines legal obligations, and provides expert tips, real-life examples, and strategies to manage costs. Whether you're",
+      "Gewerbetreibende: Tradespeople and those running a registered business. - Mini vs. full-time self-employment: Based on income thresholds and hours worked. ### How Germany\u2019s Dual Health Insurance System Works - GKV: Income-based contributions, family coverage"
+    ],
+    "source_pages": [
+      {
+        "title": "Self-Employed Health Insurance Germany Guide 2026",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        "\u20ac400",
+        "\u20ac300",
+        "\u20ac1,000"
+      ],
+      "deductible_terms": [
+        "deductible"
+      ],
+      "monthly_terms": [],
+      "salary_thresholds": [
+        "income threshold"
+      ],
+      "savings_claims": [],
+      "tariff_terms": [
+        "Premium",
+        "premium"
+      ]
+    },
+    "title": "Self-Employed Health Insurance Germany Guide 2026",
+    "trust_proof_language": [],
+    "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+  },
+  {
+    "button_like_ctas": [
+      "Zum Inhalt springen",
+      "Zum Footer springen",
+      "Jetzt Angebot erhalten",
+      "Angebot erhalten",
+      "Was ist die private Kranken\u00ad\u00adversicherung?",
+      "Wer kann sich privat versichern?",
+      "PKV f\u00fcr bestimmte Berufsgruppen",
+      "Vorteile & Leistungen der PKV"
+    ],
+    "cta_language": [],
+    "description": "Die private Krankenversicherung bietet dir top Gesundheitsschutz. Erfahre mehr \u00fcber Leistungen & Tarife & hol dir dein PKV-Angebot \u2013 kostenlos & unverbindlich.",
+    "detected_audiences": [
+      "freiberufler",
+      "selbstst\u00e4ndig"
+    ],
+    "distribution_clues": [],
+    "domain": "clark.de",
+    "feature_language": [],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "cta",
+      "trust_proof",
+      "seo_content"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        {
+          "currency": "EUR",
+          "raw": "73.800 \u20ac",
+          "value": 73800.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "421,76 \u20ac",
+          "value": 421.76
+        },
+        {
+          "currency": "EUR",
+          "raw": "5.512,50 \u20ac",
+          "value": 5512.5
+        },
+        {
+          "currency": "EUR",
+          "raw": "843,52 \u20ac",
+          "value": 843.52
+        },
+        {
+          "currency": "EUR",
+          "raw": "17.000 \u20ac",
+          "value": 17000.0
+        }
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [
+        "Jahresarbeitsentgeltgrenze"
+      ],
+      "savings_claims": [],
+      "tariff_terms": [
+        "tarif"
+      ]
+    },
+    "page_type": "product_page",
+    "pain_language": [],
+    "positioning_headline": "Private Krankenversicherung einfach & sicher abschlie\u00dfen",
+    "pricing_language": [
+      "anken\u00adversicherung f\u00fcr Angestellte - **Voraussetzung** Bruttogehalt \u00fcber 73.800 \u20ac (JAEG 2025) - Kosten orientieren sich an **Leistungen**, nicht am Gehalt - einen [Arbeitgeberzuschuss](https://www.clark.de/private-krankenversicherung/arbeitgeberzuschuss/) gibt",
+      "chuss/) gibt\u2019s auch f\u00fcr die PKV \u2013 der Arbeitgeber zahlt dabei die H\u00e4lfte deiner monatlichen PKV-Kosten bis maximal 421,76 \u20ac (Stand 2024) Was die Kosten betrifft, lohnt sich ein kurzer, vergleichender Blick zur Krankenkasse: - **GKV:** H\u00f6chstbeitrag ab 5.512,50",
+      "zahlung** **Nachhaltiges Investment auf Wunsch** Wir finden f\u00fcr dich die besten Tarife von \u00fcber 180 Versicherern - Lebenslang garantierte Leistungen - Top-Schutz bei Zahnbehandlungen - Schnelle Arzttermine \u2013 keine Wartezeit ## Private Kranken\u00adversicherung: _Au",
+      "#footer-menu) **Vorsorge-Check \u00fcber 300.000x genutzt** **Gro\u00dfe Flexibilit\u00e4t bei Beitragszahlung** **Nachhaltiges Investment auf Wunsch** Wir finden f\u00fcr dich die besten Tarife von \u00fcber 180 Versicherern - Lebenslang garantierte Leistungen - Top-Schutz bei Zahnbe"
+    ],
+    "pricing_posture": "transparent_pricing_signal",
+    "product_change_clues": [
+      "n, die **freie Arzt- und Krankenhauswahl** sowie den Support von **modernen Therapien**. - **Selbstst\u00e4ndige**, **Beamt:innen** sowie **Studierende** und **Angestellte**, die nicht der Versicherungspflicht unterliegen, k\u00f6nnen sich in der PKV versichern. - Wenn"
+    ],
+    "retrieved_at": "2026-06-21T13:58:45Z",
+    "seo_content_clues": [],
+    "source_pages": [
+      {
+        "title": "Private Krankenversicherung einfach & sicher abschlie\u00dfen",
+        "url": "https://www.clark.de/private-krankenversicherung/"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        "73.800 \u20ac",
+        "421,76 \u20ac",
+        "5.512,50 \u20ac",
+        "843,52 \u20ac",
+        "17.000 \u20ac"
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [
+        "Jahresarbeitsentgeltgrenze"
+      ],
+      "savings_claims": [],
+      "tariff_terms": [
+        "tarif"
+      ]
+    },
+    "title": "Private Krankenversicherung einfach & sicher abschlie\u00dfen",
+    "trust_proof_language": [],
+    "url": "https://www.clark.de/private-krankenversicherung/"
+  },
+  {
+    "button_like_ctas": [
+      "Zum Hauptinhalt springen",
+      "Go to homepage",
+      "Preis berechnen",
+      "Portrait of a friendly customer support agent.",
+      "+496221-3579991",
+      "Trustpilot logo",
+      "Discover Getsafe on trustpilot",
+      "Auf Einladung"
+    ],
+    "cta_language": [],
+    "description": "Schnellere Arzttermine, Zugang zu Top-Spezialist:innen. Starker Zahn- und Sehschutz, stabile Leistungen. Freie Krankenhauswahl. Ab 200 \u20ac pro Monat., Erhalte eine objektive und faire Beratung von unseren Versicherungsexperten Gemeinsam finden wir Antworten auf all deine Fragen Unabh\u00e4ngiger Vergleich der Tarife am Markt",
+    "detected_audiences": [],
+    "distribution_clues": [],
+    "domain": "hellogetsafe.com",
+    "feature_language": [],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "audience",
+      "cta",
+      "seo_content",
+      "product_changes"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        {
+          "currency": "EUR",
+          "raw": "16,50\u20ac",
+          "value": 16.5
+        },
+        {
+          "currency": "EUR",
+          "raw": "200 \u20ac",
+          "value": 200.0
+        }
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [
+        "im Monat"
+      ],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": []
+    },
+    "page_type": "product_page",
+    "pain_language": [],
+    "positioning_headline": "Private Krankenversicherung | Getsafe",
+    "pricing_language": [
+      "[Neu\\\\ \\\\ Zahnzusatzversicherung: Der Preis-Leistungs-Sieger, ab 16,50\u20ac im Monat \\| Jetzt absichern](https://www.hellogetsafe.com/de-de/p/zahnzusatz-de) [Zum Hauptinhalt springen](https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de#mai"
+    ],
+    "pricing_posture": "transparent_pricing_signal",
+    "product_change_clues": [],
+    "retrieved_at": "2026-06-21T13:58:46Z",
+    "seo_content_clues": [],
+    "source_pages": [
+      {
+        "title": "Private Krankenversicherung | Getsafe",
+        "url": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        "16,50\u20ac",
+        "200 \u20ac"
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [
+        "im Monat"
+      ],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": []
+    },
+    "title": "Private Krankenversicherung | Getsafe",
+    "trust_proof_language": [
+      "03084e9893007b291fa69/68c9ab8ef5689f75e0d5640d_trustpilot-icon.avif) 4,6 Rating Reviews (7.461) [Discover Getsafe on trustpilot](https://de.trustpilot.com/review/www.hellogetsafe.com) ![](https://cdn.prod.website-files.com/68c06194b83ff00b0a653edb/68cc701ee3d3",
+      "r buche eine kostenlose 15-min Beratung Buche eine kostenlose 15-min Beratung ![Trustpilot logo](https://cdn.prod.website-files.com/68c03084e9893007b291fa69/68c9ab8ef5689f75e0d5640d_trustpilot-icon.avif) 4,6 Rating Reviews (7.461) [Discover Getsafe on trustpil"
+    ],
+    "url": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de"
+  },
+  {
+    "button_like_ctas": [
+      "![Erfahrungen & Bewertungen zu Versicherungsb\u00fcro Weiss",
+      "\u2605\u2605\u2605\u2605\u26055.0(56)\\\\ \\\\ Google",
+      "Free Google Reviews Widget by Elfsight",
+      "See our **75** reviews on\\\\ \\\\ Trustpilot",
+      "IamEpxat fair 2025 - Presentation",
+      "Versicherungsb\u00fcro Weiss",
+      "thumbnail-image",
+      "Watch on"
+    ],
+    "cta_language": [],
+    "description": "Insurance for expats in Germany made simple. 20+ years of experience. Health, liability, property, business and more. \u25ba Book your free consultation today!",
+    "detected_audiences": [
+      "team",
+      "expat"
+    ],
+    "distribution_clues": [],
+    "domain": "versicherungsbuero-weiss.com",
+    "feature_language": [],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "cta",
+      "seo_content",
+      "product_changes"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": []
+    },
+    "page_type": "homepage",
+    "pain_language": [],
+    "positioning_headline": "English speaking Insurance Broker in Germany | Versicherungsb\u00fcro Weiss",
+    "pricing_language": [
+      "l in every aspect of their work, and I was very impressed with the level of transparency they provided.\" \\- Google ### Fabio Bernardis \u201cUnbeatable service, individual attention from start to finish. My case was so complex that my first contact could not offer"
+    ],
+    "pricing_posture": "not_found",
+    "product_change_clues": [],
+    "retrieved_at": "2026-06-21T13:58:46Z",
+    "seo_content_clues": [],
+    "source_pages": [
+      {
+        "title": "English speaking Insurance Broker in Germany | Versicherungsb\u00fcro Weiss",
+        "url": "https://www.versicherungsbuero-weiss.com/"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": []
+    },
+    "title": "English speaking Insurance Broker in Germany | Versicherungsb\u00fcro Weiss",
+    "trust_proof_language": [
+      "is here to help! As an independent insurance broker, specialised in expats and customers from all over the world, we not only provide you the best path to the insurances you really need, but also support you in finding the answers to all the smaller and bigge",
+      "%C3%BCro+Weiss+Berlin&hl=en#lrd=0x47a85126be55d3cb:0x8b258f1769021316,1) 5.0 61 reviews [Free Google Reviews Widget by Elfsight](https://elfsight.com/google-reviews-widget/?utm_source=websites&utm_medium=clients&utm_content=google-reviews&utm_term=www.versiche",
+      "was spared in finding a solution and all options were explained in detail.\" \\- TrustPilot ### Manni Kumar \u201cDaniel and Team were helpful and knowledgeable. They looked into my needs and made suggestions about insurances that were tailored for me. Overall a gre",
+      "were tailored for me. Overall a great experience. Can\u2019t help but recommend.\" \\- ProvenExpert ### Mariana Cerdeira \u201cGreat support for health insurance: decision for transition from public (GSK) into private (PKV) and for choice of carrier and plan. Daniel had t"
+    ],
+    "url": "https://www.versicherungsbuero-weiss.com/"
+  },
+  {
+    "button_like_ctas": [
+      "Mirja Lundehn - Co-Founder of KLforExpats",
+      "Whatsapp",
+      "+49 (221) 988 86 208",
+      "welcome@klforexpats.com",
+      "Your advantages: simple processing, Cost-free service, language",
+      "Get in touch with us today!",
+      "![Health Insurance for employees Germany",
+      "No German needed"
+    ],
+    "cta_language": [
+      "me and my partner find the right health insurance and navigate the complicated sign up process. All while answering a multitude of questions from me along the way. If you're at a loss for where to start looking for health insurance in Germany, start here.\" \u2b50"
+    ],
+    "description": "Our Company specializes in the health insurance needs of incoming foreigners who work here in Germany with a local employment contract.",
+    "detected_audiences": [
+      "founder",
+      "team",
+      "expat"
+    ],
+    "distribution_clues": [],
+    "domain": "klforexpats.com",
+    "feature_language": [
+      "choose the right plan, signing up and even helping you to make a claim down the track. Let\u00b4s get it done together! [Get in touch with us today!](https://www.klforexpats.com/get-in-touch/) ## The most frequently asked questions ![](https://www.klforexpats.com/s",
+      "xpats.com/privacy-policy/) \u2022 [Imprint](https://www.klforexpats.com/imprint/) \u2022 [Manage privacy preferences](https://www.klforexpats.com/#) We collect and process your personal information for the following purposes: **Basic functionality, Security, Multimedia"
+    ],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "product_changes"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": []
+    },
+    "page_type": "homepage",
+    "pain_language": [],
+    "positioning_headline": "Your expert Guide to getting Health Insurance in Germany",
+    "pricing_language": [
+      "equirements. Deciding in favour of our services means deciding in favour of transparency. After all, making plans for the future is a matter of trust. You're in friendly, experienced hands! ## Real people. Real awesome. ![Team KLforExpats](https://www.klforexp"
+    ],
+    "pricing_posture": "not_found",
+    "product_change_clues": [],
+    "retrieved_at": "2026-06-21T13:58:47Z",
+    "seo_content_clues": [
+      "ttps://www.klforexpats.com/health-insurance-employees-germany/comparison-public-vs-private/) tool Quickity. From our office in Cologne, we work with clients throughout Germany and the world. With our insurance expert Mirja you can put all your health insurance"
+    ],
+    "source_pages": [
+      {
+        "title": "Your expert Guide to getting Health Insurance in Germany",
+        "url": "https://www.klforexpats.com/"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": []
+    },
+    "title": "Your expert Guide to getting Health Insurance in Germany",
+    "trust_proof_language": [
+      "d relocating to Germany\u2014and whatever you need, we\u2019re here to help. Because good customers deserve good experiences. Here, knowing your name is only the beginning.\"_** Our Company specializes in the health insurance needs of incoming foreigners who work here in",
+      "LforExpats \u2022 a brand of KL Versicherungsservice GmbH \\| We pay attention to the security of your data! SSL \\| [Privacy Policy](https://www.klforexpats.com/privacy-policy/) \u2022 [Imprint](https://www.klforexpats.com/imprint/) \u2022 [Manage privacy preferences](https:/",
+      "pats - English-speaking Health Insurance Brokers in Germany!289 Bewertungen auf ProvenExpert.com](https://www.provenexpert.com/klforexpats-english-speaking-health-insurance-brokers-in-germany/ \"Kundenbewertungen &Erfahrungen zu KLforExpats - English-speaking H"
+    ],
+    "url": "https://www.klforexpats.com/"
+  },
+  {
+    "button_like_ctas": [
+      "health insurance germany 2026 comparison",
+      "PKV vs. GKV comparison for international residents",
+      "complete guide to health insurance in Germany",
+      "PKV vs GKV 2026: What You\u2019ll Really Pay in Germany",
+      "Stay.",
+      "Watch on",
+      "See your GKV vs PKV numbers",
+      "terminology: you may have searched for \"expat health insurance\" or \"best PKV for expat"
+    ],
+    "cta_language": [],
+    "description": "Best private health insurance (PKV) Germany 2026: honest provider comparison, real costs by age, and how to choose the right plan as an international resident.",
+    "detected_audiences": [
+      "freelancer",
+      "self-employed",
+      "expat",
+      "international resident"
+    ],
+    "distribution_clues": [
+      "xpats\" \u2014 we use \"international resident\" because it better reflects the diverse community of professionals building their lives in Germany._ In this guide, we **compare 8 major PKV providers** based on what really matters \u2014 coverage quality, premium stability,"
+    ],
+    "domain": "stayinsured.de",
+    "feature_language": [
+      "t sources like the PKV-Verband or the MAP-Report by Franke & Bornberg regularly track and compare this. ### Ageing Provisions ( _Alterungsr\u00fcckstellungen_) Every PKV provider is legally required to build financial reserves \u2014 _Alterungsr\u00fcckstellungen_ \u2014 to keep",
+      "re than just today's price. Independent sources like the PKV-Verband or the MAP-Report by Franke & Bornberg regularly track and compare this. ### Ageing Provisions ( _Alterungsr\u00fcckstellungen_) Every PKV provider is legally required to build financial reserves"
+    ],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "cta",
+      "product_changes"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        {
+          "currency": "EUR",
+          "raw": "\u20ac77,400",
+          "value": 77400.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac520",
+          "value": 520.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac69,750",
+          "value": 69750.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac200",
+          "value": 200.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac350",
+          "value": 350.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac603",
+          "value": 603.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac65,000",
+          "value": 65000.0
+        },
+        {
+          "currency": "EUR",
+          "raw": "\u20ac70,000",
+          "value": 70000.0
+        }
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [
+        "Monthly",
+        "monthly"
+      ],
+      "salary_thresholds": [
+        "income threshold"
+      ],
+      "savings_claims": [],
+      "tariff_terms": [
+        "premium",
+        "Premium",
+        "tariff"
+      ]
+    },
+    "page_type": "blog_article",
+    "pain_language": [],
+    "positioning_headline": "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents",
+    "pricing_language": [
+      "at-health-insurance-germany-complete-guide). * * * ## Why Professionals Earning \u20ac77,400+ Are Choosing PKV in 2026 To qualify for private health insurance in Germany, employed professionals must earn above the _Jahresarbeitsentgeltgrenze_ (JAEG) \u2014 **\u20ac77,400/yea",
+      "his decision can feel even more complex: you need English-language service, transparent claims processes, and a provider that understands the needs of people who weren't born into the German system. _A note on terminology: you may have searched for \"expat heal",
+      "s) | | Premium linked to | Income (rises with salary) | Age at entry + health + tariff | | Family coverage | Free for non-working spouse + kids | Each person needs own policy | PKV isn't for everyone. If you have a non-working spouse and multiple children, GKV",
+      "ast: - **GKV total contribution rate in 2026: 17.5%** (14.6% base + 2.9% _Zusatzbeitrag_) - **_Zusatzbeitrag_ trend:** 1.7% (2024) \u2192 2.5% (2025) \u2192 2.9% (2026) \u2014 rising every year - **Maximum GKV employee share:** ~\u20ac520+/month (calculated on _Beitragsbemessungs"
+    ],
+    "pricing_posture": "transparent_pricing_signal",
+    "product_change_clues": [],
+    "retrieved_at": "2026-06-21T13:58:48Z",
+    "seo_content_clues": [
+      "parison for international residents](https://www.stayinsured.de/life-in-germany-blog/pkv-vs-gkv-expats-which-insurance-saves-more) or check out our [complete guide to health insurance in Germany](https://www.stayinsured.de/life-in-germany-blog/expat-health-ins",
+      "he diverse community of professionals building their lives in Germany._ In this guide, we **compare 8 major PKV providers** based on what really matters \u2014 coverage quality, premium stability, English accessibility, and real costs by age \u2014 so you can make a con",
+      "ommunity of professionals building their lives in Germany._ In this guide, we **compare 8 major PKV providers** based on what really matters \u2014 coverage quality, premium stability, English accessibility, and real costs by age \u2014 so you can make a confident, info",
+      "informed choice. Still unsure whether PKV is right for you? Start with our [PKV vs. GKV comparison for international residents](https://www.stayinsured.de/life-in-germany-blog/pkv-vs-gkv-expats-which-insurance-saves-more) or check out our [complete guide to he",
+      "re than just today's price. Independent sources like the PKV-Verband or the MAP-Report by Franke & Bornberg regularly track and compare this. ### Ageing Provisions ( _Alterungsr\u00fcckstellungen_) Every PKV provider is legally required to build financial reserves"
+    ],
+    "source_pages": [
+      {
+        "title": "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        "\u20ac77,400",
+        "\u20ac520",
+        "\u20ac69,750",
+        "\u20ac200",
+        "\u20ac350",
+        "\u20ac603",
+        "\u20ac65,000",
+        "\u20ac70,000"
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [
+        "Monthly",
+        "monthly"
+      ],
+      "salary_thresholds": [
+        "income threshold"
+      ],
+      "savings_claims": [],
+      "tariff_terms": [
+        "premium",
+        "Premium",
+        "tariff"
+      ]
+    },
+    "title": "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents",
+    "trust_proof_language": [
+      "pdated: March 2026 \u00b7 Reviewed by **Matthias Wolf**, licensed insurance advisor (IHK) # Best Private Health Insurance Germany 2026: Provider Comparison for International Residents Looking for the **best private health insurance in Germany**? You've already deci"
+    ],
+    "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+  },
+  {
+    "button_like_ctas": [
+      "![o",
+      "Heribert",
+      "Jetzt online abschlie\u00dfen",
+      "Zur Scroll-Navigation",
+      "Roman",
+      "Auszeichnung f\u00fcr besten Kundendienst von Focus Money",
+      "Auszeichnung Wirtschaftswoche f\u00fcr PKV-Tarif 2024 mit der Bewertung 'sehr gut'",
+      "Jetzt meinen Anteil berechnen"
+    ],
+    "cta_language": [
+      "gerne Zeit, um mit dir deine Situation durchzugehen und deine Fragen zu kl\u00e4ren. Beratung vereinbaren ![](https://assets.ottonova.de/transforms/root/4177367/laptop-pkv-hub_164e6a8f.jpeg) ### Schlie\u00dfe deine Krankenversicherung direkt online ab. Du m\u00f6chtest eine"
+    ],
+    "description": "Private Krankenversicherung von ottonova - Testsieger \u2714 H\u00f6chste Kundenzufriedenheit \u2714 G\u00fcnstiger Monatsbeitrag \u2714",
+    "detected_audiences": [
+      "selbstst\u00e4ndig",
+      "team",
+      "expat"
+    ],
+    "distribution_clues": [],
+    "domain": "ottonova.de",
+    "feature_language": [],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "trust_proof",
+      "seo_content",
+      "product_changes"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [
+        "j\u00e4hrlich"
+      ],
+      "currency_amounts": [
+        {
+          "currency": "EUR",
+          "raw": "2.000 EUR",
+          "value": 2000.0
+        }
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": [
+        "Premium",
+        "Tarif",
+        "Beitrag"
+      ]
+    },
+    "page_type": "product_page",
+    "pain_language": [],
+    "positioning_headline": "Private Krankenversicherung online abschlie\u00dfen | ottonova",
+    "pricing_language": [
+      "kangeboten zu werben, die nach kurzer Zeit durch hohe Beitragsanpassungen viel teurer werden, sind bei uns alle Tarife von vorneherein fair und mit sehr guter Preis-Leistung kalkuliert. Damit Du auch in Jahrzehnten noch zufrieden mit deiner PKV bei ottonova bi",
+      "n Privatarztrechnungen Kosten & Leistungen - Einsparpotenzial (bis zu 2.000 EUR j\u00e4hrlich) - Umfangreiche Leistungen - H\u00f6here Kosten f\u00fcr gro\u00dfe Familien ### Wie geht's jetzt weiter? Berechne deinen Anteil & schlie\u00dfe direkt online ab. [Jetzt meinen Anteil berechn",
+      "abh\u00e4ngt. Diese Tarife k\u00f6nnen aus unterschiedlichen Bausteinen wie zum Beispiel Selbstbeteiligungen und Beitragsentlastungen f\u00fcr das Alter bestehen. Versicherungsschutz Privatversicherte haben die Wahl zwischen verschiedenen Leistungen, die das GKV-Niveau \u00fcber",
+      "te Krankenversicherung ottonova ist die erste digitale Premium-PKV: Auf unserer Tarifseite findest du alles \u00fcber Voraussetzungen, Kosten und Leistungen unserer privaten Krankenversicherung. \u201a F\u00fcr Angestellte & Selbstst\u00e4ndige [![o](https://assets.ottonova.de/as",
+      "rsicherung online ab! [Jetzt online abschlie\u00dfen](https://www.ottonova.de/online-beitragsrechner/) [Zur Scroll-Navigation](https://www.ottonova.de/v/private-krankenversicherung#) ![Roman](https://assets.ottonova.de/transforms/root/3720537/features-service_08e42"
+    ],
+    "pricing_posture": "transparent_pricing_signal",
+    "product_change_clues": [],
+    "retrieved_at": "2026-06-21T13:58:49Z",
+    "seo_content_clues": [],
+    "source_pages": [
+      {
+        "title": "Private Krankenversicherung online abschlie\u00dfen | ottonova",
+        "url": "https://www.ottonova.de/private-krankenversicherung"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [
+        "j\u00e4hrlich"
+      ],
+      "currency_amounts": [
+        "2.000 EUR"
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [],
+      "salary_thresholds": [],
+      "savings_claims": [],
+      "tariff_terms": [
+        "Premium",
+        "Tarif",
+        "Beitrag"
+      ]
+    },
+    "title": "Private Krankenversicherung online abschlie\u00dfen | ottonova",
+    "trust_proof_language": [],
+    "url": "https://www.ottonova.de/private-krankenversicherung"
+  },
+  {
+    "button_like_ctas": [
+      "Skip to content",
+      "Home",
+      "Insurance",
+      "Health Insurance in Germany",
+      "GermanPedia Staff",
+      "\u00a7 5 SGB V",
+      "public health insurance",
+      "long-term care insurance"
+    ],
+    "cta_language": [],
+    "description": "Explore the health insurance options for self-employed and freelancers in Germany. Learn how to choose between private and public health insurance.",
+    "detected_audiences": [
+      "freelancer",
+      "self-employed"
+    ],
+    "distribution_clues": [],
+    "domain": "germanpedia.com",
+    "feature_language": [],
+    "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
+    "missing_evidence": [
+      "cta",
+      "trust_proof",
+      "product_changes"
+    ],
+    "normalized_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        {
+          "currency": "EUR",
+          "raw": "77,400\u20ac",
+          "value": 77400.0
+        }
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [
+        "monthly"
+      ],
+      "salary_thresholds": [
+        "income threshold",
+        "jahresarbeitsentgeltgrenze",
+        "Jahresarbeitsentgeltgrenze"
+      ],
+      "savings_claims": [],
+      "tariff_terms": [
+        "premium"
+      ]
+    },
+    "page_type": "other_page",
+    "pain_language": [],
+    "positioning_headline": "Health Insurance for Self-Employed and Freelancers in Germany [2026 English Guide]",
+    "pricing_language": [
+      "(https://germanpedia.com/contribution-assessment-ceiling-germany/) (i.e., 77,400\u20ac (as of 2026)) in the previous three years. > **NOTE:** If you exempt yourself from the statutory health insurance via KSK, you can never return to public health insurance via KSK",
+      "th insurance on time. - Health insurers may demand retroactive contributions ( [Beitragsnachforderungen](https://germanpedia.com/glossary/beitragsnachforderungen/)). - You may face legal consequences (for example, insurance fraud under [\u00a7 266a StGB](https://ww"
+    ],
+    "pricing_posture": "transparent_pricing_signal",
+    "product_change_clues": [],
+    "retrieved_at": "2026-06-21T13:58:50Z",
+    "seo_content_clues": [
+      "# Health Insurance for Self-Employed and Freelancers in Germany \\[2026 English Guide\\] Author: [GermanPedia Staff](https://germanpedia.com/author/contact/ \"GermanPedia Staff\") Last Updated: November 28, 2025 \\| Views: 1,222 ## Key takeaways - Self-employed an"
+    ],
+    "source_pages": [
+      {
+        "title": "Health Insurance for Self-Employed and Freelancers in Germany [2026 English Guide]",
+        "url": "https://germanpedia.com/health-insurance-for-self-employed-and-freelancers-germany/"
+      }
+    ],
+    "structured_price_tokens": {
+      "annual_terms": [],
+      "currency_amounts": [
+        "77,400\u20ac"
+      ],
+      "deductible_terms": [],
+      "monthly_terms": [
+        "monthly"
+      ],
+      "salary_thresholds": [
+        "income threshold",
+        "jahresarbeitsentgeltgrenze",
+        "Jahresarbeitsentgeltgrenze"
+      ],
+      "savings_claims": [],
+      "tariff_terms": [
+        "premium"
+      ]
+    },
+    "title": "Health Insurance for Self-Employed and Freelancers in Germany [2026 English Guide]",
+    "trust_proof_language": [],
+    "url": "https://germanpedia.com/health-insurance-for-self-employed-and-freelancers-germany/"
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@brave/brave-search-mcp-server"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_SEARCH_API_KEY}"
+      },
+      "_category": "web_research",
+      "_priority": "high",
+      "_comment": "Web/news discovery for industry, competitors, filings pages, IR pages, and source verification."
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "firecrawl-mcp"
+      ],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY_HGINVESTOR}"
+      },
+      "_category": "web_research",
+      "_priority": "high",
+      "_comment": "Scrape/crawl/dynamic-page extraction for investor relations pages, transcripts, PDFs, product pages, and industry sources. Verify current package name with Firecrawl docs."
+    }
+  }
+}

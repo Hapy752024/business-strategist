@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "research-topic-manifest.schema.json",
+  "title": "Research Topic Manifest",
+  "type": "object",
+  "required": ["schema_version", "topic", "topic_slug", "created_at", "updated_at", "current_stage", "stages", "events", "open_blockers", "artifacts"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "topic": {"type": "string", "minLength": 1},
+    "topic_slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "current_stage": {"type": "string"},
+    "gate_result": {"enum": ["pass", "fail", "conditional_pass", "not_run"]},
+    "blocked_reason": {"type": "string"},
+    "next_action": {"type": "string"},
+    "stages": {"type": "object", "additionalProperties": {"$ref": "stage-checkpoint.schema.json"}},
+    "events": {"type": "array", "items": {"type": "object", "required": ["ts", "event"], "properties": {"ts": {"type": "string", "format": "date-time"}, "event": {"type": "string", "minLength": 1}}}},
+    "open_blockers": {"type": "array", "items": {"type": "string"}},
+    "artifacts": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,16 @@
+{
+  "body": {
+    "creditCount": 88,
+    "message": "You have 88 credits remaining.",
+    "success": true
+  },
+  "headers": {
+    "Apigw-Requestid": "AR0C8jB-vHcEJ6g=",
+    "Connection": "close",
+    "Content-Length": "76",
+    "Content-Type": "text/plain; charset=utf-8",
+    "Date": "Fri, 10 Jul 2026 07:06:58 GMT"
+  },
+  "ok": true,
+  "status_code": 200
+}

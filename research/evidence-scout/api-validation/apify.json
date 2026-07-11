@@ -1,0 +1,206 @@
+{
+  "body": {
+    "data": {
+      "createdAt": "2026-01-11T16:39:30.237Z",
+      "effectivePlatformFeatures": {
+        "ACTORS": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "ACTORS_PUBLIC_ALL": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "ACTORS_PUBLIC_DEVELOPER": {
+          "disabledReason": "The \"Selected public Actors for developers\" feature isn't enabled for your account. Please upgrade your plan or contact support@apify.com",
+          "disabledReasonType": "DISABLED",
+          "isEnabled": false,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "PROXY": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "PROXY_EXTERNAL_ACCESS": {
+          "disabledReason": "The \"Proxy external access\" feature isn't enabled for your account. Please upgrade your plan or contact support@apify.com",
+          "disabledReasonType": "DISABLED",
+          "isEnabled": false,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "PROXY_RESIDENTIAL": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "PROXY_SERPS": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "PROXY_UNBLOCKER": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "SCHEDULER": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "STORAGE": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        },
+        "WEBHOOKS": {
+          "disabledReason": null,
+          "disabledReasonType": null,
+          "isEnabled": true,
+          "isTrial": false,
+          "trialExpirationAt": null
+        }
+      },
+      "email": "REDACTED",
+      "id": "REDACTED",
+      "isPaying": false,
+      "plan": {
+        "apiRateLimitBoosts": 0,
+        "availableAddOns": [],
+        "availableProxyGroups": {
+          "BUYPROXIES94952": 5
+        },
+        "dataRetentionDays": 7,
+        "description": "The easiest way to get started with Apify. Forever free, but with limits.",
+        "enabledPlatformFeatures": [
+          "ACTORS",
+          "STORAGE",
+          "SCHEDULER",
+          "WEBHOOKS",
+          "PROXY",
+          "PROXY_RESIDENTIAL",
+          "PROXY_SERPS",
+          "PROXY_UNBLOCKER",
+          "ACTORS_PUBLIC_ALL"
+        ],
+        "id": "FREE",
+        "isEnabled": true,
+        "maxActorCount": 500,
+        "maxActorMemoryGbytes": 16,
+        "maxActorTaskCount": 5000,
+        "maxConcurrentActorRuns": 25,
+        "maxMonthlyActorComputeUnits": 625,
+        "maxMonthlyExternalDataTransferGbytes": 1000,
+        "maxMonthlyProxySerps": 50000,
+        "maxMonthlyResidentialProxyGbytes": 20,
+        "maxMonthlyUnblockerUnits": 1000000,
+        "maxMonthlyUsageUsd": 5,
+        "maxScheduleCount": 100,
+        "monthlyBasePriceUsd": 0,
+        "monthlyUsageCreditsUsd": 5,
+        "planPricing": {
+          "addOnMonthlyUnitPricesUsd": {
+            "ACCOUNT_MANAGER_SUPPORT": 100,
+            "API_RATE_LIMIT_BOOSTS": 300,
+            "MAX_ACTOR_MEMORY_GBYTES": 1,
+            "MAX_CONCURRENT_ACTOR_RUNS": 5,
+            "PERSONALIZED_SUPPORT_HOURS": 150,
+            "PRIORITY_SUPPORT": 100,
+            "SHARED_DATACENTER_PROXIES": 1,
+            "TEAM_ACCOUNT_SEATS": 49
+          },
+          "chargeableServiceUnitPricesUsd": {
+            "ACTOR_COMPUTE_UNITS": 0.2,
+            "DATASET_READS": 4e-07,
+            "DATASET_TIMED_STORAGE_GBYTE_HOURS": 0.001,
+            "DATASET_WRITES": 5e-06,
+            "DATA_TRANSFER_EXTERNAL_GBYTES": 0.2,
+            "DATA_TRANSFER_INTERNAL_GBYTES": 0.05,
+            "KEY_VALUE_STORE_LISTS": 5e-05,
+            "KEY_VALUE_STORE_READS": 5e-06,
+            "KEY_VALUE_STORE_TIMED_STORAGE_GBYTE_HOURS": 0.001,
+            "KEY_VALUE_STORE_WRITES": 5e-05,
+            "PAID_ACTORS_FLAT_PRICE_PER_MONTH": 1,
+            "PAID_ACTORS_PER_DATASET_ITEM": 1,
+            "PAID_ACTORS_PER_EVENT": 1,
+            "PROXY_RESIDENTIAL_TRANSFER_GBYTES": 8,
+            "PROXY_SERPS": 0.0025,
+            "PROXY_UNBLOCKER_UNITS": 0.00015,
+            "REQUEST_QUEUE_READS": 4e-06,
+            "REQUEST_QUEUE_TIMED_STORAGE_GBYTE_HOURS": 0.004,
+            "REQUEST_QUEUE_WRITES": 1e-05
+          },
+          "chargeableServicesVolumeDiscountTiers": {}
+        },
+        "supportLevel": "COMMUNITY",
+        "teamAccountSeatCount": 9,
+        "tier": "FREE"
+      },
+      "profile": {
+        "name": "REDACTED",
+        "pictureUrl": "https://avatars.githubusercontent.com/u/180098967?v=4"
+      },
+      "proxy": {
+        "groups": [
+          {
+            "availableCount": 5,
+            "description": "Proxies from USA 2",
+            "name": "BUYPROXIES94952"
+          },
+          {
+            "availableCount": 0,
+            "description": "Enables downloading of Google Search result pages",
+            "name": "GOOGLE_SERP"
+          },
+          {
+            "availableCount": 0,
+            "description": "Residential proxies",
+            "name": "RESIDENTIAL"
+          }
+        ],
+        "password": "REDACTED"
+      },
+      "username": "REDACTED"
+    }
+  },
+  "headers": {
+    "Access-Control-Allow-Headers": "User-Agent, Content-Type, Authorization, X-Apify-Request-Origin, X-Apify-Github-Actions-Run-Url, openai-conversation-id, openai-ephemeral-user-id, x-apify-integration-platform, x-apify-integration-app-id, x-apify-integration-ai-tool",
+    "Access-Control-Allow-Methods": "GET",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Expose-Headers": "X-Apify-Pagination-Total, X-Apify-Pagination-Offset, X-Apify-Pagination-Desc, X-Apify-Pagination-Count, X-Apify-Pagination-Limit",
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Connection": "close",
+    "Content-Length": "5746",
+    "Content-Type": "application/json; charset=utf-8",
+    "Date": "Fri, 10 Jul 2026 07:07:00 GMT",
+    "ETag": "W/\"1672-M8AwvIvyQSLXiRhlvEghd8H+3kY\"",
+    "Expires": "0",
+    "Pragma": "no-cache",
+    "Referrer-Policy": "no-referrer",
+    "Vary": "Accept-Encoding",
+    "X-RateLimit-Limit": "90",
+    "X-Robots-Tag": "none"
+  },
+  "ok": true,
+  "status_code": 200
+}

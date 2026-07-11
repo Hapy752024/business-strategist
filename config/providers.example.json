@@ -1,0 +1,93 @@
+{
+  "default_query": "project management pain points",
+  "default_geo": "US",
+  "default_language": "en",
+  "providers": {
+    "google_trends": {
+      "preferred": ["serpapi_google_trends", "dataforseo_google_trends", "pytrends"],
+      "required_for_tier_1": true
+    },
+    "reddit": {
+      "preferred": ["reddit", "apify", "brightdata"],
+      "required_for_tier_1": true
+    },
+    "youtube": {
+      "preferred": ["youtube", "serpapi_youtube"],
+      "required_for_tier_1": true
+    },
+    "web_forums": {
+      "preferred": ["serper_search", "firecrawl", "brave_search", "serpapi_search", "crawl4ai"],
+      "required_for_tier_1": true
+    },
+    "local_extraction": {
+      "preferred": ["crawl4ai", "markitdown", "scrapling"],
+      "required_for_tier_1": false,
+      "note": "Optional context-optimized local extraction. crawl4ai enriches a small discovered URL set, markitdown converts explicit document paths, and scrapling is an explicit hard-page fallback."
+    },
+    "x": {
+      "preferred": ["x", "apify", "brightdata"],
+      "required_for_tier_1": false
+    },
+    "tiktok": {
+      "preferred": ["tiktok", "apify", "brightdata"],
+      "required_for_tier_1": false
+    },
+    "meta": {
+      "preferred": ["meta", "apify", "brightdata"],
+      "required_for_tier_1": false
+    },
+    "social_scraping": {
+      "preferred": ["scrapecreators", "apify", "brightdata"],
+      "required_for_tier_1": false
+    },
+    "browser_scraping": {
+      "preferred": ["brightdata_browser", "firecrawl_interact"],
+      "required_for_tier_1": false
+    },
+    "app_reviews": {
+      "preferred": ["sonar", "app_reviews", "apify", "serpapi", "brightdata"],
+      "required_for_tier_1": false
+    },
+    "app_store_aso": {
+      "preferred": ["sonar", "apify"],
+      "required_for_tier_1": false
+    },
+    "china_public": {
+      "preferred": ["bilibili_public_search", "bilibili_site_search_brave", "bilibili_site_search_firecrawl", "v2ex_brave_site_search", "v2ex_firecrawl_site_search", "v2ex_public_hot", "agent_reach_bilibili"],
+      "required_for_tier_1": false,
+      "note": "Use for China-market or Chinese-language evidence. Native routes are best-effort; Brave/Firecrawl site search is the practical topic-search fallback. Public routes are useful for discovery but are not complete social coverage."
+    },
+    "china_bilibili_comments": {
+      "preferred": ["bilibili_public_comments"],
+      "required_for_tier_1": false,
+      "approval_required": false,
+      "note": "Explicit enrichment only. Fetches capped public comments for selected Bilibili videos and treats them as interview leads unless repeated pain/workaround language appears."
+    },
+    "china_social": {
+      "preferred": ["agent_reach_xiaohongshu", "opencli_xiaohongshu", "scrapecreators_china_social"],
+      "required_for_tier_1": false,
+      "approval_required": true,
+      "note": "Login/cookie-backed sources can be fragile and may risk account restriction. Ask before running."
+    },
+    "china_web": {
+      "preferred": ["firecrawl_china_web", "brave_china_web"],
+      "required_for_tier_1": false,
+      "domains": ["zhihu.com", "weibo.com", "douban.com", "tieba.baidu.com", "36kr.com", "huxiu.com", "xiaohongshu.com"]
+    },
+    "competitor_web_traffic": {
+      "preferred": ["apify:tri_angle/fast-similarweb-scraper"],
+      "required_for_tier_1": false,
+      "workflow": "competitor-monitoring"
+    },
+    "local_physical_market": {
+      "preferred": ["apify:compass/crawler-google-places"],
+      "required_for_tier_1": false,
+      "workflow": "competitor-monitoring"
+    },
+    "public_market_sentiment": {
+      "preferred": [],
+      "required_for_tier_1": false,
+      "note": "Do not use stock/Stocktwits sentiment actors unless the research topic is explicitly active traders, investors, or trading products."
+    }
+  }
+}

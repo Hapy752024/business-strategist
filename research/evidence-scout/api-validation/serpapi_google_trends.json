@@ -1,0 +1,28 @@
+{
+  "body": {
+    "error": "Your account has run out of searches."
+  },
+  "error": "HTTP Error 429: Too Many Requests",
+  "headers": {
+    "CF-RAY": "a18db97408589cec-ZRH",
+    "Connection": "close",
+    "Content-Type": "application/json; charset=utf-8",
+    "Date": "Fri, 10 Jul 2026 07:06:12 GMT",
+    "Server": "cloudflare",
+    "Transfer-Encoding": "chunked",
+    "Vary": "accept-encoding",
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "no-cache",
+    "cf-cache-status": "BYPASS",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "x-content-type-options": "nosniff",
+    "x-download-options": "noopen",
+    "x-frame-options": "SAMEORIGIN",
+    "x-permitted-cross-domain-policies": "none",
+    "x-request-id": "acc49822-2b64-4a5e-ba40-81b8fcc843a1",
+    "x-runtime": "0.007366",
+    "x-xss-protection": "1; mode=block"
+  },
+  "ok": false,
+  "status_code": 429
+}

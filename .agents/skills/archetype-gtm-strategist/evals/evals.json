@@ -1,0 +1,41 @@
+{
+  "skill_name": "archetype-gtm-strategist",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We have a prototype for collecting missing tax documents from small accounting firms in Germany, no paying users, and €3,000 for GTM. Build our test and first-customer strategy.",
+      "expected_output": "Europe-first B2B SaaS strategy using a narrow ICP, founder-led sales, paid/design-partner tests, proof creation, one primary channel, and explicit sales-hiring and paid-marketing gates.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our UK/Germany consumer subscription app has 2,000 waitlist signups but no retention data. We want to spend €20k on creators and Meta at launch.",
+      "expected_output": "B2C SaaS plan that treats waitlist as weak evidence, defines activation/cohort tests, selects one launch channel, caps spend, and blocks paid scale until retained value and contribution economics are visible.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Create a GTM strategy for an AI insurance adviser for self-employed people in Germany. We want direct-to-consumer launch and insurer partnerships.",
+      "expected_output": "Regulation-aware insurtech strategy separating consumer, licensed entity and carrier, using safe/human-reviewed tests, trust metrics, manual partner pilots, and no unreviewed automated advice.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I want to launch a paid relocation concierge for US professionals moving to Italy. Budget is €5k and I will deliver the first cases myself.",
+      "expected_output": "B2C professional-service plan with a trigger-defined package, paid concierge cohort, delivery economics, expat/employer/housing partnerships, reviews, local density, and capacity gates.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Our European B2B SaaS has repeatable sales in France and wants a US launch. Should we hire five sellers and run a national campaign?",
+      "expected_output": "A narrow US beachhead test that revalidates message, price, competition, references, support and sales motion before broad hiring, with country-expansion gates.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Adapt our successful European consumer finance app GTM to China using Xiaohongshu, Douyin and WeChat.",
+      "expected_output": "Lower-confidence China adaptation that rejects direct translation, requires current Chinese/local regulatory expertise, tests one audience/platform wedge, distinguishes discovery from retention, and measures downstream behavior rather than engagement.",
+      "files": []
+    }
+  ]
+}

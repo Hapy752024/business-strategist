@@ -1,0 +1,1133 @@
+[
+  {
+    "business_model_hint": "broker",
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "myhealthcarebroker.com",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Health Insurance Broker in Germany - Independent Advice for Expats Private health insurance for expats in Germany with independent comparison and honest advice in English. Clear options, fast support, free quote with no obligations.",
+      "Private Health Insurance Germany: Compare Top Providers & Find Your Ideal Coverage - Private Health Insurance Germany Private health insurance Germany comparison: costs, benefits, waiting times, coverage and real differences vs public insurance. Find the best PKV plan."
+    ],
+    "first_seen_at": "2026-06-21T12:29:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Myhealthcarebroker",
+    "needs_human_review": true,
+    "page_title": "Health Insurance Broker in Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/blog/private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.myhealthcarebroker.com/"
+      }
+    ],
+    "url": "https://www.myhealthcarebroker.com/"
+  },
+  {
+    "business_model_hint": "broker",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "feather-insurance.com",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Health insurance for freelancers in Germany: 2026 self-employed ... This post will teach you all you need to know about health insurance for freelancers and self-employed people in Germany."
+    ],
+    "first_seen_at": "2026-06-21T12:29:26Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Feather Insurance",
+    "needs_human_review": true,
+    "page_title": "Health insurance for freelancers in Germany: 2026 self",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "firecrawl",
+        "url": "https://feather-insurance.com/blog/health-insurance-germany-freelancer-guide"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "firecrawl",
+        "url": "https://feather-insurance.com/blog/health-insurance-germany-freelancer-guide"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "firecrawl",
+        "url": "https://feather-insurance.com/blog/health-insurance-germany-freelancer-guide"
+      },
+      {
+        "query": "Feather",
+        "source": "known_competitors_input",
+        "url": "https://feather-insurance.com/private-health-insurance"
+      }
+    ],
+    "url": "https://feather-insurance.com/private-health-insurance"
+  },
+  {
+    "business_model_hint": "broker",
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "health-insurance-in-germany.com",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Self-Employed Health Insurance Germany Guide 2026 GKV offers predictability; PKV offers customization. Each option has serious financial and legal implications. Evaluate your age, income, and family situation. Use expat-friendly platforms for advice and comparison. Plan for the long term, not just short-term savings. Consult a bilingual advisor. Use a comparison tool to estimate your contributions. Get insured before you register as self-employed.",
+      "Private Health Insurance in Germany (PKV) for Expats 2025 <strong>Digital nomads</strong> Ensure policies meet German residency requirements. Freelancers and the self-employed can deduct PKV contributions as business expenses, potentially reducing the net cost significantly.",
+      "Self-Employed Health Insurance Germany Guide 2026 This comprehensive guide explains everything self-employed individuals need to know about health insurance in Germany. It compares public (GKV) and private (PKV) insurance options, outlines legal obligations, and provides expert tips, real-life examples, and strategies to manage costs. Whether you&#x27;re a freelancer, creative, or digital nomad, this guide helps you navigate Germany\u2019s complex healthcare system confidently and compliantly.",
+      "Self-Employed Health Insurance Germany Guide 2026 Minimum GKV contributions often exceed income. Use hardship applications to reduce rates. Insurance is still mandatory. Risk of illness or accident can\u2019t be ignored. Use expat brokers like <strong>Feather or Ottonova</strong>."
+    ],
+    "first_seen_at": "2026-06-21T12:29:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Health Insurance In Germany",
+    "needs_human_review": true,
+    "page_title": "Self",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/private/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+      }
+    ],
+    "url": "https://www.health-insurance-in-germany.com/health-insurance/self-employed/"
+  },
+  {
+    "business_model_hint": "insurer",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "direct_insurer_candidate",
+    "confidence_score": 0.95,
+    "domain": "ottonova.de",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Private health insurance for Self-employed | ottonova Authorized by BaFin independent German rating agency. Highlights of our digital private health insurance for self-employed One app, endless possibilities, just ...",
+      "Private health insurance for Self-employed | ottonova Easily adapt your private health insurance tariff to your needs. Personalize your ottonova tariff with our additional modules and get more out of your private ...",
+      "Private health insurance for Self-employed | ottonova Be your own boss not only at work, but also in your private life. ottonova offers the optimal coverage for your health."
+    ],
+    "first_seen_at": "2026-06-21T12:29:26Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Ottonova",
+    "needs_human_review": true,
+    "page_title": "Private health insurance for Self-employed",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "firecrawl",
+        "url": "https://www.ottonova.de/en/v/private-health-insurance/self-employed"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.ottonova.de/en/v/private-health-insurance/self-employed"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "firecrawl",
+        "url": "https://www.ottonova.de/en/v/private-health-insurance/self-employed"
+      },
+      {
+        "query": "ottonova",
+        "source": "known_competitors_input",
+        "url": "https://www.ottonova.de/private-krankenversicherung"
+      }
+    ],
+    "url": "https://www.ottonova.de/private-krankenversicherung"
+  },
+  {
+    "business_model_hint": "broker",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "clark.de",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Private Krankenversicherung einfach & sicher abschlie\u00dfen Unser Algorithmus vergleicht tausende Tarife von \u00fcber 180 Versicherern, um die beste private Kranken\u00adversicherung (PKV) zu finden, die ideal zu dir passt. Angebot erhalten ... CLARK pr\u00fcft und bewertet deine bestehenden Vertr\u00e4ge \u2013 unabh\u00e4ngig und transparent.",
+      "Voraussetzungen f\u00fcr die PKV: Ab wann bekomme ich eine private Krankenversicherung? \u2013 CLARK Allerdings kannst du den Bedarf nach Extraleistungen mit privaten Krankenzusatz\u00adversicherungen gut und kosteng\u00fcnstig abdecken. Die CLARK Expert:innen beraten dich gerne, welche Versicherungen hier empfehlenswert sind. F\u00fcr die PKV ist es unwichtig, wie hoch dein Gewinn beziehungsweise dein ...",
+      "Private Krankenversicherung: Vor- und Nachteile der PKV \u2013 CLARK Unser Algorithmus vergleicht tausende Tarife von \u00fcber 180 Versicherern, um die beste private Kranken\u00adversicherung (PKV) zu finden, die ideal zu dir passt. Angebot erhalten ... CLARK pr\u00fcft und bewertet deine bestehenden Vertr\u00e4ge \u2013 unabh\u00e4ngig und transparent."
+    ],
+    "first_seen_at": "2026-06-21T12:29:35Z",
+    "job_fit_hint": "partial",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Clark",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung einfach & sicher abschlie\u00dfen",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "CLARK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.clark.de/private-krankenversicherung/"
+      },
+      {
+        "query": "CLARK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.clark.de/private-krankenversicherung/voraussetzungen/"
+      },
+      {
+        "query": "CLARK PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.clark.de/private-krankenversicherung/vor-und-nachteile/"
+      },
+      {
+        "query": "CLARK",
+        "source": "known_competitors_input",
+        "url": "https://www.clark.de/private-krankenversicherung/"
+      }
+    ],
+    "url": "https://www.clark.de/private-krankenversicherung/"
+  },
+  {
+    "business_model_hint": "broker",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "hellogetsafe.com",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "Getsafe | Alle Versicherungen in einer App \u2013 digital, einfach, fair Verdienst du \u00fcber der Jahresgrenze oder willst mehr Leistung, ist die PKV die Alternative: oft k\u00fcrzere Wartezeiten, erweiterte Leistungen, englischer Service.",
+      "Private Krankenversicherung | Getsafe Verdienst du \u00fcber der Jahresgrenze oder willst mehr Leistung, ist die PKV die Alternative: oft k\u00fcrzere Wartezeiten, erweiterte Leistungen, englischer Service."
+    ],
+    "first_seen_at": "2026-06-21T12:29:36Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Hellogetsafe",
+    "needs_human_review": true,
+    "page_title": "Getsafe",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "Getsafe PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.hellogetsafe.com/de-de"
+      },
+      {
+        "query": "Getsafe PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de"
+      },
+      {
+        "query": "Getsafe",
+        "source": "known_competitors_input",
+        "url": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de"
+      }
+    ],
+    "url": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de"
+  },
+  {
+    "business_model_hint": "broker",
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "versicherungsbuero-weiss.com",
+    "evidence_quality": "strong",
+    "evidence_snippets": [
+      "English speaking Insurance Broker in Germany | Versicherungsb\u00fcro Weiss They looked into my needs and made suggestions about insurances that were tailored for me. Overall a great experience. Can\u2019t help but recommend.&quot; - ProvenExpert \u00b7 \u201cGreat support for health insurance: decision for transition from public (GSK) into private (PKV) and for choice of carrier and plan."
+    ],
+    "first_seen_at": "2026-06-21T12:29:25Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Versicherungsbuero Weiss",
+    "needs_human_review": true,
+    "page_title": "English speaking Insurance Broker in Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.versicherungsbuero-weiss.com/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany comparison",
+        "source": "brave_search",
+        "url": "https://www.versicherungsbuero-weiss.com/"
+      }
+    ],
+    "url": "https://www.versicherungsbuero-weiss.com/"
+  },
+  {
+    "business_model_hint": "broker",
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "klforexpats.com",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Your expert Guide to getting Health Insurance in Germany Our Company specializes in the health insurance needs of incoming foreigners who work here in Germany with a local employment contract. <strong>KLforExpats is a brand of the independent insurance brokerage KL Versicherungsservice GmbH</strong>, hosting also the comparison tool Quickity."
+    ],
+    "first_seen_at": "2026-06-21T12:29:20Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Klforexpats",
+    "needs_human_review": true,
+    "page_title": "Your expert Guide to getting Health Insurance in Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://www.klforexpats.com/"
+      }
+    ],
+    "url": "https://www.klforexpats.com/"
+  },
+  {
+    "business_model_hint": "broker",
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.95,
+    "domain": "german-insurance-broker.de",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "German Insurance Broker Wir vergleichen ALLE PKV-TARIFE und finden den optimalen Tarif nach Ihren Vorgaben. Einsparungen von 60% und mehr m\u00f6glich! Tiefe Preise. Kostenloser Vergleich."
+    ],
+    "first_seen_at": "2026-06-21T12:29:21Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "German Insurance Broker",
+    "needs_human_review": true,
+    "page_title": "German Insurance Broker",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "brave_search",
+        "url": "https://german-insurance-broker.de/"
+      }
+    ],
+    "url": "https://german-insurance-broker.de/"
+  },
+  {
+    "business_model_hint": "broker",
+    "competitor_type_hint": "direct_broker_candidate",
+    "confidence_score": 0.82,
+    "domain": "stayinsured.de",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents Get Your Free PKV Comparison See How Much You Could Save with PKV \u00b7 We&#x27;re <strong>independent brokers (Versicherungsmakler).</strong> IHK-registered and BaFin-compliant: we work for you, not any insurance company.",
+      "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents You can go directly, but there&#x27;s no financial benefit \u2014 your premium is the same either way. <strong>A broker provides independent comparison across all 40+ PKV providers, ongoing support, and advocacy during claims disputes</strong>.",
+      "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents Ottonova offers the best combination of English service, digital experience, and competitive pricing. <strong>Signal Iduna</strong> is more reliable over time with moderate premiums, but she&#x27;d need a broker for English help.",
+      "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents Ottonova is fully licensed and regulated like any other private insurer. In the extremely unlikely event of failure, an industry guarantee fund (Sicherungsfonds) ensures your coverage continues. That said, the lack of long-term data on premium stability is something to consider. You can go directly, but there&#x27;s no financial benefit \u2014 your premium is the same either way. A broker provides independent ",
+      "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents That said, the lack of long-term data on premium stability is something to consider. You can go directly, but there&#x27;s no financial benefit \u2014 your premium is the same either way. A broker provides independent comparison across all 40+ PKV providers, ongoing support, and advocacy during claims disputes.",
+      "Best Private Health Insurance Germany 2026: Provider Comparison for International Residents Ottonova is fully licensed and regulated like any other private insurer. In the extremely unlikely event of failure, an industry guarantee fund (Sicherungsfonds) ensures your coverage continues. That said, the lack of long-term data on premium stability is something to consider. You can go directly, but there&#x27;s no financial benefit \u2014 your premium is the same either way. A broker provides independent "
+    ],
+    "first_seen_at": "2026-06-21T12:29:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Stayinsured",
+    "needs_human_review": true,
+    "page_title": "Best Private Health Insurance Germany 2026",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "blog_or_resource_page",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "best digital insurance broker for PKV BU Germany for high-income employees and self-employed professionals in Germany considering PKV or BU",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany reviews pricing",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany comparison",
+        "source": "brave_search",
+        "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+      }
+    ],
+    "url": "https://stayinsured.de/health-insurance-blog/best-private-health-insurance-germany-comparison"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "how-to-germany.com",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "German Private Health Insurance | Best Expat Plans for 2026 On the <strong>ottonova website</strong>, you can calculate your personal offer and then decide whether you would like personal advice, check the offer, or take out your insurance directly online.",
+      "Private Health Insurance for Freelancers in Germany | 2026 Find private health insurance plans for freelancers in Germany. Discover benefits, comparisons, and the right PKV plan for you.",
+      "German Private Health Insurance | Best Expat Plans for 2026 ottonova\u2019s regular offer is open to employees, freelancers, the self-employed, students and civil servants. On the ottonova website, you can calculate your personal offer and then decide whether you would like personal advice, check the offer, or take out your insurance directly online. There are five different tariffs to choose from, which ottonova markets as Premium Economy, Business Class, Business Class Pro, First Class, and First C",
+      "List of Top German Private Health Insurance Providers | 2026 Important for expats: English-speaking support, digital claims, clear application guidance, and residence-permit suitability can be just as important as the monthly premium. Best-known providers: Major private health insurance companies include Allianz, AXA, Barmenia, Debeka, DKV, Hallesche, HanseMerkur, Signal Iduna, and ottonova. Germany has a large private health insurance market. Private health insurance companies are known as PKV ",
+      "German Private Health Insurance | Best Expat Plans for 2026 All insurance matters can be managed quickly and easily via digital channels. Services and personal support are available in German and English. The <strong>FinTech insurance company ottonova</strong> specializes in various health insurance products.",
+      "Compare Best German Dental Insurance Providers | 2026 Alternatively, you can hire an insurance broker to help you find the best supplementary dental insurance. For expats in Germany, digital insurance providers like <strong>ottonova, Feather, and Getsafe</strong> offer particularly strong solutions.",
+      "German Private Health Insurance | Best Expat Plans for 2026 All insurance matters can be managed quickly and easily via digital channels. Services and personal support are available in German and English. The FinTech insurance company ottonova specializes in various health insurance products. In addition to comprehensive private health insurance, the health insurance provider offers supplementary private dental insurance, supplementary hospital insurance, and company health insurance for busines",
+      "Compare Best German Dental Insurance Providers | 2026 Digital dental insurance companies like <strong>ottonova, Feather, and Getsafe</strong> offer modern, expat-friendly plans with fast onboarding and English-language support. Selecting the right provider depends on your budget, dental health, and dental care ...",
+      "German Health Insurance: GKV vs. PKV Comparison 2026 Especially digital health insurers offer fast, app-based reimbursement processes. ... Younger and healthier applicants usually receive significantly lower premiums in private health insurance. Medical conditions documented before the start of the contract may result in risk surcharges or exclusions that cannot be removed later. Taking out PKV early often allows access to broader coverage at more favorable conditions and helps build age-related",
+      "German Private Health Insurance | Best Expat Plans for 2026 ottonova\u2019s regular offer is open to employees, freelancers, the self-employed, students and civil servants. On the ottonova website, you can calculate your personal offer and then decide whether you would like personal advice, check the offer, or take out your insurance directly online. There are five different tariffs to choose from, which ottonova markets as Premium Economy, Business Class, Business Class Pro, First Class, and First C",
+      "List of Top German Private Health Insurance Providers | 2026 ottonova combines digital services with predefined private health insurance plans. Coverage, limits, expat tariff, and key features at a glance. ... Considering SDK private health insurance? Discover how the insurer&#x27;s modular approach, tariff flexibility, and international coverage options work. ... Large PKV market: Germany has many private health insurance companies, from large nationwide insurers to smaller specialist providers",
+      "German Private Health Insurance | Best Expat Plans for 2026 They apply not only to Germany ... and full coverage of dental treatments (excluding dentures). ... The Berlin-based <strong>FinTech Feather</strong> offers various digital insurance products....",
+      "German Private Health Insurance | Best Expat Plans for 2026 Expert advice can be helpful here, as there are sometimes significant differences between the benefits and conditions of the various private health insurance companies. The Berlin-based <strong>FinTech Getsafe</strong> offers digital advice on choosing the right ...",
+      "List of Top German Private Health Insurance Providers | 2026 ottonova combines digital services with predefined private health insurance plans. Coverage, limits, expat tariff, and key features at a glance. ... Considering SDK private health insurance? Discover how the insurer&#x27;s modular approach, tariff flexibility, and international coverage options work. ... Large PKV market: Germany has many private health insurance companies, from large nationwide insurers to smaller specialist providers"
+    ],
+    "first_seen_at": "2026-06-21T12:29:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "How To Germany",
+    "needs_human_review": true,
+    "page_title": "German Private Health Insurance",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/freelancers/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/list/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/dental-insurance/providers-comparison/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/dental-insurance/providers-comparison/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/gkv-vs-pkv-comparison/"
+      },
+      {
+        "query": "best digital insurance broker for PKV BU Germany for high-income employees and self-employed professionals in Germany considering PKV or BU",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "best digital insurance broker for PKV BU Germany for high-income employees and self-employed professionals in Germany considering PKV or BU",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/list/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany comparison",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany comparison",
+        "source": "brave_search",
+        "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/list/"
+      }
+    ],
+    "url": "https://www.how-to-germany.com/health-insurance/private-health-insurance/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "germany-visa.org",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Best Health Insurance Companies in Germany - Germany Visa With this unique structure, any surpluses generated by the company are not retained for shareholders but instead flow back to the insured policyholders. Moreover, for employees and the self-employed, <strong>Hallesche offers three PKV full insurance tariffs</strong>, providing choices such as the budget-friendly ...",
+      "Best Health Insurance Companies in Germany - Germany Visa Type: Private Health Insurance (PKV). Insurance Options: Private comprehensive health insurance; Supplementary insurance (e.g. hospital, dental, eyeglass, cancer insurance). Plans (Tariffs): BusinessFit (comprehensive coverage including medical, dental, hospital, preventive care); ProFit (extended benefits including naturopathy and higher vision aid subsidies). Flexibility: Plans available for employees and self-employed persons; Discount",
+      "Best Health Insurance Companies in Germany - Germany Visa With this unique structure, any surpluses generated by the company are not retained for shareholders but instead flow back to the insured policyholders. Moreover, for employees and the self-employed, Hallesche offers three PKV full insurance tariffs, providing choices such as the budget-friendly \u201cPrimo\u201d and options for enhanced coverage like the \u201cPlus\u201d level.",
+      "Best Health Insurance Companies in Germany - Germany Visa Positioning: Digital health insurance provider with innovative approach. Pricing: Aims to offer fair and stable pricing over time. Plans: Economy (basic coverage), Business (extended benefits, e.g. dental, visual aids), First Class (highest level of benefits, includes alternative treatments).",
+      "Best Health Insurance Companies in Germany - Germany Visa Positioning: Digital health insurance provider with innovative approach. Pricing: Aims to offer fair and stable pricing over time. Plans: Economy (basic coverage), Business (extended benefits, e.g.",
+      "Germany Private Health Insurance: List of Providers, and Requirements Private health insurance in Germany, known as \u201cPrivate Krankenversicherung\u201d (PKV), is an alternative to the public or statutory health insurance system. It is primarily available to self-employed individuals, high-income earners, civil servants, and specific professional groups.",
+      "Best Health Insurance Companies in Germany - Germany Visa <strong>Hallesche Krankenversicherung</strong> is a mutual insurance company, setting it apart from conventional insurers. With this unique structure, any surpluses generated by the company are not retained for shareholders but instead flow back to the insured policyholders. Moreover, for employees and the ...",
+      "Best Health Insurance Companies in Germany - Germany Visa Positioning: Digital health insurance provider with innovative approach. Pricing: <strong>Aims to offer fair and stable pricing over time</strong>. Plans: Economy (basic coverage), Business (extended benefits, e.g."
+    ],
+    "first_seen_at": "2026-06-21T12:29:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Germany Visa",
+    "needs_human_review": true,
+    "page_title": "Best Health Insurance Companies in Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+      },
+      {
+        "query": "best digital insurance broker for PKV BU Germany for high-income employees and self-employed professionals in Germany considering PKV or BU",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/private-health-insurance/"
+      },
+      {
+        "query": "best digital insurance broker for PKV BU Germany for high-income employees and self-employed professionals in Germany considering PKV or BU",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany comparison",
+        "source": "brave_search",
+        "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+      }
+    ],
+    "url": "https://www.germany-visa.org/insurances-germany/health-insurance/companies/"
+  },
+  {
+    "business_model_hint": "marketplace_comparison_portal",
+    "competitor_type_hint": "marketplace_comparison_portal",
+    "confidence_score": 0.55,
+    "domain": "germanpedia.com",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Health Insurance for Self-Employed and Freelancers in Germany [2026 English Guide] Use it during your consultation with an insurance broker or a fee-based advisor. Use it while searching for a private health insurance policy. ... Switching from private to public health insurance is difficult. And it gets tougher as you grow old. There are a few ways to return to the public healthcare system. For example, \u2013 You get a job and your salary goes below the income threshold. \u2013 You shut down your busine",
+      "Health Insurance for Self-Employed and Freelancers in Germany [2026 English Guide] Use it during your consultation with an insurance broker or a fee-based advisor. Use it while searching for a private health insurance policy. ... Switching from private to public health insurance is difficult. And it gets tougher as you grow old. There are a few ways to return to the public healthcare system. For example, \u2013 You get a job and your salary goes below the income threshold. \u2013 You shut down your busine",
+      "Best Private Health Insurance In Germany [2026 Ratings] Find the best private health insurance in Germany based on in-depth tests by top rating agencies in Germany.",
+      "Best Private Health Insurance In Germany [2026 Ratings] The broker we recommend has been offering services to expats for more than a decade. German health insurance is a complicated product. There are several factors that must be considered before deciding which health insurance is best for you.",
+      "Best Private Health Insurance In Germany [2026 Ratings] An insurance broker can also help you file a claim with the provider. The broker we recommend has been offering services to expats for more than a decade. German health insurance is a complicated product. There are several factors that must be considered before deciding which health insurance is best for you.",
+      "Best Private Health Insurance In Germany [2026 Ratings] Get personalized advice from a fee-based advisor or an insurance broker."
+    ],
+    "first_seen_at": "2026-06-21T12:29:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Germanpedia",
+    "needs_human_review": true,
+    "page_title": "Health Insurance for Self",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://germanpedia.com/health-insurance-for-self-employed-and-freelancers-germany/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://germanpedia.com/health-insurance-for-self-employed-and-freelancers-germany/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://germanpedia.com/best-private-health-insurance-comparison-germany/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://germanpedia.com/best-private-health-insurance-comparison-germany/"
+      },
+      {
+        "query": "best digital insurance broker for PKV BU Germany for high-income employees and self-employed professionals in Germany considering PKV or BU",
+        "source": "brave_search",
+        "url": "https://germanpedia.com/best-private-health-insurance-comparison-germany/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany reviews pricing",
+        "source": "brave_search",
+        "url": "https://germanpedia.com/best-private-health-insurance-comparison-germany/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany comparison",
+        "source": "brave_search",
+        "url": "https://germanpedia.com/best-private-health-insurance-comparison-germany/"
+      }
+    ],
+    "url": "https://germanpedia.com/health-insurance-for-self-employed-and-freelancers-germany/"
+  },
+  {
+    "business_model_hint": "marketplace_comparison_portal",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "marketplace_comparison_portal",
+    "confidence_score": 0.55,
+    "domain": "check24.de",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Health Insurance Germany: Options & Providers Looking for private health insurance in Germany? Learn how it works, who qualifies, and compare the best options for expats and locals.",
+      "Private Health Insurance Germany: Options & Providers Germany operates a mandatory dual healthcare system where most residents are covered by statutory health insurance, but high earners above \u20ac77,400 annually, self-employed individuals, and civil servants can opt for private health insurance instead, which offers enhanced benefits such as shorter waiting times and private hospital rooms. ... Germany has a dual healthcare system with Statutory Health Insurance (GKV) covering 90 % of the populati",
+      "Private Health Insurance Germany: Options & Providers Request personalised quotes: After selecting a shortlist of insurers based on their benefits and premiums, ask an insurance broker (i.e. CHECK24) to contact these insurers for individualised offers based on your health status. Pay attention to different deductible options and special needs like international coverage."
+    ],
+    "first_seen_at": "2026-06-21T12:29:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "known_competitor_supplied": true,
+    "name": "Check24",
+    "needs_human_review": true,
+    "page_title": "Private Health Insurance Germany",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://www.check24.de/private-krankenversicherung/auslaender/en/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://www.check24.de/private-krankenversicherung/auslaender/en/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.check24.de/private-krankenversicherung/auslaender/en/"
+      },
+      {
+        "query": "best digital insurance broker for PKV BU Germany for high-income employees and self-employed professionals in Germany considering PKV or BU",
+        "source": "brave_search",
+        "url": "https://www.check24.de/private-krankenversicherung/auslaender/en/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany reviews pricing",
+        "source": "brave_search",
+        "url": "https://www.check24.de/private-krankenversicherung/auslaender/en/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany comparison",
+        "source": "brave_search",
+        "url": "https://www.check24.de/private-krankenversicherung/auslaender/en/"
+      },
+      {
+        "query": "CHECK24",
+        "source": "known_competitors_input",
+        "url": "https://www.check24.de/private-krankenversicherung/"
+      }
+    ],
+    "url": "https://www.check24.de/private-krankenversicherung/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "iamexpat.de",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private health insurance in Germany (private Krankenversicherung) If you&#x27;d like to shop around and compare private health insurance options, <strong>Quickity</strong> is an easy-to-use coverage comparison and price estimation tool. You get a comprehensive overview of various health insurance options to suit your budget and ...",
+      "Private health insurance in Germany (private Krankenversicherung) These companies all offer private ... Professionals) Versicherungsb\u00fcro Weiss (English-speaking health insurance broker) <strong>Feather private health insurance</strong> (for high-wage earners or self-employed people; insurance provided by ...",
+      "Private health insurance in Germany (private Krankenversicherung) KLforExpats (Highly Rated Multi-Provider Brokerage for Expert Professionals) Versicherungsb\u00fcro Weiss (English-speaking health insurance broker) Feather private health insurance (for high-wage earners or self-employed people; insurance provided by Hallesche) Ottonova (full support in English, specially designed for expats) Feather temporary health insurance (for incoming expats; insurance provided by Advigon) Stay (English-speaking"
+    ],
+    "first_seen_at": "2026-06-21T12:29:19Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "mentioned_in_search_evidence",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Iamexpat",
+    "needs_human_review": true,
+    "page_title": "Private health insurance in Germany (private Krankenversicherung)",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/german-health-insurance/private-health-insurance-germany"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/german-health-insurance/private-health-insurance-germany"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/german-health-insurance/private-health-insurance-germany"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/german-health-insurance/private-health-insurance-germany"
+      },
+      {
+        "query": "best digital insurance broker for PKV BU Germany for high-income employees and self-employed professionals in Germany considering PKV or BU",
+        "source": "brave_search",
+        "url": "https://www.iamexpat.de/expat-info/german-health-insurance/private-health-insurance-germany"
+      }
+    ],
+    "url": "https://www.iamexpat.de/expat-info/german-health-insurance/private-health-insurance-germany"
+  },
+  {
+    "business_model_hint": "marketplace_comparison_portal",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "marketplace_comparison_portal",
+    "confidence_score": 0.55,
+    "domain": "verivox.de",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Krankenversicherung (PKV): Vergleich 2026 Monatliche Ersparnis: 517,40 \u20ac. Quelle: Verivox Vergleichsrechner f\u00fcr private Krankenversicherung, Stand: 05/2026. ... <strong>Eine private Krankenversicherung (PKV) bietet Ihnen erweiterte und ma\u00dfgeschneiderte Gesundheitsleistungen</strong>.",
+      "Krankenversicherung Rechner | VERIVOX G\u00fcnstigster PKV-Tarif: NK select S3000 inkl. Pflegepflichtversicherung; Arbeitnehmeranteil: 138,84 \u20ac pro Monat. Beitrag GKV (BKK Firmus): Arbeitnehmeranteil: 627,17 \u20ac pro Monat. Monatliche Ersparnis: 488,33 \u20ac. Quelle: Verivox Vergleichsrechner f\u00fcr private Krankenversicherung, Stand: 12/2025.",
+      "Krankenversicherungen im Vergleich | Verivox W\u00e4hrend bei der PKV aufgrund der individuellen Berechnung der Beitr\u00e4ge h\u00e4ufig ein gro\u00dfer Unterschied besteht, k\u00f6nnen Versicherte auch beim GKV-Beitrag sparen. Hier unterscheiden sich die Zusatzbeitr\u00e4ge teilweise um bis zu ein Prozent. Auch bei den Leistungen und dem Service gibt es teils deutliche Unterschiede. Mit dem Verivox-Tarifrechner k\u00f6nnen Verbraucher schnell und kostenlos die Preise und Leistungen der verschiedenen Krankenversicherungen vergle"
+    ],
+    "first_seen_at": "2026-06-21T12:29:37Z",
+    "job_fit_hint": "partial",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Verivox",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung (PKV)",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "Verivox PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.verivox.de/private-krankenversicherung/"
+      },
+      {
+        "query": "Verivox PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.verivox.de/krankenversicherung/rechner/"
+      },
+      {
+        "query": "Verivox PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.verivox.de/krankenversicherung/"
+      },
+      {
+        "query": "Verivox",
+        "source": "known_competitors_input",
+        "url": "https://www.verivox.de/private-krankenversicherung/"
+      }
+    ],
+    "url": "https://www.verivox.de/private-krankenversicherung/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "canonicalized_from_known_competitor": true,
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "finanztip.de",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Private Krankenversicherung (PKV) - Vergleich & Checkliste Hake nach und notiere, wenn Dich der Makler zu bestimmten Themen nicht beraten hat oder eine Sache unklar geblieben ist. Hak alle Punkte auf der Finanztip-Checkliste zur Beratung in der PKV ab, wenn sie besprochen sind. So kannst Du sichergehen, dass Ihr \u00fcber alle wichtigen Punkte gesprochen habt und Du alles richtig verstanden hast.",
+      "Krankenversicherung: Privat oder gesetzlich versichern? Der Rat von Finanztip: M\u00fcsstest Du mehr als zwei Kinder privat krankenversichern, spricht vieles f\u00fcr die gesetzliche Krankenversicherung. Denn <strong>in der PKV zahlst Du f\u00fcr jedes Kind einen eigenen Beitrag, nach einer Finanztip-Recherche rund 150 bis 300 Euro pro Kind</strong>.",
+      "PKV-Beitrag gestiegen? Pr\u00fcf jetzt einen internen Tarifwechsel PKV-Beitr\u00e4ge: Im Schnitt 13 % h\u00f6her als 2025 Tipp: <strong>Interner Tarifwechsel kann Beitr\u00e4ge senken</strong> Weitere Optionen: Anbieterwechsel und R\u00fcckkehr in die GKV"
+    ],
+    "first_seen_at": "2026-06-21T12:29:37Z",
+    "job_fit_hint": "partial",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "known_competitor_supplied": true,
+    "name": "Finanztip",
+    "needs_human_review": true,
+    "page_title": "Private Krankenversicherung (PKV)",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "Finanztip PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.finanztip.de/pkv/"
+      },
+      {
+        "query": "Finanztip PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.finanztip.de/krankenversicherung/"
+      },
+      {
+        "query": "Finanztip PKV",
+        "source": "known_competitor_lookup",
+        "url": "https://www.finanztip.de/daily/pkv-zu-teuer-geworden-diese-moeglichkeiten-hast-du-jetzt/"
+      },
+      {
+        "query": "Finanztip",
+        "source": "known_competitors_input",
+        "url": "https://www.finanztip.de/pkv/"
+      }
+    ],
+    "url": "https://www.finanztip.de/pkv/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "qonto.com",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Insurance Types for the Self-Employed in Germany - Qonto There are many options for insurance when you're self-employed in Germany. Our guide will help you choose the right ones for your business.",
+      "Freelancers and health insurance in Germany - Qonto freelancers can also take out private health insurance (PKV). for the self-employed. GKV or PKV is the right choice for you"
+    ],
+    "first_seen_at": "2026-06-21T12:29:26Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Qonto",
+    "needs_human_review": true,
+    "page_title": "Insurance Types for the Self",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "blog_or_resource_page",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany software",
+        "source": "firecrawl",
+        "url": "https://qonto.com/en/blog/business-management/insurance/self-employed-insurance"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany tools",
+        "source": "firecrawl",
+        "url": "https://qonto.com/en/blog/freelancers/tools-and-tips/freelancers-and-health-insurance-in-germany"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany self employed Germany competitors",
+        "source": "firecrawl",
+        "url": "https://qonto.com/en/blog/business-management/insurance/self-employed-insurance"
+      }
+    ],
+    "url": "https://qonto.com/en/blog/business-management/insurance/self-employed-insurance"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "liveingermany.de",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Insurance Brokers vs Insurance Agents in Germany [2026] Many insurance brokers and agents charge competitive charges for their services, so choose a professional according to your budget. All the best in choosing the most cost-effective insurance broker or insurance agent! Most people look for different methods when finding the best broker or agent. Different options include; ... Among different reputed and reliable brokers, the best one is NEODIRECT. They can assist you in everything related to",
+      "Insurance Brokers vs Insurance Agents in Germany [2026] Many insurance brokers and agents charge competitive charges for their services, so choose a professional according to your budget. All the best in choosing the most cost-effective insurance broker or insurance agent! Most people look for different methods when finding the best broker or agent. Different options include; ... Among different reputed and reliable brokers, the best one is NEODIRECT. They can assist you in everything related to",
+      "Insurance Brokers vs Insurance Agents in Germany [2026] Many insurance brokers and agents charge competitive charges for their services, so choose a professional according to your budget. All the best in choosing the most cost-effective insurance broker or insurance agent! Most people look for different methods when finding the best broker or agent. Different options include; ... Among different reputed and reliable brokers, the best one is NEODIRECT. They can assist you in everything related to"
+    ],
+    "first_seen_at": "2026-06-21T12:29:22Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "mentioned_in_search_evidence"
+    },
+    "name": "Liveingermany",
+    "needs_human_review": true,
+    "page_title": "Insurance Brokers vs Insurance Agents in Germany [2026]",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://liveingermany.de/insurance-brokers-vs-insurance-agents/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://liveingermany.de/insurance-brokers-vs-insurance-agents/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany reviews pricing",
+        "source": "brave_search",
+        "url": "https://liveingermany.de/insurance-brokers-vs-insurance-agents/"
+      }
+    ],
+    "url": "https://liveingermany.de/insurance-brokers-vs-insurance-agents/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "insurancy.de",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Best Insurance Companies for Expats in Germany (Comparison) - Insurancy Also budget for registration fees, initial medical exams if required, and short-term bridge policies on arrival. <strong>Techniker Krankenkasse (TK) and BARMER</strong> are widely recognized for English support, digital services, and preventive programs.",
+      "Best Insurance Companies for Expats in Germany (Comparison) - Insurancy Digital tools from insurers like Ottonova streamline receipts and fast-track reimbursements. Some private clinics can bill insurers directly, depending on agreements. Portability depends on your policy terms. Some PKV tariffs offer international coverage and temporary suspension options. GKV coverage is linked to residency and contributions; extended absences can affect eligibility. Check terms before leaving. Independent br",
+      "Best Insurance Companies for Expats in Germany (Comparison) - Insurancy Digital tools from insurers like Ottonova streamline receipts and fast-track reimbursements. Some private clinics can bill insurers directly, depending on agreements. Portability depends on your policy terms. Some PKV tariffs offer international coverage and temporary suspension options. GKV coverage is linked to residency and contributions; extended absences can affect eligibility. Check terms before leaving. Independent br"
+    ],
+    "first_seen_at": "2026-06-21T12:29:22Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Insurancy",
+    "needs_human_review": true,
+    "page_title": "Best Insurance Companies for Expats in Germany (Comparison)",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "digital insurance broker for PKV BU Germany alternatives",
+        "source": "brave_search",
+        "url": "https://www.insurancy.de/en/expats/best-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany vs",
+        "source": "brave_search",
+        "url": "https://www.insurancy.de/en/expats/best-insurance/"
+      },
+      {
+        "query": "digital insurance broker for PKV BU Germany comparison",
+        "source": "brave_search",
+        "url": "https://www.insurancy.de/en/expats/best-insurance/"
+      }
+    ],
+    "url": "https://www.insurancy.de/en/expats/best-insurance/"
+  }
+]

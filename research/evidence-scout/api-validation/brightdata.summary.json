@@ -1,0 +1,18 @@
+{
+  "api_key_configured": true,
+  "browser_ws_url_configured": true,
+  "cost_note": "Bright Data Browser API / Selenium sessions can incur usage costs. Use low-volume validation before broad collection.",
+  "credential_source": "BRIGHTDATA_SELENIUM_URL",
+  "docs": "https://docs.brightdata.com/scraping-automation/scraping-browser/introduction",
+  "fields": [
+    "value",
+    "value.message",
+    "value.ready"
+  ],
+  "http_status": 200,
+  "notes": "Validated Selenium Browser API endpoint via /status. WebSocket Browser API URL is treated as configured if present; full Playwright/Puppeteer validation requires a browser client dependency.",
+  "provider": "brightdata",
+  "selenium_url_configured": true,
+  "status": "ok",
+  "validated_at": "2026-07-10T07:06:58Z"
+}

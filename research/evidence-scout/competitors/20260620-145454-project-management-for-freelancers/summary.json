@@ -1,0 +1,24 @@
+{
+  "candidate_count": 3,
+  "customer_segment": "solo freelancers managing multiple clients",
+  "needs_user_attention": [],
+  "outputs": {
+    "competitors_json": "/mnt/c/coding/general/market_researcher/.evidence-scout/competitors/20260620-145454-project-management-for-freelancers/competitors.json",
+    "raw": "/mnt/c/coding/general/market_researcher/.evidence-scout/competitors/20260620-145454-project-management-for-freelancers/raw.json",
+    "report": "/mnt/c/coding/general/market_researcher/.evidence-scout/competitors/20260620-145454-project-management-for-freelancers/report.md"
+  },
+  "providers": {
+    "brave_search": {
+      "candidate_count": 3,
+      "credential_source": "BRAVE_SEARCH_API_KEY",
+      "status": "ok"
+    },
+    "firecrawl": {
+      "candidate_count": 3,
+      "credential_source": "FIRECRAWL_API_KEY_HGINVESTOR",
+      "status": "ok"
+    }
+  },
+  "run_dir": "/mnt/c/coding/general/market_researcher/.evidence-scout/competitors/20260620-145454-project-management-for-freelancers",
+  "topic": "project management for freelancers"
+}

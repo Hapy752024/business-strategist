@@ -1,0 +1,57 @@
+{
+  "credential_source": "SERPAPI_API_KEY",
+  "response": {
+    "body": {
+      "error": "Google Trends hasn't returned any results for this query.",
+      "search_information": {
+        "organic_results_state": "Fully empty"
+      },
+      "search_metadata": {
+        "created_at": "2026-06-20 15:04:40 UTC",
+        "google_trends_url": "https://trends.google.com/trends/embed/explore/TIMESERIES?hl=en&tz=420&req=%7B%22comparisonItem%22%3A%5B%7B%22keyword%22%3A%22AI+client+status+reporting+for+freelancers%22%2C%22geo%22%3A%22US%22%2C%22time%22%3A%22today+1-m%22%7D%2C%7B%22keyword%22%3A%22solo+freelancers+managing+multiple+clients%22%2C%22geo%22%3A%22US%22%2C%22time%22%3A%22today+1-m%22%7D%2C%7B%22keyword%22%3A%22how+do+you+deal+with+AI+client+status+reporting+for+freelancers%22%2C%22geo%22%3A%22US%22%2C%22time%22%3A%22today+1-m%22%7D%2C%7B%22keyword%22%3A%22best+way+to+AI+client+status+reporting+for+freelancers%22%2C%22geo%22%3A%22US%22%2C%22time%22%3A%22today+1-m%22%7D%5D%2C%22category%22%3A0%2C%22property%22%3A%22%22%7D",
+        "id": "6a36ac08e6590e7745b5370d",
+        "json_endpoint": "https://serpapi.com/searches/xDnZOm21_pVnQOKcCVyJ4Q/6a36ac08e6590e7745b5370d.json",
+        "prettify_html_file": "https://serpapi.com/searches/xDnZOm21_pVnQOKcCVyJ4Q/6a36ac08e6590e7745b5370d.prettify",
+        "processed_at": "2026-06-20 15:04:40 UTC",
+        "raw_html_file": "https://serpapi.com/searches/xDnZOm21_pVnQOKcCVyJ4Q/6a36ac08e6590e7745b5370d.html",
+        "status": "Success",
+        "total_time_taken": 3.21
+      },
+      "search_parameters": {
+        "data_type": "TIMESERIES",
+        "date": "today 1-m",
+        "engine": "google_trends",
+        "geo": "US",
+        "hl": "en",
+        "q": "AI client status reporting for freelancers,solo freelancers managing multiple clients,how do you deal with AI client status reporting for freelancers,best way to AI client status reporting for freelancers",
+        "tz": "420"
+      }
+    },
+    "headers": {
+      "Accept-Ranges": "bytes",
+      "CF-RAY": "a0ebaad2ea0b8822-ZRH",
+      "Connection": "close",
+      "Content-Length": "1794",
+      "Content-Type": "application/json; charset=utf-8",
+      "Date": "Sat, 20 Jun 2026 15:04:43 GMT",
+      "Server": "cloudflare",
+      "Vary": "accept-encoding",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cache-control": "max-age=3600, public",
+      "cf-cache-status": "MISS",
+      "etag": "W/\"097446a0689f381bf4faa6475ca0ebd8\"",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "serpapi-search-id": "6a36ac08e6590e7745b5370d",
+      "x-content-type-options": "nosniff",
+      "x-download-options": "noopen",
+      "x-frame-options": "SAMEORIGIN",
+      "x-permitted-cross-domain-policies": "none",
+      "x-request-id": "6eb2fc44-e1ea-4d3b-ad85-0fbf3e98b5f8",
+      "x-robots-tag": "noindex, nofollow",
+      "x-runtime": "3.226445",
+      "x-xss-protection": "1; mode=block"
+    },
+    "ok": true,
+    "status_code": 200
+  }
+}

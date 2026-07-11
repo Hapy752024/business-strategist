@@ -1,0 +1,15 @@
+{
+  "cost_note": "Costs one SerpAPI search credit per request on most plans.",
+  "credential_source": "SERPAPI_API_KEY",
+  "docs": "https://serpapi.com/google-trends-api",
+  "fields": [
+    "error"
+  ],
+  "has_interest_over_time": false,
+  "http_status": 429,
+  "provider": "serpapi_google_trends",
+  "query": "project management,task management,notion",
+  "quota_headers": {},
+  "status": "rate_limited",
+  "validated_at": "2026-07-10T07:06:11Z"
+}

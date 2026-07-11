@@ -1,0 +1,49 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(wc *)",
+      "Bash(head *)",
+      "Bash(cat *)",
+      "Bash(which *)",
+      "Bash(python3 scripts/capability_lookup.py *)",
+      "Bash(python3 scripts/evidence_scout/provider_doctor.py *)",
+      "Bash(python3 scripts/validate_apis/run_all.py)",
+      "Bash(python3 scripts/validate_setup.sh)",
+      "Bash(python3 -c *)",
+      "Bash(python3 -m py_compile *)",
+      "Bash(npm list *)",
+      "Bash(npx --version)",
+      "Bash(echo *)",
+      "Bash(date)",
+      "Bash(pwd)",
+      "Bash(uname *)",
+      "Bash(whoami)",
+      "Read(**/*.md)",
+      "Read(**/*.json)",
+      "Read(**/*.py)",
+      "Read(**/*.sh)",
+      "Read(**/*.txt)",
+      "Read(**/*.toml)",
+      "Read(**/*.yml)",
+      "Read(**/*.yaml)",
+      "Read(**/*.cfg)",
+      "Read(**/*.ini)",
+      "Read(**/*.schema)",
+      "Read(**/*.example)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git reset --hard *)",
+      "Bash(git push --force *)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/*secret*)"
+    ]
+  }
+}

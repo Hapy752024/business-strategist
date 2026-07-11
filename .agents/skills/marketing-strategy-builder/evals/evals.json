@@ -1,0 +1,23 @@
+{
+  "skill_name": "marketing-strategy-builder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a marketing strategy for a new AI tool that helps solo consultants turn meeting notes into client updates. We have no users yet.",
+      "expected_output": "A skeptical strategy that narrows the segment, defines positioning, offer, proof needs, channel tests, metrics, and a 30/60/90-day plan without assuming demand.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We sell premium Thai massage gift cards locally and want world-class marketing for the next quarter.",
+      "expected_output": "A local-service marketing strategy with target segments, offers, seasonal/channel plan, proof assets, conversion metrics, and practical tests.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our founder wants to spend $20k on Meta ads because competitors are running ads. Build the strategy.",
+      "expected_output": "A response that challenges channel-first thinking, identifies missing positioning/offer/proof data, proposes smaller tests, and defines paid-media success and stop thresholds.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "skill_name": "startup-business-builder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to start an AI startup for small businesses. Help me make a business plan and tell me what to do first.",
+      "expected_output": "A skeptical business-first response that narrows the vague segment, translates solution language into customer problems, identifies assumptions, and proposes customer discovery plus a 7-day plan.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We are two founders with a prototype for helping accounting firms automate client document collection. We have no paying customers yet. Build a 90-day startup plan focused on business execution.",
+      "expected_output": "A 90-day plan covering early adopter segment, discovery, MVP/concierge test, first 10 customers, pricing hypothesis, metrics, failure risks, scale gates, and weekly actions.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our idea has 2,000 waitlist signups, so we want to hire a sales team and spend on ads. Is this the right next step?",
+      "expected_output": "A pushback that waitlists are weak demand, defines validation thresholds, recommends conversion/retention tests before hiring or ad scaling, and explains premature-scaling risk.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Analyze why Quibi and Airbnb are useful opposite examples for someone starting a marketplace-style consumer startup.",
+      "expected_output": "A case-based answer that extracts transferable lessons: hair-on-fire use case, doing things that do not scale, customer pull, timing, marketplace wedge, and warnings against overfunded overbuild.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "instructions": [
+    "Start at https://developers.tiktok.com/products/research-api/",
+    "Apply for Research API access if eligible",
+    "Copy client key and client secret from your approved app",
+    "Set: export TIKTOK_CLIENT_KEY='...' TIKTOK_CLIENT_SECRET='...'",
+    "Or add both keys to ~/.secrets",
+    "If not eligible, validate APIFY_TOKEN or BRIGHTDATA_API_KEY as fallback providers."
+  ],
+  "provider": "tiktok",
+  "required_env": [
+    "TIKTOK_CLIENT_KEY",
+    "TIKTOK_CLIENT_SECRET"
+  ],
+  "secrets_file_supported": "/home/habib/.secrets",
+  "status": "missing_credentials",
+  "validated_at": "2026-07-10T07:06:56Z"
+}

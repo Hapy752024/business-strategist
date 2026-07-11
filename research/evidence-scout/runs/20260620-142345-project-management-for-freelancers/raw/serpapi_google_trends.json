@@ -1,0 +1,31 @@
+{
+  "credential_source": "SERPAPI_API_KEY",
+  "response": {
+    "body": {
+      "error": "Invalid date format."
+    },
+    "error": "HTTP Error 400: Bad Request",
+    "headers": {
+      "CF-RAY": "a0eb6ef659dfc126-ZRH",
+      "Connection": "close",
+      "Content-Type": "application/json; charset=utf-8",
+      "Date": "Sat, 20 Jun 2026 14:23:48 GMT",
+      "Server": "cloudflare",
+      "Transfer-Encoding": "chunked",
+      "Vary": "accept-encoding",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cache-control": "no-cache",
+      "cf-cache-status": "BYPASS",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "x-content-type-options": "nosniff",
+      "x-download-options": "noopen",
+      "x-frame-options": "SAMEORIGIN",
+      "x-permitted-cross-domain-policies": "none",
+      "x-request-id": "df8c8f7b-0c8f-43bf-aba6-a1197fa0ac41",
+      "x-runtime": "0.007615",
+      "x-xss-protection": "1; mode=block"
+    },
+    "ok": false,
+    "status_code": 400
+  }
+}

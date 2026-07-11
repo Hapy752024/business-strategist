@@ -1,0 +1,1829 @@
+{
+  "credential_source": "BRAVE_SEARCH_API_KEY",
+  "searches": [
+    {
+      "query": "TattooInsurance: risks and worries before getting a tattoo",
+      "response": {
+        "body": {
+          "discussions": {
+            "mutated_by_goggles": false,
+            "results": [
+              {
+                "age": "February 14, 2023",
+                "data": {
+                  "forum_name": "r/TattooArtists",
+                  "num_answers": 11,
+                  "question": "<p dir=\"auto\">\n      Sorry if this has been asked. A previous question asked this, but it was more for a person opening their own shop. Do any artists have their own personal liability insurance working out of someone\u2019s else\u2019s shop? I\u2019d prefer to have peace of mind, but didn\u2019t know if it was common to have personal insurance. I know shops are supposed to cover you, but I like to know I\u2019m 100% covered. If so, what company would be suggested?\n    </p>",
+                  "score": "5",
+                  "title": "Liability insurance as an artist",
+                  "top_comment": "There's seems to be a misconception of personal liability insurance and general business insurance. The shop should 100% have general liability, this would be for slip and falls, damage of store due to natural disasters, etc. (I'm not sure if your belongings would be covered though, but you would be covered if your client fell). Personal liability is anything related to the act of tattooing. An example is if you end up being negligent while tattooing and causing extreme trauma to the skin then you are personally liable. Getting personal liability is up to you. I know majority of the local artists in my area do not have it, especially since they don't understand the difference between them. I also don't have it because it was quoted to me for $150 USD a month and was out of my budget. Though it will be something I look into the future."
+                },
+                "description": "There's seems to be a misconception of personal liability insurance and general business insurance. The shop should 100% have general liability, this would be for slip and falls, damage of store due to natural disasters, etc. (I'm not sure if your belongings would be covered though, but you would be covered if your client fell). Personal liability is anything related to the act of tattooing. An example is if you end up being negligent while tattooing and causing extreme trauma to the skin then you are personally liable. Getting personal liability is up to you. I know majority of the local artists in my area do not have it, especially since they don't understand the difference between them. I also don't have it because it was quoted to me for $150 USD a month and was out of my budget. Though it will be something I look into the future.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1779491373,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a TattooArtists  \u203a comments  \u203a 111uanh  \u203a liability_insurance_as_an_artist",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Liability insurance as an artist",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/TattooArtists/comments/111uanh/liability_insurance_as_an_artist/"
+              },
+              {
+                "age": "April 14, 2018",
+                "data": {
+                  "forum_name": "r/tattoo",
+                  "num_answers": 155,
+                  "question": "<p>\n      So I searched a few keywords like \u201ctattoos long term health\u201d and \u201ccarbon black (what\u2019s used in black ink) toxicity\u201d and found a bunch of articles and studies about potential complications one might face down the line.\n    </p><p>\n      I\u2019m not really referring to infections and allergic reactions, but rather things like chronic low grade inflammation, chronic oxidative stress, DNA damage (genotoxicity) and so on.\n    </p><p>\n      There have also been claims about inks being carcinogenic, being linked to endocrine disruption, and about lymph nodes being blocked.\n    </p><p>\n      What goes through your head when assessing these risks?\n    </p><p>\n      I\u2019m also aware of the possibility that the authors of the above claims may just be looking for an easy target to help that generate views/attention. The topic of tattoos is perfect for those needs. I\u2019m also aware of the fact that there\u2019s toxicity in everything from drinking water to pollution on the streets, and that the human body is adept at eliminating these stressors. However, could the adaptive stress from tattoos be causing long term wear and tear?\n    </p><p>\n      Also, is the adaptive stress continuous (for the life of the tattoo), or does it stop once the ink particles are swallowed by immune cells? (Macrophages)\n    </p><p>\n      Background: want to get a full sleeve this weekend. But I\u2019m slightly deterred by those search findings. I\u2019m the type of health nut who eats 10 servings of greens a day at minimum, so the findings do bother me.\n    </p>",
+                  "score": "106",
+                  "title": "What do you make of claims about long term health risks",
+                  "top_comment": "You'll have to decide for yourself. As you already mentioned folks have other shortcomings so it's a kinda \"pick your poision\" type of deal. I don't know what studies you looked at but anything with longegivity might deserve heavier skepticism. Although no tattoo inks are FDA regulated, my understanding is that the composition and formulas have advanced over the years. A pigment and ink that may have had known carcinogens in the past when sailors, soldiers, and criminals were getting ink may be completely different now. Given the growing popularity and presence of tattoos in younger generations, along with advancing technology and practice, we may not truly know their long term impact on our health until these folks age. You mentioned how well you take care of yourself and I commend you for it. Personally I'm of the opinion that nothing is garaunteed despite our best efforts. There are far greater risks we take with things known, and likely those still unknown. I would tell you to go for it but I'm sure you will hear that more than once in a community subreddit of tattoo enthusiast."
+                },
+                "description": "You'll have to decide for yourself. As you already mentioned folks have other shortcomings so it's a kinda \"pick your poision\" type of deal. I don't know what studies you looked at but anything with longegivity might deserve heavier skepticism. Although no tattoo inks are FDA regulated, my understanding is that the composition and formulas have advanced over the years. A pigment and ink that may have had known carcinogens in the past when sailors, soldiers, and criminals were getting ink may be completely different now. Given the growing popularity and presence of tattoos in younger generations, along with advancing technology and practice, we may not truly know their long term impact on our health until these folks age. You mentioned how well you take care of yourself and I commend you for it. Personally I'm of the opinion that nothing is garaunteed despite our best efforts. There are far greater risks we take with things known, and likely those still unknown. I would tell you to go for it but I'm sure you will hear that more than once in a community subreddit of tattoo enthusiast.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1782589108,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattoo  \u203a comments  \u203a 8c6tw0  \u203a what_do_you_make_of_claims_about_long_term_health",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "What do you make of claims about long term health risks",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattoo/comments/8c6tw0/what_do_you_make_of_claims_about_long_term_health/"
+              },
+              {
+                "age": "December 19, 2023",
+                "data": {
+                  "forum_name": "r/tattooadvice",
+                  "num_answers": 28,
+                  "question": "<p dir=\"auto\">\n      This is probably a dumb question at this point, but... I have four tattoos, all of which are a few years old now. I knew about the risks of scarring/allergic reactions etc (short term risks) when I got them, but I just recently found out that some inks are supposedly toxic and I am <em>panicking out of my mind</em> that I might have cancer&#39;ed myself... So, what I&#39;m looking for is some advice/knowledge from fellow tattooed people so that I can stop digging further into doom-googling. Is it really as bad as they say?\n    </p>",
+                  "score": "5",
+                  "title": "Tattoo anxiety about long term risks",
+                  "top_comment": "This is probably a dumb question at this point, but... I have four tattoos, all of which are a few years old now. I knew about the risks of\u2026"
+                },
+                "description": "This is probably a dumb question at this point, but... I have four tattoos, all of which are a few years old now. I knew about the risks of\u2026",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1780429716,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattooadvice  \u203a comments  \u203a 18mecvg  \u203a tattoo_anxiety_about_long_term_risks",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Tattoo anxiety about long term risks",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattooadvice/comments/18mecvg/tattoo_anxiety_about_long_term_risks/"
+              },
+              {
+                "age": "November 17, 2022",
+                "data": {
+                  "forum_name": "r/educationalgifs",
+                  "num_answers": 397,
+                  "score": "20808",
+                  "title": "How do tattoos stay permanent -",
+                  "top_comment": "This makes sense as to why some mortician said she would always find tattoo ink inside of tumors. White blood cells move around the body"
+                },
+                "description": "This makes sense as to why some mortician said she would always find tattoo ink inside of tumors. White blood cells move around the body",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1774896415,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a educationalgifs  \u203a comments  \u203a yxj114  \u203a how_do_tattoos_stay_permanent",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "How do tattoos stay permanent -",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/educationalgifs/comments/yxj114/how_do_tattoos_stay_permanent/"
+              },
+              {
+                "age": "November 5, 2023",
+                "data": {
+                  "forum_name": "r/NoStupidQuestions",
+                  "num_answers": 4,
+                  "question": "<p>\n      A friend of mine (cancer survivor) recently disclosed that a her first lumpectomy was full of tattoo ink. This was before her cancer diagnosis. So I started running down the list of everyone I know with lots of tattoos (which isn&#39;t many honestly) but the majority of them have developed chronic illnesses (mostly autoimmune disorders and 3 with cancer (thyroid, breast, ovariancancers i think)...all of them relatively young (late 30s-mid 50s).\n    </p><p>\n      So this made me wonder about the prevalence in the general population. Maybe it&#39;s unrelated and just coincidence. Googling seems to only talk about skin cancer at quick search but I&#39;m wondering if others have with tattoos have developed significant health issues (maybe even allergies you didnt have before) after getting tattoos?\n    </p>",
+                  "score": "4",
+                  "title": "People with lots of tattoos, how's your health?",
+                  "top_comment": "I've read that there might be some health risks with tattoos, though I'm not entirely sure about the extent of it. The Mayo Clinic does say tattoos can lead to skin infections and allergic reactions, which is a bit concerning. And then there are the points from Penn Medicine about tattoo pigments possibly creating harmful compounds as they fade, which sounds serious, but I guess it's not entirely clear how often that happens. Healthline and a Danish study suggest there could be long-term effects from the ink, including toxicity and even carcinogens in the body, which makes me wonder about the safety of the inks used. I've also come across a study mentioned by Medical News Today that connects tattoos with risky behaviors, but it seems like that might be more about the person's lifestyle rather than the tattoos causing direct harm. I suppose if someone has health issues or a history of allergies, they might want to talk to their doctor before getting a tattoo."
+                },
+                "description": "I've read that there might be some health risks with tattoos, though I'm not entirely sure about the extent of it. The Mayo Clinic does say tattoos can lead to skin infections and allergic reactions, which is a bit concerning. And then there are the points from Penn Medicine about tattoo pigments possibly creating harmful compounds as they fade, which sounds serious, but I guess it's not entirely clear how often that happens. Healthline and a Danish study suggest there could be long-term effects from the ink, including toxicity and even carcinogens in the body, which makes me wonder about the safety of the inks used. I've also come across a study mentioned by Medical News Today that connects tattoos with risky behaviors, but it seems like that might be more about the person's lifestyle rather than the tattoos causing direct harm. I suppose if someone has health issues or a history of allergies, they might want to talk to their doctor before getting a tattoo.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1762800749,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a NoStupidQuestions  \u203a comments  \u203a 17oo53w  \u203a people_with_lots_of_tattoos_hows_your_health",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "People with lots of tattoos, how's your health?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/NoStupidQuestions/comments/17oo53w/people_with_lots_of_tattoos_hows_your_health/"
+              },
+              {
+                "age": "February 15, 2024",
+                "data": {
+                  "forum_name": "r/tattooadvice",
+                  "num_answers": 126,
+                  "question": "<p dir=\"auto\">\n      I&#39;m at urgent care for something unrelated to tattoos, they left my file on the computer open and it says &quot;heavily tattooed&quot; Is that really relevant to my health? I&#39;m maybe like 40% covered.\n    </p>",
+                  "score": "394",
+                  "title": "Heavily tattooed health risks? ",
+                  "top_comment": "Doctor here: no opinion on tattoo health specifically but often I will chart any specific visual findings (tattoos, piercings, scars, etc) simply because it documents that I have actually seen the patient.  Nowadays many notes are pre-filled out and when we document specifics it just shows that we didn't just click the auto populated note and did indeed examine/see the patient.  (More of a legal precaution than anything mostly)"
+                },
+                "description": "Doctor here: no opinion on tattoo health specifically but often I will chart any specific visual findings (tattoos, piercings, scars, etc) simply because it documents that I have actually seen the patient.  Nowadays many notes are pre-filled out and when we document specifics it just shows that we didn't just click the auto populated note and did indeed examine/see the patient.  (More of a legal precaution than anything mostly)",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1780429716,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattooadvice  \u203a comments  \u203a 1ar4n50  \u203a heavily_tattooed_health_risks",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Heavily tattooed health risks? ",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattooadvice/comments/1ar4n50/heavily_tattooed_health_risks/"
+              },
+              {
+                "age": "March 4, 2025",
+                "data": {
+                  "forum_name": "r/science",
+                  "num_answers": 362,
+                  "score": "4367",
+                  "title": "La tinta del tatuaje puede aumentar el riesgo de c\u00e1ncer de piel y linfoma. Esto se debe a que la tinta del tatuaje se acumula en los ganglios linf\u00e1ticos. Los hallazgos plantean nuevas preguntas sobre los efectos a largo plazo de los tatuajes para la salud.",
+                  "top_comment": "Eso parece bastante l\u00f3gico."
+                },
+                "description": "Eso parece bastante l\u00f3gico.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1748020937,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a science  \u203a comments  \u203a 1j39zat  \u203a tattoo_ink_may_increase_the_risk_of_skin_and",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "La tinta del tatuaje puede aumentar el riesgo de c\u00e1ncer de piel y linfoma. Esto se debe a que la tinta del tatuaje se acumula en los ganglios linf\u00e1ticos. Los hallazgos plantean nuevas preguntas sobre los efectos a largo plazo de los tatuajes para la salud.",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/science/comments/1j39zat/tattoo_ink_may_increase_the_risk_of_skin_and/?tl=es-es"
+              },
+              {
+                "age": "May 18, 2018",
+                "data": {
+                  "forum_name": "r/slatestarcodex",
+                  "num_answers": 19,
+                  "question": "<p>\n    Here\u2019s how I\u2019m thinking about this:\n  </p><p>\n    There\u2019s the short-term risks, infection and whatnot, which can mostly be mitigated by going to a reputable shop that focuses on safety.\n  </p><p>\n    I\u2019m more worried about the long-term - the fact that I\u2019d be permanently injecting ink into my body containing known carcinogens, as well as other weird materials which for all we know are also carcinogens.\n  </p><p>\n    (Ink is apparently pretty much unregulated, often contains lead and other bad-sounding things, I have no idea if the amount of bad stuff present in a small tattoo is likely to be harmful.)\n  </p><p>\n    I would feel pretty dumb and sad if in 20 years it turns out that a material common in tattoo ink is super toxic and significantly raises cancer risk. Also though, I\u2019m aware that probably most of what we all eat/the air we breathe/everything around us contains some amount of horrible toxins, and I don\u2019t usually worry about that, so, <em>shrug</em>.\n  </p><p>\n    Basically I feel like I should do a fermi estimate and try to figure out if the risk of a tattoo eventually harming a person\u2019s health is like 1/100 or more like 1/100,000.\n  </p><ol>\n      <li>\n    <p>\n    Is this approach solid? 2) Any rationalists thought about this before and if so, what did you decide?\n  </p>\n  </li>\n    </ol><p>\n    Alternatively, is there any ink makeup that seems likely to be completely harmless? (There are supposedly safe, \u201corganic\u201d inks but again I have no idea how to go about evaluating these)\n  </p><p>\n    (P.S. I\u2019m aware that the most likely risk of getting a tattoo is regretting it later; that\u2019s a separate topic and not the thing I\u2019m asking about here)\n  </p>",
+                  "score": "17",
+                  "title": "Worth worrying about tattoo health risks?",
+                  "top_comment": "<p>\n    The body tries to get rid of the ink and pigments/heavy metals will accumulate in your lymph nodes:\n  </p><p>\n    <a rpl\n      class=\"relative pointer-events-auto a cursor-pointer\n  \n  \n  \n  \n  underline\n  \"\n      href=\"https://www.reddit.com/r/science/comments/6zoy5n/researchers_investigating_how_tattoo_ink_travels/\"\n      rel=\"noopener nofollow ugc\"\n      target=\"_blank\"\n      >https://www.reddit.com/r/science/comments/6zoy5n/researchers_investigating_how_tattoo_ink_travels/</a\n    >\n  </p><p>\n    There don\u2019t seem many studies though examining the long term health risks or effects on the immune system (the visible ink under the skin is also constantly re-eaten by macrophages trying to contain the foreign particles according to a mouse study).\n  </p>"
+                },
+                "description": "<p>\n    The body tries to get rid of the ink and pigments/heavy metals will accumulate in your lymph nodes:\n  </p><p>\n    <a rpl\n      class=\"relative pointer-events-auto a cursor-pointer\n  \n  \n  \n  \n  underline\n  \"\n      href=\"https://www.reddit.com/r/science/comments/6zoy5n/researchers_investigating_how_tattoo_ink_travels/\"\n      rel=\"noopener nofollow ugc\"\n      target=\"_blank\"\n      >https://www.reddit.com/r/science/comments/6zoy5n/researchers_investigating_how_tattoo_ink_travels/</a\n    >\n  </p><p>\n    There don\u2019t seem many studies though examining the long term health risks or effects on the immune system (the visible ink under the skin is also constantly re-eaten by macrophages trying to contain the foreign particles according to a mouse study).\n  </p>",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1737065419,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a slatestarcodex  \u203a comments  \u203a 8kfls6  \u203a worth_worrying_about_tattoo_health_risks",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Worth worrying about tattoo health risks?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/slatestarcodex/comments/8kfls6/worth_worrying_about_tattoo_health_risks/"
+              },
+              {
+                "age": "January 6, 2020",
+                "data": {
+                  "forum_name": "r/tattoo",
+                  "num_answers": 36,
+                  "question": "<p>\n      So I&#39;ve been interested in getting a tattoo, or a few, but I&#39;m worried about possible health risks. We know for sure that the dye accumulates in your lymph nodes, but no one really knows how it affects you in the long run. Tattoos can of course mask the signs of skin cancer and delay diagnosis and black ink has plenty of polycyclic aromatic hydrocarbons, which are known carcinogens.\n    </p><p>\n      Just late last year Finnish Safety and Chemicals Agency found toxic and possibly cancer causing chemicals in 8 out of 20 tested inks. See <a rpl class=\"relative pointer-events-auto a cursor-pointer\n  \n  \n  \n  \n  underline\n  \" href=\"https://tukes.fi/artikkeli/-/asset_publisher/tukes-testautti-tatuointi-ja-kestopigmentointivareja-kahdeksasta-varista-loytyi-terveydelle-vaarallisia-aineita?_101_INSTANCE_DqFW1Fw9NTGI_languageId=en_US\" rel=\"noopener nofollow noreferrer ugc\" target=\"_blank\">here</a>.\n    </p><p>\n      I&#39;ve had testicular cancer and there&#39;s A LOT of prostate cancer in my family. I really like tattoos, but at the same time I don&#39;t want to potentially raise my risk of getting cancer any higher. Anyone else struggling with this?\n    </p>",
+                  "score": "16",
+                  "title": "Worrying about tattoo health risks",
+                  "top_comment": "Unfortunately, European countries seem to be similar to the US in not really regulating what goes into tattoo inks and pigments. This is why you go to a reputable artist. However, increasing a risk of cancer is far more complicated than getting \u201ca few tattoos\u201d. If your morning commute has you walking past a lot of diesel vehicle idling, that is going to increase your risk of cancer far more than getting a tattoo. The same goes doe sun bathing. There are risks in everything and yes the pigment our body transports away from the tattoo site does accumulate in the lymph nodes. But, there haven\u2019t been any studies showing any sort of strong correlation to tattoos and cancer."
+                },
+                "description": "Unfortunately, European countries seem to be similar to the US in not really regulating what goes into tattoo inks and pigments. This is why you go to a reputable artist. However, increasing a risk of cancer is far more complicated than getting \u201ca few tattoos\u201d. If your morning commute has you walking past a lot of diesel vehicle idling, that is going to increase your risk of cancer far more than getting a tattoo. The same goes doe sun bathing. There are risks in everything and yes the pigment our body transports away from the tattoo site does accumulate in the lymph nodes. But, there haven\u2019t been any studies showing any sort of strong correlation to tattoos and cancer.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1762800749,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattoo  \u203a comments  \u203a ekrt8u  \u203a worrying_about_tattoo_health_risks",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Worrying about tattoo health risks",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattoo/comments/ekrt8u/worrying_about_tattoo_health_risks/"
+              },
+              {
+                "age": "May 28, 2024",
+                "data": {
+                  "forum_name": "r/Health",
+                  "num_answers": 179,
+                  "score": "973",
+                  "title": "Scientists warn tattoos may increase cancer risk",
+                  "top_comment": "Maybe. I wouldn\u2019t be surprise either way. I wonder if people are more preposition to get this cancer is more higher risk than those who do not. We also need to look if people who have tattoos have other habits that may contribute to higher risks, such as smoking, sun exposure, and alcohol use. Cause I have a tattoo after my cancer treatment, so haha I\u2019m doomed again."
+                },
+                "description": "Maybe. I wouldn\u2019t be surprise either way. I wonder if people are more preposition to get this cancer is more higher risk than those who do not. We also need to look if people who have tattoos have other habits that may contribute to higher risks, such as smoking, sun exposure, and alcohol use. Cause I have a tattoo after my cancer treatment, so haha I\u2019m doomed again.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1746054587,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a Health  \u203a comments  \u203a 1d2ke62  \u203a scientists_warn_tattoos_may_increase_cancer_risk",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Scientists warn tattoos may increase cancer risk",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/Health/comments/1d2ke62/scientists_warn_tattoos_may_increase_cancer_risk/"
+              },
+              {
+                "age": "July 6, 2024",
+                "data": {
+                  "forum_name": "r/tattooadvice",
+                  "num_answers": 651,
+                  "question": "<p>\n      Me encanta (33) mi nuevo tatuaje, pero recib\u00ed algunos comentarios bastante mediocres de mi familia despu\u00e9s de mostr\u00e1rselo. Lo que escuch\u00e9 fue que los tatuajes son veneno, te ponen en riesgo de sufrir c\u00e1ncer, etc.\n    </p><p>\n      Ahora bien, no creo que mis dos peque\u00f1os tatuajes de l\u00edneas con tinta UE sean lo m\u00e1s peligroso, pero \u00bfalguien conoce estudios sobre los tatuajes y la salud? \u00bfEsto pondr\u00e1 en riesgo mis ganglios linf\u00e1ticos?\n    </p>",
+                  "score": "3769",
+                  "title": "La familia dice que los tatuajes son veneno",
+                  "top_comment": "S\u00e9 que MUCHA m\u00e1s gente se ha envenenado por la familia que por los tatuajes. \ud83e\udd37\u200d\u2642\ufe0f"
+                },
+                "description": "S\u00e9 que MUCHA m\u00e1s gente se ha envenenado por la familia que por los tatuajes. \ud83e\udd37\u200d\u2642\ufe0f",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1754420197,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "es",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattooadvice  \u203a comments  \u203a 1dwzaop  \u203a family_said_tattoos_are_poison",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "La familia dice que los tatuajes son veneno",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattooadvice/comments/1dwzaop/family_said_tattoos_are_poison/?tl=es-es"
+              }
+            ],
+            "type": "search"
+          },
+          "mixed": {
+            "main": [
+              {
+                "all": false,
+                "index": 0,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 1,
+                "type": "web"
+              },
+              {
+                "all": true,
+                "type": "discussions"
+              },
+              {
+                "all": false,
+                "index": 2,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 3,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 4,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 5,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 6,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 7,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 8,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 9,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 10,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 11,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 12,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 13,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 14,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 15,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 16,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 17,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 18,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 19,
+                "type": "web"
+              }
+            ],
+            "side": [],
+            "top": [],
+            "type": "mixed"
+          },
+          "query": {
+            "altered": "tattoo insurance: risks and worries before getting a tattoo",
+            "bad_results": false,
+            "city": "",
+            "country": "es",
+            "header_country": "",
+            "is_navigational": false,
+            "is_news_breaking": false,
+            "more_results_available": true,
+            "original": "TattooInsurance: risks and worries before getting a tattoo",
+            "postal_code": "",
+            "should_fallback": false,
+            "show_strict_warning": false,
+            "spellcheck_off": false,
+            "state": ""
+          },
+          "type": "search",
+          "web": {
+            "family_friendly": true,
+            "results": [
+              {
+                "age": "February 12, 2026",
+                "article": {
+                  "author": [
+                    {
+                      "name": "HDFC ERGO team",
+                      "type": "person"
+                    }
+                  ],
+                  "date": "May 17, 2023",
+                  "publisher": {
+                    "name": "HDFC ERGO General Insurance Company Limited",
+                    "thumbnail": {
+                      "original": "https://www.hdfcergo.com/portal-images/logo.png",
+                      "src": "https://imgs.search.brave.com/kL4Wei77T22IlcHJB17MKpyHNGmwILd0fy2ziOW7EkM/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/aGRmY2VyZ28uY29t/L3BvcnRhbC1pbWFn/ZXMvbG9nby5wbmc"
+                    },
+                    "type": "organization"
+                  }
+                },
+                "description": "Before getting inked, it\u2019s extremely important to <strong>ensure the needles are sterilised</strong>. Using non-sterilised or contaminated needles increases the risk of contracting blood-borne diseases like HIV and Hepatitis B &amp; C.",
+                "extra_snippets": [
+                  "From allergic reactions to skin infections, it\u2019s important to understand what you\u2019re getting into and how to protect yourself. Let\u2019s discuss the potential health risks of tattoos, the dangers of tattoos, what you need to do before getting one, and how your health insurance plan can come to your aid if anything goes wrong.",
+                  "However, check the terms and conditions before buying health insurance to ensure that any tattooing-related ailment is covered. Aside from protecting against tattoo-related health risks, health insurance can also cover the costs of medical treatments for a wide range of other health conditions and emergencies.",
+                  "However, there are some health risks of tattoos, which one should be aware of: Tattooing can cause allergic reactions in some people due to the chemicals or metals in tattoo ink, especially in coloured dyes. Some symptoms are hives, itchiness, rash, and swelling, which can occur even years after getting tattooed.",
+                  "Although rare, getting a tattoo may cause skin cancer as some of the colours or pigments may be carcinogenic or contain components like azo used in car paints. Before getting inked, it\u2019s extremely important to ensure the needles are sterilised. Using non-sterilised or contaminated needles increases the risk of contracting blood-borne diseases like HIV and Hepatitis B & C."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/FieuPFB2N5-iDhZuw1fqf9sWi8T0yCdEjsNFMTjfs2g/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYmExNmQzOWRh/NTQ1YjYxYjAyYTJk/NDQ2NzM4YWIyZTUw/OTc3ZjQwZTZmYzUx/M2JiMWRmNDM1YTlm/MGMyNGE1Yy93d3cu/aGRmY2VyZ28uY29t/Lw",
+                  "hostname": "www.hdfcergo.com",
+                  "netloc": "hdfcergo.com",
+                  "path": "  \u203a home  \u203a blogs  \u203a health insurance  \u203a things to know before getting inked",
+                  "scheme": "https"
+                },
+                "page_age": "2026-02-12T09:37:20",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/FieuPFB2N5-iDhZuw1fqf9sWi8T0yCdEjsNFMTjfs2g/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYmExNmQzOWRh/NTQ1YjYxYjAyYTJk/NDQ2NzM4YWIyZTUw/OTc3ZjQwZTZmYzUx/M2JiMWRmNDM1YTlm/MGMyNGE1Yy93d3cu/aGRmY2VyZ28uY29t/Lw",
+                  "long_name": "hdfcergo.com",
+                  "name": "HDFCErgo",
+                  "url": "https://www.hdfcergo.com/blogs/health-insurance/things-to-know-before-getting-inked"
+                },
+                "subtype": "article",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://customer-portal-assets.hdfcergo.com/assets/v2/things-to-know-before-getting-inked-226073873182-1200.webp",
+                  "src": "https://imgs.search.brave.com/YHfcV1Tna6JBKNVOwUhBHD3uXDfVYa3hPAwTx4tg9gQ/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9jdXN0/b21lci1wb3J0YWwt/YXNzZXRzLmhkZmNl/cmdvLmNvbS9hc3Nl/dHMvdjIvdGhpbmdz/LXRvLWtub3ctYmVm/b3JlLWdldHRpbmct/aW5rZWQtMjI2MDcz/ODczMTgyLTEyMDAu/d2VicA"
+                },
+                "title": "Getting A Tattoo? Here Are the Things to Know Before Getting Inked",
+                "type": "search_result",
+                "url": "https://www.hdfcergo.com/blogs/health-insurance/things-to-know-before-getting-inked"
+              },
+              {
+                "age": "February 18, 2025",
+                "article": {
+                  "author": [
+                    {
+                      "name": "Nathan Molenaar",
+                      "type": "person"
+                    }
+                  ],
+                  "date": "Feb 18, 2025",
+                  "publisher": {
+                    "name": "Tattooing 101",
+                    "type": "organization"
+                  }
+                },
+                "description": "While you hope that you never need it, tattoo shop insurance is essential for every tattoo business. <strong>Operating without it is - at worst - illegal, and - at best - really risky</strong>.",
+                "extra_snippets": [
+                  "Only the business\u2019 assets are at risk. Depending on how you file taxes, you can technically an \u201cemployee\u201d of your LLC. You also need to get an EIN (number needed for filing taxes), register for taxes, and get a business license. There are several different types of insurance tattoo shops need to keep in mind.",
+                  "Insurance is a big expense, but it\u2019s safe to say that insurance for your tattoo studio will cost much less than any legal defense costs you might have as a tattoo shop owner. It\u2019s not worth \u201crisking it\u201d to save money.",
+                  "Generally, body piercing and tattoo services overlap in a lot of ways, and a lot of studios in the tattoo industry offer piercing. However, when you apply for insurance coverage, it\u2019s worth talking to the insurance agency about any additional coverage you might need as a body piercing business. For example, you\u2019d want coverage that applies to risks specific to piercing procedures, such as:",
+                  "While you hope that you never need it, tattoo shop insurance is essential for every tattoo business. Operating without it is - at worst - illegal, and - at best - really risky."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/1g3JLHN2MWeW5xhqhrQEeJnojpDRvZK9gB8QteUc7vg/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNWRhMTBhMmJm/YjcyOWE3NmMyOTkz/NThiNWMyZmI5NDU3/MDNjNGU5NThlYWYy/MWUzYTc3MWY2ZjVj/NzU1ZTQzYS90YXR0/b29pbmcxMDEuY29t/Lw",
+                  "hostname": "tattooing101.com",
+                  "netloc": "tattooing101.com",
+                  "path": "  \u203a home  \u203a topics  \u203a tattoo business  \u203a 7 tattoo artist insurance policies every tattoo shop & artist needs to know",
+                  "scheme": "https"
+                },
+                "page_age": "2025-02-18T12:23:05",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/1g3JLHN2MWeW5xhqhrQEeJnojpDRvZK9gB8QteUc7vg/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNWRhMTBhMmJm/YjcyOWE3NmMyOTkz/NThiNWMyZmI5NDU3/MDNjNGU5NThlYWYy/MWUzYTc3MWY2ZjVj/NzU1ZTQzYS90YXR0/b29pbmcxMDEuY29t/Lw",
+                  "long_name": "tattooing101.com",
+                  "name": "Tattooing 101",
+                  "url": "https://tattooing101.com/learn/business/insurance-policies/"
+                },
+                "subtype": "article",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://tattooing101.com/wp-content/uploads/2025/02/Tattoo-Studio.webp",
+                  "src": "https://imgs.search.brave.com/IrPGBB0M0_OsfBla59uREOWk3ZtDEnR3KsADl0TLtjw/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly90YXR0/b29pbmcxMDEuY29t/L3dwLWNvbnRlbnQv/dXBsb2Fkcy8yMDI1/LzAyL1RhdHRvby1T/dHVkaW8ud2VicA"
+                },
+                "title": "Tattoo Artist Insurance: 7 Policies You Need | Tattooing 101",
+                "type": "search_result",
+                "url": "https://tattooing101.com/learn/business/insurance-policies/"
+              },
+              {
+                "age": "June 6, 2024",
+                "description": "\u201cWhen I got into the insurance industry 15 years ago, people didn\u2019t want to do business with me because I had tattoos everywhere. I didn\u2019t look the part and there was a stigma attached to me before they got to know what I was capable of,\u201d writes Woedl.",
+                "extra_snippets": [
+                  "As a tattoo artist, your craft is more than just a job \u2013 it\u2019s your passion. But like any profession, there are risks involved in the tattoo industry that could potentially derail that passion. That\u2019s why having the right insurance coverage is absolutely crucial for tattoo artists.",
+                  "\u201cWhen I got into the insurance industry 15 years ago, people didn\u2019t want to do business with me because I had tattoos everywhere. I didn\u2019t look the part and there was a stigma attached to me before they got to know what I was capable of,\u201d writes Woedl.",
+                  "They\u2019ve done their homework too, carefully analyzing claims data from the tattoo industry and crafting policies that address the real risks artists face without overcharging or nickel-and-diming with unnecessary fees and surcharges.",
+                  "Enter InkShopGuard, an insurance program specifically designed to meet the unique coverage needs of the tattoo and body piercing industry. Founded by Shawn Woedl and managed by Nate Szana, who both truly understand the wants and needs of tattoo artists, InkShopGuard offers comprehensive insurance policies tailored to your profession."
+                ],
+                "family_friendly": false,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/TEm2WLaBCzZvHQEjApeeSY_8irS4arSJkDXXqJ9P5Ao/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYjIyOGY4ZGI4/ZGVjNWVjNGM2ODc3/NDA1MjljZGMwYzRi/ZjlhNWFkZjNjOGIw/MWIxYWFkNmFlZmI4/NjEyM2NlMy9pbmtl/ZG1hZy5jb20v",
+                  "hostname": "inkedmag.com",
+                  "netloc": "inkedmag.com",
+                  "path": "  \u203a home  \u203a the insurance designed specifically for tattoo artists",
+                  "scheme": "https"
+                },
+                "page_age": "2024-06-06T22:46:55",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/TEm2WLaBCzZvHQEjApeeSY_8irS4arSJkDXXqJ9P5Ao/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYjIyOGY4ZGI4/ZGVjNWVjNGM2ODc3/NDA1MjljZGMwYzRi/ZjlhNWFkZjNjOGIw/MWIxYWFkNmFlZmI4/NjEyM2NlMy9pbmtl/ZG1hZy5jb20v",
+                  "long_name": "inkedmag.com",
+                  "name": "InkedMag",
+                  "url": "https://inkedmag.com/original-news/the-insurance-designed-specifically-for-tattoo-artists"
+                },
+                "subtype": "article",
+                "title": "The Insurance Designed Specifically for Tattoo Artists - InkedMag",
+                "type": "search_result",
+                "url": "https://inkedmag.com/original-news/the-insurance-designed-specifically-for-tattoo-artists"
+              },
+              {
+                "age": "November 17, 2025",
+                "description": "For example, if a client slips on a wet floor in your shop and breaks their arm, this policy could cover their medical expenses and your legal fees if they sue. Before you ink your first tattoo, <strong>liability insurance is essential</strong>.",
+                "extra_snippets": [
+                  "Having tattoo insurance policies means you can focus on your art rather than the potential cost of property damage, lawsuits, and other losses. Learn more.",
+                  "Each piece of art you create is a testament to your skill and passion. But with any business, especially one as hands-on as tattooing, there are inherent risks. That's where tattoo insurance comes in, providing a vital safety net that protects your hard work, your employees, and your clients.",
+                  "From a slip and fall in your studio to a client having an allergic reaction to ink, the right tattoo shop insurance can be the difference between a minor hiccup and a major financial disaster. In this post, we'll explore the risks tattoo shops face and the essential coverages that can help you sleep better at night.",
+                  "Here's a breakdown of the most important types of insurance for tattoo artists and studio owners. General liability insurance. This is a must-have for any business that interacts with the public. It can protect your business from claims of bodily injury, property damage, and personal injury that occur on your premises. For example, if a client slips on a wet floor in your shop and breaks their arm, this policy could cover their medical expenses and your legal fees if they sue. Before you ink your first tattoo, liability insurance is essential."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/gvstJ0usxPZGA3p0AAhrr8iCI1oItjcARmXKmky05DE/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZTIxMjUzZmQ5/NmRkMTg0MzhlMGYy/OWE1MjZlNzAwNGYw/ODIwMmM2MGY2YmVm/Y2Q5ZjM0MWE5OGE5/MWNiZWMyZi93d3cu/YmliZXJrLmNvbS8",
+                  "hostname": "www.biberk.com",
+                  "netloc": "biberk.com",
+                  "path": "\u203a articles  \u203a tattoo-insurance-for-shops-and-studios",
+                  "scheme": "https"
+                },
+                "page_age": "2025-11-17T17:51:00",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/gvstJ0usxPZGA3p0AAhrr8iCI1oItjcARmXKmky05DE/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZTIxMjUzZmQ5/NmRkMTg0MzhlMGYy/OWE1MjZlNzAwNGYw/ODIwMmM2MGY2YmVm/Y2Q5ZjM0MWE5OGE5/MWNiZWMyZi93d3cu/YmliZXJrLmNvbS8",
+                  "long_name": "biberk.com",
+                  "name": "Biberk",
+                  "url": "https://www.biberk.com/articles/tattoo-insurance-for-shops-and-studios"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://www.biberk.com/media/huephcuf/teaser-fallback-image.png",
+                  "src": "https://imgs.search.brave.com/G_VeixyivyA3dfgoLo8ASo55fU6K-B-sDo_5D08h5F0/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/YmliZXJrLmNvbS9t/ZWRpYS9odWVwaGN1/Zi90ZWFzZXItZmFs/bGJhY2staW1hZ2Uu/cG5n"
+                },
+                "title": "Tattoo Insurance Policies For Shops And Studios | biBerk",
+                "type": "search_result",
+                "url": "https://www.biberk.com/articles/tattoo-insurance-for-shops-and-studios"
+              },
+              {
+                "age": "November 24, 2025",
+                "description": "Your policy is built around your services, risk profile, and contract requirements. Premiums are influenced by factors like the number of artists, services provided (tattooing, body piercing, permanent makeup, tattoo removal), training and experience, sterilization and safety protocols, prior claims, location, annual revenue, desired limits, and deductibles.",
+                "extra_snippets": [
+                  "With more and more people getting tattoos, tattoo shops, piercing shops, and tattoo artists need to make sure they are getting the proper liability insurance for tattoo artists and comprehensive tattoo shop insurance coverage to help protect themselves from everyday risk and lawsuits.",
+                  "Yes, we can provide insurance solutions for mobile tattoo artists or those who work at conventions. Our solutions account for the unique risks associated with non-permanent work locations.",
+                  "The cost of tattoo shop insurance varies depending on several factors such as the size of the shop, number of employees, types of services offered, and the specific risks insured.",
+                  "Your policy is built around your services, risk profile, and contract requirements. Premiums are influenced by factors like the number of artists, services provided (tattooing, body piercing, permanent makeup, tattoo removal), training and experience, sterilization and safety protocols, prior claims, location, annual revenue, desired limits, and deductibles."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/Xd9LtMiwG6s6GRJg6rP0Yequo-z6qmfzSGvS7qpr7qY/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYjMwOTVmZjk0/NmVjMzM1Y2U2ZDVl/YzgzZWRkZTdmZGZm/ZWE4MGMyZmMzMjA3/ZTEyMDNkOGVlYmIy/NWZkMTc1Zi93d3cu/eGluc3VyYW5jZS5j/b20v",
+                  "hostname": "www.xinsurance.com",
+                  "netloc": "xinsurance.com",
+                  "path": "  \u203a home  \u203a risk class  \u203a tattoo shops",
+                  "scheme": "https"
+                },
+                "page_age": "2025-11-24T15:36:33",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/Xd9LtMiwG6s6GRJg6rP0Yequo-z6qmfzSGvS7qpr7qY/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYjMwOTVmZjk0/NmVjMzM1Y2U2ZDVl/YzgzZWRkZTdmZGZm/ZWE4MGMyZmMzMjA3/ZTEyMDNkOGVlYmIy/NWZkMTc1Zi93d3cu/eGluc3VyYW5jZS5j/b20v",
+                  "long_name": "xinsurance.com",
+                  "name": "XINSURANCE",
+                  "url": "https://www.xinsurance.com/risk-class/tattoo-shop-insurance/"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://www.xinsurance.com/wp-content/uploads/2024/05/liability-insurance-for-tattoo-shops-2nd-Image.jpg",
+                  "src": "https://imgs.search.brave.com/jidCpbf_MA2-TFX_EQo4c1QFwfLTTmv7-RtPYx3hNyo/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/eGluc3VyYW5jZS5j/b20vd3AtY29udGVu/dC91cGxvYWRzLzIw/MjQvMDUvbGlhYmls/aXR5LWluc3VyYW5j/ZS1mb3ItdGF0dG9v/LXNob3BzLTJuZC1J/bWFnZS5qcGc"
+                },
+                "title": "Tattoo Shop Insurance - For Shops, Parlors, & Artists",
+                "type": "search_result",
+                "url": "https://www.xinsurance.com/risk-class/tattoo-shop-insurance/"
+              },
+              {
+                "age": "December 18, 2025",
+                "description": "That&#x27;s why we created a policy that supports you through those risks so that you can focus on what you do best, even when faced with an accident or lawsuit. Your tattoo insurance policy will include:",
+                "extra_snippets": [
+                  "\ud83d\udc9fWhat she says about Alternative Balance: Alternative Balance has been instrumental in providing me with great insurance coverage and ensuring peace of mind for both myself and my business. Their comprehensive policies have safeguarded me against potential risks and unforeseen events, allowing me to focus on running my business with confidence. Knowing that I have reliable protection in place has alleviated any worries about potential financial losses or liabilities.",
+                  "With the Alternative Balance plan, you don\u2019t have to be tied to one workplace. This tattoo artist insurance coverage follows you wherever you work, anywhere in the world! ... Alternative Balance understands the many risks that go along with owning a tattoo business.",
+                  "That's why we created a policy that supports you through those risks so that you can focus on what you do best, even when faced with an accident or lawsuit. Your tattoo insurance policy will include:",
+                  "Our service plans provide insurance coverage for over 1000+ professional trades in the fields of beauty, fitness, massage and wellness. See Full List ... Get Featured on Social Media! ... The Alternative Balance Tattoo Insurance program is an affordable tattoo insurance option for independent tattoo artists and tattoo studio owners."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/ejynB-A6EQQUZU5Wv8A8ltWol00zbEPnS5a91pFJ-x8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMjVhM2ZjZTU3/NzNjMDJkMzQ5MTcx/MDE4OWQ0Nzk3MGYw/MGNjZDU2YzY2Nzk1/YjE2OWU4NzBkMjVl/YWQ4MTc5Mi9hbHRl/cm5hdGl2ZWJhbGFu/Y2UuY29tLw",
+                  "hostname": "alternativebalance.com",
+                  "netloc": "alternativebalance.com",
+                  "path": "  \u203a home  \u203a tattoo insurance",
+                  "scheme": "https"
+                },
+                "organization": {
+                  "contact_points": [],
+                  "name": "Alternative Balance",
+                  "type": "organization"
+                },
+                "page_age": "2025-12-18T21:14:11",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/ejynB-A6EQQUZU5Wv8A8ltWol00zbEPnS5a91pFJ-x8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMjVhM2ZjZTU3/NzNjMDJkMzQ5MTcx/MDE4OWQ0Nzk3MGYw/MGNjZDU2YzY2Nzk1/YjE2OWU4NzBkMjVl/YWQ4MTc5Mi9hbHRl/cm5hdGl2ZWJhbGFu/Y2UuY29tLw",
+                  "long_name": "alternativebalance.com",
+                  "name": "Alternative Balance",
+                  "url": "https://alternativebalance.com/tattoo-insurance/"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://alternativebalance.com/wp-content/uploads/2022/02/tattoo-insurance.jpg",
+                  "src": "https://imgs.search.brave.com/CZaoacPLpnfdghvI6ghFlxGQrm_91oyp751FdlDI9CE/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9hbHRl/cm5hdGl2ZWJhbGFu/Y2UuY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy8yMDIyLzAyL3Rh/dHRvby1pbnN1cmFu/Y2UuanBn"
+                },
+                "title": "Tattoo Insurance | Alternative Balance\u00ae",
+                "type": "search_result",
+                "url": "https://alternativebalance.com/tattoo-insurance/"
+              },
+              {
+                "description": "For instance, <strong>a client might develop an infection, experience an allergic reaction, or be unsatisfied with the work performed</strong>. Without professional liability insurance, these incidents could lead to costly legal claims and could significantly ...",
+                "extra_snippets": [
+                  "Tattoo artistry is a skilled and creative profession, but like any business, it comes with its risks and challenges. Having the right insurance coverage is crucial. Whether you're a tattoo shop owner, a self-employed tattoo artist, or managing a busy studio. One way to protect against risks is tattoo liability insurance, which covers you if something goes wrong during or after a treatment.",
+                  "Tattoo liability insurance is a specialised form of tattoo artist insurance. It's designed to protect artists and tattoo business owners from the risks that come with performing body art and related services. Given that tattoos are permanent, any mistakes, accidents, or allergic reactions can lead to significant claims from clients.",
+                  "For instance, a client might develop an infection, experience an allergic reaction, or be unsatisfied with the work performed. Without professional liability insurance, these incidents could lead to costly legal claims and could significantly harm your finances and reputation. As a tattoo artist, you're exposed to various risks when working with a client.",
+                  "These can arise if a client is unhappy with their treatment. Additionally, tattoo removal insurance covers claims related to removal procedures that result in injury, scarring, or other complications. This insurance covers the risks associated with treatments, such as infections or reactions to the ink."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/AWWfhCgf30uWBKSF5l9CDkVQ3kqv_N4f71RWQB-Zlhs/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZGZlNGIzZjRi/ZTRkYjkxZjdmZTNh/NDdjOGJiNGFkOTE4/ZGFlNTI1MDI0Y2Nl/NzU5MTJjMDBlODY4/NGU5YmRmYS93d3cu/c21laW5zdXJhbmNl/LmNvbS8",
+                  "hostname": "www.smeinsurance.com",
+                  "netloc": "smeinsurance.com",
+                  "path": "  \u203a home  \u203a knowledge and resource hub  \u203a news and guides  \u203a tattoo liability insurance",
+                  "scheme": "https"
+                },
+                "profile": {
+                  "img": "https://imgs.search.brave.com/AWWfhCgf30uWBKSF5l9CDkVQ3kqv_N4f71RWQB-Zlhs/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZGZlNGIzZjRi/ZTRkYjkxZjdmZTNh/NDdjOGJiNGFkOTE4/ZGFlNTI1MDI0Y2Nl/NzU5MTJjMDBlODY4/NGU5YmRmYS93d3cu/c21laW5zdXJhbmNl/LmNvbS8",
+                  "long_name": "smeinsurance.com",
+                  "name": "Smeinsurance",
+                  "url": "https://www.smeinsurance.com/knowledge-and-resource-hub/news-and-guides/tattoo-liability-insurance.html"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://www.smeinsurance.com/content/dam/marshcommercial/smei/imagery/heroes/tattoo-liability-insurance-1920x1080_hero.jpg",
+                  "src": "https://imgs.search.brave.com/F8cz5_aX0yzT8Plg5zomPQuFRZk4MvH3su8KBetShtg/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/c21laW5zdXJhbmNl/LmNvbS9jb250ZW50/L2RhbS9tYXJzaGNv/bW1lcmNpYWwvc21l/aS9pbWFnZXJ5L2hl/cm9lcy90YXR0b28t/bGlhYmlsaXR5LWlu/c3VyYW5jZS0xOTIw/eDEwODBfaGVyby5q/cGc"
+                },
+                "title": "Tattoo Liability Insurance: Why Do You Need It?",
+                "type": "search_result",
+                "url": "https://www.smeinsurance.com/knowledge-and-resource-hub/news-and-guides/tattoo-liability-insurance.html"
+              },
+              {
+                "description": "Tattoo insurance providers recognize the exposure and risks associated with operating this type of business. <strong>Staying operative and running a profitable business in the face of a lawsuit or disaster</strong> is essential.",
+                "extra_snippets": [
+                  "Requirements for tattoo insurance vary depending on the state you conduct business in. While it may not be legally required everywhere, you must consider putting a liability policy into place to protect your business. It's especially important for tattoo artists who travel or work at conventions to make sure they're protected with the proper professional liability coverage. A tattoo shop owner should always be aware of the potential risks involved in the tattoo industry and secure the necessary coverage.",
+                  "The average cost of tattoo insurance falls between $55 and $75 a month for general liability ($1,000,000/$2,000,000) and is usually under $100 a month. Tivly understands high-risk businesses such as yours. Many insurance services and brokerages shy away from insurance for tattoo artists, making it difficult to obtain a quote.",
+                  "Tattoo insurance providers recognize the exposure and risks associated with operating this type of business. Staying operative and running a profitable business in the face of a lawsuit or disaster is essential.",
+                  "Tattoo Shop insurance\u2014referred to as tattoo insurance, tattoo liability insurance, tattoo artist insurance, and tattooist insurance\u2014is business insurance designed to protect your tattoo parlor, your employees, your customers, and you."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/UIQFOAzYTMvX9iZOTZ2329cZLtgzYERbL9jnaSUIpLw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZmExNzQ3YTU5/YjcxNmZlZjY2MmNi/MmY5M2M0MGU3Mzkz/Y2U0YjM4NWIxYjQ5/Njk3MDY4ODYwYjA1/OWJlYjczYy90aXZs/eS5jb20v",
+                  "hostname": "tivly.com",
+                  "netloc": "tivly.com",
+                  "path": "\u203a tattoo-insurance",
+                  "scheme": "https"
+                },
+                "profile": {
+                  "img": "https://imgs.search.brave.com/UIQFOAzYTMvX9iZOTZ2329cZLtgzYERbL9jnaSUIpLw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZmExNzQ3YTU5/YjcxNmZlZjY2MmNi/MmY5M2M0MGU3Mzkz/Y2U0YjM4NWIxYjQ5/Njk3MDY4ODYwYjA1/OWJlYjczYy90aXZs/eS5jb20v",
+                  "long_name": "tivly.com",
+                  "name": "Tivly",
+                  "url": "https://tivly.com/tattoo-insurance"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": true,
+                  "original": "https://d1ryqii3hd4s5u.cloudfront.net/uploads/2eng-tivly-logo-big.png",
+                  "src": "https://imgs.search.brave.com/wbbe5SpGCoP7zEtBrtlpAym73CQ5NZ_gSN8oQ208lhU/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9kMXJ5/cWlpM2hkNHM1dS5j/bG91ZGZyb250Lm5l/dC91cGxvYWRzLzJl/bmctdGl2bHktbG9n/by1iaWcucG5n"
+                },
+                "title": "Tattoo Shop Insurance | Tattoo Artist's Cost + Coverage | Tivly",
+                "type": "search_result",
+                "url": "https://tivly.com/tattoo-insurance"
+              },
+              {
+                "description": "You\u2019ll need all the right training ... down a storm, accidents can still happen. And there are some catastrophes you can\u2019t avoid. <strong>Inking without insurance is a pretty dangerous move</strong>....",
+                "extra_snippets": [
+                  "Tatts are for life, and there are risks involved, so the pressure\u2019s on for you to get it right. There\u2019s a lot more to being a tattooist than a steady hand and artistic skill. You\u2019ll need all the right training to guarantee your clients are kept safe, and you\u2019ll need a licence from your local council to prove you\u2019ve done it. Even if your masterpieces go down a storm, accidents can still happen. And there are some catastrophes you can\u2019t avoid. Inking without insurance is a pretty dangerous move.",
+                  "If you don\u2019t have insurance, and someone makes a claim against you, all the fine lines and dot work in the world won\u2019t save you from the potentially costly consequences. If you do laser tattoo removal, or body piercings, you\u2019ll need to be covered for those things too.",
+                  "Have employees? By law you\u2019ll need employers\u2019 liability insurance. The cost of your tattoo insurance will depend on lots of things.",
+                  "One thing\u2019s for sure though, treatment liability insurance is an absolute must for all tattooists. Whatever the cost, it\u2019s worth protecting yourself from medical-related claims, because they can cost you more than just money."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/MF60e6SKuNpmjBGnFB8IJMStNCkgcJp7zDRFcE44tYw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMDYyZThkOGZk/YWZkNjUzZDkyOTBk/MmMyYTE0M2FlOGU3/MzQwYWIxY2I5M2Qx/M2Y0ODEwYjdjMGE1/ODUzOTU2OC93d3cu/cG9saWN5YmVlLmNv/LnVrLw",
+                  "hostname": "www.policybee.co.uk",
+                  "netloc": "policybee.co.uk",
+                  "path": "\u203a tattooist-insurance",
+                  "scheme": "https"
+                },
+                "profile": {
+                  "img": "https://imgs.search.brave.com/MF60e6SKuNpmjBGnFB8IJMStNCkgcJp7zDRFcE44tYw/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMDYyZThkOGZk/YWZkNjUzZDkyOTBk/MmMyYTE0M2FlOGU3/MzQwYWIxY2I5M2Qx/M2Y0ODEwYjdjMGE1/ODUzOTU2OC93d3cu/cG9saWN5YmVlLmNv/LnVrLw",
+                  "long_name": "policybee.co.uk",
+                  "name": "PolicyBee",
+                  "url": "https://www.policybee.co.uk/tattooist-insurance"
+                },
+                "subtype": "generic",
+                "title": "Tattooist & tattoo studio insurance | PolicyBee",
+                "type": "search_result",
+                "url": "https://www.policybee.co.uk/tattooist-insurance"
+              },
+              {
+                "age": "January 14, 2025",
+                "description": "Running a tattoo business comes with inherent risks. <strong>Errors or miscommunications can result in lawsuits from unhappy customers</strong>. While many companies offer business insurance policies, most do not cover services related to tattooing.",
+                "extra_snippets": [
+                  "Running a tattoo business comes with inherent risks. Errors or miscommunications can result in lawsuits from unhappy customers. While many companies offer business insurance policies, most do not cover services related to tattooing. In fact they often specifically exclude them.",
+                  "Here are some key factors that influence the cost of tattoo insurance: Size and scope of business \u2013 The size of your business, whether you have a shop or you are an individual artist can impact the insurance cost. Larger risks with more artists and offer more services may have higher premiums due to an increased risk and liability associated with more clients coming into the shop.",
+                  "Claims history \u2013 Insurance companies consider the claims history of your tattoo business when determining the cost of coverage. If you have a history of claims, it may result in higher premiums. Safety measures and risk management practices \u2013 Insurance providers assess the safety measures and risk management practices implemented by your business.",
+                  "Tattoo insurance provides coverage for the unique risks and liabilities associated with the tattoo and piercing industry."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/aEveE5re6IVCHngxNT1VxBe9MppQhf_ZyuJfiQotrOg/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNGI2NDNkNDYy/MzA1NmFkNjY0ZTBi/NzUyMTMyNzQ4M2Rh/N2U1YTFjZDIyNTYw/ZjUwNTQxOWZlZDk1/NTM0YzYyMi93d3cu/cHBpYmNvcnAuY29t/Lw",
+                  "hostname": "www.ppibcorp.com",
+                  "netloc": "ppibcorp.com",
+                  "path": "  \u203a home  \u203a tattoo insurance",
+                  "scheme": "https"
+                },
+                "page_age": "2025-01-14T15:00:04",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/aEveE5re6IVCHngxNT1VxBe9MppQhf_ZyuJfiQotrOg/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNGI2NDNkNDYy/MzA1NmFkNjY0ZTBi/NzUyMTMyNzQ4M2Rh/N2U1YTFjZDIyNTYw/ZjUwNTQxOWZlZDk1/NTM0YzYyMi93d3cu/cHBpYmNvcnAuY29t/Lw",
+                  "long_name": "ppibcorp.com",
+                  "name": "Ppibcorp",
+                  "url": "https://www.ppibcorp.com/tattoo-insurance/"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": true,
+                  "original": "https://www.ppibcorp.com/wp-content/uploads/2023/08/ppib-logo-original-website.png",
+                  "src": "https://imgs.search.brave.com/8Zm3XtKWNopLxD1WTLUUfvTLDFLQ3AqD8eAaMTPlp3s/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/cHBpYmNvcnAuY29t/L3dwLWNvbnRlbnQv/dXBsb2Fkcy8yMDIz/LzA4L3BwaWItbG9n/by1vcmlnaW5hbC13/ZWJzaXRlLnBuZw"
+                },
+                "title": "Tattoo Insurance Programs for Artists & Contractors - PPIB",
+                "type": "search_result",
+                "url": "https://www.ppibcorp.com/tattoo-insurance/"
+              }
+            ],
+            "type": "search"
+          }
+        },
+        "headers": {
+          "Connection": "close",
+          "Content-Length": "61221",
+          "Content-Type": "application/json",
+          "Date": "Sun, 28 Jun 2026 14:41:03 GMT",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+          "Vary": "Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Sec-Fetch-User",
+          "X-Content-Type-Options": "nosniff",
+          "X-Download-Options": "noopen",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "1; mode=block",
+          "server-timing": "search-roundtrip;dur=483.889",
+          "vary": "Accept-Encoding",
+          "x-ratelimit-limit": "50, 0",
+          "x-ratelimit-policy": "50;w=1, 0;w=2592000",
+          "x-ratelimit-remaining": "49, 0",
+          "x-ratelimit-reset": "1, 206336"
+        },
+        "ok": true,
+        "status_code": 200
+      }
+    },
+    {
+      "query": "\"frustrated\" TattooInsurance: risks and worries before getting a tattoo",
+      "response": {
+        "body": {
+          "mixed": {
+            "main": [],
+            "side": [],
+            "top": [],
+            "type": "mixed"
+          },
+          "query": {
+            "altered": "frustrated tattoo insurance: risks and worries before getting a tattoo",
+            "bad_results": true,
+            "city": "",
+            "cleaned": "frustrated TattooInsurance: risks and worries before getting a tattoo",
+            "country": "es",
+            "header_country": "",
+            "is_navigational": false,
+            "is_news_breaking": false,
+            "more_results_available": false,
+            "original": "\"frustrated\" TattooInsurance: risks and worries before getting a tattoo",
+            "postal_code": "",
+            "search_operators": {
+              "applied": true,
+              "cleaned_query": "frustrated TattooInsurance: risks and worries before getting a tattoo"
+            },
+            "should_fallback": true,
+            "show_strict_warning": false,
+            "spellcheck_off": false,
+            "state": ""
+          },
+          "type": "search"
+        },
+        "headers": {
+          "Connection": "close",
+          "Content-Length": "703",
+          "Content-Type": "application/json",
+          "Date": "Sun, 28 Jun 2026 14:41:04 GMT",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+          "Vary": "Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Sec-Fetch-User",
+          "X-Content-Type-Options": "nosniff",
+          "X-Download-Options": "noopen",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "1; mode=block",
+          "server-timing": "search-roundtrip;dur=350.146",
+          "vary": "Accept-Encoding",
+          "x-ratelimit-limit": "50, 0",
+          "x-ratelimit-policy": "50;w=1, 0;w=2592000",
+          "x-ratelimit-remaining": "49, 0",
+          "x-ratelimit-reset": "1, 206335"
+        },
+        "ok": true,
+        "status_code": 200
+      }
+    },
+    {
+      "query": "TattooInsurance: risks and worries before getting a tattoo forum pain points",
+      "response": {
+        "body": {
+          "discussions": {
+            "mutated_by_goggles": false,
+            "results": [
+              {
+                "age": "April 14, 2018",
+                "data": {
+                  "forum_name": "r/tattoo",
+                  "num_answers": 155,
+                  "question": "<p>\n      So I searched a few keywords like \u201ctattoos long term health\u201d and \u201ccarbon black (what\u2019s used in black ink) toxicity\u201d and found a bunch of articles and studies about potential complications one might face down the line.\n    </p><p>\n      I\u2019m not really referring to infections and allergic reactions, but rather things like chronic low grade inflammation, chronic oxidative stress, DNA damage (genotoxicity) and so on.\n    </p><p>\n      There have also been claims about inks being carcinogenic, being linked to endocrine disruption, and about lymph nodes being blocked.\n    </p><p>\n      What goes through your head when assessing these risks?\n    </p><p>\n      I\u2019m also aware of the possibility that the authors of the above claims may just be looking for an easy target to help that generate views/attention. The topic of tattoos is perfect for those needs. I\u2019m also aware of the fact that there\u2019s toxicity in everything from drinking water to pollution on the streets, and that the human body is adept at eliminating these stressors. However, could the adaptive stress from tattoos be causing long term wear and tear?\n    </p><p>\n      Also, is the adaptive stress continuous (for the life of the tattoo), or does it stop once the ink particles are swallowed by immune cells? (Macrophages)\n    </p><p>\n      Background: want to get a full sleeve this weekend. But I\u2019m slightly deterred by those search findings. I\u2019m the type of health nut who eats 10 servings of greens a day at minimum, so the findings do bother me.\n    </p>",
+                  "score": "106",
+                  "title": "What do you make of claims about long term health risks",
+                  "top_comment": "You'll have to decide for yourself. As you already mentioned folks have other shortcomings so it's a kinda \"pick your poision\" type of deal. I don't know what studies you looked at but anything with longegivity might deserve heavier skepticism. Although no tattoo inks are FDA regulated, my understanding is that the composition and formulas have advanced over the years. A pigment and ink that may have had known carcinogens in the past when sailors, soldiers, and criminals were getting ink may be completely different now. Given the growing popularity and presence of tattoos in younger generations, along with advancing technology and practice, we may not truly know their long term impact on our health until these folks age. You mentioned how well you take care of yourself and I commend you for it. Personally I'm of the opinion that nothing is garaunteed despite our best efforts. There are far greater risks we take with things known, and likely those still unknown. I would tell you to go for it but I'm sure you will hear that more than once in a community subreddit of tattoo enthusiast."
+                },
+                "description": "You'll have to decide for yourself. As you already mentioned folks have other shortcomings so it's a kinda \"pick your poision\" type of deal. I don't know what studies you looked at but anything with longegivity might deserve heavier skepticism. Although no tattoo inks are FDA regulated, my understanding is that the composition and formulas have advanced over the years. A pigment and ink that may have had known carcinogens in the past when sailors, soldiers, and criminals were getting ink may be completely different now. Given the growing popularity and presence of tattoos in younger generations, along with advancing technology and practice, we may not truly know their long term impact on our health until these folks age. You mentioned how well you take care of yourself and I commend you for it. Personally I'm of the opinion that nothing is garaunteed despite our best efforts. There are far greater risks we take with things known, and likely those still unknown. I would tell you to go for it but I'm sure you will hear that more than once in a community subreddit of tattoo enthusiast.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1782589108,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattoo  \u203a comments  \u203a 8c6tw0  \u203a what_do_you_make_of_claims_about_long_term_health",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "What do you make of claims about long term health risks",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattoo/comments/8c6tw0/what_do_you_make_of_claims_about_long_term_health/"
+              },
+              {
+                "age": "July 12, 2011",
+                "data": {
+                  "forum_name": "r/tattoos",
+                  "num_answers": 59,
+                  "question": "<p dir=\"auto\">\n      I&#39;ve developed a curiosity about the pain aspect of getting a tattoo (or any other body alteration).  I love seeing all the pics you&#39;ve posted and would like to hear your different accounts!\n    </p><p dir=\"auto\">\n      Would you personally describe the pain as just an annoying side-affect that you&#39;ve accepted?\n    </p><p dir=\"auto\">\n      Is it relished because it delivers a feeling of accomplishment and/or  badassery, as well as a permanent souvenir?\n    </p><p dir=\"auto\">\n      Does the rush it creates have anything to do with the &quot;addiction&quot; some describe?\n    </p><p dir=\"auto\">\n      Or do you not even notice it because you brought a friend along or listened to music to help you ignore it?\n    </p><p dir=\"auto\">\n      Edit: I&#39;m not asking because I&#39;m anxious about getting a tattoo. I&#39;m asking because I&#39;m reading up on symbolism, body alteration, and pain-induced alternate states of consciousness. Although modern tattoos are mild compared to, say, hook hanging, it seemed like the most common place to start.  And I love the artwork.\n    </p>",
+                  "score": "48",
+                  "title": "Tattoo virgin here, question about the pain",
+                  "top_comment": "I've had my first tattoo for just over 3 weeks now and can say the pain was less than I thought it would be. It was a 2 hour session on the inside of my forearm (pretty meaty). There were a few outlines that made me grit my teeth but nothing unbearable. After the initial sting, the feeling became almost therapeutic and enjoyable. I also found that watching the guy work seemed to make it hurt less for me. When I closed my eyes I focused way too much on the pain. All I can say is I definitely will be getting more (trying to put together ideas for a sleeve now) :P"
+                },
+                "description": "I've had my first tattoo for just over 3 weeks now and can say the pain was less than I thought it would be. It was a 2 hour session on the inside of my forearm (pretty meaty). There were a few outlines that made me grit my teeth but nothing unbearable. After the initial sting, the feeling became almost therapeutic and enjoyable. I also found that watching the guy work seemed to make it hurt less for me. When I closed my eyes I focused way too much on the pain. All I can say is I definitely will be getting more (trying to put together ideas for a sleeve now) :P",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1780382672,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattoos  \u203a comments  \u203a inur7  \u203a tattoo_virgin_here_question_about_the_pain",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Tattoo virgin here, question about the pain",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattoos/comments/inur7/tattoo_virgin_here_question_about_the_pain/"
+              },
+              {
+                "age": "August 10, 2023",
+                "data": {
+                  "forum_name": "r/tattooadvice",
+                  "num_answers": 859,
+                  "question": "<p>\n      Hola, soy una chica de 19 a\u00f1os y me ha gustado la modificaci\u00f3n corporal desde que ten\u00eda unos 14 a\u00f1os, pero obviamente esper\u00e9 a tener la edad legal para empezar a modificarme algo. Sin embargo, a medida que me he hecho mayor, he desarrollado un miedo intenso a cualquier tipo de dolor que antes no ten\u00eda.\n    </p><p>\n      No es que no pueda soportar el dolor, el miedo simplemente me impide hacer lo que quiero, incluidos los tatuajes. Tengo un piercing en el septum que no doli\u00f3 nada, pero eso es todo.\n    </p><p>\n      \u00bfAlguna vez te has hecho un tatuaje en el que te hayas querido levantar de la silla? \u00bfC\u00f3mo es tu tolerancia al dolor, ya que la m\u00eda es bastante baja? Cu\u00e9ntame tus mejores y peores experiencias con los tatuajes en cuanto al dolor.\n    </p>",
+                  "score": "893",
+                  "title": "\u00bfDe verdad, cu\u00e1nto duelen los tatuajes?",
+                  "top_comment": "Como una chica con ansiedad, te recomiendo ir a la tienda antes si es posible y obtener la cita m\u00e1s temprana para evitar que se acumule durante el d\u00eda. Odio ser Dr. Reddit, pero vale la pena recordar que cuando los s\u00edntomas comienzan a afectar tu vida diaria y tus elecciones, es hora de cont\u00e1rselo a alguien."
+                },
+                "description": "Como una chica con ansiedad, te recomiendo ir a la tienda antes si es posible y obtener la cita m\u00e1s temprana para evitar que se acumule durante el d\u00eda. Odio ser Dr. Reddit, pero vale la pena recordar que cuando los s\u00edntomas comienzan a afectar tu vida diaria y tus elecciones, es hora de cont\u00e1rselo a alguien.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1777690959,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "es",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattooadvice  \u203a comments  \u203a 15nq4h2  \u203a how_much_do_tattoos_hurt_really",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "\u00bfDe verdad, cu\u00e1nto duelen los tatuajes?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattooadvice/comments/15nq4h2/how_much_do_tattoos_hurt_really/?tl=es-es"
+              },
+              {
+                "age": "August 5, 2024",
+                "data": {
+                  "forum_name": "r/tattoo",
+                  "num_answers": 111,
+                  "question": "<p>\n      I got my first tattoo above my hip and it hurt a little but it wasn\u2019t bad at all really. Today I went to get a tattoo on the back of my thigh. It was horrible. I genuinely couldn\u2019t last for more than 10 seconds at a time. My bf is the artist so luckily he\u2019s patient but I started crying too it was just so bad we had to stop and we said we\u2019re gonna finish another day. How do I stop the pain. Distraction doesn\u2019t work.\n    </p>",
+                  "score": "21",
+                  "title": "Tattoo pain is absolutely unbearable.",
+                  "top_comment": "You don\u2019t stop the pain. You just acknowledge it, accept it, and move forward."
+                },
+                "description": "You don\u2019t stop the pain. You just acknowledge it, accept it, and move forward.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1782522240,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattoo  \u203a comments  \u203a 1ekz0hw  \u203a tattoo_pain_is_absolutely_unbearable",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Tattoo pain is absolutely unbearable.",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattoo/comments/1ekz0hw/tattoo_pain_is_absolutely_unbearable/"
+              },
+              {
+                "age": "April 20, 2024",
+                "data": {
+                  "forum_name": "r/tattooadvice",
+                  "num_answers": 124,
+                  "question": "<p dir=\"auto\">\n      so, i\u2019m getting my first tattoo ever with my friends! but the thing im more concerned about is the pain tolerance? i know it\u2019s different for everyone but is there anything i could compare the discomfort to, or anything i could try just to get an idea of how much it\u2019ll hurt? i\u2019ve had a few piercings done, but im not too sure if that means i can handle a tattoo lol. it\u2019s going to be on my lower back/hip :)\n    </p><p dir=\"auto\">\n      just don\u2019t want to get cold feet or realize halfway through the tattoo i can\u2019t handle it.\n    </p>",
+                  "score": "5",
+                  "title": "How truly bad does a tattoo hurt?",
+                  "top_comment": "Small tattoo in an ok place? Absolutely fine. Large tattoo in a painful place? Borderline traumatic \ud83d\ude02 By the way \u201cmy first tattoo ever with my friends\u201d is a bit of a red flag\u2026 please tell me you and your friends aren\u2019t all getting matching tattoos?"
+                },
+                "description": "Small tattoo in an ok place? Absolutely fine. Large tattoo in a painful place? Borderline traumatic \ud83d\ude02 By the way \u201cmy first tattoo ever with my friends\u201d is a bit of a red flag\u2026 please tell me you and your friends aren\u2019t all getting matching tattoos?",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1779733218,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattooadvice  \u203a comments  \u203a 1c8e0u6  \u203a how_truly_bad_does_a_tattoo_hurt",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "How truly bad does a tattoo hurt?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattooadvice/comments/1c8e0u6/how_truly_bad_does_a_tattoo_hurt/"
+              },
+              {
+                "age": "November 1, 2015",
+                "data": {
+                  "forum_name": "r/AskMen",
+                  "num_answers": 49,
+                  "score": "18",
+                  "title": "How painful is getting a tattoo (from 1 to 10)? And do you ever regret it if you have had one?",
+                  "top_comment": "I've got 2 tattoos. One small one about the size of my hand on my right shoulder and one going from my shoulder to about halfway down my tricep. As far as pain scale goes, the larger one hurt a bit more than my right shoulder one just because its larger and where it's positioned. Some places hurt more than other when you get tattoos most notably when it's needle on bone so depending on your pain tolerance and where you get the tattoo (myself for example) 6/10"
+                },
+                "description": "I've got 2 tattoos. One small one about the size of my hand on my right shoulder and one going from my shoulder to about halfway down my tricep. As far as pain scale goes, the larger one hurt a bit more than my right shoulder one just because its larger and where it's positioned. Some places hurt more than other when you get tattoos most notably when it's needle on bone so depending on your pain tolerance and where you get the tattoo (myself for example) 6/10",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1778180943,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a AskMen  \u203a comments  \u203a 3r53uu  \u203a how_painful_is_getting_a_tattoo_from_1_to_10_and",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "How painful is getting a tattoo (from 1 to 10)? And do you ever regret it if you have had one?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/AskMen/comments/3r53uu/how_painful_is_getting_a_tattoo_from_1_to_10_and/"
+              },
+              {
+                "age": "March 24, 2022",
+                "data": {
+                  "forum_name": "r/tattoo",
+                  "num_answers": 147,
+                  "score": "100",
+                  "title": "What are some methods you use to cope with tattoo pain ?",
+                  "top_comment": "eating and drinking plenty and also snacking throughout, I like bringing clif bars and bananas and something sugary to drink. helps me not get lightheaded. also for a longer tattoo I ask the artist if it\u2019s okay if I listen to music so I\u2019ll have one earphone in and vibe to some music as a distraction. the artist I go to now is a great dude so we just talk a lot and that\u2019s a good distraction too. So I guess for me it\u2019s distraction and food!"
+                },
+                "description": "eating and drinking plenty and also snacking throughout, I like bringing clif bars and bananas and something sugary to drink. helps me not get lightheaded. also for a longer tattoo I ask the artist if it\u2019s okay if I listen to music so I\u2019ll have one earphone in and vibe to some music as a distraction. the artist I go to now is a great dude so we just talk a lot and that\u2019s a good distraction too. So I guess for me it\u2019s distraction and food!",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1781837400,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattoo  \u203a comments  \u203a tm4cka  \u203a what_are_some_methods_you_use_to_cope_with_tattoo",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "What are some methods you use to cope with tattoo pain ?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattoo/comments/tm4cka/what_are_some_methods_you_use_to_cope_with_tattoo/"
+              },
+              {
+                "age": "September 17, 2018",
+                "data": {
+                  "forum_name": "r/tattoo",
+                  "num_answers": 13,
+                  "question": "<p>\n    I&#39;ve had two tattoos now. One on the left forearm, and a significantly larger tattoo in the centre of my chest. The forearm tattoo was just done with the single needle since it&#39;s a basic design and wasn&#39;t shaded or coloured etc.\n  </p><p>\n    Forearm tattoo felt essentially like someone uncomfortably scraping a needle across your skin. Not mega painful, sort of more of a &quot;meh&quot; response from me personally.\n  </p><p>\n    So when I went for the second tattoo on the chest, I thought I understood the pain. I was wrong. I can only describe the second tattoo as feeling similar to when you hold your hand above a candle and the heat makes you need to pull away because it starts to burn. Only, with the tattoo in process, you can&#39;t really pull away and stop because you&#39;ll walk away with an unfinished tattoo which would look stupid.\n  </p><p>\n    So you kind of end up in a mindset of feeling a bit stuck, and it hurt more and more over the course of the four hours because the area became more sensitive with prolonged exposure to the needles. Probably sound like a weenie, but that second tattoo felt like a real assault to the body since it went across my sternum and ribs.\n  </p><p>\n    How would you describe your pain? Or lack thereof, if you&#39;re hard enough...\n  </p>",
+                  "score": "8",
+                  "title": "How would you describe tattoo pain?",
+                  "top_comment": "<p>\n    I tell people it&#39;s like taking a ball point pen and drawing on a sunburn\n  </p>"
+                },
+                "description": "<p>\n    I tell people it&#39;s like taking a ball point pen and drawing on a sunburn\n  </p>",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1733198996,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a tattoo  \u203a comments  \u203a 9gn1t5  \u203a how_would_you_describe_tattoo_pain",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "How would you describe tattoo pain?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/tattoo/comments/9gn1t5/how_would_you_describe_tattoo_pain/"
+              },
+              {
+                "age": "May 28, 2024",
+                "data": {
+                  "forum_name": "r/coolguides",
+                  "num_answers": 172,
+                  "score": "1353",
+                  "title": "Una gu\u00eda genial de un gr\u00e1fico de dolor de tatuaje",
+                  "top_comment": "El pie es una asombrosa tierra de maravillas de dolor que retumba en los o\u00eddos y que hay que experimentar para creerlo."
+                },
+                "description": "El pie es una asombrosa tierra de maravillas de dolor que retumba en los o\u00eddos y que hay que experimentar para creerlo.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1778210198,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "es",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a coolguides  \u203a comments  \u203a 1d2qd72  \u203a a_cool_guide_of_a_tattoo_pain_chart",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "Una gu\u00eda genial de un gr\u00e1fico de dolor de tatuaje",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/coolguides/comments/1d2qd72/a_cool_guide_of_a_tattoo_pain_chart/?tl=es-es"
+              },
+              {
+                "age": "January 1, 2016",
+                "data": {
+                  "forum_name": "r/AskTrollX",
+                  "num_answers": 41,
+                  "score": "55",
+                  "title": "What would you compare the pain of getting a tattoo to? Most/least painful places?",
+                  "top_comment": "<p>\n    Getting a tattoo feels to me like an electric cat scratch and the aftermath feels like a sunburn. I&#39;ve had my head, outer arm, inner elbow (ditch), and just above the backs of my ankles done. The most painful spots are tied at my head and ditch, with my outer arm being the least painful.\n  </p><p>\n    The parts of your body that hurt the least are where you have the most fat. What hurt the most are bony, thin-skinned, and muscle-y areas. However, YMMV. Everyone is different.\n  </p>"
+                },
+                "description": "<p>\n    Getting a tattoo feels to me like an electric cat scratch and the aftermath feels like a sunburn. I&#39;ve had my head, outer arm, inner elbow (ditch), and just above the backs of my ankles done. The most painful spots are tied at my head and ditch, with my outer arm being the least painful.\n  </p><p>\n    The parts of your body that hurt the least are where you have the most fat. What hurt the most are bony, thin-skinned, and muscle-y areas. However, YMMV. Everyone is different.\n  </p>",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1733933084,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a AskTrollX  \u203a comments  \u203a 3yz6k1  \u203a what_would_you_compare_the_pain_of_getting_a",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "What would you compare the pain of getting a tattoo to? Most/least painful places?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/AskTrollX/comments/3yz6k1/what_would_you_compare_the_pain_of_getting_a/"
+              },
+              {
+                "age": "April 20, 2025",
+                "data": {
+                  "forum_name": "r/AskUK",
+                  "num_answers": 239,
+                  "question": "<p dir=\"auto\">\n      58 a\u00f1os, hombre, quiero mi primer tatuaje. Estoy mirando la zona de la pantorrilla, en el m\u00fasculo (he o\u00eddo que hacerse uno en el hueso es horrible). No se me dan bien las agujas, donar sangre me da arcadas. \u00bfCu\u00e1nto duele un tatuaje de verdad?\n    </p>",
+                  "score": "19",
+                  "title": "\u00bfCu\u00e1nto duele un tatuaje?",
+                  "top_comment": "Por favor, ayuda a mantener AskUK acogedor! Al responder a una publicaci\u00f3n, esfu\u00e9rzate de verdad en responder a la pregunta planteada.  Nada de chistes, juicios, etc. No seas un capullo con los dem\u00e1s. Si la cosa se calienta, bloquea y sigue adelante. \u00a1Este es un subreddit estrictamente sin pol\u00edtica! Por favor, ay\u00fadanos denunciando los comentarios que infrinjan estas reglas. Soy un bot, y esta acci\u00f3n se ha realizado autom\u00e1ticamente. Por favor, contacta con los moderadores de este subreddit si tienes alguna pregunta o duda."
+                },
+                "description": "Por favor, ayuda a mantener AskUK acogedor! Al responder a una publicaci\u00f3n, esfu\u00e9rzate de verdad en responder a la pregunta planteada.  Nada de chistes, juicios, etc. No seas un capullo con los dem\u00e1s. Si la cosa se calienta, bloquea y sigue adelante. \u00a1Este es un subreddit estrictamente sin pol\u00edtica! Por favor, ay\u00fadanos denunciando los comentarios que infrinjan estas reglas. Soy un bot, y esta acci\u00f3n se ha realizado autom\u00e1ticamente. Por favor, contacta con los moderadores de este subreddit si tienes alguna pregunta o duda.",
+                "family_friendly": true,
+                "fetched_content_timestamp": 1779486841,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "es",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "\u203a r  \u203a AskUK  \u203a comments  \u203a 1k3hoam  \u203a how_painful_is_a_tattoo",
+                  "scheme": "https"
+                },
+                "subtype": "generic",
+                "title": "\u00bfCu\u00e1nto duele un tatuaje?",
+                "type": "discussion",
+                "url": "https://www.reddit.com/r/AskUK/comments/1k3hoam/how_painful_is_a_tattoo/?tl=es-es"
+              }
+            ],
+            "type": "search"
+          },
+          "mixed": {
+            "main": [
+              {
+                "all": false,
+                "index": 0,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 1,
+                "type": "web"
+              },
+              {
+                "all": true,
+                "type": "discussions"
+              },
+              {
+                "all": false,
+                "index": 2,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 3,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 4,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 5,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 6,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 7,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 8,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 9,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 10,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 11,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 12,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 13,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 14,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 15,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 16,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 17,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 18,
+                "type": "web"
+              },
+              {
+                "all": false,
+                "index": 19,
+                "type": "web"
+              }
+            ],
+            "side": [],
+            "top": [],
+            "type": "mixed"
+          },
+          "query": {
+            "altered": "tattoo insurance: risks and worries before getting a tattoo forum pain points",
+            "bad_results": false,
+            "city": "",
+            "country": "es",
+            "header_country": "",
+            "is_navigational": false,
+            "is_news_breaking": false,
+            "more_results_available": true,
+            "original": "TattooInsurance: risks and worries before getting a tattoo forum pain points",
+            "postal_code": "",
+            "should_fallback": false,
+            "show_strict_warning": false,
+            "spellcheck_off": false,
+            "state": ""
+          },
+          "type": "search",
+          "web": {
+            "family_friendly": true,
+            "results": [
+              {
+                "age": "February 12, 2026",
+                "article": {
+                  "author": [
+                    {
+                      "name": "HDFC ERGO team",
+                      "type": "person"
+                    }
+                  ],
+                  "date": "May 17, 2023",
+                  "publisher": {
+                    "name": "HDFC ERGO General Insurance Company Limited",
+                    "thumbnail": {
+                      "original": "https://www.hdfcergo.com/portal-images/logo.png",
+                      "src": "https://imgs.search.brave.com/kL4Wei77T22IlcHJB17MKpyHNGmwILd0fy2ziOW7EkM/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/aGRmY2VyZ28uY29t/L3BvcnRhbC1pbWFn/ZXMvbG9nby5wbmc"
+                    },
+                    "type": "organization"
+                  }
+                },
+                "description": "Let\u2019s discuss the potential health ... plan can come to your aid if anything goes wrong. <strong>Tattooing is done without anaesthesia, causing some pain and bleeding, which is normal</strong>....",
+                "extra_snippets": [
+                  "However, check the terms and conditions before buying health insurance to ensure that any tattooing-related ailment is covered. Aside from protecting against tattoo-related health risks, health insurance can also cover the costs of medical treatments for a wide range of other health conditions and emergencies.",
+                  "However, there are some health risks of tattoos, which one should be aware of: Tattooing can cause allergic reactions in some people due to the chemicals or metals in tattoo ink, especially in coloured dyes. Some symptoms are hives, itchiness, rash, and swelling, which can occur even years after getting tattooed. Although rare, getting a tattoo may cause skin cancer as some of the colours or pigments may be carcinogenic or contain components like azo used in car paints.",
+                  "There is a risk of skin infection immediately or within the first two weeks of getting inked when the skin is healing. Symptoms include swelling, pain, redness, itching, or rash. In extreme cases, it can lead to fever, sores, or pus around the tattoo site.",
+                  "After deciding to get a tattoo, here are certain things that you should know about body art before getting inked: There is moderate to significant pain and some bleeding during the procedure. You might think it is just a pinprick, but it could be more than that."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/FieuPFB2N5-iDhZuw1fqf9sWi8T0yCdEjsNFMTjfs2g/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYmExNmQzOWRh/NTQ1YjYxYjAyYTJk/NDQ2NzM4YWIyZTUw/OTc3ZjQwZTZmYzUx/M2JiMWRmNDM1YTlm/MGMyNGE1Yy93d3cu/aGRmY2VyZ28uY29t/Lw",
+                  "hostname": "www.hdfcergo.com",
+                  "netloc": "hdfcergo.com",
+                  "path": "  \u203a home  \u203a blogs  \u203a health insurance  \u203a things to know before getting inked",
+                  "scheme": "https"
+                },
+                "page_age": "2026-02-12T09:37:20",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/FieuPFB2N5-iDhZuw1fqf9sWi8T0yCdEjsNFMTjfs2g/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYmExNmQzOWRh/NTQ1YjYxYjAyYTJk/NDQ2NzM4YWIyZTUw/OTc3ZjQwZTZmYzUx/M2JiMWRmNDM1YTlm/MGMyNGE1Yy93d3cu/aGRmY2VyZ28uY29t/Lw",
+                  "long_name": "hdfcergo.com",
+                  "name": "HDFCErgo",
+                  "url": "https://www.hdfcergo.com/blogs/health-insurance/things-to-know-before-getting-inked"
+                },
+                "subtype": "article",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://customer-portal-assets.hdfcergo.com/assets/v2/things-to-know-before-getting-inked-226073873182-1200.webp",
+                  "src": "https://imgs.search.brave.com/YHfcV1Tna6JBKNVOwUhBHD3uXDfVYa3hPAwTx4tg9gQ/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9jdXN0/b21lci1wb3J0YWwt/YXNzZXRzLmhkZmNl/cmdvLmNvbS9hc3Nl/dHMvdjIvdGhpbmdz/LXRvLWtub3ctYmVm/b3JlLWdldHRpbmct/aW5rZWQtMjI2MDcz/ODczMTgyLTEyMDAu/d2VicA"
+                },
+                "title": "Getting A Tattoo? Here Are the Things to Know Before Getting Inked",
+                "type": "search_result",
+                "url": "https://www.hdfcergo.com/blogs/health-insurance/things-to-know-before-getting-inked"
+              },
+              {
+                "age": "July 28, 2020",
+                "description": "<strong>A keloid is an enlarged scar that resembles a bump on the skin</strong>. It consists of extra scar tissue and can occur from trauma on the skin. As the tattoo needle pierces the surface, it can cause tiny injuries, where keloids may develop.",
+                "extra_snippets": [
+                  "Although laser tattoo removal is a promising option for a person who wants to get rid of a tattoo, it can be painful and might not remove the entire tattoo.",
+                  "A person who wishes to get a tattoo should be sure they want to commit to it. It is possible to remove them with lasers. However, this is a painful procedure and may not fully remove the tattoo.",
+                  "A keloid is an enlarged scar that resembles a bump on the skin. It consists of extra scar tissue and can occur from trauma on the skin. As the tattoo needle pierces the surface, it can cause tiny injuries, where keloids may develop.",
+                  "A tattoo is a type of body modification where a person uses a needle to inject ink, pigment, or dye into the skin\u2019s dermis layer."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/UO2nz5lrZs-thMwBk4vHB0k896NBP9p4WoUuZ-FyHh0/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGJlMzJlMmEy/OTg5ZGI5NTg3ZjE0/MTVlYjRiOWJlZjg2/YjE0OTFhOTkyOTQ5/NjJiNGM2ODAzZDBh/OWNhNzM0OS93d3cu/bWVkaWNhbG5ld3N0/b2RheS5jb20v",
+                  "hostname": "www.medicalnewstoday.com",
+                  "netloc": "medicalnewstoday.com",
+                  "path": "\u203a articles  \u203a tattoo-risks",
+                  "scheme": "https"
+                },
+                "page_age": "2020-07-28T04:00:00",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/UO2nz5lrZs-thMwBk4vHB0k896NBP9p4WoUuZ-FyHh0/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGJlMzJlMmEy/OTg5ZGI5NTg3ZjE0/MTVlYjRiOWJlZjg2/YjE0OTFhOTkyOTQ5/NjJiNGM2ODAzZDBh/OWNhNzM0OS93d3cu/bWVkaWNhbG5ld3N0/b2RheS5jb20v",
+                  "long_name": "medicalnewstoday.com",
+                  "name": "Medical News Today",
+                  "url": "https://www.medicalnewstoday.com/articles/tattoo-risks"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://media.post.rvohealth.io/wp-content/uploads/sites/3/2020/07/GettyImages-1223872707_thumb.jpg",
+                  "src": "https://imgs.search.brave.com/3Mq6JOZ-Cwl4VrlZM09MC80bUckmYUDtBCYKz8oFg1M/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5wb3N0LnJ2b2hl/YWx0aC5pby93cC1j/b250ZW50L3VwbG9h/ZHMvc2l0ZXMvMy8y/MDIwLzA3L0dldHR5/SW1hZ2VzLTEyMjM4/NzI3MDdfdGh1bWIu/anBn"
+                },
+                "title": "Tattoo risks: Precaution, preparation, and aftercare",
+                "type": "search_result",
+                "url": "https://www.medicalnewstoday.com/articles/tattoo-risks"
+              },
+              {
+                "age": "December 19, 2023",
+                "article": {
+                  "author": [
+                    {
+                      "name": "Deleted User",
+                      "type": "person"
+                    }
+                  ],
+                  "date": "Dec 19, 2023",
+                  "publisher": {
+                    "name": "Reddit",
+                    "thumbnail": {
+                      "original": "https://www.redditstatic.com/shreddit/assets/favicon/64x64.png",
+                      "src": "https://imgs.search.brave.com/vwRCTZCyS3UsCGj7HsYLzWpcOMhAEqq9hhxBK8tt7Dw/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/cmVkZGl0c3RhdGlj/LmNvbS9zaHJlZGRp/dC9hc3NldHMvZmF2/aWNvbi82NHg2NC5w/bmc"
+                    },
+                    "type": "organization",
+                    "url": "https://www.reddit.com"
+                  }
+                },
+                "description": "<strong>current literature is associated illnesses found in relation to those with tattoos is coincidental, not causal</strong>. Like others have aptly stated, we got way bigger worries than our ink.",
+                "extra_snippets": [
+                  "Posted by u/[Deleted Account] - 5 votes and 28 comments",
+                  "There are ways to design studies that address these issues on the front end and statistical approaches to deal with it on the back end, but the current evidence is so preliminary and so not very strong I would be surprised to see a very strong association between tattooing and a health outcome for most folks (there may be a sub-group or something that is at increased risk with tattoos, like people with a history of inflammatory conditions or something). Anyone who is worried about cancer risk can do many other things to lower their risk, including reducing/eliminating alcohol consumption, not smoking cigarettes, exercising, sleeping well and eating lots of plants.",
+                  "Omg heyyy, toxicologist by day and tattoo artist by night here! Couldn't have said this better myself, excellent break down and I completely agree \ud83d\ude4c ... Hey there Can i adk u a question? Im a bit worried if alcohol markers are more safe than the old xelene markers and if i need to take some precautions w them?",
+                  "current literature is associated illnesses found in relation to those with tattoos is coincidental, not causal. Like others have aptly stated, we got way bigger worries than our ink."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "hostname": "www.reddit.com",
+                  "netloc": "reddit.com",
+                  "path": "  \u203a r/tattooadvice  \u203a tattoo anxiety about long term risks",
+                  "scheme": "https"
+                },
+                "page_age": "2023-12-19T22:25:22",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/U-eHNCapRHVNWWCVPPMTIvOofZULh0_A_FQKe8xTE4I/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2ZiNTU0M2Nj/MTFhZjRiYWViZDlk/MjJiMjBjMzFjMDRk/Y2IzYWI0MGI0MjVk/OGY5NzQzOGQ5NzQ5/NWJhMWI0NC93d3cu/cmVkZGl0LmNvbS8",
+                  "long_name": "reddit.com",
+                  "name": "Reddit",
+                  "url": "https://www.reddit.com/r/tattooadvice/comments/18mecvg/tattoo_anxiety_about_long_term_risks/"
+                },
+                "subtype": "article",
+                "thumbnail": {
+                  "logo": true,
+                  "original": "https://www.redditstatic.com/icon.png",
+                  "src": "https://imgs.search.brave.com/A5H_aQiEBuUODR0lNeU8iDfhrWUvO8oEmRGE_mcS_gM/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/cmVkZGl0c3RhdGlj/LmNvbS9pY29uLnBu/Zw"
+                },
+                "title": "r/tattooadvice on Reddit: Tattoo anxiety about long term risks",
+                "type": "search_result",
+                "url": "https://www.reddit.com/r/tattooadvice/comments/18mecvg/tattoo_anxiety_about_long_term_risks/"
+              },
+              {
+                "age": "April 5, 2022",
+                "description": "Keloids: Keloids are slightly raised areas of skin that resemble your skin color. You may notice them after getting a tattoo. They are painless but may become a cosmetic problem.",
+                "extra_snippets": [
+                  "Before getting a tattoo, make sure that you do not have a pre-existing skin condition or infection. Choose the site for your tattoo carefully. If you have low pain tolerance, it is best to avoid getting a tattoo over bony areas.",
+                  "Keloids: Keloids are slightly raised areas of skin that resemble your skin color. You may notice them after getting a tattoo. They are painless but may become a cosmetic problem.",
+                  "MRI complications: Tattooed individuals may experience pain or burning at the tattoo site while getting an MRI. This is frequently observed in those adults who are heavily tattooed all over their bodies.",
+                  "If you are having a life-threatening or serious condition that may require hospitalization, including, but not limited to, high-grade fever; low or high blood pressure; active serious infection, including, but not limited to, COVID; chest pain; shortness of breath; severe pain; or stroke-like symptoms, please call 911 immediately or go to a nearby emergency center as quickly as possible."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/U3DnilNK3j9-4HfHzD_oCSyG2Yuhg9x3uqZdzymKjIA/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYjRkMmNjYjM2/YTIzYWFjYTUyZmIy/ZmRlN2YyYzlkNTJi/ZTU5MDZjZmFlODg4/NmI4NjhiNjAxYWIz/YmRkMmI3Ny9jdXJh/NHUuY29tLw",
+                  "hostname": "cura4u.com",
+                  "netloc": "cura4u.com",
+                  "path": "\u203a blog  \u203a 7-health-risks-you-should-keep-in-mind-before-getting-a-tattoo",
+                  "scheme": "https"
+                },
+                "page_age": "2022-04-05T00:00:00",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/U3DnilNK3j9-4HfHzD_oCSyG2Yuhg9x3uqZdzymKjIA/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYjRkMmNjYjM2/YTIzYWFjYTUyZmIy/ZmRlN2YyYzlkNTJi/ZTU5MDZjZmFlODg4/NmI4NjhiNjAxYWIz/YmRkMmI3Ny9jdXJh/NHUuY29tLw",
+                  "long_name": "cura4u.com",
+                  "name": "Cura4U",
+                  "url": "https://cura4u.com/blog/7-health-risks-you-should-keep-in-mind-before-getting-a-tattoo"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://cura4u.com/Common/DisplayFileFormFileName?fileName=7_Health_Risks_You_Should_Keep_In_Mind_Before_Getting_A_Tattoo_BlogImage_5e407b74-5e90-4337-a661-f493f0bf6553.webp",
+                  "src": "https://imgs.search.brave.com/xxvXTTNxvuQ8XZ3RFtmfVp7Wl0ojnLXdh2nzmEYyzy4/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9jdXJh/NHUuY29tL0NvbW1v/bi9EaXNwbGF5Rmls/ZUZvcm1GaWxlTmFt/ZT9maWxlTmFtZT03/X0hlYWx0aF9SaXNr/c19Zb3VfU2hvdWxk/X0tlZXBfSW5fTWlu/ZF9CZWZvcmVfR2V0/dGluZ19BX1RhdHRv/b19CbG9nSW1hZ2Vf/NWU0MDdiNzQtNWU5/MC00MzM3LWE2NjEt/ZjQ5M2YwYmY2NTUz/LndlYnA"
+                },
+                "title": "7 Health Risks You Should Keep In Mind Before Getting A Tattoo - Cura4U",
+                "type": "search_result",
+                "url": "https://cura4u.com/blog/7-health-risks-you-should-keep-in-mind-before-getting-a-tattoo"
+              },
+              {
+                "age": "April 23, 2025",
+                "description": "Understand the potential risks and complications of getting a tattoo, such as <strong>infections, allergic reactions, and healing challenges</strong>. Learn how to reduce the risks and care for your tattoo safely.",
+                "extra_snippets": [
+                  "While every effort is made to ensure a safe, sterile, and professional environment, it is important to understand that tattooing involves minor trauma to the skin and carries inherent risks.",
+                  "Please read the following carefully. By proceeding with a tattoo appointment, you acknowledge that you have been informed of these risks and are making an informed decision.",
+                  "Some individuals may react to tattoo inks, particularly certain colours such as red, yellow, blue, or green.",
+                  "These reactions can appear immediately or even years after the tattoo is done."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/gznDeqVIvGB75BY_Wo8qE03PoBZCAUo1lmfJXEHmMu8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNzU5ODNmNmZh/NGJkZjA0ZTNhMzQw/NWFlYjEzZjgxMjhh/NGVlMThjN2EwMjE5/OTliY2ViZmRjNzk4/ZWU3ZTI3ZC93d3cu/YWxpa2F0YXR0b29h/cnQuY29tLw",
+                  "hostname": "www.alikatattooart.com",
+                  "netloc": "alikatattooart.com",
+                  "path": "\u203a blog  \u203a tattoo-risks-and-complications",
+                  "scheme": "https"
+                },
+                "page_age": "2025-04-23T12:52:00",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/gznDeqVIvGB75BY_Wo8qE03PoBZCAUo1lmfJXEHmMu8/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvNzU5ODNmNmZh/NGJkZjA0ZTNhMzQw/NWFlYjEzZjgxMjhh/NGVlMThjN2EwMjE5/OTliY2ViZmRjNzk4/ZWU3ZTI3ZC93d3cu/YWxpa2F0YXR0b29h/cnQuY29tLw",
+                  "long_name": "alikatattooart.com",
+                  "name": "Alika Tattoo Art",
+                  "url": "https://www.alikatattooart.com/blog/tattoo-risks-and-complications"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://px-web-images6.pixpa.com/tUzQvAQ3YO07pvctCEjZSlZJfa6Q3SQkwUe3ZNz9Nms/rs:fit:1200:0/q:72/czM6Ly9waXhwYS10ZXN0L2NvbS9sYXJnZS84NTI2MjIvODUyNjIyLTE3NzkxOTc3NzItdGF0dG9vLXJpc2tzLWNvbXBsaWNhdGlvbnMtaGVhbGluZy1zYWZldHkucG5n",
+                  "src": "https://imgs.search.brave.com/IV6n7osz4IqKuiikRs6uRvczgYonbDYcmv9xJ_UImqc/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9weC13/ZWItaW1hZ2VzNi5w/aXhwYS5jb20vdFV6/UXZBUTNZTzA3cHZj/dENFalpTbFpKZmE2/UTNTUWt3VWUzWk56/OU5tcy9yczpmaXQ6/MTIwMDowL3E6NzIv/Y3pNNkx5OXdhWGh3/WVMxMFpYTjBMMk52/YlM5c1lYSm5aUzg0/TlRJMk1qSXZPRFV5/TmpJeUxURTNOemt4/T1RjM056SXRkR0Yw/ZEc5dkxYSnBjMnR6/TFdOdmJYQnNhV05o/ZEdsdmJuTXRhR1Zo/YkdsdVp5MXpZV1ps/ZEhrdWNHNW4"
+                },
+                "title": "Tattoo Risks & Complications: What You Need to Know Before Getting Inked",
+                "type": "search_result",
+                "url": "https://www.alikatattooart.com/blog/tattoo-risks-and-complications"
+              },
+              {
+                "age": "May 23, 2026",
+                "description": "Las reacciones al\u00e9rgicas, las infecciones y los problemas en la piel pueden aparecer despu\u00e9s de que le hagan un tatuaje. Tome medidas para protegerse.",
+                "extra_snippets": [
+                  "Desai N. Tattooing in adolescents and young adults. https://www.uptodate.com/contents/search. Accessed Oct.",
+                  "Tattoos and permanent makeup: Fact sheet. U.S. Food and Drug Administration. https://www.fda.gov/cosmetics/cosmetic-products/tattoos-permanent-makeup-fact-sheet. Accessed Oct.",
+                  "Think before you ink: Tattoo safety. U.S. Food and Drug Administration. https://www.fda.gov/consumers/consumer-updates/think-you-ink-tattoo-safety. Accessed Nov."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "es",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/F1QZCikCU1Xq3h2jnFO_jszJNtkzLyankDCOWtGJmSQ/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGRiNzRkYTUy/ODQ5Y2IyY2EyNzU1/NjU1NWQ5NTZmNzY2/NjMxMGQyMzNjMjlm/NTc4NDk4Njg0M2Ix/M2I5ZGMzNC93d3cu/bWF5b2NsaW5pYy5v/cmcv",
+                  "hostname": "www.mayoclinic.org",
+                  "netloc": "mayoclinic.org",
+                  "path": "\u203a es  \u203a healthy-lifestyle  \u203a adult-health  \u203a in-depth  \u203a tattoos-and-piercings  \u203a art-20045067",
+                  "scheme": "https"
+                },
+                "page_age": "2026-05-23T05:00:00",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/F1QZCikCU1Xq3h2jnFO_jszJNtkzLyankDCOWtGJmSQ/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGRiNzRkYTUy/ODQ5Y2IyY2EyNzU1/NjU1NWQ5NTZmNzY2/NjMxMGQyMzNjMjlm/NTc4NDk4Njg0M2Ix/M2I5ZGMzNC93d3cu/bWF5b2NsaW5pYy5v/cmcv",
+                  "long_name": "mayoclinic.org",
+                  "name": "Mayo Clinic",
+                  "url": "https://www.mayoclinic.org/es/healthy-lifestyle/adult-health/in-depth/tattoos-and-piercings/art-20045067"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://www.mayoclinic.org/-/media/Web/GBS/Shared/Images/SocialMedia-Metadata/MC_TwitterCard_120x120.jpg",
+                  "src": "https://imgs.search.brave.com/T_iBJF3z5itETD3mMQCjMMIYgld9v0daw24cO2_WkPk/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly93d3cu/bWF5b2NsaW5pYy5v/cmcvLS9tZWRpYS9X/ZWIvR0JTL1NoYXJl/ZC9JbWFnZXMvU29j/aWFsTWVkaWEtTWV0/YWRhdGEvTUNfVHdp/dHRlckNhcmRfMTIw/eDEyMC5qcGc"
+                },
+                "title": "Tattoos: Understand risks and precautions",
+                "type": "search_result",
+                "url": "https://www.mayoclinic.org/es/healthy-lifestyle/adult-health/in-depth/tattoos-and-piercings/art-20045067"
+              },
+              {
+                "age": "October 24, 2018",
+                "description": "Getting a tattoo is much safer now than in years past. Still, it\u2019s not risk-free. Find out what precautions you can take to avoid the risks.",
+                "extra_snippets": [
+                  "Another issue relates to the components of the tattoo pigments. A 2010 study of Danish adults found traces of nickel, lead, and other cancer-causing agents in 65 tattoo inks. ... FDA, some inks contain the same chemicals used in car paint and printer ink, but the agency doesn\u2019t regulate these materials.",
+                  "Tattoos appear to be more popular than ever, with a Pew Research Center survey reporting that 40 percent of young adults have at least one.",
+                  "Still, getting a quality tattoo isn\u2019t always easy, though they are much safer than decades past.",
+                  "The actual process itself consists of a tattoo needle literally injuring your skin to design the art. The needle also inserts small amounts of color pigments."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/4uIi1Fz170gbE2B9GATZydoRHSxF5aPT8nDN0a674oQ/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGFkYzhjMDEw/NWYyYWI3NjExYmI5/N2JlMmI5ZTY2OWY1/ZjFkZWYzNGYwY2Qw/YWM0ZmNjNzhjMjYz/ZTg5N2VhNy93d3cu/aGVhbHRobGluZS5j/b20v",
+                  "hostname": "www.healthline.com",
+                  "netloc": "healthline.com",
+                  "path": "\u203a health  \u203a tattoo-side-effects",
+                  "scheme": "https"
+                },
+                "page_age": "2018-10-24T17:20:43",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/4uIi1Fz170gbE2B9GATZydoRHSxF5aPT8nDN0a674oQ/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMGFkYzhjMDEw/NWYyYWI3NjExYmI5/N2JlMmI5ZTY2OWY1/ZjFkZWYzNGYwY2Qw/YWM0ZmNjNzhjMjYz/ZTg5N2VhNy93d3cu/aGVhbHRobGluZS5j/b20v",
+                  "long_name": "healthline.com",
+                  "name": "Healthline",
+                  "url": "https://www.healthline.com/health/tattoo-side-effects"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://media.post.rvohealth.io/wp-content/uploads/2020/09/woman_listening_music-732x540-thumbnail.jpg",
+                  "src": "https://imgs.search.brave.com/emLehVWPBeCUMtak81iY3dMI7dSD3xeN8-YkmxhiSPM/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5wb3N0LnJ2b2hl/YWx0aC5pby93cC1j/b250ZW50L3VwbG9h/ZHMvMjAyMC8wOS93/b21hbl9saXN0ZW5p/bmdfbXVzaWMtNzMy/eDU0MC10aHVtYm5h/aWwuanBn"
+                },
+                "title": "Tattoo Side Effects and Risks",
+                "type": "search_result",
+                "url": "https://www.healthline.com/health/tattoo-side-effects"
+              },
+              {
+                "age": "November 20, 2024",
+                "description": "Examples include <strong>methicillin-resistant Staphylococcus aureus, hepatitis B and hepatitis C</strong>. To lower your risk, get vaccinated for hepatitis B before you get a tattoo. Skin reactions to an MRI. Rarely, a magnetic resonance imaging (MRI) exam may trigger burning pain in the tattooed area.",
+                "extra_snippets": [
+                  "Before you get a tattoo, think carefully about it. If you're not sure about getting a tattoo or you're worried that you might regret it, you may want to wait. Don't let other people pressure you into getting a tattoo.",
+                  "If you think your tattoo might be infected or you're worried that your tattoo isn't healing correctly, contact a healthcare professional.",
+                  "Examples include methicillin-resistant Staphylococcus aureus, hepatitis B and hepatitis C. To lower your risk, get vaccinated for hepatitis B before you get a tattoo. Skin reactions to an MRI. Rarely, a magnetic resonance imaging (MRI) exam may trigger burning pain in the tattooed area.",
+                  "Tattooing causes a small amount of bleeding and some pain."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/ynbZ9mhOaQpwU1StWt96TfyRjuNor5XHp_5o_1nvTsU/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGFhYmZjOGU3/NTJlMzhkMDhjOTBi/ZjIxODA4NDE0OWRh/N2QzMjU3YWNiY2Vk/NjA5YTA1MGU2YzYy/MGU3YmY2OC9taWRk/bGVzZXhoZWFsdGgu/b3JnLw",
+                  "hostname": "middlesexhealth.org",
+                  "netloc": "middlesexhealth.org",
+                  "path": "  \u203a home  \u203a learning center  \u203a articles  \u203a tattoos: understand risks and precautions",
+                  "scheme": "https"
+                },
+                "page_age": "2024-11-20T10:18:54",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/ynbZ9mhOaQpwU1StWt96TfyRjuNor5XHp_5o_1nvTsU/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGFhYmZjOGU3/NTJlMzhkMDhjOTBi/ZjIxODA4NDE0OWRh/N2QzMjU3YWNiY2Vk/NjA5YTA1MGU2YzYy/MGU3YmY2OC9taWRk/bGVzZXhoZWFsdGgu/b3JnLw",
+                  "long_name": "middlesexhealth.org",
+                  "name": "Middlesex Health",
+                  "url": "https://middlesexhealth.org/learning-center/articles/tattoos-understand-risks-and-precautions"
+                },
+                "subtype": "generic",
+                "title": "Tattoos: Understand risks and precautions // Middlesex Health",
+                "type": "search_result",
+                "url": "https://middlesexhealth.org/learning-center/articles/tattoos-understand-risks-and-precautions"
+              },
+              {
+                "age": "June 13, 2025",
+                "description": "Roughly 10% of people with tattoos experience chronic skin conditions, such as <strong>itching, redness, swelling or pain can last long after the original tattoo heals</strong>.",
+                "extra_snippets": [
+                  "Roughly 10% of people with tattoos experience chronic skin conditions, such as itching, redness, swelling or pain can last long after the original tattoo heals.",
+                  "Historically, tattoos existed at the fringe of society. But today, tattoos are mainstream \u2014 gracing the skin of athletes, celebrities, professionals and everyday people. According to the Pew Research Center, a third of American adults have a tattoo and 22% have more than one.",
+                  "Many commercially available tattoo inks contain hazardous substances \u2014 including heavy metals like lead, mercury, polycyclic aromatic hydrocarbons (PAHs) and primary aromatic amines (PAAs) formed from azo dyes. One review found that benzo(a)pyrene, a potent carcinogen found in PAHs, is present in black tattoo ink.",
+                  "Most tattoo infections are mild and localized. Yet others can become severe, especially in people with compromised immunity. There have been rare reports of systemic infections, including sepsis and necrotizing fasciitis (i.e."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/qg6-E4bARcUpS7pHuJ2FXSeQ2YI51iPfbI8wpUBx9tg/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZWY0NWFiMTBk/YmY2MjkyN2M0MTI0/NmRkYTM3ZjQzMGJj/Y2Q2MTBkYjVmZjA2/OGRjODBhMTM1M2Yx/YmRlZTA1NS93d3cu/Zm9yYmVzLmNvbS8",
+                  "hostname": "www.forbes.com",
+                  "netloc": "forbes.com",
+                  "path": "\u203a sites  \u203a jessepines  \u203a 2025  \u203a 06  \u203a 13  \u203a 7-tattoo-health-risks-to-consider-before-getting-inked",
+                  "scheme": "https"
+                },
+                "page_age": "2025-06-13T17:56:33",
+                "profile": {
+                  "img": "https://imgs.search.brave.com/qg6-E4bARcUpS7pHuJ2FXSeQ2YI51iPfbI8wpUBx9tg/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZWY0NWFiMTBk/YmY2MjkyN2M0MTI0/NmRkYTM3ZjQzMGJj/Y2Q2MTBkYjVmZjA2/OGRjODBhMTM1M2Yx/YmRlZTA1NS93d3cu/Zm9yYmVzLmNvbS8",
+                  "long_name": "forbes.com",
+                  "name": "Forbes",
+                  "url": "https://www.forbes.com/sites/jessepines/2025/06/13/7-tattoo-health-risks-to-consider-before-getting-inked/"
+                },
+                "subtype": "generic",
+                "thumbnail": {
+                  "logo": false,
+                  "original": "https://imageio.forbes.com/specials-images/imageserve/684a97fd31eff4c54698766a/0x0.jpg?format=jpg&amp;height=900&amp;width=1600&amp;fit=bounds",
+                  "src": "https://imgs.search.brave.com/Y3bouVAJOZAVG2IA6IhnajwvFYd_MeC50N9_XDrwloA/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9pbWFn/ZWlvLmZvcmJlcy5j/b20vc3BlY2lhbHMt/aW1hZ2VzL2ltYWdl/c2VydmUvNjg0YTk3/ZmQzMWVmZjRjNTQ2/OTg3NjZhLzB4MC5q/cGc_Zm9ybWF0PWpw/ZyZhbXA7aGVpZ2h0/PTkwMCZhbXA7d2lk/dGg9MTYwMCZhbXA7/Zml0PWJvdW5kcw"
+                },
+                "title": "7 Tattoo Health Risks To Consider Before (or After) Getting Inked",
+                "type": "search_result",
+                "url": "https://www.forbes.com/sites/jessepines/2025/06/13/7-tattoo-health-risks-to-consider-before-getting-inked/"
+              },
+              {
+                "description": "Cadmium, compounds of cadmium, ... (immediate), delayed, and long-term, as shown in Table 2. ... <strong>Some persons undergoing MRI may experience pain and a subjective sensation of burning at the tattoo site</strong> (25)....",
+                "extra_snippets": [
+                  "Cadmium, compounds of cadmium, cobalt sulphate, as well as soluble cobalt salts and carbon black can also cause cancers (24). Adverse effects and complications of tattooing can be acute (immediate), delayed, and long-term, as shown in Table 2. ... Some persons undergoing MRI may experience pain and a subjective sensation of burning at the tattoo site (25).",
+                  "In the future, it will certainly be necessary to i) standardise the composition and quality of tattoo inks; ii) harmonise methods for chemical and physical analysis of tattoo ink; iii) stipulate by law that tattooing can only be performed by licensed tattoo artists; iv) instruct tattoo candidates to check their health before tattooing; and v) run longitudinal studies to identify the cause-and-effect relationship between tattoo pigments and disorders in the lymph nodes and organs in which they are retained for life. ... None to declare. 1.Kean WF, Tocchio S, Kean M, Rainsford KD. The musculoskeletal abnormalities of the Similaun Iceman (\u2018OTZI\u2019): Clues to chronic pain and possible treatments Inflammopharmacology.",
+                  "Possible complications of tattooing are acute contact dermatitis, hypersensitivity reactions, chronic inflammatory reactions, or papulo-nodular reactions (28). In the case of poor hygienic conditions during tattooing, there is a risk of infection with bloodborne viruses such as hepatitis B (HBV), hepatitis C (HCV), and human immunodeficiency virus (HIV).",
+                  "According to some reports (29, 30), coloured inks, especially the red ones, are far more often associated with adverse effects than black inks. Before tattooing, it is recommended to test the person for hypersensitivity by applying coloured pigment on a small area of the skin. This will lower the risk of a hypersensitivity reaction (11)."
+                ],
+                "family_friendly": true,
+                "is_live": false,
+                "is_source_both": false,
+                "is_source_local": false,
+                "language": "en",
+                "meta_url": {
+                  "favicon": "https://imgs.search.brave.com/ijTTilvQEc3Szfx0cXONsFmJ4lXSgpFslJywgJ4L93Q/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYWE2NGUwNWIy/YjA3YTM4MjEwOWU5/MWUxNzY2NjVjOTdk/YWQ2YTFiNTgxYTcz/YTIxMTVjNzQzMWNi/ZWE2NmZhNC9wbWMu/bmNiaS5ubG0ubmlo/Lmdvdi8",
+                  "hostname": "pmc.ncbi.nlm.nih.gov",
+                  "netloc": "pmc.ncbi.nlm.nih.gov",
+                  "path": "\u203a articles  \u203a PMC11739707",
+                  "scheme": "https"
+                },
+                "profile": {
+                  "img": "https://imgs.search.brave.com/ijTTilvQEc3Szfx0cXONsFmJ4lXSgpFslJywgJ4L93Q/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYWE2NGUwNWIy/YjA3YTM4MjEwOWU5/MWUxNzY2NjVjOTdk/YWQ2YTFiNTgxYTcz/YTIxMTVjNzQzMWNi/ZWE2NmZhNC9wbWMu/bmNiaS5ubG0ubmlo/Lmdvdi8",
+                  "long_name": "pmc.ncbi.nlm.nih.gov",
+                  "name": "PubMed Central",
+                  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11739707/"
+                },
+                "subtype": "generic",
+                "title": "Tattooing: immediate and long-term adverse reactions and complications - PMC",
+                "type": "search_result",
+                "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11739707/"
+              }
+            ],
+            "type": "search"
+          }
+        },
+        "headers": {
+          "Connection": "close",
+          "Content-Length": "56162",
+          "Content-Type": "application/json",
+          "Date": "Sun, 28 Jun 2026 14:41:05 GMT",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+          "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+          "Vary": "Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Sec-Fetch-User",
+          "X-Content-Type-Options": "nosniff",
+          "X-Download-Options": "noopen",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-XSS-Protection": "1; mode=block",
+          "server-timing": "search-roundtrip;dur=530.81",
+          "vary": "Accept-Encoding",
+          "x-ratelimit-limit": "50, 0",
+          "x-ratelimit-policy": "50;w=1, 0;w=2592000",
+          "x-ratelimit-remaining": "47, 0",
+          "x-ratelimit-reset": "1, 206334"
+        },
+        "ok": true,
+        "status_code": 200
+      }
+    }
+  ]
+}

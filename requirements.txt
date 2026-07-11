@@ -1,0 +1,23 @@
+# Core: no third-party dependencies required.
+# All scripts under scripts/ use only Python 3.10+ standard library.
+
+# Optional: for pytrends fallback Google Trends access
+# pytrends>=4.9.0
+
+# Optional: for direct Reddit API access (scripts use urllib directly)
+# praw>=7.7.0
+
+# Optional: for Google API client (YouTube Data API v3)
+# google-api-python-client>=2.86.0
+
+# Optional: for environment variable loading in local dev
+# python-dotenv>=1.0.0
+
+# Optional: local page-to-Markdown extraction fallback
+# crawl4ai>=0.9.0
+
+# Optional: explicit document ingestion for PDFs, Office files, HTML, CSV/JSON/XML, etc.
+# markitdown[all]>=0.1.0
+
+# Optional: explicit hard-page scraping fallback; run `scrapling install` after install.
+# scrapling[fetchers]>=0.2.0

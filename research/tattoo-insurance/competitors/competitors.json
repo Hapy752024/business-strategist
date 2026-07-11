@@ -1,0 +1,651 @@
+[
+  {
+    "business_model_hint": "lead_gen_affiliate",
+    "competitor_type_hint": "lead_gen_affiliate",
+    "confidence_score": 0.55,
+    "domain": "ppibcorp.com",
+    "entity_type_hint": "lead_gen_affiliate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Insurance Programs for Artists & Contractors - PPIB As a leader in tattoo insurance, PPIB provides specialized coverage for artists & tattoo shops to protect you from potential risks related to your work."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Ppibcorp",
+    "needs_human_review": true,
+    "page_title": "Tattoo Insurance Programs for Artists & Contractors",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://www.ppibcorp.com/tattoo-insurance/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.ppibcorp.com/tattoo-insurance/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare alternatives",
+        "source": "firecrawl",
+        "url": "https://www.ppibcorp.com/tattoo-insurance/"
+      }
+    ],
+    "url": "https://www.ppibcorp.com/tattoo-insurance/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "pmc.ncbi.nlm.nih.gov",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Regret, Complications, and Removal: A Cross-Sectional ... Tattoo removal was mostly due to cultural reasons (74%). Local itching (32%), pain (22.7%), and infection (10.5%) were reported and associated with tattoo ...",
+      "Complications of Tattoos and Tattoo Removal: Stop and Think ... Laser tattoo removal using Q-switched lasers are the safest; however, complications can occur. Acute complications include pain, blistering, crusting and ...",
+      "Tattoo Regret, Complications, and Removal: A Cross-Sectional ... Among tattooed individuals in Saudi Arabia, the rate of tattoo regret and removal is high, and the most reported complication is pruritus."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Pmc",
+    "needs_human_review": true,
+    "page_title": "Tattoo Regret, Complications, and Removal: A Cross",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11300047/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4411590/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare alternatives",
+        "source": "firecrawl",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11300047/"
+      }
+    ],
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11300047/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "alternativebalance.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Insurance | Alternative Balance\u00ae The Alternative Balance Tattoo Insurance program is an affordable tattoo insurance option for independent tattoo artists and tattoo studio owners."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Alternativebalance",
+    "needs_human_review": true,
+    "page_title": "Tattoo Insurance",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://alternativebalance.com/tattoo-insurance/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://alternativebalance.com/tattoo-insurance/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare alternatives",
+        "source": "firecrawl",
+        "url": "https://alternativebalance.com/tattoo-insurance/"
+      }
+    ],
+    "url": "https://alternativebalance.com/tattoo-insurance/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "eqgroup.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Insurance & Body Piercing Insurance We have created an affordable tattoo insurance program designed specifically for tattoo and piercing artists. even in the face of a disaster or lawsuit. Tattoo ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Eqgroup",
+    "needs_human_review": true,
+    "page_title": "Tattoo Insurance & Body Piercing Insurance",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://www.eqgroup.com/tattoo-and-body-piercing-insurance/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.eqgroup.com/tattoo-and-body-piercing-insurance/"
+      }
+    ],
+    "url": "https://www.eqgroup.com/tattoo-and-body-piercing-insurance/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "biberk.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Insurance Policies For Shops And Studios - biBerk It protects you from claims of negligence or mistakes in your professional services. If a client is unhappy with the final tattoo, claims you ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Biberk",
+    "needs_human_review": true,
+    "page_title": "Tattoo Insurance Policies For Shops And Studios",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://www.biberk.com/articles/tattoo-insurance-for-shops-and-studios"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.biberk.com/articles/tattoo-insurance-for-shops-and-studios"
+      }
+    ],
+    "url": "https://www.biberk.com/articles/tattoo-insurance-for-shops-and-studios"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "tattooinsure.co.uk",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Treatment Risk Insurance For Tattooists Having a detailed tattoo insurance policy which focuses on treatment risk insurance for tattooists is the best way to ensure protection for your assets.",
+      "Treatment Risk Insurance For Tattooists Tattoo removal involves treatment entails high risk that may not be covered in a basic tattoo shop insurance policy."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Tattooinsure",
+    "needs_human_review": true,
+    "page_title": "Treatment Risk Insurance For Tattooists",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://www.tattooinsure.co.uk/treatment-risk-insurance-tattooists/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.tattooinsure.co.uk/treatment-risk-insurance-tattooists/"
+      }
+    ],
+    "url": "https://www.tattooinsure.co.uk/treatment-risk-insurance-tattooists/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "instagram.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "\"these artists deserve real protection.\" So they created insurance ... 9 likes, 0 comments - world.tattoo.events on May 8, 2026: \"Before tattoo shop insurance was a thing - @ppib_insurance made it a thing.",
+      "This is what you should do if you don't want to regret a tattoo\u2026 1\ufe0f\u20e3 Protect it properly keeping your tattoo covered with Saniderm, Recovery Derm Shield, or whatever second skin your artist provides. Follow your ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:17Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Instagram",
+    "needs_human_review": true,
+    "page_title": "\"these artists deserve real protection.\" So they created insurance ...",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/reel/DYEksSbxWiF/"
+      },
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare alternatives",
+        "source": "firecrawl",
+        "url": "https://www.instagram.com/reel/DXy1UIDOlG1/"
+      }
+    ],
+    "url": "https://www.instagram.com/reel/DYEksSbxWiF/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "insureon.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Shop Insurance Cost: Get Fast & Free Quotes - Insureon Tattoo studios pay an average of $54 per month, or $650 per year, for general liability insurance. General liability insurance covers legal fees related to ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Insureon",
+    "needs_human_review": true,
+    "page_title": "Tattoo Shop Insurance Cost: Get Fast & Free Quotes",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://www.insureon.com/personal-care-business-insurance/tattoo-shops/cost"
+      }
+    ],
+    "url": "https://www.insureon.com/personal-care-business-insurance/tattoo-shops/cost"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "fortunebusinessinsights.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Removal Market Size, Share | Growth Report [2034] The global tattoo removal market size was valued at $1.29 billion in 2025 & is anticipated to grow from $1.49 billion in 2026 to $4.87 billion by 2034."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "mentioned_in_search_evidence",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Fortunebusinessinsights",
+    "needs_human_review": true,
+    "page_title": "Tattoo Removal Market Size, Share",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://www.fortunebusinessinsights.com/tattoo-removal-market-110418"
+      }
+    ],
+    "url": "https://www.fortunebusinessinsights.com/tattoo-removal-market-110418"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "marketing.cochraneco.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Why Tattoo Artists Need Professional Liability Coverage General liability insurance is a fundamental safeguard for tattoo shops, covering accidents like slips, falls, or property damage."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Marketing",
+    "needs_human_review": true,
+    "page_title": "Why Tattoo Artists Need Professional Liability Coverage",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://marketing.cochraneco.com/why-tattoo-artists-need-professional-liability-coverage/"
+      }
+    ],
+    "url": "https://marketing.cochraneco.com/why-tattoo-artists-need-professional-liability-coverage/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "astanzalaser.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Removal Regulations, Insurance \u2013 Oh, My! - Astanza Laser Malpractice insurance is professional coverage for the individuals performing the laser tattoo removal procedure. Even though laser tattoo ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:15Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Astanzalaser",
+    "needs_human_review": true,
+    "page_title": "Tattoo Removal Regulations, Insurance \u2013 Oh, My!",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany software",
+        "source": "firecrawl",
+        "url": "https://astanzalaser.com/tattoo-removal-standards-regulations-insurance-oh-my/"
+      }
+    ],
+    "url": "https://astanzalaser.com/tattoo-removal-standards-regulations-insurance-oh-my/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "beautyworldnyc.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Will Insurance Cover Tattoo Removal? An Expert Breakdown Insurance does not cover tattoo removal. It's a frustrating reality for many, but it makes sense when you look at it from an insurer's perspective. Health ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:17Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Beautyworldnyc",
+    "needs_human_review": true,
+    "page_title": "Will Insurance Cover Tattoo Removal? An Expert Breakdown",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://beautyworldnyc.com/does-insurance-cover-tattoo-removal/"
+      }
+    ],
+    "url": "https://beautyworldnyc.com/does-insurance-cover-tattoo-removal/"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "ajg.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Tattoo Insurance | AJG Australia - Gallagher Our tattoo insurance policy provides both tattoo studio occupiers and tattoo artists with full malpractice coverage."
+    ],
+    "first_seen_at": "2026-06-28T14:45:17Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Ajg",
+    "needs_human_review": true,
+    "page_title": "Tattoo Insurance",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare Germany tools",
+        "source": "firecrawl",
+        "url": "https://www.ajg.com/au/insurance/small-business/tattoo-insurance/"
+      }
+    ],
+    "url": "https://www.ajg.com/au/insurance/small-business/tattoo-insurance/"
+  },
+  {
+    "business_model_hint": "editorial_resource",
+    "competitor_type_hint": "editorial_resource",
+    "confidence_score": 0.55,
+    "domain": "manifeststudio.com",
+    "entity_type_hint": "editorial_resource",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Bad Tattoos: Answers to All of Your Questions - Manifest Studio 3. Tattoo Removal Options. If you regret getting bad tattoos, several tattoo removal options can help. The right method depends on your tattoo's ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:49Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Manifeststudio",
+    "needs_human_review": true,
+    "page_title": "Bad Tattoos: Answers to All of Your Questions",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "blog_or_resource_page",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare alternatives",
+        "source": "firecrawl",
+        "url": "https://manifeststudio.com/blogs/news/bad-tattoos-answers-to-all-of-your-questions"
+      }
+    ],
+    "url": "https://manifeststudio.com/blogs/news/bad-tattoos-answers-to-all-of-your-questions"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "quora.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "What's a good replacement to clear film for tattoo aftercare (living ... I've always been told to remove the cling film before bed the first day of my tattooing. I gently clean the tattoo with ivory soap and warm ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:49Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Quora",
+    "needs_human_review": true,
+    "page_title": "What's a good replacement to clear film for tattoo aftercare (living ...",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare alternatives",
+        "source": "firecrawl",
+        "url": "https://www.quora.com/Whats-a-good-replacement-to-clear-film-for-tattoo-aftercare-living-plastic-free"
+      }
+    ],
+    "url": "https://www.quora.com/Whats-a-good-replacement-to-clear-film-for-tattoo-aftercare-living-plastic-free"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "serenitynj.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Help! I Regret My Tattoo | Medical Spa located in Pennington, NJ An ideal solution for tattoo regrets \u00b7 Simply delivered, comfortable procedure \u00b7 Noninvasive \u00b7 Advanced laser technology \u00b7 Tattoo removal isn't too time-consuming ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:49Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Serenitynj",
+    "needs_human_review": true,
+    "page_title": "Help! I Regret My Tattoo",
+    "segment_fit_hint": "partial",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare alternatives",
+        "source": "firecrawl",
+        "url": "https://www.serenitynj.com/post/help-i-regret-my-tattoo"
+      }
+    ],
+    "url": "https://www.serenitynj.com/post/help-i-regret-my-tattoo"
+  },
+  {
+    "business_model_hint": "unknown",
+    "competitor_type_hint": "uncertain_candidate",
+    "confidence_score": 0.55,
+    "domain": "healthline.com",
+    "entity_type_hint": "uncertain_candidate",
+    "evidence_quality": "medium",
+    "evidence_snippets": [
+      "Everything You Need to Know About Tattoo Aftercare - Healthline Using a dressing over it for a few days, washing the area a couple of times daily, moisturizing several times, and avoiding sun exposure are some ways to care ..."
+    ],
+    "first_seen_at": "2026-06-28T14:45:49Z",
+    "job_fit_hint": "explicit",
+    "key_success_factors": {
+      "distribution": "unknown",
+      "ease_of_use": "unknown",
+      "feature_depth": "unknown",
+      "integrations": "unknown",
+      "price": "unknown",
+      "support": "unknown",
+      "trust": "unknown"
+    },
+    "name": "Healthline",
+    "needs_human_review": true,
+    "page_title": "Everything You Need to Know About Tattoo Aftercare",
+    "segment_fit_hint": "explicit",
+    "source_page_type_hint": "product_or_homepage_candidate",
+    "sources": [
+      {
+        "query": "consumer tattoo insurance for tattoo complications regret removal bad tattoo aftercare alternatives",
+        "source": "firecrawl",
+        "url": "https://www.healthline.com/health/tattoo-aftercare"
+      }
+    ],
+    "url": "https://www.healthline.com/health/tattoo-aftercare"
+  }
+]

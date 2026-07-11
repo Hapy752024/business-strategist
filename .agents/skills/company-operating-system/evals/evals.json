@@ -1,0 +1,23 @@
+{
+  "skill_name": "company-operating-system",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We are 3 founders building a B2B SaaS for accounting firms. We have 5 unpaid pilots, no revenue, and we keep changing priorities. Set up an operating system for the next 90 days.",
+      "expected_output": "A stage-appropriate 90-day operating plan with strategy, metrics, cadence, decision rights, customer learning, cash discipline, risks, and next-week actions.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our ecommerce brand is at $120k/month revenue but fulfillment errors and customer complaints are rising. We need a management rhythm and KPIs.",
+      "expected_output": "A focused operating rhythm and KPI scorecard emphasizing delivery quality, customer issues, cash/margins, accountability, and process improvement.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I want to hire a sales team before product-market fit so we can grow faster. Help me design the company setup.",
+      "expected_output": "A skeptical response that challenges hiring before validated demand, identifies assumptions, proposes cheaper validation and sales-learning routines, and defines hiring gates.",
+      "files": []
+    }
+  ]
+}

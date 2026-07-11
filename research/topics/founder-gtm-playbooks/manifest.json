@@ -1,0 +1,180 @@
+{
+  "artifacts": [
+    ".agents/skills/archetype-gtm-strategist/SKILL.md",
+    "README.md",
+    "canvases/business-model-canvas.md",
+    "canvases/value-proposition-early-stage-founders-in-b2b-saas-b2c-saas-b2c-fintech-insurtech-and-b2c-professi.md",
+    "intake/startup-thesis.md",
+    "playbooks/research-synthesis.md",
+    "source_registry.csv"
+  ],
+  "blocked_reason": "",
+  "created_at": "2026-07-05T19:54:33Z",
+  "current_stage": "operator_playbook",
+  "events": [
+    {
+      "event": "topic_workspace_created",
+      "ts": "2026-07-05T19:54:33Z"
+    },
+    {
+      "event": "stage:operator_playbook:passed:conditional_pass",
+      "ts": "2026-07-05T19:58:56Z"
+    }
+  ],
+  "gate_result": "conditional_pass",
+  "next_action": "Use archetype-gtm-strategist on a concrete idea and validate its stage-specific recommendations with customer evidence.",
+  "open_blockers": [],
+  "schema_version": "1.0",
+  "stages": {
+    "business_model_draft": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "business_model_draft",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "channel_validation": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "channel_validation",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "competitor_discovery": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "competitor_discovery",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "competitor_marketing": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "competitor_marketing",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "customer_profile": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "customer_profile",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "evidence_collection": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "evidence_collection",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "final_decision": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "final_decision",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "first_customers": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "first_customers",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "intake": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "intake",
+      "status": "in_progress",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "mvp_or_pilot": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "mvp_or_pilot",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "offer_validation": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "offer_validation",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "operator_playbook": {
+      "artifacts": [
+        {
+          "description": "operator_playbook artifact",
+          "path": "source_registry.csv",
+          "type": "csv"
+        },
+        {
+          "description": "operator_playbook artifact",
+          "path": "playbooks/research-synthesis.md",
+          "type": "md"
+        },
+        {
+          "description": "operator_playbook artifact",
+          "path": ".agents/skills/archetype-gtm-strategist/SKILL.md",
+          "type": "md"
+        }
+      ],
+      "gate_result": "conditional_pass",
+      "next_action": "Use archetype-gtm-strategist on a concrete idea and validate its stage-specific recommendations with customer evidence.",
+      "open_gaps": [
+        "China founder evidence is thinner than Europe and the US; require current Chinese-language and local-expert validation."
+      ],
+      "provider_failures": [],
+      "stage": "operator_playbook",
+      "status": "passed",
+      "timestamp": "2026-07-05T19:58:56Z"
+    },
+    "opportunity_risk": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "opportunity_risk",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "problem_validation": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "problem_validation",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "retention": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "retention",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "scale_readiness": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "scale_readiness",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "segment_selection": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "segment_selection",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    },
+    "synthesis": {
+      "artifacts": [],
+      "gate_result": "not_run",
+      "stage": "synthesis",
+      "status": "pending",
+      "timestamp": "2026-07-05T19:54:33Z"
+    }
+  },
+  "topic": "Founder GTM Playbooks",
+  "topic_slug": "founder-gtm-playbooks",
+  "updated_at": "2026-07-05T19:58:56Z"
+}

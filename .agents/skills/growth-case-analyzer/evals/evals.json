@@ -1,0 +1,23 @@
+{
+  "skill_name": "growth-case-analyzer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Compare Amazon and Toyota as examples of company management. What should a small startup copy and not copy?",
+      "expected_output": "A balanced analysis of customer obsession, operating discipline, speed, kaizen, transferability limits, and practical startup actions.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze Kodak, Blockbuster, and Nokia failures and turn them into marketing and management lessons for a SaaS founder.",
+      "expected_output": "A failure-pattern analysis that avoids simplistic hindsight, separates management and marketing lessons, and applies them to a SaaS context.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I want case studies that prove aggressive marketing always wins. Use Apple, WeWork, and Theranos.",
+      "expected_output": "A skeptical response rejecting the false premise, distinguishing marketing from proof/performance/governance, and extracting careful lessons from the cases.",
+      "files": []
+    }
+  ]
+}

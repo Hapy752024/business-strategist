@@ -1,0 +1,17 @@
+{
+  "competitor_count": 10,
+  "needs_user_attention": [],
+  "outputs": {
+    "analysis_json": "/mnt/c/coding/general/market_researcher/research/evidence-scout/marketing/20260621-122756-digital-insurance-broker-for-pkv-bu-germany/marketing_analysis.json",
+    "raw": "/mnt/c/coding/general/market_researcher/research/evidence-scout/marketing/20260621-122756-digital-insurance-broker-for-pkv-bu-germany/raw.json",
+    "report": "/mnt/c/coding/general/market_researcher/research/evidence-scout/marketing/20260621-122756-digital-insurance-broker-for-pkv-bu-germany/report.md"
+  },
+  "provider": {
+    "fallback_used": false,
+    "http_status": 200,
+    "needs_user_attention": [],
+    "status": "ok"
+  },
+  "run_dir": "/mnt/c/coding/general/market_researcher/research/evidence-scout/marketing/20260621-122756-digital-insurance-broker-for-pkv-bu-germany",
+  "topic": "digital insurance broker for PKV BU Germany"
+}

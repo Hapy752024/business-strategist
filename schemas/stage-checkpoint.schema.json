@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-checkpoint.schema.json",
+  "title": "Stage Checkpoint",
+  "description": "Checkpoint record for a stage in the research workflow.",
+  "type": "object",
+  "required": ["stage", "status", "timestamp", "artifacts"],
+  "properties": {
+    "stage": {
+      "type": "string",
+      "enum": ["api_validation", "idea_grill", "intake", "segment_selection", "customer_profile", "business_model_draft", "problem_validation", "evidence_collection", "competitor_discovery", "competitor_marketing", "offer_validation", "mvp_or_pilot", "first_customers", "retention", "channel_validation", "operator_playbook", "opportunity_risk", "scale_readiness", "synthesis", "final_decision"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "in_progress", "passed", "failed", "blocked", "skipped"]
+    },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "gate_result": { "type": "string", "enum": ["pass", "fail", "conditional_pass", "not_run"] },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "type": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "sources_checked": { "type": "integer" },
+    "provider_failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "failure_class": { "type": "string" },
+          "confidence_impact": { "type": "string", "enum": ["none", "low", "medium", "high", "critical"] }
+        }
+      }
+    },
+    "open_gaps": { "type": "array", "items": { "type": "string" } },
+    "blocked_reason": { "type": "string" },
+    "next_action": { "type": "string" }
+  }
+}

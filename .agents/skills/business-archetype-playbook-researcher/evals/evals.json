@@ -1,0 +1,17 @@
+{
+  "skill_name": "business-archetype-playbook-researcher",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Research how bootstrapped B2B SaaS founders found their first ten accounting-firm customers and what failed. Separate Reddit and YouTube anecdotes from stronger evidence.",
+      "expected_output": "A sourced archetype playbook with context, first-customer tactics, failures, applicability limits, and no claim that founder anecdotes prove demand.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Build an operator playbook for launching an independent insurance brokerage in Germany with minimal marketing spend.",
+      "expected_output": "A regulation-aware brokerage playbook covering segment, trust, partnerships, first customers, low-cost acquisition, economics, and authoritative-source gaps.",
+      "files": []
+    }
+  ]
+}

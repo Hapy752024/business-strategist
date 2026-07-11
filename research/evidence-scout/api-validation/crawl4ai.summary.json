@@ -1,0 +1,10 @@
+{
+  "cost_note": "Local extractor. No API credits, but it can launch a browser and use local compute.",
+  "install_hint": "pip install crawl4ai && crawl4ai-setup",
+  "provider": "crawl4ai",
+  "required_cli": [
+    "crwl"
+  ],
+  "status": "missing_cli",
+  "validated_at": "2026-07-10T07:06:59Z"
+}

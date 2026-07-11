@@ -1,0 +1,17 @@
+{
+  "cost_note": "DataForSEO bills per API task. Check account pricing before running broad research.",
+  "credential_source": [
+    "DATAFORSEO_LOGIN",
+    "DATAFORSEO_PASSWORD"
+  ],
+  "docs": "https://docs.dataforseo.com/v3/keywords_data/google_trends/overview/",
+  "fields": [],
+  "has_tasks": false,
+  "http_status": null,
+  "provider": "dataforseo_google_trends",
+  "provider_status_code": null,
+  "provider_status_message": null,
+  "query": "project management,task management,notion",
+  "status": "network_blocked_or_sandboxed",
+  "validated_at": "2026-07-10T07:06:44Z"
+}

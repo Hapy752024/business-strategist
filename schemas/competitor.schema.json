@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "competitor.schema.json",
+  "title": "Competitor",
+  "description": "A discovered competitor with classification and evidence metadata.",
+  "type": "object",
+  "required": ["name", "url", "classification", "discovered_at"],
+  "properties": {
+    "name": { "type": "string", "minLength": 1 },
+    "url": { "type": "string", "format": "uri" },
+    "description": { "type": "string" },
+    "classification": {
+      "type": "string",
+      "enum": ["direct", "indirect", "substitute", "future_threat", "false_positive", "blog", "directory", "marketplace", "agency", "review_site"]
+    },
+    "classification_reason": { "type": "string" },
+    "segment_fit": { "type": "string", "enum": ["strong", "partial", "weak", "unknown"] },
+    "job_fit": { "type": "string", "enum": ["strong", "partial", "weak", "unknown"] },
+    "key_success_factor_gaps": { "type": "array", "items": { "type": "string" } },
+    "evidence_quality": { "type": "string", "enum": ["high", "medium", "low", "unverified"] },
+    "discovered_at": { "type": "string", "format": "date-time" },
+    "source_urls": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri" }
+    }
+  }
+}

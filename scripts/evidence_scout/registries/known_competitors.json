@@ -1,0 +1,24 @@
+{
+  "canonical_urls": {
+    "clark": "https://www.clark.de/private-krankenversicherung/",
+    "check24": "https://www.check24.de/private-krankenversicherung/",
+    "feather": "https://feather-insurance.com/private-health-insurance",
+    "ottonova": "https://www.ottonova.de/private-krankenversicherung",
+    "getsafe": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de",
+    "hellogetsafe": "https://www.hellogetsafe.com/de-de/p/privatekrankenversicherung-de",
+    "verivox": "https://www.verivox.de/private-krankenversicherung/",
+    "finanztip": "https://www.finanztip.de/pkv/"
+  },
+  "noisy_lookup_markers": [
+    "kündigen",
+    "kuendigen",
+    "kndigen",
+    "smartkündigen",
+    "smartkuendigen",
+    "smartkndigen",
+    "aboalarm",
+    "anbieterportal",
+    "cancel",
+    "cancellation"
+  ]
+}

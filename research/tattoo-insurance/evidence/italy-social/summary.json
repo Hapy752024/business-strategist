@@ -1,0 +1,57 @@
+{
+  "customer_segment": "Adults in Italy considering or recently getting a tattoo",
+  "days": 365,
+  "geo": "IT",
+  "hypothesis_id": "IT-H1-SOCIAL",
+  "irrelevant_count": 0,
+  "language": "it",
+  "needs_user_attention": [],
+  "outputs": {
+    "assumptions": "research/tattoo-insurance/evidence/italy-social/assumptions.md",
+    "evidence_jsonl": "research/tattoo-insurance/evidence/italy-social/evidence.jsonl",
+    "irrelevant_jsonl": "research/tattoo-insurance/evidence/italy-social/irrelevant.jsonl",
+    "raw_dir": "research/tattoo-insurance/evidence/italy-social/raw",
+    "report": "research/tattoo-insurance/evidence/italy-social/report.md",
+    "research_plan": "research/tattoo-insurance/evidence/italy-social/research_plan.md",
+    "user_review_plan": "research/tattoo-insurance/evidence/italy-social/user_review_plan.md"
+  },
+  "providers": {
+    "scrapecreators": {
+      "fields": [
+        "calls",
+        "calls[].endpoint",
+        "calls[].params",
+        "calls[].response",
+        "calls[].source",
+        "credential_source"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 10,
+      "status": "ok"
+    },
+    "x": {
+      "fields": [
+        "credential_source",
+        "searches",
+        "searches[].query",
+        "searches[].response"
+      ],
+      "irrelevant_count": 0,
+      "record_count": 0,
+      "status": "ok"
+    }
+  },
+  "providers_requested": [
+    "x",
+    "scrapecreators"
+  ],
+  "quality_flags": [
+    "No relevant Reddit records survived filtering; do not infer community pain from this run.",
+    "Only 2 direct user-pain record(s) found; treat demand evidence as thin.",
+    "Most relevant records are weak (9/10); use this run to shape interviews, not to validate purchase intent.",
+    "x API worked but produced zero relevant records."
+  ],
+  "record_count": 10,
+  "run_dir": "research/tattoo-insurance/evidence/italy-social",
+  "topic": "Tattoo risks, regret, removal, infection and aftercare concerns before getting a tattoo"
+}

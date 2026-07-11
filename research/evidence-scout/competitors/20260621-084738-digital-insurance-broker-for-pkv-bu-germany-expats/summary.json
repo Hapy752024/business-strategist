@@ -1,0 +1,26 @@
+{
+  "candidate_count": 12,
+  "customer_segment": "high-income English-speaking professionals and tech managers in Germany considering PKV or BU",
+  "needs_user_attention": [
+    "firecrawl: billing_required"
+  ],
+  "outputs": {
+    "competitors_json": "/mnt/c/coding/general/market_researcher/.evidence-scout/competitors/20260621-084738-digital-insurance-broker-for-pkv-bu-germany-expats/competitors.json",
+    "raw": "/mnt/c/coding/general/market_researcher/.evidence-scout/competitors/20260621-084738-digital-insurance-broker-for-pkv-bu-germany-expats/raw.json",
+    "report": "/mnt/c/coding/general/market_researcher/.evidence-scout/competitors/20260621-084738-digital-insurance-broker-for-pkv-bu-germany-expats/report.md"
+  },
+  "providers": {
+    "brave_search": {
+      "candidate_count": 12,
+      "credential_source": "BRAVE_SEARCH_API_KEY",
+      "status": "ok"
+    },
+    "firecrawl": {
+      "candidate_count": 6,
+      "credential_source": "FIRECRAWL_API_KEY_HGINVESTOR",
+      "status": "billing_required"
+    }
+  },
+  "run_dir": "/mnt/c/coding/general/market_researcher/.evidence-scout/competitors/20260621-084738-digital-insurance-broker-for-pkv-bu-germany-expats",
+  "topic": "digital insurance broker for PKV BU Germany expats"
+}
