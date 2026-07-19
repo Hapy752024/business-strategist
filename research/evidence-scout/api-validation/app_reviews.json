@@ -1,7 +1,0 @@
-{
-  "error": "missing credentials",
-  "required_env": [
-    "GOOGLE_PLAY_SERVICE_ACCOUNT_JSON or GOOGLE_APPLICATION_CREDENTIALS",
-    "APPSTORE_CONNECT_KEY_ID and APPSTORE_CONNECT_ISSUER_ID"
-  ]
-}

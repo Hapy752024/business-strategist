@@ -8,7 +8,7 @@
   "properties": {
     "stage": {
       "type": "string",
-      "enum": ["api_validation", "idea_grill", "intake", "segment_selection", "customer_profile", "business_model_draft", "problem_validation", "evidence_collection", "competitor_discovery", "competitor_marketing", "offer_validation", "mvp_or_pilot", "first_customers", "retention", "channel_validation", "operator_playbook", "opportunity_risk", "scale_readiness", "synthesis", "final_decision"]
+      "enum": ["api_validation", "idea_grill", "market_discovery", "intake", "segment_selection", "customer_profile", "business_model_draft", "problem_validation", "evidence_collection", "competitor_discovery", "competitor_marketing", "offer_validation", "mvp_or_pilot", "first_customers", "retention", "channel_validation", "operator_playbook", "opportunity_risk", "scale_readiness", "synthesis", "final_decision"]
     },
     "status": {
       "type": "string",

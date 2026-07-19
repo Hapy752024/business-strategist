@@ -12,13 +12,30 @@
       "family": "customer_pain",
       "label": "Reddit API",
       "description": "Posts and community discussions for raw complaint language, workarounds, repeated questions, and reachable communities.",
-      "use_when": ["customer pain", "workarounds", "communities", "complaints", "reddit", "forum demand"],
-      "avoid_when": ["representative market sizing", "proof of willingness to pay from one post"],
+      "use_when": [
+        "customer pain",
+        "workarounds",
+        "communities",
+        "complaints",
+        "reddit",
+        "forum demand"
+      ],
+      "avoid_when": [
+        "representative market sizing",
+        "proof of willingness to pay from one post"
+      ],
       "evidence_strength": "medium_when_repeated_otherwise_weak",
       "collector_provider": "reddit",
-      "provider_aliases": ["default"],
-      "validation_providers": ["reddit"],
-      "requires_env": ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"],
+      "provider_aliases": [
+        "default"
+      ],
+      "validation_providers": [
+        "reddit"
+      ],
+      "requires_env": [
+        "REDDIT_CLIENT_ID",
+        "REDDIT_CLIENT_SECRET"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py && python3 scripts/evidence_scout/provider_doctor.py --json",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --problem-keywords '<pain>' --workaround-keywords '<workaround>' --hypothesis-id H1 --providers default",
       "caveat": "Anecdotal. Cluster independent posts and separate user pain from provider/editorial content."
@@ -28,31 +45,69 @@
       "family": "search_demand",
       "label": "Google Trends via SerpAPI/DataForSEO",
       "description": "Directional search-interest proxy, seasonality, geography, and related demand language.",
-      "use_when": ["search demand", "seasonality", "google trends", "keyword interest", "geography demand"],
-      "avoid_when": ["absolute market size", "willingness to pay", "proof of pain"],
+      "use_when": [
+        "search demand",
+        "seasonality",
+        "google trends",
+        "keyword interest",
+        "geography demand"
+      ],
+      "avoid_when": [
+        "absolute market size",
+        "willingness to pay",
+        "proof of pain"
+      ],
       "evidence_strength": "weak",
       "collector_provider": "serpapi_google_trends",
-      "provider_aliases": ["default"],
-      "validation_providers": ["serpapi_google_trends", "dataforseo_google_trends"],
-      "requires_env": ["SERPAPI_API_KEY"],
-      "fallbacks": ["dataforseo_google_trends"],
+      "provider_aliases": [
+        "default"
+      ],
+      "validation_providers": [
+        "serpapi_google_trends",
+        "dataforseo_google_trends"
+      ],
+      "requires_env": [
+        "SERPAPI_API_KEY"
+      ],
+      "fallbacks": [
+        "dataforseo_google_trends",
+        "pytrends_fetch"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py",
-      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default --geo AUTO --language AUTO",
-      "caveat": "Use short user-language phrases only. Trends are attention, not demand proof."
+      "example": "python3 scripts/google_trends_fetch.py compare --keyword '<phrase 1>' --keyword '<phrase 2>' --geo AUTO --timeframe 'today 12-m'",
+      "caveat": "Use short user-language phrases only. Trends are attention, not demand proof. Zero-cost fallback when SERPAPI_API_KEY/DATAFORSEO are missing: scripts/google_trends_fetch.py (pytrends, optional dependency)."
     },
     {
       "id": "youtube",
       "family": "customer_pain",
       "label": "YouTube Data API",
       "description": "Video discovery and comments for education/review topics, creator communities, and user questions.",
-      "use_when": ["youtube", "video comments", "creator community", "tutorial", "review", "consumer education"],
-      "avoid_when": ["low-quota broad scraping", "representative demand claims"],
+      "use_when": [
+        "youtube",
+        "video comments",
+        "creator community",
+        "tutorial",
+        "review",
+        "consumer education"
+      ],
+      "avoid_when": [
+        "low-quota broad scraping",
+        "representative demand claims"
+      ],
       "evidence_strength": "weak_to_medium_when_comments_repeat",
       "collector_provider": "youtube",
-      "provider_aliases": ["default"],
-      "validation_providers": ["youtube"],
-      "requires_env": ["YOUTUBE_API_KEY"],
-      "fallbacks": ["scrapecreators"],
+      "provider_aliases": [
+        "default"
+      ],
+      "validation_providers": [
+        "youtube"
+      ],
+      "requires_env": [
+        "YOUTUBE_API_KEY"
+      ],
+      "fallbacks": [
+        "scrapecreators"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default",
       "caveat": "Quota-sensitive. Treat video metadata as context; comments need repeated pain or questions to matter."
@@ -62,14 +117,37 @@
       "family": "web_discovery_extraction",
       "label": "Serper.dev Google SERP",
       "description": "Cheap/default Google-only web/news/site-search discovery for ordinary source discovery before heavier or broader providers.",
-      "use_when": ["google search", "web discovery", "news discovery", "site search", "cheap SERP", "serper"],
-      "avoid_when": ["non-Google engines", "deep SERP edge-case parsing", "SEO/backlink/search-volume datasets", "known page extraction"],
+      "use_when": [
+        "google search",
+        "web discovery",
+        "news discovery",
+        "site search",
+        "cheap SERP",
+        "serper"
+      ],
+      "avoid_when": [
+        "non-Google engines",
+        "deep SERP edge-case parsing",
+        "SEO/backlink/search-volume datasets",
+        "known page extraction"
+      ],
       "evidence_strength": "weak_lead_source",
       "collector_provider": "serper_search",
-      "provider_aliases": ["default"],
-      "validation_providers": ["serper"],
-      "requires_env": ["SERPER_DEV_API_KEY"],
-      "fallbacks": ["brave_search", "firecrawl", "serpapi_for_edge_cases", "dataforseo_for_seo_depth"],
+      "provider_aliases": [
+        "default"
+      ],
+      "validation_providers": [
+        "serper"
+      ],
+      "requires_env": [
+        "SERPER_DEV_API_KEY"
+      ],
+      "fallbacks": [
+        "brave_search",
+        "firecrawl",
+        "serpapi_for_edge_cases",
+        "dataforseo_for_seo_depth"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py && python3 scripts/evidence_scout/provider_doctor.py --json",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers serper_search",
       "caveat": "Google-only. Use SerpApi/DataForSEO only when engine variety, edge-case parsing, Trends, SEO-depth, app, or e-commerce datasets are needed."
@@ -79,14 +157,35 @@
       "family": "web_discovery_extraction",
       "label": "Firecrawl search/scrape",
       "description": "Search and extraction for forums, blogs, directories, competitor pages, and source discovery.",
-      "use_when": ["web search", "forums", "competitor pages", "source discovery", "firecrawl", "scrape"],
-      "avoid_when": ["primary customer proof from marketing copy", "broad paid crawling without a plan"],
+      "use_when": [
+        "web search",
+        "forums",
+        "competitor pages",
+        "source discovery",
+        "firecrawl",
+        "scrape"
+      ],
+      "avoid_when": [
+        "primary customer proof from marketing copy",
+        "broad paid crawling without a plan"
+      ],
       "evidence_strength": "weak_until_source_intent_is_verified",
       "collector_provider": "firecrawl",
-      "provider_aliases": ["default"],
-      "validation_providers": ["firecrawl"],
-      "requires_env": ["FIRECRAWL_API_KEY_HGINVESTOR"],
-      "fallbacks": ["serper_search", "brave_search", "crawl4ai", "scrapling"],
+      "provider_aliases": [
+        "default"
+      ],
+      "validation_providers": [
+        "firecrawl"
+      ],
+      "requires_env": [
+        "FIRECRAWL_API_KEY_HGINVESTOR"
+      ],
+      "fallbacks": [
+        "serper_search",
+        "brave_search",
+        "crawl4ai",
+        "scrapling"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default",
       "caveat": "Marketing/editorial pages are category context, not customer pain."
@@ -96,14 +195,32 @@
       "family": "web_discovery_extraction",
       "label": "Brave Search API",
       "description": "Low-friction web/source discovery and fallback URL discovery for local extractors.",
-      "use_when": ["web discovery", "fallback search", "source discovery", "forum discovery", "brave"],
-      "avoid_when": ["known page extraction", "claim verification without opening sources"],
+      "use_when": [
+        "web discovery",
+        "fallback search",
+        "source discovery",
+        "forum discovery",
+        "brave"
+      ],
+      "avoid_when": [
+        "known page extraction",
+        "claim verification without opening sources"
+      ],
       "evidence_strength": "weak_lead_source",
       "collector_provider": "brave_search",
-      "provider_aliases": ["default"],
-      "validation_providers": ["brave_search"],
-      "requires_env": ["BRAVE_SEARCH_API_KEY"],
-      "fallbacks": ["serper_search", "firecrawl"],
+      "provider_aliases": [
+        "default"
+      ],
+      "validation_providers": [
+        "brave_search"
+      ],
+      "requires_env": [
+        "BRAVE_SEARCH_API_KEY"
+      ],
+      "fallbacks": [
+        "serper_search",
+        "firecrawl"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default",
       "caveat": "Search snippets are leads. Extract and inspect source pages before using claims."
@@ -113,14 +230,33 @@
       "family": "social_public",
       "label": "X API",
       "description": "Recent public text signals from operators, consumers, creators, and professional communities.",
-      "use_when": ["x", "twitter", "recent complaints", "operators", "social signal", "professional complaints"],
-      "avoid_when": ["stable market sizing", "topics unlikely to be discussed publicly"],
+      "use_when": [
+        "x",
+        "twitter",
+        "recent complaints",
+        "operators",
+        "social signal",
+        "professional complaints"
+      ],
+      "avoid_when": [
+        "stable market sizing",
+        "topics unlikely to be discussed publicly"
+      ],
       "evidence_strength": "weak_to_medium_when_repeated",
       "collector_provider": "x",
-      "provider_aliases": ["social", "all"],
-      "validation_providers": ["x"],
-      "requires_env": ["X_BEARER_TOKEN"],
-      "fallbacks": ["scrapecreators"],
+      "provider_aliases": [
+        "social",
+        "all"
+      ],
+      "validation_providers": [
+        "x"
+      ],
+      "requires_env": [
+        "X_BEARER_TOKEN"
+      ],
+      "fallbacks": [
+        "scrapecreators"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default,social",
       "caveat": "Add only when social evidence is material enough to spend quota/credits."
@@ -130,14 +266,33 @@
       "family": "social_public",
       "label": "Grok/xAI X Search discovery",
       "description": "Model-mediated X Search with citations for discovering investor/operator/customer discussion, handles, threads, and multimedia posts.",
-      "use_when": ["grok", "xai", "x search", "twitter semantic search", "investor discussion", "customer discussion", "cited x discovery"],
-      "avoid_when": ["source of record", "willingness-to-pay proof", "bulk export", "uncited claims"],
+      "use_when": [
+        "grok",
+        "xai",
+        "x search",
+        "twitter semantic search",
+        "investor discussion",
+        "customer discussion",
+        "cited x discovery"
+      ],
+      "avoid_when": [
+        "source of record",
+        "willingness-to-pay proof",
+        "bulk export",
+        "uncited claims"
+      ],
       "evidence_strength": "discovery_only_until_cited_posts_are_verified",
       "collector_provider": "xai_x_search",
       "provider_aliases": [],
-      "validation_providers": ["xai_x_search"],
-      "requires_env": ["GROK_API_KEY"],
-      "optional_env": ["XAI_API_KEY"],
+      "validation_providers": [
+        "xai_x_search"
+      ],
+      "requires_env": [
+        "GROK_API_KEY"
+      ],
+      "optional_env": [
+        "XAI_API_KEY"
+      ],
       "approval_required": true,
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers xai_x_search --x-from-date 2026-07-01",
@@ -148,13 +303,34 @@
       "family": "social_public",
       "label": "ScrapeCreators social fallback",
       "description": "Paid public social-data fallback across TikTok, Instagram, YouTube, Facebook, X, Reddit, Threads, LinkedIn, Pinterest, and Bluesky.",
-      "use_when": ["tiktok", "instagram", "threads", "facebook", "x profile", "twitter profile", "x handles", "social fallback", "public social", "scrapecreators"],
-      "avoid_when": ["default free evidence", "unclear segment or query language"],
+      "use_when": [
+        "tiktok",
+        "instagram",
+        "threads",
+        "facebook",
+        "x profile",
+        "twitter profile",
+        "x handles",
+        "social fallback",
+        "public social",
+        "scrapecreators"
+      ],
+      "avoid_when": [
+        "default free evidence",
+        "unclear segment or query language"
+      ],
       "evidence_strength": "weak_to_medium_when_repeated_user_pain",
       "collector_provider": "scrapecreators",
-      "provider_aliases": ["social", "all"],
-      "validation_providers": ["scrapecreators"],
-      "requires_env": ["SCRAPE_CREATORS_API_KEY"],
+      "provider_aliases": [
+        "social",
+        "all"
+      ],
+      "validation_providers": [
+        "scrapecreators"
+      ],
+      "requires_env": [
+        "SCRAPE_CREATORS_API_KEY"
+      ],
       "approval_required": true,
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers scrapecreators --x-handles handle1,handle2",
@@ -165,13 +341,28 @@
       "family": "app_store",
       "label": "Sonar ASO/app-market API",
       "description": "App-store keyword demand, competitor app reviews, app context, and optional revenue estimates.",
-      "use_when": ["mobile app", "app reviews", "app store", "aso", "sonar", "competitor app", "app revenue"],
-      "avoid_when": ["non-app businesses", "willingness-to-pay proof from keyword metrics alone"],
+      "use_when": [
+        "mobile app",
+        "app reviews",
+        "app store",
+        "aso",
+        "sonar",
+        "competitor app",
+        "app revenue"
+      ],
+      "avoid_when": [
+        "non-app businesses",
+        "willingness-to-pay proof from keyword metrics alone"
+      ],
       "evidence_strength": "weak_for_keywords_medium_for_repeated_review_pain",
       "collector_provider": "sonar",
       "provider_aliases": [],
-      "validation_providers": ["sonar"],
-      "requires_env": ["SONAR_API_KEY"],
+      "validation_providers": [
+        "sonar"
+      ],
+      "requires_env": [
+        "SONAR_API_KEY"
+      ],
       "approval_required": true,
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default,sonar --sonar-apps ios:<id>,android:<package>",
@@ -182,14 +373,32 @@
       "family": "local_extraction",
       "label": "Crawl4AI local page extraction",
       "description": "Local Markdown extraction for a small discovered URL set before heavier hard-page fallbacks.",
-      "use_when": ["local extraction", "crawl4ai", "page markdown", "reduce firecrawl credits"],
-      "avoid_when": ["broad web discovery", "default collection", "no CLI installed"],
+      "use_when": [
+        "local extraction",
+        "crawl4ai",
+        "page markdown",
+        "reduce firecrawl credits"
+      ],
+      "avoid_when": [
+        "broad web discovery",
+        "default collection",
+        "no CLI installed"
+      ],
       "evidence_strength": "page_context_only",
       "collector_provider": "crawl4ai",
-      "provider_aliases": ["local_web"],
-      "validation_providers": ["crawl4ai"],
-      "requires_cli": ["crwl"],
-      "fallbacks": ["firecrawl", "scrapling"],
+      "provider_aliases": [
+        "local_web"
+      ],
+      "validation_providers": [
+        "crawl4ai"
+      ],
+      "requires_cli": [
+        "crwl"
+      ],
+      "fallbacks": [
+        "firecrawl",
+        "scrapling"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default,local_web --local-extract-url-limit 3",
       "caveat": "Optional local fallback. Keep URL limits low and inspect raw output."
@@ -199,13 +408,28 @@
       "family": "document_ingestion",
       "label": "MarkItDown document ingestion",
       "description": "Local conversion of explicit PDFs, Office files, CSV/JSON/XML, HTML, and supplied document paths into Markdown evidence.",
-      "use_when": ["document ingestion", "pdf", "office file", "local document", "markitdown", "uploaded file"],
-      "avoid_when": ["broad web discovery", "documents without provenance", "no document paths"],
+      "use_when": [
+        "document ingestion",
+        "pdf",
+        "office file",
+        "local document",
+        "markitdown",
+        "uploaded file"
+      ],
+      "avoid_when": [
+        "broad web discovery",
+        "documents without provenance",
+        "no document paths"
+      ],
       "evidence_strength": "document_evidence_if_provenance_known",
       "collector_provider": "markitdown",
       "provider_aliases": [],
-      "validation_providers": ["markitdown"],
-      "requires_cli": ["markitdown"],
+      "validation_providers": [
+        "markitdown"
+      ],
+      "requires_cli": [
+        "markitdown"
+      ],
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers markitdown --document-paths '<path1>,<path2>'",
       "caveat": "Use only for explicit documents. Verify document source and date."
@@ -215,13 +439,27 @@
       "family": "local_extraction",
       "label": "Scrapling hard-page fallback",
       "description": "Explicit hard-page extraction fallback when normal HTTP/API/Firecrawl/Crawl4AI cannot parse a concrete page.",
-      "use_when": ["hard page", "scrapling", "fallback extraction", "blocked page", "dynamic page"],
-      "avoid_when": ["default collection", "broad scraping", "simple pages"],
+      "use_when": [
+        "hard page",
+        "scrapling",
+        "fallback extraction",
+        "blocked page",
+        "dynamic page"
+      ],
+      "avoid_when": [
+        "default collection",
+        "broad scraping",
+        "simple pages"
+      ],
       "evidence_strength": "page_context_only",
       "collector_provider": "scrapling",
       "provider_aliases": [],
-      "validation_providers": ["scrapling"],
-      "requires_cli": ["scrapling"],
+      "validation_providers": [
+        "scrapling"
+      ],
+      "requires_cli": [
+        "scrapling"
+      ],
       "approval_required": true,
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers scrapling --local-extract-url-limit 2",
@@ -232,13 +470,38 @@
       "family": "china_sources",
       "label": "China public-source route",
       "description": "Bilibili public/search fallback, V2EX, and Chinese web/domain search for China-specific market evidence.",
-      "use_when": ["china", "chinese", "bilibili", "v2ex", "zhihu", "weibo", "douban", "xiaohongshu", "CN"],
-      "avoid_when": ["non-China markets", "absence-of-demand claims from limited fallback only"],
+      "use_when": [
+        "china",
+        "chinese",
+        "bilibili",
+        "v2ex",
+        "zhihu",
+        "weibo",
+        "douban",
+        "xiaohongshu",
+        "CN"
+      ],
+      "avoid_when": [
+        "non-China markets",
+        "absence-of-demand claims from limited fallback only"
+      ],
       "evidence_strength": "weak_until_direct_user_pain_or_comments_repeat",
       "collector_provider": "china_public",
-      "provider_aliases": ["china_public", "china"],
-      "validation_providers": ["serper", "firecrawl", "brave_search"],
-      "fallbacks": ["serper_search", "brave_search", "firecrawl", "v2ex_public_hot"],
+      "provider_aliases": [
+        "china_public",
+        "china"
+      ],
+      "validation_providers": [
+        "serper",
+        "firecrawl",
+        "brave_search"
+      ],
+      "fallbacks": [
+        "serper_search",
+        "brave_search",
+        "firecrawl",
+        "v2ex_public_hot"
+      ],
       "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default,china_public --geo CN --language zh",
       "caveat": "Native Bilibili may fail. Site-search fallbacks are useful but incomplete."
@@ -248,12 +511,27 @@
       "family": "china_sources",
       "label": "China social enrichment",
       "description": "Login/cookie-backed China social enrichment, with ScrapeCreators fallback where available.",
-      "use_when": ["xiaohongshu", "china social", "little red book", "consumer china", "chinese social"],
-      "avoid_when": ["no explicit approval", "primary personal account", "non-China market"],
+      "use_when": [
+        "xiaohongshu",
+        "china social",
+        "little red book",
+        "consumer china",
+        "chinese social"
+      ],
+      "avoid_when": [
+        "no explicit approval",
+        "primary personal account",
+        "non-China market"
+      ],
       "evidence_strength": "weak_to_medium_when_repeated_user_pain",
       "collector_provider": "china_social",
-      "provider_aliases": ["china_social", "china"],
-      "validation_providers": ["scrapecreators"],
+      "provider_aliases": [
+        "china_social",
+        "china"
+      ],
+      "validation_providers": [
+        "scrapecreators"
+      ],
       "approval_required": true,
       "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers china_social --geo CN --language zh",
@@ -264,17 +542,69 @@
       "family": "paid_fallbacks",
       "label": "Apify and Bright Data fallback layer",
       "description": "Paid actor/browser fallback for selected social, traffic, local-market, and hard-source collection after choosing an actor/schema.",
-      "use_when": ["apify", "bright data", "traffic estimates", "google maps", "paid fallback", "browser scraping"],
-      "avoid_when": ["default evidence", "unclear source need", "stock sentiment for general business validation"],
+      "use_when": [
+        "apify",
+        "bright data",
+        "traffic estimates",
+        "google maps",
+        "paid fallback",
+        "browser scraping"
+      ],
+      "avoid_when": [
+        "default evidence",
+        "unclear source need",
+        "stock sentiment for general business validation"
+      ],
       "evidence_strength": "context_or_weak_signal_unless_direct_reviews_repeat",
       "collector_provider": null,
       "provider_aliases": [],
-      "validation_providers": ["apify", "brightdata"],
-      "requires_env": ["APIFY_TOKEN", "BRIGHTDATA_SELENIUM_URL"],
+      "validation_providers": [
+        "apify",
+        "brightdata"
+      ],
+      "requires_env": [
+        "APIFY_TOKEN",
+        "BRIGHTDATA_SELENIUM_URL"
+      ],
       "approval_required": true,
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "Use the competitor-monitoring skill for Google Maps or Similarweb-style actors after approval.",
       "caveat": "Not a default demand-validation source. Define actor, fields, cost, and confidence impact first."
+    },
+    {
+      "id": "podcasts",
+      "family": "founder_operator_sources",
+      "label": "Podcast discovery (Apple + Podcast Index + Spotify)",
+      "description": "Show and episode discovery for founder/operator playbook evidence: practitioners explaining what actually worked. Apple iTunes search is keyless; Podcast Index and Spotify need free app credentials.",
+      "use_when": [
+        "founder playbook",
+        "operator interview",
+        "practitioner lessons",
+        "podcast",
+        "how we grew",
+        "marketing case study",
+        "expert source discovery"
+      ],
+      "avoid_when": [
+        "representative market sizing",
+        "proof of demand from one show"
+      ],
+      "evidence_strength": "medium_when_independent_operators_repeat",
+      "collector_provider": "podcasts",
+      "provider_aliases": [
+        "default"
+      ],
+      "validation_providers": [],
+      "requires_env": [],
+      "optional_env": [
+        "PODCASTINDEX_API_KEY",
+        "PODCASTINDEX_API_SECRET",
+        "SPOTIFY_CLIENT_ID",
+        "SPOTIFY_CLIENT_SECRET"
+      ],
+      "status_check": "python3 scripts/podcast_feed_fetch.py search --query 'test' --provider apple --limit 1",
+      "example": "python3 scripts/podcast_feed_fetch.py search --query 'insurance marketing' --provider all --limit 10 --output research/topics/<slug>/raw/podcast-search.json && python3 scripts/podcast_feed_fetch.py episodes --feed <feed_url> --company <term>",
+      "caveat": "Shows are opinions of practitioners, not market data. Separate what operators did from what they conclude; prefer patterns repeated across independent operators."
     }
   ]
 }

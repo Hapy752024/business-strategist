@@ -5,6 +5,10 @@ description: Set up or run recurring competitor monitoring for pricing, messagin
 
 # Competitor Monitoring
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of monitoring/tracking queries; completes setup in <=12 tool calls; defines entities, fields, cadence, and alert thresholds; zero paid actors run without approval.
+- **Qualitative:** like-for-like snapshots are diffed; mechanical noise is suppressed; observed changes are separated from strategic interpretation.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

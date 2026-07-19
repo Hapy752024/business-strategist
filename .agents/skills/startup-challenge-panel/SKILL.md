@@ -5,6 +5,10 @@ description: Challenge a startup thesis with bounded specialist roles, independe
 
 # Startup Challenge Panel
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of challenge/review queries; completes in <=25 tool calls; runs >=3 independent bounded reviews; produces a disagreement matrix and arbiter verdict; zero decisions by vote.
+- **Qualitative:** each role has a bounded objective and evidence contract; independent reviews complete before cross-examination; unsupported claims are surfaced; the arbiter verdict is reasoned, not averaged.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

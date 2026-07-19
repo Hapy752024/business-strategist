@@ -1,0 +1,111 @@
+# Full Command Reference
+
+Extended CLI command variants for each skill. Prefer the AGENTS.md shorthand for common use; load this reference when the full variant set is needed.
+
+## Evidence Scout
+
+### Default providers
+
+```bash
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain phrase 1>,<pain phrase 2>" --workaround-keywords "<workaround 1>,<workaround 2>" --hypothesis-id H1 --days 30 --limit 20 --providers default
+```
+
+### With social enrichment (paid, ask first)
+
+```bash
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain>" --workaround-keywords "<workaround>" --hypothesis-id H1 --days 30 --limit 20 --providers default,social
+```
+
+### China-market coverage (public only)
+
+```bash
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain>" --workaround-keywords "<workaround>" --hypothesis-id H1 --days 30 --limit 20 --providers default,china_public --geo CN --language zh
+```
+
+### With local extraction (crawl4ai)
+
+```bash
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain>" --workaround-keywords "<workaround>" --hypothesis-id H1 --days 30 --limit 20 --providers default,crawl4ai --local-extract-url-limit 5
+```
+
+### With document ingestion (markitdown)
+
+```bash
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain>" --document-paths "path/to/doc.pdf,https://example.com/report" --providers default,markitdown --document-limit 5
+```
+
+### App-store enrichment (Sonar, paid — ask first)
+
+```bash
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain>" --providers default,sonar --sonar-apps ios:<app_id>,android:<package_name>
+```
+
+## Market Problem Discovery
+
+### Start a discovery run
+
+```bash
+python3 scripts/evidence_scout/discover_market_problems.py --topic "<market or domain>" --focus "<optional rough hunch>" --geo AUTO --language AUTO --collect
+```
+
+### Finalize after synthesis
+
+```bash
+python3 scripts/evidence_scout/discover_market_problems.py --finalize --run-dir "<run path>" --candidate-count <0-7>
+```
+
+### Narrow scope discovery
+
+```bash
+python3 scripts/evidence_scout/discover_market_problems.py --topic "<market>" --focus "<hunch>" --problem-keywords "<pain 1>,<pain 2>" --workaround-keywords "<workaround 1>" --collect
+```
+
+## Competitor Discovery
+
+```bash
+python3 scripts/evidence_scout/discover_competitors.py --topic "<topic>" --customer-segment "<segment>" --known-competitors "<optional comma-separated names>" --limit 20
+```
+
+## Competitor Marketing Analysis
+
+```bash
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 10
+```
+
+## Founder/Operator Playbooks
+
+```bash
+python3 scripts/evidence_scout/research_founder_playbooks.py --topic "<topic>" --archetype "<business archetype>" --customer-segment "<segment>"
+```
+
+## Infrastructure
+
+### Validate APIs
+
+```bash
+python3 scripts/validate_apis/run_all.py
+```
+
+### Capability lookup
+
+```bash
+python3 scripts/capability_lookup.py --question "<research need>" --compact
+```
+
+### Provider doctor
+
+```bash
+python3 scripts/evidence_scout/provider_doctor.py --json
+```
+
+### Setup validation
+
+```bash
+bash scripts/validate_setup.sh
+```
+
+### Initialize topic workspace
+
+```bash
+python3 scripts/evidence_scout/init_topic.py --topic "<topic>" --customer-segment "<segment>"
+```

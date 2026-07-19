@@ -5,6 +5,10 @@ description: Research how founders and operators actually validated, launched, f
 
 # Business Archetype Playbook Researcher
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of playbook/operator-research queries; completes in <=15 tool calls; collects from >=3 distinct source types; zero operator anecdotes presented as customer-demand evidence.
+- **Qualitative:** source URLs, dates, and context are preserved; failure cases and selection bias are disclosed; operator patterns are separated from customer evidence.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

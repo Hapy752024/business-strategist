@@ -1,9 +1,13 @@
 ---
 name: evidence-scout
-description: Collect source-grounded customer pain, workarounds, demand proxies, counter-evidence, and reachable communities from Reddit, YouTube, forums, search, Trends, and approved enrichment providers. Use after the idea is researchable.
+description: Collect source-grounded customer pain, workarounds, demand proxies, counter-evidence, and reachable communities from Reddit, YouTube, forums, search, Trends, and approved enrichment providers. Use after a specific customer/problem candidate is researchable. For broad market exploration before a candidate exists, use market-problem-discovery first.
 ---
 
 # Evidence Scout
+
+## Success Criteria
+- **Quantitative:** triggers on >=90% of validation queries post-idea-grill; completes in <=20 tool calls; zero failed API calls per run where credentials exist; <=15% irrelevant record rate.
+- **Qualitative:** users do not redirect mid-collection; provider failures are surfaced before evidence interpretation; evidence, interpretation, counter-evidence, and missing evidence are separated in every output.
 
 ## Workflow
 

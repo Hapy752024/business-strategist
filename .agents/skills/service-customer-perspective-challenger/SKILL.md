@@ -5,6 +5,10 @@ description: Challenge, review, package, and market a consumer service from an e
 
 # Service Customer Perspective Challenger
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of customer-perspective queries; completes review in <=15 tool calls; addresses >=3 buying contexts; zero demographic stereotypes used as evidence.
+- **Qualitative:** simulated customer voice is labeled as hypothesis, not research evidence; regional context is applied when geography is specified; each challenge is tied to evidence or a named assumption.
+
 ## Workflow
 
 1. Read `references/workflow.md` and `references/evidence-rules.md`.

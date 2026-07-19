@@ -5,6 +5,10 @@ description: Analyze successful and failed companies to extract transferable str
 
 # Growth Case Analyzer
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of case-study/company-analysis queries; completes in <=12 tool calls; verifies >=3 primary-source facts; zero transferred tactics without context comparison.
+- **Qualitative:** chronology, causal evidence, hypotheses, and hindsight judgment are separated; what should NOT be copied is stated; transferability limits are explicit.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

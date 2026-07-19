@@ -2,7 +2,7 @@
 
 ## Purpose and boundary
 
-Use this skill for the strategic sequence from market test to repeatable distribution. Use `marketing-strategy-builder` afterward for detailed campaigns and `social-digital-marketing-planner` for platform calendars and creative execution. Route unproven customer pain to `idea-grill` and `evidence-scout`; route regulated pilots to `saas-fintech-pilot-designer`.
+Use this skill for the strategic sequence from market test to repeatable distribution. Use `marketing-strategy-builder` afterward for detailed campaigns and `social-digital-marketing-planner` for platform calendars and creative execution. If the user first needs to discover which customer problem or segment is worth pursuing, route to `market-problem-discovery`; route unproven pain for a chosen candidate to `idea-grill` and `evidence-scout`; route regulated pilots to `saas-fintech-pilot-designer`.
 
 ## Minimum inputs
 

@@ -1,0 +1,32 @@
+{
+  "skill_name": "competitor-monitoring",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up recurring monitoring for three competitors in the German digital insurance space: Clark, Getsafe, and Feather. Watch for pricing changes, new product launches, and messaging shifts.",
+      "expected_output": "A monitoring plan with scope (entities, fields), cadence, baseline recommendation, and alert thresholds. Must distinguish between high-signal changes (pricing, new products) and low-signal noise (blog posts, minor copy edits). Must mention that monitoring is a separate skill, not part of evidence-scout.",
+      "must_mention": ["monitor", "cadence", "threshold", "pricing", "baseline", "separate"],
+      "must_not_mention": ["evidence-scout", "--providers monitoring"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Track web traffic for my top 5 competitors using Similarweb data. Give me monthly reports.",
+      "expected_output": "A traffic-monitoring plan with approval gate for paid traffic actors (Similarweb-style). Must note that traffic estimates and bounce rates are not proof of churn or demand — they are competitive context only. Must recommend specific metrics and warn against over-interpreting estimates.",
+      "must_mention": ["traffic", "estimate", "context", "not proof", "approval", "Similarweb"],
+      "must_not_mention": ["proven demand", "market share", "revenue proof"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Monitor local competitors — we run a chain of coffee shops in Berlin and want to track new openings, rating trends, and review sentiment.",
+      "expected_output": "A local-monitoring plan using Google Maps actors. Must require explicit user approval before running location-based actors. Must note that ratings and review counts are context unless repeated review text shows real pain or competitive weakness. Must recommend review-text analysis over rating averages.",
+      "must_mention": ["Google Maps", "approval", "review text", "local", "rating", "context"],
+      "must_not_mention": [],
+      "required_artifacts": [],
+      "files": []
+    }
+  ]
+}

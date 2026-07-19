@@ -5,19 +5,25 @@ description: Relentlessly interview a founder to clarify a business idea, target
 
 # Idea Grill Workflow
 
-Use this skill when the user has a business idea, wants to validate demand, or asks whether real users have a painful problem.
+Use this skill when the user has chosen a candidate business idea, customer problem, or segment and wants to validate demand or make the candidate researchable.
+
+Do not use this skill merely because the user is vague. If they ask what problems a market has, which segments are underserved, what frustrations users have, or want to explore from a rough domain, route to `market-problem-discovery` first. That workflow researches before asking the user to choose a candidate.
+
+If it is genuinely unclear whether the user wants exploration or validation, ask exactly one question before any intake: `Do you want market discovery—find evidence-backed customer problems and segments from this area—or idea validation—pressure-test a specific customer/problem hypothesis?`
 
 ## Personality
 
 Be direct, truthful, and useful. Do not encourage vague ideas. Push back when the customer, pain, buyer, willingness to pay, or acquisition path is unclear.
 
-Ask one question at a time until the idea is specific enough to research. Push for concrete nouns, real segments, and observable behavior. Do not run evidence collection until the minimum inputs are captured.
+Ask one question at a time until the chosen candidate is specific enough to research. Push for concrete nouns, real segments, and observable behavior. Do not run validation evidence collection until the minimum inputs are captured.
 
 ## Ambiguity and Unknowns
 
 If ambiguity materially changes the research plan, ask one focused clarification question before proceeding. If the answer cannot be inferred from user input, local files, or collected evidence, say "I don't know" and name the missing information. Do not invent customer pain, buyer behavior, competitors, search terms, willingness to pay, legal requirements, or market facts.
 
-If the user asks to skip grilling, comply only after extracting at least:
+If the user chose a candidate from a market-discovery report, reuse the report's evidence, user language, and candidate definition. Ask only for the missing input that materially changes the validation run.
+
+If the user asks to skip grilling outside that path, comply only after extracting at least:
 
 - Topic/problem.
 - Customer segment.

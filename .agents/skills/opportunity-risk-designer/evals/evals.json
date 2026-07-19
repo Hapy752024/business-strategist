@@ -1,0 +1,32 @@
+{
+  "skill_name": "opportunity-risk-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Based on our evidence collection (moderate pain signals on Reddit about PKV switching, weak Trends, no willingness-to-pay evidence yet), design the next round of low-cost tests for our digital insurance advice startup.",
+      "expected_output": "A risk register ranked by importance × uncertainty, with test cards for the top 2-3 risks. Must recommend testing willingness to pay before building anything (e.g., fake-door test, pre-sale landing page, paid consultation pilot). Must define explicit pass/pivot/repeat thresholds for each test.",
+      "must_mention": ["risk", "test", "threshold", "willingness to pay", "pass", "pivot", "cost"],
+      "must_not_mention": ["build MVP", "start development", "hire a team"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We have strong evidence of pain (repeated independent Reddit/forum complaints about expense tracking), multiple workarounds described, and a reachable freelancer community. But no competitor is doing well in this space. What are the risks?",
+      "expected_output": "A risk analysis that treats 'no successful competitor' as a yellow flag (possible missing willingness to pay, not just blue ocean). Must rank risks: willingness to pay (despite pain), monetization model, segment size vs willingness, incumbent bundling threat. Must recommend a paid pilot or concierge test before product investment.",
+      "must_mention": ["willingness to pay", "pilot", "risk", "monetization", "paid", "threshold"],
+      "must_not_mention": ["blue ocean", "no competition is great", "uncontested market"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our first 10 design partner conversations all went well and 3 said they'd pay. What should we test next?",
+      "expected_output": "A pushback that design partner enthusiasm ≠ market demand. Must recommend a structured test: put a price in front of the 3 who said they'd pay, measure actual conversion, interview the 7 who didn't offer to pay, and define a minimum paying-customer threshold before scaling. Must warn against premature optimism from small-N positive signals.",
+      "must_mention": ["conversion", "actual", "pay", "small", "threshold", "test"],
+      "must_not_mention": ["raise funding", "scale up", "hire sales team", "proven"],
+      "required_artifacts": [],
+      "files": []
+    }
+  ]
+}

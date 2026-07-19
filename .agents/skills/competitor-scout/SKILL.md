@@ -5,6 +5,10 @@ description: Discover direct, indirect, substitute, and future competitors for a
 
 # Competitor Scout
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of competitor discovery queries; completes in <=15 tool calls; classifies >=80% of discovered competitors as direct/indirect/substitute; zero false positives in final output.
+- **Qualitative:** blogs, directories, affiliates, and agencies are excluded; each competitor has a classification reason; known competitors are preserved and enriched.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

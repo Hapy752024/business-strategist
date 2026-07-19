@@ -11,6 +11,8 @@ Use this skill when the user wants a marketing strategy, go-to-market plan, posi
 
 Marketing is not decoration. Treat it as the link between customer pain, offer design, distribution, proof, and revenue. Do not produce generic channel lists. Do not copy competitor claims without checking whether real customers care.
 
+For social/content and digital-acquisition bets, ground recommendations in the practitioner evidence base at `.agents/skills/social-media-idea-validator/references/founder-playbooks.md` (Pain-Point SEO intent tiers, considered-purchase content economics, niche-first entry, broker/loan-officer channel reality), and validate untested channel ideas with `social-media-idea-validator` before committing them to the plan.
+
 Separate:
 
 - Evidence: customer words, behavior, search demand, sales calls, reviews, competitor pages, campaign data.
@@ -24,7 +26,7 @@ If the customer segment, product, buyer, price, geography, or business model is 
 
 If the user wants a fast draft, state assumptions and create a testable strategy, not a definitive one.
 
-For unsupported demand claims, route to `idea-grill` and `evidence-scout`. For competitor positioning, route to `competitor-scout` and `competitor-marketing-analyzer`.
+If the user has not chosen a customer problem or segment and wants to discover opportunities, route first to `market-problem-discovery`. For unsupported demand claims about a chosen candidate, route to `idea-grill` and `evidence-scout`. For competitor positioning, route to `competitor-scout` and `competitor-marketing-analyzer`.
 
 When business archetype, MVP/launch stage, first-customer motion, partnerships, or Europe/US/China expansion materially changes the strategy, route first to `archetype-gtm-strategist`; use this skill afterward for detailed positioning, funnel, channel, and campaign execution.
 

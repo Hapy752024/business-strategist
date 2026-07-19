@@ -5,6 +5,10 @@ description: Build evidence-grounded segmentation, positioning, messaging, offer
 
 # Marketing Strategy Builder
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of marketing strategy queries; completes in <=18 tool calls; produces segmentation, positioning, and channel plan; zero channels recommended without evidence of audience presence.
+- **Qualitative:** strategy is grounded in customer and competitor evidence; channels are matched to observed behavior; experiment budgets, thresholds, and stop rules are defined.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

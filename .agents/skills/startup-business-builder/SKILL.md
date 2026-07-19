@@ -5,6 +5,10 @@ description: Build a zero-to-one startup plan covering segment, painful job, cus
 
 # Startup Business Builder
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of startup planning queries; completes in <=20 tool calls; produces both Business Model and Value Proposition Canvases; zero steps that skip customer discovery.
+- **Qualitative:** canvases are evidence-tagged where possible; segment, painful job, and alternatives are named; failure-avoidance checks are explicit.
+
 ## Workflow
 
 1. Read `references/workflow.md` and `references/startup-business-research.md`.

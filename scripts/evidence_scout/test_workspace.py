@@ -30,6 +30,7 @@ class WorkspaceTests(unittest.TestCase):
                 "intake/startup-thesis.md",
                 "canvases/business-model-canvas.md",
                 "canvases/value-proposition-small-accounting-firms.md",
+                "market-discovery/runs",
             ]
             for relative in expected:
                 self.assertTrue((workspace / relative).exists(), relative)
@@ -46,6 +47,7 @@ class WorkspaceTests(unittest.TestCase):
             self.assertEqual(manifest["current_stage"], "evidence_collection")
             self.assertEqual(manifest["stages"]["evidence_collection"]["gate_result"], "conditional_pass")
             self.assertIn("README.md", manifest["artifacts"])
+            self.assertIn("market_discovery", manifest["stages"])
 
     def test_explicit_output_preserves_compatibility(self) -> None:
         run_dir, workspace = resolve_run_dir(

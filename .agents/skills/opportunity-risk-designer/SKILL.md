@@ -5,6 +5,10 @@ description: Convert collected customer, workaround, demand, and competitor evid
 
 # Opportunity Risk Designer
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of risk/opportunity queries; completes in <=12 tool calls; ranks >=5 risks; designs >=3 low-cost tests; zero risks stated without a testable assumption.
+- **Qualitative:** observations, interpretations, assumptions, and unknowns are separated; each risk has a test with pass/fail criteria; the riskiest assumption is surfaced first.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

@@ -7,6 +7,10 @@ description: Design a practical company operating system for strategy, goals, me
 
 Use this after the customer, business model, and current company stage are sufficiently clear.
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of company/team management queries; completes in <=12 tool calls; produces KPIs, meeting cadence, and decision rights; zero routines without a named owner and threshold.
+- **Qualitative:** every routine is tied to a decision; avoids premature hiring and big-company process theater; cadence matches the company's actual stage.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

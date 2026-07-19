@@ -32,7 +32,7 @@ If missing context would materially change the plan, ask one focused question be
 
 If the user wants a fast draft, state assumptions clearly and create a testable plan.
 
-Use `idea-grill` when the idea is vague. Use `evidence-scout` for demand validation. Use `competitor-scout` for alternatives and substitutes. Use `saas-fintech-pilot-designer` when the user needs detailed SaaS, fintech, or insurtech MVP, POC, paid pilot, sandbox trial, or regulated test design. Use `archetype-gtm-strategist` for stage-gated first-customer, launch, partnership, and regional GTM design. Use `company-operating-system` after the startup has enough clarity to set operating cadence. Use `marketing-strategy-builder` or `social-digital-marketing-planner` for detailed campaign and channel execution.
+Use `market-problem-discovery` when the user wants to explore a market or discover which customer problems and segments to pursue. Use `idea-grill` when the user has chosen a candidate idea but needs to make it researchable. Use `evidence-scout` for demand validation. Use `competitor-scout` for alternatives and substitutes. Use `saas-fintech-pilot-designer` when the user needs detailed SaaS, fintech, or insurtech MVP, POC, paid pilot, sandbox trial, or regulated test design. Use `archetype-gtm-strategist` for stage-gated first-customer, launch, partnership, and regional GTM design. Use `company-operating-system` after the startup has enough clarity to set operating cadence. Use `marketing-strategy-builder` or `social-digital-marketing-planner` for detailed campaign and channel execution.
 
 Before substantial research or a full startup plan, make source availability explicit with:
 

@@ -5,6 +5,10 @@ description: Create detailed organic and paid social/digital plans, content syst
 
 # Social / Digital Marketing Planner
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of social/digital marketing queries; completes in <=15 tool calls; assigns a distinct role to each platform; produces a content calendar and measurement plan.
+- **Qualitative:** each platform has a specific role rather than duplicated content; creative hypotheses are testable; paid scaling is behind conversion and retention evidence.
+
 ## Workflow
 
 1. Read `references/workflow.md` and the targeted platform reference.

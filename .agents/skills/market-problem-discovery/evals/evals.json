@@ -1,0 +1,32 @@
+{
+  "skill_name": "market-problem-discovery",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I only have a loose interest in the German pet-care market. What recurring problems do owners, sitters, and small providers have, and are there overlooked customer pockets worth investigating? I do not have a product idea yet.",
+      "expected_output": "Routes to market-problem-discovery without an Idea Grill. It scopes Germany/German-language sources, collects public evidence, writes a detailed market-discovery report, separates candidates from validation, includes counter-evidence and source gaps, and asks the user to choose a next path.",
+      "must_mention": ["market discovery", "evidence", "candidate", "counter-evidence", "report", "choose"],
+      "must_not_mention": ["tell me your buyer first", "what is your willingness to pay", "build an MVP now"],
+      "required_artifacts": ["market-discovery-report.md", "research_plan.md", "summary.json"],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I am thinking about helping freelance designers with invoicing, but I am not sure whether I want to explore their broader problems or validate this specific idea. What should happen first?",
+      "expected_output": "Asks exactly one routing question that distinguishes market discovery from idea validation. It does not begin a multi-question grill or collect sources until the user chooses a mode.",
+      "must_mention": ["market discovery", "idea validation", "specific customer/problem hypothesis"],
+      "must_not_mention": ["first tell me your target customer", "what is your pricing", "build a prototype"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Explore recurring workarounds and dissatisfied customer segments in US small-business bookkeeping. Give me a short summary and a detailed Markdown document, then wait for me to choose what to investigate further.",
+      "expected_output": "Runs discovery rather than validation, uses default public sources before paid enrichment, creates a durable report with problem-segment candidates, observed evidence, interpretations, workarounds, saturation signals, gaps, and a user-controlled decision checkpoint.",
+      "must_mention": ["workaround", "source coverage", "detailed", "decision", "not validation"],
+      "must_not_mention": ["proven underserved", "validated demand", "automatic handoff"],
+      "required_artifacts": ["market-discovery-report.md", "evidence.jsonl"],
+      "files": []
+    }
+  ]
+}

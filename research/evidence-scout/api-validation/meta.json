@@ -1,6 +1,0 @@
-{
-  "error": "missing credentials",
-  "required_env": [
-    "META_ACCESS_TOKEN"
-  ]
-}

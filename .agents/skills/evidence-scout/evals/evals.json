@@ -1,0 +1,41 @@
+{
+  "skill_name": "evidence-scout",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Collect evidence for a digital insurance advice product targeting self-employed Germans who are confused about PKV vs GKV. They currently use Google, ask colleagues, and post on Reddit. Hypothesis: H1 — there is repeatable, unsolved pain choosing and switching private health insurance.",
+      "expected_output": "An evidence collection run report with provider statuses, supporting evidence records, counter-evidence, candidate communities (r/Finanzen, r/Versicherung), confidence assessment, and next test. Must use German geography (geo=DE) and language (de).",
+      "must_mention": ["provider", "evidence", "Reddit", "confidence", "geo=DE", "language=de"],
+      "must_not_mention": [],
+      "required_artifacts": ["evidence.jsonl", "summary.json", "report.md"],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Search for customer pain around small business expense tracking. Run with default providers only, 30-day window, limit 20. Target segment: US freelancers and micro-business owners with 2-20 employees.",
+      "expected_output": "Evidence report covering Reddit, YouTube, Google Trends, web search. Must separate evidence from interpretation, classify source intent (user_pain vs editorial vs competitor), and flag weak signals like Trends-only demand.",
+      "must_mention": ["evidence", "weak", "interpretation", "source intent"],
+      "must_not_mention": [],
+      "required_artifacts": ["evidence.jsonl", "summary.json", "report.md"],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "We found 500 Reddit posts about our problem space. Is that enough to prove demand?",
+      "expected_output": "A pushback that post volume alone is not demand proof. Must distinguish complaints from casual mentions, check for workaround/spend language, verify segment fit, and note that engagement ≠ willingness to pay.",
+      "must_mention": ["willingness to pay", "workaround", "weak", "not proof", "segment"],
+      "must_not_mention": ["strong evidence", "proven demand", "validated"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Run evidence collection for a China-market consumer app. Target: young professionals in Shanghai who want better personal finance tools. Use China public sources.",
+      "expected_output": "Evidence report with China public providers (Bilibili, V2EX, Chinese web search), geo=CN, language=zh. Must note that china_social (XiaoHongShu) was not run and flag it as a gap. Must state whether china_public_native or china_public_search was the active backend.",
+      "must_mention": ["China", "geo=CN", "language=zh", "gap", "china_social"],
+      "must_not_mention": [],
+      "required_artifacts": ["evidence.jsonl", "summary.json", "report.md"],
+      "files": []
+    }
+  ]
+}

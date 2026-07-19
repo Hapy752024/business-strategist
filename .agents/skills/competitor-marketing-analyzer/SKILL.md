@@ -5,6 +5,10 @@ description: Analyze competitor positioning, audience language, offers, CTAs, pr
 
 # Competitor Marketing Analyzer
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of competitor marketing queries; completes in <=15 tool calls; extracts from >=3 competitor URLs per run; zero fabricated pricing/positioning claims.
+- **Qualitative:** positioning, CTAs, pricing signals, and proof points are separated; source URLs are cited for every claim; gaps in data are named.
+
 ## Workflow
 
 1. Read `references/workflow.md` completely.

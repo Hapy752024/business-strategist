@@ -5,6 +5,10 @@ description: Build evidence-grounded go-to-market strategy from MVP test through
 
 # Archetype GTM Strategist
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of GTM strategy queries; completes in <=20 tool calls; selects the correct archetype (SaaS/fintech/service) before producing output; zero stage gates skipped.
+- **Qualitative:** recommendations are grounded in the founder's evidence and constraints; archetype-specific patterns are applied; regional adaptations are explicit when geography differs.
+
 ## Workflow
 
 1. Read `references/workflow.md` and `references/evidence-base.md`.

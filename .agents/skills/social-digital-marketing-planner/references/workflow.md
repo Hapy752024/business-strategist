@@ -12,6 +12,7 @@ Use this skill when the user wants a detailed, actionable social or digital mark
 Before creating a substantial plan, read:
 
 - `references/social-digital-marketing-research.md`
+- If the user arrives with an untested channel/content idea, validate it first with `social-media-idea-validator`; its `references/founder-playbooks.md` holds the practitioner evidence base (SaaS, insurtech, professional services) for what actually works.
 
 If the user asks for latest platform-specific specs, ad formats, targeting features, algorithm changes, or benchmarks, search current official platform documentation before giving precise advice.
 
@@ -32,7 +33,7 @@ If missing information would materially change the plan, ask one focused questio
 
 If the user wants a fast draft, state assumptions clearly and create a testable plan that can be refined.
 
-For unsupported demand claims, use `idea-grill` and `evidence-scout`. For competitor positioning or channel examples, use `competitor-scout` and `competitor-marketing-analyzer`. For broader marketing strategy, coordinate with `marketing-strategy-builder`.
+If the user is still exploring which customer problem or segment to pursue, use `market-problem-discovery` before planning channels. For unsupported demand claims about a chosen candidate, use `idea-grill` and `evidence-scout`. For competitor positioning or channel examples, use `competitor-scout` and `competitor-marketing-analyzer`. For broader marketing strategy, coordinate with `marketing-strategy-builder`.
 
 ## Minimum Inputs
 

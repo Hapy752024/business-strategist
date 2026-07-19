@@ -1,0 +1,32 @@
+{
+  "skill_name": "competitor-marketing-analyzer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Analyze the marketing of these three German insurance comparison sites: Clark, Check24, and Getsafe. What are their positioning, CTAs, pricing signals, and target segments?",
+      "expected_output": "A sourced comparison showing each competitor's positioning, primary CTA, pricing signals (free/freemium/subscription), proof points (testimonials, trust seals, numbers), target audience language, and channel clues. Must distinguish copy claims from verifiable proof and note what evidence is from live pages vs cached snippets.",
+      "must_mention": ["positioning", "CTA", "pricing", "proof", "source", "audience"],
+      "must_not_mention": [],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Compare the pricing pages and signup flows of three US expense tracking SaaS products for freelancers. What can we learn about their go-to-market?",
+      "expected_output": "A pricing comparison (freemium gates, trial length, plan tiers, hidden costs) and signup-flow analysis (friction points, email capture, required fields, onboarding). Must separate what the pages claim (positioning) from what can be observed (actual form fields, pricing numbers).",
+      "must_mention": ["pricing", "signup", "freemium", "trial", "positioning", "claim"],
+      "must_not_mention": [],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "A competitor's landing page says 'trusted by 10,000 businesses' and '97% satisfaction rate.' Should we match these claims?",
+      "expected_output": "A pushback that competitor landing page claims are not verified performance data. Must recommend investigating what backs the claims (customer logos, case studies, third-party reviews, Glassdoor/RepVue data) before treating them as benchmarks. Must warn against copying unverified claims.",
+      "must_mention": ["verify", "unverified", "claim", "proof", "not verified", "third-party"],
+      "must_not_mention": ["match their claims", "copy their numbers", "say the same thing"],
+      "required_artifacts": [],
+      "files": []
+    }
+  ]
+}

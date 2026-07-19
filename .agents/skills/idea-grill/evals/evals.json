@@ -1,0 +1,41 @@
+{
+  "skill_name": "idea-grill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have an idea for an AI app that helps people manage their finances better.",
+      "expected_output": "A series of focused questions narrowing: who exactly (segment), what specific financial job is painful, how they currently solve it, what they've tried, what a better outcome looks like, who pays, and what the riskiest assumption is. Must push back on the vagueness of 'people' and 'manage finances better.'",
+      "must_mention": ["segment", "hypothesis", "assumption", "workaround", "alternatives", "riskiest"],
+      "must_not_mention": ["build an MVP", "start coding", "hire engineers"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We want to build an Uber for dog walking. Our target is everyone who owns a dog.",
+      "expected_output": "A pushback on 'everyone who owns a dog' as too broad. Must narrow to a specific painful job (e.g., last-minute weekday walks for office workers), identify who experiences the pain most acutely, and what they do today. Must challenge marketplace assumptions and the Uber analogy.",
+      "must_mention": ["segment", "narrow", "painful", "hypothesis", "not everyone", "specific"],
+      "must_not_mention": ["TAM is huge", "total addressable market"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Our competitor research shows nobody is doing exactly what we do. Is that a good sign?",
+      "expected_output": "A challenge to 'no competitors' — it usually means no demand, not blue ocean. Must probe for indirect competitors, substitutes, manual workarounds, and the 'do nothing' option. Must ask what existing solutions the target segment currently uses.",
+      "must_mention": ["substitutes", "workaround", "indirect", "do nothing", "alternatives"],
+      "must_not_mention": ["blue ocean", "first mover advantage", "no competition is great"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "We interviewed 20 potential users and they all said they would pay for our solution. Time to build?",
+      "expected_output": "A pushback that stated intent ≠ actual behavior. Must probe whether interviewees were friends/family, whether they currently pay for any alternative, whether they've tried to solve the problem before, and what concrete action (not words) shows urgency. Must recommend a fake-door or pre-sale test before building.",
+      "must_mention": ["stated", "actual behavior", "test", "pre-sale", "action", "pay"],
+      "must_not_mention": ["build now", "start coding", "hire developers immediately"],
+      "required_artifacts": [],
+      "files": []
+    }
+  ]
+}

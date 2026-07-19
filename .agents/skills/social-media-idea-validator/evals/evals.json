@@ -1,0 +1,32 @@
+{
+  "skill_name": "social-media-idea-validator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm a solo insurance broker in Munich. Should I start a TikTok channel about German insurance products to get clients?",
+      "expected_output": "Runs the validation gates instead of jumping to a content plan. Restates the idea as a testable claim, checks audience presence and demand evidence for the segment, applies practitioner patterns (considered purchase, education-first content, social-as-assist for brokers), and returns a GO/PIVOT/KILL verdict with a one-week low-cost test and stop rule. Does not produce a full 90-day marketing plan.",
+      "must_mention": ["audience", "demand", "verdict", "test", "stop rule"],
+      "must_not_mention": ["post 3 times a day", "guaranteed viral", "definitely start the channel"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our B2B SaaS wants to blog about broad industry trends to grow traffic. Is that a good content idea?",
+      "expected_output": "Challenges the volume-first framing with Pain-Point SEO logic: prioritize high-intent topics (category, comparison/alternatives, jobs-to-be-done) over top-funnel traffic, asks for customer-language sources (sales calls, surveys), and gives a verdict with the cheapest test rather than a generic yes.",
+      "must_mention": ["intent", "comparison", "jobs-to-be-done", "conversion", "customer"],
+      "must_not_mention": ["traffic is the goal", "great idea, just start blogging", "volume first"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I run a mortgage brokerage. I want to post daily loan-product graphics on Instagram. Validate this idea.",
+      "expected_output": "Applies the loan-officer practitioner evidence: generic product graphics get no traction; face-to-face, events, direct mail, and ranked content drive this business; social works mainly as partner/realtor engagement that sets up meetings. Returns KILL or PIVOT with a GO-as-assist alternative (credibility/realtor engagement), an explicit stop rule, and a one-week test.",
+      "must_mention": ["assist", "realtor", "face-to-face", "verdict", "test"],
+      "must_not_mention": ["daily graphics will build your brand", "post more often", "guaranteed leads from Instagram"],
+      "required_artifacts": [],
+      "files": []
+    }
+  ]
+}

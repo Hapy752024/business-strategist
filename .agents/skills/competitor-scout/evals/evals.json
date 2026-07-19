@@ -1,0 +1,32 @@
+{
+  "skill_name": "competitor-scout",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Find all competitors for a digital insurance advice platform targeting self-employed Germans confused about PKV vs GKV. Known competitor: Clark.",
+      "expected_output": "A classified competitor array with direct competitors (digital insurance brokers/advisers in Germany), indirect competitors (traditional brokers, comparison portals like Check24), substitutes (DIY research, asking colleagues), and false positives excluded. Must include source URLs and evidence quality ratings.",
+      "must_mention": ["direct", "indirect", "substitute", "false positive", "evidence quality", "source"],
+      "must_not_mention": [],
+      "required_artifacts": ["competitors.json"],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Discover competitors for a US-market SaaS expense tracking tool for freelancers. I don't know any competitors yet.",
+      "expected_output": "A classified competitor array discovered from web search. Must separate SaaS products (direct) from spreadsheets/manual methods (substitutes), accounting software with expense features (indirect), and blogs/directories/affiliates (excluded). Must note when no known competitors were supplied and discovery relied entirely on search.",
+      "must_mention": ["direct", "indirect", "substitute", "excluded", "discovered"],
+      "must_not_mention": [],
+      "required_artifacts": ["competitors.json"],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Here's a list of competitor URLs I found. Can you classify them for my fintech idea?",
+      "expected_output": "Classification of each URL as direct competitor, indirect competitor, substitute, future threat, false positive, or informational. Must explain the classification reasoning for each and flag any that need further investigation.",
+      "must_mention": ["classification", "false positive", "reasoning", "direct"],
+      "must_not_mention": [],
+      "required_artifacts": ["competitors.json"],
+      "files": []
+    }
+  ]
+}

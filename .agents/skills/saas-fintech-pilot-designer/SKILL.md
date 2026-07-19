@@ -5,6 +5,10 @@ description: Design SaaS, fintech, and insurtech prototypes, POCs, MVPs, paid pi
 
 # SaaS Fintech Pilot Designer
 
+## Success Criteria
+- **Quantitative:** triggers on >=90% of pilot/MVP/prototype queries; completes in <=15 tool calls; defines learning goal, scope, metrics, and stop conditions; zero tests that skip data safeguards.
+- **Qualitative:** the least risky test that can answer the question is chosen; synthetic/minimized data is preferred over sensitive production data; regulatory context is addressed when applicable.
+
 ## Workflow
 
 1. Read `references/workflow.md` and relevant regulatory reference completely.

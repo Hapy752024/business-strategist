@@ -157,8 +157,10 @@ done
 echo ""
 echo "--- Workspace Tests ---"
 check "topic workspace and Firecrawl routing tests pass" python3 scripts/evidence_scout/test_workspace.py
+check "market-problem discovery tests pass" python3 scripts/evidence_scout/test_market_discovery.py
 check "archetype GTM skill tests pass" python3 scripts/evidence_scout/test_gtm_skill.py
 check "service customer-perspective skill tests pass" python3 scripts/evidence_scout/test_customer_perspective_skill.py
+check "eval structure is valid" python3 scripts/run_evals.py
 
 # ── Schemas ───────────────────────────────────────────────
 echo ""

@@ -5,7 +5,7 @@ description: Search script-accessible web, forum, Google Trends, YouTube, Reddit
 
 # Evidence Scout Workflow
 
-Use this skill after `idea-grill` has produced a clear topic, customer segment, and hypothesis.
+Use this skill after `idea-grill` has produced a clear topic, customer segment, and hypothesis, or after the user has selected one candidate from a completed `market-problem-discovery` report. It validates a chosen candidate; it does not decide which market problem to pursue.
 
 After collecting and auditing evidence for a consumer service, route to `service-customer-perspective-challenger` to test the idea, package, trust design, and message through evidence-grounded buying contexts. Keep its simulated customer voice out of `evidence.jsonl`; only real sourced statements and behavior are evidence.
 

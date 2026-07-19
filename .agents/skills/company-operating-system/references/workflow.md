@@ -138,7 +138,7 @@ Build customer contact into the operating system:
 - Competitor and workaround observation.
 - Pricing objections and willingness-to-pay signals.
 
-If the customer pain is still uncertain, route the user to `idea-grill` and `evidence-scout` before recommending a larger operating buildout.
+If the customer pain is still uncertain because the user has not chosen a problem or segment, route to `market-problem-discovery` first. If they have a chosen candidate but need to make it researchable, route to `idea-grill` and `evidence-scout` before recommending a larger operating buildout.
 
 ### Financial Discipline
 

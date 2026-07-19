@@ -2,7 +2,7 @@
 
 ## Objective
 
-Build a portable evidence-scout skill/agent for Codex, OpenCode, and Claude Code that helps founders validate whether real users have a painful problem, whether demand exists, and where early adopters gather.
+Build a portable evidence-scout skill/agent for Codex, OpenCode, and Claude Code that helps founders discover customer problems before they have a thesis, then validate whether real users have a painful problem, whether demand exists, and where early adopters gather.
 
 The agent must not act as a cheerleader. It must challenge weak assumptions, separate evidence from interpretation, and identify supporting evidence, counter-evidence, risks, and low-cost validation tests.
 
@@ -25,7 +25,7 @@ Reuse the strong parts of the identified skills and MCP-style projects:
 - `mvanhorn/cli-printing-press`: agent-first CLI ergonomics, offline/cache-friendly outputs, and compound commands that produce useful summaries without requiring a model-specific runtime.
 - `mvanhorn/agentcookie`: relevant only as a future optional path for user-approved authenticated browser sessions. It is not a v1 dependency because this project should validate official APIs and paid providers first.
 
-Key product distinction from `last30days`: Evidence Scout is not a general recency brief. It is a demand-validation and opportunity-discovery workflow. It must formulate hypotheses, search for user pain and counter-evidence, identify reachable early adopters, and propose low-cost risk-reduction tests.
+Key product distinction from `last30days`: Evidence Scout is not a general recency brief. It is a demand-validation and opportunity-discovery workflow. It must first distinguish market discovery (broaden the problem space before a thesis) from idea validation (test a founder-chosen candidate), then search for user pain and counter-evidence, identify reachable early adopters, and propose low-cost risk-reduction tests.
 
 ## Required Data Sources
 
@@ -286,28 +286,32 @@ Evidence strength rules:
 
 ### Phase 6: Agent/Skill Packaging
 
-Create five portable skills:
+Create six portable skills:
 
-1. `idea-grill`
+1. `market-problem-discovery`
+   - Explores a rough market or hunch before a customer/problem thesis exists.
+   - Produces an evidence-backed Markdown report of candidate problem-segment pockets, counter-evidence, and a user-controlled decision menu.
+
+2. `idea-grill`
    - Interviews the user relentlessly.
    - Extracts target customer, problem, current workaround, buyer/user split, and hypotheses.
 
-2. `evidence-scout`
+3. `evidence-scout`
    - Discovers sources.
    - Runs script-based data collection.
    - Produces supporting evidence, counter-evidence, and early adopter communities.
 
-3. `opportunity-risk-designer`
+4. `opportunity-risk-designer`
    - Turns evidence into opportunity areas.
    - Ranks risks.
    - Designs low-cost validation tests and outreach targets.
 
-4. `competitor-scout`
+5. `competitor-scout`
    - Discovers direct, indirect, substitute, and future-threat competitors.
    - Separates real solution providers from directories, blogs, marketplaces, agencies, and false positives.
    - Produces a competitor-array style view with segment fit, job fit, key success-factor gaps, evidence quality, and source URLs.
 
-5. `competitor-marketing-analyzer`
+6. `competitor-marketing-analyzer`
    - Analyzes competitor positioning, audiences, offers, CTAs, pricing posture, proof points, SEO/content clues, distribution clues, and product-change clues.
    - Supports optional deep scraping of common pricing, features, customer, blog, docs, integrations, and changelog paths when worth the credits.
    - Treats competitor copy as positioning evidence, not proof of performance.
@@ -351,6 +355,7 @@ Never print full credentials. Validation summaries may show only masked key fing
 - [ ] Provider adapters.
 - [ ] Evidence scorer and clusterer.
 - [x] Portable `idea-grill` skill.
+- [x] Portable `market-problem-discovery` skill with discovery-to-validation handoff.
 - [x] Portable `evidence-scout` skill.
 - [x] Portable `opportunity-risk-designer` skill.
 - [x] Portable `competitor-scout` skill.

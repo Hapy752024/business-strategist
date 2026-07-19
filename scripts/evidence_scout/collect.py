@@ -35,7 +35,7 @@ from common import (  # noqa: E402
     status_from_response,
     with_query,
 )
-from workspace import resolve_run_dir, update_stage  # noqa: E402
+from workspace import create_run_manifest, resolve_run_dir, update_run_manifest, update_stage  # noqa: E402
 
 
 def slugify(value: str) -> str:
@@ -255,6 +255,39 @@ def problem_first_terms(topic: str, geo: str, language: str) -> list[str]:
     )
 
 
+def discovery_query_plan(
+    topic: str,
+    problem_keywords: str = "",
+    workaround_keywords: str = "",
+    geo: str = "US",
+    language: str = "en",
+) -> list[str]:
+    """Broaden collection before a customer/problem thesis has been chosen."""
+    base = topic.strip()
+    queries = [
+        f"{base} problems",
+        f"{base} pain points",
+        f"{base} complaints",
+        f'"frustrated" {base}',
+        f"{base} forum complaints",
+        f"{base} reddit complaints",
+        f"{base} workaround",
+        f"{base} alternatives",
+        f"{base} reviews problems",
+        f'"too expensive" {base}',
+    ]
+    for term in expand_language_variants(csv_terms(problem_keywords), geo, language):
+        queries.extend([term, f"{term} complaints", f"{term} forum", f"{term} workaround"])
+    for term in expand_language_variants(csv_terms(workaround_keywords), geo, language):
+        queries.extend([term, f"{term} manual", f"{term} alternative"])
+    deduped: list[str] = []
+    for query in queries:
+        clean = " ".join(query.split())
+        if clean and clean not in deduped:
+            deduped.append(clean)
+    return deduped
+
+
 def query_plan(
     topic: str,
     customer_segment: str,
@@ -262,7 +295,10 @@ def query_plan(
     workaround_keywords: str = "",
     geo: str = "US",
     language: str = "en",
+    research_mode: str = "validation",
 ) -> list[str]:
+    if research_mode == "discovery":
+        return discovery_query_plan(topic, problem_keywords, workaround_keywords, geo, language)
     base = topic.strip()
     modifiers = segment_modifiers(customer_segment)
     problem_terms = problem_first_terms(topic, geo, language)
@@ -2452,11 +2488,13 @@ def write_report(
         ),
         reverse=True,
     )[:10]
+    run_title = "# Evidence Scout Discovery Collection" if args.research_mode == "discovery" else "# Evidence Scout Run"
+    segment_label = args.customer_segment or "[unresolved: market discovery]"
     lines = [
-        "# Evidence Scout Run",
+        run_title,
         "",
         f"- Topic: {args.topic}",
-        f"- Customer segment: {args.customer_segment}",
+        f"- Customer segment: {segment_label}",
         f"- Hypothesis: {args.hypothesis_id}",
         f"- Geography/language: {args.geo}/{args.language}",
         f"- Lookback days: {args.days}",
@@ -2511,6 +2549,12 @@ def write_report(
             "- Counter-evidence and quiet communities are important; absence of complaints can mean the search plan is wrong.",
         ]
     )
+    if args.research_mode == "discovery":
+        lines.extend(
+            [
+                "- This is a market-discovery collection. Do not treat it as evidence that any candidate is underserved until the synthesized report compares recurring pain, workarounds, and current alternatives.",
+            ]
+        )
     (run_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -2595,24 +2639,42 @@ def write_user_review_plan(run_dir: Path, args: argparse.Namespace, records: lis
         for record in records
         if record.get("comment_intent") == "decision_question"
     ][:8]
+    segment_label = args.customer_segment or "[unresolved: market discovery]"
     lines = [
         "# User Review Plan",
         "",
         f"- Topic: {args.topic}",
-        f"- Segment under test: {args.customer_segment}",
+        f"- Segment under test: {segment_label}",
         "",
         "## Founder Checkpoints",
         "",
         "Interaction rule: ask the founder exactly one question at a time. Do not bundle multiple questions into one message.",
         "",
-        "1. First ask: `Which evidence item below feels most like real buyer pain to you?`",
-        "2. After the answer, ask: `Which single assumption would most change your decision if false?`",
-        "3. After the answer, ask: `Should the next research focus on interviews, narrower segment evidence, or competitor flow teardown?`",
-        "4. Define the pass/fail threshold only after the user has answered the prior questions.",
+    ]
+    if args.research_mode == "discovery":
+        lines.extend(
+            [
+                "1. Do not ask the founder to choose a solution before synthesis.",
+                "2. First synthesize candidate problem-segment pockets in `market-discovery-report.md`.",
+                "3. Then ask one question: `Which path should we take next: validate Candidate [X], broaden/narrow the market scope, extend a named source gap, or stop?`",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "1. First ask: `Which evidence item below feels most like real buyer pain to you?`",
+                "2. After the answer, ask: `Which single assumption would most change your decision if false?`",
+                "3. After the answer, ask: `Should the next research focus on interviews, narrower segment evidence, or competitor flow teardown?`",
+                "4. Define the pass/fail threshold only after the user has answered the prior questions.",
+            ]
+        )
+    lines.extend(
+        [
         "",
         "## Quality Flags To Discuss",
         "",
-    ]
+        ]
+    )
     if quality_flags:
         lines.extend(f"- {flag}" for flag in quality_flags)
     else:
@@ -2641,30 +2703,39 @@ def write_user_review_plan(run_dir: Path, args: argparse.Namespace, records: lis
         lines.append(f"{idx}. {quote} ({record.get('source_url')})")
     if not decision_questions:
         lines.append("- No decision-question records found.")
-    lines.extend(
-        [
-            "",
-            "## Suggested Interview Prompts",
-            "",
-            "- Tell me about the last time you considered PKV, BU, or changing an insurance advisor.",
-            "- What triggered the decision and what did you do first?",
-            "- Which sources or people did you trust, and which did you avoid?",
-            "- What felt risky, confusing, or too time-consuming?",
-            "- Did you compare portals, brokers, fee-based advisors, employer benefits, or do nothing?",
-            "- What would have made you comfortable completing 80% of the process self-service?",
-            "- At what point would you still want a human advisor, and what would that person need to prove?",
-            "- What would make you pay, switch broker mandate, or upload existing contracts into an app?",
-            "",
-            "## User Decision Required",
-            "",
-            "Before drawing a business-viability conclusion, ask the user to choose one next action:",
-            "",
-            "- Recommended if public evidence is mostly weak: `Interview` - recruit 8-12 people matching the tightest segment and run the prompts above.",
-            "- `Narrow Segment`: pick one trigger event and rerun evidence collection with narrower keywords.",
-            "- `Competitor Deep Dive`: inspect product flows and pricing for the top 3 direct competitors.",
-            "- `Stop`: evidence is too weak or the segment is not reachable enough.",
-        ]
-    )
+    if args.research_mode == "discovery":
+        lines.extend(
+            [
+                "",
+                "## User Decision Required",
+                "",
+                "Do not draw a business-viability conclusion from this collection. Finish the market-discovery report, then ask the single routing question above.",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "",
+                "## Suggested Interview Prompts",
+                "",
+                f"- Tell me about the last time you needed to handle `{args.topic}`.",
+                "- What triggered the decision and what did you do first?",
+                "- Which sources or people did you trust, and which did you avoid?",
+                "- What felt risky, confusing, or too time-consuming?",
+                "- Which alternatives, manual workarounds, or do-nothing options did you consider?",
+                "- What would have made the process materially easier or more reliable?",
+                "- What concrete behavior would show enough urgency to change or pay?",
+                "",
+                "## User Decision Required",
+                "",
+                "Before drawing a business-viability conclusion, ask the user to choose one next action:",
+                "",
+                "- Recommended if public evidence is mostly weak: `Interview` - recruit 8-12 people matching the tightest segment and run the prompts above.",
+                "- `Narrow Segment`: pick one trigger event and rerun evidence collection with narrower keywords.",
+                "- `Competitor Deep Dive`: inspect product flows and pricing for the top 3 direct competitors.",
+                "- `Stop`: evidence is too weak or the segment is not reachable enough.",
+            ]
+        )
     (run_dir / "user_review_plan.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -2679,24 +2750,24 @@ def write_assumptions(run_dir: Path, args: argparse.Namespace, queries: list[str
         "",
         f"- Geography: `{args.geo}`",
         f"- Language: `{args.language}`",
-        f"- Segment phrase used for fit judgment: `{args.customer_segment}`",
+        f"- Segment phrase used for fit judgment: `{args.customer_segment or '[unresolved: market discovery]'}`",
         f"- Topic phrase: `{args.topic}`",
         f"- Problem keywords: `{args.problem_keywords or 'not provided'}`",
         f"- Workaround keywords: `{args.workaround_keywords or 'not provided'}`",
         "",
         "## Working Assumptions",
         "",
-        "- The segment is interpreted as high-income employees and self-employed professionals in Germany who are considering PKV or BU.",
-        "- Search behavior is assumed to include both technical German insurance terms and English expat/insurance terms when relevant sources use English.",
+        "- Query language is an initial approximation of how people may describe the job, frustration, and workaround; inspect it before trusting coverage.",
+        "- The stated geography and language define the evidence scope; do not generalize findings beyond it.",
         "- Public posts, comments, and search results are treated as signals for interview design, not proof of willingness to pay.",
         "- Competitor/editorial/provider content is treated as category context, not customer pain.",
         "- Weak evidence requires user review before it can influence a business decision.",
         "",
         "## Explicitly Not Resolved By This Run",
         "",
-        "- Legal/regulatory feasibility was not assessed in this run.",
-        "- Unit economics, CAC, conversion, commission economics, and advisor capacity were not validated.",
-        "- Actual user willingness to switch broker mandate, pay a fee, or upload contracts was not validated.",
+        "- Legal, regulatory, and operational feasibility were not assessed in this run unless a source directly addressed them.",
+        "- Unit economics, conversion, and willingness to pay were not validated.",
+        "- A search or social signal alone cannot show market size, buyer identity, or a defensible gap.",
         "",
         "## Query Sample For Review",
         "",
@@ -2709,15 +2780,29 @@ def write_assumptions(run_dir: Path, args: argparse.Namespace, queries: list[str
         "",
         "Ask exactly one question at a time, in this order unless the user redirects:",
         "",
-        "1. Is the segment too broad, or should the run focus on one trigger event?",
-        "2. Are the German terms representative of how your target users would search or complain?",
-        "3. Should English-language expat broker evidence be included or separated from German affluent-employee evidence?",
-        "4. Are comparison portals like CHECK24/Verivox true substitutes for your concept or only research tools?",
-        "5. Which assumption above would most change your decision if false?",
-        "",
-        "Recommended next research if any answer is uncertain: narrow the segment to one trigger event and rerun evidence before competitor interpretation.",
         ]
     )
+    if args.research_mode == "discovery":
+        lines.extend(
+            [
+                "1. Is the stated market scope and geography the right place to look first?",
+                "2. After synthesis, which candidate problem-segment pocket should enter focused validation, if any?",
+                "",
+                "Recommended next research: let the user choose one candidate, change scope, extend a source gap, or stop. Do not turn discovery signals into a startup thesis automatically.",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "1. Is the segment too broad, or should the run focus on one trigger event?",
+                "2. Are these terms representative of how your target users would search or complain?",
+                "3. Should a different geography or language be separated from this evidence set?",
+                "4. Are the named alternatives true substitutes for the chosen problem?",
+                "5. Which assumption above would most change your decision if false?",
+                "",
+                "Recommended next research if any answer is uncertain: narrow the segment to one trigger event and rerun evidence before competitor interpretation.",
+            ]
+        )
     (run_dir / "assumptions.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -2730,7 +2815,11 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace, queries: list[s
         "",
         "## Objective",
         "",
-        f"Test whether public evidence supports the hypothesis behind `{args.topic}` for `{args.customer_segment}`.",
+        (
+            f"Discover candidate customer problems, workarounds, and segments in `{args.topic}` before choosing a validation hypothesis."
+            if args.research_mode == "discovery"
+            else f"Test whether public evidence supports the hypothesis behind `{args.topic}` for `{args.customer_segment}`."
+        ),
         "",
         "## Current Assumptions",
         "",
@@ -2786,9 +2875,17 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace, queries: list[s
             "",
             "Ask one question after collection:",
             "",
-            "`Which evidence item feels most like real buyer pain to you?`",
+            (
+                "`Which path should we take next: validate Candidate [X], broaden/narrow the market scope, extend a named source gap, or stop?`"
+                if args.research_mode == "discovery"
+                else "`Which evidence item feels most like real buyer pain to you?`"
+            ),
             "",
-            "Recommended next research if evidence is mostly weak: run 8-12 customer interviews before making a business-viability conclusion.",
+            (
+                "Recommended next research: synthesize source-backed candidates before asking the user to choose one; do not make a business-viability conclusion."
+                if args.research_mode == "discovery"
+                else "Recommended next research if evidence is mostly weak: run 8-12 customer interviews before making a business-viability conclusion."
+            ),
         ]
     )
     (run_dir / "research_plan.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -2798,6 +2895,12 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Collect normalized business-idea evidence.")
     parser.add_argument("--topic", required=True, help="Business idea, problem, category, or job-to-be-done.")
     parser.add_argument("--customer-segment", default="", help="Target customer segment to test.")
+    parser.add_argument(
+        "--research-mode",
+        choices=["validation", "discovery"],
+        default="validation",
+        help="Use discovery only before a customer/problem candidate has been selected; default validation tests a chosen hypothesis.",
+    )
     parser.add_argument("--hypothesis-id", default="H1", help="Hypothesis label for normalized records.")
     parser.add_argument("--days", type=int, default=30, help="Lookback window for recency-aware sources.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum normalized records per provider.")
@@ -2922,8 +3025,24 @@ def main() -> int:
             gate_result="not_run",
             next_action="Complete provider collection and inspect source quality.",
         )
+    create_run_manifest(
+        run_dir,
+        subject=args.topic,
+        run_type="evidence_collection",
+        stage="evidence_collection",
+        sources=selected_providers(args.providers),
+        next_action="Complete provider collection and inspect source quality.",
+    )
 
-    queries = query_plan(args.topic, args.customer_segment, args.problem_keywords, args.workaround_keywords, args.geo, args.language)
+    queries = query_plan(
+        args.topic,
+        args.customer_segment,
+        args.problem_keywords,
+        args.workaround_keywords,
+        args.geo,
+        args.language,
+        args.research_mode,
+    )
     requested_providers = selected_providers(args.providers)
     write_research_plan(run_dir, args, queries, requested_providers)
     provider_funcs = {
@@ -2971,6 +3090,7 @@ def main() -> int:
         "run_dir": str(run_dir),
         "topic": args.topic,
         "customer_segment": args.customer_segment,
+        "research_mode": args.research_mode,
         "hypothesis_id": args.hypothesis_id,
         "days": args.days,
         "geo": args.geo,
@@ -3012,6 +3132,18 @@ def main() -> int:
             open_gaps=quality_flags,
             next_action="Review evidence and interview users before synthesis." if gate_result != "pass" else "Proceed to competitor discovery or opportunity-risk design.",
         )
+    update_run_manifest(
+        run_dir,
+        stage="evidence_collection",
+        stage_status="failed" if not relevant_records else "passed",
+        gate_result="fail" if not relevant_records else ("conditional_pass" if (provider_summaries and any(s.get("status") not in {"ok", "not_run"} for s in provider_summaries.values())) or quality_flags else "pass"),
+        artifacts=[run_dir / "report.md", run_dir / "summary.json", run_dir / "evidence.jsonl"],
+        open_gaps=quality_flags,
+        next_action="Review evidence and interview users before synthesis." if not relevant_records or quality_flags else "Proceed to competitor discovery or opportunity-risk design.",
+        event="evidence_collection_completed",
+        record_count=len(relevant_records),
+        source_count=len([s for s in provider_summaries.values() if s.get("status") == "ok"]),
+    )
     print(json.dumps(summary, indent=2, sort_keys=True))
     return 0 if relevant_records else 1
 
