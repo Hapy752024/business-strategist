@@ -41,17 +41,21 @@ Rejected alternatives: everything in `collect.py` (argument-shape mismatch, file
 
 New optional flags, active only under `--providers scrapecreators` (which stays `approval_required: true` and is never part of `default`):
 
-| Flag | Endpoint | Notes |
+| Flag | Endpoint (verified live 2026-07-21) | Notes |
 |---|---|---|
-| `--fb-groups id_or_url,...` | `GET /v1/facebook/group/posts` | 3 posts/call; cursor-paginate up to `--fb-max-posts` (default 12, hard cap 60) |
-| `--fb-pages id_or_url,...` | `GET /v1/facebook/profile/posts` + `/profile/reels` | Page posts (3/call, same cap) + reels (10/call) |
-| `--ig-handles handle,...` | IG profile + profile posts | Competitor/niche account content |
-| `--ig-hashtags tag,...` | IG hashtag search | Audience-language and demand signals |
-| `--social-comments` | FB post comments, IG post comments | Opt-in; fetches comments on top-N collected posts (N = `--comments-max`, default 5) |
+| `--fb-groups id_or_url,...` | `GET /v1/facebook/group/posts` | Endpoint works; 3 posts/call, `cursor` pagination, up to `--fb-max-posts` (default 12, hard cap 60). **Public groups only** — a 200 with 0 posts is ambiguous (private or empty); report as "no accessible public posts", never "no posts exist" |
+| `--fb-pages id_or_url,...` | `GET /v1/facebook/profile/posts` + `/profile/reels` | Verified working (3 posts + cursor returned for a public page). Page posts 3/call (same cap), reels 10/call |
+| `--ig-handles handle,...` | `GET /v1/instagram/profile` + `GET /v2/instagram/user/posts` | Verified working. Posts live under `profile_grid_items` with `profile_grid_items_cursor` — **not** the `posts`/`data` keys the current `list_candidates` heuristic expects; needs a dedicated parser |
+| `--ig-hashtags tag,...` | `GET /v1/instagram/search/hashtag` | Verified working: 10 posts/call + `cursor`, captions and reel URLs returned |
+| `--social-comments` | FB post comments, `GET /v2/instagram/post/comments` | Opt-in; fetches comments on top-N collected posts (N = `--comments-max`, default 5) |
 
-Normalization: new `source` values in `evidence.jsonl` — `facebook_group_post`, `facebook_page_post`, `facebook_reel`, `instagram_post`, `instagram_comment`, `facebook_comment`. Raw responses redacted into `raw/scrapecreators.json` as today. Existing problem/workaround keyword relevance scoring is reused unchanged.
+Observed cost: 1 credit per call (account showed 100 free credits; live tests consumed ~6).
 
-No schema change expected to `schemas/evidence-record.schema.json` beyond extending the `source` enum; verify against the schema during implementation and extend it if required.
+Normalization: **reuse the existing `facebook` and `instagram` values** already present in `schemas/evidence-record.schema.json`'s `source` enum — do not add new enum values. Granularity goes into `author_context` (`fb-group:<id>`, `fb-page:<id>`, `ig-handle:<name>`, `ig-hashtag:<tag>`) and `confidence_notes`. Required collector-side fix: `"facebook"` is currently **missing** from the social-source sets in `infer_comment_intent` (collect.py ~line 598) and `infer_source_intent` (~line 620) — without adding it, Facebook records would be classified `not_social_comment` and excluded from social pain analysis. Raw responses redacted into `raw/scrapecreators.json` as today. Existing problem/workaround keyword relevance scoring is reused unchanged.
+
+No schema change is needed; verify against the schema during implementation.
+
+**Limit-accounting fix (bug found in review, verified live 2026-07-21):** `collect_scrapecreators` currently breaks out of the endpoint loop when total records reach `args.limit`, so one productive endpoint starves the rest — in the smoke test TikTok filled `--limit 5` and the Instagram/Threads calls were never made. Replace the global short-circuit with a per-endpoint cap (`--social-per-endpoint`, default 10): every requested endpoint is always called, each contributes up to the cap, and caps hit are logged in `summary.json` (no silent truncation).
 
 ## 4. Component: Ad intelligence (`scripts/evidence_scout/collect_ads.py`)
 
@@ -128,7 +132,7 @@ All three: read-only against external systems; no writes outside `research/topic
 | `scripts/evidence_scout/collect_ads.py` | New script (`meta_ad_library` + `apify_ads`) |
 | `schemas/ads-record.schema.json` | New schema for `ads.jsonl` records |
 | `scripts/validate_apis/validate_meta.py` | Probe `ads_archive`; document 60-day refresh |
-| `scripts/validate_apis/validate_apify.py`, `run_all.py` | Apify token validation; register in suite |
+| `scripts/validate_apis/validate_apify.py` | **Already exists and passes** (verified 2026-07-21) — verify actor-level guidance, no new file |
 | `config/source-capabilities.json` | Add `meta_ad_library` (family `ad_intel`, `approval_required: false`), `apify_ads` (`approval_required: true`); expand scrapecreators `use_when` with facebook groups/pages, instagram hashtags |
 | `config/routing-evals.json` | New routing cases (see §9) |
 | `.env.example` | Document `META_ACCESS_TOKEN`, `APIFY_TOKEN` (note: file is permission-guarded; edit during implementation) |
@@ -138,19 +142,16 @@ All three: read-only against external systems; no writes outside `research/topic
 
 ## 9. Evals and validation
 
-Repo convention: no unit-test suite; validation = eval fixtures + setup checks + CI. This design conforms and adds:
+Repo convention: no unit-test suite; validation = eval fixtures + setup checks + CI. `config/routing-evals.json` is **skill-routing** fixtures (which skill fires), not provider routing — provider routing correctness is enforced by keeping `config/source-capabilities.json` truthful, since `capability_lookup.py` routes from its `use_when` fields. This design conforms and adds:
 
-- `config/routing-evals.json` cases:
-  - "facebook groups pain evidence" → routes to `scrapecreators`
-  - "competitor facebook/instagram ads" → routes to `meta_ad_library`
-  - "competitor ads in US/non-EU market" → `meta_ad_library` with `apify_ads` fallback flagged `approval_required`
-  - "instagram hashtag demand signals" → routes to `scrapecreators`
+- **Capability-truth fix (drift found in review):** `source-capabilities.json` currently lists `facebook` in scrapecreators' `use_when`, so `capability_lookup.py` routes Facebook questions to a collector that has zero Facebook endpoints wired (verified: only TikTok/IG-reels/Threads/X are called). Implementation must make the claim true (wire the endpoints) — not delete the claim. Until then the drift is a known bug.
+- `config/routing-evals.json`: add one skill-routing fixture — "analyze what ads my competitors run on Facebook and Instagram" must route to `competitor-marketing-analyzer` (forbidden: `social-digital-marketing-planner`), since ad intel becomes part of that skill's workflow.
 - `bash scripts/validate_setup.sh` stays green (validates schemas including the new ads-record schema).
 - `python3 scripts/run_evals.py` stays green; CI (`.github/workflows/validate.yml`) runs both on push.
 - `ads.jsonl` records validated against `schemas/ads-record.schema.json` by the setup script, same as evidence records.
-- Live credit-based endpoints (ScrapeCreators FB/IG, Apify) are smoke-tested only with explicit user approval, per provider policy. Meta Ad Library live check happens after the user completes ID verification.
+- Live credit-based endpoints (ScrapeCreators FB/IG, Apify) are smoke-tested only with explicit user approval, per provider policy. Meta Ad Library live check happens after the user completes ID verification — as of 2026-07-21 `validate_meta.py` reports `missing_credentials`.
 
-Pass/fail evidence for implementation completion: `validate_setup.sh` output, `run_evals.py` output, `run_all.py` provider statuses, and one approved live run's `summary.json` committed nowhere but shown in-session (raw outputs stay gitignored per repo convention).
+Pass/fail evidence for implementation completion: `validate_setup.sh` output, `run_evals.py` output, `run_all.py` provider statuses, and one approved live run's `summary.json` shown in-session (raw outputs stay gitignored per repo convention).
 
 ## 10. Determinism and agentic best-practices conformance
 
@@ -171,3 +172,35 @@ Checked against `~/coding/general/agentic_best_practices`:
 - TikTok/LinkedIn ad libraries, engagement-metric estimation, spend inference beyond disclosed ranges.
 - Automated recurring monitoring (`competitor-monitoring` may adopt `collect_ads.py` later).
 - Meta Graph API owned-asset insights (user's own pages) — separate need, separate design.
+
+## 12. Live verification results (2026-07-21)
+
+Credential validation (`scripts/validate_apis/`):
+
+| Provider | Status | Note |
+|---|---|---|
+| scrapecreators | **ok** | 100 free credits on account; ~6 consumed by these tests |
+| apify | **ok** | account + plan fields validated |
+| meta | **missing_credentials** | user action pending: developer app + ID verification + `META_ACCESS_TOKEN` |
+
+Endpoint tests against ScrapeCreators (1 credit/call observed):
+
+| Endpoint | Result |
+|---|---|
+| `GET /v1/facebook/profile/posts` (public page) | **works** — 3 posts + `cursor` |
+| `GET /v1/facebook/group/posts` | HTTP 200, 0 posts for a private/inaccessible group — ambiguous-empty handling required |
+| `GET /v1/instagram/profile` | **works** — data nested under `data` |
+| `GET /v2/instagram/user/posts` | **works** — items under `profile_grid_items` + `profile_grid_items_cursor` (dedicated parser needed) |
+| `GET /v1/instagram/search/hashtag` | **works** — 10 posts + `cursor`, German PKV content returned |
+| `GET /v1/instagram/profile/posts`, `/v1/instagram/hashtag/search` | 404 — wrong paths; do not guess paths, use the verified ones above |
+
+Existing-pipeline smoke test (`collect.py --providers scrapecreators --limit 5`): status `ok`, 5 records, but only the TikTok call executed — Instagram/Threads were starved by the global-limit short-circuit (fix specified in §3). Test workspace: `research/topics/social-access-smoke-test-private-health-insurance-germany/` (may be deleted; it is not a real research topic).
+
+Implementation-review findings folded into this spec:
+
+1. Global-limit starvation bug in `collect_scrapecreators` (fix in §3).
+2. `facebook` missing from social-intent sets in `infer_comment_intent` / `infer_source_intent` (fix in §3).
+3. Capability drift: `source-capabilities.json` claims Facebook coverage that is not wired (fix in §9).
+4. `validate_apify.py` already exists (§8 corrected).
+5. `routing-evals.json` is skill-routing, not provider-routing (§9 corrected).
+6. `competitor-marketing-analyzer/references/workflow.md` mentions ad-library clues "where available" but the script has no ad tooling — the §4 collector closes this doc/code drift.
