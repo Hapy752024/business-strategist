@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ads-record.schema.json",
+  "title": "Ads Intelligence Record",
+  "description": "Normalized competitor paid-ads record from the Meta Ad Library or a paid fallback provider.",
+  "type": "object",
+  "required": [
+    "page_name",
+    "source",
+    "retrieved_at",
+    "matched",
+    "match_type",
+    "active"
+  ],
+  "properties": {
+    "ad_id": { "type": "string" },
+    "page_id": { "type": "string" },
+    "page_name": { "type": "string" },
+    "matched": { "type": "string", "description": "Competitor name or keyword this ad was found under." },
+    "match_type": { "type": "string", "enum": ["competitor", "keyword"] },
+    "source": { "type": "string", "enum": ["meta_ad_library", "apify_ads"] },
+    "retrieved_at": { "type": "string", "format": "date-time" },
+    "countries": { "type": "array", "items": { "type": "string" } },
+    "platforms": { "type": "array", "items": { "type": "string" } },
+    "creative_body": { "type": "string" },
+    "link_caption": { "type": "string" },
+    "link_title": { "type": "string" },
+    "link_description": { "type": "string" },
+    "delivery_start": { "type": "string" },
+    "delivery_stop": { "type": "string" },
+    "active": { "type": "boolean" },
+    "spend_lower": { "type": ["string", "number", "null"] },
+    "spend_upper": { "type": ["string", "number", "null"] },
+    "impressions_lower": { "type": ["string", "number", "null"] },
+    "impressions_upper": { "type": ["string", "number", "null"] },
+    "currency": { "type": "string" },
+    "snapshot_url": { "type": "string" },
+    "longevity_days": { "type": ["integer", "null"], "description": "Judgment signal: days between delivery start and stop/retrieval. Not performance proof." },
+    "confidence_notes": { "type": "string" }
+  }
+}

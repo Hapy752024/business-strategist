@@ -76,6 +76,8 @@ Provider sets:
 
 Use `default` first. Add `social` only when consumer, creator, trend, local community, or brand-comment evidence is material enough to spend paid credits.
 
+For Facebook/Instagram evidence via ScrapeCreators (paid, ask first), add explicit flags — the endpoints run only when the flags are present: `--fb-groups` (public group posts), `--fb-pages` (page posts + reels), `--ig-handles` (profile posts), `--ig-hashtags` (hashtag search), `--social-comments` (comments on top posts). Full route details and caveats: `references/provider-policy.md`.
+
 Use local extraction only when it adds concrete coverage:
 
 - `crawl4ai`: use as the first local fallback when Firecrawl scrape credits are constrained or when richer page Markdown is needed from a small discovered URL set. Keep `--local-extract-url-limit` low.

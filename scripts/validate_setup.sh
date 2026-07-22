@@ -165,7 +165,7 @@ check "eval structure is valid" python3 scripts/run_evals.py
 # ── Schemas ───────────────────────────────────────────────
 echo ""
 echo "--- Schemas ---"
-for schema in evidence-record competitor stage-checkpoint research-topic-manifest; do
+for schema in evidence-record ads-record competitor stage-checkpoint research-topic-manifest; do
     check "schemas/$schema.schema.json exists" test -f "schemas/$schema.schema.json"
     check "schemas/$schema.schema.json is valid JSON" python3 -c "import json; json.load(open('schemas/$schema.schema.json'))" 2>/dev/null
 done

@@ -10,7 +10,9 @@
           "prompt": "Create a social media plan with a content calendar and paid ad strategy for our B2B SaaS launch in Germany.",
           "expected_output": "Routes to social-digital-marketing-planner for platform-level social media plan and content calendar.",
           "expected_skill": "social-digital-marketing-planner",
-          "forbidden_skills": ["archetype-gtm-strategist"],
+          "forbidden_skills": [
+            "archetype-gtm-strategist"
+          ],
           "files": [],
           "rationale": "Specific request for platform-level social media plan and content calendar — social-digital-marketing-planner owns this. archetype-gtm-strategist is for end-to-end stage-gated GTM, not campaign-level social planning."
         },
@@ -19,7 +21,10 @@
           "prompt": "We need a full go-to-market strategy for our fintech SaaS — first customers, partnerships, European expansion, and regulatory path.",
           "expected_output": "Routes to archetype-gtm-strategist for end-to-end stage-gated GTM with fintech archetype and Europe region.",
           "expected_skill": "archetype-gtm-strategist",
-          "forbidden_skills": ["social-digital-marketing-planner", "marketing-strategy-builder"],
+          "forbidden_skills": [
+            "social-digital-marketing-planner",
+            "marketing-strategy-builder"
+          ],
           "files": [],
           "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) — archetype-gtm-strategist owns this. marketing-strategy-builder is for campaign-level marketing detail after the GTM strategy."
         },
@@ -28,7 +33,9 @@
           "prompt": "Define our positioning, messaging, target segments, and channel strategy for our consumer subscription app.",
           "expected_output": "Routes to marketing-strategy-builder for positioning, messaging, segmentation, and channel fundamentals.",
           "expected_skill": "marketing-strategy-builder",
-          "forbidden_skills": ["archetype-gtm-strategist"],
+          "forbidden_skills": [
+            "archetype-gtm-strategist"
+          ],
           "files": [],
           "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) — marketing-strategy-builder owns this. archetype-gtm-strategist adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
         }
@@ -42,7 +49,10 @@
           "prompt": "I have a rough idea for helping freelancers track expenses. What should I do first to figure out if it's worth pursuing?",
           "expected_output": "Routes to idea-grill to narrow the vague idea, identify the segment and painful job, and form a researchable thesis before any building or evidence collection.",
           "expected_skill": "idea-grill",
-          "forbidden_skills": ["startup-business-builder", "evidence-scout"],
+          "forbidden_skills": [
+            "startup-business-builder",
+            "evidence-scout"
+          ],
           "files": [],
           "rationale": "Vague idea, no segment clarity — needs idea-grill to narrow and form a researchable thesis before any building or evidence collection."
         },
@@ -51,7 +61,9 @@
           "prompt": "We have a clear segment (self-employed Germans confused about PKV), evidence of pain from Reddit, and want to build a business plan with customer discovery, MVP, and first-customer strategy.",
           "expected_output": "Routes to startup-business-builder for zero-to-one business plan with customer discovery, MVP, first customers, and business model.",
           "expected_skill": "startup-business-builder",
-          "forbidden_skills": ["idea-grill"],
+          "forbidden_skills": [
+            "idea-grill"
+          ],
           "files": [],
           "rationale": "Clear segment with evidence — past the idea-grill stage, ready for zero-to-one business building. The request is for a plan, not idea clarification."
         },
@@ -60,7 +72,9 @@
           "prompt": "Three advisors reviewed our GTM plan and disagree on whether to launch B2C first or go through insurance brokers. Help us decide.",
           "expected_output": "Routes to startup-challenge-panel for a multi-role adversarial review of a high-stakes strategic decision.",
           "expected_skill": "startup-challenge-panel",
-          "forbidden_skills": ["idea-grill"],
+          "forbidden_skills": [
+            "idea-grill"
+          ],
           "files": [],
           "rationale": "High-stakes strategic decision with multiple informed perspectives already on the table — startup-challenge-panel's multi-role structure is the right fit. Not an idea-clarity or business-planning problem."
         },
@@ -69,7 +83,10 @@
           "prompt": "Our consumer finance app is ready to launch in Germany. Challenge our packaging, pricing presentation, trust design, and cancellation policy from a German consumer's perspective.",
           "expected_output": "Routes to service-customer-perspective-challenger for evidence-grounded buying context and consumer trust challenge.",
           "expected_skill": "service-customer-perspective-challenger",
-          "forbidden_skills": ["idea-grill", "startup-business-builder"],
+          "forbidden_skills": [
+            "idea-grill",
+            "startup-business-builder"
+          ],
           "files": [],
           "rationale": "Consumer service packaging and trust challenge for a specific market — service-customer-perspective-challenger is built for exactly this. Use after evidence collection, before finalizing GTM."
         }
@@ -83,7 +100,9 @@
           "prompt": "What can I learn from how Airbnb and Uber grew their marketplaces in the early days?",
           "expected_output": "Routes to growth-case-analyzer for named-company case studies on Airbnb and Uber marketplace growth.",
           "expected_skill": "growth-case-analyzer",
-          "forbidden_skills": ["business-archetype-playbook-researcher"],
+          "forbidden_skills": [
+            "business-archetype-playbook-researcher"
+          ],
           "files": [],
           "rationale": "Request for case studies on specific named companies — growth-case-analyzer does company case studies. business-archetype-playbook-researcher does anonymous founder/operator lessons by business archetype."
         },
@@ -92,7 +111,9 @@
           "prompt": "What do successful founders say about building a B2B SaaS company in Europe — specifically about pricing, first customers, and avoiding common mistakes?",
           "expected_output": "Routes to business-archetype-playbook-researcher for anonymous founder/operator lessons by B2B SaaS archetype.",
           "expected_skill": "business-archetype-playbook-researcher",
-          "forbidden_skills": ["growth-case-analyzer"],
+          "forbidden_skills": [
+            "growth-case-analyzer"
+          ],
           "files": [],
           "rationale": "Request for anonymous founder/operator lessons by archetype (B2B SaaS, Europe) — business-archetype-playbook-researcher owns this. growth-case-analyzer does named-company case studies."
         }
@@ -106,7 +127,10 @@
           "prompt": "I am curious about independent elder-care services in Germany. I do not have a product yet; find recurring customer problems, dissatisfied groups, and possible overlooked pockets before I choose an idea.",
           "expected_output": "Routes to market-problem-discovery for source-grounded exploration before any founder intake. It should create a report and let the user select a candidate afterward.",
           "expected_skill": "market-problem-discovery",
-          "forbidden_skills": ["idea-grill", "evidence-scout"],
+          "forbidden_skills": [
+            "idea-grill",
+            "evidence-scout"
+          ],
           "files": [],
           "rationale": "The user explicitly wants to discover problems and segments before selecting a hypothesis. Market discovery owns the divergent research and user-controlled handoff."
         },
@@ -115,7 +139,9 @@
           "prompt": "I have a vague interest in helping small restaurants. Should we explore what frustrates them first, or figure out whether my inventory app idea is viable?",
           "expected_output": "Asks the single market-discovery versus idea-validation routing question before starting either workflow.",
           "expected_skill": "market-problem-discovery",
-          "forbidden_skills": ["evidence-scout"],
+          "forbidden_skills": [
+            "evidence-scout"
+          ],
           "files": [],
           "rationale": "The user explicitly expresses uncertainty about the mode, so the agent should resolve that choice with one routing question rather than begin a grill or a collection run."
         },
@@ -124,9 +150,41 @@
           "prompt": "I want to validate whether US freelance designers lose billable time because invoice follow-up is manual. Help me pressure-test that specific customer problem before I build anything.",
           "expected_output": "Routes to idea-grill because the user has already chosen a segment and problem hypothesis to validate.",
           "expected_skill": "idea-grill",
-          "forbidden_skills": ["market-problem-discovery", "evidence-scout"],
+          "forbidden_skills": [
+            "market-problem-discovery",
+            "evidence-scout"
+          ],
           "files": [],
           "rationale": "This is a founder-chosen validation hypothesis, not a request to discover which problem or segment to pursue."
+        }
+      ]
+    },
+    {
+      "pair": "competitor-marketing-analyzer vs social-digital-marketing-planner",
+      "evals": [
+        {
+          "id": "route-ads-1",
+          "prompt": "Analyze what Facebook and Instagram ads my competitors are running — creatives, copy, CTAs, and how long the ads have been active.",
+          "expected_output": "Routes to competitor-marketing-analyzer, which now includes an ad-evidence step via scripts/evidence_scout/collect_ads.py.",
+          "expected_skill": "competitor-marketing-analyzer",
+          "forbidden_skills": [
+            "social-digital-marketing-planner",
+            "marketing-strategy-builder"
+          ],
+          "files": [],
+          "rationale": "Analyzing competitor paid-ads intelligence is competitor analysis (collect_ads.py + Meta Ad Library), not planning our own social media campaigns — social-digital-marketing-planner owns outbound campaign planning."
+        },
+        {
+          "id": "route-ads-2",
+          "prompt": "Find customer pain evidence in public Facebook groups and Instagram hashtags for our PKV switching hypothesis.",
+          "expected_output": "Routes to evidence-scout for ScrapeCreators-backed social pain collection (--fb-groups, --ig-hashtags).",
+          "expected_skill": "evidence-scout",
+          "forbidden_skills": [
+            "competitor-marketing-analyzer",
+            "social-digital-marketing-planner"
+          ],
+          "files": [],
+          "rationale": "Social pain evidence collection is evidence-scout's job via collect.py; competitor-marketing-analyzer analyzes competitor positioning, not customer pain."
         }
       ]
     }

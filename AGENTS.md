@@ -108,6 +108,18 @@ Competitor discovery:
 python3 scripts/evidence_scout/discover_competitors.py --topic "<topic>" --customer-segment "<segment>" --known-competitors "<optional comma-separated names>" --limit 20
 ```
 
+Competitor ads intelligence (Meta Ad Library; EU/UK/EEA commercial ads; Apify paid fallback for other markets):
+
+```bash
+python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json" --countries DE --limit 20
+```
+
+Facebook/Instagram social evidence (ScrapeCreators, paid — ask first):
+
+```bash
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --providers scrapecreators --fb-groups "<public-group-url>" --ig-hashtags "<tag1,tag2>"
+```
+
 Full command variants and provider routing details live in each skill's `references/workflow.md` and `references/commands.md`.
 
 ## Provider Policy

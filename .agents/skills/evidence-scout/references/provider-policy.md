@@ -16,7 +16,23 @@ Social providers: direct X API, optional Grok/xAI X Search discovery, and Scrape
 
 Use direct X API as the default source-of-record route for recent public X/Twitter posts. Use Grok/xAI X Search only as cited discovery/synthesis and verify cited post URLs before treating claims as evidence. Use ScrapeCreators X profile/user-tweet pulls only for named-handle enrichment or fallback; use Apify only for capped bulk/historical actor-backed gaps after actor/schema review.
 
-ScrapeCreators is valuable for public TikTok, Instagram, Threads, Facebook, X/Twitter, Reddit, YouTube, LinkedIn, Pinterest, and Bluesky evidence, but it spends credits.
+ScrapeCreators is valuable for public TikTok, Instagram, Threads, Facebook, X/Twitter, Reddit, YouTube, LinkedIn, Pinterest, and Bluesky evidence, but it spends credits (1 credit per call observed).
+
+ScrapeCreators Facebook/Instagram routes (verified 2026-07-21):
+
+- `--fb-groups <url-or-id,...>`: public Facebook group posts (3 posts/call, cursor-paginated up to `--fb-max-posts`, default 12, hard cap 60). **Public groups only.** An empty response means the group is private OR inactive — report "no accessible public posts", never "no posts exist".
+- `--fb-pages <url-or-id,...>`: public page posts + reels (same pagination).
+- `--ig-handles <handle,...>`: Instagram profile posts (`/v2/instagram/user/posts`).
+- `--ig-hashtags <tag,...>`: Instagram hashtag search (`/v1/instagram/search/hashtag`, 10 posts/call).
+- `--social-comments`: also fetch comments on the top `--comments-max` (default 5) collected FB/IG posts. Pain language often lives in comments; treat comments as interview leads unless repeated.
+- `--social-per-endpoint` (default 10) caps records per endpoint so one productive platform cannot starve the others.
+
+## Ads Intelligence Providers
+
+Competitor paid-ads evidence uses `scripts/evidence_scout/collect_ads.py`, not `collect.py`:
+
+- `meta_ad_library` (default, free): official Meta Ad Library API. Requires one-time Meta developer app + government ID verification and `META_ACCESS_TOKEN` with `ads_read` scope; tokens expire ~60 days. Commercial ads only for EU/UK/EEA audiences (DSA, ~1-year retention); coarse spend/impression ranges; no engagement metrics. Ad longevity is a judgment signal, not performance proof.
+- `apify_ads` (paid fallback, `approval_required`): for non-EU/UK/EEA markets or a missing/expired Meta token. The script hard-requires `--approve-paid` as a deterministic spend gate; ask the user first. Use `--providers auto` to let the script route (Meta primary, Apify on non-EU countries or token failure).
 
 ## Provider Sets
 

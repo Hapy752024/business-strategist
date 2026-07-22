@@ -595,7 +595,7 @@ SOURCE_INTENT_DOMAINS = read_json(REGISTRY_DIR / "source_intents.json", {})
 
 def infer_comment_intent(source: str, text: str, evidence_type: str) -> str:
     lower = text.lower()
-    if source not in {"reddit", "youtube_comment", "x", "tiktok", "instagram", "threads"}:
+    if source not in {"reddit", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook"}:
         if source not in {"bilibili", "bilibili_comment", "xiaohongshu", "v2ex", "weibo", "zhihu", "douban", "tieba"}:
             return "not_social_comment"
     if evidence_type == "irrelevant":
@@ -617,7 +617,7 @@ def infer_source_intent(source: str, source_url: str, text: str, evidence_type: 
     editorial_markers = ["guide", "blog", "article", "explained", "best ", "top ", "vergleich", "comparison", "ratgeber", "erfahrungen"]
     china_social_sources = {"bilibili", "bilibili_comment", "xiaohongshu", "weibo", "douban"}
     china_forum_sources = {"v2ex", "zhihu", "tieba"}
-    if source in {"reddit", "youtube_comment", "x", "tiktok", "instagram", "threads"}:
+    if source in {"reddit", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook"}:
         if evidence_type in {"pain", "workaround", "counter_evidence", "spend", "competitor_gap", "decision_uncertainty"}:
             return "user_pain"
         return "social_comment"
@@ -651,6 +651,14 @@ def infer_source_intent(source: str, source_url: str, text: str, evidence_type: 
     return "unknown"
 
 
+def engagement_int(value: Any) -> int:
+    if isinstance(value, list):
+        return len(value)
+    if isinstance(value, (int, float)):
+        return int(value)
+    return 0
+
+
 def estimate_strength(text: str, engagement: dict[str, Any]) -> str:
     lower = text.lower()
     pain_terms = ["hate", "frustrated", "hard", "annoying", "pain", "struggle", "broken", "waste", "überfragt", "angst", "verzweifelt", "qual der wahl", "unmöglich", "kompliziert", "麻烦", "踩坑", "避雷", "难用", "不好用", "后悔", "崩溃", "不靠谱"]
@@ -660,7 +668,7 @@ def estimate_strength(text: str, engagement: dict[str, Any]) -> str:
         score += 1
     if any(term in lower for term in workaround_terms):
         score += 1
-    if (engagement.get("upvotes") or 0) >= 25 or (engagement.get("comments") or 0) >= 10:
+    if engagement_int(engagement.get("upvotes")) >= 25 or engagement_int(engagement.get("comments")) >= 10:
         score += 1
     if score >= 3:
         return "strong"
@@ -709,10 +717,10 @@ def normalize_record(
         "verbatim_quote": short_quote,
         "author_context": author_context,
         "engagement": {
-            "upvotes": engagement.get("upvotes"),
-            "comments": engagement.get("comments"),
-            "views": engagement.get("views"),
-            "likes": engagement.get("likes"),
+            "upvotes": engagement_int(engagement.get("upvotes")) if engagement.get("upvotes") is not None else None,
+            "comments": engagement_int(engagement.get("comments")) if engagement.get("comments") is not None else None,
+            "views": engagement_int(engagement.get("views")) if engagement.get("views") is not None else None,
+            "likes": engagement_int(engagement.get("likes")) if engagement.get("likes") is not None else None,
         },
         "strength": record_strength,
         "relevance": relevance,
@@ -1645,6 +1653,80 @@ def stringify_twitter_item(item: dict[str, Any]) -> tuple[str, str, dict[str, An
     return text, url, engagement, raw_id
 
 
+def stringify_facebook_item(item: dict[str, Any]) -> tuple[str, str, dict[str, Any], str]:
+    text = item.get("text") or item.get("message") or item.get("caption") or ""
+    url = item.get("url") or item.get("link") or item.get("post_url") or item.get("permalink") or ""
+    comments = item.get("comments_count") or item.get("comment_count") or item.get("comments")
+    engagement = {
+        "views": item.get("views") or item.get("view_count"),
+        "likes": item.get("likes") or item.get("like_count") or item.get("reactions"),
+        "comments": len(comments) if isinstance(comments, list) else comments,
+    }
+    raw_id = str(item.get("id") or item.get("post_id") or url or text[:80])
+    return text, url, engagement, raw_id
+
+
+def stringify_instagram_item(item: dict[str, Any]) -> tuple[str, str, dict[str, Any], str]:
+    caption = item.get("caption") or item.get("text") or ""
+    if isinstance(caption, dict):
+        caption = caption.get("text") or ""
+    url = item.get("url") or item.get("permalink") or ""
+    if not url and item.get("shortcode"):
+        url = f"https://www.instagram.com/p/{item['shortcode']}/"
+    comments = item.get("comment_count") or item.get("comments")
+    engagement = {
+        "views": item.get("views") or item.get("view_count") or item.get("video_view_count"),
+        "likes": item.get("likes") or item.get("like_count"),
+        "comments": len(comments) if isinstance(comments, list) else comments,
+    }
+    raw_id = str(item.get("id") or item.get("shortcode") or url or str(caption)[:80])
+    return str(caption), url, engagement, raw_id
+
+
+def stringify_social_comment(item: dict[str, Any]) -> tuple[str, str, dict[str, Any], str]:
+    text = item.get("text") or item.get("content") or item.get("comment") or ""
+    if isinstance(text, dict):
+        text = text.get("text") or ""
+    url = item.get("url") or item.get("link") or ""
+    engagement = {"views": None, "likes": item.get("likes") or item.get("like_count"), "comments": None}
+    raw_id = str(item.get("id") or item.get("comment_id") or url or str(text)[:80])
+    return str(text), url, engagement, raw_id
+
+
+def scrapecreators_paginate(
+    endpoint: str,
+    params: dict[str, Any],
+    api_key: str,
+    items_key: str,
+    cursor_key: str,
+    max_items: int,
+    raw_calls: list[dict[str, Any]],
+    source: str,
+) -> tuple[list[Any], str]:
+    items: list[Any] = []
+    cursor: str | None = None
+    while len(items) < max_items:
+        call_params = dict(params)
+        if cursor:
+            call_params["cursor"] = cursor
+        response = http_get(with_query(endpoint, call_params), headers={"x-api-key": api_key})
+        raw_calls.append({"source": source, "endpoint": endpoint, "params": call_params, "response": response})
+        if not response.get("ok"):
+            if response.get("status_code") == 404:
+                return items, "empty"
+            return items, status_from_response(response)
+        body = response.get("body") or {}
+        page = body.get(items_key) or []
+        if not page:
+            break
+        items.extend(page)
+        new_cursor = body.get(cursor_key)
+        if not new_cursor or new_cursor == cursor:
+            break
+        cursor = new_cursor
+    return items[:max_items], "ok" if items else "empty"
+
+
 def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     key_name, api_key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
     raw: dict[str, Any] = {"credential_source": key_name, "calls": []}
@@ -1654,29 +1736,53 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
 
     terms = social_terms(args.topic, args.problem_keywords, args.workaround_keywords, args.geo, args.language)
     social_query = terms[0] if terms else args.topic
-    endpoints = [
-        ("tiktok", "https://api.scrapecreators.com/v1/tiktok/search/keyword", {"query": social_query, "date_posted": "month", "sort_by": "relevance", "trim": "true"}),
-        ("instagram", "https://api.scrapecreators.com/v2/instagram/reels/search", {"query": social_query, "date_posted": "month", "page": 1}),
-        ("threads", "https://api.scrapecreators.com/v1/threads/search", {"query": social_query, "trim": "true"}),
+    per_endpoint = max(1, args.social_per_endpoint)
+    fb_max = min(max(3, args.fb_max_posts), 60)
+
+    # spec: (source, endpoint, params, items_key, cursor_key, cap, context, parser)
+    # items_key None means a single-call endpoint parsed with list_candidates.
+    specs: list[tuple[str, str, dict[str, Any], str | None, str | None, int, str, Any]] = [
+        ("tiktok", "https://api.scrapecreators.com/v1/tiktok/search/keyword", {"query": social_query, "date_posted": "month", "sort_by": "relevance", "trim": "true"}, None, None, per_endpoint, "ScrapeCreators tiktok-search", stringify_social_item),
+        ("instagram", "https://api.scrapecreators.com/v2/instagram/reels/search", {"query": social_query, "date_posted": "last-month", "page": 1}, None, None, per_endpoint, "ScrapeCreators ig-reels-search", stringify_social_item),
+        ("threads", "https://api.scrapecreators.com/v1/threads/search", {"query": social_query, "trim": "true"}, None, None, per_endpoint, "ScrapeCreators threads-search", stringify_social_item),
     ]
     for handle in [item.strip().lstrip("@") for item in args.x_handles.split(",") if item.strip()][:10]:
-        endpoints.append(("x", "https://api.scrapecreators.com/v1/twitter/user-tweets", {"handle": handle, "trim": "true"}))
+        specs.append(("x", "https://api.scrapecreators.com/v1/twitter/user-tweets", {"handle": handle, "trim": "true"}, None, None, per_endpoint, f"ScrapeCreators x-handle:{handle}", stringify_twitter_item))
+    for group in [item.strip() for item in args.fb_groups.split(",") if item.strip()][:10]:
+        specs.append(("facebook", "https://api.scrapecreators.com/v1/facebook/group/posts", {"url": group}, "posts", "cursor", fb_max, f"ScrapeCreators fb-group:{group}", stringify_facebook_item))
+    for page in [item.strip() for item in args.fb_pages.split(",") if item.strip()][:10]:
+        specs.append(("facebook", "https://api.scrapecreators.com/v1/facebook/profile/posts", {"url": page}, "posts", "cursor", fb_max, f"ScrapeCreators fb-page:{page}", stringify_facebook_item))
+        specs.append(("facebook", "https://api.scrapecreators.com/v1/facebook/profile/reels", {"url": page}, "reels", "cursor", per_endpoint, f"ScrapeCreators fb-page-reels:{page}", stringify_facebook_item))
+    for handle in [item.strip().lstrip("@") for item in args.ig_handles.split(",") if item.strip()][:10]:
+        specs.append(("instagram", "https://api.scrapecreators.com/v2/instagram/user/posts", {"handle": handle, "trim": "true"}, "items", "next_max_id", per_endpoint, f"ScrapeCreators ig-handle:{handle}", stringify_instagram_item))
+    for tag in [item.strip().lstrip("#") for item in args.ig_hashtags.split(",") if item.strip()][:10]:
+        specs.append(("instagram", "https://api.scrapecreators.com/v1/instagram/search/hashtag", {"hashtag": tag}, "posts", "cursor", per_endpoint, f"ScrapeCreators ig-hashtag:{tag}", stringify_instagram_item))
+
     records: list[dict[str, Any]] = []
     seen: set[str] = set()
-    for source, endpoint, params in endpoints:
-        response = http_get(with_query(endpoint, params), headers={"x-api-key": api_key})
-        raw["calls"].append({"source": source, "endpoint": endpoint, "params": params, "response": response})
-        if not response.get("ok"):
-            continue
-        for item in list_candidates(response.get("body")):
+    endpoint_statuses: dict[str, str] = {}
+    comment_candidates: list[tuple[str, str, str]] = []
+    for source, endpoint, params, items_key, cursor_key, cap, context, parser in specs:
+        if items_key is None:
+            response = http_get(with_query(endpoint, params), headers={"x-api-key": api_key})
+            raw["calls"].append({"source": source, "endpoint": endpoint, "params": params, "response": response})
+            if not response.get("ok"):
+                endpoint_statuses[context] = status_from_response(response)
+                continue
+            items = list_candidates(response.get("body"))[:cap]
+            status = "ok" if items else "empty"
+        else:
+            items, status = scrapecreators_paginate(endpoint, params, api_key, items_key, cursor_key, cap, raw["calls"], source)
+        before = len(records)
+        for item in items:
             if not isinstance(item, dict):
                 continue
-            text, url, engagement, raw_id = stringify_twitter_item(item) if source == "x" else stringify_social_item(item)
+            text, url, engagement, raw_id = parser(item)
             identity = raw_id or url or text[:80]
             if not text or identity in seen:
                 continue
             seen.add(identity)
-            relevance, relevance_notes, relevance_score = assess_relevance(text, args, social_query, url, "ScrapeCreators")
+            relevance, relevance_notes, relevance_score = assess_relevance(text, args, social_query, url, context)
             records.append(
                 normalize_record(
                     source=source,
@@ -1685,7 +1791,7 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                     customer_segment=args.customer_segment,
                     hypothesis=args.hypothesis_id,
                     text=text,
-                    author_context="ScrapeCreators",
+                    author_context=context,
                     engagement=engagement,
                     raw_id=raw_id,
                     evidence_type="irrelevant" if relevance == "irrelevant" else None,
@@ -1696,14 +1802,61 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                     confidence_notes="Collected via ScrapeCreators public social scraping API. Verify platform limitations, costs, and source URLs before broad runs.",
                 )
             )
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
+            if url and source in {"facebook", "instagram"}:
+                comment_candidates.append((source, url, context))
+        produced = len(records) - before
+        if items and produced == 0:
+            status = f"{status};items_without_text"
+        endpoint_statuses[context] = f"{status};records={produced}"
+
+    if args.social_comments:
+        comment_endpoints = {
+            "facebook": "https://api.scrapecreators.com/v1/facebook/post/comments",
+            "instagram": "https://api.scrapecreators.com/v2/instagram/post/comments",
+        }
+        for source, url, context in comment_candidates[: max(0, args.comments_max)]:
+            endpoint = comment_endpoints[source]
+            params = {"url": url, "trim": "true"}
+            response = http_get(with_query(endpoint, params), headers={"x-api-key": api_key})
+            raw["calls"].append({"source": f"{source}_comment", "endpoint": endpoint, "params": params, "response": response})
+            if not response.get("ok"):
+                endpoint_statuses[f"{context} comments"] = status_from_response(response)
+                continue
+            before = len(records)
+            for item in list_candidates(response.get("body"))[:10]:
+                if not isinstance(item, dict):
+                    continue
+                text, comment_url, engagement, raw_id = stringify_social_comment(item)
+                identity = raw_id or str(text)[:80]
+                if not text or identity in seen:
+                    continue
+                seen.add(identity)
+                relevance, relevance_notes, relevance_score = assess_relevance(text, args, social_query, comment_url or url, context)
+                records.append(
+                    normalize_record(
+                        source=source,
+                        source_url=comment_url or url,
+                        query=social_query,
+                        customer_segment=args.customer_segment,
+                        hypothesis=args.hypothesis_id,
+                        text=text,
+                        author_context=f"{context} comment",
+                        engagement=engagement,
+                        raw_id=raw_id,
+                        evidence_type="irrelevant" if relevance == "irrelevant" else None,
+                        strength="irrelevant" if relevance == "irrelevant" else None,
+                        relevance=relevance,
+                        relevance_notes=relevance_notes,
+                        relevance_score=relevance_score,
+                        confidence_notes="Comment on a public post via ScrapeCreators. Treat as interview lead unless independent comments repeat the pain.",
+                    )
+                )
+            endpoint_statuses[f"{context} comments"] = f"ok;records={len(records) - before}"
+
     first_response = (raw["calls"][0] or {}).get("response", {}) if raw["calls"] else {}
     status = "ok" if records else status_from_response(first_response)
     write_json(run_dir / "raw" / "scrapecreators.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+    return records, {"status": status, "record_count": len(records), "endpoint_statuses": endpoint_statuses, "fields": fields_present(raw)}
 
 
 def china_query_terms(args: argparse.Namespace, queries: list[str]) -> list[str]:
@@ -2988,6 +3141,49 @@ def parse_args() -> argparse.Namespace:
         help="Also fetch Sonar revenue estimates for --sonar-apps. Treat as weak monetization context.",
     )
     parser.add_argument("--x-handles", default="", help="Comma-separated X handles for handle-bounded Grok/X Search or ScrapeCreators Twitter user-tweet enrichment.")
+    parser.add_argument(
+        "--social-per-endpoint",
+        type=int,
+        default=10,
+        help="Maximum records each ScrapeCreators endpoint may contribute. Prevents one productive platform from starving the others.",
+    )
+    parser.add_argument(
+        "--fb-groups",
+        default="",
+        help="Comma-separated public Facebook group URLs or IDs for ScrapeCreators group-post collection. Public groups only; private groups return empty.",
+    )
+    parser.add_argument(
+        "--fb-pages",
+        default="",
+        help="Comma-separated public Facebook page/profile URLs or IDs for ScrapeCreators page-post and reel collection.",
+    )
+    parser.add_argument(
+        "--fb-max-posts",
+        type=int,
+        default=12,
+        help="Maximum posts to fetch per Facebook group/page via cursor pagination (hard cap 60; 3 posts per API call, 1 credit per call).",
+    )
+    parser.add_argument(
+        "--ig-handles",
+        default="",
+        help="Comma-separated Instagram handles for ScrapeCreators profile and profile-post collection.",
+    )
+    parser.add_argument(
+        "--ig-hashtags",
+        default="",
+        help="Comma-separated Instagram hashtags (without #) for ScrapeCreators hashtag search.",
+    )
+    parser.add_argument(
+        "--social-comments",
+        action="store_true",
+        help="Also fetch comments on the top collected Facebook/Instagram posts (extra credits; pain language often lives in comments).",
+    )
+    parser.add_argument(
+        "--comments-max",
+        type=int,
+        default=5,
+        help="Maximum collected posts to enrich with comments when --social-comments is set.",
+    )
     parser.add_argument("--x-from-date", help="ISO date/datetime for Grok/xAI X Search start date.")
     parser.add_argument("--x-to-date", help="ISO date/datetime for Grok/xAI X Search end date.")
     parser.add_argument("--xai-model", default="grok-4.3", help="xAI/Grok model for xai_x_search provider.")

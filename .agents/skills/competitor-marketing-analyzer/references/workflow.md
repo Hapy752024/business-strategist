@@ -16,11 +16,13 @@ If competitor identity, URL ownership, target geography, or category scope is am
 1. Clarify the category/problem, target customer segment, geography, and competitor URL ownership when ambiguous.
 2. State the marketing-analysis plan before scraping: competitor types prioritized, page types to treat as product evidence, and claims that will not be inferred.
 3. Run the marketing analyzer on explicit URLs or a `competitors.json` from `competitor-scout`.
-4. Inspect provider failures, fallback evidence, page types, source URLs, and pricing-token extraction before interpreting results.
-5. Separate scraped landing-page evidence from direct HTTP fallback and cached snippets.
-6. Analyze positioning, audience, pain language, offer, CTA, pricing posture, proof, product clues, and channel clues.
-7. Compare competitor promises against user-pain evidence rather than assuming copy reflects demand.
-8. Produce a competitor-by-competitor summary, differentiation opportunities, and follow-up evidence gaps.
+4. Run the ads collector for paid-acquisition evidence when competitor Meta/Instagram presence matters: `python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "<competitors.json>" --countries <ISO codes> --limit 20`. Free official Meta Ad Library for EU/UK/EEA audiences; non-EU markets fall back to paid Apify (`--providers auto`, ask before `--approve-paid`). If `validate_meta.py` reports missing credentials, tell the user the one-time Meta app + identity-verification setup is pending instead of skipping ad evidence silently.
+5. Inspect provider failures, fallback evidence, page types, source URLs, and pricing-token extraction before interpreting results.
+6. Separate scraped landing-page evidence from direct HTTP fallback and cached snippets.
+7. Analyze positioning, audience, pain language, offer, CTA, pricing posture, proof, product clues, and channel clues.
+8. Compare ad messaging against landing-page positioning: same promise or segmented funnels? Long-running ads signal what keeps working, but never report longevity as proven performance — the Ad Library exposes no conversion or engagement data, and EU spend/impressions are coarse ranges.
+9. Compare competitor promises against user-pain evidence rather than assuming copy reflects demand.
+10. Produce a competitor-by-competitor summary, differentiation opportunities, and follow-up evidence gaps.
 
 ## Command
 

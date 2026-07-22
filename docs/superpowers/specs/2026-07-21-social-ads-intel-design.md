@@ -45,7 +45,7 @@ New optional flags, active only under `--providers scrapecreators` (which stays 
 |---|---|---|
 | `--fb-groups id_or_url,...` | `GET /v1/facebook/group/posts` | Endpoint works; 3 posts/call, `cursor` pagination, up to `--fb-max-posts` (default 12, hard cap 60). **Public groups only** — a 200 with 0 posts is ambiguous (private or empty); report as "no accessible public posts", never "no posts exist" |
 | `--fb-pages id_or_url,...` | `GET /v1/facebook/profile/posts` + `/profile/reels` | Verified working (3 posts + cursor returned for a public page). Page posts 3/call (same cap), reels 10/call |
-| `--ig-handles handle,...` | `GET /v1/instagram/profile` + `GET /v2/instagram/user/posts` | Verified working. Posts live under `profile_grid_items` with `profile_grid_items_cursor` — **not** the `posts`/`data` keys the current `list_candidates` heuristic expects; needs a dedicated parser |
+| `--ig-handles handle,...` | `GET /v1/instagram/profile` + `GET /v2/instagram/user/posts` | Verified working. Posts live under `items` with `next_max_id` cursor (the parallel `profile_grid_items` key is often empty — do not use it). Captions are objects; text under `caption.text` |
 | `--ig-hashtags tag,...` | `GET /v1/instagram/search/hashtag` | Verified working: 10 posts/call + `cursor`, captions and reel URLs returned |
 | `--social-comments` | FB post comments, `GET /v2/instagram/post/comments` | Opt-in; fetches comments on top-N collected posts (N = `--comments-max`, default 5) |
 

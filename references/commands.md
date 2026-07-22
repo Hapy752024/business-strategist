@@ -16,6 +16,29 @@ python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "
 python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain>" --workaround-keywords "<workaround>" --hypothesis-id H1 --days 30 --limit 20 --providers default,social
 ```
 
+### Facebook/Instagram social evidence (ScrapeCreators, paid — ask first)
+
+```bash
+# Public Facebook groups + Instagram hashtags for pain evidence
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain>" --providers scrapecreators --fb-groups "<public-group-url>" --ig-hashtags "<tag1,tag2>" --social-comments
+
+# Competitor/niche Facebook pages and Instagram profiles for content intel
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --providers scrapecreators --fb-pages "<page-url>" --ig-handles "<handle1,handle2>" --fb-max-posts 15
+```
+
+## Competitor Ads Intelligence
+
+```bash
+# Known competitors (free official Meta Ad Library; EU/UK/EEA commercial ads only)
+python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json" --countries DE,AT,CH --limit 20
+
+# Keyword mode — discover WHO advertises
+python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --keywords "<keyword 1>,<keyword 2>" --countries DE --limit 30
+
+# Non-EU market or missing Meta token — Apify fallback (paid, requires --approve-paid after user approval)
+python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --keywords "<keyword>" --countries US --providers auto --approve-paid
+```
+
 ### China-market coverage (public only)
 
 ```bash
