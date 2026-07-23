@@ -61,7 +61,8 @@ DSA_COVERAGE_COUNTRIES = {
 COVERAGE_CAVEAT = (
     "Meta Ad Library covers commercial ads only for EU/UK/EEA audiences (DSA transparency, ~1-year retention). "
     "Outside those countries only political/social-issue ads are returned. Spend/impressions are coarse ranges; "
-    "no engagement metrics. Ad longevity signals what keeps running, not proven performance."
+    "no engagement metrics. Ad longevity signals what keeps running, not proven performance. "
+    "Snapshot URLs are stored without the access token; append ?access_token=$META_ACCESS_TOKEN to view one."
 )
 
 DEFAULT_APIFY_ACTOR = "apify/facebook-ads-scraper"
@@ -123,6 +124,15 @@ def graph_get(path: str, params: dict[str, Any], token: str, raw_calls: list[dic
         return response
 
 
+def strip_token_from_url(url: str) -> str:
+    """Meta embeds the caller's access_token in ad_snapshot_url. Never persist it."""
+    if not url or "access_token" not in url:
+        return url
+    parsed = urllib.parse.urlsplit(url)
+    query = [(k, v) for k, v in urllib.parse.parse_qsl(parsed.query) if k != "access_token"]
+    return urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, urllib.parse.urlencode(query), parsed.fragment))
+
+
 def normalize_meta_ad(ad: dict[str, Any], *, matched: str, match_type: str, countries: list[str]) -> dict[str, Any]:
     def first(value: Any) -> str:
         if isinstance(value, list) and value:
@@ -166,7 +176,7 @@ def normalize_meta_ad(ad: dict[str, Any], *, matched: str, match_type: str, coun
         "impressions_lower": impressions.get("lower_bound"),
         "impressions_upper": impressions.get("upper_bound"),
         "currency": ad.get("currency") or "",
-        "snapshot_url": ad.get("ad_snapshot_url") or "",
+        "snapshot_url": strip_token_from_url(ad.get("ad_snapshot_url") or ""),
         "longevity_days": longevity_days,
         "confidence_notes": COVERAGE_CAVEAT,
     }
