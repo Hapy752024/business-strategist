@@ -329,6 +329,44 @@ def analyze_text(url: str, page_bodies: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def write_marketing_plan(run_dir: Path, args: argparse.Namespace, urls: list[str]) -> None:
+    source_note = f"competitors.json at `{args.competitors_json}`" if args.competitors_json else f"{len(urls)} URL argument(s)"
+    lines = [
+        "# Competitor Marketing Analysis Plan",
+        "",
+        "## Objective",
+        "",
+        f"Extract positioning, CTAs, pricing posture, and channel signals for `{args.topic or 'competitors'}` without treating competitor claims as performance proof.",
+        "",
+        "## Scope",
+        "",
+        f"- Topic: `{args.topic or '[from competitors.json]'}`",
+        f"- Competitor source: {source_note}",
+        f"- Competitor limit: `{args.limit}`",
+        f"- Deep scrape mode: `{args.deep}` (pricing/features/customers/blog/docs/changelog pages cost more credits)",
+        "",
+        "## Questions This Run Can Explore",
+        "",
+        "- What promise, audience, and enemy does each competitor's copy claim?",
+        "- Which CTAs and pricing posture do they present, and what does that imply about their funnel?",
+        "- Which claims are verifiable proof and which are marketing assertion?",
+        "- Where do competitor messages agree (category table stakes) vs. diverge (positioning angles)?",
+        "",
+        "## Limits",
+        "",
+        "- Competitor pages state what competitors want believed; they are positioning evidence, not demand or performance evidence.",
+        "- Scrape failures and fallbacks reduce coverage and must be disclosed in the report.",
+        "- Detected audiences, CTAs, and pricing signals are heuristic extractions; verify material claims on the live page.",
+        "",
+        "## Required User Checkpoint",
+        "",
+        "After the run, compare ad messaging with landing-page positioning, then ask one question: `Which positioning angle or proof gap should we test against these competitors first?`",
+    ]
+    plan_path = run_dir / "marketing_plan.md"
+    plan_path.parent.mkdir(parents=True, exist_ok=True)
+    plan_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def write_report(run_dir: Path, args: argparse.Namespace, analyses: list[dict[str, Any]], provider_status: dict[str, Any]) -> None:
     needs_attention = provider_status.get("needs_user_attention") or []
     lines = [
@@ -434,6 +472,7 @@ def main() -> int:
     )
     if workspace:
         update_stage(workspace, "competitor_marketing", status="in_progress", gate_result="not_run", next_action="Extract positioning claims without treating them as performance proof.")
+    write_marketing_plan(run_dir, args, urls)
 
     raw: dict[str, Any] = {"scrapes": []}
     analyses: list[dict[str, Any]] = []
@@ -473,6 +512,7 @@ def main() -> int:
         "outputs": {
             "analysis_json": str(run_dir / "marketing_analysis.json"),
             "report": str(run_dir / "report.md"),
+            "marketing_plan": str(run_dir / "marketing_plan.md"),
             "raw": str(run_dir / "raw.json"),
         },
     }
@@ -490,7 +530,7 @@ def main() -> int:
             "competitor_marketing",
             status="failed" if gate_result == "fail" else "passed",
             gate_result=gate_result,
-            artifacts=[run_dir / "marketing_analysis.json", run_dir / "summary.json", run_dir / "report.md"],
+            artifacts=[run_dir / "marketing_analysis.json", run_dir / "summary.json", run_dir / "report.md", run_dir / "marketing_plan.md"],
             provider_failures=provider_failure,
             next_action="Compare competitor promises with customer evidence before selecting positioning.",
         )

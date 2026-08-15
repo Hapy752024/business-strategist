@@ -13,12 +13,15 @@ This is an exploration report, not a demand-validation verdict. Separate observe
 - Geography/language: {{GEO}}/{{LANGUAGE}}
 - Sources and run status: link to `evidence/summary.json` and name any unavailable source.
 - Interpretation limit: public evidence can reveal patterns and interview leads; it does not prove willingness to pay or an underserved market.
+- Reachability bias: name which parts of the segment are likely invisible to the sources used (e.g. offline-first, older, or non-Reddit demographics) and rate the remaining blind spots high/medium/low. Low public signal for a specific segment must be read as a coverage question first, not as absence of pain.
 
 ## Candidate Problem-Segment Pockets
 
-| Candidate segment | Trigger and painful job | Current workaround / alternative | Evidence and source links | Counter-evidence / saturation signal | Confidence | Why investigate next? |
-|---|---|---|---|---|---|---|
-|  |  |  |  |  | low |  |
+Rank with the severity × frequency rubric (see the skill workflow): Frequency 0–3 counts independent records across source types; Severity 0–3 counts evidenced consequence up to documented spend plus workaround plus failed solve attempts. Priority = S×F. Engagement metrics and same-author repeats never count; competitor/editorial content is context only.
+
+| Candidate segment | Trigger and painful job | Current workaround / alternative | Evidence and source links | Counter-evidence / saturation signal | S×F | Confidence | Why investigate next? |
+|---|---|---|---|---|---|---|---|
+|  |  |  |  |  |  | low |  |
 
 Use `candidate`, not `underserved`, unless the evidence shows a recurring job, a costly workaround or repeated dissatisfaction, and a specific shortfall in current alternatives.
 

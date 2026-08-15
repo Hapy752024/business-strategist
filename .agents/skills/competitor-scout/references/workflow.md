@@ -28,12 +28,13 @@ If the category, segment, geography, or competitor definition is ambiguous enoug
 1. Define the category/job, target segment, geography, and what counts as direct, indirect, substitute, future threat, or false positive.
 2. Preserve and pass any user-supplied known competitors into discovery.
 3. Run competitor discovery with the documented script.
-4. Inspect `competitors.json`, `summary.json`, `report.md`, and raw source evidence.
-5. Canonicalize known brands to product/entity URLs when search returns noisy blog, cancellation, or unrelated pages.
-6. Classify each candidate using title, snippet, URL, source query, page evidence, and segment fit.
-7. Separate entity classification from source-page classification.
-8. Rate evidence quality before rating competitor strength.
-9. Report direct competitors, indirect competitors, substitutes, future threats, false positives, and candidates to pass to marketing analysis.
+4. Review the script-generated `competitor_plan.md` (objective, scope, questions, limits) and confirm the stated classification rules still match the request.
+5. Inspect `competitors.json`, `summary.json`, `report.md`, and raw source evidence.
+6. Canonicalize known brands to product/entity URLs when search returns noisy blog, cancellation, or unrelated pages.
+7. Classify each candidate using title, snippet, URL, source query, page evidence, and segment fit.
+8. Separate entity classification from source-page classification.
+9. Rate evidence quality before rating competitor strength.
+10. Report direct competitors, indirect competitors, substitutes, future threats, false positives, and candidates to pass to marketing analysis.
 
 ## Command
 
@@ -53,6 +54,7 @@ For known brands, prefer canonical product/entity URLs over accidental blog or c
 
 The script writes:
 
+- `research/topics/<topic>/competitors/runs/<run>/competitor_plan.md` — objective, scope, questions, limits, and the verification checkpoint for the run
 - `research/topics/<topic>/competitors/runs/<run>/competitors.json`
 - `research/topics/<topic>/competitors/runs/<run>/summary.json`
 - `research/topics/<topic>/competitors/runs/<run>/report.md`

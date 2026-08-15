@@ -56,6 +56,42 @@ def read_json(path: Path, fallback: Any) -> Any:
         return fallback
 
 
+# Fallbacks mirror scripts/evidence_scout/registries/query_expansion.json so
+# collection keeps working if the registry file is missing or malformed.
+FALLBACK_PHRASE_VARIANTS: dict[str, str] = {
+    "rueckkehr": "Rückkehr",
+    "rückkehr": "Rueckkehr",
+    "berufsunfaehigkeit": "Berufsunfähigkeit",
+    "berufsunfähigkeit": "Berufsunfaehigkeit",
+    "risikovoranfrage": "Risikovoranfrage",
+    "voranfrage": "Voranfrage",
+}
+
+FALLBACK_QUERY_MARKETS: dict[str, Any] = {
+    "de-insurance": {
+        "geo": "DE",
+        "trigger_markers": ["pkv", "gkv", "berufsun", "versicherung"],
+        "reddit_queries": [
+            "PKV subreddit:Finanzen",
+            "GKV PKV subreddit:Finanzen",
+            "Berufsunfähigkeitsversicherung subreddit:Finanzen",
+            "Berufsunfaehigkeitsversicherung subreddit:Finanzen",
+            "anonyme Risikovoranfrage subreddit:Finanzen",
+            "Versicherungsmakler Provision subreddit:Finanzen",
+            "PKV subreddit:Versicherung",
+            "GKV PKV subreddit:Versicherung",
+            "BU Gesundheitsfragen subreddit:Versicherung",
+            "PKV subreddit:Krankenkassen",
+            "PKV Beihilfe subreddit:beamte",
+            "private health insurance Germany subreddit:germany",
+            "health insurance Germany broker subreddit:germany",
+        ],
+    }
+}
+
+QUERY_EXPANSION = read_json(REGISTRY_DIR / "query_expansion.json", {})
+
+
 def append_jsonl(path: Path, records: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:
@@ -168,14 +204,10 @@ def german_variants(term: str) -> list[str]:
         variants.append(ascii_term)
 
     lower = term.lower()
-    phrase_variants = {
-        "rueckkehr": "Rückkehr",
-        "rückkehr": "Rueckkehr",
-        "berufsunfaehigkeit": "Berufsunfähigkeit",
-        "berufsunfähigkeit": "Berufsunfaehigkeit",
-        "risikovoranfrage": "Risikovoranfrage",
-        "voranfrage": "Voranfrage",
-    }
+    phrase_variants: dict[str, str] = dict(FALLBACK_PHRASE_VARIANTS)
+    for market in QUERY_EXPANSION.get("markets", {}).values():
+        if str(market.get("geo", "")).upper() == "DE":
+            phrase_variants.update(market.get("phrase_variants", {}))
     for needle, replacement in phrase_variants.items():
         if needle in lower and replacement not in variants:
             variants.append(re.sub(needle, replacement, term, flags=re.IGNORECASE))
@@ -409,23 +441,11 @@ def social_terms(topic: str, problem_keywords: str = "", workaround_keywords: st
 
 def reddit_queries(args: argparse.Namespace, queries: list[str]) -> list[str]:
     topic_context = " ".join([args.topic, args.problem_keywords, args.workaround_keywords]).lower()
-    if args.geo.upper() == "DE" and any(marker in topic_context for marker in ["pkv", "gkv", "berufsun", "versicherung"]):
-        targeted = [
-            "PKV subreddit:Finanzen",
-            "GKV PKV subreddit:Finanzen",
-            "Berufsunfähigkeitsversicherung subreddit:Finanzen",
-            "Berufsunfaehigkeitsversicherung subreddit:Finanzen",
-            "anonyme Risikovoranfrage subreddit:Finanzen",
-            "Versicherungsmakler Provision subreddit:Finanzen",
-            "PKV subreddit:Versicherung",
-            "GKV PKV subreddit:Versicherung",
-            "BU Gesundheitsfragen subreddit:Versicherung",
-            "PKV subreddit:Krankenkassen",
-            "PKV Beihilfe subreddit:beamte",
-            "private health insurance Germany subreddit:germany",
-            "health insurance Germany broker subreddit:germany",
-        ]
-        return targeted + queries[:4]
+    markets = QUERY_EXPANSION.get("markets", {}) or FALLBACK_QUERY_MARKETS
+    for market in markets.values():
+        markers = [str(m).lower() for m in market.get("trigger_markers", [])]
+        if market.get("geo", "").upper() == args.geo.upper() and any(marker in topic_context for marker in markers):
+            return list(market.get("reddit_queries", [])) + queries[:4]
     return queries[:5]
 
 
@@ -2915,6 +2935,7 @@ def write_assumptions(run_dir: Path, args: argparse.Namespace, queries: list[str
         "- Public posts, comments, and search results are treated as signals for interview design, not proof of willingness to pay.",
         "- Competitor/editorial/provider content is treated as category context, not customer pain.",
         "- Weak evidence requires user review before it can influence a business decision.",
+        "- Coverage reflects who actually posts on the indexed sources (forums, Reddit, YouTube, search). Reachability bias: offline-first, older, or less-online demographics may appear silent even when their pain is real; read low signal for such segments as a coverage question, not absence of pain.",
         "",
         "## Explicitly Not Resolved By This Run",
         "",
@@ -2931,7 +2952,9 @@ def write_assumptions(run_dir: Path, args: argparse.Namespace, queries: list[str
             "",
         "## User Verification Sequence",
         "",
-        "Ask exactly one question at a time, in this order unless the user redirects:",
+        "Closing-question rule for the agent: end every response with exactly one question — the first item below that is not yet answered — then wait for the user's reply before asking the next. Never stack multiple questions in one response. Mark items as resolved as the user answers them.",
+        "",
+        "Ask in this order unless the user redirects:",
         "",
         ]
     )

@@ -59,7 +59,33 @@ Do not ask intake questions such as buyer, willingness to pay, or current workar
    python3 scripts/evidence_scout/discover_market_problems.py --finalize --run-dir "<run path>" --candidate-count <0-7>
    ```
 
+   If the run's evidence is mostly weak/medium, generate the interview kit for the leading candidates before or alongside the choice question: `python3 scripts/evidence_scout/build_interview_kit.py --run-dir "<run path>"`. Public evidence should screen interviews, not end the investigation.
+
 9. Ask exactly one decision question: `Which path should we take next: validate Candidate [X], broaden/narrow the market scope, extend a named source gap, or stop?`
+
+## Candidate Ranking Rubric
+
+Rank candidates deterministically from the run's `evidence.jsonl`, not by intuition. Score each candidate on two axes:
+
+**Frequency (0–3)** — independent support for the pain:
+- 0 = a single dramatic complaint
+- 1 = 2–3 records, or one source only
+- 2 = 4–9 records across at least 2 source types
+- 3 = 10+ records across at least 3 source types
+
+**Severity (0–3)** — evidenced consequence of the pain:
+- 0 = annoyance mentioned in passing
+- 1 = recurring frustration or time loss
+- 2 = money spent, risk taken, or a consequential workaround (spreadsheets, manual reconciliation, paid stopgaps)
+- 3 = documented spend plus workaround plus failed attempts to solve (provider switches, tools abandoned)
+
+**Priority score = severity × frequency (0–9):**
+- 6–9 = strongest candidate
+- 3–5 = moderate
+- 1–2 = weak lead
+- 0 = mention only — do not list as a candidate
+
+Anti-gaming rules: engagement metrics (likes, views, comments) never count toward frequency; repeated posts by the same author count once; competitor, editorial, and provider content counts as alternatives context only — never toward severity or frequency. Record both axis scores and the evidence IDs behind them in the report table so the ranking can be audited.
 
 ## Analysis Rules
 
@@ -76,7 +102,7 @@ Do not ask intake questions such as buyer, willingness to pay, or current workar
 The final `market-discovery-report.md` must include these headings:
 
 1. `Executive Summary`
-2. `Scope and Source Coverage`
+2. `Scope and Source Coverage` — including the standing line-item `Reachability bias:` (which segment demographics the used sources cannot see, blind spots rated high/medium/low; low public signal for such segments is a coverage question, not absence of pain)
 3. `Candidate Problem-Segment Pockets`
 4. `Detailed Findings`
 5. `Cross-Cutting Patterns`
@@ -85,13 +111,17 @@ The final `market-discovery-report.md` must include these headings:
 8. `Recommended Next Investigations`
 9. `Handoff`
 
+The `--finalize` gate rejects reports missing any heading or the `Reachability bias:` line-item.
+
 The final response should lead with the report path and the evidence truth, then ask one choice question. Do not bury failed providers or source gaps.
+
+Closing-question rule: end the response with exactly one question — the first unresolved item from the run's `evidence/assumptions.md` verification sequence when one exists, otherwise the candidate choice question — and wait for the answer before asking anything else. Never stack questions.
 
 ## Quality Checklist
 
 - The report names the scope, geography/language, sources searched, and source failures.
 - Every candidate includes a segment, trigger/job, workaround/alternative, source-backed observation, counter-evidence, and a named unknown.
 - Evidence, interpretation, and simulated possibilities are not blended.
-- Candidate rankings do not use attention as proof of demand.
+- Candidate rankings use the severity × frequency rubric with auditable axis scores and evidence IDs, not attention metrics or intuition.
 - The report offers a user-controlled choice, not an automatic handoff to product building.
 - The selected next step reduces uncertainty rather than merely producing more content.

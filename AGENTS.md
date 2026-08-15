@@ -65,6 +65,7 @@ Situational skills — invoke when the description matches:
 - `archetype-gtm-strategist` — end-to-end stage-gated GTM strategy from MVP test through launch and scale.
 - `social-digital-marketing-planner` — social media and digital marketing plans, paid/organic platform strategy.
 - `social-media-idea-validator` — validate a social media/content/channel idea before investing: audience presence, demand evidence, founder fit, white space, channel economics, GO/PIVOT/KILL verdict.
+- `interview-bridge` — convert weak/medium evidence from a run into an interview screener, non-leading guide, and confirmation tracker when the next uncertainty-reducing step is talking to real customers.
 - `growth-case-analyzer` — successful/failed company case studies and practical lessons.
 - `business-archetype-playbook-researcher` — sourced founder/operator lessons by business archetype.
 - `startup-challenge-panel` — high-stakes thesis, segment, launch, or scale challenges with multi-role panel.
@@ -143,6 +144,9 @@ New runs default to `research/topics/<topic-slug>/`; `--legacy-output` preserves
 - `summary.json`: provider statuses and output paths.
 - `report.md`: human-readable evidence summary.
 - `market-discovery/runs/<run>/market-discovery-report.md`: evidence-backed candidate problems and segments.
+- `competitors/runs/<run>/competitor_plan.md` and `competitors/marketing/<run>/marketing_plan.md`: script-generated audit trails (objective, scope, questions, limits) for competitor steps.
+- `interview/interview-{screener,guide,tracker}.md` (via `build_interview_kit.py`): primary-research kit when evidence is mostly weak/medium.
+- `risks/whitespace-matrix.md` (via `build_whitespace_matrix.py`): pains × competitors coverage scaffold for candidate white spots.
 
 ## Infrastructure
 
@@ -152,6 +156,7 @@ New runs default to `research/topics/<topic-slug>/`; `--legacy-output` preserves
 - **Harness config:** `.claude/settings.json` (shared permission guardrails), `.claude/settings.local.json` (personal overrides, gitignored).
 - **Implementation plan:** `docs/implementation-plan.md` — full architecture and phase details.
 - **Workspace lifecycle:** `references/workspace-lifecycle.md` — resume, replay, and run-manifest procedures.
+- **Cross-skill evidence registry:** `references/evidence-registry.md` — distilled sourced findings (sequencing rule, weak-evidence list, pull signals, regional notes) shared across GTM and marketing skills.
 - **Command reference:** `references/commands.md` — full CLI command variants and provider routing.
 - **Context budget:** `templates/CONTEXT-BUDGET.md` — planning checklist for broad, multi-topic, or long-running work (scope, action boundaries, load plan, subagent splits, evaluation plan).
 - **CI:** `.github/workflows/validate.yml` runs `scripts/validate_setup.sh` and `scripts/run_evals.py` on push and pull requests; keep both green.

@@ -495,6 +495,44 @@ def firecrawl_search(queries: list[str], limit: int, raw: dict[str, Any]) -> tup
     return candidates, {"status": status, "credential_source": key_name, "candidate_count": len(candidates)}
 
 
+def write_competitor_plan(run_dir: Path, args: argparse.Namespace) -> None:
+    lines = [
+        "# Competitor Discovery Plan",
+        "",
+        "## Objective",
+        "",
+        f"Map direct, indirect, and substitute alternatives for `{args.topic}` before treating any named competitor as established.",
+        "",
+        "## Scope",
+        "",
+        f"- Topic: `{args.topic}`",
+        f"- Customer segment: `{args.customer_segment or '[unresolved]'}`",
+        f"- Known competitors supplied: `{args.known_competitors or 'none'}`",
+        f"- Geography/language requested: `{args.geo}/{args.language}`",
+        f"- Candidate limit: `{args.limit}`",
+        "",
+        "## Questions This Run Can Explore",
+        "",
+        "- Which alternatives do customers in this segment actually compare or switch between?",
+        "- Which named candidates are false positives (directories, media, adjacent categories)?",
+        "- Which competitor types dominate: direct, indirect, substitute, or do-nothing workarounds?",
+        "- Which candidates need verification before marketing analysis?",
+        "",
+        "## Limits",
+        "",
+        "- Search-based discovery can miss local, offline, or sales-led competitors that leave few public traces.",
+        "- Candidate classification is heuristic; treat type hints as leads, not verdicts.",
+        "- Known-competitor input remains unverified until the lookup enrichment confirms it.",
+        "",
+        "## Required User Checkpoint",
+        "",
+        "After the run, verify uncertain candidates, then ask one question: `Which competitors should we analyze for positioning, pricing, and channels?`",
+    ]
+    plan_path = run_dir / "competitor_plan.md"
+    plan_path.parent.mkdir(parents=True, exist_ok=True)
+    plan_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def write_report(run_dir: Path, args: argparse.Namespace, candidates: list[dict[str, Any]], provider_summaries: dict[str, Any]) -> None:
     needs_attention = [
         f"{provider}: {summary.get('status')}"
@@ -587,6 +625,7 @@ def main() -> int:
     )
     if workspace:
         update_stage(workspace, "competitor_discovery", status="in_progress", gate_result="not_run", next_action="Classify discovered alternatives and false positives.")
+    write_competitor_plan(run_dir, args)
     queries = query_plan(args.topic, args.customer_segment, args.known_competitors)
     raw: dict[str, Any] = {"queries": queries}
 
@@ -617,6 +656,7 @@ def main() -> int:
         "outputs": {
             "competitors_json": str(run_dir / "competitors.json"),
             "report": str(run_dir / "report.md"),
+            "competitor_plan": str(run_dir / "competitor_plan.md"),
             "raw": str(run_dir / "raw.json"),
         },
     }
@@ -636,7 +676,7 @@ def main() -> int:
             "competitor_discovery",
             status="failed" if gate_result == "fail" else "passed",
             gate_result=gate_result,
-            artifacts=[run_dir / "competitors.json", run_dir / "summary.json", run_dir / "report.md"],
+            artifacts=[run_dir / "competitors.json", run_dir / "summary.json", run_dir / "report.md", run_dir / "competitor_plan.md"],
             provider_failures=failures,
             next_action="Verify uncertain candidates, then analyze selected competitors' marketing.",
         )

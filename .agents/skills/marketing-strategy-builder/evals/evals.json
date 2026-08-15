@@ -18,6 +18,12 @@
       "prompt": "Our founder wants to spend $20k on Meta ads because competitors are running ads. Build the strategy.",
       "expected_output": "A response that challenges channel-first thinking, identifies missing positioning/offer/proof data, proposes smaller tests, and defines paid-media success and stop thresholds.",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "We announced a partnership with a big retailer, our launch video got 500k views, and we have 12k newsletter subscribers. Build the Q3 marketing strategy to capitalize on this traction.",
+      "expected_output": "Treats views, subscribers, and partnership announcements as weak evidence until tied to retained customers or revenue, re-anchors the strategy on proof assets, repeatable conversion, and funnel metrics, and sequences brand/partnership amplification behind demand evidence.",
+      "files": []
     }
   ]
 }

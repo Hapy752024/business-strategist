@@ -101,6 +101,18 @@ python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>"
 python3 scripts/evidence_scout/research_founder_playbooks.py --topic "<topic>" --archetype "<business archetype>" --customer-segment "<segment>"
 ```
 
+## Interview Kit (interview-bridge)
+
+```bash
+python3 scripts/evidence_scout/build_interview_kit.py --run-dir "research/topics/<topic>/evidence/runs/<run>" --limit 8
+```
+
+## Whitespace Matrix
+
+```bash
+python3 scripts/evidence_scout/build_whitespace_matrix.py --topic "<topic>" --evidence-jsonl "research/topics/<topic>/evidence/runs/<run>/evidence.jsonl" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json"
+```
+
 ## Infrastructure
 
 ### Validate APIs

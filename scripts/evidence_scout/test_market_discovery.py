@@ -85,7 +85,7 @@ class MarketDiscoveryTests(unittest.TestCase):
                 [
                     "# Market Problem Discovery — pet care",
                     "## Executive Summary\nOne candidate warrants a focused test.",
-                    "## Scope and Source Coverage\nUS English public sources.",
+                    "## Scope and Source Coverage\nUS English public sources.\n- Reachability bias: Reddit-heavy coverage; blind spots: medium.",
                     "## Candidate Problem-Segment Pockets\nPet owners coordinating care.",
                     "## Detailed Findings\nRepeated coordination complaints appear in a source sample.",
                     "## Cross-Cutting Patterns\nManual messages and spreadsheets recur.",

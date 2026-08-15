@@ -15,7 +15,7 @@ If competitor identity, URL ownership, target geography, or category scope is am
 
 1. Clarify the category/problem, target customer segment, geography, and competitor URL ownership when ambiguous.
 2. State the marketing-analysis plan before scraping: competitor types prioritized, page types to treat as product evidence, and claims that will not be inferred.
-3. Run the marketing analyzer on explicit URLs or a `competitors.json` from `competitor-scout`.
+3. Run the marketing analyzer on explicit URLs or a `competitors.json` from `competitor-scout`; review the script-generated `marketing_plan.md` for the run's scope, limits, and checkpoint.
 4. Run the ads collector for paid-acquisition evidence when competitor Meta/Instagram presence matters: `python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "<competitors.json>" --countries <ISO codes> --limit 20`. Free official Meta Ad Library for EU/UK/EEA audiences; non-EU markets fall back to paid Apify (`--providers auto`, ask before `--approve-paid`). If `validate_meta.py` reports missing credentials, tell the user the one-time Meta app + identity-verification setup is pending instead of skipping ad evidence silently.
 5. Inspect provider failures, fallback evidence, page types, source URLs, and pricing-token extraction before interpreting results.
 6. Separate scraped landing-page evidence from direct HTTP fallback and cached snippets.
@@ -52,6 +52,7 @@ If Firecrawl fails or returns `billing_required`, use fallback evidence before g
 
 The script writes:
 
+- `research/topics/<topic>/competitors/marketing/<run>/marketing_plan.md` — objective, scope, questions, limits, and the comparison checkpoint for the run
 - `research/topics/<topic>/competitors/marketing/<run>/marketing_analysis.json`
 - `research/topics/<topic>/competitors/marketing/<run>/summary.json`
 - `research/topics/<topic>/competitors/marketing/<run>/report.md`

@@ -33,6 +33,11 @@ REQUIRED_HEADINGS = (
     "## Handoff",
 )
 
+# A finished report must carry these standing line-items, not just headings.
+REQUIRED_LINE_ITEMS = (
+    "Reachability bias:",
+)
+
 
 def read_json(path: Path, fallback: dict[str, Any] | None = None) -> dict[str, Any]:
     try:
@@ -229,11 +234,14 @@ def finalize_discovery(args: argparse.Namespace) -> int:
         raise ValueError(f"Missing report: {report_path}")
     report = report_path.read_text(encoding="utf-8")
     missing = [heading for heading in REQUIRED_HEADINGS if heading not in report]
+    missing_items = [item for item in REQUIRED_LINE_ITEMS if item not in report]
     placeholders = [token for token in ("{{", "<!--", "[name]") if token in report]
-    if missing or placeholders:
+    if missing or missing_items or placeholders:
         details = []
         if missing:
             details.append("missing headings: " + ", ".join(missing))
+        if missing_items:
+            details.append("missing line-items: " + ", ".join(item.rstrip(":") for item in missing_items))
         if placeholders:
             details.append("unreplaced placeholders: " + ", ".join(placeholders))
         raise ValueError("Report is not ready to finalize (" + "; ".join(details) + ")")

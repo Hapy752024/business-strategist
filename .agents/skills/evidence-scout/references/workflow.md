@@ -209,7 +209,9 @@ Always inspect `summary.json.needs_user_attention` and the Provider Alerts secti
 
 ## User Interaction
 
-When involving the user, ask exactly one question at a time. Start with the highest-leverage unresolved assumption or the strongest evidence item. Where relevant, include a recommendation for the next or extended research step, but do not bundle multiple questions in one message.
+When involving the user, ask exactly one question per response — the first unresolved item from the run's `assumptions.md` / `user_review_plan.md`, or the strongest evidence item needing review. Where relevant, include a recommendation for the next or extended research step, but never bundle multiple questions in one message; wait for the answer, mark the item resolved, and move to the next.
+
+When weak/medium items dominate the run and the user has reviewed them, the next uncertainty-reducing step is interviews, not more desk research — route to `interview-bridge`, which turns the selected items into a screener, guide, and tracker via `python3 scripts/evidence_scout/build_interview_kit.py --run-dir <run dir>`.
 
 When improving this skill or the collector, run:
 

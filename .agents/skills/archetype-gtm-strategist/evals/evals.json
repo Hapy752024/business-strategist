@@ -36,6 +36,24 @@
       "prompt": "Adapt our successful European consumer finance app GTM to China using Xiaohongshu, Douyin and WeChat.",
       "expected_output": "Lower-confidence China adaptation that rejects direct translation, requires current Chinese/local regulatory expertise, tests one audience/platform wedge, distinguishes discovery from retention, and measures downstream behavior rather than engagement.",
       "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Our consumer video app hit 1M downloads and 400k MAU in the first quarter with a big press spike. Retention is under 10% at day 30 but we think we can fix it after we scale. Build the plan to spend €100k on paid acquisition now.",
+      "expected_output": "Rejects immediate paid scale using the Socialcam counterexample, names downloads/MAU/press as weak evidence without retention, sets retention and cohort repair work first, and gates any acquisition spend on sustained retained cohorts and contribution economics.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "We built a marketplace for student-organized city tours in Germany, but in month two five professional tour agencies asked us to list them and one offered to pay for faster onboarding. Students are barely booking. What do we do with GTM?",
+      "expected_output": "Treats the professional-supplier pull as a pivot signal (GetYourGuide pattern), proposes a small paid/onboarding test with the pulling segment before committing supply, keeps the weak original demand explicit, and reframes first-customer motion toward the segment showing pull rather than the original thesis.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "We want to launch a Gen-Z beauty e-commerce app in China with direct brand sales and checkout from day one. Give us the launch plan.",
+      "expected_output": "Sequences trust and community before direct commerce using the Xiaohongshu pattern (expert content or review/shopping-guide wedge first, commerce after), requires current China regulatory and platform expertise, and sets gates that prove content/community retention before adding transactions.",
+      "files": []
     }
   ]
 }

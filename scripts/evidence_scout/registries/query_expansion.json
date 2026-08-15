@@ -1,0 +1,33 @@
+{
+  "description": "Per-market query expansion data for evidence collection. Add or edit markets here without touching collection code. A market activates when its geo matches the run geo AND any trigger_marker appears in the combined topic/problem/workaround text.",
+  "markets": {
+    "de-insurance": {
+      "geo": "DE",
+      "trigger_markers": ["pkv", "gkv", "berufsun", "versicherung"],
+      "reddit_queries": [
+        "PKV subreddit:Finanzen",
+        "GKV PKV subreddit:Finanzen",
+        "Berufsunfähigkeitsversicherung subreddit:Finanzen",
+        "Berufsunfaehigkeitsversicherung subreddit:Finanzen",
+        "anonyme Risikovoranfrage subreddit:Finanzen",
+        "Versicherungsmakler Provision subreddit:Finanzen",
+        "PKV subreddit:Versicherung",
+        "GKV PKV subreddit:Versicherung",
+        "BU Gesundheitsfragen subreddit:Versicherung",
+        "PKV subreddit:Krankenkassen",
+        "PKV Beihilfe subreddit:beamte",
+        "private health insurance Germany subreddit:germany",
+        "health insurance Germany broker subreddit:germany"
+      ],
+      "target_subreddits": ["Finanzen", "Versicherung", "Krankenkassen", "beamte", "germany"],
+      "phrase_variants": {
+        "rueckkehr": "Rückkehr",
+        "rückkehr": "Rueckkehr",
+        "berufsunfaehigkeit": "Berufsunfähigkeit",
+        "berufsunfähigkeit": "Berufsunfaehigkeit",
+        "risikovoranfrage": "Risikovoranfrage",
+        "voranfrage": "Voranfrage"
+      }
+    }
+  }
+}

@@ -100,6 +100,11 @@ check "config/source-capabilities.json exists" test -f config/source-capabilitie
 check "source capability catalog is valid" python3 scripts/capability_lookup.py --validate
 check "source capability lookup runs" python3 scripts/capability_lookup.py --question "customer pain evidence" --max 2 --compact
 
+# ── Registries ────────────────────────────────────────────
+echo ""
+echo "--- Registries ---"
+check "registry files are valid and consistent" python3 scripts/validate_registries.py
+
 # ── Skills ────────────────────────────────────────────────
 echo ""
 echo "--- Skills ---"
@@ -160,6 +165,8 @@ check "topic workspace and Firecrawl routing tests pass" python3 scripts/evidenc
 check "market-problem discovery tests pass" python3 scripts/evidence_scout/test_market_discovery.py
 check "archetype GTM skill tests pass" python3 scripts/evidence_scout/test_gtm_skill.py
 check "service customer-perspective skill tests pass" python3 scripts/evidence_scout/test_customer_perspective_skill.py
+check "interview-bridge kit tests pass" python3 scripts/evidence_scout/test_interview_bridge.py
+check "whitespace matrix tests pass" python3 scripts/evidence_scout/test_whitespace_matrix.py
 check "eval structure is valid" python3 scripts/run_evals.py
 
 # ── Schemas ───────────────────────────────────────────────

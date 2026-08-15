@@ -23,6 +23,7 @@ Use:
 - `evidence.jsonl`
 - `report.md`
 - The user hypothesis from `idea-grill`
+- `competitors.json` and `marketing_analysis.json` from `competitor-scout` / `competitor-marketing-analyzer`, when they exist
 
 If the user does not provide paths, read the active topic `manifest.json` and use its latest evidence artifacts. Do not select a run from another topic by timestamp alone.
 
@@ -35,9 +36,16 @@ Before ranking opportunity risk, inspect `summary.json.needs_user_attention`. If
 3. Separate direct evidence, interpretation, counter-evidence, and missing evidence.
 4. Rank problem, segment, urgency, willingness-to-pay, solution, channel, timing, and evidence-coverage risks.
 5. Identify the narrowest opportunity area supported by the evidence.
-6. Design low-cost tests that reduce the highest-ranked risks before recommending product buildout.
-7. Give each test a target segment, action, success threshold, stop/pivot condition, cost, and time budget.
-8. Choose a decision gate: persevere, narrow segment, pivot problem, or stop.
+6. When competitor discovery artifacts exist, scaffold and fill the whitespace matrix so demand-side pains formally intersect supply-side coverage:
+
+   ```bash
+   python3 scripts/evidence_scout/build_whitespace_matrix.py --topic "<topic>" --evidence-jsonl "<evidence.jsonl>" --competitors-json "<competitors.json>"
+   ```
+
+   Fill each cell from citable evidence only; `unknown` means unscored, not unserved. A candidate white spot requires an evidence-backed pain row rated `gap` across the direct competitors, and stays a candidate until tested.
+7. Design low-cost tests that reduce the highest-ranked risks before recommending product buildout.
+8. Give each test a target segment, action, success threshold, stop/pivot condition, cost, and time budget.
+9. Choose a decision gate: persevere, narrow segment, pivot problem, or stop.
 
 ## Risk Ranking
 
@@ -104,6 +112,7 @@ Produce:
 
 - Opportunity thesis.
 - Evidence confidence level.
+- Whitespace matrix with candidate white spots (when competitor artifacts exist), each with its cheapest confirmation test.
 - Top 5 risks.
 - Test plan for the next 7 days.
 - Decision gate: persevere, narrow segment, pivot problem, or stop.
@@ -131,3 +140,4 @@ Before finalizing, check:
 - If no moat source scores above "weak" on evidence and durability, this is explicitly called out.
 - The test plan includes at least one test that challenges competitive durability, not just demand.
 - The decision gate factors in competitive durability, not just demand evidence.
+- When competitor artifacts exist, a whitespace matrix was scaffolded and its cells rated from citable evidence; candidate white spots name their cheapest confirmation test.

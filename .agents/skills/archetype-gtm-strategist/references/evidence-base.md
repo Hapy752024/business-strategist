@@ -2,6 +2,8 @@
 
 Last researched: 2026-07-05. Europe was prioritized, followed by the US and China. Sources combine named founder/operator accounts, empirical research, primary regulator guidance, and a small amount of anecdotal forum discovery. Founder stories show mechanisms and context; they do not prove that another idea has demand.
 
+The cross-skill distillation of this base (sequencing rule, weak-evidence list, pull signals, regional notes) lives in `references/evidence-registry.md` at repo root; other skills cite that registry. This file remains the detailed source table.
+
 ## High-confidence cross-case findings
 
 1. **Sequence matters.** Early direct selling and manual delivery create customer language, trust, and proof. Broader marketing works better after the product and buying process are validated. HEC Paris reports this pattern from interviews and a longitudinal study of 300+ B2B high-tech startups.

@@ -24,6 +24,12 @@
       "prompt": "We have $10k to spend on Meta and TikTok ads next month for an ecommerce skincare brand. Create the campaign plan.",
       "expected_output": "A paid-social plan with offer/conversion assumptions, creative testing matrix, platform-specific creative guidance, budget allocation, fatigue management, measurement, stop/scale rules, and compliance checks for skincare claims.",
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Our consumer app has 30k signups, strong TikTok views, and no retention or repeat-purchase data yet. Build us an aggressive paid growth plan across Meta, TikTok, and YouTube to hit 200k users this quarter.",
+      "expected_output": "Applies the sequencing gate: names signups/views as weak evidence without retained-value proof, refuses a pure scale plan, proposes capped learning-budget experiments tied to activation/retention targets, and defines the evidence gates that unlock larger paid spend.",
+      "files": []
     }
   ]
 }

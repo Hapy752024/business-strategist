@@ -55,7 +55,7 @@ class GtmSkillTests(unittest.TestCase):
         self.assertGreaterEqual(sum(row["region"] == "China" for row in rows), 2)
         self.assertTrue(all(row["limitations"] for row in rows))
         evals = json.loads((SKILL / "evals" / "evals.json").read_text(encoding="utf-8"))
-        self.assertEqual(len(evals["evals"]), 6)
+        self.assertGreaterEqual(len(evals["evals"]), 9)
 
 
 if __name__ == "__main__":

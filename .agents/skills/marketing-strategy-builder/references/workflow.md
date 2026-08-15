@@ -20,6 +20,12 @@ Separate:
 - Hypotheses: what needs testing.
 - Plan: what to do next with time, budget, and metrics.
 
+## Weak-Evidence Check
+
+Before treating any traction claim as a foundation for strategy, classify it against the weak-evidence list in the cross-skill registry (`references/evidence-registry.md` at repo root): downloads, signups, waitlists, views, likes, followers, subscribers, press spikes, and partnership announcements are weak until connected to retained customers or contribution economics.
+
+When the brief leads with such claims, name them as weak evidence explicitly and re-anchor the strategy on proof: retention, repeat purchase, paid pilots, referral, and contribution margin. Positioning, funnel, and channel choices should target the next piece of real proof, not amplify the vanity signal.
+
 ## Ambiguity and Unknowns
 
 If the customer segment, product, buyer, price, geography, or business model is unclear enough to change the strategy, ask one focused question before building the plan.
@@ -184,7 +190,7 @@ Before finalizing, check:
 - Recommended channels match actual customer behavior or a stated hypothesis.
 - Proof assets are named, and missing proof becomes part of the plan.
 - Metrics include decision thresholds and stop conditions.
-- The plan does not assume demand from attention metrics alone.
+- Traction claims were checked against the weak-evidence list and the strategy does not rest on attention metrics alone.
 
 ## Output
 

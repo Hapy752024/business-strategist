@@ -27,6 +27,14 @@ Separate:
 - Plan: concrete actions, owners, cadence, budget, and thresholds.
 - Risks: brand safety, claims, cultural context, compliance, privacy, accessibility, and creative fatigue.
 
+## Sequencing Gate
+
+Before building any paid-scale plan, apply the sequencing rule from the cross-skill evidence registry (`references/evidence-registry.md` at repo root): manual learning → retained-value proof → one repeatable acquisition motion → broader marketing scale.
+
+When the user cites traction, classify every claim against the registry's weak-evidence list — downloads, signups, waitlists, views, likes, followers, subscribers, press spikes, and partnership announcements are weak until tied to retained customers or contribution economics (Socialcam is the canonical counterexample).
+
+If no retained-value evidence exists, do not produce a scale plan. Produce a capped learning-budget experiment plan with explicit unlock gates (activation/retention targets) that release larger paid spend only when the evidence arrives. Name the gate, the metric, and the threshold.
+
 ## Ambiguity and Unknowns
 
 If missing information would materially change the plan, ask one focused question before creating the full plan. Highest-leverage unknowns are target customer, offer, business goal, geography/language, budget, existing channels, and whether the plan is B2B, B2C, local, ecommerce, SaaS, marketplace, service, or creator-led.
@@ -209,6 +217,7 @@ Before finalizing, check:
 - The content pillars connect to pain, proof, objections, desire, or identity.
 - The plan includes a feasible cadence based on team capacity.
 - Paid spend has a conversion path, creative test plan, and stop/scale threshold.
+- Traction claims were classified against the weak-evidence list; a scale plan was only produced when retained-value evidence exists.
 - Metrics distinguish attention from business impact.
 - Risk review catches cultural, legal, claim, privacy, and accessibility issues.
 - Next actions are specific enough to execute this week.
