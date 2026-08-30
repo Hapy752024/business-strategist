@@ -1,0 +1,5 @@
+{
+  "profile": "brand-ui",
+  "description": "Optional UI-design MCP profile. Enable only after the user authorizes the selected trusted provider connection.",
+  "mcpServers": {}
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate .codex/config.toml and opencode.json from .mcp.json.
+"""Regenerate harness MCP config from the small default config plus profiles.
 
 Run after every edit to .mcp.json. Never hand-edit the generated files.
 """
@@ -11,6 +11,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 MCP = ROOT / ".mcp.json"
 CODEX = ROOT / ".codex" / "config.toml"
 OPENCODE = ROOT / "opencode.json"
+PROFILES = ROOT / ".mcp" / "profiles"
 
 
 def _quote(s: str) -> str:
@@ -50,16 +51,41 @@ def generate_opencode(servers: dict) -> str:
     return json.dumps(out, indent=2) + "\n"
 
 
+def load_servers(profile_names: list[str]) -> dict:
+    servers = json.loads(MCP.read_text(encoding="utf-8")).get("mcpServers", {})
+    for name in profile_names:
+        path = PROFILES / f"{name}.json"
+        if not path.is_file():
+            raise ValueError(f"unknown MCP profile: {name}")
+        profile = json.loads(path.read_text(encoding="utf-8"))
+        profile_servers = profile.get("mcpServers", {})
+        collisions = set(servers) & set(profile_servers)
+        if collisions:
+            raise ValueError(f"profile {name} collides with default servers: {sorted(collisions)}")
+        servers.update(profile_servers)
+    return servers
+
+
 def main() -> int:
     if not MCP.exists():
         print(f"ERROR {MCP} not found", file=sys.stderr)
         return 1
-    servers = json.loads(MCP.read_text()).get("mcpServers", {})
+    profile_names = [arg.removeprefix("--profile=") for arg in sys.argv[1:] if arg.startswith("--profile=")]
+    unexpected = [arg for arg in sys.argv[1:] if not arg.startswith("--profile=")]
+    if unexpected:
+        print(f"ERROR unsupported arguments: {unexpected}", file=sys.stderr)
+        return 2
+    try:
+        servers = load_servers(profile_names)
+    except (ValueError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}", file=sys.stderr)
+        return 2
     CODEX.parent.mkdir(parents=True, exist_ok=True)
     CODEX.write_text(generate_codex(servers))
     OPENCODE.write_text(generate_opencode(servers))
     print(f"WROTE {CODEX.relative_to(ROOT)}")
     print(f"WROTE {OPENCODE.relative_to(ROOT)}")
+    print(f"PROFILES {', '.join(profile_names) if profile_names else 'default only'}")
     return 0
 
 

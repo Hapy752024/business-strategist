@@ -2,13 +2,14 @@
   "schema_version": "1.0",
   "routes": [
     {"id": "market-discovery", "match": ["market discovery", "find customer problems", "underserved segment"], "skill": "market-problem-discovery", "forbidden": ["idea-grill", "brand-website-designer-builder"]},
-    {"id": "idea-validation", "match": ["validate my idea", "pressure test", "specific customer problem"], "skill": "idea-grill", "forbidden": ["market-problem-discovery"]},
-    {"id": "standalone-brand", "match": ["logo", "brand identity", "brand guidelines", "branding"], "skill": "brand-designer", "forbidden": ["market-problem-discovery", "idea-grill"]},
-    {"id": "website-build", "match": ["landing page", "branded website", "company website", "visually stunning website", "unique website", "Vercel"], "skill": "brand-website-designer-builder", "forbidden": ["brand-frontend-app-designer", "competitor-marketing-analyzer"]},
+    {"id": "idea-validation", "match": ["validate my idea", "pressure test", "pressure-test", "this idea", "specific customer problem"], "skill": "idea-grill", "forbidden": ["market-problem-discovery"]},
+    {"id": "standalone-brand", "match": ["logo", "brand identity", "brand guidelines", "branding", "segment-informed brand"], "skill": "brand-designer", "forbidden": ["market-problem-discovery", "idea-grill"]},
+    {"id": "website-build", "match": ["landing page", "branded website", "marketing website", "company website", "visually stunning website", "unique website", "Vercel"], "skill": "brand-website-designer-builder", "forbidden": ["brand-frontend-app-designer", "competitor-marketing-analyzer"]},
     {"id": "website-experiment", "match": ["A/B test", "ab test", "experiment conversion"], "skill": "brand-website-designer-builder", "mode": "experiment", "forbidden": ["brand-frontend-app-designer"]},
     {"id": "app-ui", "match": ["dashboard UI", "product interface", "app screens"], "skill": "brand-frontend-app-designer", "forbidden": ["brand-website-designer-builder"]},
-    {"id": "competitor-analysis", "match": ["analyze competitor website", "competitor pricing", "competitor messaging"], "skill": "competitor-marketing-analyzer", "forbidden": ["brand-website-designer-builder"]},
-    {"id": "brand-research", "match": ["brand references", "font research", "design benchmark"], "skill": "brand-guideline-researcher", "forbidden": ["market-problem-discovery", "evidence-scout"]}
+    {"id": "competitor-analysis", "match": ["analyze competitor website", "competitor's website", "competitor pricing", "competitor messaging"], "skill": "competitor-marketing-analyzer", "forbidden": ["brand-website-designer-builder"]},
+    {"id": "brand-research", "match": ["brand references", "font research", "design benchmark", "visual codes"], "skill": "brand-guideline-researcher", "forbidden": ["market-problem-discovery", "evidence-scout"]},
+    {"id": "brand-asset", "match": ["FAL", "brand hero image", "generate brand asset"], "skill": "brand-asset-producer", "forbidden": ["brand-website-designer-builder"]}
   ],
   "ambiguity_policy": "ask one question only when the top two routes would materially change work; otherwise choose the most specific explicit intent"
 }

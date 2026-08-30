@@ -84,7 +84,11 @@ fi
 echo ""
 echo "--- Settings ---"
 check ".claude/settings.json exists" test -f .claude/settings.json
-check ".claude/settings.local.json exists" test -f .claude/settings.local.json
+if [ -f .claude/settings.local.json ]; then
+    green "  PASS  .claude/settings.local.json is an optional local override"
+else
+    green "  PASS  .claude/settings.local.json is absent (expected in clean checkout)"
+fi
 check ".claude/settings.json is valid JSON" python3 -c "import json; json.load(open('.claude/settings.json'))"
 check "AGENTS.md excludes generated memory blocks" sh -c "! grep -q '<claude-mem-context>' AGENTS.md"
 
@@ -194,6 +198,7 @@ done
 check "skill catalog is valid JSON" python3 -c "import json; json.load(open('config/skill-catalog.json'))" 2>/dev/null
 check "workflow routes are valid JSON" python3 -c "import json; json.load(open('config/workflow-routes.json'))" 2>/dev/null
 check "website route smoke test passes" python3 -c "import subprocess,sys; out=subprocess.check_output(['python3','scripts/route_workflow.py','Build a distinctive Next.js landing page'], text=True); sys.exit(0 if 'brand-website-designer-builder' in out else 1)"
+check "website fixture contract passes" python3 scripts/verify_website_fixture.py
 
 # ── Summary ───────────────────────────────────────────────
 echo ""

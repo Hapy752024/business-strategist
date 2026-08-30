@@ -1,0 +1,5 @@
+{
+  "profile": "website-qa",
+  "description": "Optional website QA MCP profile. Local scripts remain authoritative; add an approved browser or visual-review provider only for the selected project.",
+  "mcpServers": {}
+}

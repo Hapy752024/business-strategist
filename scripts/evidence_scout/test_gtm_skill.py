@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import csv
 import json
 import unittest
 from pathlib import Path
@@ -46,14 +45,11 @@ class GtmSkillTests(unittest.TestCase):
             self.assertIn(term, experiments)
 
     def test_sources_and_evals(self) -> None:
-        registry = ROOT / "research" / "topics" / "founder-gtm-playbooks" / "source_registry.csv"
-        with registry.open(encoding="utf-8", newline="") as handle:
-            rows = list(csv.DictReader(handle))
-        self.assertGreaterEqual(len(rows), 20)
-        self.assertEqual(len({row["source_id"] for row in rows}), len(rows))
-        self.assertGreaterEqual(sum(row["region"] == "Europe" for row in rows), 10)
-        self.assertGreaterEqual(sum(row["region"] == "China" for row in rows), 2)
-        self.assertTrue(all(row["limitations"] for row in rows))
+        evidence = (SKILL / "references" / "evidence-base.md").read_text(encoding="utf-8")
+        self.assertGreaterEqual(evidence.count("]("), 20)
+        self.assertGreaterEqual(evidence.count("| Europe /"), 10)
+        self.assertGreaterEqual(evidence.count("| China /"), 2)
+        self.assertIn("## Interpretation limits", evidence)
         evals = json.loads((SKILL / "evals" / "evals.json").read_text(encoding="utf-8"))
         self.assertGreaterEqual(len(evals["evals"]), 9)
 

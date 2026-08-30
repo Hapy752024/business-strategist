@@ -118,6 +118,54 @@ def link_project(manifest_path: Path, *, track: str, workspace: str, active: boo
     return write_json_atomic(manifest_path, manifest, expected_revision=int(manifest.get("manifest_revision", 0)))
 
 
+def discover_projects(projects_root: Path = PROJECTS_ROOT) -> list[dict[str, Any]]:
+    """List resumable projects without reading or moving track artifacts."""
+    found: list[dict[str, Any]] = []
+    for path in sorted(projects_root.glob("*/project-manifest.json")):
+        try:
+            data = read_json(path)
+        except (OSError, json.JSONDecodeError):
+            continue
+        found.append({
+            "slug": data.get("slug", path.parent.name),
+            "manifest": str(path),
+            "active_track": data.get("active_track", "none"),
+            "next_action": data.get("next_action", ""),
+            "open_blockers": data.get("open_blockers", []),
+            "manifest_revision": data.get("manifest_revision", 0),
+        })
+    return found
+
+
+def next_actions(manifest_path: Path) -> list[dict[str, Any]]:
+    """Return each linked track's declared next action without assuming ownership."""
+    project = read_json(manifest_path)
+    actions: list[dict[str, Any]] = []
+    for link in project.get("links", []):
+        track = link.get("track", "unknown")
+        workspace = link.get("workspace", {})
+        raw = workspace.get("path") if isinstance(workspace, dict) else ""
+        if not raw:
+            continue
+        candidate = Path(raw)
+        if not candidate.is_absolute():
+            candidate = ROOT / candidate
+        manifest_name = "website-manifest.json" if track == "website" else "brand-manifest.json" if track == "brand" else "manifest.json"
+        track_manifest = candidate / manifest_name
+        record: dict[str, Any] = {"track": track, "workspace": str(candidate), "manifest": str(track_manifest), "next_action": "", "open_blockers": []}
+        if track_manifest.exists():
+            try:
+                data = read_json(track_manifest)
+                record["next_action"] = data.get("next_action", "")
+                record["open_blockers"] = data.get("open_blockers", data.get("coverage_gaps", []))
+            except (OSError, json.JSONDecodeError):
+                record["error"] = "invalid linked manifest"
+        else:
+            record["error"] = "linked manifest missing"
+        actions.append(record)
+    return actions
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -130,13 +178,21 @@ def main() -> int:
     link.add_argument("--track", required=True)
     link.add_argument("--workspace", required=True)
     link.add_argument("--active", action="store_true")
+    discover = subparsers.add_parser("discover")
+    discover.add_argument("--projects-root", type=Path, default=PROJECTS_ROOT)
+    actions = subparsers.add_parser("next-actions")
+    actions.add_argument("manifest", type=Path)
     args = parser.parse_args()
     if args.command == "create":
         result = create_project(args.slug, business_workspace=args.business_workspace, brand_workspace=args.brand_workspace)
         print(json.dumps({"manifest": str(result), "revision": read_json(result)["manifest_revision"]}, indent=2))
-    else:
+    elif args.command == "link":
         revision = link_project(args.manifest.resolve(), track=args.track, workspace=args.workspace, active=args.active)
         print(json.dumps({"manifest": str(args.manifest), "revision": revision}, indent=2))
+    elif args.command == "discover":
+        print(json.dumps(discover_projects(args.projects_root), indent=2))
+    else:
+        print(json.dumps(next_actions(args.manifest.resolve()), indent=2))
     return 0
 
 

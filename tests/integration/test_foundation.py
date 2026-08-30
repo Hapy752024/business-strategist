@@ -42,6 +42,13 @@ def test_project_manifest_revision_and_cas(tmp_path: Path, monkeypatch: pytest.M
     assert json.loads(manifest_path.read_text(encoding="utf-8"))["active_track"] == "brand"
     with pytest.raises(RuntimeError, match="revision conflict"):
         project.write_json_atomic(manifest_path, data, expected_revision=1)
+    discovered = project.discover_projects(tmp_path / "projects")
+    assert discovered[0]["slug"] == "demo-product"
+    brand_workspace = tmp_path / "brand-workspace"
+    brand_workspace.mkdir()
+    (brand_workspace / "brand-manifest.json").write_text(json.dumps({"next_action": "Approve typography", "open_blockers": []}), encoding="utf-8")
+    project.link_project(manifest_path, track="brand", workspace=str(brand_workspace), active=True)
+    assert project.next_actions(manifest_path)[0]["next_action"] == "Approve typography"
 
 
 def test_business_to_brand_snapshot_preserves_gaps(tmp_path: Path) -> None:
@@ -117,3 +124,29 @@ def test_release_manifest_requires_production_confirmation(tmp_path: Path) -> No
     data = json.loads(manifest.read_text(encoding="utf-8"))
     assert data["release"]["status"] == "preview"
     assert data["release"]["preview_url"] == "https://preview.example"
+
+
+def test_claim_ledger_preserves_independence_and_requires_counter_scope(tmp_path: Path) -> None:
+    builder = load_script("build_claim_ledger", "scripts/evidence_scout/build_claim_ledger.py")
+    validator = load_script("validate_synthesis", "scripts/evidence_scout/validate_synthesis.py")
+    evidence = [
+        {"source": "reddit", "source_url": "https://example.test/a", "text": "manual invoices are painful", "retrieved_at": "2026-08-30T00:00:00Z", "evidence_type": "pain", "independence_key": "a"},
+        {"source": "reddit", "source_url": "https://example.test/b", "text": "manual invoices waste time", "retrieved_at": "2026-08-30T00:00:00Z", "evidence_type": "pain", "independence_key": "b"},
+    ]
+    records = evidence
+    for record in records:
+        record["evidence_id"] = builder.stable_id(record)
+    claims = [{"claim_id": "c1", "claim_type": "observation", "claim": "Manual invoices are painful", "supporting_evidence": [record["evidence_id"] for record in records], "counter_evidence": [], "confidence": "medium", "confidence_rationale": "Two independent posts", "none_found_scope": {"sources": ["reddit"], "queries": ["manual invoices"], "geography": "US", "date_range": "30d", "failed_routes": []}}]
+    ledger = builder.build(records, claims)
+    assert ledger[0]["independence_count"] == 2
+    assert validator.validate(ledger, records) == []
+
+
+def test_website_fixture_contract() -> None:
+    verifier = load_script("verify_website_fixture", "scripts/verify_website_fixture.py")
+    assert verifier.verify(ROOT / "fixtures" / "website" / "stellar-repair") == []
+
+
+def test_mcp_profiles_are_optional_and_deterministic() -> None:
+    sync = load_script("sync_brand_mcp_config", "scripts/sync-brand-mcp-config.py")
+    assert sync.load_servers(["brand-ui", "website-qa"]) == sync.load_servers([])
