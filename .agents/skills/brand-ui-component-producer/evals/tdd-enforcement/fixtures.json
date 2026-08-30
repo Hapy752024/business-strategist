@@ -1,0 +1,14 @@
+[
+  {
+    "request": "Produce a branded input component.",
+    "expected_first_file": "Input.test.tsx",
+    "expected_second_file": "Input.tsx",
+    "expected_test_status": "pass"
+  },
+  {
+    "request": "Build me a KPI card for my dashboard.",
+    "expected_first_file": "KpiCard.test.tsx",
+    "expected_second_file": "KpiCard.tsx",
+    "expected_test_status": "pass"
+  }
+]

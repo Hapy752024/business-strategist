@@ -1,0 +1,12 @@
+[
+  {"prompt": "Give me a branded Next.js input component", "expected": true},
+  {"prompt": "Build a React component library for my brand", "expected": true},
+  {"prompt": "I need branded shadcn-based dashboard widgets", "expected": true},
+  {"prompt": "Produce a radio group component aligned to my brand", "expected": true},
+  {"prompt": "Design a logo for my company", "expected": false},
+  {"prompt": "How should my modals animate?", "expected": false},
+  {"prompt": "Design a dashboard screen layout", "expected": false},
+  {"prompt": "Pick brand colors", "expected": false},
+  {"prompt": "Write brand voice guidelines", "expected": false},
+  {"prompt": "Export my brand tokens to CSS variables", "expected": false}
+]

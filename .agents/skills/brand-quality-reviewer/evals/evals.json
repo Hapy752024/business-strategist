@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-quality-reviewer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Audit this brand package before final delivery.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

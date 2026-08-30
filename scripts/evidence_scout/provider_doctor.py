@@ -76,6 +76,10 @@ VALIDATION_PROVIDER_ALIASES = {
     "scrapecreators_social": "scrapecreators",
     "scrapecreators_china_social": "scrapecreators",
     "sonar": "sonar",
+    "itunes_reviews_rss": "itunes_reviews",
+    "hn_algolia": "hn",
+    "github_search_anonymous": "github",
+    "google_autocomplete": "google_autocomplete",
 }
 
 
@@ -261,6 +265,31 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
         ],
         "app_store": [
             _env_backend("sonar", ["SONAR_API_KEY"], risk="paid_credits"),
+            _public_http_backend(
+                "itunes_reviews_rss",
+                "https://itunes.apple.com/us/rss/customerreviews/id=284882215/sortBy=mostRecent/json",
+                {"page": 1},
+            ),
+        ],
+        "founder_community": [
+            _public_http_backend(
+                "hn_algolia",
+                "https://hn.algolia.com/api/v1/search",
+                {"query": "startup pain", "tags": "story", "hitsPerPage": 1},
+            ),
+            _public_http_backend(
+                "google_autocomplete",
+                "https://suggestqueries.google.com/complete/search",
+                {"client": "firefox", "hl": "en", "gl": "us", "q": "why is my accountant"},
+            ),
+        ],
+        "github_issues": [
+            _public_http_backend(
+                "github_search_anonymous",
+                "https://api.github.com/search/issues",
+                {"q": "reporting workaround type:issue", "per_page": 1},
+            ),
+            _env_backend("github_search_token", ["GITHUB_TOKEN"], risk="free_optional_higher_rate"),
         ],
         "china_public_native": [
             _public_http_backend(
@@ -300,6 +329,16 @@ def summarize(groups: dict[str, list[BackendStatus]]) -> dict[str, Any]:
         summary["needs_user_attention"].append(
             "No live API validation summary found. Run `python3 scripts/validate_apis/run_all.py` before relying on provider doctor routing."
         )
+    else:
+        try:
+            age_days = max(0.0, (time.time() - VALIDATION_SUMMARY.stat().st_mtime) / 86400)
+        except OSError:
+            age_days = None
+        if age_days is None or age_days > 14:
+            summary["validation_age_days"] = round(age_days, 1) if age_days is not None else "unknown"
+            summary["needs_user_attention"].append(
+                f"Live validation summaries are {summary['validation_age_days']} days old. Re-run `python3 scripts/validate_apis/run_all.py`; stale results can misroute fallbacks."
+            )
     for family, candidates in groups.items():
         candidates = [apply_live_validation(candidate, latest) for candidate in candidates]
         active = next((candidate for candidate in candidates if candidate.usable), None)

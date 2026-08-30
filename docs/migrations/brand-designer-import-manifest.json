@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "migration": "brand-designer-to-business-strategist",
+  "source_repository": "/mnt/c/coding/general/brand_designer",
+  "source_commit": "62fee9b8483ac9c36246d2666c225d599108d925",
+  "source_dirty_files": [
+    ".agents/skills/brand-asset-producer/scripts/export-logo-package.py",
+    ".agents/skills/brand-exporter/scripts/create-brand-agent-skill.py"
+  ],
+  "destination_repository": "/mnt/c/coding/general/business-strategist",
+  "destination_base_commit": "f654d8c942427efac33059ab5ab30452c2b85e1c",
+  "imported_skill_count": 15,
+  "destination_skill_count_after_merge": 37,
+  "source_tree_sha256": "71551a65566c723f5980271cfccc9af41c2e2345a64932d9c1e3818ebd70d1c2",
+  "imported_tree_sha256": "b45edc516916f1fa573b1caea35737d655d8b9b44eb6aa2d546d64193ce8a3fb",
+  "excluded_paths": [".git", ".pytest_cache", "__pycache__", "*.pyc"],
+  "workspace_policy": "Historical brand-projects outputs are not moved; new outputs use the linked project manifest and remain gitignored.",
+  "checksum_method": "sha256sum of sorted per-file sha256sum records, excluding listed paths",
+  "notes": [
+    "Imported SKILL.md entries are compact routers; complete source procedures are preserved under each skill's references/workflow.md.",
+    "No source research or existing brand output was migrated."
+  ]
+}

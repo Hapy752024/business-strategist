@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-strategy-director",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create three evidence-aware brand territories from this brief.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

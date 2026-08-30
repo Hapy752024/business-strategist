@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-guideline-researcher",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Research brand guideline patterns for this identity.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

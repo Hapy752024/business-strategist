@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-guidelines-writer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write guidelines from the approved brand package.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

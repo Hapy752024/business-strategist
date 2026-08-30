@@ -4,9 +4,36 @@ Full provider routing rules for evidence collection. The root `AGENTS.md` carrie
 
 ## Default Providers
 
-Default providers: Reddit, SerpAPI Google Trends, YouTube Data API, Serper.dev Google SERP, Firecrawl, Brave Search.
+Default providers: Reddit, SerpAPI Google Trends, YouTube Data API, Serper.dev Google SERP, Firecrawl, Brave Search, plus the zero-credential set HN Algolia (`hn`), GitHub issue search (`github`), and Google autocomplete (`google_autocomplete`) included in `default`. iTunes review RSS (`itunes_reviews`) is free but explicit (needs `--itunes-app-ids`).
 
 Use Serper.dev before SerpApi for ordinary Google-only SERP/news/site-search because it is cheaper and sufficient for standard discovery. Keep SerpApi for non-Google engines and deep Google edge-case parsers. Use DataForSEO for SEO/backlink/search-volume, historical SERP, app/e-commerce datasets, and Trends-style data where that specific API is the right source.
+
+## Zero-Credential Sources
+
+These cost nothing, need no keys, and are part of `default` runs:
+
+- `hn` — HN Algolia search over stories and comments. Strongest for founder/operator, dev-tool, B2B, and tech-adjacent pain language. Tech-skewed; do not generalize to non-technical consumers.
+- `github` — public issue search. Reaches developer-audience tooling gaps and workaround chains; issue text is bug-shaped, not buyer-shaped. Anonymous rate is ~10 search requests/min; a no-scope `GITHUB_TOKEN` raises it to ~30/min.
+- `google_autocomplete` — real user query phrasing around problem seeds. Language proxy only, never volume or intent strength.
+- `itunes_reviews` — public App Store customer-review RSS per app/storefront. Free alternative to paid Sonar for competitor review mining; requires `--itunes-app-ids` and is therefore opt-in. Public reviews only; revenue estimates still need Sonar.
+
+Use `--providers free_community` to run just the three zero-credential collectors without spending any paid credits.
+
+## YouTube Transcripts
+
+`collect.py --youtube-transcripts` fetches transcripts for the top `--youtube-transcript-max` videos (default 5) via `youtube_transcript_api` — free, no API key or quota. Records use source `youtube_transcript`; per-video fetch statuses (`ok`, `disabled`, `unavailable`, `blocked`, `missing_module`) land in `raw/youtube.json` and `summary.json` under `transcripts`.
+
+- Transcripts are **creator voice**, not customer voice. Mine them for quoted user stories, mentioned workarounds, and linked products — never as demand proof. Customer pain on YouTube still comes primarily from comments.
+- Keep `--youtube-transcript-max` low: YouTube IP-throttles transcript requests (`blocked` status means throttled from this IP, not that transcripts are unavailable everywhere).
+- `validate_youtube.py` reports `transcript_status` so `run_all.py` stays the runtime truth for transcript access too.
+
+## Agent Reach (optional capability layer)
+
+[Agent Reach](https://github.com/Panniantong/Agent-Reach) is an external CLI that maintains live-probed backend routes per platform (YouTube transcripts via yt-dlp, web reading via Jina Reader, Bilibili, XHS, Twitter/X, Reddit via login state). `provider_doctor.py` already probes `agent-reach doctor --json` as candidate backends for `reddit`, `china_public_native` (bilibili), and `china_social` (xiaohongshu) — installing it lights those routes up automatically.
+
+Install (user-initiated): `pip install agent-reach && agent-reach install --env=auto` then `agent-reach doctor --json`. Cookie/login-state channels carry account-ban risk — treat them like `china_social`: use burner accounts and get explicit user approval before any collection run through them. Never route a default run through a cookie-backed channel.
+
+## Social Providers
 
 Firecrawl always uses `FIRECRAWL_API_KEY_HGINVESTOR`; do not silently fall back to another Firecrawl account.
 
@@ -36,7 +63,8 @@ Competitor paid-ads evidence uses `scripts/evidence_scout/collect_ads.py`, not `
 
 ## Provider Sets
 
-- `default`: Reddit, SerpAPI Google Trends, YouTube Data API, Firecrawl, Brave Search.
+- `default`: Reddit, SerpAPI Google Trends, YouTube Data API, Firecrawl, Brave Search, HN Algolia (`hn`), GitHub issues (`github`), Google autocomplete (`google_autocomplete`).
+- `free_community`: only the zero-credential collectors — `hn`, `github`, `google_autocomplete`. Zero cost; use for cheap first passes.
 - `social`: direct X API and ScrapeCreators. Grok/xAI X Search is explicit only via `xai_x_search`.
 - `local_web`: crawl4ai local page extraction after lightweight URL discovery.
 - `china_public`: Bilibili public search with Serper/Brave/Firecrawl site-search fallback, V2EX topic search/public fallback, and China web/domain search.
@@ -89,9 +117,20 @@ Do not use stock sentiment or Stocktwits actors for general market research unle
 
 If a provider fails because of missing credentials, no credits, permission denied, rate limit, unsupported endpoint, or a generic failure, tell the user clearly before interpreting the evidence.
 
-If capability lookup or provider validation reports `rate_limited`, `missing_credentials`, `missing_cli`, `billing_required`, `permission_denied`, `unsupported`, or `failed`, record the fallback and confidence impact before synthesis. Do not interpret an unavailable provider as absence of demand.
+If capability lookup or provider validation reports `rate_limited`, `missing_credentials`, `missing_cli`, `billing_required`, `insufficient_credits`, `permission_denied`, `unsupported`, or `failed`, record the fallback and confidence impact before synthesis. Do not interpret an unavailable provider as absence of demand.
 
 Always check `summary.json.needs_user_attention` and the Provider Alerts section in `report.md`.
+
+## Insufficient Credits Protocol (paid providers)
+
+When a paid provider (ScrapeCreators, Apify, Sonar, DataForSEO, Bright Data) reports `insufficient_credits` or `billing_required` — in validation output, `summary.json.needs_user_attention`, or `report.md` Provider Alerts — do NOT silently continue:
+
+1. **Pause and notify the user.** Name the provider, the current balance if reported (`credits_remaining_at_start`), and what coverage is lost (e.g. Instagram/Facebook/TikTok evidence).
+2. **Ask exactly one question:** "Add credits/top up, or continue without this source?"
+3. **If the user says credits were added:** rerun `python3 scripts/validate_apis/run_all.py` (or the single validator, e.g. `validate_scrapecreators.py`) to confirm the balance, then rerun the collection for that provider before interpreting evidence.
+4. **If the user says continue without it:** record the source as unavailable in the run notes, lower confidence for any claim that needed it, and never treat the missing source as absence of demand.
+
+ScrapeCreators specifics: `collect_scrapecreators` does a free pre-flight credit-balance check before any paid call and aborts mid-run if credits exhaust (remaining endpoints are marked `skipped:insufficient_credits`), so a depleted balance can never silently look like "no evidence found". Top up at https://app.scrapecreators.com/.
 
 ## Source Priority Order
 

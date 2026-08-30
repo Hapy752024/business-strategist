@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project-manifest.schema.json",
+  "title": "Business Strategist Project Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "project_id", "slug", "created_at", "updated_at", "manifest_revision", "active_track", "links", "next_action", "open_blockers"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "project_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "manifest_revision": {"type": "integer", "minimum": 0},
+    "active_track": {"enum": ["business", "brand", "website", "none"]},
+    "business_workspace": {"$ref": "#/$defs/workspace"},
+    "brand_workspace": {"$ref": "#/$defs/workspace"},
+    "website_workspace": {"$ref": "#/$defs/workspace"},
+    "links": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["track", "workspace", "linked_at"], "properties": {"track": {"enum": ["business", "brand", "website"]}, "workspace": {"$ref": "#/$defs/workspace"}, "linked_at": {"type": "string", "format": "date-time"}}}},
+    "next_action": {"type": "string"},
+    "open_blockers": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "workspace": {"type": ["object", "null"], "additionalProperties": false, "required": ["path", "external"], "properties": {"path": {"type": "string", "minLength": 1}, "external": {"type": "boolean"}}}
+  }
+}

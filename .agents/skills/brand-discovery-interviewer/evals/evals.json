@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-discovery-interviewer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Interview me one question at a time to build a brand brief.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

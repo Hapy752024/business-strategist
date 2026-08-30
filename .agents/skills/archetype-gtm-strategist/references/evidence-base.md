@@ -1,8 +1,8 @@
 # Founder GTM Evidence Base
 
-Last researched: 2026-07-05. Europe was prioritized, followed by the US and China. Sources combine named founder/operator accounts, empirical research, primary regulator guidance, and a small amount of anecdotal forum discovery. Founder stories show mechanisms and context; they do not prove that another idea has demand.
+Last researched: 2026-08-28. Europe was prioritized, followed by the US and China, with Latin American fintech cases added where they clarified trust and service wedges. Sources combine named founder/operator accounts, empirical research, primary regulator guidance, and a small amount of anecdotal forum discovery. Founder stories show mechanisms and context; they do not prove that another idea has demand.
 
-The cross-skill distillation of this base (sequencing rule, weak-evidence list, pull signals, regional notes) lives in `references/evidence-registry.md` at repo root; other skills cite that registry. This file remains the detailed source table.
+The cross-skill distillation (sequencing, weak evidence, channel jobs, product/referral loops, community, low-cost growth, measurement, and regional notes) lives in `references/evidence-registry.md` at repo root. The expanded founder case matrix and academic comparison live in `research/topics/founder-gtm-playbooks/playbooks/founder-growth-channel-patterns-2026.md`; the complete 48-source table is `research/topics/founder-gtm-playbooks/source_registry.csv`.
 
 ## High-confidence cross-case findings
 
@@ -15,6 +15,11 @@ The cross-skill distillation of this base (sequencing rule, weak-evidence list, 
 7. **Trust is part of product and GTM.** Qonto emphasized responsive service and word of mouth; InterNations combined curated membership, online information, and local offline events; fintech/insurtech requires regulated delivery and support readiness.
 8. **Europe requires country-level validation.** Customer language, trust, licensing, and partners vary. EIOPA documents a network of national innovation hubs and regulatory sandboxes rather than one uniform shortcut.
 9. **China's strongest sourced case supports community before commerce.** Xiaohongshu began with an expert-informed shopping guide, evolved into a UGC/review community, and later added direct commerce with licensed brands.
+10. **Product loops are mechanisms, not channels.** Calendly and Typeform expose value to recipients, Slack and Figma gain utility through collaboration, Dropbox uses a reciprocal product-currency reward, and Monzo combines post-activation scarcity with friend utility. In every case, value precedes the invitation.
+11. **Community requires member-to-member value.** Monzo used transparent product participation and direct founder access; Figma established business utility before its community layer. Academic field and survey evidence supports narrow identity, useful interaction, newcomer paths, and stewardship rather than raw membership growth.
+12. **Founder advantages set transfer limits.** Dropbox had technical-community fit, Stripe had dense YC access and technical credibility, Buffer had a relevant social audience, and Monzo had a strong mission, timing, and media access. Copy mechanisms only when their prerequisites exist.
+13. **Acquisition must be measured incrementally.** Large paid-search and paid-social experiments show that observational attribution can misstate causal lift. Report source-cohort retention and contribution, and use holdouts or lift tests when spend is material.
+14. **Failure cases improve channel selection.** Homejoy amplified discount-driven acquisition before service quality, retention, and unit economics; Monzo found campus programs and merchant flyers ineffective for acquisition and events more useful for recruiting.
 
 ## Source registry
 
@@ -48,3 +53,4 @@ The cross-skill distillation of this base (sequencing rule, weak-evidence list, 
 - Historical channel tactics may no longer price or rank the same way.
 - Fintech, insurance, immigration, travel, and professional services require current jurisdiction-specific checks.
 - China coverage is materially thinner than Europe and the US; require current Chinese-language research and local expert validation before execution.
+- Sources S21–S48 are maintained in the workspace registry and expanded synthesis rather than duplicated in this already-long table.

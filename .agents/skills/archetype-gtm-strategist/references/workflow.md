@@ -26,12 +26,13 @@ If a missing input would change the recommended motion, ask one focused question
 4. **Apply the regional layer.** Europe is the default priority. Treat each country as a separate language, trust, regulatory, and channel hypothesis. Use the US or China layer only when in scope.
 5. **Design the evidence ladder.** Sequence customer interviews, prototype or concierge delivery, meaningful commitment, payment, activation, retention, referral, and repeatable acquisition.
 6. **Create the wedge offer.** Specify outcome, scope, price or commitment, risk reversal, activation moment, proof, and exclusion criteria.
-7. **Choose one primary and one supporting channel.** Rank channels by customer presence, founder access, trust fit, speed of learning, cash cost, and scalability. Avoid broad channel portfolios before one motion works.
-8. **Design partnerships as distribution tests.** Name the partner's audience, incentive, workflow, data/compliance role, value exchange, owner, pilot, attribution method, and exit condition. A logo or memorandum is not distribution.
-9. **Map the funnel and economics.** Track the behavior chain from trigger to retained value. Include sales or delivery labor, onboarding, support, partner share, refunds/claims/fraud, and contribution margin.
-10. **Set gates before spending.** Define pass, repeat, pivot, and stop thresholds for every experiment. Paid scale requires retained or repeat value, not cheap clicks.
-11. **Plan regional expansion.** Expand only after the home-market motion is teachable and the new region's regulation, localization, channel economics, support, and partner dependencies are tested.
-12. **Write the strategy.** Use the bundled template and distinguish evidence, inference, hypothesis, and decision.
+7. **Choose one primary and one supporting channel.** First assign each channel a job—discovery, education/trust, capture, conversion, activation, lifecycle, community, or recruiting. Then rank by customer presence, founder access, trust fit, content/operating capacity, speed of learning, cash cost, and scalability. Avoid broad channel portfolios before one motion works.
+8. **Diagnose a growth loop separately.** Identify recipient exposure, collaboration, reciprocal reward, network utility, or community exchange. Require value before invitation, a relevant recipient, attribution, abuse controls, and retained economics. A share button or waitlist is not a loop by itself.
+9. **Design partnerships as distribution tests.** Name the partner's audience, incentive, workflow, data/compliance role, value exchange, owner, pilot, attribution method, and exit condition. A logo or memorandum is not distribution.
+10. **Map the funnel and economics.** Track the behavior chain from trigger to retained value. Include sales or delivery labor, onboarding, support, partner share, refunds/claims/fraud, and contribution margin.
+11. **Set gates before spending.** Define pass, repeat, pivot, and stop thresholds for every experiment. Paid scale requires retained or repeat value, not cheap clicks. For material spend, include a holdout, geo, or lift design where feasible.
+12. **Plan regional expansion.** Expand only after the home-market motion is teachable and the new region's regulation, localization, channel economics, support, and partner dependencies are tested.
+13. **Write the strategy.** Use the bundled template and distinguish evidence, inference, hypothesis, and decision.
 
 ## Channel-selection rules
 
@@ -43,6 +44,20 @@ If a missing input would change the recommended motion, ask one focused question
 - Prefer partnerships when a trusted intermediary controls the trigger moment or required workflow.
 - Use paid acquisition only when activation, retention/repeat purchase, and contribution economics are measurable.
 - Treat PR, launch platforms, waitlists, followers, downloads, and partnership announcements as weak signals until they produce retained customers or revenue.
+- Treat founder cases as mechanisms with prerequisites, not recipes. Name the original advantage—network, credibility, audience, product workflow, timing, or regulation—and test whether it exists.
+- Do not rank platforms universally. Use the channel-to-job guidance in the cross-skill evidence registry and retrieve current platform details for execution.
+
+## Growth-loop rules
+
+| Loop | Required mechanism | Gate before scale | Failure mode |
+|---|---|---|---|
+| Recipient exposure | A non-user must participate and experiences immediate value | Recipient activation and retention by source | Branding or invitations with no recipient job |
+| Collaboration | A shared job becomes better with another relevant person | Value/retention rises with relevant collaboration | Forced contacts before single-user value |
+| Reciprocal reward | Both parties receive product-relevant value | Incremental retained contribution exceeds reward and fraud | Paying for emails, signups, or low-quality accounts |
+| Scarcity/invite | Access is genuinely limited and activated users invite relevant peers | Invitee becomes active/retained; queue abuse controlled | Treating waitlist or fake scarcity as PMF |
+| Community | Members repeatedly create value for one another | Return contribution, member-to-member help, and customer outcome | Empty group, broadcast audience, self-promotion, member-count optimization |
+
+For fintech/insurtech, also review financial-promotion and incentive rules, complaints, fraud/abuse, suitability, and whether referrals bias customers toward unsuitable products.
 
 ## Partnership design
 
@@ -72,6 +87,7 @@ Use `assets/gtm-strategy-template.md`. At minimum include:
 - MVP test and launch motion.
 - First-ten-customer plan.
 - Primary/supporting channels and rejected channels.
+- Product/referral/community loop with prerequisites and abuse controls, or an explicit reason to defer it.
 - Partnership portfolio with pilots and economics.
 - Funnel, retention, and unit-economics model.
 - Europe-first regional plan plus US/China adaptations if relevant.
@@ -84,6 +100,8 @@ Use `assets/gtm-strategy-template.md`. At minimum include:
 - The segment is narrow enough to reach this week.
 - Customer pain and founder stories are not confused with each other.
 - The strategy names one primary acquisition motion.
+- Each channel has a named job, operating requirement, source-cohort metric, and stop rule.
+- Any product/referral/community loop has value-before-invitation and retained-economics gates.
 - Partnerships include value exchange, workflow, economics, and attribution.
 - Marketing scale follows activation and retention evidence.
 - Fintech/insurtech recommendations include jurisdiction-specific regulatory gates.

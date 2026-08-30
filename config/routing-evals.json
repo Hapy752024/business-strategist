@@ -187,6 +187,75 @@
           "rationale": "Social pain evidence collection is evidence-scout's job via collect.py; competitor-marketing-analyzer analyzes competitor positioning, not customer pain."
         }
       ]
+    },
+    {
+      "pair": "strategy-draft-tournament vs startup-challenge-panel vs marketing-strategy-builder",
+      "evals": [
+        {
+          "id": "route-tournament-1",
+          "prompt": "Generate 3 alternative GTM approaches for our fintech SaaS, have them compete, and tell me which one wins.",
+          "expected_output": "Routes to strategy-draft-tournament for generate-and-judge over multiple drafts.",
+          "expected_skill": "strategy-draft-tournament",
+          "forbidden_skills": [
+            "startup-challenge-panel",
+            "archetype-gtm-strategist"
+          ],
+          "files": [],
+          "rationale": "The user wants multiple drafts generated and judged against each other — strategy-draft-tournament owns this. startup-challenge-panel challenges an existing plan; archetype-gtm-strategist produces a single stage-gated strategy."
+        },
+        {
+          "id": "route-tournament-2",
+          "prompt": "Here is our launch plan. Tear it apart before we commit the budget.",
+          "expected_output": "Routes to startup-challenge-panel for adversarial review of an existing plan.",
+          "expected_skill": "startup-challenge-panel",
+          "forbidden_skills": [
+            "strategy-draft-tournament"
+          ],
+          "files": [],
+          "rationale": "An existing plan to challenge is startup-challenge-panel territory. The tournament generates new drafts; it does not review a supplied plan."
+        }
+      ]
+    },
+    {
+      "pair": "brand-website-designer-builder vs brand-designer vs marketing-strategy-builder",
+      "evals": [
+        {
+          "id": "route-brand-website-1",
+          "prompt": "The business idea is validated and the brand direction is approved. Build a visually distinctive Next.js landing page for the primary customer segment and prepare it for Vercel.",
+          "expected_output": "Routes to brand-website-designer-builder for preference-led website implementation; it may consume a linked brand snapshot but must not rerun research.",
+          "expected_skill": "brand-website-designer-builder",
+          "forbidden_skills": [
+            "brand-designer",
+            "marketing-strategy-builder"
+          ],
+          "files": [],
+          "rationale": "The request is implementation of a website from approved brand inputs, not independent brand discovery or a marketing plan."
+        },
+        {
+          "id": "route-brand-independent-1",
+          "prompt": "Independently develop a brand identity for my new service, including positioning, visual direction, typography, and logo concepts. Do not do market research.",
+          "expected_output": "Routes to brand-designer for independent branding; research workflows remain out of scope.",
+          "expected_skill": "brand-designer",
+          "forbidden_skills": [
+            "brand-website-designer-builder",
+            "market-problem-discovery",
+            "evidence-scout"
+          ],
+          "files": [],
+          "rationale": "Branding is explicitly requested independently of research and without website implementation."
+        },
+        {
+          "id": "route-ab-1",
+          "prompt": "Ship two homepage hero variants and measure which CTA converts better using a simple server-side A/B test.",
+          "expected_output": "Routes to brand-website-designer-builder for Vercel Flags-based experimentation and analytics instrumentation.",
+          "expected_skill": "brand-website-designer-builder",
+          "forbidden_skills": [
+            "marketing-strategy-builder"
+          ],
+          "files": [],
+          "rationale": "The requested artifact is website experimentation implementation, not campaign strategy."
+        }
+      ]
     }
   ]
 }

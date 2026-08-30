@@ -15,7 +15,8 @@ description: Collect source-grounded customer pain, workarounds, demand proxies,
 2. Initialize or reuse `research/topics/<topic-slug>/`.
 3. Run capability lookup and provider doctor when routing matters, then use repository-root scripts.
 4. Inspect plans, raw outputs, evidence, irrelevant records, alerts, and gaps.
-5. Stop on invalid geography, unavailable critical sources, or unsupported claims.
+5. On `insufficient_credits`/`billing_required` for a paid provider, pause and ask the user to top up or continue without the source (protocol: `references/provider-policy.md`). If they topped up, re-validate and rerun the provider before interpreting.
+6. Stop on invalid geography, unavailable critical sources, or unsupported claims.
 
 ## Output
 

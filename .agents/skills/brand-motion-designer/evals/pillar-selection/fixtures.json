@@ -1,0 +1,18 @@
+[
+  {
+    "brief": "Trustworthy banking app for professionals.",
+    "expected_any_of": ["Natural", "Responsive", "Directional"]
+  },
+  {
+    "brief": "Playful social app for Gen Z.",
+    "expected_any_of": ["Expressive", "Continuous"]
+  },
+  {
+    "brief": "Premium design portfolio site.",
+    "expected_any_of": ["Natural", "Directional"]
+  },
+  {
+    "brief": "Data-dense analytics dashboard.",
+    "expected_any_of": ["Responsive", "Directional"]
+  }
+]

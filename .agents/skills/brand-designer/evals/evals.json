@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a complete brand identity from this brief and route its stages.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

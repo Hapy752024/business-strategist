@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "website-preferences.schema.json",
+  "title": "Website Preference Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_id", "version", "locale", "choices", "provenance"],
+  "properties": {
+    "profile_id": {"type": "string", "minLength": 1},
+    "version": {"type": "integer", "minimum": 1},
+    "locale": {"type": "string", "minLength": 2},
+    "last_confirmed_at": {"type": "string", "format": "date-time"},
+    "brand_artifact_refs": {"type": "array", "items": {"type": "string"}},
+    "choices": {"type": "object", "additionalProperties": {"type": ["string", "number", "boolean", "array"]}},
+    "likes": {"type": "array", "items": {"$ref": "#/$defs/reference"}},
+    "dislikes": {"type": "array", "items": {"$ref": "#/$defs/reference"}},
+    "provenance": {"type": "object", "additionalProperties": {"enum": ["brand_locked", "user_stated", "user_selected", "agent_inferred"]}}
+  },
+  "$defs": {
+    "reference": {"type": "object", "additionalProperties": false, "required": ["reference", "quality", "reason"], "properties": {"reference": {"type": "string"}, "quality": {"type": "string"}, "reason": {"type": "string"}}}
+  }
+}

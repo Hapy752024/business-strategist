@@ -1,0 +1,22 @@
+[
+  {
+    "app_description": "Analytics dashboard for a fintech app.",
+    "expected_extended": ["data-table", "date-picker", "toast"],
+    "expected_domains": ["dashboard"]
+  },
+  {
+    "app_description": "E-commerce store for handmade goods.",
+    "expected_extended": ["file-upload", "toast", "slider"],
+    "expected_domains": ["ecommerce"]
+  },
+  {
+    "app_description": "Marketing site with a blog and docs.",
+    "expected_extended": ["accordion"],
+    "expected_domains": ["content"]
+  },
+  {
+    "app_description": "Internal admin tool with role-based access.",
+    "expected_extended": ["data-table", "command-palette", "context-menu"],
+    "expected_domains": []
+  }
+]

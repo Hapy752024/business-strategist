@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-asset-producer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Produce an approved logo asset package from the selected brand direction.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

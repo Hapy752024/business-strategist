@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-ui-component-producer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Produce a tested branded button component from the token set.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

@@ -2,6 +2,8 @@
 
 Detailed procedure for `social-media-idea-validator`. Keep `SKILL.md` lean; maintain this file.
 
+**Cross-skill rules:** apply the sequencing rule, weak-evidence list, channel jobs, and loop gates from `references/evidence-registry.md` at repo root. In particular: views, likes, followers, and waitlist numbers found during Gate 1–2 are weak evidence until tied to retained behavior, and any "viral loop" idea must satisfy the registry's loop gates (value before invitation, relevant recipient, measurable steps, retained economics after rewards and abuse).
+
 ## Principle
 
 Most social/content ideas fail before production starts: the audience is not on the platform, nobody searches for the topic, the founder cannot sustain the format, or the channel cannot reach a conversion event within budget. Validation is cheaper than production. Run the gates in order and stop at the first hard KILL.

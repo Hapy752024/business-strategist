@@ -108,6 +108,18 @@ check "registry files are valid and consistent" python3 scripts/validate_registr
 # ── Skills ────────────────────────────────────────────────
 echo ""
 echo "--- Skills ---"
+# .claude/skills must be a symlink to ../.agents/skills (single source of truth).
+# A real directory here means a Windows-side checkout materialized the link as
+# copies; that silently drifts from .agents/skills.
+if [ -L .claude/skills ]; then
+    green "  PASS  .claude/skills is a symlink"
+elif [ -d .claude/skills ]; then
+    red "  FAIL  .claude/skills is a real directory, not a symlink to ../.agents/skills (drift risk). Restore with: rm -rf .claude/skills && ln -s ../.agents/skills .claude/skills"
+    ((errors += 1))
+else
+    red "  FAIL  .claude/skills is missing"
+    ((errors += 1))
+fi
 if [ -d .agents/skills ]; then
     skill_count=$(find .agents/skills -name "SKILL.md" | wc -l)
     echo "  INFO  Found $skill_count skill(s)"
@@ -167,15 +179,20 @@ check "archetype GTM skill tests pass" python3 scripts/evidence_scout/test_gtm_s
 check "service customer-perspective skill tests pass" python3 scripts/evidence_scout/test_customer_perspective_skill.py
 check "interview-bridge kit tests pass" python3 scripts/evidence_scout/test_interview_bridge.py
 check "whitespace matrix tests pass" python3 scripts/evidence_scout/test_whitespace_matrix.py
+check "imported brand skill tests pass" python3 -m pytest -q tests/brand_designer --disable-warnings
+check "business-brand-website foundation tests pass" python3 -m pytest -q tests/integration --disable-warnings
 check "eval structure is valid" python3 scripts/run_evals.py
 
 # ── Schemas ───────────────────────────────────────────────
 echo ""
 echo "--- Schemas ---"
-for schema in evidence-record ads-record competitor stage-checkpoint research-topic-manifest; do
+for schema in evidence-record ads-record competitor stage-checkpoint research-topic-manifest project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record; do
     check "schemas/$schema.schema.json exists" test -f "schemas/$schema.schema.json"
     check "schemas/$schema.schema.json is valid JSON" python3 -c "import json; json.load(open('schemas/$schema.schema.json'))" 2>/dev/null
 done
+check "skill catalog is valid JSON" python3 -c "import json; json.load(open('config/skill-catalog.json'))" 2>/dev/null
+check "workflow routes are valid JSON" python3 -c "import json; json.load(open('config/workflow-routes.json'))" 2>/dev/null
+check "website route smoke test passes" python3 -c "import subprocess,sys; out=subprocess.check_output(['python3','scripts/route_workflow.py','Build a distinctive Next.js landing page'], text=True); sys.exit(0 if 'brand-website-designer-builder' in out else 1)"
 
 # ── Summary ───────────────────────────────────────────────
 echo ""

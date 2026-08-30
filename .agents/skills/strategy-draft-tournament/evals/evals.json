@@ -1,0 +1,29 @@
+{
+  "skill_name": "strategy-draft-tournament",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're stuck on pricing for our expat tax-advisory service in Germany (target €2,400/yr, consequential and data-sensitive). Generate competing pricing structures, challenge them, and pick one.",
+      "expected_output": "Frames the decision with constraints and evidence, spawns 3-4 drafts with genuinely different pricing mechanisms (e.g. staged diagnostic, transparent flat, outcome-linked), judges them against the customer-trust lens (uncertainty reducers, staged commitment, exit clarity) and constraint fit, cross-pollinates in a feedback round if needed, and delivers a winner or synthesis with the cheapest falsifying test.",
+      "files": [],
+      "must_mention": ["judge", "staged", "test"],
+      "must_not_mention": []
+    },
+    {
+      "id": 2,
+      "prompt": "Give me options for how our new budgeting app should get its first customers, then tell me which is best. We have 8,000 waitlist signups, no retention data, and €5k.",
+      "expected_output": "Runs a tournament over distinct first-customer mechanisms; the judge applies the sequencing rule and weak-evidence list so the 8,000 signups do not count as retained-value proof; drafts that skip manual learning or start with paid scale score low on sequencing compliance; the winner is a manual/founder-led motion with an explicit proof gate.",
+      "files": [],
+      "must_mention": ["sequencing", "retention", "weak evidence"],
+      "must_not_mention": []
+    },
+    {
+      "id": 3,
+      "prompt": "Draft three different launch campaign concepts for our local physiotherapy practice and pick the strongest.",
+      "expected_output": "Checks decision value before spawning agents (a local practice campaign may not justify a full tournament and says so or scales down), produces mechanism-diverse concepts, judges on constraint fit and customer-trust compliance for a health-adjacent service (credentials, clear scope and price, authentic reviews), and ends with a pick plus a cheap falsifying test.",
+      "files": [],
+      "must_mention": ["credentials", "reviews"],
+      "must_not_mention": []
+    }
+  ]
+}

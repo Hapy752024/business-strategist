@@ -2,6 +2,8 @@
 
 Last researched: 2026-07-19. Distilled from founders and operators who did the work, with sources. Use as patterns and challenge questions, not as rules to copy. Re-verify current platform specifics before precise recommendations.
 
+**Relationship to the cross-skill registry:** this file holds practitioner evidence specific to social/content idea validation (first-customer levers, Pain-Point SEO intent tiers, considered-purchase content economics, broker/loan-officer channel reality). Cross-cutting rules — sequencing, weak-evidence list, channel jobs, loop gates, community operating model, measurement guardrails, and the channel/loop recommendation protocol — live in `references/evidence-registry.md` at repo root; cite the registry for those instead of copying them here. Policygenius appears in both evidence bases (here via The Financial Revolutionist interview; in the founder-gtm-playbooks registry as S36 via Mixergy): the accounts agree on education-first content for considered purchases and vertical selection, but treat reported growth figures from either as founder-reported, not benchmarks.
+
 ## SaaS / B2B
 
 ### First customers come from three levers only — Lenny Rachitsky's founder research

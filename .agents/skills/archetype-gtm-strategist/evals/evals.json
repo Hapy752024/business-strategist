@@ -11,7 +11,12 @@
       "id": 2,
       "prompt": "Our UK/Germany consumer subscription app has 2,000 waitlist signups but no retention data. We want to spend €20k on creators and Meta at launch.",
       "expected_output": "B2C SaaS plan that treats waitlist as weak evidence, defines activation/cohort tests, selects one launch channel, caps spend, and blocks paid scale until retained value and contribution economics are visible.",
-      "files": []
+      "files": [],
+      "must_mention": [
+        "retention",
+        "gate"
+      ],
+      "must_not_mention": []
     },
     {
       "id": 3,
@@ -41,7 +46,11 @@
       "id": 7,
       "prompt": "Our consumer video app hit 1M downloads and 400k MAU in the first quarter with a big press spike. Retention is under 10% at day 30 but we think we can fix it after we scale. Build the plan to spend €100k on paid acquisition now.",
       "expected_output": "Rejects immediate paid scale using the Socialcam counterexample, names downloads/MAU/press as weak evidence without retention, sets retention and cohort repair work first, and gates any acquisition spend on sustained retained cohorts and contribution economics.",
-      "files": []
+      "files": [],
+      "must_mention": [
+        "retention"
+      ],
+      "must_not_mention": []
     },
     {
       "id": 8,
@@ -53,6 +62,23 @@
       "id": 9,
       "prompt": "We want to launch a Gen-Z beauty e-commerce app in China with direct brand sales and checkout from day one. Give us the launch plan.",
       "expected_output": "Sequences trust and community before direct commerce using the Xiaohongshu pattern (expert content or review/shopping-guide wedge first, commerce after), requires current China regulatory and platform expertise, and sets gates that prove content/community retention before adding transactions.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Our budgeting app has 8,000 waitlist users. Copy Monzo and Robinhood: create a referral queue, Golden Tickets, a Discord community, and an influencer launch so we go viral before launch.",
+      "expected_output": "Separates waitlist acquisition from PMF, names the Monzo/Robinhood prerequisites and transfer limits, gates invitations after qualified activation, requires funded/active/retained economics and fraud controls, defines member-to-member community value instead of an empty Discord, and defers broad creator spend until retained value is proven.",
+      "files": [],
+      "must_mention": [
+        "prerequisite",
+        "activation"
+      ],
+      "must_not_mention": []
+    },
+    {
+      "id": 11,
+      "prompt": "Our collaboration SaaS has 20 retained design teams. Users already invite external reviewers into every project. Should we add paid ads, referrals, or community next?",
+      "expected_output": "Distinguishes the existing recipient/collaboration product loop from acquisition channels, measures invite-to-recipient activation and retention, selects one channel job and test based on reachable buyers, defines product-loop and paid-scale gates, and avoids recommending a community without a recurring member-to-member exchange.",
       "files": []
     }
   ]

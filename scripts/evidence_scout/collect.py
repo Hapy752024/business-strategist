@@ -30,6 +30,7 @@ from common import (  # noqa: E402
     get_secret,
     http_get,
     http_post,
+    is_credit_exhaustion,
     now_iso,
     redact_sensitive,
     status_from_response,
@@ -932,7 +933,7 @@ def normalize_local_extraction_records(
 
 
 def selected_providers(value: str) -> list[str]:
-    defaults = ["reddit", "serpapi_google_trends", "youtube", "serper_search", "firecrawl", "brave_search"]
+    defaults = ["reddit", "serpapi_google_trends", "youtube", "serper_search", "firecrawl", "brave_search", "hn", "github", "google_autocomplete"]
     social = ["x", "scrapecreators"]
     local_web = ["crawl4ai"]
     china_public = ["china_bilibili", "china_v2ex", "china_web"]
@@ -947,6 +948,8 @@ def selected_providers(value: str) -> list[str]:
             providers.extend(social)
         elif part == "local_web":
             providers.extend(local_web)
+        elif part == "free_community":
+            providers.extend(["hn", "github", "google_autocomplete"])
         elif part == "china_public":
             providers.extend(china_public)
         elif part == "china_social":
@@ -1224,6 +1227,266 @@ def collect_brave_search(args: argparse.Namespace, queries: list[str], run_dir: 
     return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
 
 
+def collect_hn(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Hacker News via the free Algolia API. No credentials required."""
+    raw: dict[str, Any] = {"searches": []}
+    cutoff = int(time.time() - (args.days * 86400))
+    records: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    per_tag_limit = max(2, args.limit // 2)
+    for tag in ["story", "comment"]:
+        for query in [queries[0], queries[3], queries[6], queries[8]][:4]:
+            response = http_get(
+                with_query(
+                    "https://hn.algolia.com/api/v1/search",
+                    {
+                        "query": query,
+                        "tags": tag,
+                        "hitsPerPage": min(per_tag_limit, 10),
+                        "numericFilters": f"created_at_i>{cutoff}",
+                    },
+                )
+            )
+            raw["searches"].append({"query": query, "tags": tag, "response": response})
+            body = response.get("body") if isinstance(response.get("body"), dict) else {}
+            hits = body.get("hits", []) if isinstance(body.get("hits"), list) else []
+            for hit in hits:
+                object_id = hit.get("objectID") or ""
+                url = hit.get("url") or (f"https://news.ycombinator.com/item?id={object_id}" if object_id else "")
+                if not object_id or object_id in seen:
+                    continue
+                seen.add(object_id)
+                title = hit.get("title") or hit.get("story_title") or ""
+                text_body = hit.get("story_text") or hit.get("comment_text") or ""
+                text = "\n\n".join(part for part in [title, text_body] if part).strip()
+                if not text:
+                    continue
+                author_context = f"HN @{hit.get('author', '')} ({tag})"
+                relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, author_context)
+                records.append(
+                    normalize_record(
+                        source="hn",
+                        source_url=url,
+                        query=query,
+                        customer_segment=args.customer_segment,
+                        hypothesis=args.hypothesis_id,
+                        text=text,
+                        author_context=author_context,
+                        engagement={"upvotes": hit.get("points"), "comments": hit.get("num_comments")},
+                        raw_id=object_id,
+                        evidence_type="irrelevant" if relevance == "irrelevant" else None,
+                        strength="irrelevant" if relevance == "irrelevant" else None,
+                        relevance=relevance,
+                        relevance_notes=relevance_notes,
+                        relevance_score=relevance_score,
+                    )
+                )
+                if len(records) >= args.limit:
+                    break
+            if len(records) >= args.limit:
+                break
+        if len(records) >= args.limit:
+            break
+
+    status = "ok" if records else "failed" if raw["searches"] else "failed"
+    write_json(run_dir / "raw" / "hn.json", redact_sensitive(raw))
+    return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+
+
+def collect_github(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """GitHub issue search via the free REST API. Optional GITHUB_TOKEN raises rate limits."""
+    key_name, token = get_secret("GITHUB_TOKEN", "GH_TOKEN")
+    raw: dict[str, Any] = {"credential_source": key_name, "searches": []}
+    headers = {"Accept": "application/vnd.github+json"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    cutoff_date = time.strftime("%Y-%m-%d", time.gmtime(time.time() - (args.days * 86400)))
+    records: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    per_query_limit = max(2, args.limit // max(1, min(len(queries), 3)))
+    for query in [queries[0], queries[3], queries[6]][:3]:
+        search_q = f"{query} type:issue created:>={cutoff_date}"
+        response = http_get(
+            with_query(
+                "https://api.github.com/search/issues",
+                {"q": search_q, "sort": "reactions", "order": "desc", "per_page": min(per_query_limit, 10)},
+            ),
+            headers=headers,
+        )
+        raw["searches"].append({"query": search_q, "response": response})
+        body = response.get("body") if isinstance(response.get("body"), dict) else {}
+        items = body.get("items", []) if isinstance(body.get("items"), list) else []
+        for item in items:
+            html_url = item.get("html_url") or ""
+            issue_id = str(item.get("id") or html_url)
+            if not issue_id or issue_id in seen:
+                continue
+            seen.add(issue_id)
+            text = "\n\n".join(part for part in [item.get("title", ""), item.get("body") or ""] if part).strip()
+            if not text:
+                continue
+            repo = "/".join(html_url.split("/")[3:5]) if html_url.count("/") >= 4 else ""
+            author_context = f"github.com/{repo}" if repo else "GitHub issue"
+            relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, html_url, author_context)
+            records.append(
+                normalize_record(
+                    source="github",
+                    source_url=html_url,
+                    query=query,
+                    customer_segment=args.customer_segment,
+                    hypothesis=args.hypothesis_id,
+                    text=text[:4000],
+                    author_context=author_context,
+                    engagement={"upvotes": item.get("reactions", {}).get("+1") if isinstance(item.get("reactions"), dict) else None, "comments": item.get("comments")},
+                    raw_id=issue_id,
+                    evidence_type="irrelevant" if relevance == "irrelevant" else None,
+                    strength="irrelevant" if relevance == "irrelevant" else None,
+                    relevance=relevance,
+                    relevance_notes=relevance_notes,
+                    relevance_score=relevance_score,
+                )
+            )
+            if len(records) >= args.limit:
+                break
+        if len(records) >= args.limit:
+            break
+
+    status = "ok" if records else ("rate_limited" if any(s.get("response", {}).get("status_code") == 403 for s in raw["searches"]) else "failed") if raw["searches"] else "failed"
+    write_json(run_dir / "raw" / "github.json", redact_sensitive(raw))
+    return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+
+
+def collect_google_autocomplete(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Google autocomplete suggestions. Free demand-language proxy; no credentials."""
+    raw: dict[str, Any] = {"searches": []}
+    records: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    seeds = [queries[0], queries[3], queries[6], problem_first_terms(args.topic, args.problem_keywords, args.workaround_keywords)[0] if problem_first_terms(args.topic, args.problem_keywords, args.workaround_keywords) else args.topic][:4]
+    for seed in seeds:
+        response = http_get(
+            with_query(
+                "https://suggestqueries.google.com/complete/search",
+                {"client": "firefox", "hl": args.language, "gl": args.geo.lower(), "q": seed},
+            )
+        )
+        raw["searches"].append({"seed": seed, "response": response})
+        body = response.get("body")
+        suggestions = body[1] if isinstance(body, list) and len(body) > 1 and isinstance(body[1], list) else []
+        for suggestion in suggestions:
+            text = str(suggestion).strip()
+            if not text or text.lower() in seen:
+                continue
+            seen.add(text.lower())
+            records.append(
+                normalize_record(
+                    source="google_autocomplete",
+                    source_url=f"https://www.google.com/search?q={urllib.parse.quote(text)}",
+                    query=seed,
+                    customer_segment=args.customer_segment,
+                    hypothesis=args.hypothesis_id,
+                    text=text,
+                    author_context="Google autocomplete",
+                    engagement={},
+                    raw_id=text,
+                    confidence_notes="Autocomplete suggestion. Attention/language proxy only, never demand proof.",
+                )
+            )
+            if len(records) >= args.limit:
+                break
+        if len(records) >= args.limit:
+            break
+
+    status = "ok" if records else "failed"
+    write_json(run_dir / "raw" / "google_autocomplete.json", redact_sensitive(raw))
+    return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+
+
+def collect_itunes_reviews(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Public iTunes customer-review RSS. Free; requires explicit app IDs via --itunes-app-ids."""
+    app_ids = [part.strip() for part in csv_terms(args.itunes_app_ids)]
+    raw: dict[str, Any] = {"apps": []}
+    if not app_ids:
+        write_json(run_dir / "raw" / "itunes_reviews.json", raw)
+        return [], {"status": "not_run", "required_arg": "--itunes-app-ids"}
+    countries = [c.strip().lower() for c in csv_terms(getattr(args, "itunes_countries", "") or args.geo)][:3]
+    records: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    cutoff_days_seconds = args.days * 86400
+    for app_id in app_ids:
+        app_id = app_id.split(":")[-1]
+        for country in countries:
+            for page in range(1, max(1, args.itunes_max_pages) + 1):
+                response = http_get(
+                    with_query(
+                        f"https://itunes.apple.com/{country}/rss/customerreviews/id={app_id}/sortBy=mostRecent/json",
+                        {"page": page},
+                    )
+                )
+                raw["apps"].append({"app_id": app_id, "country": country, "page": page, "response_status": response.get("status_code")})
+                body = response.get("body") if isinstance(response.get("body"), dict) else {}
+                feed = body.get("feed", {}) if isinstance(body.get("feed"), dict) else {}
+                entries = feed.get("entry", [])
+                if not entries:
+                    break
+                entries = entries if isinstance(entries, list) else [entries]
+                for entry in entries:
+                    review_id = ""
+                    id_node = entry.get("id")
+                    if isinstance(id_node, dict):
+                        review_id = str(id_node.get("label") or "")
+                    elif id_node:
+                        review_id = str(id_node)
+                    if not review_id or review_id in seen:
+                        continue
+                    seen.add(review_id)
+                    updated = entry.get("updated", {})
+                    updated_label = updated.get("label", "") if isinstance(updated, dict) else str(updated)
+                    try:
+                        review_ts = time.mktime(time.strptime(updated_label[:19], "%Y-%m-%dT%H:%M:%S"))
+                    except (ValueError, TypeError):
+                        review_ts = time.time()
+                    if time.time() - review_ts > cutoff_days_seconds:
+                        continue
+                    title = entry.get("title", {}).get("label", "") if isinstance(entry.get("title"), dict) else ""
+                    content = entry.get("content", {}).get("label", "") if isinstance(entry.get("content"), dict) else ""
+                    rating = entry.get("im:rating", {}).get("label") if isinstance(entry.get("im:rating"), dict) else None
+                    author = entry.get("author", {}).get("name", {}).get("label", "") if isinstance(entry.get("author"), dict) else ""
+                    text = "\n\n".join(part for part in [title, content] if part).strip()
+                    if not text:
+                        continue
+                    relevance, relevance_notes, relevance_score = assess_relevance(text, args, f"app:{app_id}", "", f"{author} rating={rating}")
+                    records.append(
+                        normalize_record(
+                            source="itunes_reviews",
+                            source_url=f"https://apps.apple.com/{country}/app/id{app_id}",
+                            query=f"app:{app_id}",
+                            customer_segment=args.customer_segment,
+                            hypothesis=args.hypothesis_id,
+                            text=text,
+                            author_context=f"{author} rating={rating}",
+                            engagement={"likes": None},
+                            raw_id=review_id,
+                            evidence_type="irrelevant" if relevance == "irrelevant" else None,
+                            strength="irrelevant" if relevance == "irrelevant" else None,
+                            relevance=relevance,
+                            relevance_notes=relevance_notes,
+                            relevance_score=relevance_score,
+                        )
+                    )
+                    if len(records) >= args.limit:
+                        break
+                if len(records) >= args.limit:
+                    break
+            if len(records) >= args.limit:
+                break
+        if len(records) >= args.limit:
+            break
+
+    status = "ok" if records else "no_recent_reviews" if raw["apps"] else "not_run"
+    write_json(run_dir / "raw" / "itunes_reviews.json", redact_sensitive(raw))
+    return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+
+
 def collect_serper_search(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     key_name, api_key = get_secret("SERPER_DEV_API_KEY", "SERPER_API_KEY")
     raw: dict[str, Any] = {"credential_source": key_name, "searches": []}
@@ -1413,15 +1676,52 @@ def collect_scrapling(args: argparse.Namespace, queries: list[str], run_dir: Pat
     }
 
 
+YOUTUBE_TRANSCRIPT_MAX_CHARS = 6000
+
+
+def fetch_youtube_transcript(video_id: str, languages: list[str]) -> tuple[str, str]:
+    """Return (status, text) for a video transcript via youtube_transcript_api.
+
+    Status is one of: ok, disabled, unavailable, missing_module, error.
+    Free (no API quota) but YouTube can IP-throttle; keep volumes low.
+    """
+    try:
+        from youtube_transcript_api import YouTubeTranscriptApi
+        from youtube_transcript_api._errors import (
+            IpBlocked,
+            NoTranscriptFound,
+            RequestBlocked,
+            TranscriptsDisabled,
+            VideoUnavailable,
+        )
+    except ImportError:
+        return "missing_module", ""
+    try:
+        fetched = YouTubeTranscriptApi().fetch(video_id, languages=languages)
+    except TranscriptsDisabled:
+        return "disabled", ""
+    except (NoTranscriptFound, VideoUnavailable):
+        return "unavailable", ""
+    except (IpBlocked, RequestBlocked):
+        return "blocked", ""
+    except Exception as exc:  # noqa: BLE001 - library raises several HTTP-era errors
+        return f"error:{type(exc).__name__}", ""
+    text = " ".join(segment.text.strip() for segment in fetched if segment.text.strip())
+    return "ok", " ".join(text.split())[:YOUTUBE_TRANSCRIPT_MAX_CHARS]
+
+
 def collect_youtube(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     key_name, api_key = get_secret("YOUTUBE_API_KEY", "GOOGLE_API_KEY")
-    raw: dict[str, Any] = {"credential_source": key_name, "searches": [], "comments": []}
+    raw: dict[str, Any] = {"credential_source": key_name, "searches": [], "comments": [], "transcripts": []}
     if not api_key:
         write_json(run_dir / "raw" / "youtube.json", raw)
         return [], {"status": "missing_credentials", "required_env": ["YOUTUBE_API_KEY"]}
 
     records: list[dict[str, Any]] = []
     seen_videos: set[str] = set()
+    transcripts_attempted = 0
+    transcripts_fetched = 0
+    transcript_max = max(0, getattr(args, "youtube_transcript_max", 5))
     for query in [queries[0], queries[2], queries[5]][:3]:
         search_response = http_get(
             with_query(
@@ -1499,6 +1799,33 @@ def collect_youtube(args: argparse.Namespace, queries: list[str], run_dir: Path)
                     )
                     if len(records) >= args.limit:
                         break
+            if getattr(args, "youtube_transcripts", False) and transcripts_attempted < transcript_max:
+                transcripts_attempted += 1
+                transcript_status, transcript_text = fetch_youtube_transcript(video_id, [args.language, "en"])
+                raw["transcripts"].append({"video_id": video_id, "status": transcript_status, "chars": len(transcript_text)})
+                if transcript_status == "ok" and transcript_text:
+                    transcripts_fetched += 1
+                    full_text = f"Transcript of video \"{snippet.get('title', '')}\": {transcript_text}"
+                    relevance, relevance_notes, relevance_score = assess_relevance(full_text, args, query, url, snippet.get("channelTitle", ""))
+                    records.append(
+                        normalize_record(
+                            source="youtube_transcript",
+                            source_url=url,
+                            query=query,
+                            customer_segment=args.customer_segment,
+                            hypothesis=args.hypothesis_id,
+                            text=full_text,
+                            author_context=snippet.get("channelTitle", ""),
+                            engagement={},
+                            raw_id=f"{video_id}:transcript",
+                            evidence_type="irrelevant" if relevance == "irrelevant" else None,
+                            strength="irrelevant" if relevance == "irrelevant" else None,
+                            relevance=relevance,
+                            relevance_notes=relevance_notes,
+                            relevance_score=relevance_score,
+                            confidence_notes="Creator-voice transcript via youtube_transcript_api (free, no API quota). A transcript is the creator's narrative, not independent customer voice; mine it for quoted user stories, mentioned workarounds, and linked products, never as demand proof.",
+                        )
+                    )
             if len(records) >= args.limit:
                 break
         if len(records) >= args.limit:
@@ -1506,7 +1833,14 @@ def collect_youtube(args: argparse.Namespace, queries: list[str], run_dir: Path)
 
     status = "ok" if records else status_from_response((raw["searches"][0] or {}).get("response", {})) if raw["searches"] else "failed"
     write_json(run_dir / "raw" / "youtube.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+    summary: dict[str, Any] = {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+    if getattr(args, "youtube_transcripts", False):
+        transcript_statuses: dict[str, int] = {}
+        for entry in raw["transcripts"]:
+            key = str(entry.get("status", "unknown")).split(":")[0]
+            transcript_statuses[key] = transcript_statuses.get(key, 0) + 1
+        summary["transcripts"] = {"attempted": transcripts_attempted, "fetched": transcripts_fetched, "statuses": transcript_statuses}
+    return records, summary
 
 
 def collect_x(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -1754,6 +2088,22 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
         write_json(run_dir / "raw" / "scrapecreators.json", raw)
         return [], {"status": "missing_credentials", "required_env": ["SCRAPE_CREATORS_API_KEY"]}
 
+    # Pre-flight credit check (free endpoint) so an exhausted balance fails loudly
+    # before any paid call is attempted.
+    credits_remaining: int | None = None
+    balance_response = http_get("https://api.scrapecreators.com/v1/credit-balance", headers={"x-api-key": api_key})
+    raw["credit_balance"] = balance_response
+    balance_body = balance_response.get("body") if isinstance(balance_response.get("body"), dict) else {}
+    if balance_response.get("ok") and isinstance(balance_body.get("creditCount"), int):
+        credits_remaining = balance_body["creditCount"]
+    if credits_remaining is not None and credits_remaining <= 0:
+        write_json(run_dir / "raw" / "scrapecreators.json", redact_sensitive(raw))
+        return [], {
+            "status": "insufficient_credits",
+            "credits_remaining": credits_remaining,
+            "top_up_url": "https://app.scrapecreators.com/",
+        }
+
     terms = social_terms(args.topic, args.problem_keywords, args.workaround_keywords, args.geo, args.language)
     social_query = terms[0] if terms else args.topic
     per_endpoint = max(1, args.social_per_endpoint)
@@ -1782,17 +2132,28 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
     seen: set[str] = set()
     endpoint_statuses: dict[str, str] = {}
     comment_candidates: list[tuple[str, str, str]] = []
+    credits_exhausted = False
     for source, endpoint, params, items_key, cursor_key, cap, context, parser in specs:
+        if credits_exhausted:
+            endpoint_statuses[context] = "skipped:insufficient_credits"
+            continue
         if items_key is None:
             response = http_get(with_query(endpoint, params), headers={"x-api-key": api_key})
             raw["calls"].append({"source": source, "endpoint": endpoint, "params": params, "response": response})
-            if not response.get("ok"):
-                endpoint_statuses[context] = status_from_response(response)
+            if not response.get("ok") or is_credit_exhaustion(response):
+                call_status = status_from_response(response)
+                endpoint_statuses[context] = call_status
+                if call_status == "insufficient_credits":
+                    credits_exhausted = True
                 continue
             items = list_candidates(response.get("body"))[:cap]
             status = "ok" if items else "empty"
         else:
             items, status = scrapecreators_paginate(endpoint, params, api_key, items_key, cursor_key, cap, raw["calls"], source)
+            if status == "insufficient_credits":
+                credits_exhausted = True
+                endpoint_statuses[context] = status
+                continue
         before = len(records)
         for item in items:
             if not isinstance(item, dict):
@@ -1829,7 +2190,7 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
             status = f"{status};items_without_text"
         endpoint_statuses[context] = f"{status};records={produced}"
 
-    if args.social_comments:
+    if args.social_comments and not credits_exhausted:
         comment_endpoints = {
             "facebook": "https://api.scrapecreators.com/v1/facebook/post/comments",
             "instagram": "https://api.scrapecreators.com/v2/instagram/post/comments",
@@ -1874,9 +2235,17 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
             endpoint_statuses[f"{context} comments"] = f"ok;records={len(records) - before}"
 
     first_response = (raw["calls"][0] or {}).get("response", {}) if raw["calls"] else {}
-    status = "ok" if records else status_from_response(first_response)
+    if credits_exhausted:
+        status = "insufficient_credits"
+    else:
+        status = "ok" if records else status_from_response(first_response)
     write_json(run_dir / "raw" / "scrapecreators.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "endpoint_statuses": endpoint_statuses, "fields": fields_present(raw)}
+    summary: dict[str, Any] = {"status": status, "record_count": len(records), "endpoint_statuses": endpoint_statuses, "fields": fields_present(raw)}
+    if credits_remaining is not None:
+        summary["credits_remaining_at_start"] = credits_remaining
+    if credits_exhausted:
+        summary["top_up_url"] = "https://app.scrapecreators.com/"
+    return records, summary
 
 
 def china_query_terms(args: argparse.Namespace, queries: list[str]) -> list[str]:
@@ -2739,6 +3108,15 @@ def provider_alerts(provider_summaries: dict[str, Any]) -> list[str]:
             continue
         if status == "missing_credentials":
             alerts.append(f"`{provider}` did not run because credentials are missing. Add the required key(s), then rerun validation.")
+        elif status == "insufficient_credits":
+            credits = summary.get("credits_remaining_at_start")
+            credit_note = f" (balance at run start: {credits})" if credits is not None else ""
+            alerts.append(
+                f"`{provider}` stopped because its paid credits are exhausted{credit_note}. "
+                "PAUSE and ask the user: add credits/top up, or continue without this source. "
+                "If the user confirms credits were added, rerun validation and repeat the run for this provider. "
+                "If the user says continue, record the source as unavailable, lower confidence, and do not treat its absence as absence of demand."
+            )
         elif status == "billing_required":
             alerts.append(f"`{provider}` is blocked by billing, missing credits, or quota. Add credits or switch providers before trusting source coverage.")
         elif status == "permission_denied":
@@ -3067,6 +3445,45 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace, queries: list[s
     (run_dir / "research_plan.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def load_provider_routing() -> dict[str, Any]:
+    """Read the latest provider-doctor summary so runs record which backend actually served each source family."""
+    doctor_path = ROOT / "research" / "evidence-scout" / "provider-doctor" / "doctor.summary.json"
+    try:
+        data = json.loads(doctor_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    families = data.get("source_families") if isinstance(data, dict) else None
+    if not isinstance(families, dict):
+        return {}
+    routing: dict[str, str] = {}
+    for family, item in families.items():
+        if isinstance(item, dict) and item.get("active_backend"):
+            routing[str(family)] = str(item["active_backend"])
+    return {"generated_at": data.get("generated_at"), "families": routing}
+
+
+PROVIDER_ROUTING_FAMILY = {
+    "reddit": "reddit",
+    "serpapi_google_trends": "google_trends",
+    "youtube": "youtube",
+    "firecrawl": "web_search",
+    "brave_search": "web_search",
+    "serper_search": "web_search",
+    "x": "social",
+    "xai_x_search": "social",
+    "scrapecreators": "social",
+    "sonar": "app_store",
+    "itunes_reviews": "app_store",
+    "hn": "founder_community",
+    "google_autocomplete": "founder_community",
+    "github": "github_issues",
+    "china_bilibili": "china_public_native",
+    "china_v2ex": "china_public_native",
+    "china_web": "china_web",
+    "china_xiaohongshu": "china_social",
+}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Collect normalized business-idea evidence.")
     parser.add_argument("--topic", required=True, help="Business idea, problem, category, or job-to-be-done.")
@@ -3093,7 +3510,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--providers",
         default="default",
-        help="Comma-separated providers. Use default, social, local_web, china_public, china_social, china, all, or explicit names: reddit,serpapi_google_trends,youtube,serper_search,firecrawl,brave_search,crawl4ai,markitdown,scrapling,x,xai_x_search,scrapecreators,sonar,china_bilibili,china_bilibili_comments,china_v2ex,china_web,china_xiaohongshu.",
+        help="Comma-separated providers. Use default, social, local_web, free_community, china_public, china_social, china, all, or explicit names: reddit,serpapi_google_trends,youtube,serper_search,firecrawl,brave_search,hn,github,google_autocomplete,itunes_reviews,crawl4ai,markitdown,scrapling,x,xai_x_search,scrapecreators,sonar,china_bilibili,china_bilibili_comments,china_v2ex,china_web,china_xiaohongshu.",
     )
     parser.add_argument(
         "--local-extract-url-limit",
@@ -3207,8 +3624,22 @@ def parse_args() -> argparse.Namespace:
         default=5,
         help="Maximum collected posts to enrich with comments when --social-comments is set.",
     )
+    parser.add_argument(
+        "--youtube-transcripts",
+        action="store_true",
+        help="Also fetch video transcripts via youtube_transcript_api (free, no API quota). Transcripts are creator voice, not customer voice.",
+    )
+    parser.add_argument(
+        "--youtube-transcript-max",
+        type=int,
+        default=5,
+        help="Maximum videos to fetch transcripts for when --youtube-transcripts is set. Keep low: YouTube can IP-throttle transcript requests.",
+    )
     parser.add_argument("--x-from-date", help="ISO date/datetime for Grok/xAI X Search start date.")
     parser.add_argument("--x-to-date", help="ISO date/datetime for Grok/xAI X Search end date.")
+    parser.add_argument("--itunes-app-ids", default="", help="Comma-separated Apple app IDs for free public review RSS (provider itunes_reviews), e.g. 123456789,987654321.")
+    parser.add_argument("--itunes-countries", default="", help="Comma-separated storefronts for itunes_reviews. Defaults to --geo.")
+    parser.add_argument("--itunes-max-pages", type=int, default=2, help="Maximum RSS pages per app/country for itunes_reviews (~50 reviews/page).")
     parser.add_argument("--xai-model", default="grok-4.3", help="xAI/Grok model for xai_x_search provider.")
     parser.add_argument("--xai-prompt", help="Override prompt for xai_x_search provider.")
     parser.add_argument("--geo", default="AUTO", help="Country/region code for providers that support geography. Use AUTO to infer from topic/segment.")
@@ -3271,6 +3702,10 @@ def main() -> int:
         "youtube": collect_youtube,
         "firecrawl": collect_firecrawl,
         "brave_search": collect_brave_search,
+        "hn": collect_hn,
+        "github": collect_github,
+        "google_autocomplete": collect_google_autocomplete,
+        "itunes_reviews": collect_itunes_reviews,
         "crawl4ai": collect_crawl4ai,
         "markitdown": collect_markitdown,
         "scrapling": collect_scrapling,
@@ -3301,6 +3736,13 @@ def main() -> int:
 
     relevant_records = [record for record in records if record.get("relevance") != "irrelevant"]
     irrelevant_records = [record for record in records if record.get("relevance") == "irrelevant"]
+    routing = load_provider_routing()
+    if routing:
+        for record in records:
+            family = PROVIDER_ROUTING_FAMILY.get(str(record.get("source")))
+            backend = (routing.get("families") or {}).get(family) if family else None
+            if backend:
+                record["active_backend"] = backend
     append_jsonl(run_dir / "evidence.jsonl", relevant_records)
     append_jsonl(run_dir / "irrelevant.jsonl", irrelevant_records)
     alerts = provider_alerts(provider_summaries)
@@ -3315,6 +3757,7 @@ def main() -> int:
         "geo": args.geo,
         "language": args.language,
         "providers_requested": selected_providers(args.providers),
+        "provider_routing": routing or None,
         "record_count": len(relevant_records),
         "irrelevant_count": len(irrelevant_records),
         "providers": provider_summaries,

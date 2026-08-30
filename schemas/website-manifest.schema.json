@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "website-manifest.schema.json",
+  "title": "Website Build Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "website_id", "entry_mode", "stack", "preferences", "concept", "pages", "qa", "release"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "website_id": {"type": "string", "minLength": 1},
+    "entry_mode": {"enum": ["standalone", "business_linked"]},
+    "stack": {"type": "object", "additionalProperties": false, "required": ["next", "react", "node", "package_manager", "resolver_source", "resolved_at"], "properties": {"next": {"type": "string"}, "react": {"type": "string"}, "node": {"type": "string"}, "package_manager": {"type": "string"}, "lockfile": {"type": "string"}, "resolver_source": {"type": "string", "format": "uri"}, "resolved_at": {"type": "string", "format": "date-time"}}},
+    "preferences": {"type": "string"},
+    "brand_refs": {"type": "array", "items": {"type": "string"}},
+    "concept": {"type": "object", "additionalProperties": false, "required": ["territories", "selected", "signature_device", "approval_status"], "properties": {"territories": {"type": "array", "items": {"type": "object"}}, "selected": {"type": "string"}, "signature_device": {"type": "string"}, "approval_status": {"enum": ["pending", "approved", "delegated"]}}},
+    "pages": {"type": "array", "items": {"type": "object"}},
+    "fal_assets": {"type": "array", "items": {"type": "object"}},
+    "experiment": {"type": ["object", "null"]},
+    "qa": {"type": "object", "additionalProperties": false, "required": ["build", "accessibility", "performance", "visual_review"], "properties": {"build": {"enum": ["pending", "pass", "fail"]}, "accessibility": {"enum": ["pending", "pass", "fail"]}, "performance": {"enum": ["pending", "pass", "fail"]}, "visual_review": {"enum": ["pending", "pass", "fail"]}}},
+    "release": {"type": "object", "additionalProperties": false, "required": ["status"], "properties": {"status": {"enum": ["local", "preview", "production", "rolled_back"]}, "github_repo": {"type": "string"}, "commit": {"type": "string"}, "preview_url": {"type": "string", "format": "uri"}, "production_url": {"type": "string", "format": "uri"}, "rollback_commit": {"type": "string"}}}
+  }
+}

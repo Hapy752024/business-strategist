@@ -14,8 +14,12 @@ Before analysis, give each role a short evidence-backed briefing from comparable
 | Segment Strategist | Compare reachable early segments | Trigger, pain, buyer, reachability, economics | One beachhead is recommended with explicit tradeoffs |
 | Distribution Operator | Challenge first-ten-customer and low-cost channels | Channel behavior, access, conversion assumptions | Each channel has a manual test and threshold |
 | Business Model Economist | Challenge pricing, margin, sales effort, retention | Price, cost-to-serve, cycle, churn assumptions | Unit-economics gaps and scale blockers are explicit |
+| GTM Sequencing Challenger | Check the plan against founder-playbook do's and don'ts | `references/evidence-registry.md` (sequencing rule, weak-evidence list, loop gates, channel/loop protocol) | Every stage skip, premature paid-scale step, borrowed founder tactic without prerequisites, and vanity-metric success criterion is flagged with the violated pattern |
+| Customer-Perspective Skeptic | Challenge the offer and messaging from the buyer's decision context | `references/evidence-registry.md` (Service-Customer Decision and Trust section) | Every claim is checked for missing uncertainty reducers relative to service risk, persona stereotyping, missing staged commitment, inauthentic proof, and unclear exit pathways |
 | Regulatory Skeptic | Identify licensing, advice, data, and consumer-risk gates | Current authoritative sources | Enabled only for regulated or sensitive models |
 | Decision Arbiter | Resolve disagreements against evidence and gates | Role memos and topic artifacts only | Verdict names decisive evidence and next test |
+
+Enable the GTM Sequencing Challenger whenever the decision involves launch, channels, pricing-led acquisition, loops, or scale spend. Enable the Customer-Perspective Skeptic whenever the decision involves a consumer service offer, packaging, pricing presentation, or messaging.
 
 ### Orchestration
 

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "all-coherent",
+    "pillars": ["responsive"],
+    "elements": [
+      {"category": "press-feedback", "element": "button", "pillar": "responsive", "overrides": []}
+    ],
+    "expected_verdict": "coherent"
+  },
+  {
+    "name": "override-with-justification",
+    "pillars": ["responsive"],
+    "elements": [
+      {"category": "press-feedback", "element": "button", "pillar": "responsive", "overrides": [{"property": "duration", "value": "120ms", "justification": "Apple Pay benchmark"}]}
+    ],
+    "expected_verdict": "coherent-with-caveats"
+  },
+  {
+    "name": "override-without-justification",
+    "pillars": ["responsive"],
+    "elements": [
+      {"category": "press-feedback", "element": "button", "pillar": "responsive", "overrides": [{"property": "duration", "value": "120ms", "justification": ""}]}
+    ],
+    "expected_verdict": "needs-rework"
+  },
+  {
+    "name": "missing-pillar-reference",
+    "pillars": ["responsive"],
+    "elements": [
+      {"category": "press-feedback", "element": "button", "pillar": "expressive", "overrides": []}
+    ],
+    "expected_verdict": "needs-rework"
+  }
+]

@@ -119,7 +119,7 @@ def runtime_for(item: dict[str, Any], validation: dict[str, dict[str, Any]]) -> 
         aggregate = "ok"
     elif all(entry.get("status") in {"missing_credentials", "missing_cli"} for entry in statuses):
         aggregate = "unavailable"
-    elif any(entry.get("status") in {"rate_limited", "billing_required", "permission_denied"} for entry in statuses):
+    elif any(entry.get("status") in {"rate_limited", "billing_required", "insufficient_credits", "permission_denied"} for entry in statuses):
         aggregate = "degraded"
     else:
         aggregate = "failed"

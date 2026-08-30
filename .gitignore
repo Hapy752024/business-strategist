@@ -20,6 +20,7 @@ node_modules/
 .claude/plans/
 .codex/artifacts/
 .firecrawl/
+.pytest_cache/
 
 # OS
 .DS_Store
@@ -33,6 +34,11 @@ Thumbs.db
 # Generated research outputs
 research/
 research.sqlite
+
+# Local business/brand project workspaces and eval runs
+projects/
+brand-projects/
+eval-workspaces/
 
 # Local git worktrees (machine-local checkouts)
 .claude/worktrees/

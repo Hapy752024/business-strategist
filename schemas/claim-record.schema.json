@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "claim-record.schema.json",
+  "title": "Evidence Claim Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claim_id", "claim_type", "claim", "supporting_evidence", "counter_evidence", "independence_count", "confidence", "confidence_rationale"],
+  "properties": {
+    "claim_id": {"type": "string", "minLength": 1},
+    "claim_type": {"enum": ["observation", "inference", "hypothesis", "recommendation"]},
+    "claim": {"type": "string", "minLength": 1},
+    "supporting_evidence": {"type": "array", "items": {"type": "string"}},
+    "counter_evidence": {"type": "array", "items": {"type": "string"}},
+    "independence_count": {"type": "integer", "minimum": 0},
+    "duplicate_clusters": {"type": "array", "items": {"type": "string"}},
+    "geography": {"type": "string"},
+    "segment": {"type": "string"},
+    "freshness": {"type": "string"},
+    "applicability": {"type": "string"},
+    "confidence": {"enum": ["low", "medium", "high", "unresolved"]},
+    "confidence_rationale": {"type": "string", "minLength": 1},
+    "missing_critical_sources": {"type": "array", "items": {"type": "string"}},
+    "decision_affected": {"type": "string"},
+    "none_found_scope": {"type": ["object", "null"]}
+  }
+}

@@ -50,6 +50,7 @@ Select one primary archetype. If the model combines software, service, marketpla
 ### Launch
 
 - Choose one primary discovery loop: explicit search/app-store intent, niche community, creator/expert audience, useful shareable artifact, or product invite.
+- Distinguish the acquisition channel from the compounding mechanism. Recipient exposure, collaboration, reciprocal rewards, and network utility each require different product behavior and metrics.
 - Align the promise to the customer's desired outcome, not feature volume. In the Popsa case, a concrete time-to-value promise materially improved app-store conversion before paid scale.
 - Make onboarding deliver the promised value quickly and instrument the drop-off points.
 - Use lifecycle communication as part of the product experience, not a substitute for product value.
@@ -59,11 +60,12 @@ Select one primary archetype. If the model combines software, service, marketpla
 - Scale a channel only when its cohort activates and retains acceptably and its contribution economics are plausible.
 - Find the constraint in the customer journey and run focused experiments rather than copying a generic growth checklist.
 - Add bundles, affiliates, platforms, employers, creators, or device/channel partners when they own a relevant audience and the value exchange is measurable.
+- Launch referrals after activation: value must precede the invitation, rewards should fit the product where possible, and referred cohorts must retain with viable economics after rewards and abuse.
 - Separate acquisition spikes from durable growth; high downloads with weak retention are not product-market fit.
 
 ### Failure patterns
 
-- Paying for installs before retention, relying on notification pressure, optimizing trial starts instead of retained value, discount-driven subscribers who churn, and expanding to many languages before the home-market funnel works.
+- Paying for installs before retention, relying on notification pressure, optimizing trial starts instead of retained value, discount-driven subscribers who churn, calling a share button a viral loop, paying for unqualified signups, and expanding to many languages before the home-market funnel works.
 
 ## B2C Fintech and Insurtech
 
@@ -80,6 +82,7 @@ Select one primary archetype. If the model combines software, service, marketpla
 - Consider a regulated partner, employer/benefit platform, broker/advisor, bank, association, retailer, or affinity group when it controls trust or the trigger event.
 - Run partner referrals manually before API integration. Agree eligibility, consent, handoff, service levels, complaints, economics, and attribution.
 - Use referral incentives carefully; measure funded, active, retained, or appropriately covered customers—not signups alone.
+- If community is part of the trust strategy, define the repeated member-to-member value, moderation, complaint escalation, promotion rules, and link to customer outcomes. A follower audience or brand page is not a community.
 
 ### Repeat and scale
 
@@ -90,7 +93,7 @@ Select one primary archetype. If the model combines software, service, marketpla
 
 ### Failure patterns
 
-- Growth incentives that attract low-quality accounts, treating a license as GTM, hiding revenue-share economics, unreviewed automated advice, expansion before local compliance/support readiness, and subsidized growth mistaken for demand.
+- Growth incentives that attract low-quality accounts, referral queues that can be gamed, treating a license as GTM, hiding revenue-share economics, unreviewed automated advice, expansion before local compliance/support readiness, and subsidized growth mistaken for demand. Monzo's early growth is a useful caution: strong word of mouth and retention coexisted with negative prepaid-card economics.
 
 ## B2C Professional Services
 

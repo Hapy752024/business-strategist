@@ -1,0 +1,22 @@
+{
+  "profile_id": "{{PROJECT_SLUG}}-website-preferences",
+  "version": 1,
+  "locale": "en",
+  "choices": {
+    "restrained_or_expressive": "unresolved",
+    "minimal_or_layered": "unresolved",
+    "editorial_or_product_led": "unresolved",
+    "geometric_or_organic": "unresolved",
+    "warm_or_cool": "unresolved",
+    "static_or_kinetic": "unresolved",
+    "familiar_or_experimental": "unresolved",
+    "sparse_or_dense": "unresolved",
+    "typography_personality": "unresolved",
+    "imagery_mode": "unresolved",
+    "motion_appetite": "unresolved",
+    "accessibility_needs": "unresolved"
+  },
+  "likes": [],
+  "dislikes": [],
+  "provenance": {}
+}

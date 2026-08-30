@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-frontend-app-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build a branded product dashboard screen from the approved tokens.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

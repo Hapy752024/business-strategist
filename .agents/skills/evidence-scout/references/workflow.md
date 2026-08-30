@@ -53,7 +53,9 @@ python3 scripts/evidence_scout/provider_doctor.py --json
 
 It writes `research/evidence-scout/provider-doctor/doctor.summary.json` and `doctor.md`. Inspect `source_families.*.active_backend` and `needs_user_attention` before interpreting source coverage. The doctor consumes the latest live API validation summary when available; credentials alone are not proof that a provider is usable.
 
-If any requested or important provider reports `missing_credentials`, `billing_required`, `permission_denied`, `rate_limited`, `unsupported`, or `failed`, notify the user before interpreting the evidence. Explain which source was unavailable, why it matters, and how to fix or bypass it. Do not bury API failures in the final caveats.
+If any requested or important provider reports `missing_credentials`, `billing_required`, `insufficient_credits`, `permission_denied`, `rate_limited`, `unsupported`, or `failed`, notify the user before interpreting the evidence. Explain which source was unavailable, why it matters, and how to fix or bypass it. Do not bury API failures in the final caveats.
+
+On `insufficient_credits` specifically, follow the Insufficient Credits Protocol in `references/provider-policy.md`: pause, ask the user to add credits or continue without the source, rerun validation + collection if they topped up, or record the coverage gap if they continue.
 
 Then collect evidence with currently available providers:
 

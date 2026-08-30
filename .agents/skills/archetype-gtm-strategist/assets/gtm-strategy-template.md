@@ -46,34 +46,44 @@
 
 ## 7. Channel portfolio
 
-| Channel | Role | Why it fits | First test | Cost cap | Success/stop rule |
-|---|---|---|---|---|---|
+| Channel | Job in journey | Audience/context fit | Operating requirement | First test | Source-cohort metric | Cost cap | Success/stop rule |
+|---|---|---|---|---|---|---|---|
 
 Name one primary channel, one supporting channel, and the channels explicitly deferred.
 
-## 8. Partnership portfolio
+## 8. Product, referral, or community loop
+
+- Loop type: recipient exposure / collaboration / reciprocal reward / scarcity-invite / network utility / community.
+- Value delivered before invitation:
+- Relevant recipient and why they participate:
+- Loop steps and conversion metric at each step:
+- Activation and retention comparison for recipients:
+- Reward economics, attribution, fraud/abuse, complaints, and compliance:
+- Evidence gate to launch, scale, change, or defer:
+
+## 9. Partnership portfolio
 
 | Partner type | Trigger/audience access | Value exchange | Manual pilot | Economics | Compliance/data owner | Attribution | Exit rule |
 |---|---|---|---|---|---|---|---|
 
-## 9. Funnel and economics
+## 10. Funnel and economics
 
 - Trigger → acquisition → conversion → activation → retained value → referral/expansion.
 - Price/revenue, gross or contribution margin, acquisition cost, onboarding/delivery/support cost, partner share, refund/claims/fraud exposure, payback hypothesis.
 
-## 10. Regional adaptation
+## 11. Regional adaptation
 
 - Europe home-market plan:
 - US adaptation, if relevant:
 - China adaptation, if relevant:
 - Localization/regulatory/partner gates:
 
-## 11. Experiment backlog
+## 12. Experiment backlog
 
 | Priority | Hypothesis | Test | Metric | Pass | Repeat | Pivot/stop | Owner | Deadline |
 |---|---|---|---|---|---|---|---|---|
 
-## 12. Execution
+## 13. Execution
 
 ### Next 7 days
 
@@ -83,6 +93,6 @@ Name one primary channel, one supporting channel, and the channels explicitly de
 
 ### Days 61–90
 
-## 13. Scale gate
+## 14. Scale gate
 
 - What must be true before more paid spend, hiring, automation, product breadth, or geographic expansion?

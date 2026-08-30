@@ -1,0 +1,12 @@
+[
+  {"prompt": "Make my app feel polished like Airbnb", "expected": true},
+  {"prompt": "How should my charts animate when data loads?", "expected": true},
+  {"prompt": "Define motion guidelines for my brand", "expected": true},
+  {"prompt": "I want iOS-style spring animations for my modals", "expected": true},
+  {"prompt": "What's a good transition between my login and dashboard pages?", "expected": true},
+  {"prompt": "Design a logo for my company", "expected": false},
+  {"prompt": "Pick brand colors for a fintech startup", "expected": false},
+  {"prompt": "Give me a React component for a text input", "expected": false},
+  {"prompt": "Write brand voice guidelines", "expected": false},
+  {"prompt": "Audit my competitors' websites", "expected": false}
+]

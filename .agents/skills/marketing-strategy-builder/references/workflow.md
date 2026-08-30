@@ -135,7 +135,7 @@ For B2B, include buyer committee, champion, economic buyer, procurement, securit
 
 ## Channel Strategy
 
-Choose channels based on customer behavior, not founder preference. Consider:
+Choose channels based on customer behavior, not founder preference. Before naming a platform, assign it one job: discovery, education/trust, demand capture, conversion, activation, lifecycle, referral, community, or recruiting. Consider:
 
 - Search: existing intent, comparison queries, pain queries.
 - Content/SEO: education-heavy markets with durable questions.
@@ -147,7 +147,33 @@ Choose channels based on customer behavior, not founder preference. Consider:
 - Events/webinars: complex categories requiring trust.
 - Marketplaces/app stores: when buyer already searches there.
 
-For each channel, include reason, first test, budget/time, success threshold, and stop condition.
+For each channel, answer the eight questions of the channel/loop recommendation protocol in `references/evidence-registry.md` (stage, customer context, channel job, mechanism, prerequisites, cohort gate, transfer limit, stop rule). Include the customer context and job; the asset, credibility, cadence, and operating capacity required; the conversion bridge; the first test and cost cap; the source-cohort metric; and the success/stop rule. Add a transfer warning when a founder example depends on unusual network, reputation, audience, product-workflow, timing, or regulatory advantages. A channel recommendation that cannot name its cohort gate and stop rule is a hypothesis — cap the budget and name the evidence that unlocks more.
+
+Name one primary acquisition motion and one supporting/owned motion. Explicitly defer channels that lack audience fit, assets, capacity, retained-value evidence, or viable economics. Use the channel-job guidance in `references/evidence-registry.md`; retrieve current official platform details before prescribing formats, targeting, algorithms, costs, or regulated-advertising execution.
+
+## Referral, Product, and Community Loops
+
+Do not describe a share button, waitlist, follower audience, or branded group as a growth loop. Diagnose recipient exposure, collaboration, reciprocal reward, scarcity/invite, network utility, or repeated member-to-member exchange.
+
+Recommend a loop only when value precedes the invitation, the recipient has a real job, every step is measurable, and retained contribution after rewards, fraud, support, refunds/claims, and complaints is plausible. For regulated services, include promotion/incentive, suitability, privacy, and abuse review.
+
+For community, require a narrow member identity, recurring useful exchange, founder/operator stewardship, newcomer onboarding, roles/recognition, moderation, and a customer-outcome link. Track member-to-member help, return contribution, activity not initiated by staff, product/customer outcomes, and moderation load—not just member count or posts.
+
+## Low-Cost Growth Guardrail
+
+Interpret “growth hacks” as low-cash, high-learning, compounding distribution: founder recruitment/onboarding, useful participation in concentrated communities, customer-language content, high-intent SEO, native repurposing, post-activation invitations, product-currency rewards, recipient exposure, and manual partner handoffs. Reject spam, fake scarcity, manufactured controversy, mass unsolicited automation, dark patterns, and regulatory arbitrage.
+
+## Customer-Perspective Challenge Pass
+
+Before finalizing positioning, offer, messaging, or funnel for a consumer service, run the draft against the Service-Customer Decision and Trust checks in `references/evidence-registry.md`:
+
+- Does the offer lead with uncertainty reducers (precise scope, process visibility, credentials, total price, human access, redress) when the service is consequential, unfamiliar, data-sensitive, or hard-to-reverse?
+- Is the segment defined by trigger, job, and risk context rather than a nationality-based persona?
+- Does the proof plan rely on review conditions that actually build trust (recent, specific, independently verifiable, provider responds to failure) rather than star averages or incentivized reviews?
+- Is the commitment staged (diagnostic, fixed-scope pilot) when outcome variance and expertise asymmetry are high, instead of one large irreversible purchase?
+- Are cancellation, refund, data-use, and complaint pathways clear in the funnel and messaging?
+
+Escalate to `service-customer-perspective-challenger` for a full challenge when the service is high-risk (regulated, health, financial, legal, immigration, data-sensitive) or when the founder's messaging assumptions conflict with these checks. Its simulated customer voice is a hypothesis input, not customer evidence.
 
 ## Proof Assets
 
@@ -176,8 +202,11 @@ Pick metrics based on goal and stage:
 - Product-led: activation, retention, expansion, referral, product-qualified leads.
 - Ecommerce: conversion rate, AOV, contribution margin, repeat purchase, refund rate.
 - Brand/content: assisted pipeline, branded search, direct traffic quality, subscriber-to-lead conversion.
+- Product/referral loops: invitation rate, recipient activation, reproduction by cohort, retained contribution, abuse/fraud, complaints.
+- Community: useful member-to-member response, return contribution, staff-independent activity, activation/retention/referral influence, moderation load.
 
 Do not treat impressions, views, likes, or follower count as success unless tied to a downstream behavior.
+For meaningful paid budgets, recommend an incrementality design where feasible. Platform attribution is diagnostic; it is not by itself causal proof.
 
 ## Quality Checklist
 
@@ -188,9 +217,13 @@ Before finalizing, check:
 - Positioning uses concrete outcomes rather than vague claims.
 - The offer reduces risk for the right customer.
 - Recommended channels match actual customer behavior or a stated hypothesis.
+- Every channel has a named job, operating requirement, conversion bridge, source-cohort metric, and stop rule.
+- Founder examples include prerequisites and transfer limits rather than copyable tactics.
+- Any product/referral/community loop proves value before invitation and includes retained-economics and abuse gates.
 - Proof assets are named, and missing proof becomes part of the plan.
 - Metrics include decision thresholds and stop conditions.
 - Traction claims were checked against the weak-evidence list and the strategy does not rest on attention metrics alone.
+- For consumer services, the customer-perspective challenge pass was run: uncertainty reducers match the service's risk level, segments rest on trigger/job/risk rather than personas, proof uses authentic-review conditions, commitment is staged where outcome variance is high, and exit pathways are clear.
 
 ## Output
 

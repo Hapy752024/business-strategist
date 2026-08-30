@@ -69,10 +69,25 @@ def main() -> int:
         "video_count": len((search_response.get("body") or {}).get("items", [])) if status == "ok" else 0,
         "comment_fetch_status": comment_status,
         "comment_count": comment_count,
+        "transcript_status": transcript_probe()[0],
+        "transcript_note": "Transcripts use youtube_transcript_api (no API key/quota). Status ok means transcript collection via collect.py --youtube-transcripts will work.",
         "docs": "https://developers.google.com/youtube/v3/getting-started",
         "cost_note": "Default YouTube quota is quota-unit based. Search and comment reads consume quota; confirm current costs in Google docs.",
     }
     return finish(PROVIDER, summary, raw)
+
+
+def transcript_probe() -> tuple[str, int]:
+    """Probe youtube_transcript_api against a captioned video. Returns (status, segment_count)."""
+    try:
+        from youtube_transcript_api import YouTubeTranscriptApi
+    except ImportError:
+        return "missing_module", 0
+    try:
+        fetched = YouTubeTranscriptApi().fetch("8jPQjjsBbIc")  # TED talk with captions
+        return "ok", len(list(fetched))
+    except Exception as exc:  # noqa: BLE001 - several HTTP/IP-block error types
+        return f"error:{type(exc).__name__}", 0
 
 
 if __name__ == "__main__":

@@ -39,6 +39,18 @@ Pass an evidence run directory (`research/topics/<topic>/evidence/runs/<run>`) o
 6. Update the tally after each batch. A signal with 3+ independent confirmations can be treated as more than a lead; one clear refutation demotes it below the public post that produced it.
 7. Feed confirmed/refuted results back into the topic workspace before running `idea-grill` refinement or `opportunity-risk-designer`.
 
+## Hypothesis Probes From The Evidence Registry
+
+Public evidence tests pain and workaround; it rarely tests the offer. When the workspace carries offer, pricing, packaging, channel, or loop hypotheses, add probes derived from the untested hypotheses in `references/evidence-registry.md`, phrased as past-behavior questions rather than pitches:
+
+- **Uncertainty reducers:** for consequential, data-sensitive, or hard-to-reverse services, ask how the participant evaluated the last comparable purchase — what they needed to see (scope, credentials, total price, human contact, redress) before committing, and what made them walk away.
+- **Staged commitment:** ask whether they previously bought a diagnostic, trial, or fixed-scope first step before a large commitment in this category, and what happened — instead of asking whether they *would* prefer one.
+- **Reviews and proof:** ask which reviews or proof they actually used last time, how they judged authenticity, and whether a provider's response to a failure ever changed a decision.
+- **Exit clarity:** ask whether cancellation, refund, or contract terms ever stopped or delayed a purchase in this category.
+- **Referral and loop hypotheses:** if a referral or recipient-exposure loop is planned, ask about the last time they recommended or were recommended a comparable service — the trigger, the wording, and whether the recipient acted.
+
+Each registry-derived probe is a hypothesis probe, not an evidence probe: tag it `H` in the guide (vs. `E1, E2, …` for evidence-traced probes) and log confirmations/refutations against the hypothesis in the tracker. Never read the offer to the participant to "test" it — these probes exist to learn how the segment decides, not to pitch.
+
 ## Interview Rules
 
 - Ask about past behavior, not future intentions. `Tell me about the last time…` beats `Would you use…`.
@@ -55,7 +67,7 @@ Pass an evidence run directory (`research/topics/<topic>/evidence/runs/<run>`) o
 
 ## Quality Checklist
 
-- Every guide probe traces to a source URL and is phrased non-leading.
+- Every guide probe traces to a source URL (`E`) or a named registry hypothesis (`H`) and is phrased non-leading, past-behavior first.
 - The screener disqualifies never-experienced and no-workaround participants.
 - The tracker logs refutations with the same weight as confirmations.
 - Interview results were written back into the workspace (manifest gaps, assumptions, or candidate notes) before the next skill runs.

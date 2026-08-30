@@ -1,0 +1,11 @@
+{
+  "skill_name": "setup-multiharness-project",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Synchronize the project harness configuration without leaking secrets.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

@@ -12,6 +12,7 @@ Use this skill when the user wants a detailed, actionable social or digital mark
 Before creating a substantial plan, read:
 
 - `references/social-digital-marketing-research.md`
+- The channel jobs, founder prerequisites, loop gates, community operating model, and incrementality rules in `references/evidence-registry.md` at repo root.
 - If the user arrives with an untested channel/content idea, validate it first with `social-media-idea-validator`; its `references/founder-playbooks.md` holds the practitioner evidence base (SaaS, insurtech, professional services) for what actually works.
 
 If the user asks for latest platform-specific specs, ad formats, targeting features, algorithm changes, or benchmarks, search current official platform documentation before giving precise advice.
@@ -41,7 +42,7 @@ If missing information would materially change the plan, ask one focused questio
 
 If the user wants a fast draft, state assumptions clearly and create a testable plan that can be refined.
 
-If the user is still exploring which customer problem or segment to pursue, use `market-problem-discovery` before planning channels. For unsupported demand claims about a chosen candidate, use `idea-grill` and `evidence-scout`. For competitor positioning or channel examples, use `competitor-scout` and `competitor-marketing-analyzer`. For broader marketing strategy, coordinate with `marketing-strategy-builder`.
+If the user is still exploring which customer problem or segment to pursue, use `market-problem-discovery` before planning channels. For unsupported demand claims about a chosen candidate, use `idea-grill` and `evidence-scout`. For competitor positioning or channel examples, use `competitor-scout` and `competitor-marketing-analyzer`. For broader marketing strategy, coordinate with `marketing-strategy-builder`. For consumer services that are regulated, data-sensitive, or hard to reverse, challenge the offer and message with `service-customer-perspective-challenger` before committing creative and spend.
 
 ## Minimum Inputs
 
@@ -61,7 +62,7 @@ Try to capture:
 1. Diagnose the goal, stage, audience, offer, channel history, budget, and constraints.
 2. State assumptions and gaps before recommending platforms or budget.
 3. Define the audience and buyer trigger in concrete language.
-4. Map platform roles by funnel stage instead of listing every social network.
+4. Map platform roles by customer job—discovery, education/trust, capture, conversion, activation, lifecycle, community, or recruiting—instead of listing every social network.
 5. Define content pillars and creative angles tied to audience pain, desire, proof, objections, and identity.
 6. Build the organic plan: cadence, formats, calendar, engagement routine, repurposing system.
 7. Build the paid plan only when conversion path and creative testing logic are clear.
@@ -89,19 +90,44 @@ If the user starts with a channel request such as "make a TikTok strategy" or "s
 
 ## Platform Roles
 
-Choose platforms by audience behavior, content fit, and operational capacity:
+Choose platforms by audience behavior, customer job, content fit, conversion bridge, and operational capacity:
 
-- Instagram: visual storytelling, Reels, lifestyle, product proof, creator/UGC, community, local discovery.
-- TikTok: platform-native short video, entertainment, education, founder/employee/customer presence, trend-aware storytelling, creative testing.
-- LinkedIn: B2B trust, thought leadership, founder/executive voice, hiring brand, demand generation, account targeting.
-- YouTube: search-led education, product demos, tutorials, reviews, long-form proof, Shorts repurposing.
-- Meta/Facebook: broad paid reach, retargeting, local/community, groups, older demographics, conversion campaigns.
-- X: real-time commentary, founder voice, tech/media niches, customer support, industry conversation.
+- Instagram: visual proof, identity/lifestyle, Reels, creator/customer stories, and local discovery. Do not use it as the sole explanation/conversion path for complex high-trust finance.
+- TikTok: discovery, native short-video creative learning, human demos, and founder/employee/customer presence. It needs sustained creative cadence and an education/conversion bridge for considered purchases.
+- LinkedIn: B2B trust, founder/expert point of view, account education, trigger-based outreach, hiring, and qualified pipeline. Generic corporate posting and broad B2C reach are weak fits.
+- YouTube: searchable education, product demos, comparisons, customer stories, and long-form proof; Shorts can support discovery. Production and compounding are slower than direct first-customer work.
+- Meta/Facebook: paid reach, retargeting, local services, older audiences, conversion campaigns, and participation in some established groups. An organic page is not a community, and paid scale requires retained-value and incrementality gates.
+- X: real-time commentary, founder voice, tech/media niches, customer support, and industry conversation. Use only where the target audience and founder operating style fit.
+- Reddit/Hacker News/specialist forums: problem learning, feedback, and credible niche entry through useful participation. Promotion-first posting, lead scraping, and treating votes as demand are anti-patterns.
 - Pinterest: visual search, evergreen discovery, shopping inspiration, DIY, home, fashion, food, events.
 - Email/SMS: conversion, retention, owned audience, launch follow-up, lifecycle campaigns.
-- Search/SEO/paid search: demand capture when users already search for the problem, category, or competitor.
+- Search/SEO: explicit problem/category/comparison intent and durable education; an unknown category first needs category education.
+- Paid search: explicit demand capture with source-cohort and incrementality measurement; check whether brand ads merely intercept organic users.
+- Creators/podcasts: borrowed niche trust, education, and demonstrations; select for audience/product fit and qualified downstream behavior, not follower count.
+- Product surfaces: recipient exposure, collaboration, referral, and network utility. These are loops rather than media channels and require value before invitation.
 
-Do not recommend a platform unless you can explain its role, audience fit, content requirement, and success metric.
+Do not recommend a platform unless you can explain its customer job, audience/context fit, operating requirement, conversion bridge, source-cohort metric, and stop rule. Run the eight-question channel/loop recommendation protocol in `references/evidence-registry.md` (stage, customer context, channel job, mechanism, prerequisites, cohort gate, transfer limit, stop rule) for each primary and supporting platform. Name one primary platform and one supporting/owned motion; explicitly defer the rest.
+
+## Product, Referral, And Community Loops
+
+Do not call a share button, contact upload, waitlist, follower base, or branded group a loop by default. Diagnose:
+
+- Recipient exposure: a necessary participant experiences immediate value.
+- Collaboration: a shared job becomes more useful with a relevant participant.
+- Reciprocal reward: both parties receive product-relevant value.
+- Scarcity/invite: access is genuinely limited and invitations follow qualification or activation.
+- Network utility: relevant connections improve recurring product value.
+- Community: members repeatedly create value for one another.
+
+For each proposed loop, map every step, value before the ask, recipient relevance, activation/retention by source, reward economics, attribution, fraud/abuse, complaints, privacy, and compliance. Defer the loop when single-user value or retained economics are unproven.
+
+For community, specify the member identity, recurring exchange, founding cohort, ritual, founder/operator role, newcomer path, roles/recognition, moderation, safety, and link to customer outcomes. Track useful member-to-member response, return contribution, staff-independent activity, product/customer outcomes, and moderation load—not member count alone.
+
+## Founder-Pattern Transfer Check
+
+When borrowing a founder story, name the mechanism and the prerequisite. Dropbox's demo had technical-community fit; Stripe had dense YC access and technical credibility; Buffer had a relevant founder audience; Monzo had a strong mission, timing, media access, and an early-adopter cohort willing to tolerate an incomplete product. If the prerequisite is missing, test the underlying mechanism at small scale or reject the tactic.
+
+Treat “growth hacking” as low-cash, high-learning, compounding distribution: founder onboarding, useful community participation, customer-language content, high-intent SEO, native repurposing, post-activation invitations, product-currency rewards, recipient exposure, and manual partner handoffs. Reject spam, fake scarcity, manufactured controversy, mass unsolicited automation, dark patterns, and regulatory arbitrage.
 
 ## Content System
 
@@ -160,6 +186,8 @@ Tie metrics to the goal:
 - Sales/ecommerce: conversion rate, CAC, contribution margin, ROAS, payback, repeat purchase.
 - B2B pipeline: account engagement, MQL/SQL quality, opportunity creation, pipeline value, sales cycle, win rate.
 - Retention: repeat purchase, renewal, churn reduction, referral, lifecycle engagement.
+- Product/referral loops: invitation rate, recipient activation, loop conversion, retained contribution, abuse/fraud, complaints.
+- Community: useful response, return contribution, staff-independent activity, activation/retention/referral influence, moderation load.
 
 For meaningful paid budgets, recommend incrementality or lift testing when feasible. Do not treat attribution reports as the full truth.
 
@@ -173,6 +201,9 @@ Before recommending publication or launch, check:
 - Has anyone outside the core team reviewed it from the audience's perspective?
 - Does humor punch down or alienate the buyer?
 - Are testimonials, before/after claims, AI claims, health/finance/legal claims, or environmental claims compliant?
+- Are reviews and testimonials authentic, unincentivized (or disclosed per FTC material-connection rules), recent, and specific? Never recommend buying, faking, or suppressing reviews as a tactic — it is both a documented trust-destroyer and a legal violation.
+- Are fees, total price, cancellation, and refund terms clear in every ad, landing page, and funnel step? Hidden fees and hard cancellation are compliance constraints and trust failures, not conversion tactics.
+- For consequential, data-sensitive, or hard-to-reverse services, do the ads and landing pages carry the uncertainty reducers (precise scope, credentials, total price, human access, redress) from the Service-Customer Decision and Trust section of the evidence registry — or do they only promise lifestyle outcomes?
 - Are accessibility basics covered: captions, readable contrast, alt text where relevant?
 - Are privacy and consent handled for UGC, customer data, tracking, and retargeting?
 - Is there a crisis response owner if the campaign receives backlash?
@@ -214,12 +245,16 @@ Before finalizing, check:
 
 - The plan starts from business objective and audience, not platform preference.
 - Each recommended channel has a role, content requirement, and KPI.
+- Each recommended channel also has a conversion bridge, source-cohort metric, and stop rule; deferred channels are named.
+- Founder examples include prerequisites and transfer limits rather than copyable surface tactics.
+- Product/referral/community loops prove value before invitation and include retained-economics, abuse, and compliance gates.
 - The content pillars connect to pain, proof, objections, desire, or identity.
 - The plan includes a feasible cadence based on team capacity.
 - Paid spend has a conversion path, creative test plan, and stop/scale threshold.
 - Traction claims were classified against the weak-evidence list; a scale plan was only produced when retained-value evidence exists.
 - Metrics distinguish attention from business impact.
 - Risk review catches cultural, legal, claim, privacy, and accessibility issues.
+- Review/testimonial tactics meet authenticity and disclosure rules; fees, cancellation, and refund terms are clear in ads and landing pages; high-risk service creative carries uncertainty reducers, not just lifestyle promises.
 - Next actions are specific enough to execute this week.
 
 ## Suggested First Question

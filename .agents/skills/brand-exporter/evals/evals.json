@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-exporter",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Export the approved brand assets and preserve provenance.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

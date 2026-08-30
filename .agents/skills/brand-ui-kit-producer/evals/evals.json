@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-ui-kit-producer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a branded UI token kit from the approved direction.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

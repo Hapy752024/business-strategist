@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-motion-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Define coherent motion tokens for the approved brand.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

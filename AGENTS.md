@@ -68,8 +68,27 @@ Situational skills — invoke when the description matches:
 - `interview-bridge` — convert weak/medium evidence from a run into an interview screener, non-leading guide, and confirmation tracker when the next uncertainty-reducing step is talking to real customers.
 - `growth-case-analyzer` — successful/failed company case studies and practical lessons.
 - `business-archetype-playbook-researcher` — sourced founder/operator lessons by business archetype.
-- `startup-challenge-panel` — high-stakes thesis, segment, launch, or scale challenges with multi-role panel.
+- `startup-challenge-panel` — high-stakes thesis, segment, launch, or scale challenges with multi-role panel (includes GTM-sequencing and customer-psychology challenger roles).
+- `strategy-draft-tournament` — generate-and-judge over 3-4 diverse drafts (service definition, pricing, GTM motion, campaign concept) with an evidence-lens judge, cross-pollinated feedback round, and winner selection.
 - `competitor-monitoring` — recurring competitor monitoring, web-traffic estimates, and local/physical-location evidence.
+
+Brand and website capabilities (independent of business research):
+
+- `brand-designer` — brand orchestration and stage routing.
+- `brand-discovery-interviewer` — standalone brand brief and preference discovery.
+- `brand-workspace-manager` — resumable brand workspace state.
+- `brand-guideline-researcher` / `brand-typography-researcher` — brand-specific research.
+- `brand-strategy-director` — positioning and creative territories.
+- `brand-asset-producer` / `brand-exporter` — approved assets and delivery packages.
+- `brand-ui-kit-producer`: design tokens and UI kit.
+- `brand-motion-designer`: motion tokens and behavior.
+- `brand-ui-component-producer`: reusable branded components.
+- `brand-frontend-app-designer` — product/app interfaces; keep this separate from marketing websites.
+- `brand-quality-reviewer` / `brand-guidelines-writer` — QA and guidelines.
+- `brand-website-designer-builder` — preference-led, distinctive Next.js websites, optional FAL assets, Vercel release, and simple A/B tests.
+- `setup-multiharness-project` — harness setup and synchronization.
+
+Brand requests do not require market research. After a user explicitly selects a validated business handoff, branding may reuse its segment and positioning snapshot. A completed business validation never starts branding automatically.
 
 ## Commands
 
@@ -125,9 +144,11 @@ Full command variants and provider routing details live in each skill's `referen
 
 ## Provider Policy
 
-- Default providers: Reddit, SerpAPI Google Trends, YouTube Data API, Serper.dev Google SERP, Firecrawl, Brave Search.
+- Default providers: Reddit, SerpAPI Google Trends, YouTube Data API, Serper.dev Google SERP, Firecrawl, Brave Search, plus the zero-credential set HN Algolia (`hn`), GitHub issue search (`github`), and Google autocomplete (`google_autocomplete`) included in `default`. iTunes review RSS (`itunes_reviews`) is free but explicit (needs `--itunes-app-ids`).
 - Firecrawl always uses `FIRECRAWL_API_KEY_HGINVESTOR`.
 - Ask the user before running paid-credit providers (social, Sonar, China social).
+- If a paid provider reports `insufficient_credits`/`billing_required`, pause and ask the user: top up or continue without the source. On top-up, re-validate and rerun the provider; on continue, record the coverage gap. Never treat a credit-blocked source as absence of demand. Full protocol: `.agents/skills/evidence-scout/references/provider-policy.md`.
+- YouTube transcripts: `collect.py --youtube-transcripts` (via `youtube_transcript_api`, free, no quota). Transcripts are creator voice, not customer voice.
 - Google Trends is a search-demand proxy only. Likes, views, and comments are weak evidence.
 - Full provider routing, China coverage, app-store enrichment, and source priority order: `.agents/skills/evidence-scout/references/provider-policy.md`.
 

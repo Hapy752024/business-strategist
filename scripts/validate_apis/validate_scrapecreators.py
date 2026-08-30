@@ -26,10 +26,15 @@ def main() -> int:
         headers={"x-api-key": api_key},
     )
     body = response.get("body")
+    status = status_from_response(response)
+    credit_count = body.get("creditCount") if isinstance(body, dict) else None
+    if status == "ok" and isinstance(credit_count, int) and credit_count <= 0:
+        status = "insufficient_credits"
     summary = {
-        "status": status_from_response(response),
+        "status": status,
         "credential_source": key_name,
         "http_status": response.get("status_code"),
+        "credits_remaining": credit_count,
         "fields": fields_present(body),
         "docs": "https://docs.scrapecreators.com/",
         "coverage_note": "Covers public social data across TikTok, Instagram, YouTube, Facebook, X/Twitter, Reddit, Threads, LinkedIn, Pinterest, Bluesky, and more.",

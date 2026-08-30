@@ -59,6 +59,8 @@ Rank these risks:
 - Channel risk: early adopters cannot be reached ethically or cheaply.
 - Timing risk: interest is declining, seasonal, or driven by temporary news.
 - Evidence coverage risk: key sources failed, lacked credits, lacked permissions, or were not run.
+- Sequencing risk: the plan amplifies before proof. Check against the sequencing rule and canonical failure modes in `references/evidence-registry.md`: paid or discount-driven acquisition before retained-value proof (Homejoy scaled Groupon cohorts with inconsistent delivery and negative contribution margin), loops before single-user value, waitlists or press treated as PMF (Robinhood's earlier products; Socialcam). When the test plan or roadmap skips manual learning → proof → one repeatable motion, name the skip as a ranked risk and make the skipped stage the next test.
+- Trust-pattern risk: the model or plan depends on tactics the registry classifies as dark patterns or compliance violations — incentivized/fake reviews, hidden fees, obstructed cancellation, pressure selling. For consumer services, also rank the absence of uncertainty reducers (scope, total price, credentials, human access, redress) relative to the service's risk level.
 - Competitive durability risk: the business cannot defend its position after initial traction. Moats are structural advantages that protect value against competitors. A business can validate demand, find customers, and still fail if the first well-funded competitor that copies it destroys margins.
 
   For competitive durability, sub-rank these moat sources by relevance to the specific business:
@@ -136,7 +138,8 @@ Before finalizing, check:
 - Tests are cheaper than building product features.
 - The decision gate follows from the evidence strength, not founder optimism.
 - The next 7 days are concrete and executable.
-- Competitive durability risk is assessed and ranked alongside the other 8 risks.
+- Competitive durability risk is assessed and ranked alongside the other risks.
+- Sequencing risk (amplification before proof) and trust-pattern risk (dark patterns, missing uncertainty reducers) are ranked when the plan touches channels, loops, or consumer-service offers.
 - If no moat source scores above "weak" on evidence and durability, this is explicitly called out.
 - The test plan includes at least one test that challenges competitive durability, not just demand.
 - The decision gate factors in competitive durability, not just demand evidence.

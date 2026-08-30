@@ -4,6 +4,14 @@
 
 Every research workflow must check for existing topic workspaces before creating new ones. The agent should surface existing work and let the user choose to continue or start fresh.
 
+Branding and website workflows are independent tracks. Do not run the research-workspace check, market discovery, or idea validation merely because a user asks for a brand or website. When those tracks are requested, inspect only the relevant project/brand manifests:
+
+```bash
+ls -d projects/*/project-manifest.json brand-projects/*/brand-manifest.json 2>/dev/null
+```
+
+Present matching workspaces with their active track, revision, next action, and blockers. Ask whether to continue the selected workspace or start a new one. A website may consume an explicitly linked, immutable `business-to-brand.json` snapshot; it must not silently read live research files.
+
 ## Checking for Existing Workspaces
 
 Before any research workflow (market-problem-discovery, evidence-scout, idea-grill), run:

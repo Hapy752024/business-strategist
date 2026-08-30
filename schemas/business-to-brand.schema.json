@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://business-strategist.local/schemas/business-to-brand.schema.json",
+  "title": "Business to brand snapshot",
+  "type": "object",
+  "required": ["schema_version", "snapshot_id", "source_workspace", "field_provenance", "coverage_gaps", "source_sha256"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "snapshot_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string"},
+    "source_workspace": {"type": "string", "minLength": 1},
+    "source_manifest_version": {"type": "string"},
+    "business_identity": {"type": "object"},
+    "segment": {"type": "object"},
+    "job_and_pain": {"type": "object"},
+    "positioning": {"type": "object"},
+    "buying_context": {"type": "object"},
+    "customer_language": {"type": "array"},
+    "channels_and_contexts": {"type": "object"},
+    "field_provenance": {"type": "object", "additionalProperties": {"enum": ["evidence_backed", "user_confirmed", "inference", "assumption", "unresolved"]}},
+    "evidence_refs": {"type": "array"},
+    "coverage_gaps": {"type": "array"},
+    "user_overrides": {"type": "object"},
+    "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": true
+}

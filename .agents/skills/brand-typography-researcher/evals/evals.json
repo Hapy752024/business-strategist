@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-typography-researcher",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Select licensable typography for this brand.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

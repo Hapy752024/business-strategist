@@ -87,6 +87,10 @@ Label page type for every analyzed URL: `homepage`, `product_page`, `blog_articl
 
 Do not assume marketing claims are true. Treat copy as evidence of how the competitor wants to be perceived, not proof that users care or that the channel converts.
 
+Classify competitor traction signals against the weak-evidence list in `references/evidence-registry.md`: a competitor's downloads, follower counts, press coverage, waitlist size, review volume, or partnership announcements are weak evidence of demand. Do not report "competitor X is winning" from attention signals; report what their positioning and proof choices reveal, and note that even their retained economics are invisible from public marketing.
+
+Assess competitor trust practices against the Service-Customer Decision and Trust section of the registry: hidden fees, hard cancellation, incentivized or generic-star reviews, and missing scope/credential/redress information are weaknesses to differentiate against for consequential services — not tactics to copy. Where competitors lack uncertainty reducers (precise scope, total price, credentials, human access, redress) for a high-risk service, name that gap as a differentiation opportunity.
+
 Compare competitor promises against user-pain evidence. A competitor's positioning is most useful when it maps to repeated customer pain, willingness-to-pay signals, or reachable communities.
 
 Preserve the source page for every extracted claim. Mark "not found" rather than inventing pricing, features, traffic, ad spend, or conversion performance.
@@ -128,4 +132,6 @@ Before finalizing, check:
 - Pricing evidence distinguishes raw price tokens from generic pricing language.
 - Provider failures, billing issues, rate limits, or fallback-only evidence are disclosed.
 - Marketing claims are treated as positioning claims, not proof of performance.
+- Competitor attention signals (downloads, followers, press, review volume) are classified as weak evidence, not reported as demand proof.
+- Competitor trust practices (reviews, fees, cancellation, uncertainty reducers) are assessed, with gaps named as differentiation opportunities and dark patterns flagged as do-not-copy.
 - Differentiation advice is tied to evidence gaps or repeated customer pain.

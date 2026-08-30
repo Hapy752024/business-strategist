@@ -1,0 +1,11 @@
+{
+  "skill_name": "brand-workspace-manager",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create or resume a brand workspace without deleting history.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": []
+    }
+  ]
+}

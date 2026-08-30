@@ -212,13 +212,51 @@ def with_query(url: str, params: dict[str, Any]) -> str:
     return f"{url}?{urllib.parse.urlencode(filtered, doseq=True)}"
 
 
+CREDIT_EXHAUSTION_TOKENS = [
+    "insufficient credit",
+    "insufficient_credit",
+    "not enough credit",
+    "out of credit",
+    "no credits",
+    "credit balance",
+    "credits remaining: 0",
+    "buy more credits",
+    "purchase credits",
+    "add credits",
+    "top up",
+    "top-up",
+    "recharge your account",
+]
+
+
+def is_credit_exhaustion(response: dict[str, Any]) -> bool:
+    """Detect credit/quota exhaustion signals in a provider response body or error text."""
+    haystacks = [str(response.get("error", "")).lower()]
+    body = response.get("body")
+    if isinstance(body, dict):
+        for key in ("message", "error", "error_message", "detail", "status_message"):
+            value = body.get(key)
+            if isinstance(value, str):
+                haystacks.append(value.lower())
+        if body.get("success") is False and body.get("message"):
+            haystacks.append(str(body.get("message")).lower())
+    elif isinstance(body, str):
+        haystacks.append(body.lower())
+    return any(token in haystack for haystack in haystacks for token in CREDIT_EXHAUSTION_TOKENS)
+
+
 def status_from_response(response: dict[str, Any]) -> str:
     if response.get("ok"):
+        body = response.get("body")
+        if isinstance(body, dict) and body.get("success") is False and is_credit_exhaustion(response):
+            return "insufficient_credits"
         return "ok"
     code = response.get("status_code")
     error = str(response.get("error", "")).lower()
     body = response.get("body") if isinstance(response.get("body"), dict) else {}
     provider_status = body.get("status_code")
+    if is_credit_exhaustion(response):
+        return "insufficient_credits"
     if code in {401, 403}:
         if provider_status == 40104:
             return "account_verification_required"

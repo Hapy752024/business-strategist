@@ -1,0 +1,8 @@
+{
+  "skill_name": "business-strategist",
+  "evals": [
+    {"id": 1, "prompt": "Build a logo and brand identity for my new consultancy.", "expected_output": "Routes to standalone brand orchestration without business research.", "files": [], "expected_skill": "brand-designer", "forbidden_skills": ["market-problem-discovery", "idea-grill"]},
+    {"id": 2, "prompt": "Create a visually distinctive landing page from the approved brand and deploy it through GitHub to Vercel.", "expected_output": "Routes to the preference-aware website skill and requires deployment approval.", "files": [], "expected_skill": "brand-website-designer-builder", "forbidden_skills": ["brand-frontend-app-designer"]},
+    {"id": 3, "prompt": "Run a simple A/B test on the pricing hero without redesigning the site.", "expected_output": "Routes to website experiment mode.", "files": [], "expected_skill": "brand-website-designer-builder", "forbidden_skills": ["brand-frontend-app-designer"]}
+  ]
+}

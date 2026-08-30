@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://business-strategist.local/schemas/brand-manifest.schema.json",
+  "title": "Brand project manifest",
+  "type": "object",
+  "required": ["schema_version", "brand_id", "entry_mode", "stages", "approvals", "artifacts"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "brand_id": {"type": "string", "minLength": 1},
+    "entry_mode": {"enum": ["standalone", "business_linked"]},
+    "business_to_brand": {"type": ["string", "null"]},
+    "stages": {"type": "object", "additionalProperties": {"enum": ["not_started", "in_progress", "blocked", "approved", "skipped"]}},
+    "approvals": {"type": "object", "additionalProperties": {"type": "object"}},
+    "artifacts": {"type": "array", "items": {"type": "object"}},
+    "open_blockers": {"type": "array"},
+    "next_action": {"type": "string"}
+  },
+  "additionalProperties": true
+}

@@ -17,13 +17,53 @@
       "id": 3,
       "prompt": "Our founder wants to spend $20k on Meta ads because competitors are running ads. Build the strategy.",
       "expected_output": "A response that challenges channel-first thinking, identifies missing positioning/offer/proof data, proposes smaller tests, and defines paid-media success and stop thresholds.",
-      "files": []
+      "files": [],
+      "must_mention": [
+        "positioning",
+        "stop rule",
+        "test"
+      ],
+      "must_not_mention": []
     },
     {
       "id": 4,
       "prompt": "We announced a partnership with a big retailer, our launch video got 500k views, and we have 12k newsletter subscribers. Build the Q3 marketing strategy to capitalize on this traction.",
       "expected_output": "Treats views, subscribers, and partnership announcements as weak evidence until tied to retained customers or revenue, re-anchors the strategy on proof assets, repeatable conversion, and funnel metrics, and sequences brand/partnership amplification behind demand evidence.",
-      "files": []
+      "files": [],
+      "must_mention": [
+        "weak evidence",
+        "retention"
+      ],
+      "must_not_mention": []
+    },
+    {
+      "id": 5,
+      "prompt": "Create a low-budget growth-hacking strategy for a new digital insurance service. Include Instagram, TikTok, YouTube, LinkedIn, Reddit, influencers, referrals, and a community.",
+      "expected_output": "Rejects the channel checklist, assigns channels explicit jobs and prerequisites, chooses one primary plus one supporting motion, distinguishes acquisition channels from referral/product/community loops, includes financial-promotion and incentive safeguards, defines source-cohort retention and contribution gates, and rejects spam, fake scarcity, and vanity metrics.",
+      "files": [],
+      "must_mention": [
+        "one primary",
+        "cohort",
+        "stop rule"
+      ],
+      "must_not_mention": [
+        "growth-hack your way"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Create a marketing strategy for our expat tax-advisory service in Germany (EUR 2,400/year, collects payroll and residence documents). Our persona is 'Anna, 34, a typical risk-averse German who values quality'. Messaging direction: 'A premium lifestyle upgrade for your new life in Berlin.' We want to sell the annual contract directly from the landing page.",
+      "expected_output": "Rejects the nationality-based personality persona and re-segments by trigger, job, and risk context; leads messaging and offer with uncertainty reducers (precise scope, credentials, total price, human access, redress) instead of lifestyle claims for a consequential data-sensitive service; stages the commitment (paid diagnostic or fixed-scope pilot before the annual contract); makes cancellation/refund/complaint pathways explicit; requires authentic, specific, verifiable reviews rather than star averages; measures qualified commitment, not clicks.",
+      "files": [],
+      "must_mention": [
+        "trigger",
+        "diagnostic",
+        "cancellation",
+        "credentials"
+      ],
+      "must_not_mention": [
+        "typical risk-averse German"
+      ]
     }
   ]
 }

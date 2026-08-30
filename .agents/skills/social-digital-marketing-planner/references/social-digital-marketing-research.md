@@ -1,6 +1,6 @@
 # Social / Digital Marketing Research Reference
 
-Last researched: 2026-06-27
+Last researched: 2026-08-28
 
 Use this reference as background for `social-digital-marketing-planner`. Treat these as planning principles, not fixed platform rules. When the user asks for the latest platform-specific execution details, search current official docs before making precise recommendations.
 
@@ -18,6 +18,27 @@ Across current sources, the durable best practices are:
 - Avoid treating reach, likes, impressions, or follower count as proof of business impact.
 - Measure incrementality where budget is meaningful enough; attribution alone can mislead.
 - Add cultural, legal, claim-substantiation, and audience-sensitivity review before publishing risky campaigns.
+- Separate acquisition channels from product/referral/community loops. Channels create contact; loops compound retained value only when a relevant recipient experiences value.
+- Treat founder stories as mechanism discovery. Always name the network, audience, credibility, product-workflow, timing, or regulatory prerequisite before transferring a tactic.
+
+## Founder And Academic Evidence
+
+The expanded case matrix is `research/topics/founder-gtm-playbooks/playbooks/founder-growth-channel-patterns-2026.md`; the cross-skill operating rules are in `references/evidence-registry.md` at repo root.
+
+Founder cases show:
+
+- Slack, Stripe, Figma, and Monzo personally recruited or onboarded early cohorts, observed friction, and increased cohort complexity before scale.
+- Dropbox's two-sided storage reward, Calendly and Typeform's recipient exposure, Figma and Slack's collaboration, and Monzo's post-activation Golden Tickets are different mechanisms. Do not reduce them to “add referrals.”
+- Monzo's campus ambassadors and merchant flyers produced little measurable acquisition; events helped recruiting more than growth; its waitlist was gamed until invitations followed real use.
+- Policygenius moved from a small paid-search test to education/SEO and quality-controlled affiliates because financial-service search was expensive and the category required explanation.
+- Homejoy shows why discount-driven acquisition before service quality, repeat use, and contribution economics can destroy rather than accelerate a service business.
+
+Academic evidence adds guardrails:
+
+- A 1,346-person study across multiple networks found engagement differs materially by platform and context. Assign platform roles; do not manage “social media” as one medium.
+- A six-month community field experiment supports identity and interpersonal-bond features; a survey of 951 Reddit community founders emphasizes topical interest, information exchange, connection, and interaction quality over self-promotion or raw size.
+- Referral value is heterogeneous: a German-bank study found a substantial value premium, while a Chilean-bank replication found loyalty without necessarily greater value. Test by segment.
+- Large eBay paid-search experiments and 15 Facebook advertising experiments show observational attribution can misstate causal lift. Use holdouts, geo tests, or lift studies when spend is material.
 
 ## Best Practices
 
@@ -79,6 +100,21 @@ Every detailed plan should include:
 - Experiment backlog.
 - Risk review for claims, cultural context, compliance, accessibility, privacy, and brand safety.
 - 7-day action list plus 30/60/90-day roadmap.
+- Founder-case prerequisite and transfer-limit notes for borrowed tactics.
+- Product/referral/community loop design only when value-before-invitation, recipient relevance, retained economics, and abuse controls exist.
+
+## Community Design
+
+Community is repeated member-to-member value, not a follower count or a branded group.
+
+1. Define a narrow member identity, recurring problem, and useful exchange.
+2. Recruit a founding cohort manually and seed a repeatable ritual: critique, peer answer, benchmark, office hours, or local event.
+3. Keep the founder/operator present and close the feedback loop visibly.
+4. Create newcomer paths, roles, recognition, moderation, and safety controls.
+5. Link participation to product/customer outcomes without pitching every interaction.
+6. Expand only when useful exchanges occur without staff initiating all of them.
+
+Measure member-to-member response, time to first useful answer, return contribution, staff-independent activity, activation/retention/referral influence, moderation load, and safety. Anti-patterns are empty Discord/Slack groups, broadcast audiences labeled communities, self-promotion, member-count optimization, and rewards for noise.
 
 ## Sources
 
@@ -92,3 +128,11 @@ Every detailed plan should include:
 - Marketing Week, "Pepsi's ad failure shows the importance of diversity and market research": https://www.marketingweek.com/pepsi-scandal-prove-lack-diversity-house-work-flawed/
 - Forbes, "Burger King's International Women's Day Tweet Goes Down In Flames": https://www.forbes.com/sites/suzannerowankelleher/2021/03/09/women-belong-in-the-kitchen-burger-kings-international-womens-day-tweet-goes-up-in-flames/
 - Clemson News, "The marketing genius of Spotify Wrapped": https://news.clemson.edu/the-marketing-genius-of-spotify-wrapped/
+- First Round Review, "From 0 to $1B — Slack's founder shares their epic launch strategy": https://review.firstround.com/from-0-to-1b-slacks-founder-shares-their-epic-launch-strategy/
+- Tom Blomfield, "Monzo Growth" (2022-07-31): https://tomblomfield.com/post/691384431502557184/monzo-growth
+- First Round Review, "How Superhuman built an engine to find product-market fit": https://review.firstround.com/how-superhuman-built-an-engine-to-find-product-market-fit/
+- Voorveld et al., Journal of Advertising (2018), platform-specific engagement: https://www.tandfonline.com/doi/pdf/10.1080/00913367.2017.1405754
+- Ren et al., MIS Quarterly (2012), online-community attachment field experiment: https://www.cs.cmu.edu/~kiesler/publications/2012/2012_building-member-attachment.pdf
+- Kairam and Foote, CHI (2024), survey of online-community founders: https://arxiv.org/abs/2405.00601
+- Blake, Nosko, and Tadelis, Econometrica (2015), eBay paid-search experiments: https://faculty.haas.berkeley.edu/stadelis/BNT_ECMA_rev.pdf
+- Gordon et al., Marketing Science (2019), Facebook advertising measurement experiments: https://gwern.net/doc/statistics/causality/2019-gordon.pdf
