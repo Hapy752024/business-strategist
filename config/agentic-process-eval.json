@@ -4,6 +4,23 @@
   "baseline_label": "pre-brand-integration agentic infrastructure",
   "comparison_label": "current worktree",
   "scope": "structural agent, skill, routing, state, safety, and QA capabilities only",
+  "baseline_snapshot": {
+    "skill_count": 19,
+    "skills_with_evals": 19,
+    "brand_skill_count": 0,
+    "contract_passes": 0,
+    "contract_total": 8,
+    "contracts": {
+      "brand-skills": false,
+      "website-skill": false,
+      "server-experiment": false,
+      "browser-qa": false,
+      "brand-state-cli": false,
+      "safe-promotion": false,
+      "fal-finalization": false,
+      "claim-fail-closed": false
+    }
+  },
   "contracts": [
     {"id": "brand-skills", "description": "Brand capabilities are represented by independently routable skills."},
     {"id": "website-skill", "description": "A dedicated website builder skill exists."},
@@ -14,5 +31,5 @@
     {"id": "fal-finalization", "description": "FAL outputs are downloaded and validated into URL-free local records."},
     {"id": "claim-fail-closed", "description": "Unknown evidence IDs are rejected instead of silently discarded."}
   ],
-  "limitations": "This benchmark measures repository contracts, not LLM judgment, subjective design quality, or real-world business outcomes."
+  "limitations": "This benchmark measures repository contracts, not LLM judgment, subjective design quality, or real-world business outcomes. The embedded baseline is used only when shallow clones do not contain baseline_ref."
 }

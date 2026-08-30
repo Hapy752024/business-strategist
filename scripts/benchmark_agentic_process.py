@@ -17,8 +17,10 @@ CONFIG = ROOT / "config" / "agentic-process-eval.json"
 
 
 def git_files(ref: str) -> set[str]:
-    output = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", ref], cwd=ROOT, text=True)
-    return set(output.splitlines())
+    result = subprocess.run(["git", "ls-tree", "-r", "--name-only", ref], cwd=ROOT, text=True, capture_output=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"Git baseline {ref} is unavailable in this checkout")
+    return set(result.stdout.splitlines())
 
 
 def git_text(ref: str, path: str) -> str:
@@ -65,6 +67,18 @@ def snapshot(files: set[str], read_text) -> dict[str, object]:
     }
 
 
+def resolve_baseline(config: dict[str, object]) -> tuple[dict[str, object], str]:
+    baseline_ref = str(config["baseline_ref"])
+    try:
+        files = git_files(baseline_ref)
+    except RuntimeError:
+        embedded = config.get("baseline_snapshot")
+        if not isinstance(embedded, dict):
+            raise
+        return embedded, "embedded-audited-snapshot"
+    return snapshot(files, lambda path: git_text(baseline_ref, path)), "git-tree"
+
+
 def write_run(root: Path, name: str, prompt: str, metrics: dict[str, object], elapsed: float) -> None:
     run = root / name
     outputs = run / "outputs"
@@ -92,8 +106,7 @@ def main() -> int:
     baseline_ref = config["baseline_ref"]
 
     started = time.perf_counter()
-    old_files = git_files(baseline_ref)
-    baseline = snapshot(old_files, lambda path: git_text(baseline_ref, path))
+    baseline, baseline_source = resolve_baseline(config)
     baseline_elapsed = time.perf_counter() - started
     started = time.perf_counter()
     current = snapshot(current_files(), lambda path: (ROOT / path).read_text(encoding="utf-8") if (ROOT / path).is_file() else "")
@@ -107,6 +120,7 @@ def main() -> int:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "mode": "structural-contract-comparison",
         "baseline_ref": baseline_ref,
+        "baseline_source": baseline_source,
         "limitations": config["limitations"],
         "baseline": baseline,
         "current": current,
@@ -120,7 +134,7 @@ def main() -> int:
         if not viewer.is_file():
             parser.error("skill-creator eval viewer not found; set SKILL_CREATOR_VIEWER")
         subprocess.run(["python3", str(viewer), str(args.output_dir), "--skill-name", "agentic-process", "--benchmark", str(benchmark_path), "--static", str(args.output_dir / "review.html")], check=True)
-    print(json.dumps({"workspace": str(args.output_dir), "benchmark": str(benchmark_path), "baseline": baseline, "current": current}, indent=2))
+    print(json.dumps({"workspace": str(args.output_dir), "benchmark": str(benchmark_path), "baseline_source": baseline_source, "baseline": baseline, "current": current}, indent=2))
     return 0
 
 

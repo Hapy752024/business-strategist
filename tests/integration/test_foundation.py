@@ -247,6 +247,17 @@ def test_invalid_contract_fixture_is_rejected() -> None:
     assert errors
 
 
+def test_agentic_benchmark_uses_embedded_baseline_for_shallow_clone(monkeypatch: pytest.MonkeyPatch) -> None:
+    benchmark = load_script("agentic_benchmark", "scripts/benchmark_agentic_process.py")
+    config = json.loads((ROOT / "config" / "agentic-process-eval.json").read_text())
+    def unavailable(_ref: str):
+        raise RuntimeError("shallow clone")
+    monkeypatch.setattr(benchmark, "git_files", unavailable)
+    baseline, source = benchmark.resolve_baseline(config)
+    assert source == "embedded-audited-snapshot"
+    assert baseline["contract_passes"] == 0
+
+
 def test_website_fixture_contract() -> None:
     verifier = load_script("verify_website_fixture", "scripts/verify_website_fixture.py")
     assert verifier.verify(ROOT / "fixtures" / "website" / "stellar-repair") == []
