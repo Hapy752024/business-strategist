@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import hashlib
 from pathlib import Path
 
 import pytest
@@ -63,3 +64,56 @@ def test_fal_adapter_defaults_to_redacted_dry_run() -> None:
     request = fal.build_request(args)
     assert request["store_io"] is False
     assert "FAL_AI_API_KEY" not in json.dumps(request)
+
+
+def test_brand_workspace_has_full_stage_manifest(tmp_path: Path) -> None:
+    manager = load_script("brand_workspace", ".agents/skills/brand-workspace-manager/scripts/manage-brand-workspace.py")
+    root = tmp_path / "brand-projects" / "demo"
+    manager.create_workspace(root)
+    manifest = manager.write_manifest(root, entry_mode="standalone")
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    for stage in ("motion", "components", "website", "qa", "guidelines", "export"):
+        assert data["stages"][stage] == "not_started"
+
+
+def test_artifact_promotion_requires_approval_and_matching_hash(tmp_path: Path) -> None:
+    promoter = load_script("promote_artifact", "scripts/brand/promote_artifact.py")
+    project = tmp_path / "brand"
+    project.mkdir()
+    candidate = project / "stages" / "logo" / "mark.svg"
+    candidate.parent.mkdir(parents=True)
+    candidate.write_text("<svg></svg>", encoding="utf-8")
+    sha = hashlib.sha256(candidate.read_bytes()).hexdigest()
+    (project / "brand-manifest.json").write_text(json.dumps({"artifacts": [{"artifact_id": "logo-1", "status": "approved", "candidate_path": "stages/logo/mark.svg", "destination": "logos/source/mark.svg", "sha256": sha}]}), encoding="utf-8")
+    dry = promoter.promote(project, "logo-1")
+    assert dry["status"] == "ready"
+    assert not (project / "logos/source/mark.svg").exists()
+    promoter.promote(project, "logo-1", confirm=True)
+    assert (project / "logos/source/mark.svg").read_text(encoding="utf-8") == "<svg></svg>"
+
+
+def test_untrusted_asset_validator_rejects_executable_svg(tmp_path: Path) -> None:
+    sanitizer = load_script("validate_untrusted_asset", "scripts/brand/validate_untrusted_asset.py")
+    safe = tmp_path / "safe.svg"
+    safe.write_text("<svg><path d='M0 0'/></svg>", encoding="utf-8")
+    unsafe = tmp_path / "unsafe.svg"
+    unsafe.write_text("<svg><script>alert(1)</script><image href='https://evil.example/x'/></svg>", encoding="utf-8")
+    assert sanitizer.validate(safe) == []
+    assert sanitizer.validate(unsafe)
+
+
+def test_capability_preflight_is_stage_scoped() -> None:
+    preflight = load_script("brand_preflight", "scripts/brand/preflight.py")
+    strategy = preflight.inspect_stage("strategy")
+    assert strategy["blocking_missing"] == []
+    assert "inkscape" not in strategy["blocking_missing"]
+
+
+def test_release_manifest_requires_production_confirmation(tmp_path: Path) -> None:
+    release = load_script("release_manifest", "scripts/brand/release_manifest.py")
+    manifest = tmp_path / "website-manifest.json"
+    manifest.write_text(json.dumps({"release": {"status": "local"}}), encoding="utf-8")
+    release.update(manifest, status="preview", commit="abc", url="https://preview.example")
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    assert data["release"]["status"] == "preview"
+    assert data["release"]["preview_url"] == "https://preview.example"

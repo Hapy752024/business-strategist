@@ -30,6 +30,17 @@ Default folder: `brand-projects/<slug>/`.
 
 Use `references/workspace-rules.md` for structure and OS commands.
 
+For manifest-aware operations use `scripts/workspace_cli.py`:
+
+```bash
+python3 scripts/workspace_cli.py create --name "My Brand"
+python3 scripts/workspace_cli.py resume brand-projects/my-brand
+python3 scripts/workspace_cli.py archive-stage brand-projects/my-brand --stage logo
+python3 scripts/workspace_cli.py record-option brand-projects/my-brand --artifact-id logo-1 --candidate stages/logo/mark.svg --destination logos/source/mark.svg
+python3 scripts/workspace_cli.py approve-option brand-projects/my-brand --artifact-id logo-1
+python3 scripts/workspace_cli.py promote brand-projects/my-brand --artifact-id logo-1  # dry-run
+```
+
 
 ## Output
 

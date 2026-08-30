@@ -8,6 +8,8 @@
 
 **Source repository:** `/mnt/c/coding/general/brand_designer` at `62fee9b8483ac9c36246d2666c225d599108d925`
 
+**Implementation note (2026-08-30):** Foundation implementation is complete in this repository: the 15 source branding skills are imported with progressive-disclosure wrappers, independent business/brand/website routing and manifests are live, the business-to-brand snapshot and validation path exists, and the preference-led Next.js/FAL/Vercel/A-B website skill scaffolding and offline gates are installed. Remaining items in this document are release-time integrations requiring an explicitly selected GitHub/Vercel target or paid-provider approval.
+
 ## 1. Objective
 
 Turn `business-strategist` into one portable, multi-harness business-building system that can:

@@ -20,7 +20,7 @@ Required checks:
 
 Recommended scripts:
 
-- `brand-designer/scripts/promote-approved-assets.py` to copy approved stage files into canonical folders.
+- `scripts/brand/promote_artifact.py <project-dir> --artifact-id <id> --dry-run` to inspect one approved artifact, then `--confirm` to atomically promote it.
 - `brand-quality-reviewer/scripts/audit-brand-package.py` to verify manifests, HTML refs, stale paths, and required files.
 - `brand-asset-producer/scripts/export-logo-package.py` to regenerate logo exports from SVG masters.
 

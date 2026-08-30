@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-STAGES = ["logo", "colors", "typography", "imagery", "ui", "marketing"]
+STAGES = ["discovery", "research", "strategy", "logo", "colors", "typography", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export"]
 
 
 def slugify(value: str) -> str:
@@ -35,6 +35,24 @@ def create_workspace(root: Path) -> list[str]:
     for path in paths:
         path.mkdir(parents=True, exist_ok=True)
     return [str(path) for path in paths]
+
+
+def write_manifest(root: Path, *, entry_mode: str, business_to_brand: str = "") -> Path:
+    manifest_path = root / "brand-manifest.json"
+    if not manifest_path.exists():
+        manifest = {
+            "schema_version": "1.0",
+            "brand_id": root.name,
+            "entry_mode": entry_mode,
+            "business_to_brand": business_to_brand or None,
+            "stages": {stage: "not_started" for stage in STAGES},
+            "approvals": {},
+            "artifacts": [],
+            "open_blockers": [],
+            "next_action": "Complete the brand brief and select the first stage."
+        }
+        manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return manifest_path
 
 
 def archive_stage(root: Path, stage: str) -> Path | None:
@@ -60,10 +78,13 @@ def main() -> int:
     parser.add_argument("--base-dir", type=Path, default=Path("brand-projects"))
     parser.add_argument("--stage", choices=STAGES)
     parser.add_argument("--archive-stage", action="store_true")
+    parser.add_argument("--entry-mode", choices=("standalone", "business_linked"), default="standalone")
+    parser.add_argument("--business-to-brand", default="")
     args = parser.parse_args()
 
     root = args.base_dir / slugify(args.name)
     created = create_workspace(root)
+    manifest_path = write_manifest(root, entry_mode=args.entry_mode, business_to_brand=args.business_to_brand)
     archived = None
     if args.archive_stage and args.stage:
         archived_path = archive_stage(root, args.stage)
@@ -72,6 +93,7 @@ def main() -> int:
     print(json.dumps({
         "platform": platform.system(),
         "workspace": str(root),
+        "manifest": str(manifest_path),
         "created": created,
         "archived": archived,
     }, indent=2))

@@ -27,7 +27,7 @@ Pipeline order: tokens (`brand-ui-kit-producer`) -> motion (`brand-motion-design
 
 Canonical package workflow:
 - Read `references/package-structure.md` when creating or reorganizing a project package.
-- Use `scripts/promote-approved-assets.py <project-dir>` after stage artifacts are approved and need handoff placement.
+- Use `scripts/brand/promote_artifact.py <project-dir> --artifact-id <id> --dry-run`, then `--confirm` after approval and hash checks pass.
 - Read `references/finalization-gate.md` before final QA, final export, or any "are we done" answer.
 
 Refs: `references/orchestration.md`, `references/guided-user-journey.md`, `references/design-guideline-anatomy.md`, `references/tooling-decision.md`, `references/startup-check.md`.

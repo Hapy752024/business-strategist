@@ -1,0 +1,4 @@
+# Optional export/preview tooling; core validation does not require these.
+Pillow>=10,<12
+CairoSVG>=2.7,<3
+PyMuPDF>=1.24,<2
