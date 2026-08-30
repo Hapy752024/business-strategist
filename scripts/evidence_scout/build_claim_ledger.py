@@ -33,8 +33,12 @@ def build(evidence: list[dict[str, Any]], claims: list[dict[str, Any]]) -> list[
     ledger = []
     for claim in claims:
         row = dict(claim)
-        support = [str(item) for item in row.get("supporting_evidence", []) if str(item) in by_id]
-        counter = [str(item) for item in row.get("counter_evidence", []) if str(item) in by_id]
+        support = [str(item) for item in row.get("supporting_evidence", [])]
+        counter = [str(item) for item in row.get("counter_evidence", [])]
+        unknown = sorted({item for item in support + counter if item not in by_id})
+        if unknown:
+            claim_id = str(row.get("claim_id", "<missing claim_id>"))
+            raise ValueError(f"{claim_id}: unknown evidence IDs: {', '.join(unknown)}")
         independence = {str(by_id[item].get("independence_key") or by_id[item].get("source_url") or item) for item in support}
         clusters = sorted({str(by_id[item].get("duplicate_cluster_id")) for item in support + counter if by_id[item].get("duplicate_cluster_id")})
         row["supporting_evidence"] = support
@@ -54,7 +58,10 @@ def main() -> int:
     claims = json.loads(args.claims.read_text(encoding="utf-8"))
     if not isinstance(claims, list):
         parser.error("--claims must contain a JSON array")
-    ledger = build(read_jsonl(args.evidence), claims)
+    try:
+        ledger = build(read_jsonl(args.evidence), claims)
+    except (KeyError, ValueError) as exc:
+        parser.error(str(exc))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"claims": len(ledger), "output": str(args.output)}, indent=2))

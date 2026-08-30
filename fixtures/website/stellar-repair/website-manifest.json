@@ -1,1 +1,52 @@
-{"schema_version":"1.0","website_id":"stellar-repair-fixture","entry_mode":"standalone","stack":{"next":"16.3.3","react":"19.2.0","node":">=20.9","package_manager":"npm","lockfile":"package-lock.json","resolver_source":"https://nextjs.org/docs/app/getting-started/installation","resolved_at":"2026-08-30T00:00:00Z"},"preferences":"website-preferences.json","brand_refs":[],"concept":{"territories":[{"id":"measured-care","signature_device":"numbered quality signal"}],"selected":"measured-care","signature_device":"numbered quality signal","approval_status":"delegated"},"pages":[{"path":"/","status":"complete"}],"fal_assets":[],"experiment":{"hypothesis":"A proof-led CTA label increases qualified visit requests relative to a direct booking CTA.","one_variable":"primary_cta_label","control":"Request a visit","treatment":"Get a clear repair plan","assignment":"query override or stable local assignment","success_metric":"qualified_request_started","status":"not_started","requires_approval":true},"qa":{"build":"pending","accessibility":"pending","performance":"pending","visual_review":"pending"},"release":{"status":"local"}}
+{
+  "schema_version": "1.0",
+  "manifest_revision": 1,
+  "updated_at": "2026-08-30T00:00:00Z",
+  "website_id": "stellar-repair-fixture",
+  "entry_mode": "standalone",
+  "stack": {
+    "next": "16.3.3",
+    "react": "19.2.0",
+    "node": ">=20.9",
+    "package_manager": "npm",
+    "lockfile": "package-lock.json",
+    "resolver_source": "https://nextjs.org/docs/app/getting-started/installation",
+    "resolved_at": "2026-08-30T00:00:00Z"
+  },
+  "preferences": "website-preferences.json",
+  "brand_refs": [],
+  "concept": {
+    "territories": [{"id": "measured-care", "signature_device": "numbered quality signal"}],
+    "selected": "measured-care",
+    "signature_device": "numbered quality signal",
+    "approval_status": "delegated"
+  },
+  "pages": [{"path": "/", "status": "complete"}],
+  "fal_assets": [],
+  "experiment": {
+    "hypothesis": "A proof-led CTA label increases qualified visit requests relative to a direct booking CTA.",
+    "changed_variable": "primary_cta_label",
+    "control": "Request a visit",
+    "treatment": "Get a clear repair plan",
+    "assignment": "Vercel Flags SDK server evaluation; control-only until production approval",
+    "audience": "eligible landing-page visitors after activation",
+    "allocation": {"control": 50, "treatment": 50},
+    "primary_metric": "qualified_request_started",
+    "guardrails": ["request_error_rate", "page_performance"],
+    "start_rule": "explicit production approval plus analytics verification",
+    "stop_rule": "predeclared sample and duration or guardrail breach",
+    "cleanup_owner": "website owner",
+    "status": "not_started",
+    "requires_approval": true
+  },
+  "qa": {
+    "build": "pass",
+    "accessibility": "pass",
+    "performance": "pass",
+    "responsive": "pass",
+    "visual_review": "pending"
+  },
+  "release": {"status": "local", "environment": "local"},
+  "next_action": "Run objective QA, then request human visual review.",
+  "open_blockers": ["human visual review", "external Preview authorization"]
+}

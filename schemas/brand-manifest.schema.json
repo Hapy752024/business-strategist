@@ -3,17 +3,58 @@
   "$id": "https://business-strategist.local/schemas/brand-manifest.schema.json",
   "title": "Brand project manifest",
   "type": "object",
-  "required": ["schema_version", "brand_id", "entry_mode", "stages", "approvals", "artifacts"],
+  "additionalProperties": false,
+  "required": ["schema_version", "manifest_revision", "brand_id", "entry_mode", "current_stage", "requested_deliverables", "excluded_deliverables", "stages", "approvals", "artifacts", "open_blockers", "accepted_residual_risks", "completion_status", "next_action"],
   "properties": {
-    "schema_version": {"type": "string"},
+    "schema_version": {"type": "string", "const": "1.0"},
+    "manifest_revision": {"type": "integer", "minimum": 1},
+    "updated_at": {"type": "string", "format": "date-time"},
     "brand_id": {"type": "string", "minLength": 1},
     "entry_mode": {"enum": ["standalone", "business_linked"]},
     "business_to_brand": {"type": ["string", "null"]},
+    "current_stage": {"$ref": "#/$defs/stage"},
+    "requested_deliverables": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "excluded_deliverables": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
     "stages": {"type": "object", "additionalProperties": {"enum": ["not_started", "in_progress", "blocked", "approved", "skipped"]}},
-    "approvals": {"type": "object", "additionalProperties": {"type": "object"}},
-    "artifacts": {"type": "array", "items": {"type": "object"}},
-    "open_blockers": {"type": "array"},
+    "approvals": {"type": "object", "additionalProperties": {"$ref": "#/$defs/approval"}},
+    "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "stage_archives": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["stage", "destination", "archived_at"], "properties": {"stage": {"$ref": "#/$defs/stage"}, "destination": {"type": "string"}, "archived_at": {"type": "string", "format": "date-time"}}}},
+    "open_blockers": {"type": "array", "items": {"type": "string"}},
+    "accepted_residual_risks": {"type": "array", "items": {"type": "string"}},
+    "completion_status": {"enum": ["in_progress", "blocked", "complete", "archived"]},
     "next_action": {"type": "string"}
   },
-  "additionalProperties": true
+  "$defs": {
+    "stage": {"enum": ["discovery", "research", "strategy", "logo", "colors", "typography", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export"]},
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "approver", "timestamp", "notes", "superseded_ids"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1},
+        "approver": {"type": "string", "minLength": 1},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "notes": {"type": "string"},
+        "superseded_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["artifact_id", "status", "candidate_path", "destination", "sha256"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1},
+        "artifact_type": {"type": "string"},
+        "stage": {"type": ["string", "null"]},
+        "status": {"enum": ["candidate", "approved", "promoted", "superseded", "rejected"]},
+        "candidate_path": {"type": "string", "minLength": 1},
+        "destination": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "provenance": {"type": "string"},
+        "rights_status": {"type": "string"},
+        "source_artifact_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "generated_derivatives": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    }
+  }
 }

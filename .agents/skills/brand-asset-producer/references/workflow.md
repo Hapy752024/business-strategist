@@ -44,6 +44,8 @@ Use `scripts/export-brand-assets.py` for SVG exports when local tools exist.
 Prefer `scripts/export-logo-package.py <logos/source> <logos/export>` for final approved logo packages.
 Use `assets/.env.example` and `scripts/generate-openrouter-images.py` for optional image-model alternatives.
 
+For FAL generation, first run `python3 scripts/fal_assets.py ...` in dry-run mode and show model, dimensions, variants, estimated cost, maximum cost, and approval ID. A paid request requires both `--execute` and `--confirm`. When the completed provider JSON is available, immediately run `python3 scripts/brand/finalize_fal_assets.py --response <result.json> --output-dir <local-assets> --record <asset-record.json> --expected-width <px> --expected-height <px>`. The finalizer accepts validated PNG/JPEG outputs from trusted FAL hosts, enforces size/MIME/dimensions, hashes local files, and persists no temporary URL. Record finalized files as candidate artifacts before approval/promotion.
+
 
 ## Output
 

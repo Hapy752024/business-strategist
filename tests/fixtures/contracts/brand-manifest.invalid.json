@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "manifest_revision": 0,
+  "brand_id": "",
+  "entry_mode": "standalone",
+  "current_stage": "discovery",
+  "requested_deliverables": [],
+  "excluded_deliverables": [],
+  "stages": {},
+  "approvals": {},
+  "artifacts": [],
+  "open_blockers": [],
+  "accepted_residual_risks": [],
+  "completion_status": "in_progress",
+  "next_action": ""
+}

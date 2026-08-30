@@ -2,13 +2,27 @@
 
 **Date:** 2026-08-30
 
-**Status:** Proposed implementation plan
+**Status:** Agentic implementation complete; operational acceptance gates pending
 
 **Destination repository:** `/mnt/c/coding/general/business-strategist`
 
 **Source repository:** `/mnt/c/coding/general/brand_designer` at `62fee9b8483ac9c36246d2666c225d599108d925`
 
-**Implementation note (2026-08-30):** Foundation implementation is complete in this repository: the 15 source branding skills are imported with progressive-disclosure wrappers, independent business/brand/website routing and manifests are live, the business-to-brand snapshot and validation path exists, and the preference-led Next.js/FAL/Vercel/A-B website skill scaffolding and offline gates are installed. Remaining items in this document are release-time integrations requiring an explicitly selected GitHub/Vercel target or paid-provider approval.
+**Implementation note (2026-08-30):** The reusable agent/skill implementation is complete for the user-authorized scope. Existing research outputs were not inspected or changed. The 15 branding skills, independent and business-linked routing, revisioned manifests, explicit approvals, conflict-safe promotion, FAL finalization, preference-led Next.js website fixture, server-side Vercel Flags experiment, browser QA, CI, and reproducible structural comparison are installed. The remaining gates are empirical or external—not missing code: repeated authorized LLM/token benchmarks, human/blind visual acceptance across multiple generated sites, a selected GitHub/Vercel target, and any paid FAL or production experiment/deployment.
+
+### Implementation status by milestone
+
+| Milestone | Implementation status | Acceptance still requiring external evidence or authorization |
+|---|---|---|
+| M0 baseline | Complete for immutable import records and reconstructed Git structural baseline | A pre-change LLM run cannot be recreated retroactively; future runs use the committed benchmark contract. |
+| M1 schemas/control plane | Complete | None. |
+| M2 skill import | Complete | None. |
+| M3 routing/entry modes | Complete | Repeated LLM trigger-quality measurement remains a manual benchmark. |
+| M4 brand state/assets | Complete | Paid/live FAL calls remain approval-gated. |
+| M5 research quality | Excluded from this implementation pass except fail-closed reusable claim contracts | Existing research and the collector refactor were explicitly left untouched. |
+| M6 website build | Complete as an executable skill and fixture | Human visual acceptance and diversity testing require generated user projects. |
+| M7 release/experiment | Complete as guarded CI, manifest, runbook, and Preview-testable fixture | No external Vercel project, analytics, traffic, or production deployment was authorized. |
+| M8 evaluation/rollout | Complete as deterministic routing and old/current structural harness with static viewer | Do not claim LLM quality or 25% token savings until a repeated authorized model benchmark passes. |
 
 ## 1. Objective
 

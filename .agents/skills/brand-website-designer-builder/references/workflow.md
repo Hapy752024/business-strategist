@@ -7,9 +7,11 @@
 5. Ask for selection unless the user delegated it. Record the decision and rationale in `website-manifest.json`.
 6. Build the hero/navigation/primary CTA vertical slice, capture 375px and desktop screenshots, and fix concrete issues.
 7. Complete pages, content states, localization, metadata, assets, reduced motion, and performance budgets.
-8. Run `scripts/validate-site.mjs`, Playwright/axe, visual review, and the independent `brand-quality-reviewer`.
+8. Run `scripts/validate-site.mjs`, Playwright/axe across mobile/tablet/desktop, keyboard and reduced-motion checks, visual review, and the independent `brand-quality-reviewer`.
 9. If requested, run experiment mode from `references/experimentation.md`.
 10. Prepare a GitHub PR and Vercel Preview. Do not connect, merge, deploy production, enable analytics, or split traffic without approval.
+
+The reference fixture at `fixtures/website/stellar-repair/` is the executable minimum: pinned stable Next.js, server-evaluated Vercel Flags SDK control/treatment, `FlagValues`, control-only production fallback, Preview-only overrides, axe, keyboard, responsive overflow, and screenshot evidence. Never use client `Math.random()` or `localStorage` for assignment.
 
 ## Output
 

@@ -5,9 +5,13 @@ from __future__ import annotations
 import importlib.util
 import json
 import hashlib
+import io
+import struct
+import subprocess
 from pathlib import Path
 
 import pytest
+from jsonschema import Draft202012Validator, FormatChecker
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -73,6 +77,28 @@ def test_fal_adapter_defaults_to_redacted_dry_run() -> None:
     assert "FAL_AI_API_KEY" not in json.dumps(request)
 
 
+def test_fal_finalizer_downloads_validated_assets_without_persisting_url(tmp_path: Path) -> None:
+    fal = load_script("fal_assets_finalize", "scripts/fal_assets.py")
+    png = b"\x89PNG\r\n\x1a\n" + b"\x00\x00\x00\x0dIHDR" + struct.pack(">II", 2, 3) + b"\x08\x02\x00\x00\x00" + b"synthetic"
+
+    class Response(io.BytesIO):
+        headers = {"Content-Type": "image/png"}
+        def __enter__(self): return self
+        def __exit__(self, *_args): self.close()
+
+    def opener(request, timeout):
+        assert timeout == 30
+        assert request.full_url == "https://fal.media/files/synthetic.png"
+        return Response(png)
+
+    records = fal.download_assets({"images": [{"url": "https://fal.media/files/synthetic.png"}]}, tmp_path, expected_width=2, expected_height=3, opener=opener)
+    assert len(records) == 1
+    assert Path(records[0]["path"]).read_bytes() == png
+    assert "fal.media/files" not in json.dumps(records)
+    with pytest.raises(ValueError, match="untrusted"):
+        fal.download_assets({"url": "https://evil.example/image.png"}, tmp_path, opener=opener)
+
+
 def test_brand_workspace_has_full_stage_manifest(tmp_path: Path) -> None:
     manager = load_script("brand_workspace", ".agents/skills/brand-workspace-manager/scripts/manage-brand-workspace.py")
     root = tmp_path / "brand-projects" / "demo"
@@ -83,6 +109,33 @@ def test_brand_workspace_has_full_stage_manifest(tmp_path: Path) -> None:
         assert data["stages"][stage] == "not_started"
 
 
+def test_brand_workspace_cli_records_explicit_approval_and_archive_revision(tmp_path: Path) -> None:
+    cli = ROOT / ".agents/skills/brand-workspace-manager/scripts/workspace_cli.py"
+    subprocess.run(["python3", str(cli), "create", "--name", "Synthetic Brand", "--base-dir", str(tmp_path)], check=True, capture_output=True, text=True)
+    project = tmp_path / "synthetic-brand"
+    candidate = project / "stages" / "logo" / "option.svg"
+    candidate.write_text("<svg></svg>", encoding="utf-8")
+    subprocess.run(["python3", str(cli), "record-option", str(project), "--artifact-id", "logo-1", "--candidate", "stages/logo/option.svg", "--destination", "logos/source/mark.svg", "--artifact-type", "logo", "--stage", "logo"], check=True, capture_output=True, text=True)
+    subprocess.run(["python3", str(cli), "approve-option", str(project), "--artifact-id", "logo-1", "--approver", "user", "--notes", "Selected option 1"], check=True, capture_output=True, text=True)
+    before_archive = json.loads((project / "brand-manifest.json").read_text())
+    assert before_archive["approvals"]["logo-1"]["approver"] == "user"
+    subprocess.run(["python3", str(cli), "archive-stage", str(project), "--stage", "logo"], check=True, capture_output=True, text=True)
+    after_archive = json.loads((project / "brand-manifest.json").read_text())
+    assert after_archive["manifest_revision"] == before_archive["manifest_revision"] + 1
+    assert after_archive["stage_archives"][0]["stage"] == "logo"
+
+
+def test_business_linked_brand_copies_immutable_handoff(tmp_path: Path) -> None:
+    cli = ROOT / ".agents/skills/brand-workspace-manager/scripts/workspace_cli.py"
+    handoff = tmp_path / "handoff.json"
+    handoff.write_text('{"snapshot_id":"synthetic"}', encoding="utf-8")
+    subprocess.run(["python3", str(cli), "create", "--name", "Linked Brand", "--base-dir", str(tmp_path / "brands"), "--entry-mode", "business_linked", "--business-to-brand", str(handoff)], check=True, capture_output=True, text=True)
+    project = tmp_path / "brands" / "linked-brand"
+    manifest = json.loads((project / "brand-manifest.json").read_text())
+    assert manifest["business_to_brand"] == "business-to-brand.json"
+    assert (project / "business-to-brand.json").read_text() == handoff.read_text()
+
+
 def test_artifact_promotion_requires_approval_and_matching_hash(tmp_path: Path) -> None:
     promoter = load_script("promote_artifact", "scripts/brand/promote_artifact.py")
     project = tmp_path / "brand"
@@ -91,12 +144,34 @@ def test_artifact_promotion_requires_approval_and_matching_hash(tmp_path: Path) 
     candidate.parent.mkdir(parents=True)
     candidate.write_text("<svg></svg>", encoding="utf-8")
     sha = hashlib.sha256(candidate.read_bytes()).hexdigest()
-    (project / "brand-manifest.json").write_text(json.dumps({"artifacts": [{"artifact_id": "logo-1", "status": "approved", "candidate_path": "stages/logo/mark.svg", "destination": "logos/source/mark.svg", "sha256": sha}]}), encoding="utf-8")
+    (project / "brand-manifest.json").write_text(json.dumps({"manifest_revision": 1, "artifacts": [{"artifact_id": "logo-1", "status": "approved", "candidate_path": "stages/logo/mark.svg", "destination": "logos/source/mark.svg", "sha256": sha}]}), encoding="utf-8")
     dry = promoter.promote(project, "logo-1")
     assert dry["status"] == "ready"
     assert not (project / "logos/source/mark.svg").exists()
     promoter.promote(project, "logo-1", confirm=True)
     assert (project / "logos/source/mark.svg").read_text(encoding="utf-8") == "<svg></svg>"
+    assert json.loads((project / "brand-manifest.json").read_text())["manifest_revision"] == 2
+
+
+def test_artifact_promotion_refuses_unapproved_overwrite(tmp_path: Path) -> None:
+    promoter = load_script("promote_conflict", "scripts/brand/promote_artifact.py")
+    project = tmp_path / "brand"
+    candidate = project / "stages" / "logo" / "new.svg"
+    destination = project / "logos" / "source" / "mark.svg"
+    candidate.parent.mkdir(parents=True)
+    destination.parent.mkdir(parents=True)
+    candidate.write_text("<svg>new</svg>", encoding="utf-8")
+    destination.write_text("<svg>old</svg>", encoding="utf-8")
+    sha = hashlib.sha256(candidate.read_bytes()).hexdigest()
+    (project / "brand-manifest.json").write_text(json.dumps({"manifest_revision": 1, "artifacts": [{"artifact_id": "logo-2", "status": "approved", "candidate_path": "stages/logo/new.svg", "destination": "logos/source/mark.svg", "sha256": sha}]}), encoding="utf-8")
+    with pytest.raises(ValueError, match="refusing to overwrite"):
+        promoter.promote(project, "logo-2", confirm=True)
+    assert destination.read_text(encoding="utf-8") == "<svg>old</svg>"
+    with pytest.raises(ValueError, match="replacement approver"):
+        promoter.promote(project, "logo-2", confirm=True, replace_conflict=True)
+    replaced = promoter.promote(project, "logo-2", confirm=True, replace_conflict=True, replacement_approver="user")
+    assert replaced["replacement_authorized"] is True
+    assert destination.read_text(encoding="utf-8") == "<svg>new</svg>"
 
 
 def test_untrusted_asset_validator_rejects_executable_svg(tmp_path: Path) -> None:
@@ -119,11 +194,13 @@ def test_capability_preflight_is_stage_scoped() -> None:
 def test_release_manifest_requires_production_confirmation(tmp_path: Path) -> None:
     release = load_script("release_manifest", "scripts/brand/release_manifest.py")
     manifest = tmp_path / "website-manifest.json"
-    manifest.write_text(json.dumps({"release": {"status": "local"}}), encoding="utf-8")
-    release.update(manifest, status="preview", commit="abc", url="https://preview.example")
+    manifest.write_text(json.dumps({"manifest_revision": 1, "qa": {"build": "pass", "accessibility": "pending", "performance": "pending", "responsive": "pending", "visual_review": "pending"}, "release": {"status": "local"}}), encoding="utf-8")
+    release.update(manifest, status="preview", commit="abcdef1", url="https://preview.example")
     data = json.loads(manifest.read_text(encoding="utf-8"))
     assert data["release"]["status"] == "preview"
     assert data["release"]["preview_url"] == "https://preview.example"
+    with pytest.raises(ValueError, match="explicit confirmation"):
+        release.update(manifest, status="production", commit="abcdef1", url="https://www.example")
 
 
 def test_claim_ledger_preserves_independence_and_requires_counter_scope(tmp_path: Path) -> None:
@@ -140,6 +217,34 @@ def test_claim_ledger_preserves_independence_and_requires_counter_scope(tmp_path
     ledger = builder.build(records, claims)
     assert ledger[0]["independence_count"] == 2
     assert validator.validate(ledger, records) == []
+
+
+def test_claim_ledger_rejects_unknown_evidence_ids() -> None:
+    builder = load_script("build_claim_ledger_unknown", "scripts/evidence_scout/build_claim_ledger.py")
+    with pytest.raises(ValueError, match="unknown evidence IDs: ev-missing"):
+        builder.build([], [{"claim_id": "c1", "supporting_evidence": ["ev-missing"]}])
+
+
+@pytest.mark.parametrize(
+    ("schema_name", "fixture"),
+    [
+        ("brand-manifest", "tests/fixtures/contracts/brand-manifest.valid.json"),
+        ("website-preferences", "fixtures/website/stellar-repair/website-preferences.json"),
+        ("website-manifest", "fixtures/website/stellar-repair/website-manifest.json"),
+        ("claim-record", "tests/fixtures/contracts/claim-record.valid.json"),
+    ],
+)
+def test_contract_fixtures_validate(schema_name: str, fixture: str) -> None:
+    schema = json.loads((ROOT / "schemas" / f"{schema_name}.schema.json").read_text())
+    instance = json.loads((ROOT / fixture).read_text())
+    Draft202012Validator(schema, format_checker=FormatChecker()).validate(instance)
+
+
+def test_invalid_contract_fixture_is_rejected() -> None:
+    schema = json.loads((ROOT / "schemas" / "brand-manifest.schema.json").read_text())
+    instance = json.loads((ROOT / "tests/fixtures/contracts/brand-manifest.invalid.json").read_text())
+    errors = list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(instance))
+    assert errors
 
 
 def test_website_fixture_contract() -> None:

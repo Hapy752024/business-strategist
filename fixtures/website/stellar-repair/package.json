@@ -1,19 +1,26 @@
 {
   "name": "stellar-repair-fixture",
   "private": true,
-  "engines": {"node": ">=20.9"},
+  "engines": {
+    "node": ">=20.9"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "start": "next start",
     "lint": "node scripts/lint.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "flags": "4.3.0",
     "next": "16.3.3",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.62.1",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -1,14 +1,19 @@
 import { ExperimentCta } from "./experiment-cta";
+import { FlagValues } from "flags/react";
+import { resolveCtaVariant } from "../lib/flags";
 
 const proof = ["Clear fixed-price scope", "Named specialist before arrival", "Photo-backed completion record"];
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ variant?: string | string[] }> }) {
+  const requested = (await searchParams).variant;
+  const variant = await resolveCtaVariant(Array.isArray(requested) ? requested[0] : requested);
   return (
     <main>
+      <FlagValues values={{ primary_cta_label: variant }} />
       <a className="skip" href="#request">Skip to request</a>
       <header><p className="eyebrow">STELLAR / HOME REPAIR</p><nav aria-label="Primary"><a href="#process">How it works</a><a href="#proof">Why Stellar</a><a className="nav-cta" href="#request">Request a visit</a></nav></header>
       <section className="hero" aria-labelledby="hero-title">
-        <div><p className="kicker">For homes that deserve a cleaner finish</p><h1 id="hero-title">The clearest way to get small repairs done properly.</h1><p className="lede">Stellar pairs considered craft with an exact scope before work begins—so your home feels looked after, not processed.</p><div className="actions"><ExperimentCta /><a className="secondary" href="#proof">See the standard</a></div></div>
+        <div><p className="kicker">For homes that deserve a cleaner finish</p><h1 id="hero-title">The clearest way to get small repairs done properly.</h1><p className="lede">Stellar pairs considered craft with an exact scope before work begins—so your home feels looked after, not processed.</p><div className="actions"><ExperimentCta variant={variant} /><a className="secondary" href="#proof">See the standard</a></div></div>
         <aside className="signature" aria-label="Stellar quality signal"><span>01</span><strong>Measured repair.<br />Visible care.</strong><p>Every finish is documented before we leave.</p></aside>
       </section>
       <section id="proof" className="proof" aria-labelledby="proof-title"><p className="eyebrow">WHAT MAKES THE DIFFERENCE</p><h2 id="proof-title">Confidence comes from specificity.</h2><ul>{proof.map((item) => <li key={item}>{item}</li>)}</ul></section>

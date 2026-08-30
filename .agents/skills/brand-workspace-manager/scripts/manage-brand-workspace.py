@@ -42,13 +42,19 @@ def write_manifest(root: Path, *, entry_mode: str, business_to_brand: str = "") 
     if not manifest_path.exists():
         manifest = {
             "schema_version": "1.0",
+            "manifest_revision": 1,
             "brand_id": root.name,
             "entry_mode": entry_mode,
             "business_to_brand": business_to_brand or None,
+            "current_stage": "discovery",
+            "requested_deliverables": [],
+            "excluded_deliverables": [],
             "stages": {stage: "not_started" for stage in STAGES},
             "approvals": {},
             "artifacts": [],
             "open_blockers": [],
+            "accepted_residual_risks": [],
+            "completion_status": "in_progress",
             "next_action": "Complete the brand brief and select the first stage."
         }
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")

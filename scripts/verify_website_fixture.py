@@ -56,8 +56,14 @@ def verify(root: Path) -> list[str]:
     for required_copy in ("Confidence comes from specificity", "Demo interaction only", "Request a visit"):
         if required_copy not in source:
             errors.append(f"fixture is missing required content contract: {required_copy!r}")
-    if 'data-experiment="primary_cta_label"' not in source or "URLSearchParams" not in source:
-        errors.append("fixture must implement a query-overridable, one-variable CTA experiment")
+    flag_source = (root / "lib" / "flags.ts").read_text(encoding="utf-8") if (root / "lib" / "flags.ts").is_file() else ""
+    if 'data-experiment="primary_cta_label"' not in source or 'key: "primary_cta_label"' not in flag_source:
+        errors.append("fixture must implement a server-evaluated, one-variable CTA experiment")
+    for nondeterministic in ('"use client"', "Math.random", "localStorage"):
+        if nondeterministic in experiment_component.read_text(encoding="utf-8"):
+            errors.append(f"experiment assignment must not use client-side {nondeterministic}")
+    if "FlagValues" not in page.read_text(encoding="utf-8"):
+        errors.append("fixture must emit evaluated flag values for observability")
     return errors
 
 

@@ -26,6 +26,12 @@ jobs:
       - name: Run evals
         run: python3 scripts/run_evals.py
 
+      - name: Run full Python test suite
+        run: PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q tests --disable-warnings
+
+      - name: Compare agentic process contracts
+        run: python3 scripts/benchmark_agentic_process.py --output-dir /tmp/agentic-process-eval
+
   optional-brand-tools:
     name: optional brand tooling
     if: ${{ vars.RUN_BRAND_TOOLS == 'true' }}
@@ -58,3 +64,5 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

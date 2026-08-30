@@ -6,6 +6,14 @@
       "prompt": "Create or resume a brand workspace without deleting history.",
       "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
       "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Promote approved logo option 2 over a different existing master file.",
+      "expected_output": "Performs a dry run, reports the conflict, and refuses overwrite until separate explicit replacement approval is recorded.",
+      "files": [],
+      "must_mention": ["conflict", "approval", "dry run"],
+      "must_not_mention": ["automatically overwrite"]
     }
   ]
 }

@@ -24,6 +24,8 @@ def main() -> int:
     timestamp = now_iso()
     manifest = {
         "schema_version": "1.0",
+        "manifest_revision": 1,
+        "updated_at": timestamp,
         "website_id": args.website_id,
         "entry_mode": args.entry_mode,
         "stack": {"next": args.next_version, "react": "resolved-by-next", "node": ">=20.9", "package_manager": "pnpm", "lockfile": "source/pnpm-lock.yaml", "resolver_source": "https://nextjs.org/docs/app/getting-started/installation", "resolved_at": timestamp},
@@ -33,8 +35,10 @@ def main() -> int:
         "pages": [],
         "fal_assets": [],
         "experiment": None,
-        "qa": {"build": "pending", "accessibility": "pending", "performance": "pending", "visual_review": "pending"},
-        "release": {"status": "local"},
+        "qa": {"build": "pending", "accessibility": "pending", "performance": "pending", "responsive": "pending", "visual_review": "pending"},
+        "release": {"status": "local", "environment": "local"},
+        "next_action": "Select a creative territory and build the vertical slice.",
+        "open_blockers": [],
     }
     args.website_dir.mkdir(parents=True, exist_ok=True)
     output = args.website_dir / "website-manifest.json"

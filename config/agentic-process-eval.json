@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "baseline_ref": "f654d8c942427efac33059ab5ab30452c2b85e1c",
+  "baseline_label": "pre-brand-integration agentic infrastructure",
+  "comparison_label": "current worktree",
+  "scope": "structural agent, skill, routing, state, safety, and QA capabilities only",
+  "contracts": [
+    {"id": "brand-skills", "description": "Brand capabilities are represented by independently routable skills."},
+    {"id": "website-skill", "description": "A dedicated website builder skill exists."},
+    {"id": "server-experiment", "description": "Website fixture evaluates its CTA experiment on the server."},
+    {"id": "browser-qa", "description": "Browser accessibility and responsive checks are CI-configured."},
+    {"id": "brand-state-cli", "description": "Brand workspaces expose explicit state commands."},
+    {"id": "safe-promotion", "description": "Artifact promotion fails closed on destination conflicts."},
+    {"id": "fal-finalization", "description": "FAL outputs are downloaded and validated into URL-free local records."},
+    {"id": "claim-fail-closed", "description": "Unknown evidence IDs are rejected instead of silently discarded."}
+  ],
+  "limitations": "This benchmark measures repository contracts, not LLM judgment, subjective design quality, or real-world business outcomes."
+}

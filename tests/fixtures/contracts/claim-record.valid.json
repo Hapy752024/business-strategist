@@ -1,0 +1,12 @@
+{
+  "claim_id": "synthetic-claim-1",
+  "claim_type": "hypothesis",
+  "claim": "A synthetic customer may prefer option A.",
+  "supporting_evidence": [],
+  "counter_evidence": [],
+  "independence_count": 0,
+  "duplicate_clusters": [],
+  "confidence": "unresolved",
+  "confidence_rationale": "No real-world evidence was used.",
+  "none_found_scope": null
+}

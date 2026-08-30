@@ -92,55 +92,15 @@ Brand requests do not require market research. After a user explicitly selects a
 
 ## Commands
 
-Initialize a topic workspace:
+Use the selected skill's `references/workflow.md` and `references/commands.md`; do not load unrelated command references. Common entry points:
 
-```bash
-python3 scripts/evidence_scout/init_topic.py --topic "<topic>" --customer-segment "<segment>"
-```
-
-Market-problem discovery:
-
-```bash
-python3 scripts/evidence_scout/discover_market_problems.py --topic "<market or domain>" --focus "<optional rough hunch>" --collect
-```
-
-Validate API access:
-
-```bash
-python3 scripts/validate_apis/run_all.py
-```
-
-Discover the best source route for a research need:
-
-```bash
-python3 scripts/capability_lookup.py --question "<research need>" --compact
-```
-
-Default evidence run:
-
-```bash
-python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain phrase 1>,<pain phrase 2>" --workaround-keywords "<workaround 1>,<workaround 2>" --hypothesis-id H1 --days 30 --limit 20 --providers default
-```
-
-Competitor discovery:
-
-```bash
-python3 scripts/evidence_scout/discover_competitors.py --topic "<topic>" --customer-segment "<segment>" --known-competitors "<optional comma-separated names>" --limit 20
-```
-
-Competitor ads intelligence (Meta Ad Library; EU/UK/EEA commercial ads; Apify paid fallback for other markets):
-
-```bash
-python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json" --countries DE --limit 20
-```
-
-Facebook/Instagram social evidence (ScrapeCreators, paid — ask first):
-
-```bash
-python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --providers scrapecreators --fb-groups "<public-group-url>" --ig-hashtags "<tag1,tag2>"
-```
-
-Full command variants and provider routing details live in each skill's `references/workflow.md` and `references/commands.md`.
+- Topic init: `python3 scripts/evidence_scout/init_topic.py --topic "<topic>" --customer-segment "<segment>"`
+- Market discovery: `python3 scripts/evidence_scout/discover_market_problems.py --topic "<market>" --focus "<hunch>" --collect`
+- Provider validation: `python3 scripts/validate_apis/run_all.py`
+- Route lookup: `python3 scripts/capability_lookup.py --question "<need>" --compact`
+- Evidence collection: `python3 scripts/evidence_scout/collect.py ... --providers default`
+- Competitors: `python3 scripts/evidence_scout/discover_competitors.py ...`
+- Ads: `python3 scripts/evidence_scout/collect_ads.py ...`; social: `collect.py --providers scrapecreators ...` (paid; ask first).
 
 ## Provider Policy
 

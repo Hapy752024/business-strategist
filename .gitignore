@@ -24,6 +24,8 @@ node_modules/
 .codex/artifacts/
 .firecrawl/
 .pytest_cache/
+test-results/
+playwright-report/
 
 # OS
 .DS_Store

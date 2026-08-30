@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "manifest_revision": 1,
+  "updated_at": "{{ISO_TIMESTAMP}}",
+  "website_id": "{{PROJECT_SLUG}}",
+  "entry_mode": "standalone",
+  "stack": {
+    "next": "{{RESOLVED_STABLE_NEXT}}",
+    "react": "{{RESOLVED_REACT}}",
+    "node": ">=20.9",
+    "package_manager": "npm",
+    "lockfile": "package-lock.json",
+    "resolver_source": "https://nextjs.org/docs/app/getting-started/installation",
+    "resolved_at": "{{ISO_TIMESTAMP}}"
+  },
+  "preferences": "website-preferences.json",
+  "brand_refs": [],
+  "concept": {"territories": [], "selected": "", "signature_device": "", "approval_status": "pending"},
+  "pages": [],
+  "fal_assets": [],
+  "experiment": null,
+  "qa": {"build": "pending", "accessibility": "pending", "performance": "pending", "responsive": "pending", "visual_review": "pending"},
+  "release": {"status": "local", "environment": "local"},
+  "next_action": "Capture preferences and propose creative territories.",
+  "open_blockers": []
+}

@@ -185,7 +185,9 @@ check "interview-bridge kit tests pass" python3 scripts/evidence_scout/test_inte
 check "whitespace matrix tests pass" python3 scripts/evidence_scout/test_whitespace_matrix.py
 check "imported brand skill tests pass" python3 -m pytest -q tests/brand_designer --disable-warnings
 check "business-brand-website foundation tests pass" python3 -m pytest -q tests/integration --disable-warnings
+check "full Python test suite passes" python3 -m pytest -q tests --disable-warnings
 check "offline behavioral route evals pass" python3 scripts/run_behavioral_evals.py --repeat 3 >/dev/null
+check "agentic process comparison runs" python3 scripts/benchmark_agentic_process.py --output-dir /tmp/business-strategist-agentic-eval >/dev/null
 check "eval structure is valid" python3 scripts/run_evals.py
 
 # ── Schemas ───────────────────────────────────────────────

@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "manifest_revision": 1,
+  "brand_id": "synthetic-brand",
+  "entry_mode": "standalone",
+  "business_to_brand": null,
+  "current_stage": "discovery",
+  "requested_deliverables": ["logo"],
+  "excluded_deliverables": ["website"],
+  "stages": {"discovery": "in_progress", "logo": "not_started", "website": "skipped"},
+  "approvals": {},
+  "artifacts": [],
+  "open_blockers": [],
+  "accepted_residual_risks": [],
+  "completion_status": "in_progress",
+  "next_action": "Complete the synthetic brief."
+}
