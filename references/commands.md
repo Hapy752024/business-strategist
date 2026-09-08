@@ -30,7 +30,7 @@ python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "
 
 ```bash
 # Known competitors (free official Meta Ad Library; EU/UK/EEA commercial ads only)
-python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json" --countries DE,AT,CH --limit 20
+python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --countries DE,AT,CH --limit 20
 
 # Keyword mode — discover WHO advertises
 python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --keywords "<keyword 1>,<keyword 2>" --countries DE --limit 30
@@ -87,12 +87,26 @@ python3 scripts/evidence_scout/discover_market_problems.py --topic "<market>" --
 
 ```bash
 python3 scripts/evidence_scout/discover_competitors.py --topic "<topic>" --customer-segment "<segment>" --known-competitors "<optional comma-separated names>" --limit 20
+
+# Add Lane B and Lane C scopes explicitly (lane provenance is preserved per source observation)
+python3 scripts/evidence_scout/discover_competitors.py --topic "<topic>" --customer-segment "<segment>" --analog-market "<other country or segment>" --reference-capability "website" --reference-capability "YouTube" --limit 20
 ```
 
 ## Competitor Marketing Analysis
 
 ```bash
-python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 10
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 10
+
+# Analyze only one lane
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --lane similar_company --limit 5
+```
+
+## Lane-aware landscape artifacts
+
+```bash
+python3 scripts/evidence_scout/collect_social_presence.py --entities-json "<competitors.json>" --marketing-json "<marketing_analysis.json>" --out "<run>/social-observations.json"
+python3 scripts/evidence_scout/build_entity_landscape.py --competitors-json "<competitors.json>" --discovery-summary-json "<discovery-summary.json>" --marketing-json "<marketing_analysis.json>" --social-json "<run>/social-observations.json" --service "<service>" --job "<customer job>" --target-segment "<segment>" --geography "<country/market>" --out "<run>/entity-landscape.json"
+python3 scripts/evidence_scout/build_landscape_artifacts.py --entities-json "<entity-landscape.json>" --marketing-json "<marketing_analysis.json>" --out-dir "<run>/landscape"
 ```
 
 ## Founder/Operator Playbooks
@@ -104,13 +118,13 @@ python3 scripts/evidence_scout/research_founder_playbooks.py --topic "<topic>" -
 ## Interview Kit (interview-bridge)
 
 ```bash
-python3 scripts/evidence_scout/build_interview_kit.py --run-dir "research/topics/<topic>/evidence/runs/<run>" --limit 8
+python3 scripts/evidence_scout/build_interview_kit.py --run-dir "projects/research/topics/<topic>/evidence/runs/<run>" --limit 8
 ```
 
 ## Whitespace Matrix
 
 ```bash
-python3 scripts/evidence_scout/build_whitespace_matrix.py --topic "<topic>" --evidence-jsonl "research/topics/<topic>/evidence/runs/<run>/evidence.jsonl" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json"
+python3 scripts/evidence_scout/build_whitespace_matrix.py --topic "<topic>" --evidence-jsonl "projects/research/topics/<topic>/evidence/runs/<run>/evidence.jsonl" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json"
 ```
 
 ## Infrastructure
@@ -144,3 +158,14 @@ bash scripts/validate_setup.sh
 ```bash
 python3 scripts/evidence_scout/init_topic.py --topic "<topic>" --customer-segment "<segment>"
 ```
+# Strategy execution review
+
+Run from the repository root. KPI definitions in `schemas/strategy-plan.schema.json` require `direction: at_least` or `at_most`; do not assume larger values are better. Existing plans must add direction before validation.
+
+```bash
+python3 scripts/strategy_review.py validate --plan <strategy-plan.json>
+python3 scripts/strategy_review.py freeze --plan <strategy-plan.json> --output <baseline.json>
+python3 scripts/strategy_review.py weekly-review --plan <strategy-plan.json> --baseline <baseline.json> --observations <observations.json>
+```
+
+Freeze before collecting results. Baseline creation refuses overwrite. Review rejects changed experiment/KPI definitions; preserve the baseline and start a new experiment revision when rules change. Numeric observations use the numerator/denominator field names. For scoped KPIs, include `_metadata` keyed by KPI name with matching `window`, `currency`, and/or `cohort`; cohort observations also require `mature: true`. Missing, invalid, mismatched, or immature observations return `incomplete`, never success. Commitments may include `completed_at`; uncompleted commitments are reported as pending or overdue. The report retains the supplied strategic verdict for founder review; it does not infer a business verdict from a ratio alone.

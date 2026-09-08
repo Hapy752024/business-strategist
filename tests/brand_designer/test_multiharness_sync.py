@@ -26,6 +26,6 @@ def test_new_skills_visible_via_claude_skills() -> None:
 
 
 def test_catalog_exposes_imported_skills() -> None:
-    catalog = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    catalog = (ROOT / "config/skill-catalog.json").read_text(encoding="utf-8")
     assert "brand-motion-designer" in catalog
     assert "brand-ui-component-producer" in catalog

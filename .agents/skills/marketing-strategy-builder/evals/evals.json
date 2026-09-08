@@ -64,6 +64,12 @@
       "must_not_mention": [
         "typical risk-averse German"
       ]
+    },
+    {
+      "id": "position-narrow-copy",
+      "prompt": "Only write three short ad-copy variants. Selected promise: checklist preparation in 3 days after complete intake; no legal advice. Use these supplied assumptions; do not research or redo positioning.",
+      "expected_output": "Deliver only the requested copy, preserving timing and exclusion without invented proof, a full strategy plan, new positioning alternatives or unrelated reference loads.",
+      "files": []
     }
   ]
 }

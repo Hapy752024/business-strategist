@@ -1,0 +1,101 @@
+{
+  "routes": {
+    "Build a GTM strategy for my SaaS": "business-strategist",
+    "Create a marketing strategy": "business-strategist",
+    "Monitor competitor pricing weekly": "competitor-marketing-analyzer",
+    "Do not build a landing page; analyze competitor pricing": "competitor-marketing-analyzer",
+    "أريد خطة تسويق": "business-strategist",
+    "Ich brauche eine Marketingstrategie": "business-strategist"
+  },
+  "source_schema_errors": {
+    "hn": [
+      "'hn' is not one of ['reddit', 'youtube', 'youtube_comment', 'google_trends', 'forum', 'web_search', 'x', 'tiktok', 'instagram', 'threads', 'facebook', 'app_store', 'app_review', 'amazon', 'news', 'web', 'brave_search', 'firecrawl', 'crawl4ai', 'markitdown', 'scrapling', 'bilibili', 'bilibili_comment', 'v2ex', 'zhihu', 'weibo', 'douban', 'tieba', 'xiaohongshu']"
+    ],
+    "github": [
+      "'github' is not one of ['reddit', 'youtube', 'youtube_comment', 'google_trends', 'forum', 'web_search', 'x', 'tiktok', 'instagram', 'threads', 'facebook', 'app_store', 'app_review', 'amazon', 'news', 'web', 'brave_search', 'firecrawl', 'crawl4ai', 'markitdown', 'scrapling', 'bilibili', 'bilibili_comment', 'v2ex', 'zhihu', 'weibo', 'douban', 'tieba', 'xiaohongshu']"
+    ],
+    "google_autocomplete": [
+      "'google_autocomplete' is not one of ['reddit', 'youtube', 'youtube_comment', 'google_trends', 'forum', 'web_search', 'x', 'tiktok', 'instagram', 'threads', 'facebook', 'app_store', 'app_review', 'amazon', 'news', 'web', 'brave_search', 'firecrawl', 'crawl4ai', 'markitdown', 'scrapling', 'bilibili', 'bilibili_comment', 'v2ex', 'zhihu', 'weibo', 'douban', 'tieba', 'xiaohongshu']"
+    ]
+  },
+  "engagement_changes_strength": {
+    "0": "medium",
+    "25": "strong"
+  },
+  "inflated_confidence_errors": [],
+  "stage_jump": {
+    "intake": "in_progress",
+    "current_stage": "final_decision",
+    "gate_result": "pass",
+    "missing_artifact_exists": false
+  },
+  "geo_language": {
+    "Swiss retirement planning": [
+      "US",
+      "en"
+    ],
+    "French freelancers": [
+      "US",
+      "en"
+    ],
+    "خدمات سعودية": [
+      "US",
+      "en"
+    ],
+    "Italian accounting software": [
+      "US",
+      "en"
+    ]
+  },
+  "unicode_lookup_words": [],
+  "podcasts_in_default": false,
+  "reddit_failed_search_summary": {
+    "status": "ok",
+    "record_count": 0,
+    "fields": [
+      "searches",
+      "searches[].query",
+      "searches[].response",
+      "token",
+      "token.ok"
+    ]
+  },
+  "inventory": {
+    "skills": 38,
+    "catalog_entries": 37,
+    "workflow_routes": 11,
+    "source_capabilities": 23,
+    "missing_catalog": [
+      "competitor-monitoring"
+    ],
+    "source_literals_missing_schema": [
+      "hn",
+      "github",
+      "google_autocomplete",
+      "itunes_reviews",
+      "youtube_transcript",
+      "xai_x_search"
+    ],
+    "skill_entry_lines_min": 21,
+    "skill_entry_lines_max": 30,
+    "workflow_files_with_duplicate_frontmatter": 14,
+    "root_agents_bytes": 12594
+  },
+  "checks": {
+    "setup": "passed",
+    "tests_directory": "44 passed",
+    "skill_eval_structure": "109 cases across 38 skills; zero errors",
+    "routing_eval_structure": "24 cases across 9 pairs",
+    "offline_routing": "16 scenarios repeated 3 times passed via setup",
+    "scripts_evidence_scout_plain_pytest": "3 import collection errors",
+    "scripts_evidence_scout_with_pythonpath": "59 passed",
+    "diff_check": "passed",
+    "live_serper_search": "passed after sandbox DNS retry",
+    "live_all_providers": "not run",
+    "live_agent_harnesses": "not run"
+  },
+  "hook_documented_payload": {
+    "input_field": "last_assistant_message",
+    "observed": "nonempty documented payload returned continue=false and empty-output diagnostic; implementation reads agent_output"
+  }
+}

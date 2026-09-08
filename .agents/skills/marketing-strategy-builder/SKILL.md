@@ -1,22 +1,17 @@
 ---
 name: marketing-strategy-builder
 description: Build evidence-grounded segmentation, positioning, messaging, offers, funnels, channels, launch plans, campaigns, and growth metrics. Use whenever the user asks how to market, position, launch, or acquire demand.
+compatibility: Requires the business-strategist repository and its shared references/task-scope.md contract.
 ---
 
 # Marketing Strategy Builder
 
-## Success Criteria
-- **Quantitative:** triggers on >=90% of marketing strategy queries; completes in <=18 tool calls; produces segmentation, positioning, and channel plan; zero channels recommended without evidence of audience presence.
-- **Qualitative:** strategy is grounded in customer and competitor evidence; channels are matched to observed behavior; experiment budgets, thresholds, and stop rules are defined.
-
 ## Workflow
 
-1. Read `references/workflow.md` completely.
-2. Require a specific segment, buyer, problem, offer, geography, and goal.
-3. Ground strategy in customer and competitor evidence.
-4. Match channels to observed behavior and founder constraints.
-5. Define experiment budgets, thresholds, stop rules, and learning cadence.
+1. Read repo-root `references/task-scope.md` (shared repository dependency). Reuse supplied context; select focused, execution or strategy scope.
+2. For a focused answer or copy/message execution, use the requested audience, offer, tone, proof limits, CTA and format. Produce only the requested answer or variants. If a fact is missing, ask only if material; otherwise label an assumption. Do not reopen positioning or require a strategy file for routine copy.
+3. For a full marketing strategy, read [strategy workflow](references/workflow.md) completely. Ground channels in audience evidence and define budgets, thresholds and stop rules. Reuse the active strategy record when available.
 
 ## Output
 
-Produce segmentation, positioning, offer, funnel, channel roles, proof plan, experiments, metrics, risks, and 7/30/60/90-day actions.
+Focused/execution: the requested answer or deliverable, with material assumptions only. Strategy: the applicable strategy-workflow outputs. Never publish or spend without approval.

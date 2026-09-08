@@ -1,22 +1,22 @@
 ---
 name: social-media-idea-validator
-description: Validate a social media, content, or channel idea before investing production effort. Use when the user asks whether a content series, YouTube/TikTok/LinkedIn channel, podcast, SEO topic cluster, newsletter, or social campaign concept is worth pursuing for their business. Checks audience presence, demand evidence, founder-format fit, differentiation and white space, and channel economics, then returns a GO / PIVOT / KILL verdict with a low-cost test plan. NOT for building the full social or digital marketing plan after validation → use `social-digital-marketing-planner`. NOT for overall marketing strategy, segmentation, or positioning → use `marketing-strategy-builder`. NOT for validating the underlying business idea → use `idea-grill`.
+description: Validate a content, social, or channel idea before production investment. Use when audience evidence, founder fit, differentiation, channel economics, and a GO/PIVOT/KILL test are needed.
 ---
 
 # Social Media Idea Validator
 
 ## Success Criteria
 - **Quantitative:** triggers on >=90% of "is this social/content idea worth it" queries; completes in <=15 tool calls; every GO verdict cites at least one demand signal and one audience-presence signal; zero verdicts without an explicit test plan and stop rule.
-- **Qualitative:** verdicts follow the founder evidence base (practitioner patterns, not vibes); ideas are killed or pivoted when demand evidence is missing; the user can execute the low-cost test within one week.
+- **Qualitative:** verdicts follow the founder evidence base (practitioner patterns, not vibes); ideas are not rejected merely for an occupied market or unavailable evidence; the user gets a bounded, affordable test calibrated to the buying cycle.
 
 ## Workflow
 
 1. Read `references/workflow.md` for the six validation gates and evidence instruments.
 2. Read `references/founder-playbooks.md` for the practitioner evidence base (SaaS, fintech/insurtech, professional services).
 3. Restate the idea as a testable claim: audience, platform, format, promise, conversion event.
-4. Run the gates in order: audience presence → demand evidence → founder-format fit → differentiation/white space → channel economics → sustainability. Stop early on a hard KILL.
-5. Return the verdict with evidence, confidence, and a one-week low-cost test.
+4. Run the gates in order: audience presence → demand evidence → founder-format fit → economic entry/customer relationship → route economics/learning window → sustainability. Stop early on a hard KILL.
+5. Return the verdict with evidence, confidence, and a bounded low-cost test with separate access, relationship and commercial thresholds.
 
 ## Output
 
-Produce: idea restatement, gate-by-gate evidence table, GO / PIVOT / KILL verdict with confidence, the cheapest test that would change the verdict, stop rules, and source list with dates. Mark missing evidence `[DATA UNAVAILABLE]` instead of filling gaps from memory.
+Produce: idea restatement, gate-by-gate evidence table, GO / GO-as-assist / PIVOT / KILL / INSUFFICIENT EVIDENCE verdict with confidence, the cheapest test that would change the verdict, access/relationship/commercial thresholds, and source list with dates. Mark missing evidence `[DATA UNAVAILABLE]` instead of filling gaps from memory.

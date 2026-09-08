@@ -1,6 +1,6 @@
 ---
 name: archetype-gtm-strategist
-description: Build evidence-grounded go-to-market strategy from MVP test through launch and scale for B2B SaaS, B2C SaaS, B2C fintech/insurtech, and B2C professional services. Use whenever a founder needs customer segmentation, first customers, low-cost marketing, partnerships, regional expansion, channel tests, or GTM decision gates, especially in Europe, the US, or China.
+description: Select business positioning and derive strategic trade-offs, or build stage-gated GTM plans. Use for business-position choices, first customers, channel tests, partnerships, or launch decisions; load archetype playbooks only where applicable.
 ---
 
 # Archetype GTM Strategist
@@ -11,12 +11,13 @@ description: Build evidence-grounded go-to-market strategy from MVP test through
 
 ## Workflow
 
-1. Read `references/workflow.md` and `references/evidence-base.md`.
-2. Read only the relevant sections of `references/archetypes.md` and `references/regions.md`.
+1. Read `references/workflow.md`; for position selection/revision use repo-root `references/strategic-positioning.md` and answer only the requested scope.
+2. For a GTM plan, read `references/evidence-base.md` and only applicable sections of `references/archetypes.md` and `references/regions.md`.
 3. Use `references/experiments.md` for stage gates and test design.
 4. Ground recommendations in the founder's evidence, constraints, and current stage.
-5. Write the result using `assets/gtm-strategy-template.md`.
+5. Use relevant sections of `assets/gtm-strategy-template.md`; for execution-ready plans, reuse the active `strategy-plan.json` with accountable KPI owners, formulas, targets, and decision rules. A focused advisory answer needs no full plan.
+6. Validate it with `python3 scripts/strategy_review.py validate --plan <strategy-plan.json>` before calling a GTM plan ready to execute.
 
 ## Output
 
-Produce a trigger-defined segment, positioning and offer, MVP/launch plan, first-customer motion, channel and partnership portfolio, regional adaptations, economics, metrics, stop/scale gates, and 7/30/60/90-day actions.
+For focused positioning, return the decision and requested implications. For a full GTM plan, produce segment, positioning/offer, launch and first-customer motion, channels/partners, relevant regional adaptations, economics, KPIs, gates, and accountable actions.

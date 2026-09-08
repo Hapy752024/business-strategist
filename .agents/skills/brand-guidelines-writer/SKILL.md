@@ -1,7 +1,6 @@
 ---
 name: brand-guidelines-writer
-description: Writes the final corporate identity and corporate design guideline documents from confirmed strategy, research, assets, tokens, and UI system outputs.
-user_invocable: true
+description: Write brand identity and design guideline documents from confirmed strategy, research, assets, tokens, and UI outputs. Use after core brand decisions are confirmed.
 ---
 
 # Brand Guidelines Writer

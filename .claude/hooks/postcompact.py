@@ -49,7 +49,7 @@ def main() -> int:
 
     lines.append("")
     lines.append("### Restored Invariants")
-    lines.append("- Check `research/topics/<slug>/manifest.json` before resuming any workflow.")
+    lines.append("- For a research continuation, check `projects/research/topics/<slug>/manifest.json`. A new unrelated request does not inherit this workspace.")
     lines.append("- Do not re-run completed stages unless source data has materially changed.")
     lines.append("- Separate facts, hypotheses, and judgments in all outputs.")
     lines.append("- Ask one question at a time when user input is needed.")

@@ -42,7 +42,7 @@ Define the foundational motion archetypes for a brand. Each pillar carries its o
 6. Record the benchmark pattern cited (from `references/benchmarks.md`) in `stages/motion/pillars/<pillar-name>/benchmark-citation.md`.
 
 ## Pillar Selection Heuristic
-- Read `brand-strategy-director` outputs (brand personality, audience, tone) from `brand-projects/<name>/strategy/`.
+- Read `brand-strategy-director` outputs (brand personality, audience, tone) from `projects/brand-projects/<name>/strategy/`.
 - Map brand personality traits to pillar archetypes:
   - "Trustworthy, professional" → Natural + Responsive
   - "Playful, energetic" → Expressive + Continuous

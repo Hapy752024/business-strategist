@@ -80,6 +80,24 @@
       "prompt": "Our collaboration SaaS has 20 retained design teams. Users already invite external reviewers into every project. Should we add paid ads, referrals, or community next?",
       "expected_output": "Distinguishes the existing recipient/collaboration product loop from acquisition channels, measures invite-to-recipient activation and retention, selects one channel job and test based on reachable buyers, defines product-loop and paid-scale gates, and avoids recommending a community without a recurring member-to-member exchange.",
       "files": []
+    },
+    {
+      "id": "position-priorities",
+      "prompt": "Small firms want inexpensive all-in-one support, according to six forum posts and no interviews. Compare strategic positions and the next test only.",
+      "expected_output": "Separate buyer evidence from inferred priorities; compare feasible alternatives, exclusions and a discriminating test without false precision or a full GTM plan.",
+      "files": []
+    },
+    {
+      "id": "position-founder-pressure",
+      "prompt": "I insist on premium customization, instant delivery and the lowest price. We have 20 delivery hours weekly, 5 hours per case, EUR 50 price per case. Define our strategic positioning and operating choices.",
+      "expected_output": "Challenge the combination with capacity and economic calculations, offer feasible narrower alternatives and customer-outcome/economic tests; do not agree because the founder insists.",
+      "files": []
+    },
+    {
+      "id": "position-new-evidence",
+      "prompt": "I previously insisted instant custom delivery works without evidence. Now a pilot shows checklist automation reduces each standard case from 5 hours to 20 minutes, 12 buyers paid EUR 50, and 2 required costly exceptions. Reconsider our position.",
+      "expected_output": "Revise the recommendation on new evidence, distinguish standard cases and exceptions, revisit exclusions/capacity/economics and affected downstream work while retaining the original experiment interpretation.",
+      "files": []
     }
   ]
 }

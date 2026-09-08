@@ -1,13 +1,15 @@
 # Workspace Lifecycle — Resume, Replay, and Run-Manifest
 
+Canonical roots are `projects/research/topics/` and `projects/brand-projects/`; controller manifests remain `projects/<slug>/project-manifest.json`. Reserve `research` and `brand-projects` as controller slugs. Do not recreate former root-level directories. For an old explicit path, report its relocated equivalent; preserve frozen evidence paths as historical provenance. Repair only operational links after checking their targets. A new unrelated request does not inherit another workspace's active track.
+
 ## Purpose
 
-Every research workflow must check for existing topic workspaces before creating new ones. The agent should surface existing work and let the user choose to continue or start fresh.
+Every research workflow must check for existing topic workspaces before creating new ones. Reuse an explicit workspace choice or clear continuation instruction from the conversation; ask only when the target or new-versus-resume intent is unresolved.
 
 Branding and website workflows are independent tracks. Do not run the research-workspace check, market discovery, or idea validation merely because a user asks for a brand or website. When those tracks are requested, inspect only the relevant project/brand manifests:
 
 ```bash
-ls -d projects/*/project-manifest.json brand-projects/*/brand-manifest.json 2>/dev/null
+ls -d projects/*/project-manifest.json projects/brand-projects/*/brand-manifest.json 2>/dev/null
 ```
 
 Present matching workspaces with their active track, revision, next action, and blockers. Ask whether to continue the selected workspace or start a new one. A website may consume an explicitly linked, immutable `business-to-brand.json` snapshot; it must not silently read live research files.
@@ -17,7 +19,7 @@ Present matching workspaces with their active track, revision, next action, and 
 Before any research workflow (market-problem-discovery, evidence-scout, idea-grill), run:
 
 ```bash
-ls -d research/topics/*/manifest.json 2>/dev/null
+ls -d projects/research/topics/*/manifest.json 2>/dev/null
 ```
 
 If the command returns paths, read each manifest's key fields:
@@ -25,7 +27,7 @@ If the command returns paths, read each manifest's key fields:
 ```bash
 python3 -c "
 import json, pathlib
-for p in pathlib.Path('research/topics').glob('*/manifest.json'):
+for p in pathlib.Path('projects/research/topics').glob('*/manifest.json'):
     m = json.loads(p.read_text())
     print(f\"{p.parent.name} | stage: {m['current_stage']} | updated: {m['updated_at']} | next: {m['next_action']}\")
 "
@@ -33,7 +35,7 @@ for p in pathlib.Path('research/topics').glob('*/manifest.json'):
 
 ## Presenting Options
 
-When existing workspaces are found, present them as numbered options:
+When existing workspaces are found and the conversation has not already resolved the choice, present them as numbered options:
 
 ```
 I found existing research workspaces:
@@ -57,6 +59,14 @@ When the user chooses to continue a workspace:
 3. Read the `run-manifest.json` from the most recent run if it exists.
 4. Resume from the current stage's `next_action` field.
 5. Do not re-run completed stages unless the user explicitly asks or source data has materially changed.
+
+## Current executive document
+
+Keep `README.md` as the sole current reader-facing narrative at the topic root. It contains the current date/status, founder context, options and trade-offs, recommendation and evidence strength, acquisition/relationship feasibility, decisive unknowns and next action. A reader should understand the decision without opening an annex. Supporting narratives belong under `deep-dives/`; source/run outputs and machine state retain their established paths.
+
+After substantive follow-ups, update the affected README sections and link directly to relevant evidence or deep dives. Use verified website links for named players; label unavailable addresses. For a material reversal, preserve the previous decision in `decisions/`, record why the affected assumption changed, and keep README consistent with the current manifest and strategy record. Preserve frozen experiment baselines.
+
+For an explicitly scoped existing-workspace migration, inventory narratives and inbound links first. Save a reversible old-to-new path map, consolidate current conclusions in README, move only supporting narratives, and update relative links and manifest references. Verify every local link/manifest target and unchanged evidence/baseline bytes. Initialization must never overwrite an existing README or silently migrate a workspace. Do not reorganize unrelated topics.
 
 ## Per-Run Manifest
 

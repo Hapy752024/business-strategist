@@ -1,6 +1,6 @@
 ---
 name: growth-case-analyzer
-description: Analyze successful and failed companies to extract transferable strategy, management, marketing, product, distribution, timing, culture, and capital-allocation lessons. Use for company cases, comparisons, and failure analysis.
+description: Analyze successful and failed companies for transferable strategy, marketing, product, distribution, and operating lessons. Use when a company case, comparison, or failure analysis is needed.
 ---
 
 # Growth Case Analyzer

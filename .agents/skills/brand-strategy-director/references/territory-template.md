@@ -3,6 +3,7 @@
 ## Territory Name
 
 - Core idea:
+- Business-linked work: source snapshot/revision and expression of its selected position; note any material conflict:
 - USP/differentiation expressed:
 - Best for:
 - Audience signal:

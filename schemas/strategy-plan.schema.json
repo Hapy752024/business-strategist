@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "strategy-plan.schema.json",
+  "title": "Decision-ready strategy plan",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "verdict",
+    "decisive_uncertainty",
+    "experiments",
+    "kpis",
+    "commitments"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "verdict": {
+      "enum": [
+        "insufficient_evidence",
+        "investigate",
+        "test",
+        "commit",
+        "pivot",
+        "park",
+        "stop"
+      ]
+    },
+    "decisive_uncertainty": {
+      "type": "string",
+      "minLength": 1
+    },
+    "experiments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "hypothesis",
+          "segment",
+          "action",
+          "success_metric",
+          "success_threshold",
+          "stop_condition",
+          "owner",
+          "due_date"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hypothesis": {
+            "type": "string",
+            "minLength": 1
+          },
+          "segment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "success_metric": {
+            "type": "string",
+            "minLength": 1
+          },
+          "success_threshold": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "stop_condition": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "kpis": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "formula",
+          "numerator",
+          "denominator",
+          "cadence",
+          "owner",
+          "target",
+          "direction",
+          "decision_rule"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "direction": {
+            "enum": [
+              "at_least",
+              "at_most"
+            ]
+          },
+          "window": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cohort": {
+            "type": "string",
+            "minLength": 1
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "formula": {
+            "const": "numerator / denominator"
+          },
+          "numerator": {
+            "type": "string",
+            "minLength": 1
+          },
+          "denominator": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cadence": {
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly",
+              "cohort"
+            ]
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "number"
+          },
+          "decision_rule": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "commitments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "owner",
+          "action",
+          "due_date"
+        ],
+        "properties": {
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    "positioning": {
+      "type": "object",
+      "required": [
+        "decision_status",
+        "statement",
+        "exclusions",
+        "provenance",
+        "evidence_refs",
+        "activities",
+        "experiment_ids",
+        "kpi_names"
+      ],
+      "properties": {
+        "decision_status": {
+          "enum": [
+            "proposed",
+            "selected",
+            "revisit"
+          ]
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "provenance": {
+          "enum": [
+            "evidence_backed",
+            "user_confirmed",
+            "inference",
+            "assumption",
+            "unresolved"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "activities": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "customer_priority",
+              "promise",
+              "choice",
+              "consequences",
+              "implications",
+              "provenance",
+              "evidence_refs"
+            ],
+            "properties": {
+              "customer_priority": {
+                "type": "string",
+                "minLength": 1
+              },
+              "promise": {
+                "type": "string",
+                "minLength": 1
+              },
+              "choice": {
+                "type": "string",
+                "minLength": 1
+              },
+              "consequences": {
+                "type": "string",
+                "minLength": 1
+              },
+              "implications": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provenance": {
+                "enum": [
+                  "evidence_backed",
+                  "user_confirmed",
+                  "inference",
+                  "assumption",
+                  "unresolved"
+                ]
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "experiment_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "kpi_names": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        "experiment_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "kpi_names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      }
+    }
+  }
+}

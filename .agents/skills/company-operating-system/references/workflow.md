@@ -60,8 +60,8 @@ Use these management principles:
 1. Identify the company stage, business model, team size, customer, bottleneck, and time horizon.
 2. State assumptions and material unknowns before prescribing a management system.
 3. Diagnose the main constraint: demand, conversion, delivery, quality, hiring, cash, focus, retention, or execution.
-4. Design only the operating routines that match the stage and constraint.
-5. Define a small scorecard with leading and lagging indicators.
+4. For operating-model design or a material strategy conflict, load repo-root `references/strategic-positioning.md`. Before routines, derive the activities, capabilities, people/technology/partners, service boundaries, capacity, and costs needed to deliver the selected promise. Trace consequential dependencies, conflicts, and reversal costs. Return an infeasible promise to GTM position selection. A cadence-only request uses the supplied position without this exercise.
+5. Design only necessary routines and a small scorecard: customer outcome plus relevant delivery/economic guardrails. Reuse the active strategy record's KPIs/tests, owners, formulas, windows, targets, and decision rules; identify disconfirming evidence and affected downstream work at review.
 6. Assign cadence, decision rights, owners, and review artifacts.
 7. Add cash, hiring, and stop/pivot gates.
 8. End with next-week actions that can be executed without extra planning.

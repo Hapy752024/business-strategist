@@ -5,8 +5,11 @@ from __future__ import annotations
 
 import json
 import time
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
+
+import fcntl
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,6 +24,7 @@ STAGES = (
     "evidence_collection",
     "competitor_discovery",
     "competitor_marketing",
+    "competitive_landscape",
     "offer_validation",
     "mvp_or_pilot",
     "first_customers",
@@ -50,6 +54,18 @@ def write_json(path: Path, value: Any) -> None:
     temporary.replace(path)
 
 
+@contextmanager
+def manifest_lock(workspace: Path):
+    """Serialize stage transitions so independent agents cannot overwrite them."""
+    lock_path = workspace / "manifest.lock"
+    with lock_path.open("a+", encoding="utf-8") as handle:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
 def _render_template(source: Path, destination: Path, replacements: dict[str, str]) -> None:
     if destination.exists():
         return
@@ -61,9 +77,13 @@ def _render_template(source: Path, destination: Path, replacements: dict[str, st
 
 
 def create_topic_workspace(topic: str, workspace: str = "", customer_segment: str = "") -> Path:
-    path = Path(workspace).expanduser() if workspace else ROOT / "research" / "topics" / slugify(topic)
+    path = Path(workspace).expanduser() if workspace else ROOT / "projects" / "research" / "topics" / slugify(topic)
     if not path.is_absolute():
         path = ROOT / path
+    for old_root in (ROOT / "research", ROOT / "brand-projects"):
+        if path.resolve().is_relative_to(old_root.resolve()):
+            moved = ROOT / "projects" / path.resolve().relative_to(ROOT.resolve())
+            raise ValueError(f"Workspace relocated; use {moved}. Old roots are not created.")
     path.mkdir(parents=True, exist_ok=True)
     for relative in (
         "intake",
@@ -73,6 +93,7 @@ def create_topic_workspace(topic: str, workspace: str = "", customer_segment: st
         "competitors/runs",
         "competitors/marketing",
         "customer-discovery",
+        "deep-dives",
         "experiments",
         "go-to-market",
         "decisions",
@@ -100,6 +121,7 @@ def create_topic_workspace(topic: str, workspace: str = "", customer_segment: st
         created = now_iso()
         manifest = {
             "schema_version": "1.0",
+            "manifest_revision": 1,
             "topic": topic,
             "topic_slug": slugify(topic),
             "created_at": created,
@@ -149,36 +171,60 @@ def update_stage(
 ) -> None:
     if stage not in STAGES:
         raise ValueError(f"Unsupported stage: {stage}")
-    manifest = read_manifest(workspace)
-    timestamp = now_iso()
+    if status not in {"pending", "in_progress", "passed", "failed", "blocked"}:
+        raise ValueError(f"Unsupported stage status: {status}")
+    if gate_result not in {"not_run", "pass", "conditional_pass", "fail"}:
+        raise ValueError(f"Unsupported gate result: {gate_result}")
+    if status == "passed" and gate_result not in {"pass", "conditional_pass"}:
+        raise ValueError("Passed stages require a pass or conditional_pass gate result")
+    if gate_result == "pass" and status != "passed":
+        raise ValueError("A passing gate result requires status='passed'")
     relative_artifacts: list[str] = []
+    if status == "passed" and not artifacts:
+        raise ValueError("Passed stages require artifacts")
     for artifact in artifacts or []:
+        if status == "passed" and not artifact.exists():
+            raise ValueError(f"Passed stage artifact does not exist: {artifact}")
         try:
             relative_artifacts.append(str(artifact.resolve().relative_to(workspace.resolve())))
         except ValueError:
-            relative_artifacts.append(str(artifact))
-    checkpoint = manifest["stages"][stage]
-    checkpoint.update(
-        {
-            "status": status,
-            "timestamp": timestamp,
-            "gate_result": gate_result,
-            "artifacts": [
-                {"path": path, "type": Path(path).suffix.lstrip(".") or "directory", "description": f"{stage} artifact"}
-                for path in relative_artifacts
-            ],
-            "provider_failures": provider_failures or [],
-            "open_gaps": open_gaps or [],
-            "next_action": next_action,
-        }
-    )
-    manifest["updated_at"] = timestamp
-    manifest["current_stage"] = stage
-    manifest["gate_result"] = gate_result
-    manifest["next_action"] = next_action
-    manifest["events"].append({"ts": timestamp, "event": f"stage:{stage}:{status}:{gate_result}"})
-    manifest["artifacts"] = sorted(set(manifest.get("artifacts", []) + relative_artifacts))
-    write_json(workspace / "manifest.json", manifest)
+            # Explicit --out paths predate topic workspaces and remain supported.
+            # Existence is still required for a passed stage.
+            relative_artifacts.append(str(artifact.resolve()))
+    with manifest_lock(workspace):
+        manifest = read_manifest(workspace)
+        if stage == "final_decision" and status == "passed":
+            stages = manifest.get("stages", {})
+            if not any(stages.get(name, {}).get("gate_result") == "pass" for name in ("synthesis", "opportunity_risk", "market_discovery")):
+                raise ValueError("Final decision requires a passed synthesis, opportunity risk, or market discovery gate")
+        timestamp = now_iso()
+        # Migrate older topic manifests lazily when a newly introduced stage is used.
+        checkpoint = manifest.setdefault("stages", {}).setdefault(
+            stage,
+            {"stage": stage, "status": "pending", "timestamp": timestamp, "gate_result": "not_run", "artifacts": []},
+        )
+        checkpoint.update(
+            {
+                "status": status,
+                "timestamp": timestamp,
+                "gate_result": gate_result,
+                "artifacts": [
+                    {"path": path, "type": Path(path).suffix.lstrip(".") or "directory", "description": f"{stage} artifact"}
+                    for path in relative_artifacts
+                ],
+                "provider_failures": provider_failures or [],
+                "open_gaps": open_gaps or [],
+                "next_action": next_action,
+            }
+        )
+        manifest["updated_at"] = timestamp
+        manifest["manifest_revision"] = int(manifest.get("manifest_revision", 0)) + 1
+        manifest["current_stage"] = stage
+        manifest["gate_result"] = gate_result
+        manifest["next_action"] = next_action
+        manifest["events"].append({"ts": timestamp, "event": f"stage:{stage}:{status}:{gate_result}"})
+        manifest["artifacts"] = sorted(set(manifest.get("artifacts", []) + relative_artifacts))
+        write_json(workspace / "manifest.json", manifest)
 
 
 def create_run_manifest(
@@ -280,7 +326,7 @@ def update_run_manifest(
 def find_existing_workspaces() -> list[dict[str, Any]]:
     """Return summary of existing topic workspaces for the 'continue or new' prompt."""
     workspaces: list[dict[str, Any]] = []
-    topics_dir = ROOT / "research" / "topics"
+    topics_dir = ROOT / "projects" / "research" / "topics"
     if not topics_dir.exists():
         return workspaces
     for manifest_path in sorted(topics_dir.glob("*/manifest.json")):
@@ -375,6 +421,6 @@ def resolve_run_dir(
     if out_dir:
         return Path(out_dir), None
     if legacy_output:
-        return ROOT / "research" / "evidence-scout" / legacy_subdir / run_name, None
+        return ROOT / "projects" / "research" / "evidence-scout" / legacy_subdir / run_name, None
     workspace = create_topic_workspace(topic, workspace_arg, customer_segment)
     return workspace / workspace_subdir / run_name, workspace

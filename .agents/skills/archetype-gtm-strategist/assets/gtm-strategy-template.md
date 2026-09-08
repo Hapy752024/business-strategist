@@ -24,12 +24,19 @@
 
 ## 4. Positioning and offer
 
-- Category and enemy:
+- Category and actual alternative (including doing nothing):
+- Buying situation, minimum requirements, deciding preferences, and acceptable sacrifices (evidence or hypothesis):
+- Selected position and deliberate exclusions; compare alternatives only if unresolved:
 - Outcome promise:
 - Differentiation:
 - Offer, scope, price, and risk reversal:
 - Activation moment:
 - Required proof:
+
+Include only consequential rows; present the same decision saved in the active strategy record. Reuse evidence, economics, and experiment sections below.
+
+| Customer priority and evidence | Promise and exclusion | Operating choice | Consequences and trade-offs | Service, brand and marketing implications | Existing test/KPI reference |
+|---|---|---|---|---|---|
 
 ## 5. MVP test and launch
 
@@ -46,10 +53,10 @@
 
 ## 7. Channel portfolio
 
-| Channel | Job in journey | Audience/context fit | Operating requirement | First test | Source-cohort metric | Cost cap | Success/stop rule |
-|---|---|---|---|---|---|---|---|
+| Channel | Job in journey | Discovery mechanism for an unknown entrant | Relationship role / reason to return | Conversion bridge | Operating requirement and full cost | First test | Source-cohort metric | Success/stop rule |
+|---|---|---|---|---|---|---|---|---|
 
-Name one primary channel, one supporting channel, and the channels explicitly deferred.
+Name one primary channel, one supporting channel, and the channels explicitly deferred. Separate access, relationship and commercial evidence; organic production and response time are costs, not free reach.
 
 ## 8. Product, referral, or community loop
 

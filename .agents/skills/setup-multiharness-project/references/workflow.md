@@ -1,107 +1,47 @@
-# Setup Multi-Harness Project Workflow
+# Setup and repair workflow
 
-Use this reference only when the shell scripts fail or the user asks for the rationale.
+Use the existing entry scripts. They dispatch to trusted bundled `scripts/setup_core.py` using isolated Python, without importing or executing code from the target project. Requires Bash and Python 3.10+; native Windows users need an appropriate shell. Live harness compatibility is separate from local script tests.
 
-## What This Skill Does
+## Target and scope
 
-One skill, two modes, auto-detected:
+- `--target <existing-directory>` selects the project. Without it, use the caller's current directory, never the installed skill's location. Print the resolved target and reject root/home/missing targets.
+- Start with `--dry-run`. Dry-run and audit inspect destination files as data only; they do not execute the target sync script, load its Python modules, start MCP servers, or modify the target.
+- Default bootstrap creates **only AGENTS.md**, preserving an existing nonempty file. No stack, review agents, harnesses, MCP configs, sync script or skill directories are compulsory.
+- `--harness claude`, `--harness codex` and `--harness opencode` are independent, repeatable opt-ins. Claude adds its shim and canonical skills link; Codex adds its config directory; OpenCode adds an empty config if absent.
+- `--mcp` separately enables MCP data/config rendering for selected harnesses. It does not install/start servers, copy a sync script, or enable unselected harnesses. Claude uses canonical `.mcp.json`; Codex/OpenCode receive derived settings.
 
-- **Bootstrap** (greenfield): create `AGENTS.md`, `CLAUDE.md`, `.mcp.json`, `.agents/skills/`, `.claude/skills` symlink, `.codex/`, `opencode.json`, and a `scripts/sync-mcp-config.py` stub.
-- **Optimize** (existing): audit line budgets, symlink health, generated memory blocks, MCP config drift, and AGENTS.md section structure; apply safe repairs without overwriting user content.
+## Safety rules
 
-## Multi-Harness Layout
+Validate the entire known destination surface and all planned output types before any mutation. Refuse symlinked ancestors, linked files (including dangling links), and special files. The only accepted symlink is `.claude/skills -> ../.agents/skills`, resolving inside the target. Unsafe links require manual resolution; do not automatically delete or follow them.
 
-The canonical, harness-neutral layout this skill produces:
+Recheck destinations at write time and replace files atomically; never modify a different inode through a hard link. Work against a stable, owner-controlled directory: these preflight checks are not a sandbox against another process concurrently replacing or relocating directories. Do not run setup in an actively hostile/shared writable target.
 
-```
-<repo>/
-  AGENTS.md                     # canonical context, 150-250 lines
-  CLAUDE.md                     # thin: @AGENTS.md + Claude-specific notes
-  .mcp.json                     # canonical MCP server list
-  .agents/
-    skills/<name>/SKILL.md      # canonical skills (harness-neutral)
-  .claude/
-    settings.json               # Claude permissions + hooks
-    agents/<name>.md            # Claude-specific subagent wrappers
-    rules/                      # Claude path-scoped rules
-    skills -> ../.agents/skills # relative symlink
-  .codex/
-    config.toml                 # Codex CLI profile config (generated)
-  opencode.json                 # OpenCode config (generated)
-  .gemini/
-    settings.json               # Gemini CLI (generated/linked)
-  scripts/
-    sync-mcp-config.py          # regenerates .codex/config.toml + opencode.json from .mcp.json
-    install-codex-profile.py    # installs the codex profile for `codex -p <project>`
-```
+The bundled renderer at `scripts/templates/sync-mcp-config.py` is the trusted rendering source. Read target MCP and existing configurations as data, never source or import target code. The renderer supports stdio command, args, and env only. Unsupported transports/fields or malformed inputs fail before writes instead of being silently discarded. Preserve unrelated OpenCode settings; refuse conflicting non-generated Codex settings for manual reconciliation. Never print configuration values or credentials in audit output.
 
-## Why One Skill Instead Of Two
+## Modes
 
-The bootstrap and optimize modes share the same layout, the same root-detection, the same dry-run pattern, and the same guardrails. Splitting them forces the user to know which to call. Auto-detection (no `AGENTS.md` → bootstrap, `AGENTS.md` present → optimize) removes that decision. Forced modes are still available for CI and re-runs.
-
-## Bootstrap Defaults
-
-- Create `AGENTS.md` with the 10-section structure: Header & harness file map, Project, Setup, Core Rules, Context Loading, Skills, Review Loops, Subagents, MCP And Harnesses, Code Graph (optional).
-- Create `CLAUDE.md` as a thin shim: `Read AGENTS.md first.` plus Claude-specific runtime notes.
-- Create `.mcp.json` with an empty `mcpServers` block.
-- Create `.agents/skills/` and symlink `.claude/skills` to `../.agents/skills`.
-- Create `scripts/sync-mcp-config.py` stub that regenerates `.codex/config.toml` and `opencode.json` from `.mcp.json` (so adding MCP servers later is one command).
-- Refuse to overwrite any non-empty instruction file.
-
-## Optimize Defaults
-
-- Audit:
-  - `AGENTS.md` and `CLAUDE.md` exist and are under 250 lines.
-  - `.claude/skills` is a relative symlink to `../.agents/skills`.
-  - `AGENTS.md` has no generated `<claude-mem-context>` block.
-  - `.codex/config.toml` and `opencode.json` match what `sync-mcp-config.py` would produce from `.mcp.json`.
-  - `AGENTS.md` contains the required section markers (## Project, ## Setup, ## Core Rules, ## Context Loading, ## Skills).
-- Apply safe repairs only:
-  - Restore the `.claude/skills` symlink if missing or wrong.
-  - Strip `<claude-mem-context>` blocks from `AGENTS.md`.
-  - Re-run `scripts/sync-mcp-config.py` to regenerate harness configs.
-- Never overwrite user-written content in `AGENTS.md` or `CLAUDE.md`.
-- Manual judgment: if `AGENTS.md` is still too long after safe repairs, move procedures into skills or `references/` files. Keep only stable project facts, commands, conventions, and pointers in always-loaded docs.
+- No mode: bootstrap when AGENTS.md is missing/empty, otherwise optimize.
+- `bootstrap`: minimal instructions plus explicitly selected integrations.
+- `optimize` / `apply`: remove complete generated memory blocks and repair only explicitly selected integrations; never overwrite user-written instruction content or add unrequested integrations.
+- `audit`: read-only checks for minimal instructions and integrations already present or explicitly selected. Missing optional integrations are not failures. Show mismatches against the bundled renderer without running destination code.
 
 ## Commands
 
 ```bash
-# auto-detect
-bash .agents/skills/setup-multiharness-project/scripts/setup.sh --dry-run
-bash .agents/skills/setup-multiharness-project/scripts/setup.sh
+# Minimal project; no integrations
+bash .agents/skills/setup-multiharness-project/scripts/setup.sh bootstrap --target /path/to/project --dry-run
+bash .agents/skills/setup-multiharness-project/scripts/setup.sh bootstrap --target /path/to/project
 
-# force modes
-bash .agents/skills/setup-multiharness-project/scripts/setup.sh bootstrap
-bash .agents/skills/setup-multiharness-project/scripts/setup.sh optimize
-bash .agents/skills/setup-multiharness-project/scripts/setup.sh audit
+# Explicit additions only
+bash .agents/skills/setup-multiharness-project/scripts/setup.sh bootstrap --target /path/to/project --harness claude
+bash .agents/skills/setup-multiharness-project/scripts/setup.sh optimize --target /path/to/project --harness codex --harness opencode --mcp --dry-run
+
+# Read-only drift inspection
+bash .agents/skills/setup-multiharness-project/scripts/setup.sh audit --target /path/to/project
 ```
 
-## What Belongs Where
+The bootstrap.sh, audit.sh and apply.sh entrypoints accept the same target/integration options and force their respective mode. Do not infer permission to publish, install dependencies, change personal/global configuration, or run destination scripts from a setup request.
 
-- **Always-loaded docs (`AGENTS.md`, `CLAUDE.md`):** stable facts, commands, conventions, and pointers. Under 250 lines.
-- **Skills (`.agents/skills/<name>/SKILL.md`):** repeatable procedures, checklists, detailed workflows, and helper scripts.
-- **References (`<skill>/references/*.md`):** long-form detail loaded only when the skill body points to them.
-- **Scripts (`<skill>/scripts/*` and `scripts/*`):** deterministic retrieval, validation, syncing, and reporting.
-- **Claude rules/agents (`.claude/rules/`, `.claude/agents/`):** Claude-only behavior, path-scoped rules, and specialist subagents. Never duplicate skill bodies here.
-- **Harness configs (`.codex/config.toml`, `opencode.json`):** generated from `.mcp.json`; never hand-edited.
+## Delivery
 
-## Launching Each Harness
-
-From the WSL repo root after setup:
-
-```bash
-claude --mcp-config .mcp.json
-codex -p <project-name>
-opencode .
-```
-
-Do not mix Windows and WSL toolchains in one session.
-
-## When The Scripts Fail
-
-The scripts are designed to be re-runnable and idempotent. If one fails:
-
-1. Read the FAIL line — it names the file or check that failed.
-2. If root detection is wrong, set `ROOT` explicitly: `ROOT=/path/to/repo bash .../setup.sh`.
-3. If a generated config is out of sync, run `python3 scripts/sync-mcp-config.py` manually and re-audit.
-4. If `AGENTS.md` is over the line budget, move procedures to skills or `references/` rather than trimming facts.
+Report exact additions/repairs and unresolved conflicts. Keep shared instructions short and move only conditional detail to references. Test dry-run immutability, external/dangling symlinks, opt-in combinations, config preservation and repeat execution. Do not claim live host behavior or token savings from structural checks.

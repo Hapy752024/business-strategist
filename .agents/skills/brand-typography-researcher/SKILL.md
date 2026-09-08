@@ -1,7 +1,6 @@
 ---
 name: brand-typography-researcher
-description: Finds, identifies, compares, and validates brand font families. Use for font search, font pairing, Google Fonts/Fontsource/Adobe Fonts research, license checks, multilingual support, visual font identification, and typography recommendations.
-user_invocable: true
+description: Find, compare, and validate brand font families, licenses, and multilingual support. Use when font search, pairing, identification, or typography recommendations are needed.
 ---
 
 # Brand Typography Researcher

@@ -9,6 +9,7 @@
 - Qualitative: user does not redirect mid-loop; motion feels coherent across elements; developer implements reference impls on first read.
 
 ## Workflow
+0. Concept gate: if the pipeline is at the `motion-concept` stage (or no approved concept exists yet), run `references/concept.md` and produce `stages/motion-concept/motion-concept.md` for approval. Otherwise read the approved motion concept and treat it as fixed input — do not re-open its decisions.
 1. Read `references/pillars.md` and present the pillar menu.
 2. For each chosen pillar, run `references/iteration-loop.md` to tune tokens.
 3. Read `references/element-taxonomy.md`; iterate element motion specs per selected categories.
@@ -20,7 +21,7 @@
 - Top-down tokens: element specs reference pillars by name.
 - Exploration demos are HTML+CSS; final reference impls are Next.js + Framer Motion (or CSS keyframes / View Transitions API for page-level).
 - Cite at least one benchmark per pillar from `references/benchmarks.md`.
-- Outputs live under `brand-projects/<name>/motion/` (canonical) and `stages/motion/` (working).
+- Outputs live under `projects/brand-projects/<name>/motion/` (canonical) and `stages/motion/` (working).
 - Dispatch fresh subagents per `references/subagent-dispatch.md` whenever work parallelizes.
 
 

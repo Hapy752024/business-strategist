@@ -3,7 +3,7 @@
 Use this structure for final handoff. `stages/` is working history; root-level folders are canonical delivery.
 
 ```text
-brand-projects/<slug>/
+projects/brand-projects/<slug>/
   EXECUTIVE-SUMMARY.md
   BRAND-GUIDELINES.md
   DECISIONS.md
@@ -17,6 +17,8 @@ brand-projects/<slug>/
       eps/
   colors/
   typography/
+  imagery-style/
+  motion/
   tokens/
   ui/
   imagery/
@@ -31,6 +33,8 @@ Rules:
 - `logos/source/` contains approved SVG masters and is the source of truth.
 - `logos/export/` contains generated assets only.
 - `colors/`, `typography/`, `tokens/`, `ui/`, `imagery/`, and `marketing/` contain implementation/handoff artifacts.
+- `imagery-style/` contains the approved art-direction brief and style frames (gate before imagery production).
+- `motion/` contains the approved motion concept, motion tokens, and reference implementations.
 - `qa/` contains QA reports, screenshots, and audit evidence.
 - `stages/` contains exploration and approved-stage working files.
 - `old/` contains historical archives only.

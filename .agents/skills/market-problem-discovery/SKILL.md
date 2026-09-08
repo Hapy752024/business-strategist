@@ -1,6 +1,6 @@
 ---
 name: market-problem-discovery
-description: Discover evidence-grounded customer problems, workarounds, potential segments, and candidate underserved pockets from a rough market, domain, or early hunch. Use whenever a user asks what problems customers have, which segments are overlooked, where people are dissatisfied, what opportunity exists in a market, or wants research before they have a specific problem/segment hypothesis. Do not begin Idea Grill first; use Idea Grill only after the user selects a candidate to validate.
+description: Discover sourced customer problems, workarounds, segments, and candidate underserved pockets. Use for broad market exploration before a specific customer and problem hypothesis exists.
 ---
 
 # Market Problem Discovery

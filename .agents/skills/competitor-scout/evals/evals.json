@@ -27,6 +27,15 @@
       "must_not_mention": [],
       "required_artifacts": ["competitors.json"],
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Classify a payroll provider serving small restaurants in Germany, a similar provider serving US startups, and a company with an exceptional onboarding website.",
+      "expected_output": "The restaurant provider is competitive-market, the US startup provider is similar-company, and the onboarding example is capability-reference. Each has independent fit dimensions and a reason; analogs and references cannot support competitive whitespace.",
+      "must_mention": ["competitive-market", "similar", "capability", "fit", "reason"],
+      "must_not_mention": ["all are direct competitors"],
+      "required_artifacts": ["competitors.json"],
+      "files": []
     }
   ]
 }

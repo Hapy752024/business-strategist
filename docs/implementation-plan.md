@@ -1,5 +1,7 @@
 # Evidence Scout Agent Implementation Plan
 
+Current improvement backlog: [Agent and business-coach implementation plan — 5 September 2026](agent-coach-implementation-plan.md). It covers the complete agent/strategy audit, including evidence enforcement, source and skill wiring, honest coaching, GTM execution, KPI review, multilingual scope, and removal of unnecessary overhead. The original implementation history below is retained; its provider-status notes are historical, not current readiness checks.
+
 ## Objective
 
 Build a portable evidence-scout skill/agent for Codex, OpenCode, and Claude Code that helps founders discover customer problems before they have a thesis, then validate whether real users have a painful problem, whether demand exists, and where early adopters gather.
@@ -315,6 +317,10 @@ Create six portable skills:
    - Analyzes competitor positioning, audiences, offers, CTAs, pricing posture, proof points, SEO/content clues, distribution clues, and product-change clues.
    - Supports optional deep scraping of common pricing, features, customer, blog, docs, integrations, and changelog paths when worth the credits.
    - Treats competitor copy as positioning evidence, not proof of performance.
+
+7. `competitive-landscape-builder`
+   - Coordinates the two narrow competitor workers and separates competitive-market entities, similar companies, and capability references.
+   - Produces lane-aware service/price, social-presence, inspiration, and positioning-hypothesis artifacts; only the competitive-market lane feeds whitespace conclusions.
 
 For portability:
 

@@ -30,7 +30,11 @@ If the user asks to skip grilling outside that path, comply only after extractin
 - Geography/language.
 - Core hypothesis.
 
+For a request that compares candidates or asks which opportunity to pursue, also reuse the supplied founder decision context. If a missing objective, desired role, capability/access, affordable downside, time/income horizon, or acquisition constraint could change the ranking or test, ask for the first such gap before substantial prioritisation research. Label it as a hard constraint, preference, assumption, or unresolved input. Do not turn a narrow validation of one chosen customer problem into a founder interview unless that context changes the test.
+
 ## Procedure
+
+Begin with the customer/need hypothesis in repo-root `references/strategic-positioning.md`, even when the input is an app, feature or technology. State the segment, triggering situation, desired outcome, current alternative and consequence before proposing a product test. If the customer/need is genuinely unknown, offer focused discovery rather than forcing the founder to invent pain. Reuse previous answers; this does not apply to fixed-scope execution for an already selected business.
 
 1. Ask one focused question at a time until the minimum inputs are known.
 2. Convert broad customer segments into a specific early-adopter segment.
@@ -54,6 +58,7 @@ Capture:
 - Existing alternatives or competitors.
 - What the user believes people will pay for.
 - Geography, language, and business model assumptions.
+- For opportunity selection only: decision-changing founder constraints and preferences.
 
 ## Interview Rules
 

@@ -1,6 +1,6 @@
 ---
 name: strategy-draft-tournament
-description: Generate-and-judge tournament for consequential, under-determined deliverables such as service definitions, pricing structures, GTM approaches, or campaign concepts. Spawns 3-4 diverse draft attempts in parallel, challenges and rates them against founder-GTM and customer-psychology evidence lenses, runs a cross-pollinated feedback round when no draft clears the bar, and selects or synthesizes a winner. Use when the answer space is wide and one-shot drafting is risky. NOT for challenging an already-written plan (use startup-challenge-panel). NOT for single-draft strategy, positioning, or campaign builds (use marketing-strategy-builder, archetype-gtm-strategist, or social-digital-marketing-planner).
+description: Generate and judge competing strategy drafts using evidence and customer-psychology lenses. Use when a consequential decision has a wide answer space and one draft is too risky.
 ---
 
 # Strategy Draft Tournament

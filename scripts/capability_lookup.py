@@ -13,9 +13,11 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "config" / "source-capabilities.json"
-VALIDATION_PATH = ROOT / "research" / "evidence-scout" / "api-validation" / "all.summary.json"
-VALIDATION_DIR = ROOT / "research" / "evidence-scout" / "api-validation"
-DOCTOR_PATH = ROOT / "research" / "evidence-scout" / "provider-doctor" / "doctor.summary.json"
+VALIDATION_PATH = ROOT / "projects" / "research" / "evidence-scout" / "api-validation" / "all.summary.json"
+VALIDATION_DIR = ROOT / "projects" / "research" / "evidence-scout" / "api-validation"
+DOCTOR_PATH = ROOT / "projects" / "research" / "evidence-scout" / "provider-doctor" / "doctor.summary.json"
+sys.path.insert(0, str(ROOT / "scripts" / "validate_apis"))
+from readiness import load_latest
 
 
 def load_json(path: Path, fallback: Any) -> Any:
@@ -53,18 +55,7 @@ def validate_catalog(catalog: dict[str, Any]) -> list[str]:
 
 
 def latest_validation_status() -> dict[str, dict[str, Any]]:
-    statuses: dict[str, dict[str, Any]] = {}
-    for path in VALIDATION_DIR.glob("*.summary.json"):
-        if path.name == "all.summary.json":
-            continue
-        item = load_json(path, {})
-        if isinstance(item, dict) and item.get("provider"):
-            statuses[str(item["provider"])] = item
-    items = load_json(VALIDATION_PATH, [])
-    if not isinstance(items, list):
-        return statuses
-    statuses.update({str(item.get("provider")): item for item in items if isinstance(item, dict) and item.get("provider")})
-    return statuses
+    return load_latest(VALIDATION_DIR)
 
 
 def latest_doctor_status() -> dict[str, dict[str, Any]]:
@@ -117,6 +108,8 @@ def runtime_for(item: dict[str, Any], validation: dict[str, dict[str, Any]]) -> 
         return {"status": "not_checked", "providers": []}
     if any(entry.get("status") == "ok" for entry in statuses):
         aggregate = "ok"
+    elif any(entry.get("status") == "stale" for entry in statuses):
+        aggregate = "stale"
     elif all(entry.get("status") in {"missing_credentials", "missing_cli"} for entry in statuses):
         aggregate = "unavailable"
     elif any(entry.get("status") in {"rate_limited", "billing_required", "insufficient_credits", "permission_denied"} for entry in statuses):

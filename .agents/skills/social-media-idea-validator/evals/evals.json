@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "I'm a solo insurance broker in Munich. Should I start a TikTok channel about German insurance products to get clients?",
-      "expected_output": "Runs the validation gates instead of jumping to a content plan. Restates the idea as a testable claim, checks audience presence and demand evidence for the segment, applies practitioner patterns (considered purchase, education-first content, social-as-assist for brokers), and returns a GO/PIVOT/KILL verdict with a one-week low-cost test and stop rule. Does not produce a full 90-day marketing plan.",
+      "expected_output": "Runs the validation gates instead of jumping to a content plan. Restates the idea as a testable claim, checks audience presence and demand evidence for the segment, applies practitioner patterns (considered purchase, education-first content, social-as-assist for brokers), and returns a GO/PIVOT/KILL verdict with a bounded low-cost test and calibrated thresholds. Does not produce a full 90-day marketing plan.",
       "must_mention": ["audience", "demand", "verdict", "test", "stop rule"],
       "must_not_mention": ["post 3 times a day", "guaranteed viral", "definitely start the channel"],
       "required_artifacts": [],
@@ -22,9 +22,18 @@
     {
       "id": 3,
       "prompt": "I run a mortgage brokerage. I want to post daily loan-product graphics on Instagram. Validate this idea.",
-      "expected_output": "Applies the loan-officer practitioner evidence: generic product graphics get no traction; face-to-face, events, direct mail, and ranked content drive this business; social works mainly as partner/realtor engagement that sets up meetings. Returns KILL or PIVOT with a GO-as-assist alternative (credibility/realtor engagement), an explicit stop rule, and a one-week test.",
-      "must_mention": ["assist", "realtor", "face-to-face", "verdict", "test"],
+      "expected_output": "Treats practitioner cases as hypotheses with transfer limits, checks the target audience and discovery path, and tests whether product graphics serve a useful job. Does not force a partner or face-to-face acquisition model merely because the business is a brokerage. Returns an evidence-calibrated verdict and bounded test.",
+      "must_mention": ["audience", "verdict", "test"],
       "must_not_mention": ["daily graphics will build your brand", "post more often", "guaranteed leads from Instagram"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Several established creators already explain retirement planning. Can a new adviser build a useful YouTube relationship before people are ready to buy? We have a six-month learning window and no paid media budget.",
+      "expected_output": "Does not reject the idea merely because competitors exist. Separates discovery, repeat/relevant engagement and commercial evidence; evaluates a credible entry mechanism and founder capacity; proposes bounded access, relationship and commercial thresholds calibrated to the long buying cycle.",
+      "must_mention": ["discovery", "relationship", "commercial", "threshold"],
+      "must_not_mention": ["no whitespace", "five posts", "one-week kill"],
       "required_artifacts": [],
       "files": []
     }

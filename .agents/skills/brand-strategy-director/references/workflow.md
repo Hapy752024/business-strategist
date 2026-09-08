@@ -18,8 +18,10 @@ Qualitative:
 
 Do not create final assets until a territory is approved.
 
+For business-linked branding, use the selected snapshot and repo-root `references/strategic-positioning.md` to check alignment. Run `python3 scripts/brand/validate_business_to_brand_handoff.py <snapshot.json> --check-sources` before generation. A changed/unavailable source requires a fresh handoff or explicitly provisional work; preserve archived snapshots and uncertainty. Territories express one business position; a different buyer, promise, or relative price is an explicit business-strategy revision. Standalone brand discovery remains independent.
+
 Create exactly 3 distinct territories unless the user requests a different count:
-- Positioning idea.
+- Expression of the selected business position (or a provisional brand-positioning idea for standalone discovery).
 - USP/differentiation expression.
 - Personality keywords.
 - Logo direction.

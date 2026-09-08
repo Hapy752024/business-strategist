@@ -13,13 +13,19 @@ def test_routing_lists_both_new_skills() -> None:
 
 def test_routing_pipeline_order_is_correct() -> None:
     routing = (SKILL_DIR / "references/routing.md").read_text(encoding="utf-8")
-    kit = routing.find("brand-ui-kit-producer")
-    motion = routing.find("brand-motion-designer")
-    components = routing.find("brand-ui-component-producer")
-    frontend = routing.find("brand-frontend-app-designer")
-    assert kit < motion < components < frontend, (
-        "pipeline order must be: ui-kit-producer -> motion-designer -> "
-        "ui-component-producer -> frontend-app-designer"
+    imagery_style = routing.find("Imagery art direction")
+    motion_concept = routing.find("Motion concept")
+    imagery = routing.find("Imagery assets")
+    kit = routing.find("UI tokens")
+    motion_tokens = routing.find("Motion tokens and reference implementations")
+    components = routing.find("UI component library")
+    frontend = routing.find("Frontend apps/flows")
+    assert -1 not in (imagery_style, motion_concept, imagery, kit, motion_tokens, components, frontend), (
+        "routing.md must list imagery-style, motion-concept, imagery, tokens, motion, components, frontend lines"
+    )
+    assert imagery_style < motion_concept < imagery < kit < motion_tokens < components < frontend, (
+        "pipeline order must be: imagery-style gate -> motion-concept gate -> imagery -> "
+        "ui-kit-producer -> motion-designer (tokens/impls) -> ui-component-producer -> frontend-app-designer"
     )
 
 

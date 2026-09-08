@@ -1,7 +1,6 @@
 ---
 name: brand-frontend-app-designer
-description: Designs branded frontend app screens, dashboards, workflows, forms, and interactive UI prototypes. Uses Figma MCP for interactive canvas feedback and Storybook/Chromatic MCP for real component-system context when trusted MCPs are available.
-user_invocable: true
+description: Design branded app screens, dashboards, workflows, forms, and interactive UI prototypes. Use for product interfaces rather than marketing websites.
 ---
 
 # Brand Frontend App Designer

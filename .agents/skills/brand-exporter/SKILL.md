@@ -1,7 +1,6 @@
 ---
 name: brand-exporter
-description: Exports final approved brand decisions into app-ready CSS variables and an agent-readable brand guideline skill/DESIGN.md package. Use at the end of a brand identity project after approval and quality review.
-user_invocable: true
+description: Export approved brand decisions as CSS variables and an agent-readable design package. Use after a brand identity passes approval and quality review.
 ---
 
 # Brand Exporter

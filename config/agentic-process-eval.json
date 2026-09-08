@@ -11,7 +11,7 @@
     "contract_passes": 0,
     "contract_total": 8,
     "contracts": {
-      "brand-skills": false,
+      "brand-capability-routing": false,
       "website-skill": false,
       "server-experiment": false,
       "browser-qa": false,
@@ -22,7 +22,7 @@
     }
   },
   "contracts": [
-    {"id": "brand-skills", "description": "Brand capabilities are represented by independently routable skills."},
+    {"id": "brand-capability-routing", "description": "Brand identity, research, assets, app UI and website requests route to available implementations, regardless of skill count."},
     {"id": "website-skill", "description": "A dedicated website builder skill exists."},
     {"id": "server-experiment", "description": "Website fixture evaluates its CTA experiment on the server."},
     {"id": "browser-qa", "description": "Browser accessibility and responsive checks are CI-configured."},

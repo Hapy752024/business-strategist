@@ -6,6 +6,8 @@ Use this skill for the strategic sequence from market test to repeatable distrib
 
 ## Minimum inputs
 
+For business-position selection/revision or a coherence review, load `references/strategic-positioning.md` at repo root. Compare feasible positions before choosing the offer; derive consequential delivery choices and their service/marketing implications. Reuse an existing selected position unless evidence or a material conflict warrants revisiting it. For a focused positioning question, use only relevant inputs and output sections; archetype and regional playbooks are conditional.
+
 - Business archetype and revenue model.
 - Geography and launch language.
 - Specific user, buyer, payer, and trigger event.
@@ -25,11 +27,12 @@ If a missing input would change the recommended motion, ask one focused question
 3. **Select the archetype motion.** Apply the relevant playbook from `archetypes.md`; split user, buyer, payer, champion, blocker, supplier, or regulated principal where relevant.
 4. **Apply the regional layer.** Europe is the default priority. Treat each country as a separate language, trust, regulatory, and channel hypothesis. Use the US or China layer only when in scope.
 5. **Design the evidence ladder.** Sequence customer interviews, prototype or concierge delivery, meaningful commitment, payment, activation, retention, referral, and repeatable acquisition.
-6. **Create the wedge offer.** Specify outcome, scope, price or commitment, risk reversal, activation moment, proof, and exclusion criteria.
-7. **Choose one primary and one supporting channel.** First assign each channel a job—discovery, education/trust, capture, conversion, activation, lifecycle, community, or recruiting. Then rank by customer presence, founder access, trust fit, content/operating capacity, speed of learning, cash cost, and scalability. Avoid broad channel portfolios before one motion works.
+6. **Create the wedge offer from the selected position.** Specify outcome, scope, price or commitment, risk reversal, activation moment, proof, and exclusion criteria. Check delivery capability/capacity and interactions among operating choices; return infeasibility to position selection rather than concealing it in a campaign plan.
+7. **Choose one primary and one supporting channel.** First assign each channel a job—discovery, education/trust, relationship, capture, conversion, activation, lifecycle, community, or recruiting. For each, state how an unknown entrant earns relevant first exposure, why people return or trust it, and how it bridges to enquiry/purchase. Then rank by customer presence, founder access, trust fit, content/operating capacity, speed of learning, cash cost, and scalability. Avoid broad channel portfolios before one motion works.
 8. **Diagnose a growth loop separately.** Identify recipient exposure, collaboration, reciprocal reward, network utility, or community exchange. Require value before invitation, a relevant recipient, attribution, abuse controls, and retained economics. A share button or waitlist is not a loop by itself.
 9. **Design partnerships as distribution tests.** Name the partner's audience, incentive, workflow, data/compliance role, value exchange, owner, pilot, attribution method, and exit condition. A logo or memorandum is not distribution.
 10. **Map the funnel and economics.** Track the behavior chain from trigger to retained value. Include sales or delivery labor, onboarding, support, partner share, refunds/claims/fraud, and contribution margin.
+    Apply repo-root `references/strategic-positioning.md` for the 12–24-month entrant test and any earlier income deadline: required customers/sales, reachable qualified prospects, conversion assumptions, retained cohorts, founder capacity and monthly cash ramp. Unknown economics stay unresolved. Specify interview recruitment and how the first relevant audience encounters the content; creating landing pages alone is not an acquisition plan.
 11. **Set gates before spending.** Define pass, repeat, pivot, and stop thresholds for every experiment. Paid scale requires retained or repeat value, not cheap clicks. For material spend, include a holdout, geo, or lift design where feasible.
 12. **Plan regional expansion.** Expand only after the home-market motion is teachable and the new region's regulation, localization, channel economics, support, and partner dependencies are tested.
 13. **Write the strategy.** Use the bundled template and distinguish evidence, inference, hypothesis, and decision.
@@ -45,6 +48,7 @@ If a missing input would change the recommended motion, ask one focused question
 - Use paid acquisition only when activation, retention/repeat purchase, and contribution economics are measurable.
 - Treat PR, launch platforms, waitlists, followers, downloads, and partnership announcements as weak signals until they produce retained customers or revenue.
 - Treat founder cases as mechanisms with prerequisites, not recipes. Name the original advantage—network, credibility, audience, product workflow, timing, or regulation—and test whether it exists.
+- Existing competitors prove supply, not saturation. Do not require a competitor gap or novelty when a credible entry/customer-choice case exists; equally, do not call a gap an opportunity without acquisition and economics evidence.
 - Do not rank platforms universally. Use the channel-to-job guidance in the cross-skill evidence registry and retrieve current platform details for execution.
 
 ## Growth-loop rules
@@ -78,7 +82,7 @@ Reject partnerships that require major integrations before a manual co-sell test
 
 ## Output
 
-Use `assets/gtm-strategy-template.md`. At minimum include:
+For a full GTM plan, use `assets/gtm-strategy-template.md` and include the applicable sections below. For a focused question, return only the decision, relevant evidence/unknowns, economics or trade-offs, and next test; do not expand it into a launch plan. Mark excluded channels or regions as out of scope rather than designing them against founder constraints.
 
 - Verdict and current stage.
 - Evidence, assumptions, and decisive unknowns.
@@ -100,7 +104,7 @@ Use `assets/gtm-strategy-template.md`. At minimum include:
 - The segment is narrow enough to reach this week.
 - Customer pain and founder stories are not confused with each other.
 - The strategy names one primary acquisition motion.
-- Each channel has a named job, operating requirement, source-cohort metric, and stop rule.
+- Each channel has a named job, discovery mechanism, relationship role where relevant, operating requirement, source-cohort metric, and stop rule.
 - Any product/referral/community loop has value-before-invitation and retained-economics gates.
 - Partnerships include value exchange, workflow, economics, and attribution.
 - Marketing scale follows activation and retention evidence.

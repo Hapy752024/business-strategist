@@ -1,0 +1,23 @@
+{
+  "skill_name": "competitive-landscape-builder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Map the landscape for a payroll service for small restaurants in Germany. Separate companies serving German restaurants from similar payroll companies serving US startups, and identify one website or YouTube reference worth studying.",
+      "expected_output": "Three lane outputs. German restaurant providers are competitive-market entities; US startup providers are similar-company entities and cannot support market-pressure claims; the website/YouTube reference has a named capability purpose. Each has evidence, uncertainty and transfer notes.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze competitors for an Arabic educational YouTube channel that explains everyday financial systems. Include services or monetization, prices where visible, official social platforms and how each channel uses them. Recommend positioning hypotheses without claiming a blue ocean.",
+      "expected_output": "The report distinguishes audience/content competition from business competitors, records visible prices or not_found, describes platform roles with dated public evidence, and labels positioning as hypotheses tied to evidence.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I have competitor URLs and three examples from another country. Classify them, analyze offers and pricing, and tell me what could inspire our website without treating the examples as competitors.",
+      "expected_output": "Each entity has one primary lane, independent fit dimensions, sourced claims, explicit unknowns, and adaptation/do-not-copy notes. Other-country examples are similar companies unless actual target-market substitutability is evidenced.",
+      "files": []
+    }
+  ]
+}

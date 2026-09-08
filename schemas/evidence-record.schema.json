@@ -16,7 +16,7 @@
     "signal_quality": {"type": "object", "properties": {"directness": {"type": "string"}, "specificity": {"type": "string"}, "authenticity": {"type": "string"}, "recency": {"type": "string"}, "relevance": {"type": "string"}}},
     "source": {
       "type": "string",
-      "enum": ["reddit", "youtube", "youtube_comment", "google_trends", "forum", "web_search", "x", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu"]
+      "enum": ["reddit", "youtube", "youtube_comment", "youtube_transcript", "google_trends", "google_autocomplete", "forum", "web_search", "x", "xai_x_search", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "itunes_reviews", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "hn", "github", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu"]
     },
     "source_url": { "type": "string", "format": "uri" },
     "retrieved_at": { "type": "string", "format": "date-time" },
@@ -30,6 +30,12 @@
     "text": { "type": "string", "minLength": 1 },
     "verbatim_quote": { "type": "string" },
     "author_context": { "type": "string" },
+    "source_record_id": {"type": "string", "minLength": 1},
+    "source_role": {"enum": ["customer_statement", "customer_review", "creator_statement", "search_suggestion", "search_result", "competitor_context", "editorial_context", "community_context", "discovery_only"]},
+    "retrieval_backend": {"type": "string"},
+    "query_language": {"type": "string"},
+    "source_language": {"type": "string"},
+    "output_language": {"type": "string"},
     "engagement": {
       "type": "object",
       "properties": {

@@ -4,9 +4,9 @@
 Define how brand design tokens (from `brand-ui-kit-producer`) and motion tokens (from `brand-motion-designer`) are applied to a shadcn base component.
 
 ## Inputs Required
-- `brand-projects/<name>/tokens.css` — CSS custom properties for color, typography, spacing, radii, shadows.
-- `brand-projects/<name>/motion/motion-tokens.css` — CSS custom properties for durations and easings.
-- `brand-projects/<name>/motion/motion-tokens.ts` — TS exports for Framer Motion configs.
+- `projects/brand-projects/<name>/tokens.css` — CSS custom properties for color, typography, spacing, radii, shadows.
+- `projects/brand-projects/<name>/motion/motion-tokens.css` — CSS custom properties for durations and easings.
+- `projects/brand-projects/<name>/motion/motion-tokens.ts` — TS exports for Framer Motion configs.
 - The shadcn base component file (e.g., `input.tsx` from the shadcn registry).
 
 ## Application Procedure

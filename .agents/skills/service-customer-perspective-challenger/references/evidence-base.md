@@ -1,6 +1,6 @@
 # Evidence Base
 
-Last researched: 2026-07-06. Full source notes live in `research/topics/european-german-us-service-customer-psychology/`.
+Last researched: 2026-07-06. Full source notes live in `projects/research/topics/european-german-us-service-customer-psychology/`.
 
 ## Findings used by the skill
 

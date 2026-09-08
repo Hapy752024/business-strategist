@@ -17,13 +17,18 @@ Rules:
 - Guide the user at every stage: state what to do now and recommend the next step.
 - Keep SVG/vector masters as the source of truth for logos and icons.
 - Separate evidence, interpretation, and recommendations.
+- For explicitly business-linked work, use repo-root `references/strategic-positioning.md` for the existing handoff builder/source-check commands; preserve the selected position and evidence labels across stages. Standalone branding needs no business-positioning exercise.
 - Use root-level canonical delivery folders for approved handoff assets; keep `stages/` as working history only.
 - After a user approves a direction, log the decision, archive/remove competing active alternatives, and promote approved assets before final delivery.
 - Before saying a brand package is done, run the finalization gate.
 - Dispatch a fresh subagent per pipeline stage whenever stages can run in parallel (e.g. motion pillars + component taxonomy scoping), and one critic subagent for the finalization gate review. Never parallelize subagents that touch the same brand-project folder.
 
 Routing: see `references/routing.md` for the child-skill dispatch table.
-Pipeline order: tokens (`brand-ui-kit-producer`) -> motion (`brand-motion-designer`) -> components (`brand-ui-component-producer`) -> screens (`brand-frontend-app-designer`).
+Pipeline order: typography -> imagery-style (`brand-asset-producer`, art-direction mode) -> motion-concept (`brand-motion-designer`, concept mode) -> imagery (`brand-asset-producer`) -> tokens (`brand-ui-kit-producer`) -> motion tokens/impls (`brand-motion-designer`) -> components (`brand-ui-component-producer`) -> screens (`brand-frontend-app-designer`).
+
+Gates:
+- `imagery-style` must be approved before any imagery asset production: medium (photo/illustration/hybrid), treatment (grading, overlays), subject mix, crop ratios, licensing, and 2-3 style frames. Template: `brand-asset-producer/references/imagery-art-direction.md`.
+- `motion-concept` must be approved before tokenization: motion principles, duration/easing primitives, named signature moments (e.g. hover illustration-to-photo crossfade), and reduced-motion policy. Template: `brand-motion-designer/references/concept.md`. The later `motion` stage consumes the approved concept.
 
 Canonical package workflow:
 - Read `references/package-structure.md` when creating or reorganizing a project package.

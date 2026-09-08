@@ -74,8 +74,8 @@ Do not start with channels unless the user explicitly asks for channel execution
 1. Clarify the customer, buyer, product, business model, geography, budget, time horizon, and marketing goal.
 2. State assumptions and evidence gaps before recommending channels or campaigns.
 3. Narrow the early adopter segment and buyer trigger.
-4. Build positioning from pain, promise, differentiation, and proof.
-5. Design the offer and risk reversal.
+4. Express the selected business position through customer language, promise, differentiation, and proof. For an unresolved business-position choice or material contradiction, use repo-root `references/strategic-positioning.md` and GTM ownership; a narrow message/copy request uses supplied assumptions without reopening strategy.
+5. Design the offer and risk reversal within the selected service boundaries, relative price, and proof limits. Make any conflicting business change explicit and reuse the active strategy record rather than creating another positioning decision.
 6. Map the funnel and identify the conversion action.
 7. Choose channels based on customer behavior and available proof.
 8. Define campaign tests with budgets, thresholds, and stop conditions.

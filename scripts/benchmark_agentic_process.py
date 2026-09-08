@@ -48,7 +48,13 @@ def snapshot(files: set[str], read_text) -> dict[str, object]:
     promoter = read_text("scripts/brand/promote_artifact.py")
     claim_builder = read_text("scripts/evidence_scout/build_claim_ledger.py")
     contracts = {
-        "brand-skills": len(brand_entries) >= 10,
+        # Capability routing is independent of how many skills implement it.
+        "brand-capability-routing": all(
+            any(route.get("id") == capability and
+                f".agents/skills/{route.get('skill')}/SKILL.md" in files
+                for route in json.loads(workflow or '{"routes": []}').get("routes", []))
+            for capability in ("standalone-brand", "brand-research", "brand-asset", "app-ui", "website-build")
+        ),
         "website-skill": ".agents/skills/brand-website-designer-builder/SKILL.md" in files and "brand-website-designer-builder" in workflow,
         "server-experiment": "flags/next" in experiment and "Math.random" not in experiment and '"use client"' not in experiment,
         "browser-qa": "playwright" in ci.lower() and "@axe-core/playwright" in read_text("fixtures/website/stellar-repair/package.json"),

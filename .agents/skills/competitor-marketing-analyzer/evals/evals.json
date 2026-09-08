@@ -27,6 +27,15 @@
       "must_not_mention": ["match their claims", "copy their numbers", "say the same thing"],
       "required_artifacts": [],
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Analyze a competitor's service packages, exact price points, and public Instagram, YouTube and LinkedIn usage. Separate verified profiles from not-found sources and explain each platform's role.",
+      "expected_output": "A sourced service and price table with currency/period/conditions or not_found, plus canonical platform URLs, status, sampled window, platform role and public-proxy caveats.",
+      "must_mention": ["service", "price", "not_found", "Instagram", "YouTube", "LinkedIn", "role", "proxy"],
+      "must_not_mention": ["followers prove conversion"],
+      "required_artifacts": [],
+      "files": []
     }
   ]
 }

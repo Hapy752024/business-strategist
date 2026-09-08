@@ -20,6 +20,7 @@ Review as an independent critic, not as the creator.
 
 Check:
 - Brief and approved territory alignment.
+- For business-linked work, run `python3 scripts/brand/validate_business_to_brand_handoff.py <snapshot.json> --check-sources`; compare service claims, tone, visuals, proof, and CTAs against that position and its exclusions. Load repo-root `references/strategic-positioning.md` for material conflicts. Preserve uncertainty and report changed/unavailable sources and affected outputs; stylistic differences alone are not strategy drift. Standalone brand work needs no business snapshot.
 - Human-centered brand fit: audience, country/culture, USP, trust cues, emotion.
 - Best-practice compliance from `references/best-practices-guidelines.md`.
 - Guideline completeness.

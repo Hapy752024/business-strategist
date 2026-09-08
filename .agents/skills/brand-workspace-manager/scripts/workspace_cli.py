@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-STAGES = ("discovery", "research", "strategy", "logo", "colors", "typography", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export")
+STAGES = ("discovery", "research", "strategy", "logo", "colors", "typography", "imagery-style", "motion-concept", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export")
 
 
 def load(path: Path) -> dict:
@@ -43,7 +43,7 @@ def save(path: Path, data: dict, *, expected_revision: int) -> None:
 def manifest(root: Path) -> Path:
     path = root / "brand-manifest.json"
     if not path.exists():
-        raise SystemExit(f"brand manifest not found: {path}")
+        raise SystemExit(f"brand manifest not found: {path}; moved workspaces are under projects/brand-projects/")
     return path
 
 
@@ -70,7 +70,7 @@ def main() -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     create = sub.add_parser("create")
     create.add_argument("--name", required=True)
-    create.add_argument("--base-dir", type=Path, default=Path("brand-projects"))
+    create.add_argument("--base-dir", type=Path, default=Path(__file__).resolve().parents[4] / "projects/brand-projects")
     create.add_argument("--entry-mode", choices=("standalone", "business_linked"), default="standalone")
     create.add_argument("--business-to-brand", default="")
     resume = sub.add_parser("resume")

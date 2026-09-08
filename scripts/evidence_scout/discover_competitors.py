@@ -109,11 +109,12 @@ def segment_modifiers(segment: str) -> list[str]:
     return modifiers[:4]
 
 
-def query_plan(topic: str, segment: str, known: str) -> list[str]:
+def query_plan(topic: str, segment: str, known: str, analog_markets: list[str] | None = None, reference_capabilities: list[str] | None = None) -> dict[str, list[dict[str, str]]]:
+    """Build bounded query sets that are executed independently per lane."""
     modifiers = segment_modifiers(segment)
     segment_scope = " ".join(modifiers)
     scoped = f"{topic} {segment_scope}".strip()
-    queries = [
+    competitive_queries = [
         f"{scoped} software",
         f"{scoped} tools",
         f"{scoped} competitors",
@@ -128,10 +129,26 @@ def query_plan(topic: str, segment: str, known: str) -> list[str]:
         f"{segment} manual workflow {topic}",
     ]
     for competitor in known_competitor_terms(known):
-        queries.append(f"{competitor} alternatives")
-        queries.append(f"{competitor} competitors")
-        queries.append(f"{competitor} pricing reviews")
-    return queries
+        competitive_queries.extend([
+            f"{competitor} alternatives",
+            f"{competitor} competitors",
+            f"{competitor} pricing reviews",
+        ])
+    similar_queries: list[dict[str, str]] = []
+    for market in analog_markets or []:
+        similar_queries.extend({"query": query, "scope_value": market} for query in [
+            f"{topic} {market} service",
+            f"{topic} {market} pricing",
+            f"{topic} {market} customers",
+        ])
+    reference_queries: list[dict[str, str]] = []
+    for capability in reference_capabilities or []:
+        reference_queries.append({"query": f"best company {capability} case study", "scope_value": capability})
+    return {
+        "competitive_market": [{"query": query, "scope_value": segment} for query in competitive_queries],
+        "similar_company": similar_queries,
+        "capability_reference": reference_queries,
+    }
 
 
 def classify_business_model(domain: str, url: str, text: str) -> str:
@@ -294,6 +311,32 @@ def classify_candidate(candidate: dict[str, Any], topic: str, segment: str) -> d
         candidate["segment_fit_hint"] = "explicit" if segment_hits >= 2 else "partial" if segment_hits else "query_only" if query_segment_hits else "unknown"
         candidate["job_fit_hint"] = "explicit" if topic_hits >= 2 else "partial" if topic_hits else "query_only" if query_topic_hits else "unknown"
     candidate["key_success_factors"] = key_success_factors
+    role_hint = (
+        "direct" if "direct" in competitor_type
+        else "substitute" if "substitute" in competitor_type
+        else "indirect" if "indirect" in competitor_type or competitor_type == "marketplace_comparison_portal"
+        else "future_threat" if "future_threat" in competitor_type
+        else "unknown"
+    )
+    candidate["lane_observations"] = sorted(
+        {
+            str(source.get("lane_scope"))
+            for source in candidate.get("sources", [])
+            if source.get("lane_scope") in {"competitive_market", "similar_company", "capability_reference"}
+        }
+    )
+    candidate["primary_lane"] = "uncertain"
+    candidate["competitive_role"] = "unknown"
+    candidate["competitive_role_hint"] = role_hint
+    candidate["verification_status"] = "uncertain"
+    candidate["inspiration_roles"] = []
+    candidate["offer_job_overlap"] = "strong" if candidate.get("job_fit_hint") == "explicit" else "partial" if candidate.get("job_fit_hint") == "partial" else "unknown"
+    candidate["target_segment_overlap"] = "strong" if candidate.get("segment_fit_hint") == "explicit" else "partial" if candidate.get("segment_fit_hint") == "partial" else "unknown"
+    candidate["buyer_overlap"] = "unknown"
+    candidate["geography_overlap"] = "unknown"
+    candidate["price_tier_overlap"] = "unknown"
+    candidate["purchase_substitutability"] = "strong" if role_hint in {"direct", "substitute"} else "partial" if role_hint == "indirect" else "unknown"
+    candidate["classification_reason"] = "Discovery evidence only; lane observations are search provenance, not a final commercial classification."
     candidate["needs_human_review"] = True
     return candidate
 
@@ -319,7 +362,7 @@ def add_known_competitors(candidates: dict[str, dict[str, Any]], known: str) -> 
                 ):
                     candidate["url"] = canonical_url
                     candidate["canonicalized_from_known_competitor"] = True
-                candidate.setdefault("sources", []).append({"source": "known_competitors_input", "query": name, "url": candidate.get("url", "")})
+                candidate.setdefault("sources", []).append({"source": "known_competitors_input", "query": name, "url": candidate.get("url", ""), "lane_scope": "competitive_market", "scope_value": "user supplied"})
                 matched = True
                 break
         if matched:
@@ -332,7 +375,7 @@ def add_known_competitors(candidates: dict[str, dict[str, Any]], known: str) -> 
                 "domain": "",
                 "url": "",
                 "page_title": name,
-                "sources": [{"source": "known_competitors_input", "query": name, "url": ""}],
+                "sources": [{"source": "known_competitors_input", "query": name, "url": "", "lane_scope": "competitive_market", "scope_value": "user supplied"}],
                 "evidence_snippets": [f"Known competitor supplied by user: {name}"],
                 "first_seen_at": now_iso(),
                 "known_competitor_supplied": True,
@@ -396,6 +439,8 @@ def enrich_known_competitors(candidates: dict[str, dict[str, Any]], known: str, 
                     description=item.get("description", ""),
                     query=query,
                     source="known_competitor_lookup",
+                    lane_scope="competitive_market",
+                    scope_value="user supplied",
                 )
             added += max(0, len(candidates) - before)
             if len(candidates) > before:
@@ -403,7 +448,7 @@ def enrich_known_competitors(candidates: dict[str, dict[str, Any]], known: str, 
     return {"status": status, "credential_source": key_name, "candidate_count": added}
 
 
-def add_candidate(candidates: dict[str, dict[str, Any]], *, url: str, title: str, description: str, query: str, source: str) -> None:
+def add_candidate(candidates: dict[str, dict[str, Any]], *, url: str, title: str, description: str, query: str, source: str, lane_scope: str, scope_value: str = "") -> None:
     domain = domain_of(url)
     if not domain:
         return
@@ -425,24 +470,27 @@ def add_candidate(candidates: dict[str, dict[str, Any]], *, url: str, title: str
             "first_seen_at": now_iso(),
         },
     )
-    candidate["sources"].append({"source": source, "query": query, "url": url})
+    observation = {"source": source, "query": query, "url": url, "lane_scope": lane_scope, "scope_value": scope_value}
+    if observation not in candidate["sources"]:
+        candidate["sources"].append(observation)
     snippet = " ".join(part for part in [title, description] if part).strip()
     if snippet and snippet not in candidate["evidence_snippets"]:
         candidate["evidence_snippets"].append(snippet[:500])
 
 
-def brave_search(queries: list[str], limit: int, raw: dict[str, Any], geo: str, language: str) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+def brave_search(queries: list[dict[str, str]], limit: int, raw: dict[str, Any], geo: str, language: str, lane_scope: str) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
     key_name, api_key = get_secret("BRAVE_SEARCH_API_KEY")
     candidates: dict[str, dict[str, Any]] = {}
     if not api_key:
         return candidates, {"status": "missing_credentials", "required_env": ["BRAVE_SEARCH_API_KEY"]}
     status = "ok"
-    for query in queries:
+    for query_spec in queries:
+        query = query_spec["query"]
         response = http_get(
             with_query("https://api.search.brave.com/res/v1/web/search", {"q": query, "count": min(limit, 10), "country": geo, "search_lang": language}),
             headers={"X-Subscription-Token": api_key, "Accept": "application/json"},
         )
-        raw.setdefault("brave_search", []).append({"query": query, "response": response})
+        raw.setdefault("brave_search", []).append({"query": query, "lane_scope": lane_scope, "scope_value": query_spec.get("scope_value", ""), "response": response})
         if not response.get("ok"):
             status = status_from_response(response)
             continue
@@ -455,6 +503,8 @@ def brave_search(queries: list[str], limit: int, raw: dict[str, Any], geo: str, 
                 description=item.get("description", ""),
                 query=query,
                 source="brave_search",
+                lane_scope=lane_scope,
+                scope_value=query_spec.get("scope_value", ""),
             )
             if len(candidates) >= limit:
                 break
@@ -463,19 +513,20 @@ def brave_search(queries: list[str], limit: int, raw: dict[str, Any], geo: str, 
     return candidates, {"status": status, "credential_source": key_name, "candidate_count": len(candidates)}
 
 
-def firecrawl_search(queries: list[str], limit: int, raw: dict[str, Any]) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+def firecrawl_search(queries: list[dict[str, str]], limit: int, raw: dict[str, Any], lane_scope: str) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
     key_name, api_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
     candidates: dict[str, dict[str, Any]] = {}
     if not api_key:
         return candidates, {"status": "missing_credentials", "required_env": ["FIRECRAWL_API_KEY_HGINVESTOR"]}
     status = "ok"
-    for query in queries[:4]:
+    for query_spec in queries[:4]:
+        query = query_spec["query"]
         response = http_post(
             "https://api.firecrawl.dev/v1/search",
             headers={"Authorization": f"Bearer {api_key}"},
             data={"query": query, "limit": min(limit, 10)},
         )
-        raw.setdefault("firecrawl", []).append({"query": query, "response": response})
+        raw.setdefault("firecrawl", []).append({"query": query, "lane_scope": lane_scope, "scope_value": query_spec.get("scope_value", ""), "response": response})
         if not response.get("ok"):
             status = status_from_response(response)
             continue
@@ -487,12 +538,29 @@ def firecrawl_search(queries: list[str], limit: int, raw: dict[str, Any]) -> tup
                 description=item.get("description", ""),
                 query=query,
                 source="firecrawl",
+                lane_scope=lane_scope,
+                scope_value=query_spec.get("scope_value", ""),
             )
             if len(candidates) >= limit:
                 break
         if len(candidates) >= limit:
             break
     return candidates, {"status": status, "credential_source": key_name, "candidate_count": len(candidates)}
+
+
+def merge_candidate_maps(target: dict[str, dict[str, Any]], incoming: dict[str, dict[str, Any]]) -> None:
+    """Merge provider/lane observations without letting discovery order set a lane."""
+    for key, row in incoming.items():
+        if key not in target:
+            target[key] = row
+            continue
+        current = target[key]
+        for source in row.get("sources", []):
+            if source not in current.setdefault("sources", []):
+                current["sources"].append(source)
+        for snippet in row.get("evidence_snippets", []):
+            if snippet not in current.setdefault("evidence_snippets", []):
+                current["evidence_snippets"].append(snippet)
 
 
 def write_competitor_plan(run_dir: Path, args: argparse.Namespace) -> None:
@@ -509,6 +577,8 @@ def write_competitor_plan(run_dir: Path, args: argparse.Namespace) -> None:
         f"- Customer segment: `{args.customer_segment or '[unresolved]'}`",
         f"- Known competitors supplied: `{args.known_competitors or 'none'}`",
         f"- Geography/language requested: `{args.geo}/{args.language}`",
+        f"- Lane B analog markets: `{', '.join(args.analog_market) or 'none supplied'}`",
+        f"- Lane C capability references: `{', '.join(args.reference_capability) or 'none supplied'}`",
         f"- Candidate limit: `{args.limit}`",
         "",
         "## Questions This Run Can Explore",
@@ -555,17 +625,17 @@ def write_report(run_dir: Path, args: argparse.Namespace, candidates: list[dict[
         lines.extend(["", "## Provider Alerts", ""])
         for item in needs_attention:
             lines.append(f"- {item}")
-    lines.extend(["", "## Candidate Competitors", ""])
+    lines.extend(["", "## Lane-aware Candidate Entities", ""])
     for candidate in candidates:
         snippet = candidate["evidence_snippets"][0] if candidate["evidence_snippets"] else ""
         lines.append(
-            f"- {candidate['name']} - `{candidate['domain']}` - {candidate.get('competitor_type_hint', 'unknown')} "
+            f"- {candidate['name']} - `{candidate['domain']}` - lane `{candidate.get('primary_lane', 'unknown')}` - role `{candidate.get('competitive_role', 'unknown')}` - legacy `{candidate.get('competitor_type_hint', 'unknown')}` "
             f"- {candidate.get('business_model_hint', 'unknown_model')} - {candidate.get('source_page_type_hint', 'unknown_page')} - confidence {candidate.get('confidence_score', 'n/a')} "
             f"- {candidate['url']} - {snippet}"
         )
-    lines.extend(["", "## Competitor Array", ""])
-    lines.append("| Candidate | Type hint | Segment fit | Job fit | Evidence | Key unknowns |")
-    lines.append("| --- | --- | --- | --- | --- | --- |")
+    lines.extend(["", "## Entity Array", ""])
+    lines.append("| Candidate | Lane | Role | Segment fit | Job fit | Evidence | Key unknowns |")
+    lines.append("| --- | --- | --- | --- | --- | --- | --- |")
     for candidate in candidates:
         unknowns = [
             factor
@@ -577,7 +647,8 @@ def write_report(run_dir: Path, args: argparse.Namespace, candidates: list[dict[
             + " | ".join(
                 [
                     candidate.get("name", ""),
-                    f"{candidate.get('competitor_type_hint', 'unknown')} ({candidate.get('source_page_type_hint', 'unknown_page')})",
+                    candidate.get("primary_lane", "unknown"),
+                    candidate.get("competitive_role", "unknown"),
                     candidate.get("segment_fit_hint", "unknown"),
                     candidate.get("job_fit_hint", "unknown"),
                     candidate.get("evidence_quality", "weak"),
@@ -604,11 +675,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--customer-segment", default="")
     parser.add_argument("--known-competitors", default="")
     parser.add_argument("--limit", type=int, default=20)
+    parser.add_argument("--competitive-limit", type=int, default=5, help="Lane A candidate cap per provider.")
+    parser.add_argument("--similar-limit", type=int, default=3, help="Lane B candidate cap per provider.")
+    parser.add_argument("--reference-limit", type=int, default=3, help="Lane C candidate cap per provider.")
     parser.add_argument("--geo", default="US")
     parser.add_argument("--language", default="en")
+    parser.add_argument("--analog-market", action="append", default=[], help="Additional market/segment scope for Lane B analog discovery. Repeatable.")
+    parser.add_argument("--reference-capability", action="append", default=[], help="Narrow Lane C capability to study, such as website or YouTube. Repeatable.")
+    parser.add_argument("--fixture-results-json", default="", help="Offline replay fixture keyed by lane; bypasses provider calls for deterministic tests.")
     parser.add_argument("--out-dir", default="")
-    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to research/topics/<topic-slug>.")
-    parser.add_argument("--legacy-output", action="store_true", help="Write to the former research/evidence-scout/competitors layout.")
+    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to projects/research/topics/<topic-slug>.")
+    parser.add_argument("--legacy-output", action="store_true", help="Write to the former projects/research/evidence-scout/competitors layout.")
     return parser.parse_args()
 
 
@@ -626,13 +703,47 @@ def main() -> int:
     if workspace:
         update_stage(workspace, "competitor_discovery", status="in_progress", gate_result="not_run", next_action="Classify discovered alternatives and false positives.")
     write_competitor_plan(run_dir, args)
-    queries = query_plan(args.topic, args.customer_segment, args.known_competitors)
-    raw: dict[str, Any] = {"queries": queries}
-
-    brave_candidates, brave_summary = brave_search(queries, args.limit, raw, args.geo, args.language)
-    firecrawl_candidates, firecrawl_summary = firecrawl_search(queries, args.limit, raw)
-    merged = {**firecrawl_candidates, **brave_candidates}
-    known_lookup_summary = enrich_known_competitors(merged, args.known_competitors, raw, args.geo, args.language, args.topic)
+    query_sets = query_plan(args.topic, args.customer_segment, args.known_competitors, args.analog_market, args.reference_capability)
+    raw: dict[str, Any] = {"query_sets": query_sets}
+    lane_limits = {
+        "competitive_market": args.competitive_limit,
+        "similar_company": args.similar_limit,
+        "capability_reference": args.reference_limit,
+    }
+    merged: dict[str, dict[str, Any]] = {}
+    provider_summaries: dict[str, Any] = {}
+    fixture_results = read_json(Path(args.fixture_results_json), {}) if args.fixture_results_json else None
+    for lane_scope, lane_queries in query_sets.items():
+        if not lane_queries:
+            provider_summaries[f"brave_search:{lane_scope}"] = {"status": "not_run", "candidate_count": 0}
+            provider_summaries[f"firecrawl:{lane_scope}"] = {"status": "not_run", "candidate_count": 0}
+            continue
+        lane_limit = lane_limits[lane_scope]
+        if fixture_results is not None:
+            fixture_lane: dict[str, dict[str, Any]] = {}
+            for item in fixture_results.get(lane_scope, [])[:lane_limit]:
+                if not isinstance(item, dict):
+                    continue
+                add_candidate(
+                    fixture_lane,
+                    url=str(item.get("url", "")), title=str(item.get("title", "")), description=str(item.get("description", "")),
+                    query=str(item.get("query", lane_queries[0]["query"])), source="offline_fixture", lane_scope=lane_scope,
+                    scope_value=str(item.get("scope_value", lane_queries[0].get("scope_value", ""))),
+                )
+            merge_candidate_maps(merged, fixture_lane)
+            provider_summaries[f"fixture:{lane_scope}"] = {"status": "ok", "candidate_count": len(fixture_lane)}
+            continue
+        brave_candidates, brave_summary = brave_search(lane_queries, lane_limit, raw, args.geo, args.language, lane_scope)
+        firecrawl_candidates, firecrawl_summary = firecrawl_search(lane_queries, lane_limit, raw, lane_scope)
+        lane_candidates: dict[str, dict[str, Any]] = {}
+        merge_candidate_maps(lane_candidates, brave_candidates)
+        merge_candidate_maps(lane_candidates, firecrawl_candidates)
+        ranked_lane = sorted(lane_candidates.items(), key=lambda pair: (len(pair[1].get("sources", [])), len(pair[1].get("evidence_snippets", []))), reverse=True)
+        merge_candidate_maps(merged, dict(ranked_lane[:lane_limit]))
+        provider_summaries[f"brave_search:{lane_scope}"] = brave_summary
+        provider_summaries[f"firecrawl:{lane_scope}"] = firecrawl_summary
+    known_lookup_summary = {"status": "not_run", "candidate_count": 0} if fixture_results is not None or not args.known_competitors else enrich_known_competitors(merged, args.known_competitors, raw, args.geo, args.language, args.topic)
+    provider_summaries["known_competitor_lookup"] = known_lookup_summary
     add_known_competitors(merged, args.known_competitors)
     classified = [classify_candidate(item, args.topic, args.customer_segment) for item in merged.values()]
     known_unverified = [item for item in classified if item.get("competitor_type_hint") == "known_competitor_unverified"]
@@ -640,18 +751,25 @@ def main() -> int:
     discovered = sorted(discovered, key=lambda item: (item["confidence_score"], len(item["sources"])), reverse=True)
     candidates = discovered[: max(args.limit - len(known_unverified), 0)] + known_unverified
 
-    provider_summaries = {"brave_search": brave_summary, "firecrawl": firecrawl_summary, "known_competitor_lookup": known_lookup_summary}
     needs_user_attention = [
         f"{provider}: {summary.get('status')}"
         for provider, summary in provider_summaries.items()
         if summary.get("status") not in {"ok", "not_run"}
     ]
+    lane_coverage = {
+        lane: {
+            "query_count": len(query_sets.get(lane, [])),
+            "candidate_count": sum(any(source.get("lane_scope") == lane for source in candidate.get("sources", [])) for candidate in candidates),
+        }
+        for lane in ("competitive_market", "similar_company", "capability_reference")
+    }
     summary = {
         "run_dir": str(run_dir),
         "topic": args.topic,
         "customer_segment": args.customer_segment,
         "candidate_count": len(candidates),
         "providers": provider_summaries,
+        "lane_coverage": lane_coverage,
         "needs_user_attention": needs_user_attention,
         "outputs": {
             "competitors_json": str(run_dir / "competitors.json"),

@@ -2,7 +2,7 @@
 
 Last researched: 2026-08-28. Europe was prioritized, followed by the US and China, with Latin American fintech cases added where they clarified trust and service wedges. Sources combine named founder/operator accounts, empirical research, primary regulator guidance, and a small amount of anecdotal forum discovery. Founder stories show mechanisms and context; they do not prove that another idea has demand.
 
-The cross-skill distillation (sequencing, weak evidence, channel jobs, product/referral loops, community, low-cost growth, measurement, and regional notes) lives in `references/evidence-registry.md` at repo root. The expanded founder case matrix and academic comparison live in `research/topics/founder-gtm-playbooks/playbooks/founder-growth-channel-patterns-2026.md`; the complete 48-source table is `research/topics/founder-gtm-playbooks/source_registry.csv`.
+The cross-skill distillation (sequencing, weak evidence, channel jobs, product/referral loops, community, low-cost growth, measurement, and regional notes) lives in `references/evidence-registry.md` at repo root. The expanded founder case matrix and academic comparison live in `projects/research/topics/founder-gtm-playbooks/playbooks/founder-growth-channel-patterns-2026.md`; the complete 48-source table is `projects/research/topics/founder-gtm-playbooks/source_registry.csv`.
 
 ## High-confidence cross-case findings
 

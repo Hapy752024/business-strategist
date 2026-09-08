@@ -1,7 +1,6 @@
 ---
 name: brand-website-designer-builder
-description: Builds visually distinctive, production-grade Next.js marketing and corporate websites from an approved brand or standalone user taste brief. Use whenever the user asks for a landing page, branded website, company site, visually stunning or unique web experience, website redesign, GitHub-to-Vercel delivery, or a simple website A/B test—even if they do not explicitly mention branding.
-user_invocable: true
+description: Build distinctive Next.js marketing and corporate websites from an approved brand or taste brief. Use when building landing pages, company sites, redesigns, Vercel delivery, or website A/B tests.
 ---
 
 # Brand Website Designer-Builder

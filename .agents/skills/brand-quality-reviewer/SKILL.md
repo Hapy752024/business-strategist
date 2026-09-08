@@ -1,7 +1,6 @@
 ---
 name: brand-quality-reviewer
-description: Reviews brand identity outputs for consistency, accessibility, visual quality, guideline compliance, asset completeness, UI overlaps, and best-practice gaps. Use before final delivery and after major revisions.
-user_invocable: true
+description: Review brand outputs for consistency, accessibility, visual quality, compliance, completeness, and UI defects. Use before delivery and after major revisions.
 ---
 
 # Brand Quality Reviewer

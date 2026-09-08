@@ -90,6 +90,7 @@ else
     green "  PASS  .claude/settings.local.json is absent (expected in clean checkout)"
 fi
 check ".claude/settings.json is valid JSON" python3 -c "import json; json.load(open('.claude/settings.json'))"
+check ".mcp.json is valid JSON" python3 -c "import json; json.load(open('.mcp.json'))"
 check "AGENTS.md excludes generated memory blocks" sh -c "! grep -q '<claude-mem-context>' AGENTS.md"
 
 # ── Dependency declarations ───────────────────────────────
@@ -177,15 +178,7 @@ done
 
 echo ""
 echo "--- Workspace Tests ---"
-check "topic workspace and Firecrawl routing tests pass" python3 scripts/evidence_scout/test_workspace.py
-check "market-problem discovery tests pass" python3 scripts/evidence_scout/test_market_discovery.py
-check "archetype GTM skill tests pass" python3 scripts/evidence_scout/test_gtm_skill.py
-check "service customer-perspective skill tests pass" python3 scripts/evidence_scout/test_customer_perspective_skill.py
-check "interview-bridge kit tests pass" python3 scripts/evidence_scout/test_interview_bridge.py
-check "whitespace matrix tests pass" python3 scripts/evidence_scout/test_whitespace_matrix.py
-check "imported brand skill tests pass" python3 -m pytest -q tests/brand_designer --disable-warnings
-check "business-brand-website foundation tests pass" python3 -m pytest -q tests/integration --disable-warnings
-check "full Python test suite passes" python3 -m pytest -q tests --disable-warnings
+check "full Python test suite passes" python3 -m pytest -q --disable-warnings
 check "offline behavioral route evals pass" python3 scripts/run_behavioral_evals.py --repeat 3 >/dev/null
 check "agentic process comparison runs" python3 scripts/benchmark_agentic_process.py --output-dir /tmp/business-strategist-agentic-eval >/dev/null
 check "eval structure is valid" python3 scripts/run_evals.py
@@ -193,7 +186,7 @@ check "eval structure is valid" python3 scripts/run_evals.py
 # ── Schemas ───────────────────────────────────────────────
 echo ""
 echo "--- Schemas ---"
-for schema in evidence-record ads-record competitor stage-checkpoint research-topic-manifest project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record; do
+for schema in evidence-record ads-record competitor entity-landscape stage-checkpoint research-topic-manifest project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record strategy-plan; do
     check "schemas/$schema.schema.json exists" test -f "schemas/$schema.schema.json"
     check "schemas/$schema.schema.json is valid JSON" python3 -c "import json; json.load(open('schemas/$schema.schema.json'))" 2>/dev/null
 done

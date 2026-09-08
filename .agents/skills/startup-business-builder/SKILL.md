@@ -1,6 +1,6 @@
 ---
 name: startup-business-builder
-description: Build a zero-to-one startup plan covering segment, painful job, customer discovery, canvases, MVP, first customers, pricing, business model, traction, operating cadence, and scale gates. Use whenever starting, evaluating, or restructuring a startup.
+description: Build a zero-to-one startup plan covering segment, discovery, MVP, first customers, pricing, operating cadence, and scale gates. Use when starting, evaluating, or restructuring a startup.
 ---
 
 # Startup Business Builder

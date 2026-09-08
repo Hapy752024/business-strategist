@@ -1,7 +1,6 @@
 ---
 name: brand-designer
-description: Orchestrates creation of complete corporate identity and corporate design systems. Use for brand guidelines, CI/CD, logo systems, colors, typography, marketing assets, favicons, UI tokens, or design-system work. Routes work to focused brand skills and keeps discovery one question at a time.
-user_invocable: true
+description: Orchestrate brand identity and design-system work across focused skills. Use for logos, guidelines, colors, typography, marketing assets, favicons, or UI tokens.
 ---
 
 # Brand Designer

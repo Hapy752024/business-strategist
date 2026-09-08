@@ -1,7 +1,6 @@
 ---
 name: brand-workspace-manager
-description: Creates and manages per-project brand folders, detects OS/shell context, and archives previous iteration assets into old/ before new assets are generated.
-user_invocable: true
+description: Create and manage per-project brand workspaces and archive earlier iteration assets. Use when initializing, resuming, or revising a brand workspace.
 ---
 
 # Brand Workspace Manager

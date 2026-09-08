@@ -1,7 +1,6 @@
 ---
 name: brand-asset-producer
-description: Produces brand assets such as SVG logos, logo variants, favicons, app icons, social avatars, PNG/EPS/PDF/ICO exports, and asset manifests from an approved brand direction.
-user_invocable: true
+description: Produce logos, favicons, social avatars, exports, and asset manifests from an approved brand direction. Use after a brand direction is approved.
 ---
 
 # Brand Asset Producer

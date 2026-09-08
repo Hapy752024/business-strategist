@@ -23,6 +23,8 @@ When intent is genuinely ambiguous, ask exactly one question and wait:
 
 Do not ask intake questions such as buyer, willingness to pay, or current workaround before an explicit discovery run. Ask one narrow scope question only if geography, language, or the market definition would materially change the sources; otherwise state and label the initial scope assumption.
 
+When the request also asks which opportunity the founder should pursue, apply repo-root `references/strategic-positioning.md` before prioritisation. Reuse supplied founder preferences and constraints; ask only a missing decision-changing input. Broad problem discovery can proceed without requiring the founder to invent a pain in advance. Give viable candidates comparable initial coverage and distinguish public-evidence salience from business attractiveness.
+
 ## Procedure
 
 1. Restate the market/domain, any rough hunch, and the source scope. Treat the hunch as a search seed, not a claim.
@@ -45,6 +47,7 @@ Do not ask intake questions such as buyer, willingness to pay, or current workar
 4. Inspect `<run>/evidence/research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, `irrelevant.jsonl`, and provider alerts. Exclude irrelevant records before clustering.
 5. Synthesize the sources into `<run>/market-discovery-report.md`. Replace every template placeholder. Cite the evidence IDs or source URLs for material claims.
 6. Build 3–7 candidates only when the evidence supports them. A candidate needs a plausible segment, trigger/job, recurring pain or decision uncertainty, current workaround or alternative, and a named uncertainty. If evidence is thin, report fewer candidates or none.
+   For each candidate, outline the journey in which the need arises using the customer-journey contract in `evidence-scout/references/workflow.md` (sibling skill). Existing providers do not exclude a candidate: assess potential customer choice and access, with unknowns, before calling a segment saturated.
 7. For each candidate, separate:
 
    - observed evidence;
@@ -66,6 +69,8 @@ Do not ask intake questions such as buyer, willingness to pay, or current workar
 ## Candidate Ranking Rubric
 
 Rank candidates deterministically from the run's `evidence.jsonl`, not by intuition. Score each candidate on two axes:
+
+This rubric ranks observed evidence within this run only. It does not estimate market prevalence, willingness to pay, or the best opportunity for the founder. Unequal source coverage and missing independence limit comparison; apply the shared positioning contract before an opportunity recommendation.
 
 **Frequency (0–3)** — independent support for the pain:
 - 0 = a single dramatic complaint

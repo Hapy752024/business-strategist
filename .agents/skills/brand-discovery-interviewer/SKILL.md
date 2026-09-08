@@ -1,7 +1,6 @@
 ---
 name: brand-discovery-interviewer
-description: Conducts brand identity discovery one question at a time. Use before creating brand guidelines, corporate identity, logo systems, color palettes, UI kits, or marketing assets.
-user_invocable: true
+description: Conduct brand identity discovery one question at a time. Use before creating a brand system, logo, palette, UI kit, or marketing assets.
 ---
 
 # Brand Discovery Interviewer

@@ -24,32 +24,16 @@ VALIDATOR_DIR = ROOT / "scripts" / "validate_apis"
 sys.path.insert(0, str(VALIDATOR_DIR))
 
 from common import get_secret, http_get, now_iso, write_json, with_query  # noqa: E402
+from readiness import load_latest
 
 
-OUTPUT_DIR = ROOT / "research" / "evidence-scout" / "provider-doctor"
-VALIDATION_SUMMARY = ROOT / "research" / "evidence-scout" / "api-validation" / "all.summary.json"
-VALIDATION_DIR = ROOT / "research" / "evidence-scout" / "api-validation"
+OUTPUT_DIR = ROOT / "projects" / "research" / "evidence-scout" / "provider-doctor"
+VALIDATION_SUMMARY = ROOT / "projects" / "research" / "evidence-scout" / "api-validation" / "all.summary.json"
+VALIDATION_DIR = ROOT / "projects" / "research" / "evidence-scout" / "api-validation"
 
 
 def latest_validation_statuses() -> dict[str, dict[str, Any]]:
-    statuses: dict[str, dict[str, Any]] = {}
-    for path in VALIDATION_DIR.glob("*.summary.json"):
-        if path.name == "all.summary.json":
-            continue
-        try:
-            item = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            continue
-        if isinstance(item, dict) and item.get("provider"):
-            statuses[str(item["provider"])] = item
-    try:
-        data = json.loads(VALIDATION_SUMMARY.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError):
-        return statuses
-    if not isinstance(data, list):
-        return statuses
-    statuses.update({str(item.get("provider")): item for item in data if isinstance(item, dict) and item.get("provider")})
-    return statuses
+    return load_latest(VALIDATION_DIR)
 
 
 VALIDATION_PROVIDER_ALIASES = {

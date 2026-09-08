@@ -1,6 +1,6 @@
 ---
 name: competitor-scout
-description: Discover direct, indirect, substitute, and future competitors for a business idea, then exclude blogs, directories, affiliates, agencies, and false positives. Use whenever alternatives or market structure matter.
+description: Discover direct competitors, substitutes, analogs, threats, and false positives for a business idea. Use for a narrow competitor-candidate search before a full landscape.
 ---
 
 # Competitor Scout
@@ -19,4 +19,4 @@ description: Discover direct, indirect, substitute, and future competitors for a
 
 ## Output
 
-Produce competitor arrays, exclusions, source URLs, success factors, uncertainties, and marketing-analysis candidates.
+Produce lane-aware competitor arrays, exclusions, source URLs, fit dimensions, uncertainties, and marketing-analysis candidates. Preserve legacy fields while adding `primary_lane`, `competitive_role`, and `inspiration_roles`.

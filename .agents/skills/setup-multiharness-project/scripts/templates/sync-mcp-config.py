@@ -14,7 +14,7 @@ OPENCODE = ROOT / "opencode.json"
 
 
 def _quote(s: str) -> str:
-    return '"' + s.replace('"', '\\"') + '"'
+    return json.dumps(s, ensure_ascii=False)
 
 
 def generate_codex(servers: dict) -> str:
@@ -23,15 +23,15 @@ def generate_codex(servers: dict) -> str:
         command = cfg.get("command", "")
         args = cfg.get("args", [])
         env = cfg.get("env") or {}
-        lines.append(f"[mcp_servers.{name}]")
+        lines.append(f"[mcp_servers.{_quote(name)}]")
         lines.append(f"command = {_quote(command)}")
         if args:
             joined = ", ".join(_quote(a) for a in args)
             lines.append(f"args = [{joined}]")
         if env:
-            lines.append("[mcp_servers.%s.env]" % name)
+            lines.append("[mcp_servers.%s.env]" % _quote(name))
             for k, v in env.items():
-                lines.append(f"{k} = {_quote(str(v))}")
+                lines.append(f"{_quote(k)} = {_quote(str(v))}")
         lines.append("")
     return "\n".join(lines) + "\n"
 

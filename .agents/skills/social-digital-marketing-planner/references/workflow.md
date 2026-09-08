@@ -53,16 +53,18 @@ Try to capture:
 - Primary goal: awareness, trust, community, leads, sales, bookings, app installs, retention, referrals, or hiring.
 - Current assets: website, landing page, profiles, email list, customer stories, reviews, product photos/videos, founder/expert voices.
 - Current channels and performance baselines.
-- Budget and team capacity.
+- Budget and team capacity, including production, response/moderation and sales/delivery time.
 - Time horizon.
 - Constraints: regulated claims, sensitive categories, brand voice, approval workflow, legal/compliance.
 
 ## Procedure
 
+Carry the selected position's audience, promise, exclusions, and proof limits into campaign briefs. For a material conflict, conditionally load repo-root `references/strategic-positioning.md` and surface the choice; do not rerun positioning for routine copy or calendars. Reuse the active plan's experiment/KPI definitions and source revision.
+
 1. Diagnose the goal, stage, audience, offer, channel history, budget, and constraints.
 2. State assumptions and gaps before recommending platforms or budget.
 3. Define the audience and buyer trigger in concrete language.
-4. Map platform roles by customer job—discovery, education/trust, capture, conversion, activation, lifecycle, community, or recruiting—instead of listing every social network.
+4. Map platform roles by customer job—discovery, education/trust, relationship, capture, conversion, activation, lifecycle, community, or recruiting—instead of listing every social network. For each primary route, state how an unknown entrant gets relevant exposure, why people return or trust it, and the bridge to a commercial outcome.
 5. Define content pillars and creative angles tied to audience pain, desire, proof, objections, and identity.
 6. Build the organic plan: cadence, formats, calendar, engagement routine, repurposing system.
 7. Build the paid plan only when conversion path and creative testing logic are clear.
@@ -106,7 +108,7 @@ Choose platforms by audience behavior, customer job, content fit, conversion bri
 - Creators/podcasts: borrowed niche trust, education, and demonstrations; select for audience/product fit and qualified downstream behavior, not follower count.
 - Product surfaces: recipient exposure, collaboration, referral, and network utility. These are loops rather than media channels and require value before invitation.
 
-Do not recommend a platform unless you can explain its customer job, audience/context fit, operating requirement, conversion bridge, source-cohort metric, and stop rule. Run the eight-question channel/loop recommendation protocol in `references/evidence-registry.md` (stage, customer context, channel job, mechanism, prerequisites, cohort gate, transfer limit, stop rule) for each primary and supporting platform. Name one primary platform and one supporting/owned motion; explicitly defer the rest.
+Do not recommend a platform unless you can explain its customer job, audience/context fit, discovery mechanism for an unknown entrant, relationship role where relevant, operating requirement, conversion bridge, source-cohort metric, and stop rule. Run the eight-question channel/loop recommendation protocol in `references/evidence-registry.md` (stage, customer context, channel job, mechanism, prerequisites, cohort gate, transfer limit, stop rule) for each primary and supporting platform. Name one primary platform and one supporting/owned motion; explicitly defer the rest.
 
 ## Product, Referral, And Community Loops
 

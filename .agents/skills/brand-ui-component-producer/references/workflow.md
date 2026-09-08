@@ -17,7 +17,7 @@
 ## Rules
 - Always test first; the PreToolUse Write hook blocks `Component.tsx` without matching `Component.test.tsx`.
 - Components reference `tokens.css` and `motion-tokens.ts` by import.
-- Outputs live under `brand-projects/<name>/components/` (canonical) and `stages/components/iterations/` (working).
+- Outputs live under `projects/brand-projects/<name>/components/` (canonical) and `stages/components/iterations/` (working).
 - shadcn/ui is the base primitive library; never hand-roll a component that shadcn already provides.
 - Dispatch fresh subagents per `references/subagent-dispatch.md` whenever component work parallelizes.
 

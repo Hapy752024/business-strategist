@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-STAGES = ["discovery", "research", "strategy", "logo", "colors", "typography", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export"]
+STAGES = ["discovery", "research", "strategy", "logo", "colors", "typography", "imagery-style", "motion-concept", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export"]
 
 
 def slugify(value: str) -> str:
@@ -21,6 +21,9 @@ def slugify(value: str) -> str:
 
 
 def create_workspace(root: Path) -> list[str]:
+    repo = Path(__file__).resolve().parents[4]
+    if root.resolve().is_relative_to((repo / "brand-projects").resolve()):
+        raise ValueError("Workspace relocated; use projects/brand-projects/. Old roots are not created.")
     paths = [
         root / "stages",
         root / "old",
@@ -81,7 +84,7 @@ def archive_stage(root: Path, stage: str) -> Path | None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", required=True, help="Brand/project name")
-    parser.add_argument("--base-dir", type=Path, default=Path("brand-projects"))
+    parser.add_argument("--base-dir", type=Path, default=Path(__file__).resolve().parents[4] / "projects/brand-projects")
     parser.add_argument("--stage", choices=STAGES)
     parser.add_argument("--archive-stage", action="store_true")
     parser.add_argument("--entry-mode", choices=("standalone", "business_linked"), default="standalone")

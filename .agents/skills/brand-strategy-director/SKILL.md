@@ -1,7 +1,6 @@
 ---
 name: brand-strategy-director
-description: Creates brand strategy and visual design territories from a confirmed brief and research. Use before final logos, colors, typography, UI kits, or brand guidelines are produced.
-user_invocable: true
+description: Create brand strategy and visual design territories from a confirmed brief and research. Use before producing final logos, colors, typography, UI kits, or guidelines.
 ---
 
 # Brand Strategy Director

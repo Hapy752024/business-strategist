@@ -95,6 +95,17 @@ def load_competitor_names(args: argparse.Namespace) -> list[str]:
                 domain = item.get("domain") or ""
                 name = domain.split(".")[0] if domain else ""
             if name:
+                # Final landscapes require a verified competitive lane. Raw
+                # discovery candidates are eligible only when Lane A was one
+                # of their explicit source scopes.
+                lane = item.get("primary_lane")
+                observed = item.get("lane_observations", [])
+                if lane not in {None, "uncertain", "competitive_market"}:
+                    continue
+                if lane == "competitive_market" and item.get("verification_status") != "verified":
+                    continue
+                if lane in {None, "uncertain"} and observed and "competitive_market" not in observed:
+                    continue
                 names.append(name)
     deduped: list[str] = []
     for name in names:
@@ -376,8 +387,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--approve-paid", action="store_true", help="Confirm paid-credit spend for apify_ads. Required or apify_ads returns approval_required.")
     parser.add_argument("--apify-actor", default=DEFAULT_APIFY_ACTOR, help=f"Apify actor for the fallback (default {DEFAULT_APIFY_ACTOR}).")
     parser.add_argument("--out-dir", default="")
-    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to research/topics/<topic-slug>.")
-    parser.add_argument("--legacy-output", action="store_true", help="Write to the former research/evidence-scout/ads layout.")
+    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to projects/research/topics/<topic-slug>.")
+    parser.add_argument("--legacy-output", action="store_true", help="Write to the former projects/research/evidence-scout/ads layout.")
     return parser.parse_args()
 
 

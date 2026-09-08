@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -21,6 +22,21 @@ from workspace import create_topic_workspace, resolve_run_dir, update_stage  # n
 
 
 class WorkspaceTests(unittest.TestCase):
+    def test_resume_preserves_reader_document_state_and_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = create_topic_workspace("Repair service", temporary, "local homeowners")
+            readme = workspace / "README.md"
+            for target in re.findall(r"\]\(([^)]+)\)", readme.read_text()):
+                self.assertTrue((workspace / target).exists(), target)
+            self.assertEqual([p.name for p in workspace.glob("*.md")], ["README.md"])
+            readme.write_text("# Current decision\nTest quotes before launch.\n")
+            evidence = workspace / "evidence" / "frozen.jsonl"
+            evidence.write_bytes(b'{"evidence_id":"fixture"}\n')
+            protected = [readme, evidence, workspace / "manifest.json"]
+            before = {p: p.read_bytes() for p in protected}
+            create_topic_workspace("Repair service", temporary, "local homeowners")
+            self.assertEqual(before, {p: p.read_bytes() for p in protected})
+
     def test_scaffold_and_manifest_update(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             workspace = create_topic_workspace("Accounting document SaaS", temporary, "small accounting firms")
@@ -28,12 +44,18 @@ class WorkspaceTests(unittest.TestCase):
                 "manifest.json",
                 "README.md",
                 "intake/startup-thesis.md",
+                "deep-dives",
                 "canvases/business-model-canvas.md",
                 "canvases/value-proposition-small-accounting-firms.md",
                 "market-discovery/runs",
             ]
             for relative in expected:
                 self.assertTrue((workspace / relative).exists(), relative)
+            readme = (workspace / "README.md").read_text(encoding="utf-8")
+            thesis = (workspace / "intake" / "startup-thesis.md").read_text(encoding="utf-8")
+            self.assertIn("Current recommendation", readme)
+            self.assertIn("Acquisition and relationship feasibility", readme)
+            self.assertIn("Founder decision context", thesis)
             update_stage(
                 workspace,
                 "evidence_collection",
@@ -48,6 +70,22 @@ class WorkspaceTests(unittest.TestCase):
             self.assertEqual(manifest["stages"]["evidence_collection"]["gate_result"], "conditional_pass")
             self.assertIn("README.md", manifest["artifacts"])
             self.assertIn("market_discovery", manifest["stages"])
+            self.assertEqual(manifest["manifest_revision"], 2)
+
+    def test_passed_stage_rejects_missing_artifacts_but_preserves_explicit_output(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = create_topic_workspace("Example", temporary)
+            with self.assertRaisesRegex(ValueError, "does not exist"):
+                update_stage(
+                    workspace, "evidence_collection", status="passed", gate_result="pass",
+                    artifacts=[workspace / "missing.md"],
+                )
+            external = Path(temporary).parent / "outside.md"
+            external.write_text("external", encoding="utf-8")
+            update_stage(
+                workspace, "evidence_collection", status="passed", gate_result="pass",
+                artifacts=[external],
+            )
 
     def test_explicit_output_preserves_compatibility(self) -> None:
         run_dir, workspace = resolve_run_dir(

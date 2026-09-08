@@ -1,6 +1,6 @@
 ---
 name: company-operating-system
-description: Design a practical company operating system for strategy, goals, metrics, meetings, decisions, cash, hiring, and accountability. Use whenever a founder asks how to run, organize, manage, or scale a company or team.
+description: Derive a delivery operating model from a selected strategic position, or design company goals, metrics, routines, decisions, cash, hiring, and accountability. Use for operating-model design or company management.
 ---
 
 # Company Operating System
@@ -21,4 +21,4 @@ Use this after the customer, business model, and current company stage are suffi
 
 ## Output
 
-Produce operating thesis, priorities, KPIs, meeting cadence, decision rights, cash and hiring gates, accountability loop, risks, and 7/30/60/90-day actions.
+Produce only the requested operating-model implications or management routines, with relevant KPIs, accountable actions, and review rules; a focused request needs no full company blueprint.

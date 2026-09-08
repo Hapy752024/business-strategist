@@ -79,6 +79,8 @@ def write_json_atomic(path: Path, value: dict[str, Any], *, expected_revision: i
 
 def create_project(slug: str, *, business_workspace: str = "", brand_workspace: str = "") -> Path:
     slug = slugify(slug)
+    if slug in {"research", "brand-projects"}:
+        raise ValueError(f"reserved project directory: {slug}")
     if not SLUG_RE.fullmatch(slug):
         raise ValueError(f"invalid project slug: {slug}")
     directory = PROJECTS_ROOT / slug

@@ -5,7 +5,7 @@ description: Analyze competitor marketing approaches from public landing pages, 
 
 # Competitor Marketing Analyzer Workflow
 
-Use this skill after competitors have been identified, or when the user provides competitor URLs and wants to understand their marketing approach.
+Use this skill after entities have been identified, or when the user provides URLs and wants a narrow marketing teardown. For lane assignment and full competitive/analog/reference synthesis, use `competitive-landscape-builder`.
 
 ## Ambiguity and Unknowns
 
@@ -19,10 +19,11 @@ If competitor identity, URL ownership, target geography, or category scope is am
 4. Run the ads collector for paid-acquisition evidence when competitor Meta/Instagram presence matters: `python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "<competitors.json>" --countries <ISO codes> --limit 20`. Free official Meta Ad Library for EU/UK/EEA audiences; non-EU markets fall back to paid Apify (`--providers auto`, ask before `--approve-paid`). If `validate_meta.py` reports missing credentials, tell the user the one-time Meta app + identity-verification setup is pending instead of skipping ad evidence silently.
 5. Inspect provider failures, fallback evidence, page types, source URLs, and pricing-token extraction before interpreting results.
 6. Separate scraped landing-page evidence from direct HTTP fallback and cached snippets.
-7. Analyze positioning, audience, pain language, offer, CTA, pricing posture, proof, product clues, and channel clues.
+7. Analyze positioning, audience, pain language, every service/package, CTA, pricing posture, proof, product clues, website clues, and public social presence/usage.
+   Extract explicit social URLs from first-party pages as unverified hints; verify profiles and activity with the approved public-platform workflow before reporting presence.
 8. Compare ad messaging against landing-page positioning: same promise or segmented funnels? Long-running ads signal what keeps working, but never report longevity as proven performance — the Ad Library exposes no conversion or engagement data, and EU spend/impressions are coarse ranges.
 9. Compare competitor promises against user-pain evidence rather than assuming copy reflects demand.
-10. Produce a competitor-by-competitor summary, differentiation opportunities, and follow-up evidence gaps.
+10. Produce an entity-by-entity summary, lane-aware differentiation opportunities, analog transfer notes where applicable, and follow-up evidence gaps.
 
 ## Command
 
@@ -35,13 +36,13 @@ python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<categor
 Analyze candidates from `competitor-scout`:
 
 ```bash
-python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 10
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 10
 ```
 
 Use deeper page discovery only when worth the credits:
 
 ```bash
-python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 5 --deep
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 5 --deep
 ```
 
 When analyzing a `competitors.json`, prioritize `direct_broker_candidate`, `direct_insurer_candidate`, and `marketplace_comparison_portal` before editorial resources. Analyze editorials separately unless the user explicitly wants SEO/content strategy.
@@ -52,13 +53,22 @@ If Firecrawl fails or returns `billing_required`, use fallback evidence before g
 
 The script writes:
 
-- `research/topics/<topic>/competitors/marketing/<run>/marketing_plan.md` — objective, scope, questions, limits, and the comparison checkpoint for the run
-- `research/topics/<topic>/competitors/marketing/<run>/marketing_analysis.json`
-- `research/topics/<topic>/competitors/marketing/<run>/summary.json`
-- `research/topics/<topic>/competitors/marketing/<run>/report.md`
-- `research/topics/<topic>/competitors/marketing/<run>/raw.json`
+- `projects/research/topics/<topic>/competitors/marketing/<run>/marketing_plan.md` — objective, scope, questions, limits, and the comparison checkpoint for the run
+- `projects/research/topics/<topic>/competitors/marketing/<run>/marketing_analysis.json`
+- `projects/research/topics/<topic>/competitors/marketing/<run>/summary.json`
+- `projects/research/topics/<topic>/competitors/marketing/<run>/report.md`
+- `projects/research/topics/<topic>/competitors/marketing/<run>/raw.json`
 
 ## What To Analyze
+
+For entry/strategy research, assess the four stages below against the researched customer journey. Narrow requests for a price or CTA do not require the full review. Use `stage | customer need | observed strength/weakness | source/date | proposed entrant advantage | test | confidence` in the existing report. Distinguish observed design from performance and company claims from customer outcomes.
+
+- Visibility: target-customer search results, relevant social profiles/content, audience fit, referrals and other observed distribution. A dormant social profile does not establish low total visibility; a small brand does not establish easy acquisition.
+- Sales: follow content to offer, contact/application and purchase as publicly accessible; assess clarity, objections, friction and trust. Do not infer conversion rates from website design or ad longevity.
+- Service: inspect onboarding, help, responsiveness, problem resolution and balanced customer reviews. Attribute supplier versus intermediary failures correctly. Missing public service data stays unknown.
+- Retention/engagement: investigate return use, helpful reminders/content, renewal, referrals, cancellation and reasons for leaving. Quiet social accounts are not evidence of low retention; some customers value reliable service with little ongoing contact.
+
+Social content can build both visibility and relationships. State the initial exposure mechanism, reason to return, path to consent/contact and commercial action; followers and engagement are proxies. Treat a competitor weakness as an entry hypothesis only when it matters to the customer and the entrant can address it economically. Apply the served/entrant-feasibility rules in repo-root `references/strategic-positioning.md`.
 
 Look for:
 

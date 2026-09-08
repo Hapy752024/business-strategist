@@ -28,10 +28,12 @@ If decisive inputs are absent, state assumptions and continue with a provisional
 
 ## Handoff
 
+When evaluating customer priorities or a service-positioning conflict, load repo-root `references/strategic-positioning.md`. Within each buying situation distinguish minimum requirements, deciding preferences, and acceptable sacrifices, with evidence/inference labels. Repackage within the selected position; surface material changes to audience, promise, price, or exclusions for an explicit strategy decision. Keep this skill scoped to consumer-service buying contexts.
+
 - Run after `idea-grill` and initial `evidence-scout` collection when possible.
 - Send evidence gaps back to `evidence-scout`; simulated reactions are not evidence records.
 - Use `opportunity-risk-designer` to rank failed assumptions and tests.
-- Use `marketing-strategy-builder` after this review for the full positioning, funnel, and campaign plan.
+- Use `marketing-strategy-builder` after this review for marketing expression, funnel, and campaigns; GTM owns unresolved business-position selection.
 - Use `archetype-gtm-strategist` when stage, first-customer motion, partnership, or international rollout is the primary question.
 
 ## Output standard

@@ -76,6 +76,14 @@
         "cancellation"
       ],
       "must_not_mention": []
+    },
+    {
+      "id": 10,
+      "prompt": "We are a new financial-planning service. We want YouTube to make future customers familiar with us before retirement decisions arise. Design the channel role without pretending views are sales.",
+      "expected_output": "Defines discovery, education/trust or relationship, conversion bridge and owned follow-up separately; includes response/production costs, repeat substantive engagement measures and commercial outcome thresholds rather than treating views as proof.",
+      "files": [],
+      "must_mention": ["discovery", "relationship", "conversion", "repeat"],
+      "must_not_mention": ["views prove demand"]
     }
   ]
 }

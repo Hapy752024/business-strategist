@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Shared event emission for fetch/helper scripts.
 
-Appends one JSONL event per call to research/agentic-events.jsonl (gitignored,
+Appends one JSONL event per call to projects/research/agentic-events.jsonl (gitignored,
 durable across sessions — unlike the previous /tmp location). This gives
 CrewAI/smolagents-style step logs without adopting a runtime: who ran, with
 what inputs, from which vendor, producing which artifact, and how it ended.
@@ -22,7 +22,7 @@ def log_path() -> Path:
     override = os.environ.get("AGENTIC_EVENT_LOG")
     if override:
         return Path(override)
-    return Path(__file__).resolve().parent.parent / "research" / "agentic-events.jsonl"
+    return Path(__file__).resolve().parent.parent / "projects" / "research" / "agentic-events.jsonl"
 
 
 def emit(

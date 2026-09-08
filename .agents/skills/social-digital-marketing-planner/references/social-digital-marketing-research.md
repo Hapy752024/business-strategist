@@ -23,7 +23,7 @@ Across current sources, the durable best practices are:
 
 ## Founder And Academic Evidence
 
-The expanded case matrix is `research/topics/founder-gtm-playbooks/playbooks/founder-growth-channel-patterns-2026.md`; the cross-skill operating rules are in `references/evidence-registry.md` at repo root.
+The expanded case matrix is `projects/research/topics/founder-gtm-playbooks/playbooks/founder-growth-channel-patterns-2026.md`; the cross-skill operating rules are in `references/evidence-registry.md` at repo root.
 
 Founder cases show:
 

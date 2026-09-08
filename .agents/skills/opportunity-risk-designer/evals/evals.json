@@ -27,6 +27,15 @@
       "must_not_mention": ["raise funding", "scale up", "hire sales team", "proven"],
       "required_artifacts": [],
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Competitors already serve the same local trade. We have evidence that customers complain about slow quotes, but no proof that the gap is unserved. Is the opportunity dead?",
+      "expected_output": "Does not require a whitespace finding. Ranks entry/customer-choice, acquisition/relationship and delivery economics risks; asks why customers would notice, trust and choose the entrant; proposes the cheapest bounded test instead of declaring the market saturated.",
+      "must_mention": ["entry", "customer", "test", "risk"],
+      "must_not_mention": ["market is saturated", "whitespace is required"],
+      "required_artifacts": [],
+      "files": []
     }
   ]
 }

@@ -1,22 +1,18 @@
 ---
 name: social-digital-marketing-planner
-description: Create detailed organic and paid social/digital plans, content systems, creative tests, platform roles, calendars, measurement, and launch controls. Use for LinkedIn, Meta, TikTok, Instagram, YouTube, X, Pinterest, creators, or digital acquisition.
+description: Create organic and paid social plans with content systems, creative tests, platform roles, calendars, and measurement. Use when planning social or digital acquisition.
+compatibility: Requires the business-strategist repository and its shared references/task-scope.md contract.
 ---
 
 # Social / Digital Marketing Planner
 
-## Success Criteria
-- **Quantitative:** triggers on >=90% of social/digital marketing queries; completes in <=15 tool calls; assigns a distinct role to each platform; produces a content calendar and measurement plan.
-- **Qualitative:** each platform has a specific role rather than duplicated content; creative hypotheses are testable; paid scaling is behind conversion and retention evidence.
-
 ## Workflow
 
-1. Read `references/workflow.md` and the targeted platform reference.
-2. Define audience, offer, conversion event, budget, assets, and constraints.
-3. Assign each platform a specific role rather than duplicating content.
-4. Build creative hypotheses, measurement, stop rules, and approval checks.
-5. Keep paid scaling behind conversion and retention evidence.
+1. Read repo-root `references/task-scope.md` (shared repository dependency) and select focused, execution or strategy scope. Preserve the selected marketing strategy for execution requests.
+2. For copy or calendar execution, return the requested variants or schedule using supplied audience, offer, channel, tone and constraints. Do not invent a new channel strategy.
+3. For paid-social execution, read [campaign execution](references/campaign-execution.md). A campaign plan does not authorize ad purchases or launch.
+4. For a full social/digital strategy, read [strategy workflow](references/workflow.md) and only the relevant platform references it selects. Verify current platform specifications when they affect the requested work.
 
 ## Output
 
-Produce platform roles, content pillars, creative matrix, calendar, paid/organic mix, budget, KPIs, risks, and 7/30/60/90-day plan.
+Return only the requested answer, calendar, creative or campaign plan. Full strategy outputs apply only in strategy scope; paid scaling still requires conversion and retained-value evidence.

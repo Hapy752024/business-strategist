@@ -5,7 +5,7 @@ description: Identify potential direct, indirect, and substitute competitors for
 
 # Competitor Scout Workflow
 
-Use this skill when the user wants to know who already offers similar solutions, what alternatives customers use, or whether a market/category already has competitors.
+Use this skill for narrow discovery or classification. For a complete market landscape with analogs, capability references, offer/price analysis and social usage, route to `competitive-landscape-builder`.
 
 ## Stance
 
@@ -14,6 +14,8 @@ Be skeptical. Search results are candidate evidence, not truth. A competitor can
 - Direct: solves the same problem for the same segment.
 - Indirect: solves part of the job or targets a neighboring segment.
 - Substitute: spreadsheet, agency, marketplace, manual workflow, incumbent tool, or "do nothing".
+
+Similar companies and capability references are separate from competition. A similar company offers the same or a related service but has an explicit segment, demographic or geography mismatch. A capability reference is selected for one named learning purpose (website, brand, YouTube, social, onboarding, trust, offer or pricing), regardless of category.
 
 Do not confuse review sites, blogs, app stores, directories, consultants, affiliate pages, SEO guides, or integration partners with direct competitors.
 
@@ -25,16 +27,16 @@ If the category, segment, geography, or competitor definition is ambiguous enoug
 
 ## Procedure
 
-1. Define the category/job, target segment, geography, and what counts as direct, indirect, substitute, future threat, or false positive.
+1. Define the category/job, target segment, buyer, geography, and what counts as competitive, similar, reference, or false positive.
 2. Preserve and pass any user-supplied known competitors into discovery.
 3. Run competitor discovery with the documented script.
 4. Review the script-generated `competitor_plan.md` (objective, scope, questions, limits) and confirm the stated classification rules still match the request.
 5. Inspect `competitors.json`, `summary.json`, `report.md`, and raw source evidence.
 6. Canonicalize known brands to product/entity URLs when search returns noisy blog, cancellation, or unrelated pages.
-7. Classify each candidate using title, snippet, URL, source query, page evidence, and segment fit.
+7. Classify each candidate using explicit offer/job, segment, buyer, geography, price-tier and purchase-substitutability dimensions. Query text alone is never enough.
 8. Separate entity classification from source-page classification.
 9. Rate evidence quality before rating competitor strength.
-10. Report direct competitors, indirect competitors, substitutes, future threats, false positives, and candidates to pass to marketing analysis.
+10. Report Lane A competitive entities, Lane B similar companies, Lane C references, false positives, and candidates to pass to marketing analysis. Lane B/C never support market-pressure or whitespace claims.
 
 ## Command
 
@@ -54,11 +56,11 @@ For known brands, prefer canonical product/entity URLs over accidental blog or c
 
 The script writes:
 
-- `research/topics/<topic>/competitors/runs/<run>/competitor_plan.md` — objective, scope, questions, limits, and the verification checkpoint for the run
-- `research/topics/<topic>/competitors/runs/<run>/competitors.json`
-- `research/topics/<topic>/competitors/runs/<run>/summary.json`
-- `research/topics/<topic>/competitors/runs/<run>/report.md`
-- `research/topics/<topic>/competitors/runs/<run>/raw.json`
+- `projects/research/topics/<topic>/competitors/runs/<run>/competitor_plan.md` — objective, scope, questions, limits, and the verification checkpoint for the run
+- `projects/research/topics/<topic>/competitors/runs/<run>/competitors.json`
+- `projects/research/topics/<topic>/competitors/runs/<run>/summary.json`
+- `projects/research/topics/<topic>/competitors/runs/<run>/report.md`
+- `projects/research/topics/<topic>/competitors/runs/<run>/raw.json`
 
 ## Analysis Rules
 

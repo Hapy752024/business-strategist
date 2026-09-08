@@ -1,6 +1,6 @@
 ---
 name: service-customer-perspective-challenger
-description: Challenge, review, package, and market a consumer service from an evidence-grounded customer perspective. Use whenever a founder wants a customer persona, buyer reaction, objection review, trust audit, service packaging critique, message critique, or Europe/Germany/US consumer adaptation—even if they only ask whether an idea sounds attractive.
+description: Challenge a consumer service through customer reactions, objections, trust, packaging, and messaging. Use when a founder needs an evidence-grounded buyer-perspective review.
 ---
 
 # Service Customer Perspective Challenger

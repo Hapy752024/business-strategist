@@ -1,6 +1,6 @@
 ---
 name: competitor-marketing-analyzer
-description: Analyze competitor positioning, audience language, offers, CTAs, pricing signals, proof, pages, and channel clues from public evidence. Use after competitors or URLs are known.
+description: Analyze a known competitor's services, pricing, positioning, proof, CTAs, website, and public social usage. Use for a narrow evidence-backed competitor teardown.
 ---
 
 # Competitor Marketing Analyzer
@@ -19,4 +19,4 @@ description: Analyze competitor positioning, audience language, offers, CTAs, pr
 
 ## Output
 
-Produce sourced comparisons, category patterns, differentiation hypotheses, weak claims to avoid, and evidence gaps.
+Produce sourced comparisons, service/price and channel-usage evidence, category patterns, differentiation hypotheses, weak claims to avoid, and evidence gaps. Keep analog/reference findings separate from competitor conclusions.

@@ -27,7 +27,7 @@ def main() -> int:
 
     # Collect active workspace state
     active_workspaces: list[dict[str, str]] = []
-    topics_dir = ROOT / "research" / "topics"
+    topics_dir = ROOT / "projects" / "research" / "topics"
     if topics_dir.exists():
         for manifest_path in sorted(topics_dir.glob("*/manifest.json")):
             try:

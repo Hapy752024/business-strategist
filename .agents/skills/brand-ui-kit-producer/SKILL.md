@@ -1,7 +1,6 @@
 ---
 name: brand-ui-kit-producer
-description: Produces brand-aligned UI design tokens and component templates including colors, typography, buttons, inputs, cards, badges, alerts, navigation, responsive rules, and interaction states.
-user_invocable: true
+description: Produce brand-aligned UI tokens and component templates for colors, typography, controls, navigation, responsive rules, and states. Use when defining a UI kit.
 ---
 
 # Brand Ui Kit Producer

@@ -24,11 +24,23 @@ SCENARIOS = [
     ("approved-brand-website", "Build a marketing website from our approved brand", "brand-website-designer-builder"),
     ("app-ui", "Design product dashboard UI screens", "brand-frontend-app-designer"),
     ("competitor-website", "Analyze a competitor's website positioning and CTA", "competitor-marketing-analyzer"),
+    ("competitive-landscape", "Map the competitive landscape, similar companies abroad, pricing, social presence, and positioning white space", "competitive-landscape-builder"),
+    ("competitor-discovery-only", "Find competitors for my invoice automation idea; I only need a candidate list", "competitor-scout"),
+    ("competitor-pages-only", "Analyze these competitor landing pages and their pricing CTAs", "competitor-marketing-analyzer"),
     ("experiment", "Run a simple A/B test on the homepage CTA", "brand-website-designer-builder"),
     ("fal-asset", "Generate a brand hero image using FAL", "brand-asset-producer"),
     ("vercel-release", "Prepare a GitHub to Vercel Preview release", "brand-website-designer-builder"),
     ("market-discovery", "Find customer problems in independent elder care", "market-problem-discovery"),
     ("idea-validation", "Pressure-test this idea: software for independent care homes to schedule staff", "idea-grill"),
+    ("gtm", "Build a go-to-market strategy to get our first customers", "archetype-gtm-strategist"),
+    ("marketing", "Create a demand generation and positioning strategy", "marketing-strategy-builder"),
+    ("social", "Create a paid social media plan and content calendar", "social-digital-marketing-planner"),
+    ("monitoring", "Monitor competitor pricing and track competitor changes", "competitor-monitoring"),
+    ("prioritization", "Help me prioritize ideas using decision gates", "opportunity-risk-designer"),
+    ("business-positioning", "Compare strategic positions for my business and derive the operating model", "archetype-gtm-strategist"),
+    ("selected-position-delivery", "Derive the operating model from our selected position", "company-operating-system"),
+    ("position-ad-copy-only", "Write ad copy for our fixed-scope service", "marketing-strategy-builder"),
+    ("selected-position-cadence", "Design an operating cadence for our selected position", "company-operating-system"),
 ]
 
 

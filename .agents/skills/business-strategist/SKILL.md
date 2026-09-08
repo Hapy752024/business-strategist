@@ -1,7 +1,6 @@
 ---
 name: business-strategist
-description: Routes business research, validation, branding, distinctive website, and experiment requests to the smallest useful specialist workflow. Use whenever a request spans business strategy and brand execution, or when the correct specialist is unclear.
-user_invocable: true
+description: Route business, brand, website, and experiment requests to the smallest useful workflow. Use when a request spans specialties or the correct specialist is unclear.
 ---
 
 # Business Strategist
@@ -15,7 +14,7 @@ Rules:
 - Keep research, brand, website, and experiment state in their authoritative manifests.
 - Ask at most one question when ambiguity would materially change the workflow.
 - Require explicit approval before paid providers, external connections, analytics, experiments, commits to another repository, or deployment.
-- Return the selected skill, mode, prerequisites, expected artifacts, and next action before dispatch.
+- Return the selected skill, mode, prerequisites, expected artifacts, cost class, and next action before dispatch.
 
 ## Procedure
 

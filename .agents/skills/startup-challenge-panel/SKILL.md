@@ -1,6 +1,6 @@
 ---
 name: startup-challenge-panel
-description: Challenge a startup thesis with bounded specialist roles, independent evidence memos, red-team cross-examination, and an arbiter decision. Use for high-stakes idea reviews, segment choices, launch plans, business models, or scale decisions where multiple independent perspectives justify the cost.
+description: Challenge a startup thesis with evidence memos, red-team cross-examination, and an arbiter decision. Use when high-stakes idea, segment, launch, business-model, or scale choices need independent views.
 ---
 
 # Startup Challenge Panel

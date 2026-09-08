@@ -36,6 +36,12 @@
       "prompt": "Customers say they like our US career coaching idea. Role-play the buyer and decide whether we should scale paid ads.",
       "expected_output": "Treats role-play as hypothesis only, distinguishes stated liking from behavior, challenges outcome and proof, and requires paid/retention evidence before scale.",
       "files": []
+    },
+    {
+      "id": "position-buying-situation",
+      "prompt": "Review our low-cost paperwork service for a person with a deadline next week versus one browsing for a move next year. Priorities are founder guesses; no interviews.",
+      "expected_output": "Distinguish buying-situation minimum requirements, deciding preferences and acceptable sacrifices. Label inferred/synthetic reactions and propose confirmation, not personas as demand proof.",
+      "files": []
     }
   ]
 }

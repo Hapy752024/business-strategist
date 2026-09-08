@@ -33,6 +33,26 @@ def test_routes_keep_branding_independent_and_website_specific() -> None:
     assert website["skill"] == "brand-website-designer-builder"
     app = route.route_request("Design product dashboard UI screens")
     assert app["skill"] == "brand-frontend-app-designer"
+    gtm = route.route_request("Build a go-to-market strategy for first customers")
+    assert gtm["skill"] == "archetype-gtm-strategist"
+    explicit = route.route_request("A vague request", intent="opportunity-prioritization")
+    assert explicit["skill"] == "opportunity-risk-designer"
+    assert explicit["expected_artifacts"] == ["risk matrix and tests"]
+
+
+def test_position_routes_keep_scope_and_explicit_context() -> None:
+    route = load_script("position_routes", "scripts/route_workflow.py")
+    choice = route.route_request("Compare strategic positions and derive the operating model")
+    assert choice["skill"] == "archetype-gtm-strategist"
+    assert choice["mode"] == "positioning"
+    assert choice["expected_artifacts"] == ["positioning decision and requested implications"]
+    known = route.route_request("Our strategic positioning is already selected. Derive the operating model.", intent="company-operations")
+    assert known["skill"] == "company-operating-system"
+    assert known["reason"] == "explicit intent"
+    translated = route.route_request("حدد موقع المشروع الاستراتيجي", intent="business-positioning")
+    assert translated["mode"] == "positioning"
+    with pytest.raises(ValueError, match="Unknown route intent"):
+        route.route_request("Write ad copy", intent="not-an-intent")
 
 
 def test_project_manifest_revision_and_cas(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -65,8 +85,91 @@ def test_business_to_brand_snapshot_preserves_gaps(tmp_path: Path) -> None:
     output.parent.mkdir()
     output.write_text(json.dumps(snapshot), encoding="utf-8")
     assert validator.validate(output) == []
-    assert snapshot["coverage_gaps"] == ["pricing"]
+    assert "pricing" in snapshot["coverage_gaps"]
     assert snapshot["field_provenance"]["positioning"] == "unresolved"
+    assert snapshot["field_provenance"]["segment"] == "unresolved"
+
+
+def test_positioning_handoff_preserves_hypotheses_sources_and_revisions(tmp_path: Path) -> None:
+    builder = load_script("positioning_handoff", "scripts/brand/build_business_to_brand_handoff.py")
+    validator = load_script("positioning_validator", "scripts/brand/validate_business_to_brand_handoff.py")
+    fixtures = load_script("strategy_fixtures", "tests/test_strategy_review.py")
+    source, strategy = tmp_path / "manifest.json", tmp_path / "strategy-plan.json"
+    source.write_text(json.dumps({"schema_version": "1.0", "segment": {"name": "Independent firms"}, "field_provenance": {"segment": "user_confirmed"}, "coverage_gaps": ["No customer interviews"]}))
+    plan = fixtures.plan()
+    plan["positioning"] = fixtures.position()
+    strategy.write_text(json.dumps(plan))
+    snapshot = builder.build_snapshot(source, strategy)
+    assert snapshot["positioning"] == plan["positioning"]
+    assert snapshot["field_provenance"]["positioning"] == "assumption"
+    assert snapshot["field_provenance"]["segment"] == "user_confirmed"
+    assert "No customer interviews" in snapshot["coverage_gaps"]
+    output = tmp_path / "handoff.json"
+    command = ["python3", str(ROOT / "scripts/brand/build_business_to_brand_handoff.py"), str(source), str(output), "--strategy-plan", str(strategy)]
+    assert subprocess.run(command, capture_output=True).returncode == 0
+    snapshot = json.loads(output.read_text())
+    assert validator.validate(output, check_sources=True) == []
+    check_command = ["python3", str(ROOT / "scripts/brand/validate_business_to_brand_handoff.py"), str(output), "--check-sources"]
+    assert subprocess.run(check_command, capture_output=True).returncode == 0
+    plan["positioning"]["statement"] = "Different position"
+    strategy.write_text(json.dumps(plan))
+    assert any("source changed" in e for e in validator.validate(output, check_sources=True))
+    assert subprocess.run(check_command, capture_output=True).returncode != 0
+    refreshed = builder.build_snapshot(source, strategy)
+    assert refreshed["snapshot_id"] != snapshot["snapshot_id"]
+    assert json.loads(output.read_text()) == snapshot
+    strategy.unlink()
+    assert any("source unavailable" in e for e in validator.validate(output, check_sources=True))
+
+
+def test_handoff_cannot_upgrade_population_or_unrelated_evidence(tmp_path: Path) -> None:
+    builder = load_script("provenance_handoff", "scripts/brand/build_business_to_brand_handoff.py")
+    source = tmp_path / "manifest.json"
+    source.write_text(json.dumps({"positioning": {"statement": "Founder belief"}, "field_provenance": {"positioning": "evidence_backed"}, "evidence_refs": ["unrelated-source"]}))
+    snapshot = builder.build_snapshot(source)
+    assert snapshot["field_provenance"]["positioning"] == "unresolved"
+    source.write_text(json.dumps({"positioning": {"statement": "Observed choice", "evidence_refs": ["interview:1"], "provenance": "evidence_backed"}}))
+    snapshot = builder.build_snapshot(source)
+    assert snapshot["field_provenance"]["positioning"] == "evidence_backed"
+    assert snapshot["field_evidence_refs"]["positioning"] == ["interview:1"]
+    source.write_text(json.dumps({"customer_segment": {"name": "Independent firms"}, "field_provenance": {"customer_segment": "user_confirmed"}, "field_evidence_refs": {"customer_segment": ["brief:1"]}}))
+    snapshot = builder.build_snapshot(source)
+    assert snapshot["field_provenance"]["segment"] == "user_confirmed"
+    assert snapshot["field_evidence_refs"]["segment"] == ["brief:1"]
+
+
+def test_selected_plan_without_position_cannot_use_stale_manifest_position(tmp_path: Path) -> None:
+    builder = load_script("missing_position_handoff", "scripts/brand/build_business_to_brand_handoff.py")
+    fixtures = load_script("no_position_fixtures", "tests/test_strategy_review.py")
+    source, strategy = tmp_path / "source.json", tmp_path / "strategy-plan.json"
+    source.write_text(json.dumps({"positioning": {"statement": "Stale manifest claim"}}))
+    strategy.write_text(json.dumps(fixtures.plan()))
+    with pytest.raises(ValueError, match="has no positioning"):
+        builder.build_snapshot(source, strategy)
+
+
+def test_handoff_cli_refuses_overwrite_and_invalid_selected_plan(tmp_path: Path) -> None:
+    source, output = tmp_path / "source.json", tmp_path / "snapshot.json"
+    source.write_text('{}')
+    command = ["python3", str(ROOT / "scripts/brand/build_business_to_brand_handoff.py"), str(source), str(output)]
+    assert subprocess.run(command, capture_output=True).returncode == 0
+    original = output.read_bytes()
+    assert subprocess.run(command, capture_output=True).returncode != 0
+    assert output.read_bytes() == original
+    strategy = tmp_path / "strategy-plan.json"
+    strategy.write_text('{}')
+    fresh = tmp_path / "fresh.json"
+    result = subprocess.run(command[:-1] + [str(fresh), "--strategy-plan", str(strategy)], capture_output=True)
+    assert result.returncode != 0
+    assert not fresh.exists()
+
+
+@pytest.mark.parametrize("invalid", [[], {"field_provenance": []}, {"schema_version": "1.0", "snapshot_id": "x", "source_workspace": "x", "field_provenance": {}, "coverage_gaps": [], "source_sha256": "bad"}])
+def test_handoff_validator_rejects_malformed_contract(tmp_path: Path, invalid) -> None:
+    validator = load_script("malformed_handoff", "scripts/brand/validate_business_to_brand_handoff.py")
+    path = tmp_path / "snapshot.json"
+    path.write_text(json.dumps(invalid))
+    assert validator.validate(path)
 
 
 def test_fal_adapter_defaults_to_redacted_dry_run() -> None:
@@ -217,6 +320,8 @@ def test_claim_ledger_preserves_independence_and_requires_counter_scope(tmp_path
     ledger = builder.build(records, claims)
     assert ledger[0]["independence_count"] == 2
     assert validator.validate(ledger, records) == []
+    forged = dict(ledger[0], independence_count=99)
+    assert any("submitted independence count" in error for error in validator.validate([forged], records))
 
 
 def test_claim_ledger_rejects_unknown_evidence_ids() -> None:

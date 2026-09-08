@@ -28,7 +28,7 @@ def project_root() -> Path:
 
 
 ROOT = project_root()
-OUTPUT_DIR = ROOT / "research" / "evidence-scout" / "api-validation"
+OUTPUT_DIR = ROOT / "projects" / "research" / "evidence-scout" / "api-validation"
 
 
 def now_iso() -> str:

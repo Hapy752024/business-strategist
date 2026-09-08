@@ -1,6 +1,6 @@
 ---
 name: idea-grill
-description: Relentlessly interview a founder to clarify a chosen business idea, target segment, painful job, buyer, workarounds, hypotheses, and risks before validation or building. Use when the user wants to pressure-test a specific candidate idea or problem. Do not use for broad market exploration or discovering problems and segments from a rough domain; use market-problem-discovery first.
+description: Pressure-test a specific business idea, segment, buyer, painful job, workarounds, and risks. Use before validating or building a chosen candidate idea.
 ---
 
 # Idea Grill

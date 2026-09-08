@@ -150,7 +150,7 @@ def merge_pages(url: str, page_bodies: list[dict[str, Any]]) -> tuple[dict[str, 
             metadata = page_metadata
         if text:
             texts.append(text)
-            source_pages.append({"url": page_url, "title": page_metadata.get("title", "")})
+            source_pages.append({"url": page_url, "title": page_metadata.get("title", ""), "retrieval_source": str(page.get("retrieval_source") or page.get("fallback_source") or "unknown")})
     return metadata, compact_text(" ".join(texts), 24000), source_pages
 
 
@@ -258,7 +258,84 @@ def extract_button_like_ctas(text: str) -> list[str]:
     return found
 
 
-def analyze_text(url: str, page_bodies: list[dict[str, Any]]) -> dict[str, Any]:
+def extract_social_link_hints(text: str) -> list[dict[str, str]]:
+    """Extract only explicit public links; a hint is not verified presence."""
+    platforms = {
+        "youtube": r"https?://(?:www\.)?(?:youtube\.com|youtu\.be)/[^\s)]+",
+        "instagram": r"https?://(?:www\.)?instagram\.com/[^\s)]+",
+        "facebook": r"https?://(?:www\.)?facebook\.com/[^\s)]+",
+        "linkedin": r"https?://(?:www\.)?linkedin\.com/[^\s)]+",
+        "tiktok": r"https?://(?:www\.)?tiktok\.com/[^\s)]+",
+        "x": r"https?://(?:www\.)?(?:x\.com|twitter\.com)/[^\s)]+",
+    }
+    found: list[dict[str, str]] = []
+    for platform, pattern in platforms.items():
+        for match in re.findall(pattern, text, flags=re.IGNORECASE):
+            url = match.rstrip(".,;\"")
+            if not any(item["url"] == url for item in found):
+                found.append({"platform": platform, "url": url, "status": "unverified", "evidence_type": "official_entity_page_link"})
+    return found[:20]
+
+
+def requested_capabilities(entity_meta: dict[str, Any] | None) -> list[str]:
+    values: list[str] = []
+    for source in (entity_meta or {}).get("sources", []):
+        if isinstance(source, dict) and source.get("lane_scope") == "capability_reference":
+            value = str(source.get("scope_value", "")).casefold().strip()
+            if value and value not in values:
+                values.append(value)
+    return values
+
+
+def extract_capability_patterns(capabilities: list[str], result: dict[str, Any], text: str) -> list[dict[str, str]]:
+    """Return only capability-specific observed patterns, not generic page titles."""
+    patterns: list[dict[str, str]] = []
+    for capability in capabilities:
+        observed = ""
+        if capability == "onboarding":
+            matches = find_phrases(text, ["onboarding", "product tour", "guided setup", "getting started", "step-by-step"])
+            observed = matches[0] if matches else ""
+        elif capability == "pricing" and result.get("price_status") == "structured_price_found":
+            observed = f"Structured pricing is publicly visible: {result.get('normalized_price_tokens', {})}"
+        elif capability == "trust" and result.get("trust_proof_language"):
+            observed = str(result["trust_proof_language"][0])
+        elif capability == "offer" and result.get("service_offers"):
+            observed = str(result["service_offers"][0].get("observed_text", ""))
+        elif capability == "positioning" and result.get("description") and result.get("title"):
+            observed = f"{result['title']} — {result['description']}"
+        elif capability == "website":
+            signal_count = sum(bool(result.get(key)) for key in ["cta_language", "trust_proof_language", "feature_language"])
+            if signal_count >= 2:
+                observed = f"Page combines {signal_count} evidenced conversion/trust/product signal groups."
+        if observed:
+            patterns.append({"capability": capability, "observed_pattern": " ".join(observed.split())[:360]})
+    return patterns
+
+
+def extract_service_offers(text: str, audience_patterns: list[str]) -> list[dict[str, Any]]:
+    """Extract source snippets as offer observations, never as inferred packages."""
+    markers = ["service", "package", "plan", "solution", "consulting", "subscription", "membership"]
+    sentences = [" ".join(part.split()) for part in re.split(r"(?<=[.!?])\s+|\n+", text) if part.strip()]
+    offers: list[dict[str, Any]] = []
+    for sentence in sentences:
+        lower = sentence.casefold()
+        if not any(marker in lower for marker in markers):
+            continue
+        price_tokens = extract_price_tokens(sentence)
+        offers.append({
+            "observed_text": sentence[:360],
+            "target_segments": [pattern for pattern in audience_patterns if pattern in lower],
+            "prices": normalize_price_tokens(price_tokens),
+            "price_status": "structured_price_found" if price_tokens.get("currency_amounts") else "not_found",
+            "conditions": [value for key in ("monthly_terms", "annual_terms") for value in price_tokens.get(key, [])],
+            "evidence_type": "official_page_copy",
+        })
+        if len(offers) >= 12:
+            break
+    return offers
+
+
+def analyze_text(url: str, page_bodies: list[dict[str, Any]], entity_meta: dict[str, Any] | None = None) -> dict[str, Any]:
     metadata, text, source_pages = merge_pages(url, page_bodies)
     lower = text.lower()
     cta_patterns = [
@@ -291,19 +368,37 @@ def analyze_text(url: str, page_bodies: list[dict[str, Any]]) -> dict[str, Any]:
     distribution_patterns = ["partners", "affiliate", "marketplace", "integrations", "community", "app store", "chrome extension"]
     pain_patterns = ["manual", "spreadsheet", "waste", "slow", "error", "missed", "overwhelmed", "chaos", "busywork", "fragmented"]
     price_tokens = extract_price_tokens(text)
-    return {
+    page_type = classify_page_type(url, metadata.get("title", ""), text)
+    social_links = extract_social_link_hints(text)
+    service_offers = extract_service_offers(text, audience_patterns)
+    first_party_sources = [
+        page for page in source_pages
+        if page.get("retrieval_source") in {"firecrawl", "direct_http", "fixture_official"}
+        and domain_of(str(page.get("url", ""))) == domain_of(url)
+    ]
+    official_service_evidence = bool(first_party_sources and page_type in {"homepage", "product_page"} and service_offers)
+    offer_evidence_type = "official_page_copy" if official_service_evidence else "search_or_cached_copy"
+    for offer in service_offers:
+        offer["evidence_type"] = offer_evidence_type
+    result = {
         "url": url,
         "domain": domain_of(url),
         "retrieved_at": now_iso(),
         "source_pages": source_pages,
+        "first_party_source_pages": first_party_sources,
         "title": metadata.get("title", ""),
         "description": metadata.get("description", ""),
-        "page_type": classify_page_type(url, metadata.get("title", ""), text),
+        "page_type": page_type,
         "positioning_headline": (metadata.get("title") or text[:160]).strip(),
         "detected_audiences": [pattern for pattern in audience_patterns if pattern in lower],
         "pain_language": find_phrases(text, pain_patterns),
         "cta_language": find_phrases(text, cta_patterns),
         "button_like_ctas": extract_button_like_ctas(text),
+        "social_link_hints": social_links,
+        "social_presence": [
+            {**item, "retrieved_at": now_iso(), "role": "linked_from_official_site", "posts_sampled": 0, "coverage_gap": "Profile activity and content usage not sampled."}
+            for item in social_links
+        ],
         "pricing_posture": classify_pricing_posture(text),
         "pricing_language": find_phrases(text, pricing_patterns),
         "structured_price_tokens": price_tokens,
@@ -313,6 +408,10 @@ def analyze_text(url: str, page_bodies: list[dict[str, Any]]) -> dict[str, Any]:
         "seo_content_clues": find_phrases(text, content_patterns),
         "product_change_clues": find_phrases(text, product_change_patterns),
         "distribution_clues": find_phrases(text, distribution_patterns),
+        "offer_signals": find_phrases(text, ["service", "package", "plan", "solution", "consulting", "subscription", "membership"]),
+        "service_offers": service_offers,
+        "official_service_evidence": official_service_evidence,
+        "price_status": "structured_price_found" if price_tokens.get("currency_amounts") else "pricing_mentioned" if pricing_patterns and any(p in lower for p in pricing_patterns) else "not_found",
         "missing_evidence": [
             label
             for label, values in {
@@ -327,6 +426,16 @@ def analyze_text(url: str, page_bodies: list[dict[str, Any]]) -> dict[str, Any]:
         ],
         "marketing_notes": "Heuristic extraction from public page copy. Verify claims and add ad-library, SEO, and social evidence before drawing channel conclusions.",
     }
+    if entity_meta:
+        result["primary_lane"] = entity_meta.get("primary_lane", "uncertain")
+        result["competitive_role"] = entity_meta.get("competitive_role", "unknown")
+        result["inspiration_roles"] = entity_meta.get("inspiration_roles", [])
+    else:
+        result["primary_lane"] = "uncertain"
+        result["competitive_role"] = "unknown"
+        result["inspiration_roles"] = []
+    result["capability_patterns"] = extract_capability_patterns(requested_capabilities(entity_meta), result, text)
+    return result
 
 
 def write_marketing_plan(run_dir: Path, args: argparse.Namespace, urls: list[str]) -> None:
@@ -386,6 +495,7 @@ def write_report(run_dir: Path, args: argparse.Namespace, analyses: list[dict[st
     ]
     for item in analyses:
         lines.append(f"### {item['domain']}")
+        lines.append(f"- Lane: {item.get('primary_lane', 'uncertain')} | competitive role: {item.get('competitive_role', 'unknown')}")
         lines.append(f"- URL: {item['url']}")
         lines.append(f"- Page type: {item.get('page_type', 'unknown')}")
         lines.append(f"- Source pages: {len(item.get('source_pages', []))}")
@@ -429,9 +539,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--competitors-json", default="", help="Path to competitors.json from discover_competitors.py.")
     parser.add_argument("--limit", type=int, default=10)
     parser.add_argument("--deep", action="store_true", help="Scrape common pricing, features, customers, blog, docs, and changelog paths for each competitor. Costs more credits.")
+    parser.add_argument("--lane", choices=["all", "competitive_market", "similar_company", "capability_reference"], default="all", help="Analyze only entities in one lane when using --competitors-json.")
+    parser.add_argument("--fixture-pages-json", default="", help="Offline first-party page replay fixture keyed by entity URL.")
     parser.add_argument("--out-dir", default="")
-    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to research/topics/<topic-slug>.")
-    parser.add_argument("--legacy-output", action="store_true", help="Write to the former research/evidence-scout/marketing layout.")
+    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to projects/research/topics/<topic-slug>.")
+    parser.add_argument("--legacy-output", action="store_true", help="Write to the former projects/research/evidence-scout/marketing layout.")
     return parser.parse_args()
 
 
@@ -456,6 +568,9 @@ def main() -> int:
         for item in items:
             if not isinstance(item, dict):
                 continue
+            observed_lanes = item.get("lane_observations", [])
+            if args.lane != "all" and item.get("primary_lane", "") != args.lane and args.lane not in observed_lanes:
+                continue
             url = item.get("url", "")
             if url:
                 urls.append(url)
@@ -477,31 +592,38 @@ def main() -> int:
     raw: dict[str, Any] = {"scrapes": []}
     analyses: list[dict[str, Any]] = []
     provider_status = {"status": "not_run", "needs_user_attention": [], "fallback_used": False}
+    fixture_pages = json.loads(Path(args.fixture_pages_json).read_text(encoding="utf-8")) if args.fixture_pages_json else None
     for url in urls:
         page_responses: list[dict[str, Any]] = []
-        for page_url in (deep_urls(url) if args.deep else [url]):
-            response = scrape_url(page_url)
-            raw["scrapes"].append({"url": page_url, "response": response})
-            status = response.get("status") or status_from_response(response)
-            provider_status["status"] = status
-            provider_status["http_status"] = response.get("status_code")
-            if response.get("ok"):
-                page_responses.append({"url": page_url, "body": response.get("body") or {}})
-            elif status not in {"not_run", "ok"}:
-                provider_status["needs_user_attention"].append(f"firecrawl failed for {page_url}: {status}")
-                fallback_response = direct_fetch_url(page_url)
-                raw.setdefault("direct_fetch_fallbacks", []).append({"url": page_url, "response": fallback_response})
-                if fallback_response.get("ok"):
-                    provider_status["fallback_used"] = True
-                    page_responses.append({"url": page_url, "body": fallback_response.get("body") or {}, "fallback_source": "direct_http"})
-                elif page_url == url and url in competitor_items:
-                    cached = cached_competitor_page(competitor_items[url])
-                    if ((cached.get("body") or {}).get("data") or {}).get("markdown"):
+        if fixture_pages is not None:
+            for page in fixture_pages.get(url, []):
+                if isinstance(page, dict):
+                    page_responses.append({**page, "retrieval_source": str(page.get("retrieval_source", "fixture_official"))})
+            provider_status["status"] = "ok" if page_responses else "fixture_missing"
+        else:
+            for page_url in (deep_urls(url) if args.deep else [url]):
+                response = scrape_url(page_url)
+                raw["scrapes"].append({"url": page_url, "response": response})
+                status = response.get("status") or status_from_response(response)
+                provider_status["status"] = status
+                provider_status["http_status"] = response.get("status_code")
+                if response.get("ok"):
+                    page_responses.append({"url": page_url, "body": response.get("body") or {}, "retrieval_source": "firecrawl"})
+                elif status not in {"not_run", "ok"}:
+                    provider_status["needs_user_attention"].append(f"firecrawl failed for {page_url}: {status}")
+                    fallback_response = direct_fetch_url(page_url)
+                    raw.setdefault("direct_fetch_fallbacks", []).append({"url": page_url, "response": fallback_response})
+                    if fallback_response.get("ok"):
                         provider_status["fallback_used"] = True
-                        page_responses.append(cached)
-                        provider_status["needs_user_attention"].append(f"used cached competitor snippet fallback for {page_url}")
+                        page_responses.append({"url": page_url, "body": fallback_response.get("body") or {}, "fallback_source": "direct_http", "retrieval_source": "direct_http"})
+                    elif page_url == url and url in competitor_items:
+                        cached = cached_competitor_page(competitor_items[url])
+                        if ((cached.get("body") or {}).get("data") or {}).get("markdown"):
+                            provider_status["fallback_used"] = True
+                            page_responses.append(cached)
+                            provider_status["needs_user_attention"].append(f"used cached competitor snippet fallback for {page_url}")
         if page_responses:
-            analyses.append(analyze_text(url, page_responses))
+            analyses.append(analyze_text(url, page_responses, competitor_items.get(url)))
 
     summary = {
         "run_dir": str(run_dir),

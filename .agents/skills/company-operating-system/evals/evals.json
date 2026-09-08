@@ -18,6 +18,12 @@
       "prompt": "I want to hire a sales team before product-market fit so we can grow faster. Help me design the company setup.",
       "expected_output": "A skeptical response that challenges hiring before validated demand, identifies assumptions, proposes cheaper validation and sales-learning routines, and defines hiring gates.",
       "files": []
+    },
+    {
+      "id": "position-coherent-tradeoffs",
+      "prompt": "Our selected position is predictable low-cost fixed-scope paperwork support. Customers accept 3-day delivery and self-service intake. Bespoke advice is excluded. Derive only the operating model and second-order consequences.",
+      "expected_output": "Recognize coherent sacrifices; derive necessary activities, exception boundaries, capacity/costs and reinforcing choices before routines. Explain reversal costs and customer-outcome/delivery/economic guardrails.",
+      "files": []
     }
   ]
 }

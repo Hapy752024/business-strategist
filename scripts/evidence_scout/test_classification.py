@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from analyze_competitor_marketing import classify_page_type, classify_pricing_posture, extract_price_tokens, normalize_price_tokens
-from collect import demand_expansion_terms, infer_comment_intent, infer_evidence_type, infer_geo_language, infer_source_intent, quality_summary, selected_providers
+from collect import accepted_records, demand_expansion_terms, infer_comment_intent, infer_evidence_type, infer_geo_language, infer_source_intent, normalize_record, quality_summary, query_plan, selected_providers
 from discover_competitors import CANONICAL_KNOWN_URLS, classify_candidate, known_lookup_relevant
 
 
@@ -38,6 +38,17 @@ class EvidenceClassificationTests(unittest.TestCase):
         self.assertIn("PKV Rechner", terms)
         self.assertIn("CHECK24 PKV", terms)
 
+    def test_explicit_motor_terms_do_not_pull_personal_insurance_fallbacks(self) -> None:
+        queries = query_plan(
+            "German low cost motor insurance MGA",
+            "drivers comparing motor insurance",
+            "Kfz Versicherung Beitragserhöhung,Werkstattbindung",
+            "CHECK24 Kfz Versicherung,Kfz Versicherung wechseln",
+            "DE",
+            "de",
+        )
+        self.assertFalse(any("PKV" in query or "BU Gesundheitsfragen" in query for query in queries))
+
     def test_quality_flags_weak_and_unknown_heavy_runs(self) -> None:
         records = [
             {"source": "forum", "source_intent": "unknown", "strength": "weak"},
@@ -54,6 +65,28 @@ class EvidenceClassificationTests(unittest.TestCase):
             infer_geo_language("xiaohongshu reviews for skincare app", "Chinese consumers"),
             ("CN", "zh"),
         )
+
+    def test_swiss_english_scope_does_not_default_to_german(self) -> None:
+        self.assertEqual(
+            infer_geo_language("English-language support in Switzerland", "Swiss freelancers"),
+            ("CH", "en"),
+        )
+
+    def test_normalized_record_has_stable_provenance_and_schema_gate(self) -> None:
+        record = normalize_record(
+            source="reddit", source_url="https://www.reddit.com/r/example/comments/1",
+            query="manual invoicing", customer_segment="freelancers", hypothesis="H1",
+            text="I keep a spreadsheet because invoicing software is too expensive.", raw_id="post-1",
+        )
+        accepted, rejected = accepted_records([record])
+        self.assertEqual(len(accepted), 1)
+        self.assertEqual(rejected, [])
+        self.assertEqual(record["source_record_id"], "post-1")
+        self.assertTrue(record["evidence_id"].startswith("ev-"))
+        invalid = dict(record, source="not-a-provider")
+        accepted, rejected = accepted_records([invalid])
+        self.assertEqual(accepted, [])
+        self.assertEqual(len(rejected), 1)
 
     def test_chinese_pain_and_decision_language(self) -> None:
         self.assertEqual(infer_evidence_type("这个工具太难用了，手动整理表格很麻烦"), "workaround")

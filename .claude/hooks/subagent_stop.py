@@ -77,42 +77,24 @@ def main() -> int:
     except json.JSONDecodeError:
         input_data = {}
 
-    subagent_name = input_data.get("agent_name", "unknown")
-    subagent_output = input_data.get("agent_output", "")
+    # Claude's documented hook input uses agent_type and last_assistant_message.
+    # Keep the old keys as a harmless compatibility fallback for local harnesses.
+    subagent_name = input_data.get("agent_type") or input_data.get("agent_name", "unknown")
+    subagent_output = input_data.get("last_assistant_message") or input_data.get("agent_output", "")
 
     validation = validate_subagent_output(subagent_output)
 
+    if input_data.get("stop_hook_active"):
+        print("{}")
+        return 0
+
     if not validation["valid"]:
-        output = {
-            "continue": False,
-            "hookSpecificOutput": {
-                "hookEventName": "SubagentStop",
-                "decision": "block",
-                "reason": validation["reason"],
-                "message": f"Subagent '{subagent_name}' output blocked: {validation['reason']}",
-            },
-        }
-    elif validation["findings"]:
-        output = {
-            "continue": True,
-            "hookSpecificOutput": {
-                "hookEventName": "SubagentStop",
-                "decision": "warn",
-                "reason": f"Subagent output accepted with {len(validation['findings'])} warnings.",
-                "findings": validation["findings"],
-                "message": f"Subagent '{subagent_name}' output accepted with warnings: {'; '.join(validation['findings'])}",
-            },
-        }
+        output = {"decision": "block", "reason": validation["reason"]}
     else:
-        output = {
-            "continue": True,
-            "hookSpecificOutput": {
-                "hookEventName": "SubagentStop",
-                "decision": "allow",
-                "reason": "Subagent output passed quality checks.",
-                "message": f"Subagent '{subagent_name}' output accepted.",
-            },
-        }
+        detail = "Subagent output passed basic quality checks."
+        if validation["findings"]:
+            detail = f"Subagent output accepted with warnings: {'; '.join(validation['findings'])}"
+        output = {}
 
     print(json.dumps(output))
     return 0

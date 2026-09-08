@@ -14,7 +14,8 @@ def stable_id(record: dict[str, Any]) -> str:
     existing = record.get("evidence_id")
     if existing:
         return str(existing)
-    material = "\n".join(str(record.get(key, "")) for key in ("source", "source_url", "text", "retrieved_at"))
+    # Retrieval time is an occurrence, not the identity of the published item.
+    material = "\n".join(str(record.get(key, "")) for key in ("source", "source_record_id", "source_url", "content_sha256", "text"))
     return f"ev-{hashlib.sha256(material.encode()).hexdigest()[:16]}"
 
 
@@ -28,6 +29,25 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def independent_groups(records: list[dict[str, Any]]) -> list[str]:
+    """Collapse connected author, content, and duplicate identities conservatively."""
+    groups: list[set[str]] = []
+    for record in records:
+        key = record.get("independence_key")
+        tokens = {f"author:{key}"} if key and not str(key).startswith("unknown:") else set()
+        for field in ("duplicate_cluster_id", "content_sha256"):
+            if record.get(field):
+                tokens.add(f"{field}:{record[field]}")
+        if record.get("text"):
+            tokens.add("text:" + hashlib.sha256(" ".join(record["text"].split()).encode()).hexdigest())
+        overlaps = [group for group in groups if group & tokens]
+        for group in overlaps:
+            tokens |= group
+            groups.remove(group)
+        groups.append(tokens)
+    return sorted(min(token for token in group if token.startswith("author:")) for group in groups if any(token.startswith("author:") for token in group))
+
+
 def build(evidence: list[dict[str, Any]], claims: list[dict[str, Any]]) -> list[dict[str, Any]]:
     by_id = {record["evidence_id"]: record for record in evidence}
     ledger = []
@@ -39,11 +59,12 @@ def build(evidence: list[dict[str, Any]], claims: list[dict[str, Any]]) -> list[
         if unknown:
             claim_id = str(row.get("claim_id", "<missing claim_id>"))
             raise ValueError(f"{claim_id}: unknown evidence IDs: {', '.join(unknown)}")
-        independence = {str(by_id[item].get("independence_key") or by_id[item].get("source_url") or item) for item in support}
+        independence = independent_groups([by_id[item] for item in support])
         clusters = sorted({str(by_id[item].get("duplicate_cluster_id")) for item in support + counter if by_id[item].get("duplicate_cluster_id")})
         row["supporting_evidence"] = support
         row["counter_evidence"] = counter
         row["independence_count"] = len(independence)
+        row["independence_keys"] = sorted(independence)
         row["duplicate_clusters"] = clusters
         ledger.append(row)
     return ledger

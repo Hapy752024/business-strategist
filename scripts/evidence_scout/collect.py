@@ -8,6 +8,7 @@ called from Codex, OpenCode, Claude Code, CI, or a plain terminal.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import shutil
@@ -18,10 +19,13 @@ import urllib.parse
 from pathlib import Path
 from typing import Any
 
+from jsonschema import Draft202012Validator, FormatChecker
+
 
 ROOT = Path(__file__).resolve().parents[2]
 VALIDATOR_DIR = ROOT / "scripts" / "validate_apis"
 REGISTRY_DIR = Path(__file__).resolve().parent / "registries"
+EVIDENCE_SCHEMA_PATH = ROOT / "schemas" / "evidence-record.schema.json"
 sys.path.insert(0, str(VALIDATOR_DIR))
 
 from common import (  # noqa: E402
@@ -37,6 +41,10 @@ from common import (  # noqa: E402
     with_query,
 )
 from workspace import create_run_manifest, resolve_run_dir, update_run_manifest, update_stage  # noqa: E402
+
+EVIDENCE_VALIDATOR = Draft202012Validator(
+    json.loads(EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8")), format_checker=FormatChecker()
+)
 
 
 def slugify(value: str) -> str:
@@ -122,6 +130,9 @@ def infer_geo_language(topic: str, customer_segment: str, problem_keywords: str 
         "check24",
         "verivox",
     ]
+    swiss_markers = ["switzerland", "swiss", "schweiz", "suisse", "svizzera"]
+    french_markers = ["france", "french", "français", "francais"]
+    italian_markers = ["italy", "italian", "italia", "italiano"]
     china_markers = [
         "china",
         "chinese",
@@ -146,6 +157,14 @@ def infer_geo_language(topic: str, customer_segment: str, problem_keywords: str 
     ]
     if any(marker in text for marker in german_markers):
         return "DE", "de"
+    if any(marker in text for marker in swiss_markers):
+        return "CH", "en" if "english" in text else "de"
+    if any(marker in text for marker in french_markers):
+        return "FR", "fr"
+    if any(marker in text for marker in italian_markers):
+        return "IT", "it"
+    if any("\u0600" <= char <= "\u06ff" for char in text):
+        return "SA", "ar"
     if any(marker in text for marker in china_markers):
         return "CN", "zh"
     return "US", "en"
@@ -269,8 +288,15 @@ def inferred_search_terms(topic: str) -> list[str]:
 
 
 def problem_first_terms(topic: str, geo: str, language: str) -> list[str]:
+    """Fallback personal-insurance queries when the caller gave no user terms.
+
+    These are deliberately limited to a clearly personal-health/income topic.
+    A generic German insurance topic may concern motor, liability or another
+    line, so adding PKV/BU queries there contaminates comparison evidence.
+    """
     lower = topic.lower()
-    if not (geo.upper() == "DE" and any(marker in lower for marker in ["insurance", "versicherung", "pkv", "gkv", "bu", "berufsun"])):
+    personal_markers = ["pkv", "gkv", "private health", "krankenversicherung", "berufsun", "risikovoranfrage"]
+    if not (geo.upper() == "DE" and any(marker in lower for marker in personal_markers)):
         return []
     return expand_language_variants(
         [
@@ -334,7 +360,8 @@ def query_plan(
         return discovery_query_plan(topic, problem_keywords, workaround_keywords, geo, language)
     base = topic.strip()
     modifiers = segment_modifiers(customer_segment)
-    problem_terms = problem_first_terms(topic, geo, language)
+    explicit_terms = bool(csv_terms(problem_keywords) or csv_terms(workaround_keywords))
+    problem_terms = [] if explicit_terms else problem_first_terms(topic, geo, language)
     scoped_terms = [base]
     scoped_terms.extend(f"{base} {modifier}" for modifier in modifiers)
     queries = []
@@ -395,7 +422,7 @@ def trend_terms(topic: str, problem_keywords: str = "", workaround_keywords: str
     if not seeded_terms:
         terms = inferred_search_terms(topic)
     terms = expand_language_variants(terms, geo, language)
-    expansion_terms = demand_expansion_terms(topic, geo, language)
+    expansion_terms = [] if seeded_terms else demand_expansion_terms(topic, geo, language)
     if expansion_terms:
         terms = expansion_terms + terms
     filtered = [
@@ -441,7 +468,9 @@ def social_terms(topic: str, problem_keywords: str = "", workaround_keywords: st
 
 
 def reddit_queries(args: argparse.Namespace, queries: list[str]) -> list[str]:
-    topic_context = " ".join([args.topic, args.problem_keywords, args.workaround_keywords]).lower()
+    if csv_terms(args.problem_keywords) or csv_terms(args.workaround_keywords):
+        return queries[:5]
+    topic_context = args.topic.lower()
     markets = QUERY_EXPANSION.get("markets", {}) or FALLBACK_QUERY_MARKETS
     for market in markets.values():
         markers = [str(m).lower() for m in market.get("trigger_markers", [])]
@@ -689,13 +718,31 @@ def estimate_strength(text: str, engagement: dict[str, Any]) -> str:
         score += 1
     if any(term in lower for term in workaround_terms):
         score += 1
-    if engagement_int(engagement.get("upvotes")) >= 25 or engagement_int(engagement.get("comments")) >= 10:
-        score += 1
-    if score >= 3:
-        return "strong"
+    # Platform engagement helps discovery, but cannot manufacture independent
+    # corroboration or willingness-to-pay evidence from a single observation.
     if score == 2:
         return "medium"
     return "weak"
+
+
+def source_role(source: str, source_intent: str) -> str:
+    if source == "youtube_transcript":
+        return "creator_statement"
+    if source == "google_autocomplete":
+        return "search_suggestion"
+    if source == "xai_x_search":
+        return "discovery_only"
+    if source in {"itunes_reviews", "app_review"}:
+        return "customer_review"
+    if source in {"reddit", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook", "hn", "github", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu", "bilibili_comment"}:
+        return "customer_statement"
+    if source_intent == "competitor_content":
+        return "competitor_context"
+    if source_intent == "editorial_content":
+        return "editorial_context"
+    if source_intent in {"forum_discussion", "social_comment"}:
+        return "community_context"
+    return "search_result"
 
 
 def normalize_record(
@@ -724,7 +771,9 @@ def normalize_record(
     comment_intent = infer_comment_intent(source, text, record_type)
     if source_intent in {"competitor_content", "editorial_content", "official_provider", "search_demand", "forum_discussion"} and record_strength != "irrelevant":
         record_strength = "weak"
+    stable_material = raw_id or source_url or "\n".join([source, short_quote])
     return {
+        "schema_version": "1.1",
         "source": source,
         "source_url": source_url,
         "retrieved_at": now_iso(),
@@ -737,6 +786,13 @@ def normalize_record(
         "text": text,
         "verbatim_quote": short_quote,
         "author_context": author_context,
+        "source_record_id": str(stable_material),
+        "evidence_id": f"ev-{hashlib.sha256(f'{source}|{stable_material}'.encode()).hexdigest()[:16]}",
+        "content_sha256": hashlib.sha256(text.encode()).hexdigest(),
+        "canonical_url": source_url,
+        "independence_key": "unknown:" + str(stable_material),
+        "source_role": source_role(source, source_intent),
+        "retrieval_backend": source,
         "engagement": {
             "upvotes": engagement_int(engagement.get("upvotes")) if engagement.get("upvotes") is not None else None,
             "comments": engagement_int(engagement.get("comments")) if engagement.get("comments") is not None else None,
@@ -751,6 +807,18 @@ def normalize_record(
         or "Collected directly from source API/search result. Treat as signal, not proof of willingness to pay.",
         "raw_id": raw_id,
     }
+
+
+def accepted_records(records: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    accepted: list[dict[str, Any]] = []
+    rejected: list[dict[str, str]] = []
+    for record in records:
+        errors = sorted(EVIDENCE_VALIDATOR.iter_errors(record), key=lambda error: list(error.path))
+        if errors:
+            rejected.append({"source": str(record.get("source", "unknown")), "source_record_id": str(record.get("source_record_id", "")), "error": errors[0].message})
+        else:
+            accepted.append(record)
+    return accepted, rejected
 
 
 def app_market_relevant(topic: str, problem_keywords: str = "", workaround_keywords: str = "") -> bool:
@@ -1046,8 +1114,12 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
         if len(records) >= args.limit:
             break
 
+    outcomes = [item["response"] for item in raw["searches"]]
+    succeeded = sum(1 for response in outcomes if response.get("ok"))
+    failed = [response for response in outcomes if not response.get("ok")]
+    status = "ok" if succeeded and not failed else "partial" if succeeded else status_from_response(failed[0]) if failed else "failed"
     write_json(run_dir / "raw" / "reddit.json", redact_sensitive(raw))
-    return records, {"status": "ok", "record_count": len(records), "fields": fields_present(raw)}
+    return records, {"status": status, "record_count": len(records), "request_count": len(outcomes), "successful_requests": succeeded, "failed_requests": len(failed), "fields": fields_present(raw)}
 
 
 def collect_firecrawl(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -3447,7 +3519,7 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace, queries: list[s
 
 def load_provider_routing() -> dict[str, Any]:
     """Read the latest provider-doctor summary so runs record which backend actually served each source family."""
-    doctor_path = ROOT / "research" / "evidence-scout" / "provider-doctor" / "doctor.summary.json"
+    doctor_path = ROOT / "projects" / "research" / "evidence-scout" / "provider-doctor" / "doctor.summary.json"
     try:
         data = json.loads(doctor_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
@@ -3645,8 +3717,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--geo", default="AUTO", help="Country/region code for providers that support geography. Use AUTO to infer from topic/segment.")
     parser.add_argument("--language", default="AUTO", help="Language code for providers that support language filtering. Use AUTO to infer from topic/segment.")
     parser.add_argument("--out-dir", default="", help="Optional output directory.")
-    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to research/topics/<topic-slug>.")
-    parser.add_argument("--legacy-output", action="store_true", help="Write to the former research/evidence-scout/runs layout.")
+    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to projects/research/topics/<topic-slug>.")
+    parser.add_argument("--legacy-output", action="store_true", help="Write to the former projects/research/evidence-scout/runs layout.")
     return parser.parse_args()
 
 
@@ -3727,22 +3799,29 @@ def main() -> int:
             provider_summaries[provider] = {"status": "unsupported", "record_count": 0}
             continue
         provider_records, provider_summary = func(args, queries, run_dir)
-        relevant_provider_records = [record for record in provider_records if record.get("relevance") != "irrelevant"]
-        irrelevant_provider_records = [record for record in provider_records if record.get("relevance") == "irrelevant"]
-        records.extend(provider_records)
+        # Store the route actually used for this retrieval, rather than adding
+        # a hypothetical backend after collection. Language fields express the
+        # requested search scope; they do not claim a language detector ran.
+        for record in provider_records:
+            record["retrieval_backend"] = provider
+            record["query_language"] = args.language
+            record.setdefault("source_language", "und")
+            record["output_language"] = "en"
+        accepted, rejected = accepted_records(provider_records)
+        relevant_provider_records = [record for record in accepted if record.get("relevance") != "irrelevant"]
+        irrelevant_provider_records = [record for record in accepted if record.get("relevance") == "irrelevant"]
+        records.extend(accepted)
         provider_summary["record_count"] = len(relevant_provider_records)
         provider_summary["irrelevant_count"] = len(irrelevant_provider_records)
+        provider_summary["rejected_record_count"] = len(rejected)
+        if rejected:
+            provider_summary["record_rejections"] = rejected[:10]
+            provider_summary["status"] = "partial" if accepted else "invalid_records"
         provider_summaries[provider] = provider_summary
 
     relevant_records = [record for record in records if record.get("relevance") != "irrelevant"]
     irrelevant_records = [record for record in records if record.get("relevance") == "irrelevant"]
     routing = load_provider_routing()
-    if routing:
-        for record in records:
-            family = PROVIDER_ROUTING_FAMILY.get(str(record.get("source")))
-            backend = (routing.get("families") or {}).get(family) if family else None
-            if backend:
-                record["active_backend"] = backend
     append_jsonl(run_dir / "evidence.jsonl", relevant_records)
     append_jsonl(run_dir / "irrelevant.jsonl", irrelevant_records)
     alerts = provider_alerts(provider_summaries)

@@ -1,6 +1,6 @@
 ---
 name: opportunity-risk-designer
-description: Convert collected customer, workaround, demand, and competitor evidence into opportunity areas, ranked assumptions, low-cost tests, and decision gates. Use after evidence collection or when deciding what to validate next.
+description: Convert customer, workaround, demand, and competitor evidence into ranked assumptions, low-cost tests, and decision gates. Use when deciding what to validate next.
 ---
 
 # Opportunity Risk Designer
@@ -19,4 +19,4 @@ description: Convert collected customer, workaround, demand, and competitor evid
 
 ## Output
 
-Produce opportunity areas, risk register, assumption map, test cards, evidence gaps, decision gates, and next actions.
+Produce opportunity areas, risk register, assumption map, test cards, evidence gaps, decision gates, and next actions. When the result becomes an execution plan, record it as `strategy-plan.json` and run `python3 scripts/strategy_review.py validate --plan <strategy-plan.json>`.

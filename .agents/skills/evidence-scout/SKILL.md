@@ -1,6 +1,6 @@
 ---
 name: evidence-scout
-description: Collect source-grounded customer pain, workarounds, demand proxies, counter-evidence, and reachable communities from Reddit, YouTube, forums, search, Trends, and approved enrichment providers. Use after a specific customer/problem candidate is researchable. For broad market exploration before a candidate exists, use market-problem-discovery first.
+description: Collect sourced customer pain, workarounds, demand proxies, counter-evidence, and reachable communities. Use after a specific customer and problem hypothesis is researchable.
 ---
 
 # Evidence Scout
@@ -12,7 +12,7 @@ description: Collect source-grounded customer pain, workarounds, demand proxies,
 ## Workflow
 
 1. Read `references/workflow.md` and `references/provider-policy.md`.
-2. Initialize or reuse `research/topics/<topic-slug>/`.
+2. Initialize or reuse `projects/research/topics/<topic-slug>/`.
 3. Run capability lookup and provider doctor when routing matters, then use repository-root scripts.
 4. Inspect plans, raw outputs, evidence, irrelevant records, alerts, and gaps.
 5. On `insufficient_credits`/`billing_required` for a paid provider, pause and ask the user to top up or continue without the source (protocol: `references/provider-policy.md`). If they topped up, re-validate and rerun the provider before interpreting.

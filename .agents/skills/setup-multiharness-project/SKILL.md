@@ -1,7 +1,6 @@
 ---
 name: setup-multiharness-project
-description: Set up or repair a multi-harness agentic project (Claude Code, Codex CLI, OpenCode, Gemini CLI) with AGENTS.md, thin per-harness shims, shared skills, MCP config, and WSL-safe symlinks. Auto-detects new vs existing and runs bootstrap or optimize accordingly. Use when starting a new project, adding agent wiring to an existing repo, or repairing config drift.
-user_invocable: true
+description: Set up or repair a multi-harness agent project with shared skills, thin shims, MCP config, and safe symlinks. Use when starting a project or repairing agent wiring drift.
 ---
 
 # Setup Multiharness Project
@@ -10,7 +9,7 @@ Read `references/workflow.md` for the complete procedure. Load only the addition
 
 ## Procedure
 
-Use the imported workflow and keep state in the active manifest.
+Bootstrap only minimal instructions by default. Use `--harness` and `--mcp` only for requested integrations. Audit/dry-run never execute target code; refuse unsafe destination links before any writes. Use the bundled implementation described in the workflow.
 
 ## Output
 

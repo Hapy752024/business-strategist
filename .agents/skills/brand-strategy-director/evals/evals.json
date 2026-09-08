@@ -6,6 +6,12 @@
       "prompt": "Create three evidence-aware brand territories from this brief.",
       "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
       "files": []
+    },
+    {
+      "id": "position-brand-drift",
+      "prompt": "Our linked business snapshot selects a low-cost fixed-scope paperwork service; demand remains hypothetical. I prefer luxury concierge branding promising instant bespoke advice. Define territories.",
+      "expected_output": "Flag changed scope, relative-price signal and promise; preserve hypothesis labels, check source revision and propose expressions of the selected position or an explicit business revision.",
+      "files": []
     }
   ]
 }

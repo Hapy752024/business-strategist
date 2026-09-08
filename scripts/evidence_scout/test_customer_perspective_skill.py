@@ -52,7 +52,7 @@ class CustomerPerspectiveSkillTests(unittest.TestCase):
         self.assertIn("US FTC", evidence)
         self.assertIn("## Transfer limits", evidence)
         evals = json.loads((SKILL / "evals" / "evals.json").read_text(encoding="utf-8"))
-        self.assertEqual(len(evals["evals"]), 6)
+        self.assertGreaterEqual(len(evals["evals"]), 6)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "snapshot_id": "business-to-brand-<source-sha256-prefix>",
-  "source_workspace": "research/topics/<slug>",
+  "source_workspace": "projects/research/topics/<slug>",
   "source_manifest_version": "1.0",
   "business_identity": {},
   "segment": {},

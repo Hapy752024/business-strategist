@@ -1,8 +1,3 @@
----
-name: opportunity-risk-designer
-description: Turn collected evidence about user pain, workarounds, search demand, and counter-evidence into opportunity areas, risk-ranked assumptions, and low-cost validation tests.
----
-
 # Opportunity Risk Designer Workflow
 
 Use this skill after evidence has been collected.
@@ -25,6 +20,8 @@ Use:
 - The user hypothesis from `idea-grill`
 - `competitors.json` and `marketing_analysis.json` from `competitor-scout` / `competitor-marketing-analyzer`, when they exist
 
+Reuse relevant founder decision context from the active thesis or strategy record: objective, desired role, means/access, affordable downside, time horizon, and acquisition/operating constraints. If a missing item changes the ranking or test design, ask one focused question and label the result as constraint, preference, assumption, or unresolved input.
+
 If the user does not provide paths, read the active topic `manifest.json` and use its latest evidence artifacts. Do not select a run from another topic by timestamp alone.
 
 Before ranking opportunity risk, inspect `summary.json.needs_user_attention`. If provider failures, missing credits, permission errors, or missing keys affected collection, state that the evidence base is incomplete and include the failed providers in the risk assessment.
@@ -34,20 +31,22 @@ Before ranking opportunity risk, inspect `summary.json.needs_user_attention`. If
 1. Locate the relevant `summary.json`, `evidence.jsonl`, `report.md`, and original hypothesis.
 2. Inspect provider alerts, missing evidence, and `summary.json.needs_user_attention` before interpreting the opportunity.
 3. Separate direct evidence, interpretation, counter-evidence, and missing evidence.
-4. Rank problem, segment, urgency, willingness-to-pay, solution, channel, timing, and evidence-coverage risks.
+4. Rank problem, segment, urgency, willingness-to-pay, solution, entry/customer-choice, channel/relationship, delivery/economics, timing, and evidence-coverage risks.
 5. Identify the narrowest opportunity area supported by the evidence.
-6. When competitor discovery artifacts exist, scaffold and fill the whitespace matrix so demand-side pains formally intersect supply-side coverage:
+6. Use a coverage matrix only when a claimed competitor gap is material to the decision. It is an instrument for checking that claim, not a mandatory prerequisite or a proof of entry feasibility:
 
    ```bash
    python3 scripts/evidence_scout/build_whitespace_matrix.py --topic "<topic>" --evidence-jsonl "<evidence.jsonl>" --competitors-json "<competitors.json>"
    ```
 
-   Fill each cell from citable evidence only; `unknown` means unscored, not unserved. A candidate white spot requires an evidence-backed pain row rated `gap` across the direct competitors, and stays a candidate until tested.
+   Fill each cell from citable evidence only; `unknown` means unscored, not unserved. A candidate gap stays a hypothesis until tested. If direct competitors address the pain, assess instead why a suitable customer would notice, trust and choose this entrant at acceptable acquisition and delivery cost.
 7. Design low-cost tests that reduce the highest-ranked risks before recommending product buildout.
 8. Give each test a target segment, action, success threshold, stop/pivot condition, cost, and time budget.
-9. Choose a decision gate: persevere, narrow segment, pivot problem, or stop.
+9. Choose a decision gate: insufficient_evidence, persevere, narrow segment, pivot problem, or stop. Persevere means continue the bounded test; it does not authorize investment or scale.
 
 ## Risk Ranking
+
+Apply the entrant-success contract in repo-root `references/strategic-positioning.md`. Assess the founder's required scale and 12–24-month horizon (or stated override), using customer-journey evidence and the competitor's visibility, sales, service and retention strengths/weaknesses. Existing supply is not saturation; absent social activity is not a proven opening. Review changes to a recommendation against changed facts, constraints or corrected reasoning. If acquisition/capacity/economics are unverified, use investigate/insufficient evidence rather than a forced winner or stop.
 
 Rank these risks:
 
@@ -56,7 +55,9 @@ Rank these risks:
 - Urgency risk: the pain exists but can wait.
 - Willingness-to-pay risk: users complain but will not pay.
 - Solution risk: proposed solution does not beat workarounds.
-- Channel risk: early adopters cannot be reached ethically or cheaply.
+- Entry/customer-choice risk: no plausible reason for a suitable customer to notice, trust or choose the entrant over doing nothing or available alternatives. Several modest advantages may jointly be enough; novelty is not required.
+- Channel/relationship risk: early adopters cannot be reached ethically or cheaply, or the category needs trust/ongoing engagement that the proposed route cannot plausibly earn.
+- Delivery/economics risk: the offer cannot be delivered within founder capacity, cash, compliance/dependency limits, or a plausible contribution range.
 - Timing risk: interest is declining, seasonal, or driven by temporary news.
 - Evidence coverage risk: key sources failed, lacked credits, lacked permissions, or were not run.
 - Sequencing risk: the plan amplifies before proof. Check against the sequencing rule and canonical failure modes in `references/evidence-registry.md`: paid or discount-driven acquisition before retained-value proof (Homejoy scaled Groupon cohorts with inconsistent delivery and negative contribution margin), loops before single-user value, waitlists or press treated as PMF (Robinhood's earlier products; Socialcam). When the test plan or roadmap skips manual learning → proof → one repeatable motion, name the skip as a ranked risk and make the skipped stage the next test.
@@ -80,7 +81,7 @@ Rank these risks:
 
   For each relevant moat source, assess: (a) does the business have this moat? (b) does it map to a top customer priority? (c) can a well-funded competitor replicate it, and if so, on what timeline? (d) would a rational competitor choose not to copy it (incentive barrier, e.g., copying would cannibalize their own cash cow)?
 
-  If no moat source scores above "weak" on both evidence and durability, competitive durability risk is high regardless of demand validation results.
+  Judge durability relative to founder ambition, required margin, operating horizon and credible competitor response. A weak moat is a risk to examine, not a universal rejection of a small profitable service. Require a durability test only when it could change the next decision.
 
 ## Tests
 
@@ -114,17 +115,18 @@ Produce:
 
 - Opportunity thesis.
 - Evidence confidence level.
-- Whitespace matrix with candidate white spots (when competitor artifacts exist), each with its cheapest confirmation test.
+- Coverage matrix only when a claimed gap matters, with its cheapest confirmation test.
 - Top 5 risks.
 - Test plan for the next 7 days.
-- Decision gate: persevere, narrow segment, pivot problem, or stop.
+- Decision gate: insufficient_evidence, persevere, narrow segment, pivot problem, or stop.
 
 Decision gates:
 
 - `persevere`: strong pain, reachable segment, and evidence of workaround/spend.
 - `narrow segment`: pain exists but the segment is too broad or mixed.
 - `pivot problem`: the segment is reachable but cares about a different pain.
-- `stop`: evidence is weak, generic, solved, or not worth paying for.
+- `insufficient_evidence`: coverage or relevant behaviour is inadequate to judge; name the next investigation.
+- `stop`: demonstrated rejection or economic/operating incompatibility makes the opportunity unsuitable under the founder's constraints. Weak evidence or existing solutions alone do not justify stop.
 
 ## Quality Checklist
 
@@ -141,6 +143,6 @@ Before finalizing, check:
 - Competitive durability risk is assessed and ranked alongside the other risks.
 - Sequencing risk (amplification before proof) and trust-pattern risk (dark patterns, missing uncertainty reducers) are ranked when the plan touches channels, loops, or consumer-service offers.
 - If no moat source scores above "weak" on evidence and durability, this is explicitly called out.
-- The test plan includes at least one test that challenges competitive durability, not just demand.
+- The test plan challenges competitive durability when it is material to the next decision.
 - The decision gate factors in competitive durability, not just demand evidence.
-- When competitor artifacts exist, a whitespace matrix was scaffolded and its cells rated from citable evidence; candidate white spots name their cheapest confirmation test.
+- When a claimed competitor gap matters, a coverage matrix was scaffolded and its cells rated from citable evidence; otherwise entry/customer-choice evidence was assessed directly.

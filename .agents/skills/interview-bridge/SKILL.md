@@ -1,6 +1,6 @@
 ---
 name: interview-bridge
-description: Convert collected weak/medium public evidence into an interview screener, non-leading interview guide, and confirmation tracker. Use after an evidence-scout or market-problem-discovery run when evidence is mostly weak or medium and the next uncertainty-reducing step is talking to real customers, not more desk research.
+description: Turn weak or medium public evidence into a screener, non-leading interview guide, and confirmation tracker. Use when customer interviews are the next uncertainty-reducing step.
 ---
 
 # Interview Bridge

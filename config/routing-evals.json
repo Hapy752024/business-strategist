@@ -1,6 +1,6 @@
 {
   "dataset_name": "skill-routing",
-  "description": "Routing collision tests — ambiguous prompts per collision pair, testing which skill fires.",
+  "description": "Routing collision tests \u2014 ambiguous prompts per collision pair, testing which skill fires.",
   "pairs": [
     {
       "pair": "marketing-strategy-builder vs social-digital-marketing-planner vs archetype-gtm-strategist",
@@ -14,11 +14,11 @@
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "Specific request for platform-level social media plan and content calendar — social-digital-marketing-planner owns this. archetype-gtm-strategist is for end-to-end stage-gated GTM, not campaign-level social planning."
+          "rationale": "Specific request for platform-level social media plan and content calendar \u2014 social-digital-marketing-planner owns this. archetype-gtm-strategist is for end-to-end stage-gated GTM, not campaign-level social planning."
         },
         {
           "id": "route-marketing-2",
-          "prompt": "We need a full go-to-market strategy for our fintech SaaS — first customers, partnerships, European expansion, and regulatory path.",
+          "prompt": "We need a full go-to-market strategy for our fintech SaaS \u2014 first customers, partnerships, European expansion, and regulatory path.",
           "expected_output": "Routes to archetype-gtm-strategist for end-to-end stage-gated GTM with fintech archetype and Europe region.",
           "expected_skill": "archetype-gtm-strategist",
           "forbidden_skills": [
@@ -26,7 +26,7 @@
             "marketing-strategy-builder"
           ],
           "files": [],
-          "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) — archetype-gtm-strategist owns this. marketing-strategy-builder is for campaign-level marketing detail after the GTM strategy."
+          "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) \u2014 archetype-gtm-strategist owns this. marketing-strategy-builder is for campaign-level marketing detail after the GTM strategy."
         },
         {
           "id": "route-marketing-3",
@@ -37,7 +37,7 @@
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) — marketing-strategy-builder owns this. archetype-gtm-strategist adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
+          "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) \u2014 marketing-strategy-builder owns this. archetype-gtm-strategist adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
         }
       ]
     },
@@ -54,7 +54,7 @@
             "evidence-scout"
           ],
           "files": [],
-          "rationale": "Vague idea, no segment clarity — needs idea-grill to narrow and form a researchable thesis before any building or evidence collection."
+          "rationale": "Vague idea, no segment clarity \u2014 needs idea-grill to narrow and form a researchable thesis before any building or evidence collection."
         },
         {
           "id": "route-evaluate-2",
@@ -65,7 +65,7 @@
             "idea-grill"
           ],
           "files": [],
-          "rationale": "Clear segment with evidence — past the idea-grill stage, ready for zero-to-one business building. The request is for a plan, not idea clarification."
+          "rationale": "Clear segment with evidence \u2014 past the idea-grill stage, ready for zero-to-one business building. The request is for a plan, not idea clarification."
         },
         {
           "id": "route-evaluate-3",
@@ -76,7 +76,7 @@
             "idea-grill"
           ],
           "files": [],
-          "rationale": "High-stakes strategic decision with multiple informed perspectives already on the table — startup-challenge-panel's multi-role structure is the right fit. Not an idea-clarity or business-planning problem."
+          "rationale": "High-stakes strategic decision with multiple informed perspectives already on the table \u2014 startup-challenge-panel's multi-role structure is the right fit. Not an idea-clarity or business-planning problem."
         },
         {
           "id": "route-evaluate-4",
@@ -88,7 +88,7 @@
             "startup-business-builder"
           ],
           "files": [],
-          "rationale": "Consumer service packaging and trust challenge for a specific market — service-customer-perspective-challenger is built for exactly this. Use after evidence collection, before finalizing GTM."
+          "rationale": "Consumer service packaging and trust challenge for a specific market \u2014 service-customer-perspective-challenger is built for exactly this. Use after evidence collection, before finalizing GTM."
         }
       ]
     },
@@ -104,18 +104,18 @@
             "business-archetype-playbook-researcher"
           ],
           "files": [],
-          "rationale": "Request for case studies on specific named companies — growth-case-analyzer does company case studies. business-archetype-playbook-researcher does anonymous founder/operator lessons by business archetype."
+          "rationale": "Request for case studies on specific named companies \u2014 growth-case-analyzer does company case studies. business-archetype-playbook-researcher does anonymous founder/operator lessons by business archetype."
         },
         {
           "id": "route-lessons-2",
-          "prompt": "What do successful founders say about building a B2B SaaS company in Europe — specifically about pricing, first customers, and avoiding common mistakes?",
+          "prompt": "What do successful founders say about building a B2B SaaS company in Europe \u2014 specifically about pricing, first customers, and avoiding common mistakes?",
           "expected_output": "Routes to business-archetype-playbook-researcher for anonymous founder/operator lessons by B2B SaaS archetype.",
           "expected_skill": "business-archetype-playbook-researcher",
           "forbidden_skills": [
             "growth-case-analyzer"
           ],
           "files": [],
-          "rationale": "Request for anonymous founder/operator lessons by archetype (B2B SaaS, Europe) — business-archetype-playbook-researcher owns this. growth-case-analyzer does named-company case studies."
+          "rationale": "Request for anonymous founder/operator lessons by archetype (B2B SaaS, Europe) \u2014 business-archetype-playbook-researcher owns this. growth-case-analyzer does named-company case studies."
         }
       ]
     },
@@ -164,7 +164,7 @@
       "evals": [
         {
           "id": "route-ads-1",
-          "prompt": "Analyze what Facebook and Instagram ads my competitors are running — creatives, copy, CTAs, and how long the ads have been active.",
+          "prompt": "Analyze what Facebook and Instagram ads my competitors are running \u2014 creatives, copy, CTAs, and how long the ads have been active.",
           "expected_output": "Routes to competitor-marketing-analyzer, which now includes an ad-evidence step via scripts/evidence_scout/collect_ads.py.",
           "expected_skill": "competitor-marketing-analyzer",
           "forbidden_skills": [
@@ -172,7 +172,7 @@
             "marketing-strategy-builder"
           ],
           "files": [],
-          "rationale": "Analyzing competitor paid-ads intelligence is competitor analysis (collect_ads.py + Meta Ad Library), not planning our own social media campaigns — social-digital-marketing-planner owns outbound campaign planning."
+          "rationale": "Analyzing competitor paid-ads intelligence is competitor analysis (collect_ads.py + Meta Ad Library), not planning our own social media campaigns \u2014 social-digital-marketing-planner owns outbound campaign planning."
         },
         {
           "id": "route-ads-2",
@@ -201,7 +201,7 @@
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "The user wants multiple drafts generated and judged against each other — strategy-draft-tournament owns this. startup-challenge-panel challenges an existing plan; archetype-gtm-strategist produces a single stage-gated strategy."
+          "rationale": "The user wants multiple drafts generated and judged against each other \u2014 strategy-draft-tournament owns this. startup-challenge-panel challenges an existing plan; archetype-gtm-strategist produces a single stage-gated strategy."
         },
         {
           "id": "route-tournament-2",
@@ -254,6 +254,122 @@
           ],
           "files": [],
           "rationale": "The requested artifact is website experimentation implementation, not campaign strategy."
+        }
+      ]
+    },
+    {
+      "pair": "competitive-landscape-builder vs competitor-scout vs competitor-marketing-analyzer vs brand-website-designer-builder",
+      "evals": [
+        {
+          "id": "route-landscape-1",
+          "prompt": "Map our competitive landscape: same-market competitors, similar companies in other countries, their services and prices, and how they use YouTube and Instagram. Suggest positioning white space.",
+          "expected_output": "Routes to competitive-landscape-builder with three lane outputs and no website build.",
+          "expected_skill": "competitive-landscape-builder",
+          "forbidden_skills": [
+            "brand-website-designer-builder"
+          ],
+          "files": [],
+          "rationale": "This is the complete lane-aware market, analog and social/positioning workflow."
+        },
+        {
+          "id": "route-landscape-2",
+          "prompt": "Find competitors for my invoice automation idea; I only need a classified candidate list.",
+          "expected_output": "Routes to competitor-scout for narrow discovery.",
+          "expected_skill": "competitor-scout",
+          "forbidden_skills": [
+            "competitive-landscape-builder"
+          ],
+          "files": [],
+          "rationale": "The user explicitly requests discovery only, not synthesis or social analysis."
+        },
+        {
+          "id": "route-landscape-3",
+          "prompt": "Analyze these three competitor landing pages and their pricing CTAs.",
+          "expected_output": "Routes to competitor-marketing-analyzer for a supplied-URL teardown.",
+          "expected_skill": "competitor-marketing-analyzer",
+          "forbidden_skills": [
+            "competitive-landscape-builder"
+          ],
+          "files": [],
+          "rationale": "A supplied-URL narrow marketing analysis remains owned by the existing analyzer."
+        }
+      ]
+    },
+    {
+      "pair": "brand-asset-producer (imagery-style) vs brand-motion-designer (motion-concept) vs brand-ui-kit-producer",
+      "evals": [
+        {
+          "id": "route-imagery-style-1",
+          "prompt": "Before we produce any images for the brand, define the imagery style: realistic photography vs illustration vs hybrid, overlay treatment, subject mix (nature vs human faces), crop rules, and 2-3 style frames for approval.",
+          "expected_output": "Runs the imagery-style art-direction gate (brand-asset-producer in art-direction mode) producing an art-direction brief and style frames; no batch imagery production before approval.",
+          "expected_skill": "brand-asset-producer",
+          "forbidden_skills": [
+            "brand-ui-kit-producer",
+            "brand-website-designer-builder"
+          ],
+          "files": [],
+          "rationale": "The request is the imagery-style gate that precedes asset production, not token or website work."
+        },
+        {
+          "id": "route-motion-concept-1",
+          "prompt": "Define the animation concept for our web page and assets: motion principles, duration and easing primitives, and signature moments like a hover crossfade from a drawn image to a realistic photo, plus reduced-motion fallbacks.",
+          "expected_output": "Runs the motion-concept gate (brand-motion-designer in concept mode) producing a motion-concept doc; tokenization and reference implementations come later in the motion stage.",
+          "expected_skill": "brand-motion-designer",
+          "forbidden_skills": [
+            "brand-ui-component-producer",
+            "brand-website-designer-builder"
+          ],
+          "files": [],
+          "rationale": "The request is the early motion-concept definition, not component or website implementation."
+        }
+      ]
+    },
+    {
+      "pair": "business positioning vs operating model vs marketing expression vs standalone brand",
+      "evals": [
+        {
+          "id": "position-select",
+          "prompt": "Compare strategic positions for my business and derive the operating model.",
+          "expected_skill": "archetype-gtm-strategist",
+          "forbidden_skills": [
+            "brand-designer"
+          ],
+          "expected_output": "Choose the business position first; derive only requested implications.",
+          "files": [],
+          "rationale": "Choose the business position first; derive only requested implications."
+        },
+        {
+          "id": "position-delivery",
+          "prompt": "Derive the operating model from our selected position.",
+          "expected_skill": "company-operating-system",
+          "forbidden_skills": [
+            "archetype-gtm-strategist"
+          ],
+          "expected_output": "Use the selected position and derive activities before routines.",
+          "files": [],
+          "rationale": "Use the selected position and derive activities before routines."
+        },
+        {
+          "id": "position-copy",
+          "prompt": "Write ad copy for our fixed-scope service.",
+          "expected_skill": "marketing-strategy-builder",
+          "forbidden_skills": [
+            "archetype-gtm-strategist"
+          ],
+          "expected_output": "Write the requested copy without a positioning exercise.",
+          "files": [],
+          "rationale": "Write the requested copy without a positioning exercise."
+        },
+        {
+          "id": "position-brand",
+          "prompt": "Develop a standalone brand identity without market research.",
+          "expected_skill": "brand-designer",
+          "forbidden_skills": [
+            "archetype-gtm-strategist"
+          ],
+          "expected_output": "Preserve standalone brand discovery.",
+          "files": [],
+          "rationale": "Preserve standalone brand discovery."
         }
       ]
     }

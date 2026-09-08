@@ -22,8 +22,15 @@ If ambiguity materially changes provider choice, query wording, geography, langu
 5. Run the collector with scoped topic, segment, problem keywords, workaround keywords, hypothesis ID, date range, limit, and providers.
 6. Inspect `research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, raw provider outputs, and provider alerts.
 7. Exclude irrelevant records and verify the strongest records materially match topic, geography, pain, and segment.
+   Automated relevance and user-pain labels are provisional. Read every record supporting a consequential claim; check the actual buyer/job, geography, source role and context rather than keyword overlap. Record accepted/rejected/unresolved judgments with evidence ID or URL and reason; retain raw runs. For claim-ledger validation use `validate_synthesis.py --require-source-review` with reviewed evidence records carrying `analyst_review.status=accepted` and a nonempty `analyst_review.reason`. Report only audited counts as customer evidence; never compare unaudited collection totals. If false positives remain, withdraw affected claims and reopen synthesis. Failed or badly targeted searches do not establish weak demand or exhaustion of desk research.
 8. Separate evidence, interpretation, counter-evidence, missing evidence, source intent, and comment intent.
 9. Report the truth about evidence strength, provider gaps, unresolved risks, and next low-cost tests.
+
+## Customer-journey contract
+
+For venture research, reconstruct the customer journey from web context and relevant social/community posts, comments and reviews. Branch where different triggers or roles materially change the need; do not collapse every user into one funnel. Cover trigger, discovery, evaluation, purchase, onboarding, use/service, renewal/referral and exit where applicable. For each stage record `segment/trigger | desired outcome | current action/alternative | pain and consequence | source ID/URL/date and role | counter-evidence | unknown/next check`. Customer-language quotes must be real, not composites; company tutorials show an intended journey, not actual customer behavior.
+
+Audit claims for job, geography, author role and causal context. Include satisfied customers and successful workarounds. If social evidence is unavailable, report that part of the journey as unverified; do not supply inferred customer statements. Stage-specific friction does not prove market-wide dissatisfaction. Save the journey in the existing report/deep dive and summarize decision-relevant findings in README.
 
 ## Execution Rule
 
@@ -51,7 +58,7 @@ When setup/routing matters, especially for China sources or fallback selection, 
 python3 scripts/evidence_scout/provider_doctor.py --json
 ```
 
-It writes `research/evidence-scout/provider-doctor/doctor.summary.json` and `doctor.md`. Inspect `source_families.*.active_backend` and `needs_user_attention` before interpreting source coverage. The doctor consumes the latest live API validation summary when available; credentials alone are not proof that a provider is usable.
+It writes `projects/research/evidence-scout/provider-doctor/doctor.summary.json` and `doctor.md`. Inspect `source_families.*.active_backend` and `needs_user_attention` before interpreting source coverage. The doctor consumes the latest live API validation summary when available; credentials alone are not proof that a provider is usable.
 
 If any requested or important provider reports `missing_credentials`, `billing_required`, `insufficient_credits`, `permission_denied`, `rate_limited`, `unsupported`, or `failed`, notify the user before interpreting the evidence. Explain which source was unavailable, why it matters, and how to fix or bypass it. Do not bury API failures in the final caveats.
 
@@ -171,7 +178,7 @@ Before interpreting the run, check:
 - Whether the run has direct user-pain records, not only provider/editorial/competitor content.
 - Whether `summary.json.quality_flags` warns about zero Reddit/forum pain, weak Trends signals, or mostly competitor/editorial evidence.
 - Whether `summary.json.quality_flags` warns about mostly weak records, low direct user-pain share, or many `unknown` source-intent records.
-- Whether paths in `summary.json.outputs` exist. If `.evidence-scout/...` and `research/evidence-scout/...` differ, inspect the path that exists and report the mismatch as a workflow issue.
+- Whether paths in `summary.json.outputs` exist. If `.evidence-scout/...` and `projects/research/evidence-scout/...` differ, inspect the path that exists and report the mismatch as a workflow issue.
 - Whether `research_plan.md`, `assumptions.md`, and `user_review_plan.md` exist. These are part of the flow, not optional notes.
 
 If any quality gate fails, say so before interpreting the evidence. Do not describe a run as healthy just because provider status is `ok`.
@@ -200,10 +207,10 @@ Evidence strength:
 
 The collector writes:
 
-- `research/topics/<topic>/evidence/runs/<run>/raw/`
-- `research/topics/<topic>/evidence/runs/<run>/evidence.jsonl`
-- `research/topics/<topic>/evidence/runs/<run>/summary.json`
-- `research/topics/<topic>/evidence/runs/<run>/report.md`
+- `projects/research/topics/<topic>/evidence/runs/<run>/raw/`
+- `projects/research/topics/<topic>/evidence/runs/<run>/evidence.jsonl`
+- `projects/research/topics/<topic>/evidence/runs/<run>/summary.json`
+- `projects/research/topics/<topic>/evidence/runs/<run>/report.md`
 
 Use `--legacy-output` only when a downstream consumer still requires the former global layout.
 

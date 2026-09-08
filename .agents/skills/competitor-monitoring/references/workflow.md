@@ -154,7 +154,7 @@ python3 scripts/validate_apis/validate_sonar.py
 Write monitoring outputs under:
 
 ```text
-research/evidence-scout/competitor-monitoring/<timestamp-topic>/
+projects/research/evidence-scout/competitor-monitoring/<timestamp-topic>/
 ```
 
 Recommended files:

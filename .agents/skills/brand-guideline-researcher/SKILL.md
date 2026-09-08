@@ -1,7 +1,6 @@
 ---
 name: brand-guideline-researcher
 description: Researches brand, corporate identity, corporate design, competitor, and design-system references. Use when a brand project needs web search, official references, competitor benchmarking, or analysis of local DESIGN.md guideline examples.
-user_invocable: true
 ---
 
 # Brand Guideline Researcher
