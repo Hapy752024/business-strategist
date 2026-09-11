@@ -102,7 +102,7 @@ class LandscapePipelineTests(unittest.TestCase):
             subprocess.run(["python3", "scripts/evidence_scout/build_entity_landscape.py", "--competitors-json", str(candidates), "--marketing-json", str(marketing), "--service", "care scheduling", "--job", "schedule care", "--target-segment", "small business", "--geography", "Germany", "--workspace", str(workspace), "--out", str(landscape)], check=True, capture_output=True, text=True, env=ENV)
             entity = json.loads(landscape.read_text(encoding="utf-8"))["entities"][0]
             self.assertEqual(entity["verification_status"], "uncertain")
-            checkpoint = json.loads((workspace / "manifest.json").read_text(encoding="utf-8"))["stages"]["competitive_landscape"]
+            checkpoint = json.loads((workspace / "market_research" / "manifest.json").read_text(encoding="utf-8"))["stages"]["competitive_landscape"]
             self.assertNotEqual(checkpoint["status"], "passed")
 
     def test_unsampled_social_gap_propagates_to_canonical_coverage(self):
@@ -131,7 +131,7 @@ class LandscapePipelineTests(unittest.TestCase):
             ]), encoding="utf-8")
             marketing.write_text(json.dumps([{"url": "https://clinicflow.example.com", "retrieved_at": "2026-08-30T01:00:00Z", "official_service_evidence": True, "detected_audiences": ["small business"], "first_party_source_pages": [{"url": "https://clinicflow.example.com", "retrieval_source": "fixture_official"}], "service_offers": [{"observed_text": "Care scheduling service for small business care teams", "price_status": "not_found"}]}]), encoding="utf-8")
             subprocess.run(["python3", "scripts/evidence_scout/build_entity_landscape.py", "--competitors-json", str(candidates), "--marketing-json", str(marketing), "--service", "care scheduling", "--job", "schedule care teams", "--target-segment", "small business", "--geography", "Germany", "--workspace", str(workspace), "--out", str(root / "landscape.json")], check=True, capture_output=True, text=True, env=ENV)
-            manifest = json.loads((workspace / "manifest.json").read_text(encoding="utf-8"))
+            manifest = json.loads((workspace / "market_research" / "manifest.json").read_text(encoding="utf-8"))
             checkpoint = manifest["stages"]["competitive_landscape"]
             self.assertEqual(checkpoint["status"], "in_progress")
             self.assertEqual(checkpoint["gate_result"], "conditional_pass")

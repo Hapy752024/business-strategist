@@ -36,13 +36,13 @@ python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<categor
 Analyze candidates from `competitor-scout`:
 
 ```bash
-python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 10
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json" --limit 10
 ```
 
 Use deeper page discovery only when worth the credits:
 
 ```bash
-python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 5 --deep
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json" --limit 5 --deep
 ```
 
 When analyzing a `competitors.json`, prioritize `direct_broker_candidate`, `direct_insurer_candidate`, and `marketplace_comparison_portal` before editorial resources. Analyze editorials separately unless the user explicitly wants SEO/content strategy.
@@ -53,11 +53,11 @@ If Firecrawl fails or returns `billing_required`, use fallback evidence before g
 
 The script writes:
 
-- `projects/research/topics/<topic>/competitors/marketing/<run>/marketing_plan.md` — objective, scope, questions, limits, and the comparison checkpoint for the run
-- `projects/research/topics/<topic>/competitors/marketing/<run>/marketing_analysis.json`
-- `projects/research/topics/<topic>/competitors/marketing/<run>/summary.json`
-- `projects/research/topics/<topic>/competitors/marketing/<run>/report.md`
-- `projects/research/topics/<topic>/competitors/marketing/<run>/raw.json`
+- `projects/<topic>/market_research/solution_alternatives/marketing/<run>/marketing_plan.md` — objective, scope, questions, limits, and the comparison checkpoint for the run
+- `projects/<topic>/market_research/solution_alternatives/marketing/<run>/marketing_analysis.json`
+- `projects/<topic>/market_research/solution_alternatives/marketing/<run>/summary.json`
+- `projects/<topic>/market_research/solution_alternatives/marketing/<run>/report.md`
+- `projects/<topic>/market_research/solution_alternatives/marketing/<run>/raw.json`
 
 ## What To Analyze
 

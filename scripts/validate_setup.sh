@@ -181,12 +181,13 @@ echo "--- Workspace Tests ---"
 check "full Python test suite passes" python3 -m pytest -q --disable-warnings
 check "offline behavioral route evals pass" python3 scripts/run_behavioral_evals.py --repeat 3 >/dev/null
 check "agentic process comparison runs" python3 scripts/benchmark_agentic_process.py --output-dir /tmp/business-strategist-agentic-eval >/dev/null
+check "all installed skills are catalogued and routable" python3 scripts/validate_skill_routes.py
 check "eval structure is valid" python3 scripts/run_evals.py
 
 # ── Schemas ───────────────────────────────────────────────
 echo ""
 echo "--- Schemas ---"
-for schema in evidence-record ads-record competitor entity-landscape stage-checkpoint research-topic-manifest project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record strategy-plan; do
+for schema in evidence-record ads-record competitor entity-landscape stage-checkpoint research-manifest project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record strategy-plan; do
     check "schemas/$schema.schema.json exists" test -f "schemas/$schema.schema.json"
     check "schemas/$schema.schema.json is valid JSON" python3 -c "import json; json.load(open('schemas/$schema.schema.json'))" 2>/dev/null
 done

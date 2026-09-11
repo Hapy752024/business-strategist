@@ -5,11 +5,11 @@ description: Route business, brand, website, and experiment requests to the smal
 
 # Business Strategist
 
-Use `scripts/route_workflow.py` to make an explicit route decision before loading long references.
+Use `scripts/route_workflow.py` to make an explicit route decision before loading long references. Check dispatch with `--check-skill <selected-skill>` and stop on a nonzero exit; pass `--project <slug>` for a venture with a business track.
 
 Rules:
 
-- Preserve standalone branding: never require business research for a brand or website request.
+- Preserve standalone branding: independent brand or website requests need no business research; venture-linked commitment work must pass the pain-first gate or carry an explicit audited user override.
 - A validated business may offer a brand handoff, but never start branding automatically.
 - Keep research, brand, website, and experiment state in their authoritative manifests.
 - Ask at most one question when ambiguity would materially change the workflow.

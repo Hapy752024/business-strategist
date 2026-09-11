@@ -12,7 +12,7 @@ description: Collect sourced customer pain, workarounds, demand proxies, counter
 ## Workflow
 
 1. Read `references/workflow.md` and `references/provider-policy.md`.
-2. Initialize or reuse `projects/research/topics/<topic-slug>/`.
+2. Initialize or reuse `projects/<topic-slug>/market_research/`.
 3. Run capability lookup and provider doctor when routing matters, then use repository-root scripts.
 4. Inspect plans, raw outputs, evidence, irrelevant records, alerts, and gaps.
 5. On `insufficient_credits`/`billing_required` for a paid provider, pause and ask the user to top up or continue without the source (protocol: `references/provider-policy.md`). If they topped up, re-validate and rerun the provider before interpreting.

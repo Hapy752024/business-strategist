@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "research-topic-manifest.schema.json",
-  "title": "Research Topic Manifest",
+  "$id": "research-manifest.schema.json",
+  "title": "Research Manifest",
   "type": "object",
   "required": ["schema_version", "topic", "topic_slug", "created_at", "updated_at", "current_stage", "stages", "events", "open_blockers", "artifacts"],
   "properties": {

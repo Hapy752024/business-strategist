@@ -26,20 +26,20 @@ Rules:
 - Never delete old iterations unless the user explicitly asks.
 - Tell the user which folder/stage is active and what will happen before the next generation.
 
-Default folder: `projects/brand-projects/<slug>/`.
+Default base dir: `projects/`. Both `scripts/manage-brand-workspace.py` and `scripts/workspace_cli.py create` accept `--project <slug>`, which places the brand workspace at `projects/<slug>/branding` (brand_id = project slug); `workspace_cli.py create` also links the brand track into `projects/<slug>/project-manifest.json` when that controller exists. The old `projects/brand-projects/` root is rejected by a relocation guard.
 
 Use `references/workspace-rules.md` for structure and OS commands.
 
 For manifest-aware operations use `scripts/workspace_cli.py`:
 
 ```bash
-python3 scripts/workspace_cli.py create --name "My Brand"
-python3 scripts/workspace_cli.py resume projects/brand-projects/my-brand
-python3 scripts/workspace_cli.py archive-stage projects/brand-projects/my-brand --stage logo
-python3 scripts/workspace_cli.py record-option projects/brand-projects/my-brand --artifact-id logo-1 --artifact-type logo --stage logo --candidate stages/logo/mark.svg --destination logos/source/mark.svg
-python3 scripts/workspace_cli.py approve-option projects/brand-projects/my-brand --artifact-id logo-1 --approver "user" --notes "Explicitly selected option 1"
-python3 scripts/workspace_cli.py promote projects/brand-projects/my-brand --artifact-id logo-1
-python3 scripts/workspace_cli.py promote projects/brand-projects/my-brand --artifact-id logo-1 --confirm
+python3 scripts/workspace_cli.py create --name "My Brand" --project my-brand
+python3 scripts/workspace_cli.py resume projects/my-brand/branding
+python3 scripts/workspace_cli.py archive-stage projects/my-brand/branding --stage logo
+python3 scripts/workspace_cli.py record-option projects/my-brand/branding --artifact-id logo-1 --artifact-type logo --stage logo --candidate stages/logo/mark.svg --destination logos/source/mark.svg
+python3 scripts/workspace_cli.py approve-option projects/my-brand/branding --artifact-id logo-1 --approver "user" --notes "Explicitly selected option 1"
+python3 scripts/workspace_cli.py promote projects/my-brand/branding --artifact-id logo-1
+python3 scripts/workspace_cli.py promote projects/my-brand/branding --artifact-id logo-1 --confirm
 ```
 
 `promote` is a dry run without `--confirm`. A different existing destination fails closed. Use `--replace-conflict --replacement-approver "<identity>"` only after separate explicit replacement approval; do not infer it from approval of the candidate. Record source artifact IDs for derivatives and supersede prior approvals explicitly.

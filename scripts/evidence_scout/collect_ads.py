@@ -387,8 +387,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--approve-paid", action="store_true", help="Confirm paid-credit spend for apify_ads. Required or apify_ads returns approval_required.")
     parser.add_argument("--apify-actor", default=DEFAULT_APIFY_ACTOR, help=f"Apify actor for the fallback (default {DEFAULT_APIFY_ACTOR}).")
     parser.add_argument("--out-dir", default="")
-    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to projects/research/topics/<topic-slug>.")
-    parser.add_argument("--legacy-output", action="store_true", help="Write to the former projects/research/evidence-scout/ads layout.")
+    parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
+    parser.add_argument("--legacy-output", action="store_true", help="Removed: the projects/research/evidence-scout layout is gone (now projects/_archive, read-only). Use --out-dir for an explicit path.")
     return parser.parse_args()
 
 
@@ -409,7 +409,7 @@ def main() -> int:
         workspace_arg=args.workspace,
         out_dir=args.out_dir,
         legacy_output=args.legacy_output,
-        workspace_subdir="ads/runs",
+        workspace_subdir="market_research/solution_alternatives/ads",
         legacy_subdir="ads",
     )
     if workspace:

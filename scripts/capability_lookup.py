@@ -13,9 +13,19 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "config" / "source-capabilities.json"
-VALIDATION_PATH = ROOT / "projects" / "research" / "evidence-scout" / "api-validation" / "all.summary.json"
-VALIDATION_DIR = ROOT / "projects" / "research" / "evidence-scout" / "api-validation"
-DOCTOR_PATH = ROOT / "projects" / "research" / "evidence-scout" / "provider-doctor" / "doctor.summary.json"
+INFRA_DIR = ROOT / "projects" / "_infra"
+LEGACY_INFRA_DIR = ROOT / "projects" / "research" / "evidence-scout"
+
+
+def _infra_read(*parts: str) -> Path:
+    """Prefer projects/_infra; fall back to the legacy evidence-scout location."""
+    new = INFRA_DIR.joinpath(*parts)
+    return new if new.exists() else LEGACY_INFRA_DIR.joinpath(*parts)
+
+
+VALIDATION_DIR = _infra_read("api-validation")
+VALIDATION_PATH = VALIDATION_DIR / "all.summary.json"
+DOCTOR_PATH = _infra_read("provider-doctor", "doctor.summary.json")
 sys.path.insert(0, str(ROOT / "scripts" / "validate_apis"))
 from readiness import load_latest
 

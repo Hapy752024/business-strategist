@@ -78,8 +78,11 @@ def write_json_atomic(path: Path, value: dict[str, Any], *, expected_revision: i
 
 
 def create_project(slug: str, *, business_workspace: str = "", brand_workspace: str = "") -> Path:
+    raw = slug.strip().lower()
     slug = slugify(slug)
-    if slug in {"research", "brand-projects"}:
+    # Reserved names are checked on the raw input too: slugify strips the
+    # leading underscore, so "_infra" would otherwise become plain "infra".
+    if raw in {"_infra", "_archive"} or slug in {"_infra", "_archive"}:
         raise ValueError(f"reserved project directory: {slug}")
     if not SLUG_RE.fullmatch(slug):
         raise ValueError(f"invalid project slug: {slug}")
@@ -106,14 +109,50 @@ def create_project(slug: str, *, business_workspace: str = "", brand_workspace: 
     return manifest_path
 
 
-def link_project(manifest_path: Path, *, track: str, workspace: str, active: bool = False) -> int:
+def _pain_gate_passed(manifest: dict[str, Any]) -> bool:
+    """Check the linked business track's research manifest for the pain-first gate."""
+    business = manifest.get("business_workspace") or {}
+    raw = business.get("path") if isinstance(business, dict) else ""
+    if not raw:
+        return False
+    candidate = Path(raw)
+    if not candidate.is_absolute():
+        candidate = ROOT / candidate
+    research_manifest = candidate / "manifest.json"
+    if not research_manifest.exists():
+        return False
+    try:
+        data = read_json(research_manifest)
+    except (OSError, json.JSONDecodeError):
+        return False
+    stages = data.get("stages") if isinstance(data, dict) else None
+    gate = stages.get("problem_validation") if isinstance(stages, dict) else None
+    return (isinstance(gate, dict) and gate.get("status") == "passed"
+            and gate.get("gate_result") in ("pass", "conditional_pass"))
+
+
+def link_project(manifest_path: Path, *, track: str, workspace: str, active: bool = False, standalone: bool = False) -> int:
     if track not in {"business", "brand", "website"}:
         raise ValueError("track must be business, brand, or website")
     manifest = read_json(manifest_path)
     entry = _safe_path(workspace, allow_external=True)
     manifest[f"{track}_workspace"] = entry
     links = [link for link in manifest.get("links", []) if link.get("track") != track]
-    links.append({"track": track, "workspace": entry, "linked_at": now_iso()})
+    link: dict[str, Any] = {"track": track, "workspace": entry, "linked_at": now_iso()}
+    if track in {"brand", "website"}:
+        # Pain-first rule: brand/website tracks on a business-linked project
+        # should follow a validated pain gate; standalone tracks are exempt.
+        validated = standalone or _pain_gate_passed(manifest)
+        link["validated"] = validated
+        if not validated:
+            note = (
+                f"{track} track linked before the pain-first gate passed (problem_validation). "
+                "Validate customer segment, journey, and pain points first, or link with --standalone."
+            )
+            blockers = manifest.setdefault("open_blockers", [])
+            if note not in blockers:
+                blockers.append(note)
+    links.append(link)
     manifest["links"] = links
     if active:
         manifest["active_track"] = track
@@ -180,6 +219,7 @@ def main() -> int:
     link.add_argument("--track", required=True)
     link.add_argument("--workspace", required=True)
     link.add_argument("--active", action="store_true")
+    link.add_argument("--standalone", action="store_true", help="Exempt a brand/website link from the pain-first gate check.")
     discover = subparsers.add_parser("discover")
     discover.add_argument("--projects-root", type=Path, default=PROJECTS_ROOT)
     actions = subparsers.add_parser("next-actions")
@@ -189,7 +229,7 @@ def main() -> int:
         result = create_project(args.slug, business_workspace=args.business_workspace, brand_workspace=args.brand_workspace)
         print(json.dumps({"manifest": str(result), "revision": read_json(result)["manifest_revision"]}, indent=2))
     elif args.command == "link":
-        revision = link_project(args.manifest.resolve(), track=args.track, workspace=args.workspace, active=args.active)
+        revision = link_project(args.manifest.resolve(), track=args.track, workspace=args.workspace, active=args.active, standalone=args.standalone)
         print(json.dumps({"manifest": str(args.manifest), "revision": revision}, indent=2))
     elif args.command == "discover":
         print(json.dumps(discover_projects(args.projects_root), indent=2))

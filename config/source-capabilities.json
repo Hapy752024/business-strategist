@@ -3,8 +3,8 @@
   "purpose": "Compact agent-facing catalog of business-strategist research data sources, routing rules, quality limits, and validation hooks.",
   "default_lookup": "python3 scripts/capability_lookup.py --question '<research need>' --compact",
   "runtime_truth": [
-    "projects/research/evidence-scout/api-validation/all.summary.json",
-    "projects/research/evidence-scout/provider-doctor/doctor.summary.json"
+    "projects/_infra/api-validation/all.summary.json",
+    "projects/_infra/provider-doctor/doctor.summary.json"
   ],
   "capabilities": [
     {
@@ -372,7 +372,7 @@
       ],
       "approval_required": false,
       "status_check": "python3 scripts/validate_apis/validate_meta.py",
-      "example": "python3 scripts/evidence_scout/collect_ads.py --topic '<topic>' --competitors-json 'projects/research/topics/<topic>/competitors/runs/<run>/competitors.json' --countries DE,AT,CH --limit 20",
+      "example": "python3 scripts/evidence_scout/collect_ads.py --topic '<topic>' --competitors-json 'projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json' --countries DE,AT,CH --limit 20",
       "caveat": "Requires one-time Meta developer app + government ID verification; token expires ~60 days (ads_read scope). Commercial ads EU/UK/EEA-only (DSA), ~1-year retention, coarse spend ranges, no engagement metrics. Ad longevity signals what keeps running, not proven performance."
     },
     {
@@ -671,7 +671,7 @@
         "SPOTIFY_CLIENT_SECRET"
       ],
       "status_check": "python3 scripts/podcast_feed_fetch.py search --query 'test' --provider apple --limit 1",
-      "example": "python3 scripts/podcast_feed_fetch.py search --query 'insurance marketing' --provider all --limit 10 --output projects/research/topics/<slug>/raw/podcast-search.json && python3 scripts/podcast_feed_fetch.py episodes --feed <feed_url> --company <term>",
+      "example": "python3 scripts/podcast_feed_fetch.py search --query 'insurance marketing' --provider all --limit 10 --output projects/<slug>/market_research/raw/podcast-search.json && python3 scripts/podcast_feed_fetch.py episodes --feed <feed_url> --company <term>",
       "caveat": "Shows are opinions of practitioners, not market data. Separate what operators did from what they conclude; prefer patterns repeated across independent operators."
     },
     {

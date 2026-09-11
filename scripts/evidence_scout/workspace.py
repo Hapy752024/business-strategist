@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Durable topic-workspace and stage-manifest helpers."""
+"""Durable project-workspace and stage-manifest helpers.
+
+Layout: each venture is ``projects/<project-slug>/`` with workstream folders
+(``market_research/``, ``strategy/``, ``branding/``, ``marketing/``,
+``web-site/``, ``digital-assets/``). The research stage machine lives in
+``market_research/manifest.json``; artifact paths are project-root-relative.
+"""
 
 from __future__ import annotations
 
@@ -13,7 +19,10 @@ import fcntl
 
 
 ROOT = Path(__file__).resolve().parents[2]
-TEMPLATE_DIR = ROOT / "templates" / "research-topic"
+TEMPLATE_DIR = ROOT / "templates" / "project"
+RESEARCH_DIR = "market_research"
+RESEARCH_MANIFEST_REL = Path(RESEARCH_DIR) / "manifest.json"
+RESEARCH_LOCK_REL = Path(RESEARCH_DIR) / "manifest.lock"
 STAGES = (
     "market_discovery",
     "intake",
@@ -37,6 +46,43 @@ STAGES = (
     "final_decision",
 )
 
+# Pain-first rule: customer segment -> customer journey -> validated pain
+# points come before any commitment work. ``problem_validation`` is the pain
+# gate; it may only pass with web-searched evidence artifacts filed under
+# market_research/pain_points/. Commitment stages require that gate.
+PAIN_GATE_STAGE = "problem_validation"
+PAIN_GATE_DOWNSTREAM = frozenset(
+    {
+        "business_model_draft",
+        "offer_validation",
+        "mvp_or_pilot",
+        "first_customers",
+        "channel_validation",
+        "synthesis",
+    }
+)
+
+PROJECT_SUBDIRS = (
+    "market_research/customer_segments",
+    "market_research/customer_journey",
+    "market_research/pain_points/runs",
+    "market_research/pain_point_sizing",
+    "market_research/solution_alternatives/runs",
+    "market_research/solution_alternatives/marketing",
+    "market_research/solution_alternatives/ads",
+    "market_research/solution_alternatives/landscape",
+    "market_research/market_discovery/runs",
+    "market_research/interviews",
+    "market_research/deep_dives",
+    "strategy/intake",
+    "strategy/canvases",
+    "strategy/decisions",
+    "strategy/gtm",
+    "strategy/playbooks/runs",
+    "strategy/risks",
+    "strategy/experiments",
+)
+
 
 def now_iso() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
@@ -44,7 +90,7 @@ def now_iso() -> str:
 
 def slugify(value: str) -> str:
     safe = "".join(char.lower() if char.isalnum() else "-" for char in value)
-    return "-".join(part for part in safe.split("-") if part)[:80] or "research-topic"
+    return "-".join(part for part in safe.split("-") if part)[:80] or "project"
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -57,7 +103,8 @@ def write_json(path: Path, value: Any) -> None:
 @contextmanager
 def manifest_lock(workspace: Path):
     """Serialize stage transitions so independent agents cannot overwrite them."""
-    lock_path = workspace / "manifest.lock"
+    lock_path = workspace / RESEARCH_LOCK_REL
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
     with lock_path.open("a+", encoding="utf-8") as handle:
         fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
         try:
@@ -76,60 +123,67 @@ def _render_template(source: Path, destination: Path, replacements: dict[str, st
     destination.write_text(text, encoding="utf-8")
 
 
-def create_topic_workspace(topic: str, workspace: str = "", customer_segment: str = "") -> Path:
-    path = Path(workspace).expanduser() if workspace else ROOT / "projects" / "research" / "topics" / slugify(topic)
+def _project_workspace_module() -> Any:
+    """Load scripts/project_workspace.py regardless of sys.path."""
+    import importlib.util
+
+    source = ROOT / "scripts" / "project_workspace.py"
+    spec = importlib.util.spec_from_file_location("project_workspace", source)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    return module
+
+
+def create_project_workspace(project: str, workspace: str = "", customer_segment: str = "") -> Path:
+    projects_root = ROOT / "projects"
+    path = Path(workspace).expanduser() if workspace else projects_root / slugify(project)
     if not path.is_absolute():
         path = ROOT / path
-    for old_root in (ROOT / "research", ROOT / "brand-projects"):
+    old_roots = (
+        (ROOT / "research", "projects/<slug>"),
+        (ROOT / "brand-projects", "projects/<slug>/branding"),
+        (ROOT / "projects" / "research", "projects/<slug>/market_research"),
+        (ROOT / "projects" / "brand-projects", "projects/<slug>/branding"),
+    )
+    for old_root, hint in old_roots:
         if path.resolve().is_relative_to(old_root.resolve()):
-            moved = ROOT / "projects" / path.resolve().relative_to(ROOT.resolve())
-            raise ValueError(f"Workspace relocated; use {moved}. Old roots are not created.")
+            raise ValueError(f"Workspace relocated; use {hint}. Old roots are not created.")
+    for reserved in (projects_root / "_infra", projects_root / "_archive"):
+        if path.resolve().is_relative_to(reserved.resolve()):
+            raise ValueError(f"{reserved.name} is reserved for shared infrastructure/archive, not project workspaces.")
     path.mkdir(parents=True, exist_ok=True)
-    for relative in (
-        "intake",
-        "canvases",
-        "market-discovery/runs",
-        "evidence/runs",
-        "competitors/runs",
-        "competitors/marketing",
-        "customer-discovery",
-        "deep-dives",
-        "experiments",
-        "go-to-market",
-        "decisions",
-        "playbooks",
-        "reviews",
-    ):
+    for relative in PROJECT_SUBDIRS:
         (path / relative).mkdir(parents=True, exist_ok=True)
 
     replacements = {
-        "TOPIC": topic,
-        "TOPIC_SLUG": slugify(topic),
+        "TOPIC": project,
+        "TOPIC_SLUG": slugify(project),
         "CUSTOMER_SEGMENT": customer_segment or "[UNRESOLVED]",
         "CREATED_AT": now_iso(),
     }
     for source_name, destination in (
         ("README.md", path / "README.md"),
-        ("startup-thesis.md", path / "intake" / "startup-thesis.md"),
-        ("business-model-canvas.md", path / "canvases" / "business-model-canvas.md"),
-        ("value-proposition-canvas.md", path / "canvases" / f"value-proposition-{slugify(customer_segment or 'segment')}.md"),
+        ("startup-thesis.md", path / "strategy" / "intake" / "startup-thesis.md"),
+        ("business-model-canvas.md", path / "strategy" / "canvases" / "business-model-canvas.md"),
+        ("value-proposition-canvas.md", path / "strategy" / "canvases" / f"value-proposition-{slugify(customer_segment or 'segment')}.md"),
     ):
         _render_template(TEMPLATE_DIR / source_name, destination, replacements)
 
-    manifest_path = path / "manifest.json"
+    manifest_path = path / RESEARCH_MANIFEST_REL
     if not manifest_path.exists():
         created = now_iso()
         manifest = {
             "schema_version": "1.0",
             "manifest_revision": 1,
-            "topic": topic,
-            "topic_slug": slugify(topic),
+            "topic": project,
+            "topic_slug": slugify(project),
             "created_at": created,
             "updated_at": created,
             "current_stage": "intake",
             "gate_result": "not_run",
             "blocked_reason": "",
-            "next_action": "Complete the startup thesis and customer-segment hypothesis.",
+            "next_action": "Complete the startup thesis, then pin the customer segment, journey, and pain points with web-searched evidence (pain-first rule).",
             "stages": {
                 stage: {
                     "stage": stage,
@@ -140,22 +194,38 @@ def create_topic_workspace(topic: str, workspace: str = "", customer_segment: st
                 }
                 for stage in STAGES
             },
-            "events": [{"ts": created, "event": "topic_workspace_created"}],
+            "events": [{"ts": created, "event": "project_workspace_created"}],
             "open_blockers": [],
             "artifacts": [
                 "README.md",
-                "intake/startup-thesis.md",
-                "canvases/business-model-canvas.md",
-                f"canvases/value-proposition-{slugify(customer_segment or 'segment')}.md",
+                "strategy/intake/startup-thesis.md",
+                "strategy/canvases/business-model-canvas.md",
+                f"strategy/canvases/value-proposition-{slugify(customer_segment or 'segment')}.md",
             ],
         }
         manifest["stages"]["intake"]["status"] = "in_progress"
         write_json(manifest_path, manifest)
+
+    # Create/link the controller manifest for real project directories.
+    controller_script = ROOT / "scripts" / "project_workspace.py"
+    if controller_script.exists() and path.resolve().parent == projects_root.resolve():
+        project_workspace = _project_workspace_module()
+        controller = project_workspace.create_project(path.name)
+        project_workspace.link_project(
+            controller,
+            track="business",
+            workspace=f"projects/{path.name}/{RESEARCH_DIR}",
+            active=True,
+        )
     return path
 
 
+# Back-compat alias: older scripts and docs still say "topic workspace".
+create_topic_workspace = create_project_workspace
+
+
 def read_manifest(workspace: Path) -> dict[str, Any]:
-    return json.loads((workspace / "manifest.json").read_text(encoding="utf-8"))
+    return json.loads((workspace / RESEARCH_MANIFEST_REL).read_text(encoding="utf-8"))
 
 
 def update_stage(
@@ -168,6 +238,7 @@ def update_stage(
     provider_failures: list[dict[str, str]] | None = None,
     open_gaps: list[str] | None = None,
     next_action: str = "",
+    override: str = "",
 ) -> None:
     if stage not in STAGES:
         raise ValueError(f"Unsupported stage: {stage}")
@@ -177,8 +248,9 @@ def update_stage(
         raise ValueError(f"Unsupported gate result: {gate_result}")
     if status == "passed" and gate_result not in {"pass", "conditional_pass"}:
         raise ValueError("Passed stages require a pass or conditional_pass gate result")
-    if gate_result == "pass" and status != "passed":
+    if (gate_result == "pass" or (stage == PAIN_GATE_STAGE and gate_result == "conditional_pass")) and status != "passed":
         raise ValueError("A passing gate result requires status='passed'")
+    override = override.strip()
     relative_artifacts: list[str] = []
     if status == "passed" and not artifacts:
         raise ValueError("Passed stages require artifacts")
@@ -191,8 +263,29 @@ def update_stage(
             # Explicit --out paths predate topic workspaces and remain supported.
             # Existence is still required for a passed stage.
             relative_artifacts.append(str(artifact.resolve()))
+    if stage == PAIN_GATE_STAGE and status == "passed" and not override:
+        # Pain-first rule: the pain gate only passes with web-searched pain
+        # evidence filed under market_research/pain_points/.
+        evidence_root = workspace.resolve() / "market_research" / "pain_points"
+        if not any(
+            artifact.is_file() and artifact.stat().st_size > 0
+            and artifact.resolve().is_relative_to(evidence_root)
+            for artifact in artifacts or []
+        ):
+            raise ValueError(
+                "problem_validation may only pass with pain-point evidence artifacts "
+                "under market_research/pain_points/ (or pass override= with a recorded reason)."
+            )
     with manifest_lock(workspace):
         manifest = read_manifest(workspace)
+        if stage in PAIN_GATE_DOWNSTREAM and status in {"in_progress", "passed"} and not override:
+            gate = manifest.get("stages", {}).get(PAIN_GATE_STAGE, {})
+            if gate.get("status") != "passed" or gate.get("gate_result") not in {"pass", "conditional_pass"}:
+                raise ValueError(
+                    f"Stage '{stage}' requires the pain-first gate: pass '{PAIN_GATE_STAGE}' with "
+                    "web-searched evidence under market_research/pain_points/ first "
+                    "(or pass override= with a recorded reason)."
+                )
         if stage == "final_decision" and status == "passed":
             stages = manifest.get("stages", {})
             if not any(stages.get(name, {}).get("gate_result") == "pass" for name in ("synthesis", "opportunity_risk", "market_discovery")):
@@ -223,8 +316,10 @@ def update_stage(
         manifest["gate_result"] = gate_result
         manifest["next_action"] = next_action
         manifest["events"].append({"ts": timestamp, "event": f"stage:{stage}:{status}:{gate_result}"})
+        if override:
+            manifest["events"].append({"ts": timestamp, "event": f"gate_override:{stage}:{override}"})
         manifest["artifacts"] = sorted(set(manifest.get("artifacts", []) + relative_artifacts))
-        write_json(workspace / "manifest.json", manifest)
+        write_json(workspace / RESEARCH_MANIFEST_REL, manifest)
 
 
 def create_run_manifest(
@@ -324,26 +419,28 @@ def update_run_manifest(
 
 
 def find_existing_workspaces() -> list[dict[str, Any]]:
-    """Return summary of existing topic workspaces for the 'continue or new' prompt."""
+    """Return summary of existing project workspaces for the 'continue or new' prompt."""
     workspaces: list[dict[str, Any]] = []
-    topics_dir = ROOT / "projects" / "research" / "topics"
-    if not topics_dir.exists():
+    projects_root = ROOT / "projects"
+    if not projects_root.exists():
         return workspaces
-    for manifest_path in sorted(topics_dir.glob("*/manifest.json")):
+    for manifest_path in sorted(projects_root.glob(f"*/{RESEARCH_DIR}/manifest.json")):
         try:
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            workspaces.append(
-                {
-                    "slug": manifest_path.parent.name,
-                    "path": str(manifest_path.parent),
-                    "topic": manifest.get("topic", ""),
-                    "current_stage": manifest.get("current_stage", "unknown"),
-                    "updated_at": manifest.get("updated_at", ""),
-                    "next_action": manifest.get("next_action", ""),
-                    "open_blockers": manifest.get("open_blockers", []),
-                    "gate_result": manifest.get("gate_result", "not_run"),
-                }
-            )
+            project_manifest = manifest_path.parent.parent / "project-manifest.json"
+            entry: dict[str, Any] = {
+                "slug": manifest_path.parent.parent.name,
+                "path": str(manifest_path.parent.parent),
+                "topic": manifest.get("topic", ""),
+                "current_stage": manifest.get("current_stage", "unknown"),
+                "updated_at": manifest.get("updated_at", ""),
+                "next_action": manifest.get("next_action", ""),
+                "open_blockers": manifest.get("open_blockers", []),
+                "gate_result": manifest.get("gate_result", "not_run"),
+            }
+            if project_manifest.exists():
+                entry["project_manifest"] = str(project_manifest)
+            workspaces.append(entry)
         except (json.JSONDecodeError, OSError):
             continue
     return workspaces
@@ -413,7 +510,7 @@ def resolve_run_dir(
     out_dir: str,
     legacy_output: bool,
     workspace_subdir: str,
-    legacy_subdir: str,
+    legacy_subdir: str = "",
     customer_segment: str = "",
 ) -> tuple[Path, Path | None]:
     timestamp = time.strftime("%Y%m%d-%H%M%S", time.gmtime())
@@ -421,6 +518,9 @@ def resolve_run_dir(
     if out_dir:
         return Path(out_dir), None
     if legacy_output:
-        return ROOT / "projects" / "research" / "evidence-scout" / legacy_subdir / run_name, None
-    workspace = create_topic_workspace(topic, workspace_arg, customer_segment)
+        raise ValueError(
+            "--legacy-output layout removed: projects/research/evidence-scout is now "
+            "projects/_archive (read-only). Use --out-dir for an explicit path."
+        )
+    workspace = create_project_workspace(topic, workspace_arg, customer_segment)
     return workspace / workspace_subdir / run_name, workspace

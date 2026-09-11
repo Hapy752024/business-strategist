@@ -30,7 +30,7 @@ python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "
 
 ```bash
 # Known competitors (free official Meta Ad Library; EU/UK/EEA commercial ads only)
-python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --countries DE,AT,CH --limit 20
+python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json" --countries DE,AT,CH --limit 20
 
 # Keyword mode — discover WHO advertises
 python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --keywords "<keyword 1>,<keyword 2>" --countries DE --limit 30
@@ -95,10 +95,10 @@ python3 scripts/evidence_scout/discover_competitors.py --topic "<topic>" --custo
 ## Competitor Marketing Analysis
 
 ```bash
-python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --limit 10
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>" --competitors-json "projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json" --limit 10
 
 # Analyze only one lane
-python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json" --lane similar_company --limit 5
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<topic>" --competitors-json "projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json" --lane similar_company --limit 5
 ```
 
 ## Lane-aware landscape artifacts
@@ -118,13 +118,13 @@ python3 scripts/evidence_scout/research_founder_playbooks.py --topic "<topic>" -
 ## Interview Kit (interview-bridge)
 
 ```bash
-python3 scripts/evidence_scout/build_interview_kit.py --run-dir "projects/research/topics/<topic>/evidence/runs/<run>" --limit 8
+python3 scripts/evidence_scout/build_interview_kit.py --run-dir "projects/<topic>/market_research/pain_points/runs/<run>" --limit 8
 ```
 
 ## Whitespace Matrix
 
 ```bash
-python3 scripts/evidence_scout/build_whitespace_matrix.py --topic "<topic>" --evidence-jsonl "projects/research/topics/<topic>/evidence/runs/<run>/evidence.jsonl" --competitors-json "projects/research/topics/<topic>/competitors/runs/<run>/competitors.json"
+python3 scripts/evidence_scout/build_whitespace_matrix.py --topic "<topic>" --evidence-jsonl "projects/<topic>/market_research/pain_points/runs/<run>/evidence.jsonl" --competitors-json "projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json"
 ```
 
 ## Infrastructure
@@ -153,10 +153,10 @@ python3 scripts/evidence_scout/provider_doctor.py --json
 bash scripts/validate_setup.sh
 ```
 
-### Initialize topic workspace
+### Initialize project workspace
 
 ```bash
-python3 scripts/evidence_scout/init_topic.py --topic "<topic>" --customer-segment "<segment>"
+python3 scripts/evidence_scout/init_project.py --project "<project>" --customer-segment "<segment>"
 ```
 # Strategy execution review
 
@@ -169,3 +169,10 @@ python3 scripts/strategy_review.py weekly-review --plan <strategy-plan.json> --b
 ```
 
 Freeze before collecting results. Baseline creation refuses overwrite. Review rejects changed experiment/KPI definitions; preserve the baseline and start a new experiment revision when rules change. Numeric observations use the numerator/denominator field names. For scoped KPIs, include `_metadata` keyed by KPI name with matching `window`, `currency`, and/or `cohort`; cohort observations also require `mature: true`. Missing, invalid, mismatched, or immature observations return `incomplete`, never success. Commitments may include `completed_at`; uncompleted commitments are reported as pending or overdue. The report retains the supplied strategic verdict for founder review; it does not infer a business verdict from a ratio alone.
+
+
+## Bounded evidence collection
+
+`collect.py` now defaults to `--max-http-requests 100` for calls through the shared HTTP helper. Reaching the cap stops later providers, preserves collected records, marks the run blocked, and exits 2. `summary.json` includes `request_budget`, `collection_complete`, and structured `remaining_tasks`; `report.md` lists unfinished provider/quality work. Resolve these tasks before claiming complete coverage. This limit excludes SDK/CLI traffic and implicit redirects, and is not a dollar or wall-clock budget.
+
+Identical successful GETs are reused only when the response explicitly supplies a positive HTTP `max-age`, capped at 60 seconds and adjusted for `Age`. Credentials and headers are part of the in-memory cache identity. POSTs, failures and non-cacheable responses stay live. The bounded cache is cleared at run end and is never written to disk. Use `--fresh-http` to disable reuse. No automatic retries or cross-run cache were introduced.

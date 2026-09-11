@@ -55,15 +55,24 @@ def test_distinct_requested_workflows_need_resolution():
 def test_research_default_and_old_root_rejection(tmp_path, monkeypatch):
     monkeypatch.setattr(workspace, "ROOT", tmp_path)
     root = workspace.create_topic_workspace("Scope test")
-    assert root == tmp_path / "projects/research/topics/scope-test"
+    assert root == tmp_path / "projects" / "scope-test"
+    assert (root / "market_research" / "manifest.json").exists()
     assert workspace.create_topic_workspace("Scope test") == root
     assert workspace.find_existing_workspaces()[0]["path"] == str(root)
     with pytest.raises(ValueError, match="relocated"):
         workspace.create_topic_workspace("Old", "research/topics/old")
+    with pytest.raises(ValueError, match="relocated"):
+        workspace.create_topic_workspace("Old", "projects/research/topics/old")
+    with pytest.raises(ValueError, match="relocated"):
+        workspace.create_topic_workspace("Old", "projects/brand-projects/old")
+    with pytest.raises(ValueError, match="reserved"):
+        workspace.create_topic_workspace("Old", "projects/_infra/thing")
+    with pytest.raises(ValueError, match="reserved"):
+        workspace.create_topic_workspace("Old", "projects/_archive/thing")
     assert not (tmp_path / "research").exists()
 
 
-@pytest.mark.parametrize("slug", ["research", "brand-projects"])
+@pytest.mark.parametrize("slug", ["_infra", "_archive"])
 def test_reserved_controller_names(slug):
     with pytest.raises(ValueError, match="reserved"):
         project_workspace.create_project(slug)

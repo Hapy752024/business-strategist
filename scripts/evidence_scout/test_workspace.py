@@ -30,9 +30,9 @@ class WorkspaceTests(unittest.TestCase):
                 self.assertTrue((workspace / target).exists(), target)
             self.assertEqual([p.name for p in workspace.glob("*.md")], ["README.md"])
             readme.write_text("# Current decision\nTest quotes before launch.\n")
-            evidence = workspace / "evidence" / "frozen.jsonl"
+            evidence = workspace / "market_research" / "pain_points" / "frozen.jsonl"
             evidence.write_bytes(b'{"evidence_id":"fixture"}\n')
-            protected = [readme, evidence, workspace / "manifest.json"]
+            protected = [readme, evidence, workspace / "market_research" / "manifest.json"]
             before = {p: p.read_bytes() for p in protected}
             create_topic_workspace("Repair service", temporary, "local homeowners")
             self.assertEqual(before, {p: p.read_bytes() for p in protected})
@@ -41,20 +41,25 @@ class WorkspaceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             workspace = create_topic_workspace("Accounting document SaaS", temporary, "small accounting firms")
             expected = [
-                "manifest.json",
+                "market_research/manifest.json",
                 "README.md",
-                "intake/startup-thesis.md",
-                "deep-dives",
-                "canvases/business-model-canvas.md",
-                "canvases/value-proposition-small-accounting-firms.md",
-                "market-discovery/runs",
+                "strategy/intake/startup-thesis.md",
+                "market_research/deep_dives",
+                "market_research/customer_segments",
+                "market_research/customer_journey",
+                "market_research/pain_points/runs",
+                "market_research/solution_alternatives/runs",
+                "strategy/canvases/business-model-canvas.md",
+                "strategy/canvases/value-proposition-small-accounting-firms.md",
+                "market_research/market_discovery/runs",
             ]
             for relative in expected:
                 self.assertTrue((workspace / relative).exists(), relative)
             readme = (workspace / "README.md").read_text(encoding="utf-8")
-            thesis = (workspace / "intake" / "startup-thesis.md").read_text(encoding="utf-8")
+            thesis = (workspace / "strategy" / "intake" / "startup-thesis.md").read_text(encoding="utf-8")
             self.assertIn("Current recommendation", readme)
             self.assertIn("Acquisition and relationship feasibility", readme)
+            self.assertIn("pain-first", readme)
             self.assertIn("Founder decision context", thesis)
             update_stage(
                 workspace,
@@ -65,7 +70,7 @@ class WorkspaceTests(unittest.TestCase):
                 open_gaps=["payment evidence missing"],
                 next_action="Run interviews",
             )
-            manifest = json.loads((workspace / "manifest.json").read_text(encoding="utf-8"))
+            manifest = json.loads((workspace / "market_research" / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(manifest["current_stage"], "evidence_collection")
             self.assertEqual(manifest["stages"]["evidence_collection"]["gate_result"], "conditional_pass")
             self.assertIn("README.md", manifest["artifacts"])
@@ -93,11 +98,20 @@ class WorkspaceTests(unittest.TestCase):
             workspace_arg="",
             out_dir="/tmp/explicit-evidence-output",
             legacy_output=False,
-            workspace_subdir="evidence/runs",
-            legacy_subdir="runs",
+            workspace_subdir="market_research/pain_points/runs",
         )
         self.assertEqual(run_dir, Path("/tmp/explicit-evidence-output"))
         self.assertIsNone(workspace)
+
+    def test_legacy_output_layout_removed(self) -> None:
+        with self.assertRaisesRegex(ValueError, "legacy-output layout removed"):
+            resolve_run_dir(
+                topic="Example",
+                workspace_arg="",
+                out_dir="",
+                legacy_output=True,
+                workspace_subdir="market_research/pain_points/runs",
+            )
 
     def test_hginvestor_firecrawl_key_is_canonical(self) -> None:
         previous_hg = os.environ.get("FIRECRAWL_API_KEY_HGINVESTOR")

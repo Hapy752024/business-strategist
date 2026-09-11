@@ -6,14 +6,16 @@ This repo contains a portable business-idea validation skill set for Claude Code
 
 Be direct and truthful. Do not validate the founder's idea by default. Separate what users actually said or did from interpretation. Push back on vague segments, weak pain, missing buyers, and unsupported demand claims.
 
+**Pain-first rule.** For any venture, the first deliverables are the customer segment, the customer journey, and the pain points — detected or validated with web-searched evidence — even when the user arrives with a finished solution. A core value of this agent is finding and validating pain points for a segment, topic, or journey by searching the web. File these under `market_research/customer_segments/`, `market_research/customer_journey/`, and `market_research/pain_points/` (evidence runs under `pain_points/runs/`). Commitment work (business model, offer, GTM, brand, website) stays gated until the `problem_validation` stage passes with pain-point evidence, or the user explicitly overrides (recorded in the manifest's events). Narrow execution requests still bypass via `references/task-scope.md`.
+
 **Evidence first — always search before answering.** Never answer market, audience, competitor, platform, pricing, or marketing-channel questions from training memory. Before answering, run at least one retrieval (web search via `scripts/serper_fetch.py`, social/community source, or a provider from `config/source-capabilities.json` — podcast, trends, and social sources included). End research answers with a source list with dates. If a retrieval route fails, state what could not be checked instead of filling the gap from memory.
 
 ## Workspace Lifecycle — Always Check First
 
-Before starting ANY research workflow, check for existing topic workspaces:
+Before starting ANY research workflow, check for existing project workspaces:
 
 ```bash
-ls -d projects/research/topics/*/manifest.json 2>/dev/null
+ls -d projects/*/market_research/manifest.json 2>/dev/null
 ```
 
 If the conversation already selects a workspace or clearly requests continuation, read that manifest and resume without asking again. Otherwise, if existing workspaces are found, present them as numbered options and ask exactly one question:
@@ -21,13 +23,13 @@ If the conversation already selects a workspace or clearly requests continuation
 ```
 I found existing research workspaces:
 
-1. projects/research/topics/<topic-slug-1>/ — stage: <current_stage>, last updated: <date>
-2. projects/research/topics/<topic-slug-2>/ — stage: <current_stage>, last updated: <date>
+1. projects/<project-slug-1>/ — stage: <current_stage>, last updated: <date>
+2. projects/<project-slug-2>/ — stage: <current_stage>, last updated: <date>
 
 Which path: continue [1], continue [2], or start new research?
 ```
 
-Read each manifest's `current_stage`, `updated_at`, `next_action`, and `open_blockers` before presenting options. Use `python3 -c "import json; m=json.load(open('projects/research/topics/<slug>/manifest.json')); print(m['current_stage'], m['updated_at'], m['next_action'])"` to extract key fields.
+Read each manifest's `current_stage`, `updated_at`, `next_action`, and `open_blockers` before presenting options. Use `python3 -c "import json; m=json.load(open('projects/<slug>/market_research/manifest.json')); print(m['current_stage'], m['updated_at'], m['next_action'])"` to extract key fields.
 
 If no workspaces exist, proceed directly to the workflow below. A matching topic without a clear continuation/new-run instruction needs one choice before creating anything new.
 
@@ -63,15 +65,17 @@ Core sequence for validating a founder-chosen startup idea:
 4. Use `competitive-landscape-builder` to separate same-market competitors, similar companies, and capability references, then analyze offers, prices, social usage, and positioning.
 5. Use `opportunity-risk-designer` to rank risks and design low-cost tests. Only the competitive-market lane may support competitive whitespace claims.
 
+Before specialist dispatch, run `scripts/route_workflow.py` with the understood `--intent`, `--task-scope`, and `--check-skill <selected-skill>`; include `--project <slug>` for a venture with a business track. Exit 2 means stop dispatch (blocked gate or invalid selection). For explicit specialist requests without a phrase route, use that skill's name as its route ID in `config/workflow-routes.json`. Empty `match` lists are intentional internal-stage routes, not orphan skills. Routing does not waive specialist prerequisites or authorize side effects. Claude skill-tool and direct slash dispatch use the checked envelope in `references/runtime-routing.md`; the caller supplies its metadata from known user scope. `scripts/validate_skill_routes.py` checks catalog/disk parity and route reachability in CI. These checks enforce the CLI contract and configured Claude skill-dispatch boundary; arbitrary shell/file access is not sandboxed by the router.
+
 Situational capabilities: select from the installed skill descriptions and `config/workflow-routes.json`; use `.agents/skills/business-strategist/references/routing.md` only when ownership is unclear. Load the selected specialist, not the entire catalog of workflows. `config/skill-catalog.json` lists prerequisites, outputs and side-effect boundaries. Brand, website, marketing, operations and monitoring requests retain their own scope; they do not automatically start business validation.
 
-Brand requests do not require market research. After a user explicitly selects a validated business handoff, branding may reuse its segment and positioning snapshot. A completed business validation never starts branding automatically.
+Brand requests do not require market research when they are standalone. After a user explicitly selects a validated business handoff, branding may reuse its segment and positioning snapshot. A completed business validation never starts branding automatically. When a brand, website, GTM, marketing-strategy, positioning, or operations request targets a venture with a business track, route it with `scripts/route_workflow.py --project <slug>`: the pain-first gate returns `gate_blocked` with `first_skill: idea-grill` until `problem_validation` has passed (or the user records an explicit `--override-gate`).
 
 ## Commands
 
 Use the selected skill's `references/workflow.md` and `references/commands.md`; do not load unrelated command references. Common entry points:
 
-- Topic init: `python3 scripts/evidence_scout/init_topic.py --topic "<topic>" --customer-segment "<segment>"`
+- Topic init: `python3 scripts/evidence_scout/init_project.py --project "<project>" --customer-segment "<segment>"`
 - Market discovery: `python3 scripts/evidence_scout/discover_market_problems.py --topic "<market>" --focus "<hunch>" --collect`
 - Provider validation: `python3 scripts/validate_apis/run_all.py`
 - Route lookup: `python3 scripts/capability_lookup.py --question "<need>" --compact`
@@ -96,23 +100,23 @@ Founder/operator source discovery: `scripts/podcast_feed_fetch.py search|episode
 
 ## Outputs
 
-New runs default to `projects/research/topics/<topic-slug>/`; `--legacy-output` preserves the former global layout.
+Each venture is one project folder: `projects/<project-slug>/`, with the research stage machine at `market_research/manifest.json` and workstream folders `market_research/`, `strategy/`, `branding/`, `marketing/`, `web-site/`, `digital-assets/`. Shared provider-validation state lives in `projects/_infra/`; legacy pre-restructure runs are read-only under `projects/_archive/`. `--legacy-output` is removed — use `--out-dir` for an explicit path.
 
-Maintain `README.md` as the one current executive narrative at the topic root, with supporting narratives under `deep-dives/`. Update its affected sections after substantive follow-ups; do not create another current recommendation memo. Follow `references/workspace-lifecycle.md` for history, links, state consistency and explicit migrations. Existing raw/run artifacts keep their current paths.
+Maintain `README.md` as the one current executive narrative at the project root, with supporting narratives under `market_research/deep_dives/`. Update its affected sections after substantive follow-ups; do not create another current recommendation memo. Follow `references/workspace-lifecycle.md` for history, links, state consistency and explicit migrations. Existing raw/run artifacts keep their current paths.
 
-- `raw/`: redacted provider responses.
+- `raw/`: redacted provider responses (inside the run that produced them).
 - `evidence.jsonl`: normalized evidence records.
 - `summary.json`: provider statuses and output paths.
 - `report.md`: human-readable evidence summary.
-- `market-discovery/runs/<run>/market-discovery-report.md`: evidence-backed candidate problems and segments.
-- `competitors/runs/<run>/competitor_plan.md` and `competitors/marketing/<run>/marketing_plan.md`: script-generated audit trails (objective, scope, questions, limits) for competitor steps.
-- `interview/interview-{screener,guide,tracker}.md` (via `build_interview_kit.py`): primary-research kit when evidence is mostly weak/medium.
-- `risks/whitespace-matrix.md` (via `build_whitespace_matrix.py`): pains × competitors coverage scaffold for candidate white spots.
+- `market_research/market_discovery/runs/<run>/market-discovery-report.md`: evidence-backed candidate problems and segments.
+- `market_research/solution_alternatives/runs/<run>/competitor_plan.md` and `market_research/solution_alternatives/marketing/<run>/marketing_plan.md`: script-generated audit trails (objective, scope, questions, limits) for competitor steps.
+- `market_research/interviews/interview-{screener,guide,tracker}.md` (via `build_interview_kit.py`): primary-research kit when evidence is mostly weak/medium.
+- `market_research/solution_alternatives/whitespace-matrix.md` (via `build_whitespace_matrix.py`): pains × competitors coverage scaffold for candidate white spots.
 
 ## Infrastructure
 
 - **Agent modes:** `agent-modes/` — mode-specific tool permissions, required checks, and stop conditions for `research`, `source-audit`, and `coding`.
-- **Schemas:** `schemas/` — JSON schemas for evidence records, competitor data, stage checkpoints, and topic manifests.
+- **Schemas:** `schemas/` — JSON schemas for evidence records, competitor data, stage checkpoints, and project/research manifests.
 - **Setup validation:** `bash scripts/validate_setup.sh` — checks .gitignore, .env.example, settings files, skill structure, symlinks, and schema validity.
 - **Harness config:** `.claude/settings.json` (shared permission guardrails), `.claude/settings.local.json` (personal overrides, gitignored).
 - **Implementation plan:** `docs/implementation-plan.md` — full architecture and phase details.

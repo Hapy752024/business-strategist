@@ -1,0 +1,468 @@
+[
+  {
+    "slug": "orvieto",
+    "name": "Orvieto",
+    "province": "Terni (TR)",
+    "region": "Umbria",
+    "pattern": "umbria-lazio-hill-towns",
+    "facts": {
+      "population": {"value": 19196, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/umbria/tr/orvieto", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 500, "high": 2400, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.066 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/umbria/tr/orvieto", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 380, "source_label": "immobiliare.it mercato Orvieto: affitto medio 7,57 €/m²/mese (feb 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.immobiliare.it/mercato-immobiliare/umbria/orvieto/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Umbria not among the 8 regions; Orvieto not on SISMA 2009/2016 lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Santa Maria della Stella", "town": "Orvieto", "drive_min": 10, "source_label": "ALU Umbria — rete ospedaliera (determina N277452, atti.alumbria.it)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Rome Fiumicino (FCO)", "drive_min": 90, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Hill-top at ~325 m: warm summers, cool damp winters with fog in the valley below; occasional snow."},
+      "fit_note": {"value": "For retirees who want a walkable Umbrian hill city with real services and fast rail to Rome. Watch-out: the clifftop centro is steep in parts; many daily errands happen in Orvieto Scalo below."}
+    }
+  },
+  {
+    "slug": "todi",
+    "name": "Todi",
+    "province": "Perugia (PG)",
+    "region": "Umbria",
+    "pattern": "umbria-lazio-hill-towns",
+    "facts": {
+      "population": {"value": 15481, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/umbria/pg/todi", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 500, "high": 1850, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 900 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/umbria/pg/todi", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 355, "source_label": "immobiliare.it mercato Todi: affitto medio 7,10 €/m²/mese (apr 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.immobiliare.it/mercato-immobiliare/umbria/todi/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Umbria not among the 8 regions; Todi not on SISMA 2009/2016 lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale di Todi (loc. Pantalla)", "town": "Todi", "drive_min": 10, "source_label": "ALU Umbria — rete ospedaliera (determina N277452, atti.alumbria.it)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Perugia San Francesco (PEG)", "drive_min": 50, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Hill town at ~400 m: hot summers tempered by elevation; cold winters with frost and some fog."},
+      "fit_note": {"value": "For buyers who want a quieter, less touristed Umbrian hill town at lower prices. Watch-out: limited specialist healthcare locally; you drive to Terni or Perugia for more than basics."}
+    }
+  },
+  {
+    "slug": "spoleto",
+    "name": "Spoleto",
+    "province": "Perugia (PG)",
+    "region": "Umbria",
+    "pattern": "umbria-lazio-hill-towns",
+    "facts": {
+      "population": {"value": 35983, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/umbria/pg/spoleto", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 540, "high": 1900, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.018 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/umbria/pg/spoleto", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 340, "source_label": "wikicasa mercato Spoleto: affitto medio 6,77 €/m²/mese (ago 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.wikicasa.it/quotazione-immobili/spoleto/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "On SISMA 2016 crater list BUT Agenzia delle Entrate states earthquake-zone comuni must also have ≤30.000 residents; Spoleto has 35.983 (ISTAT 2025)", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale San Matteo degli Infermi", "town": "Spoleto", "drive_min": 10, "source_label": "ALU Umbria — rete ospedaliera (determina N277452, atti.alumbria.it)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Perugia San Francesco (PEG)", "drive_min": 60, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Valley-edge town at ~400 m near the Apennines: hot summers, properly cold winters with occasional snow."},
+      "fit_note": {"value": "For culture-oriented retirees (Festival dei Due Mondi) wanting a lived-in small city. Watch-out: the 7% regime is off the table — on the earthquake list but over the 30,000 population cap."}
+    }
+  },
+  {
+    "slug": "civita-di-bagnoregio",
+    "name": "Civita di Bagnoregio",
+    "province": "Viterbo (VT)",
+    "region": "Lazio",
+    "pattern": "umbria-lazio-hill-towns",
+    "facts": {
+      "population": {"value": 3302, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 (comune di Bagnoregio) via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lazio/vt/bagnoregio", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 550, "high": 1600, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili comune di Bagnoregio via Valutamicasa (Agenzia delle Entrate), media 1.039 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lazio/vt/bagnoregio", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Lazio not among the 8 regions; Bagnoregio (prov. Viterbo) not on SISMA 2009/2016 lists (crater Lazio is prov. Rieti)", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Santa Maria della Stella", "town": "Orvieto", "drive_min": 25, "source_label": "ALU Umbria rete ospedaliera; drive time estimated from road distance, not tool-read", "checked_date": "2026-09-09"},
+      "airport": {"name": "Rome Fiumicino (FCO)", "drive_min": 95, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Exposed tufa ridge at ~485 m: windy; hot dry summers, cold damp winters. Summer day-trip crowds dominate the village."},
+      "fit_note": {"value": "A part-time base, not a full-time home: the 'dying town' is a pedestrian bridge away from everything. Watch-out: no year-round services inside Civita itself; daily life is Bagnoregio proper."}
+    }
+  },
+  {
+    "slug": "siena",
+    "name": "Siena",
+    "province": "Siena (SI)",
+    "region": "Tuscany",
+    "pattern": "tuscany-val-dorcia",
+    "facts": {
+      "population": {"value": 52990, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/toscana/si/siena", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 970, "high": 5200, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 2.194 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/toscana/si/siena", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 590, "source_label": "immobiliare.it mercato Siena: affitto medio 11,78 €/m²/mese (giu 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.immobiliare.it/mercato-immobiliare/toscana/siena/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Tuscany not among the 8 regions; Siena not on SISMA lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Santa Maria alle Scotte (AO Universitaria Senese, DEA II livello)", "town": "Siena", "drive_min": 10, "source_label": "AO Universitaria Senese — pronto soccorso (ao-siena.toscana.it)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Florence Peretola (FLR)", "drive_min": 75, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Hill city at ~320 m: hot summers (July–August heat sits inside the walls), chilly winters with some frost."},
+      "fit_note": {"value": "For retirees who want a full-service Tuscan city with a top-tier hospital and don't need the 7% regime. Watch-out: highest prices in this set after Como and Taormina."}
+    }
+  },
+  {
+    "slug": "lucca",
+    "name": "Lucca",
+    "province": "Lucca (LU)",
+    "region": "Tuscany",
+    "pattern": "tuscany-val-dorcia",
+    "facts": {
+      "population": {"value": 89002, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/toscana/lu/lucca", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 770, "high": 3400, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.658 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/toscana/lu/lucca", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 630, "source_label": "mercato-immobiliare.info Lucca: affitto medio 12,6 €/m²/mese (agg. lug 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.mercato-immobiliare.info/toscana/lucca.html", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Tuscany not among the 8 regions; Lucca not on SISMA lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale San Luca", "town": "Lucca", "drive_min": 10, "source_label": "toscana-notizie (rete ospedaliera Toscana nord-ovest) — re-verify against ASL page", "checked_date": "2026-09-09"},
+      "airport": {"name": "Pisa Galileo Galilei (PSA)", "drive_min": 30, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "high", "source_label": "impatria.com (2026-08-12): Lucca listed for 'forte presenza anglofona' among retiree destinations", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Plain near the coast: hot humid summers; mild but wet winters — among the rainier provinces in Tuscany."},
+      "fit_note": {"value": "For anglophone retirees wanting a flat, bikeable walled city near the sea and Pisa airport. Watch-out: very wet winters; property inside the walls rarely comes with parking."}
+    }
+  },
+  {
+    "slug": "pienza",
+    "name": "Pienza",
+    "province": "Siena (SI)",
+    "region": "Tuscany",
+    "pattern": "tuscany-val-dorcia",
+    "facts": {
+      "population": {"value": 1928, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/toscana/si/pienza", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 880, "high": 2400, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.445 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/toscana/si/pienza", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 430, "source_label": "immobiliare.it mercato Pienza: affitto medio 8,54 €/m²/mese (ago 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.immobiliare.it/mercato-immobiliare/toscana/pienza/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Tuscany not among the 8 regions; Pienza not on SISMA lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale della Valdichiana (Nottola)", "town": "Montepulciano", "drive_min": 20, "source_label": "toscana-notizie (rete ospedaliera Toscana sud-est); drive time estimated", "checked_date": "2026-09-09"},
+      "airport": {"name": "Florence Peretola (FLR)", "drive_min": 105, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Val d'Orcia ridge at ~490 m: breezy; hot dry summers, cold winters with frost and occasional snow."},
+      "fit_note": {"value": "For those set on Val d'Orcia scenery who accept village-scale services. Watch-out: under 2,000 residents — the nearest hospital is Nottola/Montepulciano and a car is not optional."}
+    }
+  },
+  {
+    "slug": "arezzo",
+    "name": "Arezzo",
+    "province": "Arezzo (AR)",
+    "region": "Tuscany",
+    "pattern": "tuscany-val-dorcia",
+    "facts": {
+      "population": {"value": 96479, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/toscana/ar/arezzo", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 750, "high": 3100, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.593 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/toscana/ar/arezzo", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 430, "source_label": "la Nazione quoting Immobiliare.it (2026-04-23): affitto medio Arezzo 8,6 €/m²/mese × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.lanazione.it/arezzo/cronaca/comprare-o-affittare-la-casa-7617c8ae", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Tuscany not among the 8 regions; Arezzo not on SISMA lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale San Donato", "town": "Arezzo", "drive_min": 10, "source_label": "Regione Toscana — guida emergenze (regione.toscana.it)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Florence Peretola (FLR)", "drive_min": 75, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Inland valley at ~300 m: hot summers, cold winters — wider temperature swings than coastal Tuscany."},
+      "fit_note": {"value": "For value-seekers wanting a real Tuscan city at lower €/m² than Siena or Florence. Watch-out: less international polish; winters are colder than the Tuscany postcard suggests."}
+    }
+  },
+  {
+    "slug": "lecce",
+    "name": "Lecce",
+    "province": "Lecce (LE)",
+    "region": "Puglia",
+    "pattern": "puglia-south",
+    "facts": {
+      "population": {"value": 94187, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/le/lecce", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 420, "high": 2800, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.179 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/le/lecce", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 470, "source_label": "idealista Lecce: affitto medio 9,4 €/m²/mese (2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.idealista.it/valutazione-di-immobili/lecce-lecce", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Puglia eligible but Lecce has 94.187 residents (ISTAT 2025), over the 30.000 cap", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/le/lecce", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Vito Fazzi", "town": "Lecce", "drive_min": 10, "source_label": "ASL Lecce — sanita.puglia.it (pronto soccorso confirmed)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Brindisi (BDS)", "drive_min": 35, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Salento flatland: very hot dry summers (heatwaves above 35 °C common), mild short winters, windy."},
+      "fit_note": {"value": "For retirees wanting baroque-city life, real services and southern prices. Watch-out: NOT 7%-eligible at ~94,000 residents, and summers are fiercely hot."}
+    }
+  },
+  {
+    "slug": "ostuni",
+    "name": "Ostuni",
+    "province": "Brindisi (BR)",
+    "region": "Puglia",
+    "pattern": "puglia-south",
+    "facts": {
+      "population": {"value": 29943, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/br/ostuni", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 850, "high": 4200, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.884 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/br/ostuni", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 450, "source_label": "realadvisor Ostuni appartamenti: 108 €/m²/anno ≈ 9,0 €/m²/mese × ~50 m² bilocale — derived, not a listing; short-let market distorts supply", "source_url": "https://realadvisor.it/it/mercato-immobiliare/comune-ostuni-it", "checked_date": "2026-09-09"},
+      "tax7": {"status": "eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Puglia, pop. 29.943 (ISTAT 2025) under the 30.000 cap — FRAGILE: within ~60 residents of the limit; re-verify every year", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/br/ostuni", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Presidio Ospedaliero Perrino", "town": "Brindisi", "drive_min": 40, "source_label": "ASL Brindisi network; drive time estimated from road distance, not tool-read", "checked_date": "2026-09-09"},
+      "airport": {"name": "Brindisi (BDS)", "drive_min": 35, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "high", "source_label": "ISTAT 2025 via impatria.com (2026-08-13): 1.530 stranieri residenti (5,11%), established British/German communities", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Hill near the sea: long hot summers cooled by sea breeze, mild winters; tramontana wind episodes."},
+      "fit_note": {"value": "For buyers wanting the established expat hub of Puglia with 7% eligibility (just under the cap). Watch-out: eligibility is fragile — the population sits within ~60 residents of the 30,000 limit; re-verify every year."}
+    }
+  },
+  {
+    "slug": "polignano-a-mare",
+    "name": "Polignano a Mare",
+    "province": "Bari (BA)",
+    "region": "Puglia",
+    "pattern": "puglia-south",
+    "facts": {
+      "population": {"value": 17353, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/ba/polignano-a-mare", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 800, "high": 3000, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.696 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/ba/polignano-a-mare", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 745, "source_label": "immobiliare.it mercato Polignano a Mare: affitto medio 14,88 €/m²/mese (mag 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.immobiliare.it/mercato-immobiliare/puglia/polignano-a-mare/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Puglia, pop. 17.353 (ISTAT 2025) under the 30.000 cap", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/ba/polignano-a-mare", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale San Giacomo", "town": "Monopoli", "drive_min": 15, "source_label": "micuro.it / ASL Bari — pronto soccorso Monopoli; drive time estimated", "checked_date": "2026-09-09"},
+      "airport": {"name": "Bari (BRI)", "drive_min": 40, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "medium", "source_label": "Quotidiano di Puglia (2024-09-06): US families documented as resident home-owners; tourism board statements", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Coastal: hot summers with sea breeze, mild winters; humid sea air and wind off-season."},
+      "fit_note": {"value": "For sea-lovers who want 7% eligibility and a strong international scene. Watch-out: heavy seasonal overtourism; off-season some seafront businesses close."}
+    }
+  },
+  {
+    "slug": "nardo",
+    "name": "Nardò",
+    "province": "Lecce (LE)",
+    "region": "Puglia",
+    "pattern": "puglia-south",
+    "facts": {
+      "population": {"value": 30752, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/le/nardo", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 440, "high": 2800, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 998 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/le/nardo", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 390, "source_label": "mercato-immobiliare.info Nardò appartamenti: 7,8 €/m²/mese (agg. apr 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.mercato-immobiliare.info/puglia/lecce/nardo/quotazione-appartamento.html", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Puglia eligible but Nardò has 30.752 residents (ISTAT 2025), just OVER the 30.000 cap — borderline; re-check annually", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/puglia/le/nardo", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Santa Caterina Novella", "town": "Galatina", "drive_min": 25, "source_label": "ASL Lecce network; drive time estimated from road distance, not tool-read", "checked_date": "2026-09-09"},
+      "airport": {"name": "Brindisi (BDS)", "drive_min": 60, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Salento coast: very hot dry summers, mild winters; strong sirocco and tramontana spells."},
+      "fit_note": {"value": "For Salento buyers priced out of Ostuni. Watch-out: NOT 7%-eligible — at ~30,750 residents it sits just over the 30,000 cap."}
+    }
+  },
+  {
+    "slug": "pescara",
+    "name": "Pescara",
+    "province": "Pescara (PE)",
+    "region": "Abruzzo",
+    "pattern": "abruzzo",
+    "facts": {
+      "population": {"value": 118313, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/pe/pescara", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 560, "high": 3700, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.556 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/pe/pescara", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 490, "source_label": "immobiliare.it mercato Pescara: affitto medio 9,8 €/m²/mese (giu 2026) × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.immobiliare.it/mercato-immobiliare/abruzzo/pescara/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Abruzzo eligible but Pescara has 118.313 residents (ISTAT 2025), over the 30.000 cap", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/pe/pescara", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Civile Santo Spirito", "town": "Pescara", "drive_min": 10, "source_label": "ASL Pescara — asl.pe.it (official)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Pescara (PSR)", "drive_min": 15, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Adriatic coast: hot humid summers, mild winters; sea breezes, occasional storm surges."},
+      "fit_note": {"value": "For retirees who want an Adriatic beach city with its own airport and a full hospital. Watch-out: modern and functional rather than charming; not 7%-eligible."}
+    }
+  },
+  {
+    "slug": "chieti",
+    "name": "Chieti",
+    "province": "Chieti (CH)",
+    "region": "Abruzzo",
+    "pattern": "abruzzo",
+    "facts": {
+      "population": {"value": 48403, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/ch/chieti", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 500, "high": 1350, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 879 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/ch/chieti", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 300, "source_label": "realadvisor Chieti appartamenti: 72 €/m²/anno ≈ 6,0 €/m²/mese × ~50 m² bilocale — derived, not a listing", "source_url": "https://realadvisor.it/it/mercato-immobiliare/comune-chieti-it", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Abruzzo eligible but Chieti has 48.403 residents (ISTAT 2025), over the 30.000 cap", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/ch/chieti", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale SS. Annunziata (Via dei Vestini)", "town": "Chieti", "drive_min": 10, "source_label": "ASL2 Abruzzo — asl2abruzzo.it (official)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Pescara (PSR)", "drive_min": 25, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Hill city near the coast at ~330 m: warm summers, cool winters with some snow; mountain weather spills over."},
+      "fit_note": {"value": "For a quieter hill-city base near both sea and mountains at Abruzzo prices. Watch-out: hilly layout; not 7%-eligible at ~48,000 residents."}
+    }
+  },
+  {
+    "slug": "sulmona",
+    "name": "Sulmona",
+    "province": "L'Aquila (AQ)",
+    "region": "Abruzzo",
+    "pattern": "abruzzo",
+    "facts": {
+      "population": {"value": 21759, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/aq/sulmona", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 330, "high": 1100, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 655 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/aq/sulmona", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 355, "source_label": "realadvisor Sulmona appartamenti: 85 €/m²/anno ≈ 7,1 €/m²/mese × ~50 m² bilocale — derived, not a listing", "source_url": "https://realadvisor.it/it/mercato-immobiliare/comune-sulmona-it", "checked_date": "2026-09-09"},
+      "tax7": {"status": "eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Abruzzo, pop. 21.759 (ISTAT 2025) under the 30.000 cap", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/abruzzo/aq/sulmona", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale SS. Annunziata (Viale Mazzini)", "town": "Sulmona", "drive_min": 10, "source_label": "sulmonalive — re-verify against ASL1 Avezzano-Sulmona-L'Aquila page", "checked_date": "2026-09-09"},
+      "airport": {"name": "Pescara (PSR)", "drive_min": 60, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Inland basin at ~400 m ringed by mountains: hot days but cool summer nights; cold winters with snow."},
+      "fit_note": {"value": "For buyers wanting an authentic inland Abruzzo town with 7% eligibility and mountain scenery. Watch-out: colder winters than coastal clients expect; Rome is about 1.5 hours away."}
+    }
+  },
+  {
+    "slug": "ortigia-syracuse",
+    "name": "Ortigia (Siracusa)",
+    "province": "Siracusa (SR)",
+    "region": "Sicily",
+    "pattern": "sicily",
+    "facts": {
+      "population": {"value": 115776, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025, comune di Siracusa, via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/sr/siracusa", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 400, "high": 2900, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili comune di Siracusa via Valutamicasa (Agenzia delle Entrate), media 1.081 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/sr/siracusa", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 410, "source_label": "realadvisor Siracusa appartamenti: 98 €/m²/anno ≈ 8,2 €/m²/mese × ~50 m² bilocale — derived, not a listing", "source_url": "https://realadvisor.it/it/mercato-immobiliare/comune-siracusa-it", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Sicily eligible but comune di Siracusa has 115.776 residents (ISTAT 2025) — the Ortigia-is-small misconception is wrong; eligibility follows the comune", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/sr/siracusa", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Umberto I (Via Testaferrata)", "town": "Siracusa", "drive_min": 10, "source_label": "ASP Siracusa — asp.sr.it (pronto soccorso 24h, official)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Catania Fontanarossa (CTA)", "drive_min": 55, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "medium", "source_label": "impatria.com (2026-08-12): Siracusa/Ortigia described as emerging destination for American, British, Scandinavian retirees", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Coastal southeast Sicily: very hot summers (sirocco peaks), very mild winters; scarce rain."},
+      "fit_note": {"value": "For sea-and-history buyers; Ortigia is one of the strongest lifestyle pitches in Sicily. Watch-out: NOT 7%-eligible — the comune of Siracusa is ~116,000 residents; blogs claiming otherwise are wrong."}
+    }
+  },
+  {
+    "slug": "palermo",
+    "name": "Palermo",
+    "province": "Palermo (PA)",
+    "region": "Sicily",
+    "pattern": "sicily",
+    "facts": {
+      "population": {"value": 628693, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/pa/palermo", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 630, "high": 3300, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.238 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/pa/palermo", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 445, "source_label": "idealista report affitti Sicilia (lug 2026): 8,9 €/m²/mese × ~50 m² bilocale — derived; provincial value, comune-level not retrieved", "source_url": "https://www.idealista.it/sala-stampa/report-prezzo-immobile/affitto/sicilia/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Sicily eligible but Palermo has 628.693 residents (ISTAT 2025), far over the cap", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/pa/palermo", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Buccheri La Ferla / Villa Sofia", "town": "Palermo", "drive_min": 15, "source_label": "Regione Sicilia — qualitasiciliassr pronto soccorso list (PDF)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Palermo Falcone Borsellino (PMO)", "drive_min": 35, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Coastal basin (Conca d'Oro): hot humid summers, mild winters; heat trapped during sirocco episodes."},
+      "fit_note": {"value": "For city people who want capital-city culture, food and prices far below Milan. Watch-out: big-city frictions (traffic, petty crime, bureaucracy) are real; not 7%-eligible."}
+    }
+  },
+  {
+    "slug": "catania",
+    "name": "Catania",
+    "province": "Catania (CT)",
+    "region": "Sicily",
+    "pattern": "sicily",
+    "facts": {
+      "population": {"value": 298054, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/ct/catania", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 350, "high": 2700, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.081 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/ct/catania", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 425, "source_label": "idealista report affitti Sicilia (lug 2026): Catania 8,5 €/m²/mese × ~50 m² bilocale — derived, not a listing", "source_url": "https://www.idealista.it/sala-stampa/report-prezzo-immobile/affitto/sicilia/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Sicily eligible but Catania has 298.054 residents (ISTAT 2025), far over the cap", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/ct/catania", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Garibaldi-Centro", "town": "Catania", "drive_min": 10, "source_label": "Regione Siciliana — new pronto soccorso inaugurated (regione.sicilia.it)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Catania Fontanarossa (CTA)", "drive_min": 20, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Coastal under Etna: very hot dry summers, mild winters; volcanic ash episodes and Etna-driven weather."},
+      "fit_note": {"value": "For retirees wanting a working Sicilian city with an airport at the foot of Etna. Watch-out: grittier than Ortigia or Taormina; not 7%-eligible."}
+    }
+  },
+  {
+    "slug": "taormina",
+    "name": "Taormina",
+    "province": "Messina (ME)",
+    "region": "Sicily",
+    "pattern": "sicily",
+    "facts": {
+      "population": {"value": 10480, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/me/taormina", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 590, "high": 5500, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 2.420 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/me/taormina", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 1000, "source_label": "realadvisor Taormina appartamenti: 251 €/m²/anno ≈ 20,9 €/m²/mese × ~50 m² bilocale — derived; tourist market, long-term supply thin", "source_url": "https://realadvisor.it/it/mercato-immobiliare/comune-taormina-it", "checked_date": "2026-09-09"},
+      "tax7": {"status": "eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri: Sicily, pop. 10.480 (ISTAT 2025) under the 30.000 cap", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://www.valutamicasa.it/quotazioni-immobiliari/sicilia/me/taormina", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale San Vincenzo", "town": "Taormina", "drive_min": 10, "source_label": "Regione Sicilia — qualitasiciliassr pronto soccorso list (PDF)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Catania Fontanarossa (CTA)", "drive_min": 55, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Cliff-side at ~200 m above the sea: hot summers with sea breeze, mild winters; peak-season crowding."},
+      "fit_note": {"value": "For higher-budget buyers who accept resort-town economics and get 7% eligibility in return. Watch-out: rents and prices reflect tourism, not local life; summer crowds are intense."}
+    }
+  },
+  {
+    "slug": "como",
+    "name": "Como",
+    "province": "Como (CO)",
+    "region": "Lombardy",
+    "pattern": "italian-lakes",
+    "facts": {
+      "population": {"value": 83135, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lombardia/co/como", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 900, "high": 6300, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 2.567 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lombardia/co/como", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Lombardy not among the 8 regions; Como not on SISMA lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Sant'Anna", "town": "San Fermo della Battaglia (Como)", "drive_min": 15, "source_label": "Comune di Montano Lucino — ospedale di riferimento (official)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Milan Malpensa (MXP)", "drive_min": 45, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Lake basin at the Alps' edge: warm humid summers, cold foggy winters; heavy rain events."},
+      "fit_note": {"value": "For lake lifestyle at the top of the budget with Milan and Switzerland next door. Watch-out: the most expensive market in this set; not 7%-eligible."}
+    }
+  },
+  {
+    "slug": "stresa",
+    "name": "Stresa",
+    "province": "Verbano-Cusio-Ossola (VB)",
+    "region": "Piedmont",
+    "pattern": "italian-lakes",
+    "facts": {
+      "population": {"value": 4634, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/piemonte/vb/stresa", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 900, "high": 3500, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.883 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/piemonte/vb/stresa", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 590, "source_label": "realadvisor Stresa appartamenti: 141 €/m²/anno ≈ 11,8 €/m²/mese × ~50 m² bilocale — derived, not a listing", "source_url": "https://realadvisor.it/it/mercato-immobiliare/comune-stresa-it", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Piedmont not among the 8 regions; Stresa not on SISMA lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Castelli (DEA)", "town": "Verbania", "drive_min": 20, "source_label": "ASL VCO — aslvco.it (official); drive time estimated", "checked_date": "2026-09-09"},
+      "airport": {"name": "Milan Malpensa (MXP)", "drive_min": 55, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Lakeside at ~200 m: warm summers, cold damp winters; the lake moderates frost."},
+      "fit_note": {"value": "For a quieter Lake Maggiore base with grand-hotel bones. Watch-out: limited year-round economy; Malpensa is the practical airport, about an hour."}
+    }
+  },
+  {
+    "slug": "verbania",
+    "name": "Verbania",
+    "province": "Verbano-Cusio-Ossola (VB)",
+    "region": "Piedmont",
+    "pattern": "italian-lakes",
+    "facts": {
+      "population": {"value": 29953, "ref_date": "2025", "source_label": "ISTAT popolazione residente 2025 via Valutamicasa", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/piemonte/vb/verbania", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 550, "high": 3000, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili via Valutamicasa (Agenzia delle Entrate), media comune 1.619 €/m²", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/piemonte/vb/verbania", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 630, "source_label": "realadvisor Verbania appartamenti: 151 €/m²/anno ≈ 12,6 €/m²/mese × ~50 m² bilocale — derived, not a listing", "source_url": "https://realadvisor.it/it/mercato-immobiliare/comune-verbania-it", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "Agenzia delle Entrate — regime pensionati esteri (art. 24-ter TUIR): Piedmont not among the 8 regions; Verbania not on SISMA lists", "source_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "confirm_url": "https://osservatoriosisma.it/la-liste-dei-140-comuni-inseriti-nel-cratere-del-terremoto/", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Castelli (DEA)", "town": "Verbania", "drive_min": 10, "source_label": "ASL VCO — aslvco.it (official)", "checked_date": "2026-09-09"},
+      "airport": {"name": "Milan Malpensa (MXP)", "drive_min": 70, "source_label": "Estimated from road distance, not tool-read — verify", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Lakeside: warm summers, cool damp winters; milder than the plain thanks to the lake."},
+      "fit_note": {"value": "For buyers wanting Lake Maggiore at lower prices than Stresa, with the area's main hospital in town. Watch-out: a car is needed for most of the lake's western shore."}
+    }
+  },
+  {
+    "slug": "milan",
+    "name": "Milan",
+    "province": "Milano (MI)",
+    "region": "Lombardy",
+    "pattern": "lombardy-milan",
+    "facts": {
+      "population": {"value": 1364144, "ref_date": "2026-05-31", "source_label": "ISTAT via Wikipedia (it), resident population at 2026-05-31", "source_url": "https://it.wikipedia.org/wiki/Milano", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 4500, "high": 6500, "semester": "2° semestre 2025", "source_label": "OMI semicentro abitazioni civili ~4.500–6.500 €/m² (media zona ~5.509; intervallo completo comune 1.600–21.000) via Valutamicasa (Agenzia delle Entrate)", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lombardia/mi/milano", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 1227, "source_label": "Zerasa report giugno 2026 (captured by research agent; URL not captured — re-source on next pass)", "source_url": "https://www.immobiliare.it/mercato-immobiliare/lombardia/milano/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "DL 34/2019 (Gazzetta Ufficiale): Lombardy not among eligible regions", "source_url": "https://www.gazzettaufficiale.it/eli/id/2019/04/30/19G00041/sg", "confirm_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Niguarda", "town": "Milan", "drive_min": 20, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "airport": {"name": "Milan Linate (LIN)", "drive_min": 20, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "high", "source_label": "InterNations + ~21% foreign residents (research agent, checked 2026-09-09)", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Po Valley: hot humid summers, cold foggy winters; winter air quality among the worst in Italy."},
+      "fit_note": {"value": "For retirees who want Italy's best healthcare, transport and culture and will pay for it. Watch-out: by far the priciest option in this set; winter air quality is poor."}
+    }
+  },
+  {
+    "slug": "bergamo",
+    "name": "Bergamo",
+    "province": "Bergamo (BG)",
+    "region": "Lombardy",
+    "pattern": "lombardy-milan",
+    "facts": {
+      "population": {"value": 120389, "ref_date": "2025-01-01", "source_label": "ISTAT via Tuttitalia (research agent)", "source_url": "https://www.tuttitalia.it/lombardia/bergamo/", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 850, "high": 4300, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili (media comune ~1.900 €/m²) via Valutamicasa (Agenzia delle Entrate)", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lombardia/bg/bergamo", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 800, "source_label": "immobiliare.it Bergamo (2025, research agent)", "source_url": "https://www.immobiliare.it/mercato-immobiliare/lombardia/bergamo/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "DL 34/2019 (Gazzetta Ufficiale): Lombardy not among eligible regions", "source_url": "https://www.gazzettaufficiale.it/eli/id/2019/04/30/19G00041/sg", "confirm_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Papa Giovanni XXIII", "town": "Bergamo", "drive_min": 10, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "airport": {"name": "Milan Bergamo (BGY)", "drive_min": 10, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "low", "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Pre-Alpine: warm summers, less muggy than Milan; cold winters with snow; cooler up in Città Alta."},
+      "fit_note": {"value": "For a smaller Lombardy city with its own airport and the Alps on the doorstep. Watch-out: not 7%-eligible; Città Alta is steep and pricey."}
+    }
+  },
+  {
+    "slug": "brescia",
+    "name": "Brescia",
+    "province": "Brescia (BS)",
+    "region": "Lombardy",
+    "pattern": "lombardy-milan",
+    "facts": {
+      "population": {"value": 200104, "ref_date": "2025-01-01", "source_label": "ISTAT via Bresciaoggi (research agent)", "source_url": "https://www.tuttitalia.it/lombardia/brescia/", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 950, "high": 4300, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili (media comune ~1.860 €/m²) via Valutamicasa (Agenzia delle Entrate)", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lombardia/bs/brescia", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 800, "source_label": "Research agent, checked 2026-09-09 (re-source on next pass)", "source_url": "https://www.immobiliare.it/mercato-immobiliare/lombardia/brescia/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "DL 34/2019 (Gazzetta Ufficiale): Lombardy not among eligible regions", "source_url": "https://www.gazzettaufficiale.it/eli/id/2019/04/30/19G00041/sg", "confirm_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Spedali Civili", "town": "Brescia", "drive_min": 10, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "airport": {"name": "Milan Bergamo (BGY)", "drive_min": 45, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "low", "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Po Valley edge near Lake Garda: hot humid summers, cold foggy winters."},
+      "fit_note": {"value": "For an undervalued Lombardy city between Lake Garda and Lake Iseo. Watch-out: low international profile; fog in winter."}
+    }
+  },
+  {
+    "slug": "mantua",
+    "name": "Mantua",
+    "province": "Mantova (MN)",
+    "region": "Lombardy",
+    "pattern": "lombardy-milan",
+    "facts": {
+      "population": {"value": 49607, "ref_date": "2025-01-01", "source_label": "ISTAT via Quantitalia (research agent)", "source_url": "https://www.tuttitalia.it/lombardia/mantova/", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 400, "high": 3700, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili (media comune ~1.284 €/m²) via Valutamicasa (Agenzia delle Entrate)", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lombardia/mn/mantova", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 650, "source_label": "mantovauno.it (2025, research agent)", "source_url": "https://www.immobiliare.it/mercato-immobiliare/lombardia/mantova/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "DL 34/2019 (Gazzetta Ufficiale): Lombardy not among eligible regions", "source_url": "https://www.gazzettaufficiale.it/eli/id/2019/04/30/19G00041/sg", "confirm_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Ospedale Carlo Poma", "town": "Mantua", "drive_min": 10, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "airport": {"name": "Verona (VRN)", "drive_min": 37, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "low", "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Ringed by lakes: very humid — muggy summers, foggy cold winters."},
+      "fit_note": {"value": "For art-city lovers on a budget, ringed by lakes. Watch-out: humidity in both seasons — muggy summers, foggy winters."}
+    }
+  },
+  {
+    "slug": "pavia",
+    "name": "Pavia",
+    "province": "Pavia (PV)",
+    "region": "Lombardy",
+    "pattern": "lombardy-milan",
+    "facts": {
+      "population": {"value": 71610, "ref_date": "2025-01-01", "source_label": "ISTAT via Quantitalia (research agent)", "source_url": "https://www.tuttitalia.it/lombardia/pavia/", "checked_date": "2026-09-09"},
+      "omi_buy": {"low": 485, "high": 4200, "semester": "2° semestre 2025", "source_label": "OMI abitazioni civili (media comune ~1.902 €/m²) via Valutamicasa (Agenzia delle Entrate)", "source_url": "https://www.valutamicasa.it/quotazioni-immobiliari/lombardia/pv/pavia", "checked_date": "2026-09-09"},
+      "rent_1bed_eur": {"value": 650, "source_label": "immobiliare.it Pavia (apr 2026, research agent)", "source_url": "https://www.immobiliare.it/mercato-immobiliare/lombardia/pavia/", "checked_date": "2026-09-09"},
+      "tax7": {"status": "not_eligible", "source_label": "DL 34/2019 (Gazzetta Ufficiale): Lombardy not among eligible regions", "source_url": "https://www.gazzettaufficiale.it/eli/id/2019/04/30/19G00041/sg", "confirm_url": "https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/regime-opzionale-per-i-pensionati-esteri-che-cose-cittadini", "checked_date": "2026-09-09"},
+      "hospital": {"name": "Policlinico San Matteo", "town": "Pavia", "drive_min": 8, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "airport": {"name": "Milan Linate (LIN)", "drive_min": 43, "source_label": "Research agent, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "expat_presence": {"value": "low", "source_label": "Research agent: 15,4% foreign residents but student-driven, checked 2026-09-09", "checked_date": "2026-09-09"},
+      "climate_note": {"value": "Po Valley: hot humid summers, cold foggy winters; Ticino river humidity."},
+      "fit_note": {"value": "For a university-town rhythm near Milan at moderate cost. Watch-out: the market is student-driven; limited expat infrastructure."}
+    }
+  }
+]

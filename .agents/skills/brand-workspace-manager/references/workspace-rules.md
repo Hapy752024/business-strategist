@@ -3,7 +3,7 @@
 ## Default Structure
 
 ```text
-projects/brand-projects/<slug>/
+projects/<slug>/branding/
   brief.md
   research.md
   strategy.md
@@ -53,15 +53,15 @@ $PSVersionTable.Platform
 Linux/macOS:
 
 ```bash
-mkdir -p "projects/brand-projects/my-brand/stages/logo" "projects/brand-projects/my-brand/old"
-mv "projects/brand-projects/my-brand/stages/logo"/* "projects/brand-projects/my-brand/old/logo/20260607-120000/"
+mkdir -p "projects/my-brand/branding/stages/logo" "projects/my-brand/branding/old"
+mv "projects/my-brand/branding/stages/logo"/* "projects/my-brand/branding/old/logo/20260607-120000/"
 ```
 
 PowerShell:
 
 ```powershell
-New-Item -ItemType Directory -Force -Path "projects/brand-projects/my-brand/stages/logo","projects/brand-projects/my-brand/old"
-Move-Item "projects/brand-projects/my-brand/stages/logo/*" "projects/brand-projects/my-brand/old/logo/20260607-120000/"
+New-Item -ItemType Directory -Force -Path "projects/my-brand/branding/stages/logo","projects/my-brand/branding/old"
+Move-Item "projects/my-brand/branding/stages/logo/*" "projects/my-brand/branding/old/logo/20260607-120000/"
 ```
 
 Prefer the Python helper for portability.

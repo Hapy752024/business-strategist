@@ -16,7 +16,7 @@
     "business_workspace": {"$ref": "#/$defs/workspace"},
     "brand_workspace": {"$ref": "#/$defs/workspace"},
     "website_workspace": {"$ref": "#/$defs/workspace"},
-    "links": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["track", "workspace", "linked_at"], "properties": {"track": {"enum": ["business", "brand", "website"]}, "workspace": {"$ref": "#/$defs/workspace"}, "linked_at": {"type": "string", "format": "date-time"}}}},
+    "links": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["track", "workspace", "linked_at"], "properties": {"track": {"enum": ["business", "brand", "website"]}, "workspace": {"$ref": "#/$defs/workspace"}, "linked_at": {"type": "string", "format": "date-time"}, "validated": {"type": "boolean"}}}},
     "next_action": {"type": "string"},
     "open_blockers": {"type": "array", "items": {"type": "string"}}
   },

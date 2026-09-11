@@ -6,6 +6,12 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import time
+
+try:
+    from scripts.evidence_scout.workspace import manifest_lock, write_json
+except ModuleNotFoundError:  # Direct CLI execution from scripts/.
+    from evidence_scout.workspace import manifest_lock, write_json
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +19,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 ROUTES_PATH = ROOT / "config" / "workflow-routes.json"
 CATALOG_PATH = ROOT / "config" / "skill-catalog.json"
+PAIN_GATE_MANIFEST_REL = Path("market_research") / "manifest.json"
+PAIN_GATE_CONCEPTS = ["customer_segments", "customer_journey", "pain_points"]
 
 
 def load_routes() -> list[dict[str, Any]]:
@@ -23,6 +31,57 @@ def load_catalog() -> dict[str, dict[str, Any]]:
     return json.loads(CATALOG_PATH.read_text(encoding="utf-8"))["skills"]
 
 
+def pain_gate_state(project_slug: str) -> tuple[bool, Path | None]:
+    """Return (passed, manifest_path) for a project's pain-first gate.
+
+    A missing or unreadable research manifest means the gate has not passed:
+    no evidence-backed segment/journey/pain analysis exists yet.
+    """
+    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", project_slug):
+        raise ValueError("Project must be a lowercase project slug, not a path")
+    projects_root = ROOT / "projects"
+    manifest_path = projects_root / project_slug / PAIN_GATE_MANIFEST_REL
+    # Reject symlinked components even when they lead to another project in-repo.
+    for path in (projects_root, manifest_path.parent.parent, manifest_path.parent, manifest_path,
+                 manifest_path.parent / "manifest.lock"):
+        if path.is_symlink():
+            raise ValueError("Project gate paths must not be symlinks")
+    if not manifest_path.exists():
+        return False, None
+    try:
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False, manifest_path
+    stages = data.get("stages") if isinstance(data, dict) else None
+    gate = stages.get("problem_validation") if isinstance(stages, dict) else None
+    passed = (isinstance(gate, dict) and gate.get("status") == "passed"
+              and gate.get("gate_result") in ("pass", "conditional_pass"))
+    return passed, manifest_path
+
+
+def record_gate_override(manifest_path: Path, route_id: str, override_id: str = "") -> None:
+    """Append an auditable override event to the research manifest."""
+    with manifest_lock(manifest_path.parent.parent):
+        try:
+            data = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ValueError("Cannot audit gate override: unreadable research manifest") from exc
+        if not isinstance(data, dict) or not isinstance(data.get("events"), list):
+            raise ValueError("Cannot audit gate override: manifest requires an events list")
+        if override_id and any(event.get("override_id") == override_id
+                               and event.get("event") == f"routing_gate_override:{route_id}"
+                               for event in data["events"] if isinstance(event, dict)):
+            return
+        data["events"].append({
+            **({"override_id": override_id} if override_id else {}),
+            "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "event": f"routing_gate_override:{route_id}",
+        })
+        data["manifest_revision"] = int(data.get("manifest_revision", 0)) + 1
+        data["updated_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        write_json(manifest_path, data)
+
+
 def route_request(
     request: str,
     *,
@@ -30,8 +89,14 @@ def route_request(
     active_manifest: dict[str, Any] | None = None,
     task_scope: str = "",
     continue_workspace: bool = False,
+    project: str = "",
+    override_gate: bool = False,
+    check_skill: str = "",
+    override_id: str = "",
 ) -> dict[str, Any]:
     """Return a reproducible route packet from an explicit intent or phrase match."""
+    if override_gate and not project:
+        raise ValueError("Gate override requires --project and an existing research manifest")
     text = re.sub(r"[-–—]", " ", request.casefold())
     # A conservative fallback, not a language parser. The caller should supply
     # intent/scope for complex phrasing, quotations and multi-step requests.
@@ -96,7 +161,13 @@ def route_request(
             selected = {"id": "clarify", "skill": "business-strategist", "matched": []}
             reason = "multiple requested workflows; resolve scope before dispatch"
     skill = selected["skill"]
-    metadata = load_catalog().get(skill, {})
+    catalog = load_catalog()
+    if skill not in catalog:
+        raise ValueError(f"Route targets uncatalogued skill: {skill}")
+    metadata = catalog[skill]
+    if check_skill and (skill == "business-strategist" or check_skill != skill
+                        or check_skill in selected.get("forbidden", [])):
+        raise ValueError(f"Dispatch rejected: requested {check_skill}, routed {skill}")
     requested_strategy = bool(re.search(action + r"\b[^.;!?]*\bstrateg(?:y|ies)\b", outcome_text))
     scope = task_scope or ("strategy" if requested_strategy
                            else "focused" if re.search(r"\b(explain|what is|what does|why)\b", outcome_text)
@@ -106,7 +177,7 @@ def route_request(
     artifacts = selected.get("artifacts", metadata.get("artifacts", []))
     if skill in {"marketing-strategy-builder", "social-digital-marketing-planner", "archetype-gtm-strategist"} and scope != "strategy":
         artifacts = ["requested deliverable only; preserve existing strategy" if scope == "execution" else "focused answer and material evidence limits"]
-    return {
+    packet = {
         "route_id": selected["id"],
         "skill": skill,
         "mode": selected.get("mode", "default"),
@@ -120,6 +191,26 @@ def route_request(
         "side_effect": metadata.get("side_effect", "unknown"),
         "estimated_cost": metadata.get("cost", "unknown"),
     }
+    if project and selected.get("requires_pain_gate"):
+        passed, manifest_path = pain_gate_state(project)
+        if not passed:
+            packet["gate_blocked"] = True
+            packet["gate"] = "pain_first"
+            packet["first_skill"] = "idea-grill"
+            packet["gate_concepts"] = PAIN_GATE_CONCEPTS
+            packet["reason"] = (
+                reason
+                + "; pain-first gate: problem_validation not passed for project "
+                + project
+                + " — establish customer segment, customer journey, and pain points with web-searched evidence first"
+            )
+            if override_gate:
+                if manifest_path is None:
+                    raise ValueError("Cannot audit gate override: research manifest is missing")
+                record_gate_override(manifest_path, selected["id"], override_id)
+                packet["gate_blocked"] = False
+                packet["gate_override"] = True
+    return packet
 
 
 def main() -> int:
@@ -129,17 +220,21 @@ def main() -> int:
     parser.add_argument("--intent", help="Explicit route ID when the caller has already classified intent.")
     parser.add_argument("--task-scope", choices=["focused", "execution", "strategy"], default="")
     parser.add_argument("--continue-workspace", action="store_true")
+    parser.add_argument("--project", default="", help="Project slug; enforces the pain-first gate on routes that require it.")
+    parser.add_argument("--check-skill", default="", help="Reject dispatch unless this skill matches the selected route; blocked gates exit 2.")
+    parser.add_argument("--override-gate", action="store_true", help="Record an explicit user override and dispatch despite a blocked pain-first gate.")
     args = parser.parse_args()
     manifest = None
     if args.manifest:
         manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     try:
         packet = route_request(args.request, intent=args.intent or "", active_manifest=manifest,
-                               task_scope=args.task_scope, continue_workspace=args.continue_workspace)
+                               task_scope=args.task_scope, continue_workspace=args.continue_workspace,
+                               project=args.project, override_gate=args.override_gate, check_skill=args.check_skill)
     except ValueError as exc:
         parser.error(str(exc))
     print(json.dumps(packet, indent=2, sort_keys=True))
-    return 0
+    return 2 if packet.get("gate_blocked") else 0
 
 
 if __name__ == "__main__":

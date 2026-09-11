@@ -49,7 +49,7 @@ def main() -> int:
             parsed["stderr"] = proc.stderr[-2000:]
         results.append(parsed)
 
-    out = ROOT / "projects" / "research" / "evidence-scout" / "api-validation" / "all.summary.json"
+    out = ROOT / "projects" / "_infra" / "api-validation" / "all.summary.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=2, sort_keys=True), encoding="utf-8")
     print(json.dumps(results, indent=2, sort_keys=True))

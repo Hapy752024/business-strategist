@@ -56,11 +56,11 @@ For known brands, prefer canonical product/entity URLs over accidental blog or c
 
 The script writes:
 
-- `projects/research/topics/<topic>/competitors/runs/<run>/competitor_plan.md` — objective, scope, questions, limits, and the verification checkpoint for the run
-- `projects/research/topics/<topic>/competitors/runs/<run>/competitors.json`
-- `projects/research/topics/<topic>/competitors/runs/<run>/summary.json`
-- `projects/research/topics/<topic>/competitors/runs/<run>/report.md`
-- `projects/research/topics/<topic>/competitors/runs/<run>/raw.json`
+- `projects/<topic>/market_research/solution_alternatives/runs/<run>/competitor_plan.md` — objective, scope, questions, limits, and the verification checkpoint for the run
+- `projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json`
+- `projects/<topic>/market_research/solution_alternatives/runs/<run>/summary.json`
+- `projects/<topic>/market_research/solution_alternatives/runs/<run>/report.md`
+- `projects/<topic>/market_research/solution_alternatives/runs/<run>/raw.json`
 
 ## Analysis Rules
 

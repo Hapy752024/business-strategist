@@ -2,7 +2,7 @@
 
 ## 1. Brief and scope
 
-Before any retrieval, inspect existing `projects/research/topics/*/manifest.json` and offer continuation of the matching workspace according to `references/workspace-lifecycle.md`. Capture service/offer, customer job, buyer, target segment, geography, price tier, known entities, analogous markets and capability questions. Ask one question only if a missing field would change lane assignment. Keep branding independent.
+Before any retrieval, inspect existing `projects/*/market_research/manifest.json` and offer continuation of the matching workspace according to `references/workspace-lifecycle.md`. Capture service/offer, customer job, buyer, target segment, geography, price tier, known entities, analogous markets and capability questions. Ask one question only if a missing field would change lane assignment. Keep branding independent.
 
 ## 2. Classification contract
 

@@ -21,7 +21,7 @@
 - Top-down tokens: element specs reference pillars by name.
 - Exploration demos are HTML+CSS; final reference impls are Next.js + Framer Motion (or CSS keyframes / View Transitions API for page-level).
 - Cite at least one benchmark per pillar from `references/benchmarks.md`.
-- Outputs live under `projects/brand-projects/<name>/motion/` (canonical) and `stages/motion/` (working).
+- Outputs live under `projects/<name>/branding/motion/` (canonical) and `stages/motion/` (working).
 - Dispatch fresh subagents per `references/subagent-dispatch.md` whenever work parallelizes.
 
 

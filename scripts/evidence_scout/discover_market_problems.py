@@ -15,12 +15,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from workspace import create_run_manifest, resolve_run_dir, update_run_manifest, update_stage, write_json
+from workspace import RESEARCH_MANIFEST_REL, create_run_manifest, resolve_run_dir, update_run_manifest, update_stage, write_json
 
 
 ROOT = Path(__file__).resolve().parents[2]
 COLLECTOR = ROOT / "scripts" / "evidence_scout" / "collect.py"
-TEMPLATE = ROOT / "templates" / "research-topic" / "market-discovery-report.md"
+TEMPLATE = ROOT / "templates" / "project" / "market-discovery-report.md"
 REQUIRED_HEADINGS = (
     "## Executive Summary",
     "## Scope and Source Coverage",
@@ -151,7 +151,7 @@ def start_discovery(args: argparse.Namespace) -> int:
         workspace_arg=args.workspace,
         out_dir=args.out_dir,
         legacy_output=args.legacy_output,
-        workspace_subdir="market-discovery/runs",
+        workspace_subdir="market_research/market_discovery/runs",
         legacy_subdir="market-discovery",
     )
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -283,7 +283,7 @@ def finalize_discovery(args: argparse.Namespace) -> int:
 
     workspace_value = summary.get("workspace") or ""
     workspace = Path(workspace_value) if workspace_value else None
-    if workspace and (workspace / "manifest.json").exists():
+    if workspace and (workspace / RESEARCH_MANIFEST_REL).exists():
         artifacts = [run_dir / "research_plan.md", report_path, run_dir / "summary.json"]
         for relative in ("evidence/report.md", "evidence/evidence.jsonl", "evidence/summary.json"):
             artifact = run_dir / relative

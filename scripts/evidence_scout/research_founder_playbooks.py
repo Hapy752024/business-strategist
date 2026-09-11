@@ -31,7 +31,7 @@ def main() -> int:
     args = parser.parse_args()
 
     workspace = create_topic_workspace(args.topic, args.workspace, args.customer_segment)
-    run_dir = workspace / "playbooks" / "runs" / f"{time.strftime('%Y%m%d-%H%M%S', time.gmtime())}-{slugify(args.archetype)}"
+    run_dir = workspace / "strategy" / "playbooks" / "runs" / f"{time.strftime('%Y%m%d-%H%M%S', time.gmtime())}-{slugify(args.archetype)}"
     evidence_dir = run_dir / "evidence"
     run_dir.mkdir(parents=True, exist_ok=True)
     plan = f"""# Founder / Operator Playbook Research Plan
@@ -83,7 +83,7 @@ def main() -> int:
         "run_dir": str(run_dir),
         "evidence_dir": str(evidence_dir),
         "collector_exit_code": completed.returncode,
-        "next_artifact": str(workspace / "playbooks" / f"{slugify(args.archetype)}.md"),
+        "next_artifact": str(workspace / "strategy" / "playbooks" / f"{slugify(args.archetype)}.md"),
     }
     (run_dir / "run_summary.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     gate = "pass" if completed.returncode == 0 else "fail"

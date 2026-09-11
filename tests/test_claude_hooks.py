@@ -17,9 +17,9 @@ def test_lifecycle_hooks_are_project_anchored_and_precompact_runs_nested(tmp_pat
     fixture_root = tmp_path / "business-strategist"
     (fixture_root / ".claude/hooks").mkdir(parents=True)
     shutil.copy2(ROOT / ".claude/hooks/precompact.py", fixture_root / ".claude/hooks/precompact.py")
-    nested = fixture_root / "projects" / "brand-projects" / "example" / "website"
+    nested = fixture_root / "projects" / "example" / "web-site"
     nested.mkdir(parents=True)
-    topic = fixture_root / "projects/research/topics/resume-test"
+    topic = fixture_root / "projects" / "resume-test" / "market_research"
     topic.mkdir(parents=True)
     (topic / "manifest.json").write_text(json.dumps({"current_stage": "synthesis", "next_action": "review evidence"}))
     env = os.environ.copy()

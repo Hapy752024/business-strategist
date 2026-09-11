@@ -75,7 +75,7 @@ class MarketDiscoveryTests(unittest.TestCase):
                 collect=False,
             )
             self.assertEqual(discovery.start_discovery(start_args), 0)
-            runs = list((workspace / "market-discovery" / "runs").iterdir())
+            runs = list((workspace / "market_research" / "market_discovery" / "runs").iterdir())
             self.assertEqual(len(runs), 1)
             run_dir = runs[0]
             self.assertTrue((run_dir / "research_plan.md").exists())
@@ -116,7 +116,7 @@ class MarketDiscoveryTests(unittest.TestCase):
             finalize_args = argparse.Namespace(run_dir=str(run_dir), candidate_count=1)
             self.assertEqual(discovery.finalize_discovery(finalize_args), 0)
             summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
-            manifest = json.loads((workspace / "manifest.json").read_text(encoding="utf-8"))
+            manifest = json.loads((workspace / "market_research" / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(summary["status"], "complete")
             self.assertEqual(summary["gate_result"], "pass")
             self.assertEqual(manifest["current_stage"], "market_discovery")

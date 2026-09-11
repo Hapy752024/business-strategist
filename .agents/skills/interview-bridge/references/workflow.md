@@ -27,7 +27,7 @@ Do not use this skill before any evidence run exists. Do not use interviews to v
 python3 scripts/evidence_scout/build_interview_kit.py --run-dir "<run path>" --limit 8
 ```
 
-Pass an evidence run directory (`projects/research/topics/<topic>/evidence/runs/<run>`) or a market-discovery run root (`projects/research/topics/<topic>/market-discovery/runs/<run>`); the script finds `evidence.jsonl` in either layout. `--topic` and `--segment` override labels from `summary.json`.
+Pass an evidence run directory (`projects/<topic>/market_research/pain_points/runs/<run>`) or a market-discovery run root (`projects/<topic>/market_research/market_discovery/runs/<run>`); the script finds `evidence.jsonl` in either layout. `--topic` and `--segment` override labels from `summary.json`.
 
 ## Procedure
 

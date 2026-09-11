@@ -2,13 +2,27 @@
 
 **Status:** intake / no recommendation yet
 **Last updated:** {{CREATED_AT}}
-**Machine state:** [`manifest.json`](manifest.json)
+**Machine state:** [`market_research/manifest.json`](market_research/manifest.json)
 
-This is the current reader-facing decision document. It must remain understandable on its own. Keep supporting narratives in [`deep-dives/`](deep-dives/); keep raw runs and machine state in their existing folders. Treat canvases as versioned hypotheses: customer-side claims require evidence IDs; value-side entries remain design choices until tested.
+This is the current reader-facing decision document. It must remain understandable on its own. Keep supporting narratives in [`market_research/deep_dives/`](market_research/deep_dives/); keep raw runs and machine state in their existing folders. Treat canvases as versioned hypotheses: customer-side claims require evidence IDs; value-side entries remain design choices until tested.
+
+## Foundation: segment, journey, pain points (pain-first rule)
+
+Before any solution, strategy, brand, or website work, this venture needs its three foundations pinned with web-searched evidence:
+
+1. **Customer segment** — who exactly: [`market_research/customer_segments/`](market_research/customer_segments/)
+2. **Customer journey** — how they move through the topic today: [`market_research/customer_journey/`](market_research/customer_journey/)
+3. **Pain points** — detected/validated from public evidence: [`market_research/pain_points/`](market_research/pain_points/) (collection runs under `pain_points/runs/`)
+
+Even when the founder arrives with a solution, these come first. Downstream commitment stages (business model, offer, GTM, brand, website) stay gated until `problem_validation` passes in the manifest — or the founder records an explicit override.
+
+- Initial customer segment: {{CUSTOMER_SEGMENT}}
+- Segment status: [UNRESOLVED]
+- Journey coverage: [UNRESOLVED]
+- Strongest evidence-backed pain: [UNRESOLVED]
 
 ## Decision context
 
-- Initial customer segment: {{CUSTOMER_SEGMENT}}
 - Founder objective / ambition: [UNRESOLVED]
 - Desired role and work to avoid: [UNRESOLVED]
 - Means: capabilities, access, time and cash: [UNRESOLVED]
@@ -49,10 +63,11 @@ State the specific audience destination, initial exposure mechanism, content ang
 
 Recommendation change: previous view → changed evidence/constraint or corrected reasoning → effect on ranking → remaining uncertainty. Completion: distinguish delivered scope, audited claims, missing research and validation actually run; generated reports or passing code tests do not establish research completion.
 
-- Founder and customer hypothesis: [`intake/startup-thesis.md`](intake/startup-thesis.md)
-- Deep dives: [`deep-dives/`](deep-dives/)
-- Evidence runs: [`evidence/`](evidence/)
-- Decisions and dated reversals: [`decisions/`](decisions/)
+- Founder and customer hypothesis: [`strategy/intake/startup-thesis.md`](strategy/intake/startup-thesis.md)
+- Deep dives: [`market_research/deep_dives/`](market_research/deep_dives/)
+- Evidence runs: [`market_research/pain_points/runs/`](market_research/pain_points/runs/)
+- Solution alternatives (competitors/workarounds): [`market_research/solution_alternatives/`](market_research/solution_alternatives/)
+- Decisions and dated reversals: [`strategy/decisions/`](strategy/decisions/)
 
 ## Working rules
 

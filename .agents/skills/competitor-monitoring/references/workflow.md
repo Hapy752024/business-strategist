@@ -151,11 +151,13 @@ python3 scripts/validate_apis/validate_sonar.py
 
 ## Output
 
-Write monitoring outputs under:
+Write monitoring outputs under the current project workspace (pass an explicit `--out-dir` to the scripts; `--legacy-output` is removed):
 
 ```text
-projects/research/evidence-scout/competitor-monitoring/<timestamp-topic>/
+projects/<project-slug>/market_research/solution_alternatives/monitoring/<timestamp-topic>/
 ```
+
+The former default location is a read-only archive of legacy runs: `projects/_archive/legacy-evidence-scout/competitor-monitoring/`.
 
 Recommended files:
 

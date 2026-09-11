@@ -4,6 +4,10 @@
 from __future__ import annotations
 
 import base64
+import copy
+import hashlib
+from contextlib import contextmanager
+from contextvars import ContextVar
 import json
 import os
 import re
@@ -28,7 +32,7 @@ def project_root() -> Path:
 
 
 ROOT = project_root()
-OUTPUT_DIR = ROOT / "projects" / "research" / "evidence-scout" / "api-validation"
+OUTPUT_DIR = ROOT / "projects" / "_infra" / "api-validation"
 
 
 def now_iso() -> str:
@@ -135,6 +139,41 @@ def sanitize_headers(headers: dict[str, str]) -> dict[str, str]:
     return safe
 
 
+class RequestBudget:
+    """Per-run limits for calls through this module; no persistent response cache."""
+
+    def __init__(self, max_requests: int, *, reuse_gets: bool = True):
+        if type(max_requests) is not int or max_requests < 1:
+            raise ValueError("max_requests must be a positive integer")
+        self.max_requests = max_requests
+        self.reuse_gets = reuse_gets
+        self.requests = 0
+        self.cache_hits = 0
+        self.blocked_requests = 0
+        self.cache: dict[str, Any] = {}
+
+    def summary(self) -> dict[str, Any]:
+        return {"max_requests": self.max_requests, "requests": self.requests,
+                "cache_hits": self.cache_hits, "blocked_requests": self.blocked_requests,
+                "scope": "shared HTTP helper calls only; excludes SDKs, subprocesses and redirects"}
+
+
+_REQUEST_BUDGET: ContextVar[RequestBudget | None] = ContextVar("request_budget", default=None)
+
+
+@contextmanager
+def request_budget(max_requests: int, *, reuse_gets: bool = True):
+    if _REQUEST_BUDGET.get() is not None:
+        raise ValueError("Nested request budgets could bypass the outer limit")
+    budget = RequestBudget(max_requests, reuse_gets=reuse_gets)
+    token = _REQUEST_BUDGET.set(budget)
+    try:
+        yield budget
+    finally:
+        budget.cache.clear()
+        _REQUEST_BUDGET.reset(token)
+
+
 def http_request(
     method: str,
     url: str,
@@ -160,6 +199,22 @@ def http_request(
         token = base64.b64encode(f"{basic_auth[0]}:{basic_auth[1]}".encode("utf-8")).decode("ascii")
         request_headers["Authorization"] = f"Basic {token}"
 
+    budget = _REQUEST_BUDGET.get()
+    cache_key = None
+    if budget:
+        if budget.reuse_gets and method.upper() == "GET" and body is None:
+            cache_key = hashlib.sha256(json.dumps(
+                [url, sorted((k.lower(), v) for k, v in request_headers.items())]
+            ).encode()).hexdigest()
+            cached = budget.cache.get(cache_key)
+            if cached and cached[0] > time.monotonic():
+                budget.cache_hits += 1
+                return copy.deepcopy(cached[1])
+        if budget.requests >= budget.max_requests:
+            budget.blocked_requests += 1
+            return {"ok": False, "status_code": None, "headers": {}, "body": None,
+                    "error": "HTTP request budget exhausted", "error_type": "request_budget_exhausted"}
+        budget.requests += 1
     req = urllib.request.Request(url, data=body, headers=request_headers, method=method.upper())
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:
@@ -170,12 +225,24 @@ def http_request(
                 parsed = json.loads(text)
             except json.JSONDecodeError:
                 parsed = {"text": text[:20000]}
-            return {
+            result = {
                 "ok": True,
                 "status_code": response.status,
                 "headers": sanitize_headers(dict(response.headers.items())),
                 "body": parsed,
             }
+            # Reuse only explicitly fresh HTTP responses; uncacheable polling stays live.
+            cache_control = response.headers.get("Cache-Control", "").lower()
+            max_age = re.search(r"(?:^|,)\s*max-age=(\d+)(?:,|$)", cache_control)
+            try:
+                ttl = max(0, min(60, int(max_age[1]) - int(response.headers.get("Age", "0")))) if max_age else 0
+            except ValueError:
+                ttl = 0
+            if (ttl and budget and cache_key and len(budget.cache) < 128 and len(raw_body) <= 262144
+                    and response.status == 200 and not any(
+                        flag in cache_control for flag in ("no-store", "no-cache", "max-age=0"))):
+                budget.cache[cache_key] = (time.monotonic() + ttl, copy.deepcopy(result))
+            return result
     except urllib.error.HTTPError as exc:
         text = exc.read().decode("utf-8", errors="replace")
         try:
@@ -246,6 +313,8 @@ def is_credit_exhaustion(response: dict[str, Any]) -> bool:
 
 
 def status_from_response(response: dict[str, Any]) -> str:
+    if response.get("error_type") == "request_budget_exhausted":
+        return "request_budget_exhausted"
     if response.get("ok"):
         body = response.get("body")
         if isinstance(body, dict) and body.get("success") is False and is_credit_exhaustion(response):

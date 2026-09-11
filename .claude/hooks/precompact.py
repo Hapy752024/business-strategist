@@ -27,13 +27,13 @@ def main() -> int:
 
     # Collect active workspace state
     active_workspaces: list[dict[str, str]] = []
-    topics_dir = ROOT / "projects" / "research" / "topics"
-    if topics_dir.exists():
-        for manifest_path in sorted(topics_dir.glob("*/manifest.json")):
+    projects_dir = ROOT / "projects"
+    if projects_dir.exists():
+        for manifest_path in sorted(projects_dir.glob("*/market_research/manifest.json")):
             try:
                 manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
                 active_workspaces.append({
-                    "slug": manifest_path.parent.name,
+                    "slug": manifest_path.parent.parent.name,
                     "current_stage": manifest.get("current_stage", "unknown"),
                     "updated_at": manifest.get("updated_at", ""),
                     "next_action": manifest.get("next_action", ""),
@@ -44,7 +44,7 @@ def main() -> int:
 
     # Collect recent run manifests
     recent_runs: list[dict[str, str]] = []
-    for run_manifest_path in sorted(topics_dir.glob("*/**/run-manifest.json")):
+    for run_manifest_path in sorted(projects_dir.glob("*/market_research/**/run-manifest.json")):
         try:
             run = json.loads(run_manifest_path.read_text(encoding="utf-8"))
             recent_runs.append({

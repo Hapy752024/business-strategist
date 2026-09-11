@@ -3,12 +3,12 @@
 ## Purpose
 Define the exact file shapes the component producer must produce before its Stop hook will allow the skill to declare done.
 
-## Canonical Delivery: `projects/brand-projects/<name>/components/`
+## Canonical Delivery: `projects/<name>/branding/components/`
 
 ```
 components/
 ├── README.md
-├── tokens.css                              # symlink or copy from projects/brand-projects/<name>/tokens.css
+├── tokens.css                              # symlink or copy from projects/<name>/branding/tokens.css
 ├── motion-tokens.css                       # symlink or copy from motion/motion-tokens.css
 ├── motion-tokens.ts                        # symlink or copy from motion/motion-tokens.ts
 ├── core/
@@ -43,7 +43,7 @@ For each component `<PascalName>`:
 - Component file references at least one `var(--color-*)` or `var(--motion-*)` token.
 - Component file contains no hardcoded hex colors (regex `#[0-9a-fA-F]{3,8}`).
 
-## Working History: `projects/brand-projects/<name>/stages/components/`
+## Working History: `projects/<name>/branding/stages/components/`
 
 ```
 stages/components/

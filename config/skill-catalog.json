@@ -566,6 +566,22 @@
       ],
       "side_effect": "none",
       "cost": "high"
+    },
+    "town-db-curator": {
+      "intent": [
+        "curate Italy town data with dated sources"
+      ],
+      "excludes": [
+        "venture validation"
+      ],
+      "prerequisites": [
+        "selected internal town database"
+      ],
+      "artifacts": [
+        "verified sourced updates and regenerated exports"
+      ],
+      "side_effect": "local-write",
+      "cost": "medium"
     }
   }
 }

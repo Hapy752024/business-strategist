@@ -1,6 +1,6 @@
 {
   "dataset_name": "skill-routing",
-  "description": "Routing collision tests \u2014 ambiguous prompts per collision pair, testing which skill fires.",
+  "description": "Routing collision tests — ambiguous prompts per collision pair, testing which skill fires.",
   "pairs": [
     {
       "pair": "marketing-strategy-builder vs social-digital-marketing-planner vs archetype-gtm-strategist",
@@ -14,11 +14,11 @@
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "Specific request for platform-level social media plan and content calendar \u2014 social-digital-marketing-planner owns this. archetype-gtm-strategist is for end-to-end stage-gated GTM, not campaign-level social planning."
+          "rationale": "Specific request for platform-level social media plan and content calendar — social-digital-marketing-planner owns this. archetype-gtm-strategist is for end-to-end stage-gated GTM, not campaign-level social planning."
         },
         {
           "id": "route-marketing-2",
-          "prompt": "We need a full go-to-market strategy for our fintech SaaS \u2014 first customers, partnerships, European expansion, and regulatory path.",
+          "prompt": "We need a full go-to-market strategy for our fintech SaaS — first customers, partnerships, European expansion, and regulatory path.",
           "expected_output": "Routes to archetype-gtm-strategist for end-to-end stage-gated GTM with fintech archetype and Europe region.",
           "expected_skill": "archetype-gtm-strategist",
           "forbidden_skills": [
@@ -26,7 +26,7 @@
             "marketing-strategy-builder"
           ],
           "files": [],
-          "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) \u2014 archetype-gtm-strategist owns this. marketing-strategy-builder is for campaign-level marketing detail after the GTM strategy."
+          "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) — archetype-gtm-strategist owns this. marketing-strategy-builder is for campaign-level marketing detail after the GTM strategy."
         },
         {
           "id": "route-marketing-3",
@@ -37,7 +37,7 @@
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) \u2014 marketing-strategy-builder owns this. archetype-gtm-strategist adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
+          "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) — marketing-strategy-builder owns this. archetype-gtm-strategist adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
         }
       ]
     },
@@ -54,7 +54,7 @@
             "evidence-scout"
           ],
           "files": [],
-          "rationale": "Vague idea, no segment clarity \u2014 needs idea-grill to narrow and form a researchable thesis before any building or evidence collection."
+          "rationale": "Vague idea, no segment clarity — needs idea-grill to narrow and form a researchable thesis before any building or evidence collection."
         },
         {
           "id": "route-evaluate-2",
@@ -65,7 +65,7 @@
             "idea-grill"
           ],
           "files": [],
-          "rationale": "Clear segment with evidence \u2014 past the idea-grill stage, ready for zero-to-one business building. The request is for a plan, not idea clarification."
+          "rationale": "Clear segment with evidence — past the idea-grill stage, ready for zero-to-one business building. The request is for a plan, not idea clarification."
         },
         {
           "id": "route-evaluate-3",
@@ -76,7 +76,7 @@
             "idea-grill"
           ],
           "files": [],
-          "rationale": "High-stakes strategic decision with multiple informed perspectives already on the table \u2014 startup-challenge-panel's multi-role structure is the right fit. Not an idea-clarity or business-planning problem."
+          "rationale": "High-stakes strategic decision with multiple informed perspectives already on the table — startup-challenge-panel's multi-role structure is the right fit. Not an idea-clarity or business-planning problem."
         },
         {
           "id": "route-evaluate-4",
@@ -88,7 +88,7 @@
             "startup-business-builder"
           ],
           "files": [],
-          "rationale": "Consumer service packaging and trust challenge for a specific market \u2014 service-customer-perspective-challenger is built for exactly this. Use after evidence collection, before finalizing GTM."
+          "rationale": "Consumer service packaging and trust challenge for a specific market — service-customer-perspective-challenger is built for exactly this. Use after evidence collection, before finalizing GTM."
         }
       ]
     },
@@ -104,18 +104,18 @@
             "business-archetype-playbook-researcher"
           ],
           "files": [],
-          "rationale": "Request for case studies on specific named companies \u2014 growth-case-analyzer does company case studies. business-archetype-playbook-researcher does anonymous founder/operator lessons by business archetype."
+          "rationale": "Request for case studies on specific named companies — growth-case-analyzer does company case studies. business-archetype-playbook-researcher does anonymous founder/operator lessons by business archetype."
         },
         {
           "id": "route-lessons-2",
-          "prompt": "What do successful founders say about building a B2B SaaS company in Europe \u2014 specifically about pricing, first customers, and avoiding common mistakes?",
+          "prompt": "What do successful founders say about building a B2B SaaS company in Europe — specifically about pricing, first customers, and avoiding common mistakes?",
           "expected_output": "Routes to business-archetype-playbook-researcher for anonymous founder/operator lessons by B2B SaaS archetype.",
           "expected_skill": "business-archetype-playbook-researcher",
           "forbidden_skills": [
             "growth-case-analyzer"
           ],
           "files": [],
-          "rationale": "Request for anonymous founder/operator lessons by archetype (B2B SaaS, Europe) \u2014 business-archetype-playbook-researcher owns this. growth-case-analyzer does named-company case studies."
+          "rationale": "Request for anonymous founder/operator lessons by archetype (B2B SaaS, Europe) — business-archetype-playbook-researcher owns this. growth-case-analyzer does named-company case studies."
         }
       ]
     },
@@ -164,7 +164,7 @@
       "evals": [
         {
           "id": "route-ads-1",
-          "prompt": "Analyze what Facebook and Instagram ads my competitors are running \u2014 creatives, copy, CTAs, and how long the ads have been active.",
+          "prompt": "Analyze what Facebook and Instagram ads my competitors are running — creatives, copy, CTAs, and how long the ads have been active.",
           "expected_output": "Routes to competitor-marketing-analyzer, which now includes an ad-evidence step via scripts/evidence_scout/collect_ads.py.",
           "expected_skill": "competitor-marketing-analyzer",
           "forbidden_skills": [
@@ -172,7 +172,7 @@
             "marketing-strategy-builder"
           ],
           "files": [],
-          "rationale": "Analyzing competitor paid-ads intelligence is competitor analysis (collect_ads.py + Meta Ad Library), not planning our own social media campaigns \u2014 social-digital-marketing-planner owns outbound campaign planning."
+          "rationale": "Analyzing competitor paid-ads intelligence is competitor analysis (collect_ads.py + Meta Ad Library), not planning our own social media campaigns — social-digital-marketing-planner owns outbound campaign planning."
         },
         {
           "id": "route-ads-2",
@@ -201,7 +201,7 @@
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "The user wants multiple drafts generated and judged against each other \u2014 strategy-draft-tournament owns this. startup-challenge-panel challenges an existing plan; archetype-gtm-strategist produces a single stage-gated strategy."
+          "rationale": "The user wants multiple drafts generated and judged against each other — strategy-draft-tournament owns this. startup-challenge-panel challenges an existing plan; archetype-gtm-strategist produces a single stage-gated strategy."
         },
         {
           "id": "route-tournament-2",
@@ -370,6 +370,46 @@
           "expected_output": "Preserve standalone brand discovery.",
           "files": [],
           "rationale": "Preserve standalone brand discovery."
+        }
+      ]
+    },
+    {
+      "pair": "pain-first gate: solution-first requests with a project context",
+      "evals": [
+        {
+          "id": "gate-website-1",
+          "prompt": "Build a landing page for my new idea: a relocation concierge for US retirees moving to Italy.",
+          "expected_skill": "brand-website-designer-builder",
+          "forbidden_skills": [],
+          "expected_output": "Route is website-build, but with --project set and problem_validation not passed the packet is gate_blocked with first_skill idea-grill: customer segment, journey, and pain points must be validated with web-searched evidence first.",
+          "files": [],
+          "project_context": true,
+          "expected_gate_blocked": true,
+          "expected_first_skill": "idea-grill",
+          "rationale": "Pain-first rule: even solution-first requests on a business-track project start with segment/journey/pain validation before website work."
+        },
+        {
+          "id": "gate-gtm-1",
+          "prompt": "Create a go-to-market strategy and launch plan for my meal-planning app for busy parents.",
+          "expected_skill": "archetype-gtm-strategist",
+          "forbidden_skills": [],
+          "expected_output": "Route is gtm-strategy, gate_blocked with first_skill idea-grill until the pain gate passes or an explicit override is recorded.",
+          "files": [],
+          "project_context": true,
+          "expected_gate_blocked": true,
+          "expected_first_skill": "idea-grill",
+          "rationale": "GTM commits resources; the pain-first gate requires validated customer segment, journey, and pain points first."
+        },
+        {
+          "id": "gate-exempt-1",
+          "prompt": "Find competitors for my meal-planning app idea.",
+          "expected_skill": "competitor-scout",
+          "forbidden_skills": [],
+          "expected_output": "Not gate-blocked: discovery/evidence routes never require the pain gate.",
+          "files": [],
+          "project_context": true,
+          "expected_gate_blocked": false,
+          "rationale": "Evidence-gathering routes are how the pain gate gets passed; they must stay unblocked."
         }
       ]
     }

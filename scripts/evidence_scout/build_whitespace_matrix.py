@@ -12,7 +12,7 @@ Usage:
       --topic "<topic>" --evidence-jsonl <path> --competitors-json <path> \
       [--out <path>] [--pains 8] [--competitors 10]
 
-Default output: projects/research/topics/<topic-slug>/risks/whitespace-matrix.md
+Default output: projects/<project-slug>/market_research/solution_alternatives/whitespace-matrix.md
 No network access.
 """
 
@@ -167,7 +167,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--topic", required=True)
     parser.add_argument("--evidence-jsonl", required=True, help="Path to an evidence run's evidence.jsonl.")
     parser.add_argument("--competitors-json", required=True, help="Path to competitors.json from discover_competitors.py.")
-    parser.add_argument("--out", default="", help="Output path. Defaults to projects/research/topics/<topic-slug>/risks/whitespace-matrix.md.")
+    parser.add_argument("--out", default="", help="Output path. Defaults to projects/<project-slug>/market_research/solution_alternatives/whitespace-matrix.md.")
     parser.add_argument("--pains", type=int, default=8, help="Maximum pain rows.")
     parser.add_argument("--competitors", type=int, default=10, help="Maximum competitor columns.")
     return parser.parse_args()
@@ -189,7 +189,7 @@ def main() -> int:
     out_path = (
         Path(args.out).expanduser().resolve()
         if args.out
-        else ROOT / "projects" / "research" / "topics" / slugify(args.topic) / "risks" / "whitespace-matrix.md"
+        else ROOT / "projects" / slugify(args.topic) / "market_research" / "solution_alternatives" / "whitespace-matrix.md"
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(render_matrix(args.topic, pains, competitors), encoding="utf-8")

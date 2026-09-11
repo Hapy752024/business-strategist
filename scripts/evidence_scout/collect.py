@@ -34,6 +34,7 @@ from common import (  # noqa: E402
     get_secret,
     http_get,
     http_post,
+    request_budget,
     is_credit_exhaustion,
     now_iso,
     redact_sensitive,
@@ -3133,6 +3134,10 @@ def write_report(
         lines.extend(["", "## Provider Alerts", ""])
         for alert in failed:
             lines.append(f"- {alert}")
+    pending = remaining_tasks(provider_summaries, quality_flags)
+    if pending:
+        lines.extend(["", "## Remaining Tasks", ""])
+        lines.extend(f"- {task['provider']} ({task['status']}): {task['action']}" for task in pending)
     lines.extend(["", "## Query Plan", ""])
     lines.extend(f"- `{query}`" for query in queries)
     lines.extend(["", "## Evidence Mix", ""])
@@ -3215,6 +3220,24 @@ def provider_alerts(provider_summaries: dict[str, Any]) -> list[str]:
         else:
             alerts.append(f"`{provider}` failed with status `{status}`. Inspect raw provider output before relying on the run.")
     return alerts
+
+
+def remaining_tasks(provider_summaries: dict[str, Any], quality_flags: list[str]) -> list[dict[str, str]]:
+    """Explicit unresolved work, never a claim that a missing source disproves demand."""
+    tasks = []
+    for provider, summary in provider_summaries.items():
+        status = summary.get("status", "unknown")
+        if status == "ok":
+            continue
+        action = ("Review the request limit and rerun this provider within the approved scope."
+                  if status == "request_budget_exhausted" else
+                  "Ask the user to top up or continue without this source; do not retry automatically."
+                  if status in {"billing_required", "insufficient_credits"} else
+                  "Resolve provider coverage and rerun or record an explicit source gap.")
+        tasks.append({"provider": provider, "status": str(status), "action": action})
+    tasks.extend({"provider": "evidence_quality", "status": "unresolved", "action": flag}
+                 for flag in quality_flags)
+    return tasks
 
 
 def quality_summary(records: list[dict[str, Any]], provider_summaries: dict[str, Any]) -> list[str]:
@@ -3519,7 +3542,11 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace, queries: list[s
 
 def load_provider_routing() -> dict[str, Any]:
     """Read the latest provider-doctor summary so runs record which backend actually served each source family."""
-    doctor_path = ROOT / "projects" / "research" / "evidence-scout" / "provider-doctor" / "doctor.summary.json"
+    doctor_path = ROOT / "projects" / "_infra" / "provider-doctor" / "doctor.summary.json"
+    legacy_path = ROOT / "projects" / "research" / "evidence-scout" / "provider-doctor" / "doctor.summary.json"
+    if not doctor_path.exists() and legacy_path.exists():
+        # Pre-migration location; removed in a later cleanup.
+        doctor_path = legacy_path
     try:
         data = json.loads(doctor_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
@@ -3568,6 +3595,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--hypothesis-id", default="H1", help="Hypothesis label for normalized records.")
     parser.add_argument("--days", type=int, default=30, help="Lookback window for recency-aware sources.")
+    parser.add_argument("--max-http-requests", type=int, default=100,
+                        help="Per-run cap on shared HTTP helper calls; excludes SDK/CLI traffic. Default: 100.")
+    parser.add_argument("--fresh-http", action="store_true",
+                        help="Disable in-run reuse of identical successful GET requests.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum normalized records per provider.")
     parser.add_argument(
         "--problem-keywords",
@@ -3717,9 +3748,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--geo", default="AUTO", help="Country/region code for providers that support geography. Use AUTO to infer from topic/segment.")
     parser.add_argument("--language", default="AUTO", help="Language code for providers that support language filtering. Use AUTO to infer from topic/segment.")
     parser.add_argument("--out-dir", default="", help="Optional output directory.")
-    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to projects/research/topics/<topic-slug>.")
-    parser.add_argument("--legacy-output", action="store_true", help="Write to the former projects/research/evidence-scout/runs layout.")
-    return parser.parse_args()
+    parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
+    parser.add_argument("--legacy-output", action="store_true", help="Removed: the projects/research/evidence-scout layout is gone (now projects/_archive, read-only). Use --out-dir for an explicit path.")
+    args = parser.parse_args()
+    if args.max_http_requests < 1:
+        parser.error("--max-http-requests must be positive")
+    return args
 
 
 def main() -> int:
@@ -3734,7 +3768,7 @@ def main() -> int:
         workspace_arg=args.workspace,
         out_dir=args.out_dir,
         legacy_output=args.legacy_output,
-        workspace_subdir="evidence/runs",
+        workspace_subdir="market_research/pain_points/runs",
         legacy_subdir="runs",
         customer_segment=args.customer_segment,
     )
@@ -3793,31 +3827,38 @@ def main() -> int:
     }
     records: list[dict[str, Any]] = []
     provider_summaries: dict[str, Any] = {}
-    for provider in requested_providers:
-        func = provider_funcs.get(provider)
-        if not func:
-            provider_summaries[provider] = {"status": "unsupported", "record_count": 0}
-            continue
-        provider_records, provider_summary = func(args, queries, run_dir)
-        # Store the route actually used for this retrieval, rather than adding
-        # a hypothetical backend after collection. Language fields express the
-        # requested search scope; they do not claim a language detector ran.
-        for record in provider_records:
-            record["retrieval_backend"] = provider
-            record["query_language"] = args.language
-            record.setdefault("source_language", "und")
-            record["output_language"] = "en"
-        accepted, rejected = accepted_records(provider_records)
-        relevant_provider_records = [record for record in accepted if record.get("relevance") != "irrelevant"]
-        irrelevant_provider_records = [record for record in accepted if record.get("relevance") == "irrelevant"]
-        records.extend(accepted)
-        provider_summary["record_count"] = len(relevant_provider_records)
-        provider_summary["irrelevant_count"] = len(irrelevant_provider_records)
-        provider_summary["rejected_record_count"] = len(rejected)
-        if rejected:
-            provider_summary["record_rejections"] = rejected[:10]
-            provider_summary["status"] = "partial" if accepted else "invalid_records"
-        provider_summaries[provider] = provider_summary
+    with request_budget(args.max_http_requests, reuse_gets=not args.fresh_http) as budget:
+        for provider in requested_providers:
+            func = provider_funcs.get(provider)
+            if not func:
+                provider_summaries[provider] = {"status": "unsupported", "record_count": 0}
+                continue
+            if budget.requests >= budget.max_requests:
+                provider_summaries[provider] = {"status": "request_budget_exhausted", "record_count": 0}
+                continue
+            blocked_before = budget.blocked_requests
+            provider_records, provider_summary = func(args, queries, run_dir)
+            # Store the route actually used for this retrieval, rather than adding
+            # a hypothetical backend after collection. Language fields express the
+            # requested search scope; they do not claim a language detector ran.
+            for record in provider_records:
+                record["retrieval_backend"] = provider
+                record["query_language"] = args.language
+                record.setdefault("source_language", "und")
+                record["output_language"] = "en"
+            accepted, rejected = accepted_records(provider_records)
+            relevant_provider_records = [record for record in accepted if record.get("relevance") != "irrelevant"]
+            irrelevant_provider_records = [record for record in accepted if record.get("relevance") == "irrelevant"]
+            records.extend(accepted)
+            provider_summary["record_count"] = len(relevant_provider_records)
+            provider_summary["irrelevant_count"] = len(irrelevant_provider_records)
+            provider_summary["rejected_record_count"] = len(rejected)
+            if rejected:
+                provider_summary["record_rejections"] = rejected[:10]
+                provider_summary["status"] = "partial" if accepted else "invalid_records"
+            if budget.blocked_requests > blocked_before:
+                provider_summary["status"] = "request_budget_exhausted"
+            provider_summaries[provider] = provider_summary
 
     relevant_records = [record for record in records if record.get("relevance") != "irrelevant"]
     irrelevant_records = [record for record in records if record.get("relevance") == "irrelevant"]
@@ -3826,6 +3867,8 @@ def main() -> int:
     append_jsonl(run_dir / "irrelevant.jsonl", irrelevant_records)
     alerts = provider_alerts(provider_summaries)
     quality_flags = quality_summary(relevant_records, provider_summaries)
+    remaining = remaining_tasks(provider_summaries, quality_flags)
+    budget_exhausted = any(s.get("status") == "request_budget_exhausted" for s in provider_summaries.values())
     summary = {
         "run_dir": str(run_dir),
         "topic": args.topic,
@@ -3841,6 +3884,9 @@ def main() -> int:
         "irrelevant_count": len(irrelevant_records),
         "providers": provider_summaries,
         "needs_user_attention": alerts,
+        "request_budget": budget.summary(),
+        "remaining_tasks": remaining,
+        "collection_complete": not remaining,
         "quality_flags": quality_flags,
         "outputs": {
             "evidence_jsonl": str(run_dir / "evidence.jsonl"),
@@ -3862,31 +3908,31 @@ def main() -> int:
             for provider, result in provider_summaries.items()
             if result.get("status") not in {"ok", "not_run"}
         ]
-        gate_result = "fail" if not relevant_records else ("conditional_pass" if failures or quality_flags else "pass")
+        gate_result = "fail" if budget_exhausted or not relevant_records else ("conditional_pass" if failures or quality_flags else "pass")
         update_stage(
             workspace,
             "evidence_collection",
-            status="failed" if gate_result == "fail" else "passed",
+            status="blocked" if budget_exhausted else ("failed" if gate_result == "fail" else "passed"),
             gate_result=gate_result,
             artifacts=[run_dir / "report.md", run_dir / "summary.json", run_dir / "evidence.jsonl", run_dir / "assumptions.md"],
             provider_failures=failures,
             open_gaps=quality_flags,
-            next_action="Review evidence and interview users before synthesis." if gate_result != "pass" else "Proceed to competitor discovery or opportunity-risk design.",
+            next_action="Resolve remaining_tasks in summary.json before continuing collection." if budget_exhausted else "Review evidence and interview users before synthesis." if gate_result != "pass" else "Proceed to competitor discovery or opportunity-risk design.",
         )
     update_run_manifest(
         run_dir,
         stage="evidence_collection",
-        stage_status="failed" if not relevant_records else "passed",
-        gate_result="fail" if not relevant_records else ("conditional_pass" if (provider_summaries and any(s.get("status") not in {"ok", "not_run"} for s in provider_summaries.values())) or quality_flags else "pass"),
+        stage_status="blocked" if budget_exhausted else ("failed" if not relevant_records else "passed"),
+        gate_result="fail" if budget_exhausted or not relevant_records else ("conditional_pass" if (provider_summaries and any(s.get("status") not in {"ok", "not_run"} for s in provider_summaries.values())) or quality_flags else "pass"),
         artifacts=[run_dir / "report.md", run_dir / "summary.json", run_dir / "evidence.jsonl"],
         open_gaps=quality_flags,
-        next_action="Review evidence and interview users before synthesis." if not relevant_records or quality_flags else "Proceed to competitor discovery or opportunity-risk design.",
-        event="evidence_collection_completed",
+        next_action="Resolve remaining_tasks in summary.json before continuing collection." if budget_exhausted else "Review evidence and interview users before synthesis." if not relevant_records or quality_flags else "Proceed to competitor discovery or opportunity-risk design.",
+        event="evidence_collection_budget_exhausted" if budget_exhausted else "evidence_collection_completed",
         record_count=len(relevant_records),
         source_count=len([s for s in provider_summaries.values() if s.get("status") == "ok"]),
     )
     print(json.dumps(summary, indent=2, sort_keys=True))
-    return 0 if relevant_records else 1
+    return 2 if budget_exhausted else (0 if relevant_records else 1)
 
 
 if __name__ == "__main__":

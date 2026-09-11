@@ -3,7 +3,7 @@
 ## Purpose
 Define the exact file shapes the motion skill must produce before its Stop hook will allow the skill to declare done.
 
-## Canonical Delivery: `projects/brand-projects/<name>/motion/`
+## Canonical Delivery: `projects/<name>/branding/motion/`
 
 ```
 motion/
@@ -41,7 +41,7 @@ motion/
 - Each file imports from `../../motion-tokens.ts` (or its CSS equivalent) and references pillar tokens by name.
 - Each file's header comment names the source spec it implements: `// Implements: stages/motion/elements/<category>/<element>/spec.json`.
 
-## Working History: `projects/brand-projects/<name>/stages/motion/`
+## Working History: `projects/<name>/branding/stages/motion/`
 
 ```
 stages/motion/

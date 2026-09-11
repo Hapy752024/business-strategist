@@ -22,8 +22,10 @@ def slugify(value: str) -> str:
 
 def create_workspace(root: Path) -> list[str]:
     repo = Path(__file__).resolve().parents[4]
-    if root.resolve().is_relative_to((repo / "brand-projects").resolve()):
-        raise ValueError("Workspace relocated; use projects/brand-projects/. Old roots are not created.")
+    resolved = root.resolve()
+    legacy_roots = [(repo / "projects" / "brand-projects").resolve(), (repo / "brand-projects").resolve()]
+    if any(resolved.is_relative_to(legacy) for legacy in legacy_roots):
+        raise ValueError("Workspace relocated; use projects/<project-slug>/branding/. Old roots are not created.")
     paths = [
         root / "stages",
         root / "old",
@@ -40,13 +42,13 @@ def create_workspace(root: Path) -> list[str]:
     return [str(path) for path in paths]
 
 
-def write_manifest(root: Path, *, entry_mode: str, business_to_brand: str = "") -> Path:
+def write_manifest(root: Path, *, entry_mode: str, business_to_brand: str = "", brand_id: str = "") -> Path:
     manifest_path = root / "brand-manifest.json"
     if not manifest_path.exists():
         manifest = {
             "schema_version": "1.0",
             "manifest_revision": 1,
-            "brand_id": root.name,
+            "brand_id": brand_id or root.name,
             "entry_mode": entry_mode,
             "business_to_brand": business_to_brand or None,
             "current_stage": "discovery",
@@ -84,16 +86,21 @@ def archive_stage(root: Path, stage: str) -> Path | None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", required=True, help="Brand/project name")
-    parser.add_argument("--base-dir", type=Path, default=Path(__file__).resolve().parents[4] / "projects/brand-projects")
+    parser.add_argument("--base-dir", type=Path, default=Path(__file__).resolve().parents[4] / "projects")
+    parser.add_argument("--project", default="", help="Project slug: brand workspace goes to projects/<slug>/branding.")
     parser.add_argument("--stage", choices=STAGES)
     parser.add_argument("--archive-stage", action="store_true")
     parser.add_argument("--entry-mode", choices=("standalone", "business_linked"), default="standalone")
     parser.add_argument("--business-to-brand", default="")
     args = parser.parse_args()
 
-    root = args.base_dir / slugify(args.name)
+    if args.project:
+        root = Path(__file__).resolve().parents[4] / "projects" / slugify(args.project) / "branding"
+    else:
+        root = args.base_dir / slugify(args.name)
     created = create_workspace(root)
-    manifest_path = write_manifest(root, entry_mode=args.entry_mode, business_to_brand=args.business_to_brand)
+    manifest_path = write_manifest(root, entry_mode=args.entry_mode, business_to_brand=args.business_to_brand,
+                                   brand_id=slugify(args.project) if args.project else "")
     archived = None
     if args.archive_stage and args.stage:
         archived_path = archive_stage(root, args.stage)

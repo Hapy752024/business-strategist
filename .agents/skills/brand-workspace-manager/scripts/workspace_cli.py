@@ -43,7 +43,7 @@ def save(path: Path, data: dict, *, expected_revision: int) -> None:
 def manifest(root: Path) -> Path:
     path = root / "brand-manifest.json"
     if not path.exists():
-        raise SystemExit(f"brand manifest not found: {path}; moved workspaces are under projects/brand-projects/")
+        raise SystemExit(f"brand manifest not found: {path}; brand workspaces live at projects/<project-slug>/branding/")
     return path
 
 
@@ -70,7 +70,9 @@ def main() -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     create = sub.add_parser("create")
     create.add_argument("--name", required=True)
-    create.add_argument("--base-dir", type=Path, default=Path(__file__).resolve().parents[4] / "projects/brand-projects")
+    create.add_argument("--base-dir", type=Path, default=Path(__file__).resolve().parents[4] / "projects")
+    create.add_argument("--project", default="", help="Project slug: create at projects/<slug>/branding and link the brand track to the project controller.")
+    create.add_argument("--standalone", action="store_true", help="Exempt a project-linked brand workspace from the pain-first gate check.")
     create.add_argument("--entry-mode", choices=("standalone", "business_linked"), default="standalone")
     create.add_argument("--business-to-brand", default="")
     resume = sub.add_parser("resume")
@@ -114,7 +116,9 @@ def main() -> int:
             handoff = Path(args.business_to_brand).expanduser().resolve()
             if not handoff.is_file():
                 raise SystemExit("business-to-brand handoff must be an existing local file")
-        root = args.base_dir / module.slugify(args.name)
+        repo = Path(__file__).resolve().parents[4]
+        project_slug = module.slugify(args.project) if args.project else ""
+        root = repo / "projects" / project_slug / "branding" if project_slug else args.base_dir / module.slugify(args.name)
         module.create_workspace(root)
         handoff_ref = ""
         if handoff is not None:
@@ -124,8 +128,18 @@ def main() -> int:
             if not snapshot.exists():
                 shutil.copy2(handoff, snapshot)
             handoff_ref = snapshot.relative_to(root).as_posix()
-        path = module.write_manifest(root, entry_mode=args.entry_mode, business_to_brand=handoff_ref)
-        print(json.dumps({"workspace": str(root), "manifest": str(path)}, indent=2)); return 0
+        path = module.write_manifest(root, entry_mode=args.entry_mode, business_to_brand=handoff_ref, brand_id=project_slug)
+        controller_ref = ""
+        if project_slug:
+            controller = repo / "projects" / project_slug / "project-manifest.json"
+            if controller.exists():
+                pw_source = repo / "scripts" / "project_workspace.py"
+                pw_spec = spec_from_file_location("project_workspace", pw_source)
+                pw = module_from_spec(pw_spec); assert pw_spec and pw_spec.loader; pw_spec.loader.exec_module(pw)
+                pw.link_project(controller, track="brand", workspace=f"projects/{project_slug}/branding",
+                                active=False, standalone=args.standalone)
+                controller_ref = str(controller)
+        print(json.dumps({"workspace": str(root), "manifest": str(path), "project_manifest": controller_ref}, indent=2)); return 0
 
     root = args.project_dir.resolve()
     path = manifest(root)

@@ -542,8 +542,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lane", choices=["all", "competitive_market", "similar_company", "capability_reference"], default="all", help="Analyze only entities in one lane when using --competitors-json.")
     parser.add_argument("--fixture-pages-json", default="", help="Offline first-party page replay fixture keyed by entity URL.")
     parser.add_argument("--out-dir", default="")
-    parser.add_argument("--workspace", default="", help="Topic workspace path. Defaults to projects/research/topics/<topic-slug>.")
-    parser.add_argument("--legacy-output", action="store_true", help="Write to the former projects/research/evidence-scout/marketing layout.")
+    parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
+    parser.add_argument("--legacy-output", action="store_true", help="Removed: the projects/research/evidence-scout layout is gone (now projects/_archive, read-only). Use --out-dir for an explicit path.")
     return parser.parse_args()
 
 
@@ -582,7 +582,7 @@ def main() -> int:
         workspace_arg=args.workspace,
         out_dir=args.out_dir,
         legacy_output=args.legacy_output,
-        workspace_subdir="competitors/marketing",
+        workspace_subdir="market_research/solution_alternatives/marketing",
         legacy_subdir="marketing",
     )
     if workspace:

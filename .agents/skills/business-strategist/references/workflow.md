@@ -1,10 +1,11 @@
 # Business Strategist Workflow
 
 1. Normalize the request and inspect only the relevant active manifest.
-2. Read repo-root `references/task-scope.md` and run `python3 scripts/route_workflow.py "<request>" --intent <route-id> --task-scope <focused|execution|strategy>` when intent is understood. Respect exclusions, preserved decisions and new-project boundaries. Use `--continue-workspace` only for an actual continuation. Consult `references/routing.md` for ownership; phrase matches are a fallback, not semantic understanding.
-3. If the result is `business-strategist`, ask one routing question; otherwise dispatch the selected specialist.
-4. Pass only the selected specialist's required inputs. Do not preload unrelated research or brand references.
-5. Record the route, approvals, artifacts, and next action in the controller manifest. Specialist workers write disjoint artifacts and return result packets.
+2. Read repo-root `references/task-scope.md` and run `python3 scripts/route_workflow.py "<request>" --intent <route-id> --task-scope <focused|execution|strategy> --check-skill <selected-skill>` when intent is understood — add `--project <slug>` whenever the request targets a venture with a business track. Respect exclusions, preserved decisions and new-project boundaries. Use `--continue-workspace` only for an actual continuation. Consult `references/routing.md` for ownership; phrase matches are a fallback, not semantic understanding.
+3. Require exit 0 before dispatch; exit 2 means a blocked gate or invalid selection. Skill-name route IDs cover specialists without automatic phrase matching. An override requires an existing readable manifest and a successful audit write; it does not prove evidence quality or user authorization. Pain-first gate check: if the packet has `gate_blocked: true`, do not dispatch the downstream specialist. Establish the foundation first — customer segment, customer journey, and pain points with web-searched evidence via `idea-grill`/evidence collection under `market_research/{customer_segments,customer_journey,pain_points}` — until `problem_validation` passes, or the user explicitly overrides (`--override-gate`, recorded in the manifest's events).
+4. If the result is `business-strategist`, ask one routing question; otherwise dispatch the selected specialist.
+5. Pass only the selected specialist's required inputs. Do not preload unrelated research or brand references.
+6. Record the route, approvals, artifacts, and next action in the controller manifest. Specialist workers write disjoint artifacts and return result packets.
 
 For business-position selection or a coherence review, conditionally use `references/strategic-positioning.md` at repo root. Reuse supplied founder decision context before asking a question; ask one focused question only when a missing objective, role, means, downside, time horizon, or channel constraint would change the comparison. GTM owns position selection; operations derives delivery requirements; marketing and branding consume the selected decision. Reuse the active strategy record and do not reopen strategy for narrow execution requests.
 

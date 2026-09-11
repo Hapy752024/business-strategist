@@ -58,7 +58,7 @@ When setup/routing matters, especially for China sources or fallback selection, 
 python3 scripts/evidence_scout/provider_doctor.py --json
 ```
 
-It writes `projects/research/evidence-scout/provider-doctor/doctor.summary.json` and `doctor.md`. Inspect `source_families.*.active_backend` and `needs_user_attention` before interpreting source coverage. The doctor consumes the latest live API validation summary when available; credentials alone are not proof that a provider is usable.
+It writes `projects/_infra/provider-doctor/doctor.summary.json` and `doctor.md`. Inspect `source_families.*.active_backend` and `needs_user_attention` before interpreting source coverage. The doctor consumes the latest live API validation summary when available; credentials alone are not proof that a provider is usable.
 
 If any requested or important provider reports `missing_credentials`, `billing_required`, `insufficient_credits`, `permission_denied`, `rate_limited`, `unsupported`, or `failed`, notify the user before interpreting the evidence. Explain which source was unavailable, why it matters, and how to fix or bypass it. Do not bury API failures in the final caveats.
 
@@ -178,7 +178,7 @@ Before interpreting the run, check:
 - Whether the run has direct user-pain records, not only provider/editorial/competitor content.
 - Whether `summary.json.quality_flags` warns about zero Reddit/forum pain, weak Trends signals, or mostly competitor/editorial evidence.
 - Whether `summary.json.quality_flags` warns about mostly weak records, low direct user-pain share, or many `unknown` source-intent records.
-- Whether paths in `summary.json.outputs` exist. If `.evidence-scout/...` and `projects/research/evidence-scout/...` differ, inspect the path that exists and report the mismatch as a workflow issue.
+- Whether paths in `summary.json.outputs` exist. If `.evidence-scout/...` and `projects/_archive/legacy-evidence-scout/...` differ, inspect the path that exists and report the mismatch as a workflow issue.
 - Whether `research_plan.md`, `assumptions.md`, and `user_review_plan.md` exist. These are part of the flow, not optional notes.
 
 If any quality gate fails, say so before interpreting the evidence. Do not describe a run as healthy just because provider status is `ok`.
@@ -207,10 +207,10 @@ Evidence strength:
 
 The collector writes:
 
-- `projects/research/topics/<topic>/evidence/runs/<run>/raw/`
-- `projects/research/topics/<topic>/evidence/runs/<run>/evidence.jsonl`
-- `projects/research/topics/<topic>/evidence/runs/<run>/summary.json`
-- `projects/research/topics/<topic>/evidence/runs/<run>/report.md`
+- `projects/<topic>/market_research/pain_points/runs/<run>/raw/`
+- `projects/<topic>/market_research/pain_points/runs/<run>/evidence.jsonl`
+- `projects/<topic>/market_research/pain_points/runs/<run>/summary.json`
+- `projects/<topic>/market_research/pain_points/runs/<run>/report.md`
 
 Use `--legacy-output` only when a downstream consumer still requires the former global layout.
 

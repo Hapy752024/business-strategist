@@ -27,9 +27,19 @@ from common import get_secret, http_get, now_iso, write_json, with_query  # noqa
 from readiness import load_latest
 
 
-OUTPUT_DIR = ROOT / "projects" / "research" / "evidence-scout" / "provider-doctor"
-VALIDATION_SUMMARY = ROOT / "projects" / "research" / "evidence-scout" / "api-validation" / "all.summary.json"
-VALIDATION_DIR = ROOT / "projects" / "research" / "evidence-scout" / "api-validation"
+INFRA_DIR = ROOT / "projects" / "_infra"
+LEGACY_INFRA_DIR = ROOT / "projects" / "research" / "evidence-scout"
+OUTPUT_DIR = INFRA_DIR / "provider-doctor"
+
+
+def _infra_read(*parts: str) -> Path:
+    """Prefer projects/_infra; fall back to the legacy evidence-scout location."""
+    new = INFRA_DIR.joinpath(*parts)
+    return new if new.exists() else LEGACY_INFRA_DIR.joinpath(*parts)
+
+
+VALIDATION_SUMMARY = _infra_read("api-validation", "all.summary.json")
+VALIDATION_DIR = _infra_read("api-validation")
 
 
 def latest_validation_statuses() -> dict[str, dict[str, Any]]:

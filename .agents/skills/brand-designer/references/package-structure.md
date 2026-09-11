@@ -3,7 +3,7 @@
 Use this structure for final handoff. `stages/` is working history; root-level folders are canonical delivery.
 
 ```text
-projects/brand-projects/<slug>/
+projects/<slug>/branding/
   EXECUTIVE-SUMMARY.md
   BRAND-GUIDELINES.md
   DECISIONS.md
