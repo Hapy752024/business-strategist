@@ -6,3 +6,5 @@
 - Connect a user-selected GitHub repository to Vercel only with authorization. Review the immutable Preview deployment before protected-branch production.
 - Keep secrets in Vercel settings or local environment, never Git. The default site has no runtime FAL dependency.
 - Record Preview/Production/rollback state with `python3 scripts/brand/release_manifest.py <website-manifest> --status preview|production|rolled_back --commit <sha> --url <https-url>`. Preview requires a passing build. Production requires all QA fields to pass, `--confirm-production`, and recorded `--github-repo`, `--github-branch`, and `--vercel-project`. The command atomically records state only; it never deploys or changes traffic.
+
+Production recording also requires completed launch checks bound to full commit, tested production URL and --deployment-id configuration identity. Preview evidence cannot substitute for production verification.

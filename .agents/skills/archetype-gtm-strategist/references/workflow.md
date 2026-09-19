@@ -6,7 +6,7 @@ Use this skill for the strategic sequence from market test to repeatable distrib
 
 ## Minimum inputs
 
-For business-position selection/revision or a coherence review, load `references/strategic-positioning.md` at repo root. Compare feasible positions before choosing the offer; derive consequential delivery choices and their service/marketing implications. Reuse an existing selected position unless evidence or a material conflict warrants revisiting it. For a focused positioning question, use only relevant inputs and output sections; archetype and regional playbooks are conditional.
+For business-position selection/revision or a coherence review, load `references/strategic-positioning.md` at repo root. Compare specific customer-choice hypotheses before choosing the offer; derive consequential delivery choices and separately assess benefit, imitation barrier and value capture using that shared method. Reuse an existing selected position unless evidence or a material conflict warrants revisiting it. For a focused positioning question, use only relevant inputs and output sections; archetype and regional playbooks are conditional.
 
 - Business archetype and revenue model.
 - Geography and launch language.

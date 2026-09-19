@@ -541,6 +541,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--deep", action="store_true", help="Scrape common pricing, features, customers, blog, docs, and changelog paths for each competitor. Costs more credits.")
     parser.add_argument("--lane", choices=["all", "competitive_market", "similar_company", "capability_reference"], default="all", help="Analyze only entities in one lane when using --competitors-json.")
     parser.add_argument("--fixture-pages-json", default="", help="Offline first-party page replay fixture keyed by entity URL.")
+    parser.add_argument("--case", default="", help="Registered case ID within --workspace.")
     parser.add_argument("--out-dir", default="")
     parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
     parser.add_argument("--legacy-output", action="store_true", help="Removed: the projects/research/evidence-scout layout is gone (now projects/_archive, read-only). Use --out-dir for an explicit path.")
@@ -580,13 +581,14 @@ def main() -> int:
     run_dir, workspace = resolve_run_dir(
         topic=effective_topic,
         workspace_arg=args.workspace,
+        case_id=getattr(args, "case", ""),
         out_dir=args.out_dir,
         legacy_output=args.legacy_output,
         workspace_subdir="market_research/solution_alternatives/marketing",
         legacy_subdir="marketing",
     )
     if workspace:
-        update_stage(workspace, "competitor_marketing", status="in_progress", gate_result="not_run", next_action="Extract positioning claims without treating them as performance proof.")
+        update_stage(workspace, "competitor_marketing", run_dir=run_dir, status="in_progress", gate_result="not_run", next_action="Extract positioning claims without treating them as performance proof.")
     write_marketing_plan(run_dir, args, urls)
 
     raw: dict[str, Any] = {"scrapes": []}
@@ -649,7 +651,7 @@ def main() -> int:
         gate_result = "fail" if not analyses else ("conditional_pass" if provider_failure or provider_status.get("fallback_used") else "pass")
         update_stage(
             workspace,
-            "competitor_marketing",
+            "competitor_marketing", run_dir=run_dir,
             status="failed" if gate_result == "fail" else "passed",
             gate_result=gate_result,
             artifacts=[run_dir / "marketing_analysis.json", run_dir / "summary.json", run_dir / "report.md", run_dir / "marketing_plan.md"],

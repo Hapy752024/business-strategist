@@ -1,0 +1,24 @@
+{
+  "adapter_notes": "Only comparison field names normalized for initial author; harness supplied real fixture revision and local source bindings. No authored prose changed.",
+  "initial": {
+    "results": {
+      "capacity_meets_target": false,
+      "contribution_per_unit": 50.0,
+      "required_sales": 80
+    },
+    "returncode": 0,
+    "selection": null,
+    "stderr": ""
+  },
+  "initial_narratives_archived": true,
+  "updated": {
+    "results": {
+      "capacity_meets_target": true,
+      "contribution_per_unit": 100.0,
+      "required_sales": 40
+    },
+    "returncode": 0,
+    "selection": null,
+    "stderr": ""
+  }
+}

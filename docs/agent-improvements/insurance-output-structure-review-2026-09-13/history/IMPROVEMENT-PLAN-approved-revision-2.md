@@ -1,0 +1,176 @@
+# Agent improvement plan: better case research, one selected business
+
+13 September 2026. Revision 2: resolves the six findings and two setup clarifications in the [independent adversarial review](INDEPENDENT-ADVERSARIAL-REVIEW.md). Status: proposed implementation plan; no agent code or research migration implemented. Uses physical case folders (Option B). Supports multiple investigations, feasibility and economics per case, one executable idea, a root business plan, and separate current documents/history/archives. The [previous version](history/IMPROVEMENT-PLAN-before-adversarial-fixes.md) remains historical; earlier tournament scores do not approve this revision.
+
+## Outcome and scope
+
+The user should be able to compare investigated ideas, understand the evidence and economics behind each, select one, and receive a coherent business plan for that selection. The improvement must also make the research more useful: explain customer choice, delivery requirements, cash and uncertainty rather than simply accumulating sources.
+
+Four bounded work packages extend existing skills, state helpers and validators. Do not import the four external repositories or create another framework, database, dashboard, standing agent panel or parallel stage machine. New templates and small helper code are justified only by the specific outputs/checks below. Existing research and unrelated uncommitted changes are preserved.
+
+## Lessons to adopt, adapt and reject
+
+| Source inspected | Useful lesson | Our adaptation and actual novelty |
+|---|---|---|
+| MaxKmet [memory contract](https://raw.githubusercontent.com/MaxKmet/idea-validation-agents/main/memory/README.md) and [decision memo](https://raw.githubusercontent.com/MaxKmet/idea-validation-agents/main/skills/decision-memo/SKILL.md) | Durable per-idea assessments, shared research, a concise recommendation, explicit uncertainty, failure scenarios and a next test. | Case-local current outputs are a structural addition. Put a short decision summary in each case README, with the three most consequential failure paths and one next action when the evidence supports one. Preserve uncertainty and do not add another competing recommendation memo. |
+| MaxKmet [pricing](https://raw.githubusercontent.com/MaxKmet/idea-validation-agents/main/skills/pricing-and-wtp/SKILL.md), [CAC](https://raw.githubusercontent.com/MaxKmet/idea-validation-agents/main/skills/cac-modeler/SKILL.md) and [retention](https://raw.githubusercontent.com/MaxKmet/idea-validation-agents/main/skills/retention-predictor/SKILL.md) | Make pricing, acquisition and continued value explicit research dimensions. | These topics already exist locally. Improve the deliverable: separate observed prices/spend from hypothetical willingness to pay; show the acquisition funnel and contribution; explain renewal/repeat-value mechanisms. Reject invented price-survey thresholds, desire-based price multipliers, unsupported default retention/CAC estimates and revenue-only lifetime value for profitability decisions. |
+| ANVEAI [idea-hunt](https://raw.githubusercontent.com/ANVEAI/idea-hunt-skill/main/SKILL.md) | Investigate the existing workaround and spending, record rejected alternatives, define a commercial test and choose one candidate before execution planning. | Pain-first research and test design already exist. Add a visible comparison and explicit user selection. Do not import its universal 72-hour build/reachability rules, compulsory AI/software model, automatic rejection of infrequent needs, or treatment of a job posting as a purchase order. Tests do not authorize taking payments or contacting customers. |
+| MackDing [stage gates](https://raw.githubusercontent.com/MackDing/ai-native-founder-playbook-skill/main/ai-native-founder-playbook/references/stage-gates.md) and [templates](https://raw.githubusercontent.com/MackDing/ai-native-founder-playbook-skill/main/ai-native-founder-playbook/references/templates.md) | Match research to maturity; investigate false positives, define MVP exclusions/amendment criteria, and expose founder-dependent operations. | Reuse our stage machine and pilot/operations skills. Add a skeptical interpretation to outcome evidence, an evidence requirement for expanding MVP scope, and founder-attention/capacity questions to feasibility. Do not import app retention thresholds or a new lifecycle. Detailed files were successfully inspected for this plan; the earlier audit had only README coverage. |
+| Agency-agents [business strategist](https://raw.githubusercontent.com/msitarzewski/agency-agents/main/specialized/business-strategist.md) and [financial analyst](https://raw.githubusercontent.com/msitarzewski/agency-agents/main/finance/finance-financial-analyst.md) | Evaluate alternatives including doing nothing; state investment, dependencies, cash flows, sensitivity and reversible decision points. | Formalize a lightweight case business case and auditable economics. Existing positioning already covers many questions; standardized calculations and linked plan completeness are the additions. Avoid default DCF/LBO/M&A work, arbitrary scenario probabilities and unsupported market-share forecasts. Role prompts are not verified analytical software. |
+
+These are design lessons from source inspection, not evidence that the repositories outperform this agent. Preserve our explicit evidence provenance, comparable coverage, unpaid interview recruitment preference, pain gate and authorization boundaries.
+
+## Work package 1 — Case identity, selection and clean outputs
+
+**Value:** the reader can find every investigated case; the agent cannot confuse a research follow-up with execution selection. This is the most involved infrastructure change and must be delivered as a complete path through the relevant writers.
+
+Extend the existing project manifest with an identity-only case registry and one nullable selection with scope and revision. This consolidates the earlier proposed `cases.json` into an existing authority. Keep case research stages in their own research manifests; do not duplicate stage status in the registry. Research focus and `active_track` are not selection. Stable IDs survive renaming; relations/facets handle variants without automatically creating a business for every combination.
+
+### Authority and invalidation
+
+| Record | Authority and change rule |
+|---|---|
+| Project `manifest_revision` | Write-conflict control only. It is never used as evidence that A's plan became stale when B changed. |
+| Project `selection_generation` and nullable selection | Increment on explicit user selection, clearing selection, or change to the approved execution configuration. Selection records case ID, configuration and decision reference. A→B→A creates three distinct generations; redelivery of the same decision is idempotent. |
+| Case `assessment_revision` | Increment for a material concept, evidence-applicability, interpretation or economic-assumption change. Mere presentation edits do not change it. Raw evidence bytes and runs remain immutable. |
+| Case checkpoints and current outputs | Record the reviewed assessment revision and source-use bindings: input path/record locator, checked digest, applicability and correction reference when relevant. These records own readiness; the project registry does not duplicate it. |
+| Selected plan and handoffs | Bind case ID, execution configuration, selection generation, reviewed assessment revision and economics input digest when used. Consumers check the binding against current authorities before normal execution. |
+
+A known material correction increments the affected case revision and marks its dependent passes, plan sections and handoffs `review_required` in the same publication. Use declared bindings and the existing stage prerequisites; if affected stages cannot be distinguished, conservatively invalidate all commitment readiness in that case. A shared-source correction is applied to each declared consuming case in one project publication. Original evidence need not change for interpretation corrections to invalidate readiness. A stored digest detects byte changes at use time; an explicitly recorded correction detects known interpretation errors. Neither discovers undeclared semantic dependencies automatically.
+
+Unrelated B updates preserve A's bindings. Missing or mismatched reviewed revisions block normal execution; a human/agent review may refresh a still-valid checkpoint with a recorded rationale, never by silently copying the old pass. A change to the selected execution configuration requires an explicit selection decision; an evidence correction alone does not select or expand anything. Overrides remain scoped to explicitly named evidence prerequisites and the current revision; they cannot waive a pending publication, change selection, accept an old generation, or authorize two execution targets. Old handoffs must be rebuilt against the current binding even when a prerequisite is explicitly overridden.
+
+Minimum default layout:
+
+```text
+projects/<project>/
+  project-manifest.json          # Case identities and one execution selection
+  README.md                     # Current comparison and navigation
+  cases/<id>/
+    README.md                   # Current concept, assessment summary, next action
+    market_research/manifest.json
+    market_research/...         # Created as used; original runs retain provenance
+    feasibility.md              # Created when assessed
+    business-case.md            # Created when assessed
+    economics.json              # Created when calculations are needed
+  market_research/...           # Shared studies and preserved legacy runs
+  strategy/...                  # Only the selected idea's business plan/execution
+  history/decisions/<id>.md      # Canonical rationale, affected cases, snapshot links
+  history/evolution.md           # Generated project timeline
+  history/snapshots/<revision>/  # Actual prior concepts and current outputs
+```
+
+### Explicit paths and appraisal dispatch
+
+The shared resolver returns project root, case ID, research root, output base and layout version. Resolve source bindings against the explicit project root and checkpoints against the case research root; never infer roots by walking up from a manifest. Case checkpoints reference case-local assessments; those assessments may bind read-only root/shared/legacy inputs contained within the project. Scope-specific input can be reused only with a declared applicability assessment. Read access does not confer write access or a validation pass.
+
+For case mode, reject absolute checkpoint paths and writes outside the designated case/output purpose, including symlink escapes. `--case` plus `--out-dir` is accepted only if the resolved directory lies inside that route's allowed destination; reject conflicts before creating directories. Explicit standalone exports keep their current contract but cannot update case gates. Discovery and the checked hook recognize the versioned project manifest/case registry even when no root research manifest exists. Unknown/retired IDs and ambiguous aliases never fall back to project scope.
+
+Add exactly one route ID, `case-appraisal`, owned by `opportunity-risk-designer` in a documented appraisal mode. Keep existing task scopes; the explicit route/mode supplies permissions, not the word `focused`. Require a registered case, a researchable segment/problem/context, and initial segment/journey/pain research with its evidence limits. Where absent, route to the existing discovery/intake/evidence work first. A passed pain gate, selected execution target and later strategy checkpoints are **not** prerequisites for this mode. It writes only case README/feasibility/business-case, economics inputs/results and their publication metadata. It advances no commitment checkpoint and creates no root strategy, campaign, brand, website or approved pilot artifact.
+
+Appraisal reuses current research and the decision-relevant feasibility/economic questions in the shared reference. It does not dispatch the full startup/GTM/pilot/operations workflows to evade their prerequisites. Further evidence collection uses its normal checked route; any later specialist dispatch retains its existing gate. Catalog mode metadata specifies required inputs, allowed outputs, prerequisites and publisher; router, hook, alias validation and stage writer consume the same contract. `opportunity-risk-designer` aliases become ambiguous across modes and require the route ID, supplied by the routing agent. Execution routes require the current selection binding plus their existing prerequisites/authorization; standalone bypass cannot reclassify a known business case.
+
+### One project publication protocol
+
+Extend `scripts/project_workspace.py` with a project lock/publication helper; the existing revision-checked replace alone is insufficient. All versioned case state/current-output publication paths use it. Prepare draft outputs outside the lock. Under `project.lock`, re-read authorities, check expected project/case/input revisions, validate allowed paths and calculations, and reject conflicts before changing current files. Case mode stage helpers use this same already-held lock rather than reacquiring a nested research lock; legacy mode keeps its old lock. Use unique temporary files and exclusive run directories (timestamp plus random suffix with collision check), including simultaneous raw collections.
+
+Use one bounded pending-operation record, `history/pending.json`, not a transaction service. It contains operation/decision ID, affected cases, expected revisions, file destinations, before/after digests, and staged/backup paths plus whether a destination previously existed. Stage the validated new files and snapshots under the operation's private directory. Atomically publish the pending record **before** replacing any current file; replace validated artifacts and track manifests, install the decision record and updated timeline, then replace the project manifest last with `last_completed_operation_id`. Flush writes, then clear pending. Raw runs are not rolled back or repurposed.
+
+The recovery destination list includes the project manifest and its previous completion marker, every affected case manifest/current output, the canonical decision file and the generated timeline. Thus rollback restores the whole previous publication, not just case prose. The pending record itself is bookkeeping, not one of its own digest targets; operation-private drafts/backups may remain as clearly aborted diagnostics.
+
+On resume, acquire the project lock. If the project completion ID matches pending and all after-digests match, clear pending idempotently. Otherwise restore the exact before-images (remove only operation-created current destinations), mark the staged decision aborted, retain raw evidence, and clear pending after successful restoration. A mismatch indicating outside modification blocks recovery without overwriting that modification. A crash during rollback is resumed idempotently from the same before-images. Aborted decisions never appear in the committed timeline. Completed decision rationale is stored once; machine events reference its ID.
+
+Checked dispatch and execution consumers read state under the same lock and refuse any pending publication; a timeline-only check is insufficient. Derived views carry the operation ID and remain untrusted until it is committed. A direct filesystem reader can temporarily see mixed files and must check pending; arbitrary writes and disabled/other-host hooks remain outside enforcement. Do not claim full tool mediation. Selection changes preserve the old plan and invalidate handoffs but perform no external cancellations.
+
+**Existing surfaces:** [project control](../../../scripts/project_workspace.py), [workspace helpers](../../../scripts/evidence_scout/workspace.py), [initializer](../../../scripts/evidence_scout/init_project.py), [router](../../../scripts/route_workflow.py), route enforcement, project/research/handoff schemas, lifecycle reference and project templates. Audit and adapt collection, discovery, competitor marketing/ads, landscape builders, founder-playbook research, interview-kit and downstream brand/website writers. Reuse the producer list in [the structure report](REPORT.md); add any direct writer found during implementation.
+
+**Acceptance:** initialize a topic without empty venture workstreams; resume a known case without duplication; update A without changing B or execution selection; reject retired/ambiguous/escaping paths; reject multiple selections and old-revision handoffs; detect interrupted publication; preserve original source files. Audit every producer before making case mode the default. A partial implementation stays explicitly experimental.
+
+Add regression sequences for A→B→A with an old A handoff; same-byte source interpretation correction; a correction to shared evidence used by A/B but not C; pain override without selection; two conflicting selections; same-second raw runs; and interruptions after snapshot, after current replacement, before project commit and during rollback. Readers must reject pending state, and recovery must neither duplicate a decision nor overwrite unrelated edits. Exercise nested resume without a root research manifest, shared-input reads versus cross-case output writes, and all case/output conflicts before writing.
+
+## Work package 2 — A compact, comparable research assessment
+
+**Value:** every case answers the decision-changing questions, while existing evidence is reused. This is primarily workflow/template work, not new specialist skills.
+
+Create one shared assessment reference and three small templates: case README, feasibility and business case. Existing specialists own their relevant sections and cite source records. The README holds a short current decision summary; detail stays in the two assessments and research artifacts. A focused question updates only affected sections.
+
+**Inputs and final writer ownership:** the checked dispatch packet supplies project/case/layout, mode, selection generation, expected assessment revision, current concept, relevant source/assessment locators with evidence limits, requested sections and allowed destinations. The appraisal owner (`opportunity-risk-designer`) alone publishes the three case narratives. Evidence/other specialists own their normal research artifacts and supply section drafts or pointers through checked dispatch; they do not independently replace the assembled narratives. The appraisal owner authors economic inputs; the calculation helper owns results. The startup builder publishes the root business plan only. The shared publisher, acting for the declared owner, writes metadata/history and generated navigation. Expected input revisions prevent a stale section draft from overwriting a newer one; no separate handoff schema per specialist is required. Attach the shared reference only to applicable route modes.
+
+| Research dimension | Required substance when relevant | Existing owner |
+|---|---|---|
+| Customer choice | Trigger; user/buyer/payer; current workaround; switching friction; evidence the customer notices, trusts and prefers the entrant; doing nothing as an alternative. | Idea grill, evidence scout, customer-perspective challenger |
+| Commercial evidence | Who pays whom today, for what; actual prices/spend versus statements of intent; reasons to decline; cheapest appropriate next test. An existing provider's revenue is not our willingness-to-pay validation. | Evidence scout, opportunity risk, startup builder |
+| Reach and retention | Concrete first-customer access, funnel denominators, founder time, time to receive value, renewal/repeat/referral mechanism and cancellation causes. Choose a measurement window appropriate to the service. | GTM/marketing, startup builder, pilot designer |
+| Delivery feasibility | Build/buy/partner options, critical dependencies, people/skills/data/permissions, lead times, capacity, manual review/rework/support burden, upfront costs and what fails if the founder is unavailable. AI-specific reliability questions only when AI is material. | Operating system, pilot designer, opportunity risk |
+| Decision and disconfirmation | Strongest support, strongest counter-evidence, three plausible failure paths, most consequential unresolved assumption, next test and its predeclared interpretation. | Opportunity risk, startup builder |
+
+Reuse [strategic positioning](../../../references/strategic-positioning.md) as the shared source for entrant fit, comparative coverage and economic definitions. Do not repeat its full rules in each skill. Distinguish evidence, inference, assumption and unknown; missing evidence is not a hard failure. A necessary unknown prevents a confident recommendation but can justify another investigation. Document demonstrated incompatibilities separately from weak coverage. Do not force selection if no case is ready.
+
+**Insurance illustration, not new findings:** the Chinese-language case should ask which journey actually requires language support, how customers currently cope and whether language changes trust or conversion; the discount-motor case should ask what could fund the discount and what partner/access dependencies exist. Both need comparable acquisition, service effort and cash assumptions. These are research questions, not claims of demand, margin or legal permission. Annual insurance renewal should not be judged by daily app use.
+
+**Research-quality acceptance procedure:** the existing `run_evals.py` checks fixture structure and `run_behavioral_evals.py` checks routing; neither generates research. After implementation, use a disposable case workspace and the user's existing interactive agent host, recording host/model/version and the exact fixture prompt. In a fresh conversation, supply fixed local evidence and the normal checked workflow; do not browse, use live project evidence or buy provider calls for this controlled evaluation. Save the actual response, produced files and source bindings in the evaluation run directory. A human or separate reviewer judges each explicit assertion against those saved artifacts and records pass/fail with a cited excerpt. No new evaluation platform or automatic paid model runner is required. If real responses were not obtained, semantic acceptance remains pending.
+
+Fixtures cover a complaint without spend, a job posting without purchase, a launch spike without retained value, missing acquisition costs, country/segment evidence that cannot transfer, one-off versus recurring value, and contradictory historical/current recommendations. Run follow-ups where a material correction must update all affected current conclusions and archive the old advice, and where a correction is immaterial to ranking and must not force a new winner. Check no invented numbers, appropriate uncertainty, consistent recommendation/state and correct scope/history. Also give a fresh specialist only its declared inputs: it must identify the correct destination and evidence limits without chat history. Overlapping section drafts must conflict or be deliberately merged by the owner, never silently overwrite each other. A failure in these assertions requires correction and a rerun of affected tasks; valid headings or fixtures alone do not pass.
+
+## Work package 3 — Small, auditable economics
+
+**Value:** distinguish a plausible market story from a business that can meet the founder's income, cash and capacity constraints.
+
+Add one compact economics data contract for cases: currency, period, unit/customer definition, model type, source-linked input status, one-time costs, recurring fixed costs, variable delivery/acquisition costs, founder compensation, cash timing and scenario assumptions. Unknown inputs remain null/unresolved. Use an explicit small set of supported calculation types; do not evaluate arbitrary formula strings. Add a small calculation helper only where current code has no equivalent.
+
+Support only two initial calculation types. **Transactional:** contribution per completed sale = venture revenue earned minus variable service/partner/acquisition cost and explicitly estimated refund/clawback exposure; required indivisible sales = ceiling((fixed costs + target owner compensation) / positive contribution), floored at zero for a zero target. Zero/negative contribution cannot yield a viable break-even volume. Revenue means the venture's own fee/commission/sales revenue; pass-through premiums or customer budgets are not venture revenue. Define whether acquisition cost is per lead or completed sale and convert only with supported funnel inputs.
+
+**Recurring:** a bounded monthly cohort/cash schedule uses explicit opening customers, new customers, renewal/cancellation assumptions, per-customer revenue/delivery costs, acquisition outlays and collection/payment timing. State whether new customers bill immediately or next period and which costs are already netted; do not subtract acquisition twice. Compute monthly contribution, workload/capacity and closing cash = opening cash + cash receipts − cash payments, carrying balances forward. State horizon and opening cash before claiming cash sufficiency/runway. Recognized revenue and cash receipts are distinct. No extrapolated lifetime value or payback for unsupported/immature cohorts; return unresolved or an explicit conditional scenario. Expansion beyond demonstrated capacity requires an explicit cost/capacity scenario. Separate owner compensation paid in cash from imputed founder labor/opportunity cost; apply each once. Use base/downside and decision-changing sensitivities, with upside optional; no unsupported probabilities.
+
+Both model types use the same bounded monthly cash-timing calculation: transactional cases map completed sales and costs to their receipt/payment months, while recurring cases supply cohort-derived flows. Neither may infer cash sufficiency from positive contribution alone. This is shared helper logic, not a third model or finance framework.
+
+Within the one `economics.json`, distinguish authored inputs, deterministic results and source/revision metadata. Inputs are authoritative; recompute results before publication and require the calculation helper to validate results against a canonical input digest. A changed input invalidates prior results/narrative bindings. The publisher rejects stale or hand-edited results, and current narratives cite the same input digest/results. Extend existing strategy validation for input status, units, periods, calculations and selected-plan dependencies. Source-backed and conditional assumption-based outputs remain visibly different; mathematical correctness does not validate demand or estimates.
+
+**Synthetic acceptance fixture:** revenue per sale 100, variable service cost 25, partner cost 10 and acquisition cost 15 give contribution 50. Fixed costs 1,500 plus owner compensation 2,500 require 80 completed sales/month. If demonstrated capacity is 60, the case does not meet the target under those assumptions despite positive contribution. Also test zero/negative contribution, delayed cash receipt, upfront versus recurring revenue, absent inputs and double-counted labor.
+
+Add noninteger-volume rounding, fee/commission versus pass-through spend, lead versus customer acquisition units, refunds/cancellations, missing opening cash, immature-cohort payback and a positive-contribution business with a cash deficit from delayed receipts. Modify one input and attempt to republish old results; it must fail until recalculation and affected narrative refresh. These are synthetic checks, not insurance economics or verified forecasts.
+
+**Depth limit:** do not make five-year forecasts, valuation, integrated three-statement accounts or financing mechanics mandatory for early idea comparison. Escalate detail only for the selected business and its planning audience. Missing financing/legal/tax/IP work stays visible rather than being filled with generic prose.
+
+## Work package 4 — Root business plan and safe adoption
+
+**Value:** one coherent plan for the chosen business, supported by current research and calculations.
+
+Give the existing startup builder responsibility for assembling root `strategy/business-plan.md`. Reuse the existing `strategy-plan.json` as the authority for selected positioning, experiments, KPIs and commitments; add selection/revision and section/source bindings rather than introduce another strategy state store. The Markdown plan synthesizes those records and current case evidence. Financial values come from the supporting model. The project README remains a brief overview.
+
+Check coverage proportionately: business/customer description, market and competitive choice, product/service and revenue model, acquisition/sales, delivery/team, finances, milestones/risks, and conditional funding/legal/IP requirements. Each section is supported, provisional, missing or not applicable with a reason. Preserve the distinction between a complete document and a validated/executable plan. If selected evidence changes, mark affected sections/handoffs review-required; do not silently select another case.
+
+Fold scope-amendment criteria into the existing MVP/pilot output: a new feature requires evidence that it enables the chosen outcome or required trust, together with cost/capacity consequences. Do not create full product/marketing/brand plans for all alternatives.
+
+**Existing surfaces:** startup-builder workflow, [strategy schema](../../../schemas/strategy-plan.schema.json), [strategy review](../../../scripts/strategy_review.py), strategy/business-to-brand handoff builders and validators, project templates and lifecycle docs. Case-aware route/selection checks from package 1 must be consumed here too.
+
+**Acceptance and rollout:** first use disposable synthetic projects; then rehearse on a copy of German insurance. Inventory all existing files and links, create a reversible mapping, and preserve raw/run paths. Existing umbrella conditional passes do not qualify every new case. Compare hashes and source references; exercise switch, correction, archive, interruption and rollback. Do not migrate the live insurance workspace or unrelated projects automatically. After the full case path passes, new projects use it by default; legacy projects remain readable under their existing layout until explicit migration.
+
+**Legacy boundary:** a project without the new layout version remains on its existing contract. Read-only investigation and ordinary existing research continuation keep the old paths/stage rules and create no implicit cases or selection. Case creation/appraisal, selected root-plan publication and new downstream execution require explicit migration first; rejected requests make no writes. Existing historical outputs remain readable, but legacy handoffs are not eligible for new case-mode execution. New-version consumers never reinterpret an umbrella pass as a case pass. Test both supported legacy research continuation and rejected migration-dependent work, including rollback on the rehearsal copy. The root manifest is the explicit version switch; unsupported intermediate migrations remain unavailable for execution.
+
+## Implementation order and review boundary
+
+1. Package 1 defines the identities, selection and output boundaries; write its meaningful regression cases first and inventory affected writers.
+2. Package 2 supplies the human-readable content contract, reusing existing specialist ownership.
+3. Package 3 provides calculations and consistency checks for that content.
+4. Package 4 assembles the selected plan and completes end-to-end rehearsal before default enablement.
+
+Extend existing tests where possible: [workspace gates](../../../tests/test_workspace_gates.py), [workspace tests](../../../scripts/evidence_scout/test_workspace.py), [strategy review](../../../tests/test_strategy_review.py), routing and handoff suites. Run applicable targeted tests, then `python3 scripts/validate_skill_routes.py`, `bash scripts/validate_setup.sh` and `python3 scripts/run_evals.py`. Record pre-existing failures separately; never claim all checks passed without running them. Include a small fixed-task semantic evaluation for research quality; structural checks alone are insufficient.
+
+Stop expanding when users can compare current cases, inspect feasibility/economics, choose one, read its coherent plan and trace history, with the isolation and evidence checks above passing. Add no new skill, provider, app, automatic recurring research, scoring engine or UI unless a demonstrated remaining failure needs it. Folder/history rules belong in one contract; specialized detail loads only when relevant. Preserve attribution/license notices for any actual copied source material; this plan proposes adapted requirements rather than wholesale prompt imports.
+
+## Adversarial finding closure map
+
+| Finding | Resolution in this revision |
+|---|---|
+| 1: selection/evidence freshness | Separate selection generation and assessment revision; explicit corrections, case invalidation and non-overridable selection/pending checks. |
+| 2: appraisal prerequisites | One named owner/mode with bounded inputs/outputs; existing scopes and full-strategy prerequisites remain intact. |
+| 3: locking/recovery | One project publication helper, pending record, before/after images, project commit marker, idempotent rollback and exclusive raw run directories. |
+| 4: paths/legacy | Explicit roots, case-local checkpoint assessments, read-only shared bindings, strict output containment and a declared legacy continuation boundary. |
+| 5: semantic evaluation | Actual fresh-context model tasks, saved responses, assertion-based independent/human review and correction follow-ups, separate from structural scripts. |
+| 6: economics | Two bounded model types, venture revenue/cash/unit definitions, conservative unknown handling and additional arithmetic fixtures. |
+| Setup reuse | Explicit input/output publisher ownership and recalculation before publishing numerical conclusions. |
+
+The [independent revision check](INDEPENDENT-REVISION-CHECK.md) finds Revision 2 **READY at plan level**, closing all six findings, both setup clarifications and the final cash-timing/recovery details. No implementation or model tests have been run for these changes. The inspected external files remain design references, not tested dependencies. Source inspection and the prior REVISE verdict are preserved in the review history.
+
+Sources retrieved 13 September 2026: the source links in the adoption table; [MackDing main skill](https://raw.githubusercontent.com/MackDing/ai-native-founder-playbook-skill/main/ai-native-founder-playbook/SKILL.md). MackDing's detailed references were retrieved directly from raw GitHub after the web renderer failed to fetch them. Local contracts were checked in the current checkout. See also the earlier [coverage audit](business-plan-coverage-and-open-source.md) and [review history](REVIEW-LOG.md).

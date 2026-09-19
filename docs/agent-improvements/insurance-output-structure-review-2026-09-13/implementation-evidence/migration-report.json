@@ -1,0 +1,547 @@
+{
+  "all_original_research_and_run_hashes_preserved": true,
+  "copy_changed_original_paths": [
+    "project-manifest.json",
+    "README.md",
+    "strategy/strategy-plan.json"
+  ],
+  "final_selection": null,
+  "limits": [
+    "Structural migration rehearsal only; case findings were not reassessed. No live project migration."
+  ],
+  "link_inventory": [
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-11-retirement-55plus-selfemployed-register-mail-channel.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-11-challenge-review.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/traditional-broker-acquisition-and-portfolio.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "../../docs/customer-need-and-entrant-success-plan.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/decisions/2026-09-11-workspace-consolidation-map.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-06-surelius-pain-points/current-pain-points.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/customer_segments/2026-06-multilingual-segments-and-journey.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/gtm/2026-06-multilingual-gtm-strategy.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/2026-06-digital-workflow-and-app.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "marketing/2026-06-social-media-playbook.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/sources-2026-06-multilingual.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/market-discovery-report.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/solution_alternatives/ads/20260723-064709-self-employed-professionals-germany/report.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/intake/2026-07-templates/startup-thesis-sepg.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-11-retirement-55plus-selfemployed-register-mail-channel.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-11-challenge-review.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-06-rerun-evidence-audit.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-06-three-idea-reassessment.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/deep_dives/2026-09-06-operator-and-international-patterns.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/surelius-pilot-mvp-brief.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/surelius-personalised-why-and-simulation.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/current-recommendation.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/decisions/three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/solution_alternatives/player-directory.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "market_research/customer_segments/profession-segments-and-relationship-model.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/annex-a-personal-insurance.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/annex-b-motor-mga.md"
+    },
+    {
+      "document": "README.md",
+      "exists_before": true,
+      "target": "strategy/annex-c-broker-succession.md"
+    },
+    {
+      "document": "strategy/annex-a-personal-insurance.md",
+      "exists_before": true,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "strategy/annex-a-personal-insurance.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "strategy/annex-a-personal-insurance.md",
+      "exists_before": true,
+      "target": "progressive-advice-language-markets-and-coverage.md"
+    },
+    {
+      "document": "strategy/annex-a-personal-insurance.md",
+      "exists_before": false,
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "strategy/annex-a-personal-insurance.md",
+      "exists_before": true,
+      "target": "progressive-advice-language-markets-and-coverage.md"
+    },
+    {
+      "document": "strategy/annex-b-motor-mga.md",
+      "exists_before": false,
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "strategy/content-reachability-validation.md",
+      "exists_before": true,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "strategy/content-reachability-validation.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "strategy/current-recommendation.md",
+      "exists_before": true,
+      "target": "arabic-brokerage-assessment.md"
+    },
+    {
+      "document": "strategy/current-recommendation.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "strategy/current-recommendation.md",
+      "exists_before": true,
+      "target": "content-reachability-validation.md"
+    },
+    {
+      "document": "strategy/current-recommendation.md",
+      "exists_before": false,
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "strategy/progressive-advice-language-markets-and-coverage.md",
+      "exists_before": true,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "strategy/progressive-advice-language-markets-and-coverage.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "strategy/surelius-personalised-why-and-simulation.md",
+      "exists_before": false,
+      "target": "profession-segments-and-relationship-model.md"
+    },
+    {
+      "document": "strategy/surelius-personalised-why-and-simulation.md",
+      "exists_before": false,
+      "target": "competitor-advisory-walkthrough.md"
+    },
+    {
+      "document": "strategy/surelius-pilot-mvp-brief.md",
+      "exists_before": true,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "strategy/surelius-pilot-mvp-brief.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "strategy/surelius-pilot-mvp-brief.md",
+      "exists_before": true,
+      "target": "progressive-advice-language-markets-and-coverage.md"
+    },
+    {
+      "document": "strategy/surelius-pilot-mvp-brief.md",
+      "exists_before": true,
+      "target": "/mnt/c/coding/alyyn/surelius/concept/explanation-phase-design.md"
+    },
+    {
+      "document": "market_research/customer_segments/profession-segments-and-relationship-model.md",
+      "exists_before": false,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "market_research/customer_segments/profession-segments-and-relationship-model.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "market_research/customer_segments/profession-segments-and-relationship-model.md",
+      "exists_before": false,
+      "target": "content-reachability-validation.md"
+    },
+    {
+      "document": "market_research/customer_segments/surelius-and-language-segments.md",
+      "exists_before": false,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "market_research/customer_segments/surelius-and-language-segments.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "market_research/customer_segments/surelius-and-language-segments.md",
+      "exists_before": false,
+      "target": "sources-language-and-surelius.md"
+    },
+    {
+      "document": "market_research/customer_segments/surelius-and-language-segments.md",
+      "exists_before": false,
+      "target": "sources.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-06-rerun-evidence-audit.md",
+      "exists_before": false,
+      "target": "../evidence/runs/2026-09-06-refresh-personal/report.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-06-rerun-evidence-audit.md",
+      "exists_before": false,
+      "target": "../evidence/runs/2026-09-06-refresh-professional-it-v3/report.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-06-rerun-evidence-audit.md",
+      "exists_before": false,
+      "target": "../evidence/runs/2026-09-06-refresh-mga-v4/report.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-06-three-idea-reassessment.md",
+      "exists_before": false,
+      "target": "../evidence/runs/2026-09-06-refresh-personal/report.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-06-three-idea-reassessment.md",
+      "exists_before": false,
+      "target": "../evidence/runs/2026-09-06-refresh-professional-it-v3/report.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-06-three-idea-reassessment.md",
+      "exists_before": false,
+      "target": "../evidence/runs/2026-09-06-refresh-mga-v4/report.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-11-retirement-55plus-selfemployed-register-mail-channel.md",
+      "exists_before": true,
+      "target": "2026-09-11-challenge-review.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md",
+      "exists_before": true,
+      "target": "2026-09-11-challenge-review.md"
+    },
+    {
+      "document": "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md",
+      "exists_before": true,
+      "target": "2026-09-11-retirement-55plus-selfemployed-register-mail-channel.md"
+    },
+    {
+      "document": "market_research/solution_alternatives/pain-versus-offer-matrix.md",
+      "exists_before": false,
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "market_research/solution_alternatives/pain-versus-offer-matrix.md",
+      "exists_before": false,
+      "target": "progressive-advice-language-markets-and-coverage.md"
+    },
+    {
+      "document": "market_research/solution_alternatives/player-directory.md",
+      "exists_before": false,
+      "target": "arabic-brokerage-assessment.md"
+    },
+    {
+      "document": "market_research/solution_alternatives/player-directory.md",
+      "exists_before": false,
+      "target": "sources.md"
+    },
+    {
+      "document": "market_research/solution_alternatives/player-directory.md",
+      "exists_before": false,
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "market_research/solution_alternatives/player-directory.md",
+      "exists_before": false,
+      "target": "content-reachability-validation.md"
+    },
+    {
+      "document": "market_research/pain_points/runs/legacy-root-20260906/report.md",
+      "exists_before": false,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "market_research/pain_points/runs/legacy-root-20260906/report.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "market_research/pain_points/runs/legacy-root-20260906/report.md",
+      "exists_before": false,
+      "target": "surelius-and-language-segments.md"
+    },
+    {
+      "document": "market_research/pain_points/runs/legacy-root-20260906/report.md",
+      "exists_before": false,
+      "target": "economics.csv"
+    },
+    {
+      "document": "market_research/pain_points/runs/legacy-root-20260906/report.md",
+      "exists_before": false,
+      "target": "sources.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": true,
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "sources.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "player-directory.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "arabic-brokerage-assessment.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "content-reachability-validation.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "profession-segments-and-relationship-model.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "self-employment-journeys-it-and-doctors.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "profession-segments-and-relationship-model.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "content-reachability-validation.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "surelius-personalised-why-and-simulation.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "competitor-advisory-walkthrough.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "progressive-advice-language-markets-and-coverage.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "profession-segments-and-relationship-model.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "economics.csv"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "current-recommendation.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "annex-a-personal-insurance.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "annex-b-motor-mga.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "annex-c-broker-succession.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": true,
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": true,
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "sources.md"
+    },
+    {
+      "document": "strategy/decisions/three-ideas-decision-memo.md",
+      "exists_before": false,
+      "target": "progressive-advice-language-markets-and-coverage.md"
+    }
+  ],
+  "link_note": "Existing files remain in place. Original root README is byte-preserved in history; its relative links are interpreted from the recorded original project-root location. No archived Markdown rewriting.",
+  "no_inherited_case_passes": true,
+  "old_selected_plan_archived_and_marked_review_required": true,
+  "original_file_count": 376,
+  "original_unchanged": true,
+  "recovery_idempotent": true,
+  "rehearsal_copy": "/tmp/insurance-case-migration-20260913-final/german-insurance-opportunity",
+  "rollback_exact_before_images": true,
+  "source": "/mnt/c/coding/general/business-strategist/projects/german-insurance-opportunity",
+  "source_bindings": [
+    {
+      "case": "chinese-speakers",
+      "hash_matches_original": true,
+      "source": "market_research/customer_segments/2026-06-multilingual-segments-and-journey.md"
+    },
+    {
+      "case": "english-speakers",
+      "hash_matches_original": true,
+      "source": "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md"
+    },
+    {
+      "case": "discount-car-insurance",
+      "hash_matches_original": true,
+      "source": "strategy/annex-b-motor-mga.md"
+    }
+  ],
+  "switch_back_rejects_old_binding": true,
+  "unrelated_case_preserves_binding": true
+}

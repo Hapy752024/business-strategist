@@ -13,18 +13,11 @@ Marketing is not decoration. Treat it as the link between customer pain, offer d
 
 For social/content and digital-acquisition bets, ground recommendations in the practitioner evidence base at `.agents/skills/social-media-idea-validator/references/founder-playbooks.md` (Pain-Point SEO intent tiers, considered-purchase content economics, niche-first entry, broker/loan-officer channel reality), and validate untested channel ideas with `social-media-idea-validator` before committing them to the plan.
 
-Separate:
-
-- Evidence: customer words, behavior, search demand, sales calls, reviews, competitor pages, campaign data.
-- Interpretation: what the evidence may mean.
-- Hypotheses: what needs testing.
-- Plan: what to do next with time, budget, and metrics.
+Separate observed customer behavior, interpretation, hypotheses and proposed actions. Consume the selected promise, sacrifices and per-claim uncertainty: need, customer choice, delivery fit and defensibility remain separate. Do not turn a hypothetical moat into proven superiority. Return material contradictions to the positioning owner; narrow copy work does not restart strategy.
 
 ## Weak-Evidence Check
 
-Before treating any traction claim as a foundation for strategy, classify it against the weak-evidence list in the cross-skill registry (`references/evidence-registry.md` at repo root): downloads, signups, waitlists, views, likes, followers, subscribers, press spikes, and partnership announcements are weak until connected to retained customers or contribution economics.
-
-When the brief leads with such claims, name them as weak evidence explicitly and re-anchor the strategy on proof: retention, repeat purchase, paid pilots, referral, and contribution margin. Positioning, funnel, and channel choices should target the next piece of real proof, not amplify the vanity signal.
+Use repo-root `references/evidence-registry.md`: downloads, signups, waitlists, engagement, press and partnerships are weak without retained customer value or contribution economics. Name weak claims explicitly and target the next proof through retention, repeat purchase, paid pilots or referral; do not amplify vanity signals.
 
 ## Ambiguity and Unknowns
 

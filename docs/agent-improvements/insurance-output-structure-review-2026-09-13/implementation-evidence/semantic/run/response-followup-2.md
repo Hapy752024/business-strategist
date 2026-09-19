@@ -1,0 +1,1 @@
+Corrected B's three document headings from 'Discount transations' to 'Discount transactions'. Its assessment revision remains 4; source bindings and comparison wording are unchanged. Both cases remain under investigation, and execution selection remains null. Prior versions are retained in the normal publication history.

@@ -19,7 +19,7 @@ def test_duplicates_and_unknowns_do_not_inflate_confidence():
         row["independence_key"] = str(i)
     assert len(independent_groups(rows)) == 1
     claims = build(rows, [{"supporting_evidence": ["0", "1", "2"], "confidence": "high"}])
-    assert any("confidence exceeds" in error for error in validate(claims, rows))
+    assert any("claim_type and contextual assessment" in error for error in validate(claims, rows))
 
 
 def test_source_review_requires_acceptance_and_reason_for_both_sides():
@@ -48,7 +48,7 @@ def test_legacy_identity_agrees_between_consumers(tmp_path):
 
 
 def test_final_decision_requires_artifacts_and_predecessor(tmp_path):
-    workspace = create_topic_workspace("fixture", str(tmp_path))
+    workspace = create_topic_workspace("fixture", str(tmp_path), layout_version=1)
     with pytest.raises(ValueError, match="require artifacts"):
         update_stage(workspace, "final_decision", status="passed", gate_result="pass")
     artifact = tmp_path / "decision.json"

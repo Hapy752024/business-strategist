@@ -1,0 +1,73 @@
+{
+  "review_started_at": "2026-09-13T19:10:19.555005+00:00",
+  "plan_sha256": "60960b28c173e798c603abf5fb8e7a393d352bbbde840f63680aa97cdad52b11",
+  "inventory_sha256": "785daccdf7d8998f9a09b4d3ba034d6591962db2d3f56b51041356c7074e2d0e",
+  "plan_snapshot": "plan-reviewed.md",
+  "reviewer": "/root/fresh_migration_plan_adversary",
+  "reviewer_context": "none; fresh spawn",
+  "mode": "read-only repository review; report artifacts only",
+  "supporting_checks": [
+    {
+      "project": "credit-cards-enhanced-payments",
+      "inventoried_files": 271,
+      "changed_existing_files": [],
+      "missing_existing_files": [],
+      "casefold_destination_collisions": []
+    },
+    {
+      "project": "german-insurance-opportunity",
+      "inventoried_files": 379,
+      "changed_existing_files": [],
+      "missing_existing_files": [],
+      "casefold_destination_collisions": []
+    },
+    {
+      "project": "individualized-marketing-content",
+      "inventoried_files": 33,
+      "changed_existing_files": [],
+      "missing_existing_files": [],
+      "casefold_destination_collisions": []
+    },
+    {
+      "project": "tattoo-insurance",
+      "inventoried_files": 140,
+      "changed_existing_files": [],
+      "missing_existing_files": [],
+      "casefold_destination_collisions": []
+    },
+    {
+      "project": "us-retirees-italy",
+      "inventoried_files": 729,
+      "changed_existing_files": [],
+      "missing_existing_files": [],
+      "casefold_destination_collisions": []
+    }
+  ],
+  "limits": [
+    "Inventory comparison checks recorded files only; it does not detect new files or inspect the opaque Git/runtime trees.",
+    "No live migration, document cleanup, provider calls or deployment performed.",
+    "Optional plan-review security references and impact-radius tool unavailable; direct repository inspection used."
+  ],
+  "verdict": "FLAG",
+  "score": 85,
+  "confirmed_blockers": 0,
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "P2",
+      "title": "Retire legacy manifest state from current discovery"
+    },
+    {
+      "id": "R2",
+      "severity": "P2",
+      "title": "Pin migration coordination outside the replaced tree"
+    },
+    {
+      "id": "R3",
+      "severity": "P2",
+      "title": "Include external tooling in cutover and rollback"
+    }
+  ],
+  "report": "REVIEW.md",
+  "plan_modified_by_review": false
+}

@@ -1,0 +1,47 @@
+{
+  "ask_question": false,
+  "case_context": {
+    "assessment_revision": 1,
+    "case_id": "b",
+    "current_concept": "/tmp/case-semantic-eval-20260913/contract-replay/projects/topic/cases/b/README.md",
+    "execution_binding": null,
+    "input_contract": [
+      "case_context",
+      "current concept",
+      "source/applicability bindings",
+      "requested sections"
+    ],
+    "layout_version": 2,
+    "manifest_revision": 1,
+    "open_blockers": [],
+    "output_owner": "opportunity-risk-designer",
+    "output_root": "/tmp/case-semantic-eval-20260913/contract-replay/projects/topic/cases/b",
+    "project_root": "/tmp/case-semantic-eval-20260913/contract-replay/projects/topic",
+    "selection_generation": 0,
+    "source_bindings": []
+  },
+  "estimated_cost": "medium",
+  "expected_artifacts": [
+    "case README.md",
+    "feasibility.md",
+    "business-case.md",
+    "economics.json when needed"
+  ],
+  "forbidden_skills": [],
+  "matched": [
+    "intent:case-appraisal"
+  ],
+  "mode": "appraisal",
+  "prerequisites": [
+    "registered case",
+    "initial segment, journey and pain research; evidence limits allowed"
+  ],
+  "reason": "explicit intent",
+  "required_references": [
+    "references/case-assessment.md"
+  ],
+  "route_id": "case-appraisal",
+  "side_effect": "none",
+  "skill": "opportunity-risk-designer",
+  "task_scope": "strategy"
+}

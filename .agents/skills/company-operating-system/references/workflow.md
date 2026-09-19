@@ -1,207 +1,49 @@
----
-name: company-operating-system
-description: Design a practical company operating system for founders and operators: strategy, goals, metrics, meeting cadence, decision rights, cash discipline, hiring principles, accountability, and management routines. Use this skill whenever the user asks how to set up, run, manage, scale, organize, or improve a company, startup, team, department, operating rhythm, OKRs, KPIs, leadership system, management process, or business execution plan.
----
-
 # Company Operating System Workflow
 
-Use this skill when the user wants to set up or improve how a company runs, not merely generate a business idea. The goal is to turn strategy into repeatable management behavior.
+## Choose scope before loading detail
 
-## Stance
+Use the existing `company-operations` route for both modes; the requested outcome selects the procedure below. Preserve its pain gate and existing skill alias. No new route or stage is needed.
 
-Be direct and operational. Do not recommend big-company theater for a small company. Do not validate a founder's plan by default. Separate:
+- **Delivery design:** derive how a selected promise will be delivered. Read repo-root `references/strategic-positioning.md`, including delivery and defensibility distinctions. Return only requested model implications; no automatic meeting plan.
+- **Management cadence:** design goals, scorecards, decision rights, cash/hiring discipline and routines around the supplied position. Do not load the strategic method or reopen positioning unless a material contradiction appears.
+- **Combined company setup:** delivery design first, then only routines needed to run it. A generic company operating system request uses management mode unless it also requests delivery design.
 
-- What is known from evidence.
-- What is an assumption.
-- What the company should measure next.
-- What the leadership team must decide.
+If the position is unresolved, return the consequential choice to `archetype-gtm-strategist`. If customer need is unresolved, use discovery/validation; provisional case appraisal remains with `opportunity-risk-designer` through `case-appraisal`, not this commitment route.
 
-A company operating system is useful only if it changes decisions, execution speed, customer learning, cash discipline, or accountability.
+## Minimum context
 
-## Ambiguity and Unknowns
+Reuse stage, customer/user/buyer, selected promise and exclusions, founder role, current assets/team, demand evidence, bottleneck, time horizon, capacity and cash constraints. Ask one decision-changing question only when missing. Unknowns remain explicit; a fast draft does not turn assumptions into facts.
 
-If missing context would materially change the operating design, ask one focused question before creating the system. Important unknowns include company stage, revenue, team size, customer segment, sales motion, cash runway, regulatory risk, and whether the company is product-led, sales-led, service-led, marketplace, local, or enterprise.
+## Delivery-design procedure
 
-If the user wants an immediate draft, state assumptions clearly and produce a version that can be adjusted later.
+1. Translate the promised customer outcome and minimum service requirements into necessary work, using the shared strategic method. Limit detail to consequential processes, people, locations/assets, information, suppliers and controls.
+2. Compare materially different configurations only when unresolved: existing assets, clean-sheet target, affordable transition. Identify which choices enable/constrain others, dependencies, bottlenecks and reversal costs. Do not assume existing assets are a handicap or that a faster target is affordable.
+3. Check entry-scale contribution, service/acquisition labor, capacity, cash ramp, utilization/density and downside where relevant using existing economics. Explain the transition sequence and what must be tested before costly commitments.
+4. Feed operating evidence into the selected position's benefit/barrier assessment; coherent operations alone prove no moat. If the promise cannot be delivered or is not valued, propose a specific revision/test rather than rationalizing it.
+5. Update only the applicable existing case/strategy sections through their authorized owners. Link existing evidence, tests and KPIs. A short advisory response requires no new saved plan.
 
-## Minimum Inputs
+## Management-cadence procedure
 
-Try to capture:
+1. Diagnose the stage and decision bottleneck: demand, conversion, delivery, quality, hiring, cash, retention or coordination.
+2. Pick a small scorecard: customer outcome plus relevant delivery/economic guardrails. Reuse strategy KPIs and experiments with owner, formula, cohort/window, target, cadence and stop/change rule; explain threshold assumptions.
+3. Add only routines that change a decision. Each has owner, inputs, threshold, decision, follow-up and artifact. Daily/weekly/monthly/quarterly frequencies are options, not defaults to impose together.
+4. Delegate reversible decisions to an accountable owner; record expensive or hard-to-reverse commitments and their authorization. Clarify cross-functional ownership and escalation.
+5. Tie cash review, hiring, incentives and quality responsibilities to observed constraints. Do not hire ahead of demand without a justified delivery/trust requirement. Make customer learning, lost-deal/churn review and process improvement visible where useful.
+6. End with concrete next-week actions and triggers for reconsideration. Do not invent cash health, retention or production capacity.
 
-- Company stage: idea, pre-revenue, early revenue, growth, turnaround, or mature.
-- Business model: product, service, marketplace, agency, SaaS, ecommerce, local, enterprise, or mixed.
-- Target customer and buyer.
-- Current revenue, gross margin, cash runway, or budget discipline if known.
-- Team size and key functions.
-- Current bottleneck: demand, conversion, delivery, quality, hiring, cash, focus, retention, or execution.
-- Time horizon: next 30 days, quarter, year, or multi-year.
+## Stage and review rules
 
-## Operating Principles
+- Idea/pre-revenue: prioritize customer learning, buyer/choice evidence and runway. No premature organizational buildout.
+- Early revenue: repeatable sales, delivery quality and founder capacity.
+- Growth: retention, unit economics, role clarity and coordination.
+- Mature/turnaround: waste, accountability, capital allocation and customer trust.
 
-Design for the company's real stage:
-
-- Idea/pre-revenue: validate painful problem, buyer, willingness to pay, and reachable channel before building complexity.
-- Early revenue: focus on repeatable sales, delivery quality, customer feedback, cash control, and founder-led hiring.
-- Growth: add management cadence, role clarity, retention loops, unit economics, and process quality.
-- Mature/turnaround: clarify strategy, remove waste, reset accountability, improve capital allocation, and protect customer trust.
-
-Use these management principles:
-
-- Narrow strategy beats broad ambition.
-- Metrics must expose reality, not decorate dashboards.
-- Decision rights must be explicit when speed matters.
-- Meetings need owners, inputs, decisions, and follow-through.
-- Cash runway is a strategic constraint, not an accounting detail.
-- Culture is reinforced through hiring, rewards, conflict norms, and what leaders tolerate.
-- Operating systems should reduce avoidable coordination cost.
-
-## Procedure
-
-1. Identify the company stage, business model, team size, customer, bottleneck, and time horizon.
-2. State assumptions and material unknowns before prescribing a management system.
-3. Diagnose the main constraint: demand, conversion, delivery, quality, hiring, cash, focus, retention, or execution.
-4. For operating-model design or a material strategy conflict, load repo-root `references/strategic-positioning.md`. Before routines, derive the activities, capabilities, people/technology/partners, service boundaries, capacity, and costs needed to deliver the selected promise. Trace consequential dependencies, conflicts, and reversal costs. Return an infeasible promise to GTM position selection. A cadence-only request uses the supplied position without this exercise.
-5. Design only necessary routines and a small scorecard: customer outcome plus relevant delivery/economic guardrails. Reuse the active strategy record's KPIs/tests, owners, formulas, windows, targets, and decision rules; identify disconfirming evidence and affected downstream work at review.
-6. Assign cadence, decision rights, owners, and review artifacts.
-7. Add cash, hiring, and stop/pivot gates.
-8. End with next-week actions that can be executed without extra planning.
-
-## Core Design Areas
-
-Cover only the areas relevant to the user request. For a full company setup, include all of them:
-
-### Strategy
-
-- One-sentence company thesis.
-- Target customer and buyer.
-- Pain/job to be solved.
-- Positioning and unfair advantage hypothesis.
-- Strategic tradeoffs: what the company will not do.
-- 3-5 quarterly priorities.
-
-### Metrics
-
-Define a small scorecard:
-
-- North-star outcome tied to customer value.
-- Revenue and gross margin.
-- Cash runway, burn, or operating cash flow.
-- Acquisition, conversion, activation, retention, referral, or expansion metrics as appropriate.
-- Delivery quality, cycle time, defect rate, or customer satisfaction.
-- Leading indicators that can move weekly.
-
-Avoid vanity metrics unless they connect to revenue, retention, learning, or customer outcomes.
-
-### Cadence
-
-Recommend a management rhythm:
-
-- Daily or twice-weekly execution check for early teams.
-- Weekly metrics and blockers review.
-- Weekly customer learning review.
-- Monthly financial and strategy review.
-- Quarterly strategy reset.
-- Postmortems for failed launches, churn, outages, delivery misses, or missed targets.
-
-Every recurring meeting should have a purpose, owner, required inputs, decisions made, and output artifact.
-
-### Decision Rights
-
-Classify decisions:
-
-- Reversible decisions: push down to owners, move fast, review outcomes.
-- Hard-to-reverse decisions: slow down, write the decision memo, name risks, require explicit approval.
-- Cross-functional decisions: name the decision owner before debate starts.
-
-Use written one-page or six-page memos when the decision is expensive, ambiguous, or politically loaded.
-
-### People
-
-Define:
-
-- Critical roles for the current stage.
-- Hiring bar and non-negotiable traits.
-- Ownership boundaries.
-- Performance expectations.
-- How conflict is handled.
-- What behaviors get rewarded or removed.
-
-Do not recommend hiring ahead of validated demand unless delivery capacity, compliance, or customer trust requires it.
-
-### Customer Learning
-
-Build customer contact into the operating system:
-
-- Weekly customer interviews or sales-call reviews.
-- Lost-deal and churn review.
-- Support-ticket and complaint review.
-- Competitor and workaround observation.
-- Pricing objections and willingness-to-pay signals.
-
-If the customer pain is still uncertain because the user has not chosen a problem or segment, route to `market-problem-discovery` first. If they have a chosen candidate but need to make it researchable, route to `idea-grill` and `evidence-scout` before recommending a larger operating buildout.
-
-### Financial Discipline
-
-Include:
-
-- Cash runway.
-- Monthly burn.
-- Contribution margin or gross margin.
-- Payback period where relevant.
-- Budget owner.
-- Hiring and spend gates.
-- Stop/pivot triggers.
-
-If numbers are missing, say so and provide placeholders rather than inventing financial health.
-
-## Red Flags
-
-Call out:
-
-- Broad customer segment with no buyer.
-- Strategy expressed only as features.
-- No clear pain, urgency, or willingness to pay.
-- Too many priorities.
-- Hiring before repeatable demand.
-- Marketing spend without conversion measurement.
-- Founder avoiding customer conversations.
-- Dashboards full of vanity metrics.
-- Cash runway not tracked weekly or monthly.
-- Decision paralysis hidden as consensus culture.
-
-## Quality Checklist
-
-Before finalizing, check:
-
-- The plan names a specific stage and constraint.
-- Metrics are few, actionable, and tied to customer value or financial reality.
-- Meeting cadence has owners, inputs, decisions, and outputs.
-- Decision rights distinguish reversible and hard-to-reverse decisions.
-- Hiring recommendations are gated by evidence, delivery need, or trust risk.
-- Cash discipline is explicit when money, runway, or hiring is involved.
-- Unknowns are stated instead of filled with confident guesses.
-- Next actions are concrete enough to start this week.
+At review identify disconfirming evidence, protocol changes and affected downstream work. Preserve frozen baselines and evidence uncertainty. KPI success alone does not validate a position. Flag unsupported growth, unpaid labor hiding cost, uncontrolled exceptions and inconsistent promises with concrete consequences.
 
 ## Output
 
-For a full operating-system request, produce:
+For delivery-only work, return the configuration, consequential activity relationships, economics/transition limits and next test. For cadence-only work, return requested routines, scorecard and decision rights. For a full setup add a proportionate 30/60/90-day sequence, cash/hiring gates, risks and next-week actions. Omit irrelevant areas.
 
-- Operating diagnosis.
-- Key assumptions and unknowns.
-- Strategy spine.
-- 30/60/90-day operating plan.
-- Company scorecard.
-- Meeting cadence.
-- Decision-rights model.
-- Hiring and role priorities.
-- Cash and spending discipline.
-- Top risks and stop/pivot triggers.
-- Next actions for the coming week.
+## Quality Checklist
 
-For narrower requests, return only the relevant section, but preserve the same skepticism and evidence discipline.
-
-## Suggested First Question
-
-If needed, ask:
-
-`What stage is the company in right now: idea, pre-revenue, early revenue, growth, turnaround, or mature?`
+Check that each recommendation supports a customer outcome or a necessary management decision, fits the company's stage, preserves the selected promise and uncertainty, and adds less coordination cost than it removes.

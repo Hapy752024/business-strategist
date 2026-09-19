@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
+  "required": ["artifact_type", "schema_version", "state_id", "generation_id", "generation_version", "review_run_id", "status", "authorization_digest", "verified_artifact_digest", "review_log_digest", "generated_at", "signature_algorithm", "key_id", "signature"],
+  "properties": {
+    "artifact_type": {"const": "community_review_current_receipt"}, "schema_version": {"const": 2}, "state_id": {"type": "string", "pattern": "^(unit-test-state|[0-9a-f]{64})$"}, "generation_id": {"type": "string", "format": "uuid"}, "generation_version": {"type": "integer", "minimum": 0}, "review_run_id": {"type": "string", "format": "uuid"},
+    "status": {"enum": ["valid", "no_public_api_targets", "revoked_invalid_packet", "revoked_missing_signing_key"]}, "authorization_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "verified_artifact_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "review_log_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "generated_at": {"type": "string", "format": "date-time"},
+    "signature_algorithm": {"const": "ed25519"}, "key_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "signature": {"type": "string", "minLength": 80}
+  }, "additionalProperties": false
+}

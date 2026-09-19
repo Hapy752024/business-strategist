@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 import tempfile
@@ -21,18 +22,9 @@ import discover_market_problems as discovery  # noqa: E402
 class MarketDiscoveryTests(unittest.TestCase):
     def test_discovery_query_plan_is_problem_first(self) -> None:
         queries = collect.query_plan("pet care", "", geo="US", language="en", research_mode="discovery")
-        self.assertEqual(
-            queries[:7],
-            [
-                "pet care problems",
-                "pet care pain points",
-                "pet care complaints",
-                '"frustrated" pet care',
-                "pet care forum complaints",
-                "pet care reddit complaints",
-                "pet care workaround",
-            ],
-        )
+        self.assertEqual(queries[0], "pet care problems")
+        self.assertTrue(any("workaround" in query for query in queries[:7]))
+        self.assertTrue(any("worked well" in query or "satisfied" in query or "successful" in query for query in queries[:7]))
         self.assertNotIn("best way to pet care", queries)
 
     def test_discovery_artifacts_are_market_generic(self) -> None:
@@ -75,6 +67,7 @@ class MarketDiscoveryTests(unittest.TestCase):
                 collect=False,
             )
             self.assertEqual(discovery.start_discovery(start_args), 0)
+            workspace = workspace / "business-analysis"
             runs = list((workspace / "market_research" / "market_discovery" / "runs").iterdir())
             self.assertEqual(len(runs), 1)
             run_dir = runs[0]
@@ -114,11 +107,20 @@ class MarketDiscoveryTests(unittest.TestCase):
             (evidence_dir / "evidence.jsonl").write_text("{}\n", encoding="utf-8")
 
             finalize_args = argparse.Namespace(run_dir=str(run_dir), candidate_count=1)
+            with self.assertRaisesRegex(ValueError, "research pack required"):
+                discovery.finalize_discovery(finalize_args)
+            pack = run_dir / "customer-feedback"
+            pack.mkdir()
+            (pack / "evidence.jsonl").write_text("")
+            (pack / "source-review.json").write_text(json.dumps({"evidence_sha256": hashlib.sha256(b"").hexdigest(), "target_segment": "unresolved discovery", "reviews": []}))
+            (pack / "customer-feedback-coverage.json").write_text(json.dumps({"status": "insufficient_evidence", "synthesis_allowed": False, "coverage_status": "partial", "topic_led_voc": {"accepted_evidence_ids": []}, "source_matrix": []}))
+            (pack / "customer-voc-synthesis.json").write_text(json.dumps({"schema_version": 2, "status": "insufficient_evidence", "topic_led_evidence_ids": [], "entity_led_evidence_ids": [], "customer_needs": [], "solution_requirements": [], "codebook": {"version": 1, "codes": []}, "next_investigations": [{"question": "Where are recent customer accounts?", "method": "local source discovery", "reason": "No reviewed voice", "decision_change": "Whether candidate formation is possible"}]}))
+            finalize_args.candidate_count = 0
             self.assertEqual(discovery.finalize_discovery(finalize_args), 0)
             summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
             manifest = json.loads((workspace / "market_research" / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(summary["status"], "complete")
-            self.assertEqual(summary["gate_result"], "pass")
+            self.assertEqual(summary["gate_result"], "conditional_pass")
             self.assertEqual(manifest["current_stage"], "market_discovery")
             self.assertEqual(manifest["stages"]["market_discovery"]["status"], "passed")
 

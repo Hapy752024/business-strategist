@@ -10,8 +10,13 @@ The folder is created at <output-dir>/<tier>/<kebab-name>/.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
+
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
 
 
 def pascal_to_kebab(name: str) -> str:
@@ -102,6 +107,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--base", required=True, help="shadcn primitive name (kebab-case)")
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args(argv)
+    if not re.fullmatch(r'[A-Z][A-Za-z0-9]*', args.name):
+        parser.error('name must be a PascalCase identifier')
+    if not re.fullmatch(r'(?:core|extended|domains/[a-z0-9][a-z0-9-]*)', args.tier):
+        parser.error('tier must be core, extended or domains/<safe-pack>')
+    return namespace_writer(args, 'output_dir', execute, input_attributes=[])
+
+
+def execute(args):
 
     kebab = pascal_to_kebab(args.name)
     folder = args.output_dir / args.tier / kebab

@@ -97,6 +97,7 @@ Never recommend live production testing with consumer funds, coverage, claims, c
 4. Choose the test type and explain why it is the smallest sufficient artifact.
 5. Define the participant profile and recruiting path.
 6. Define scope, non-goals, timeline, owner, and operating cadence.
+   Admit a scope amendment only when evidence shows it enables the chosen customer outcome or a required trust condition. Record that evidence, the smallest change, its cost/capacity effect, and the test that will establish whether it helped. Defer unsupported feature requests; do not turn a pilot into a broader product by default. Keep the amended current scope separate from the dated decision and previous scope in history.
 7. Define data needed and data that must not be collected.
 8. Define security, privacy, compliance, and human-review guardrails.
 9. Define success, failure, and inconclusive thresholds.
@@ -129,6 +130,7 @@ For a full request, produce:
 - Why not heavier or lighter alternatives.
 - Customer/participant profile.
 - MVP or pilot scope and non-goals.
+- Scope amendments, if any: outcome/trust evidence, cost and capacity effect, and validation test.
 - Data plan and compliance guardrails.
 - Success metrics, failure metrics, and stop/scale thresholds.
 - Pilot agreement outline.

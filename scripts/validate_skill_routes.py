@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+try:
+    from scripts.route_workflow import checked_references
+except ModuleNotFoundError:
+    from route_workflow import checked_references
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -13,6 +18,20 @@ def validate(root: Path = ROOT) -> list[str]:
     catalog = json.loads((root / 'config/skill-catalog.json').read_text())['skills']
     routes = json.loads((root / 'config/workflow-routes.json').read_text())['routes']
     errors = []
+    for name, metadata in catalog.items():
+        try:
+            checked_references(metadata, root)
+        except (ValueError, OSError) as exc:
+            errors.append(f'{name}: {exc}')
+        for mode, contract in metadata.get('modes', {}).items():
+            try:
+                checked_references(contract, root)
+                if not contract.get('inputs') or not contract.get('output_owner') or not contract.get('artifacts'):
+                    raise ValueError('mode requires inputs, artifacts and output owner')
+                if not any(r['skill'] == name and r.get('mode') == mode for r in routes):
+                    raise ValueError('mode has no checked route')
+            except (ValueError, OSError) as exc:
+                errors.append(f'{name}/{mode}: {exc}')
     for name in sorted(skills - catalog.keys()):
         errors.append(f'Installed skill missing from catalog: {name}')
     for name in sorted(catalog.keys() - skills):

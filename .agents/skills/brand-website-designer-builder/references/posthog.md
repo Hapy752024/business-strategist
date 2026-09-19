@@ -1,0 +1,17 @@
+# Optional PostHog user analytics
+
+Load only when the user chooses PostHog. It is a provider option, not a mandatory account, dependency, wizard, feature-flag replacement or background service. Analytics itself is optional. Record the user choice: disabled (launch analytics check not_requested with evidence of no collection), or a selected provider such as PostHog. An unresolved choice stays pending; never silently enable analytics.
+
+Before implementation record desired events, EU-hosted project and actual ingestion host, retention, access permissions, DPA/transfer review and cost limits. Verify current official Next.js/SDK docs against installed versions. Prefer stable posthog-js integration; do not select a prerelease adapter or execute a setup wizard just because docs advertise one. No account creation, paid plan or service connection without authorization.
+
+Use EU project settings to obtain the correct host/token; never copy the US quickstart host into an EU project. Client project token is designed for browser use; personal/admin API keys remain server-side and out of Git. EU hosting alone does not establish GDPR compliance.
+
+Dynamically initialize only after valid analytics consent. Keep autocapture, session replay, surveys, person identification and optional feature-flag requests off unless separately needed and approved. Use explicit minimal events, sanitized URLs/properties and exactly one pageview strategy; confirmed-success conversions must not fire on a direct thank-you visit. Do not put email/name/form values into captures. Consent controls both browser and any server-side capture/proxy. Avoid replays entirely by default; masking is not consent.
+
+Implement refusal and withdrawal using current documented SDK opt-out/cleanup behavior and a denied application state, guard every future capture path, and handle initialization-versus-withdrawal races. Do not replay queued pre-consent events after opt-in. Disable queued events/timers and accessible identifiers on withdrawal. Verify actual network behavior; init flags alone do not prove zero requests. All tracking stays disabled on missing configuration, expired consent or vendor failure. Do not use a proxy to circumvent consent or user privacy controls.
+
+Tests extend consent-eu.md: no PostHog requests or storage before choice/after reject (including proxy endpoints and flag/config requests); analytics-only opt-in delivers one allowed pageview; SPA transitions do not duplicate; withdrawing during asynchronous SDK load cannot start collection; reload respects refusal; correct EU destination; payloads exclude PII; no replay/autocapture/identity unless expressly enabled. Verify authorized test events reach the selected project, distinguish local stubs from production acceptance, and redact evidence.
+
+Official sources checked 2026-09-14: [Next.js integration](https://posthog.com/docs/libraries/next-js), [PostHog GDPR guidance](https://posthog.com/docs/privacy/gdpr-compliance). Some guessed privacy subpage URLs failed retrieval; use these verified entry points and follow current linked SDK consent documentation when implementing. No live PostHog integration was exercised in this setup audit.
+
+For optional authoritative server conversions apply campaign-tracking.md; use the documented PostHog Node flush/shutdown lifecycle, and do not treat its in-memory queue as a durable outbox. Keep browser exposure and backend outcomes distinct.

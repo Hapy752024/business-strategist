@@ -1,6 +1,6 @@
 ---
 name: interview-bridge
-description: Convert collected weak/medium public evidence into an interview screener, non-leading interview guide, and confirmation tracker. Use after an evidence-scout or market-problem-discovery run when evidence is mostly weak or medium and the next uncertainty-reducing step is talking to real customers, not more desk research.
+description: Convert reviewed experiences and unanswered customer questions into a non-leading interview kit when conversations or observation can resolve the uncertainty.
 ---
 
 # Interview Bridge Workflow
@@ -17,9 +17,9 @@ Do not use this skill before any evidence run exists. Do not use interviews to v
 
 ## When To Use
 
-- After `evidence-scout` when `user_review_plan.md` shows mostly weak/medium items.
+- After `evidence-scout` when the unresolved question concerns motives, decisions, context or handoffs that interviews can illuminate, even with strong public evidence.
 - After `market-problem-discovery` when the user selects a candidate and public evidence needs primary confirmation before `idea-grill` closes remaining hypothesis gaps.
-- When the founder says "the evidence looks thin" — thin evidence is an interview trigger, not a conclusion.
+- When evidence is thin, first diagnose why: missing source coverage calls for discovery; missing experience/context may call for interviews.
 
 ## Command
 
@@ -31,12 +31,12 @@ Pass an evidence run directory (`projects/<topic>/market_research/pain_points/ru
 
 ## Procedure
 
-1. Confirm the run directory contains evidence and that weak/medium items dominate — otherwise more desk research or a narrower rerun is the right move, not interviews.
+1. Name the unresolved question and explain why interviews can answer it. Source-coverage gaps may instead need local discovery; solution-use uncertainty may need observation/usability testing; payment claims need a separately authorized behavioral test.
 2. Run the generator and inspect all three artifacts.
 3. Review the screener against the segment hypothesis: are the recruitment pools reachable by this team? Are the disqualifiers consistent with the buyer? Adjust pools/questions by editing the artifact.
 4. Review every probe in the guide: rephrase into the segment's own language where the public phrasing is insider jargon, and keep the evidence trace (E1, E2, …) intact.
-5. Recruit 5–8 interviews per segment pocket. Log every interview in the tracker, including refutations.
-6. Update the tally after each batch. A signal with 3+ independent confirmations can be treated as more than a lead; one clear refutation demotes it below the public post that produced it.
+5. Choose an initial learning batch for the question and contrasting contexts; include successful alternatives and non-adopters, not only painful cases. Log every interview, including refutations.
+6. Update the interpretation after each batch against hypothesis-specific criteria set beforehand. No fixed confirmation count validates a claim. A contrary case may reveal a context or segment boundary rather than erase other experiences. Inspect interview-selection.json for omitted perspectives and expand the guide when needed.
 7. Feed confirmed/refuted results back into the topic workspace before running `idea-grill` refinement or `opportunity-risk-designer`.
 
 ## Hypothesis Probes From The Evidence Registry
@@ -56,7 +56,7 @@ Each registry-derived probe is a hypothesis probe, not an evidence probe: tag it
 - Ask about past behavior, not future intentions. `Tell me about the last time…` beats `Would you use…`.
 - Never pitch the solution. The moment you describe the idea, the answer stops being evidence.
 - Capture verbatim phrases; they feed positioning later.
-- Interview count is not validation. Five interviews that all confirm a workaround exists is strong signal for pain; it still proves nothing about willingness to pay for your fix.
+- Interview count is not validation. A workaround's existence does not itself establish painful unmetness or willingness to pay for a different solution.
 
 ## Analysis Rules
 
@@ -68,7 +68,13 @@ Each registry-derived probe is a hypothesis probe, not an evidence probe: tag it
 ## Quality Checklist
 
 - Every guide probe traces to a source URL (`E`) or a named registry hypothesis (`H`) and is phrased non-leading, past-behavior first.
-- The screener disqualifies never-experienced and no-workaround participants.
+- The screener establishes a relevant recent incident; absence of a workaround needs investigation, not automatic exclusion.
 - The tracker logs refutations with the same weight as confirmations.
 - Interview results were written back into the workspace (manifest gaps, assumptions, or candidate notes) before the next skill runs.
-- The final response asks exactly one question — which probe or pool to prioritize first.
+- Ask one decision-changing question early only when an unresolved choice matters; do not tack on a ceremonial closing question.
+
+## Source acceptance before generated probes
+
+Read the actual source and decide whether its segment, incident/journey and voice support the intended probe. Keyword matches and automatic relevance labels are discovery aids, not acceptance. Preserve the raw run; write `<run>/source-review.json` (or pass `--source-review`) with `evidence_sha256` for exact evidence.jsonl bytes, `target_segment`, and `reviews`. Each review records `evidence_id`, `source_url`, `status` (accepted/rejected/unresolved), `reviewed_segment`, `journey_stage`, `relevance_rationale`, `voice` (customer/operator/context), `segment_relation` (target/adjacent/unresolved), and boolean `firsthand`. Accepted reviews must match the target segment. Explain rejection or unresolved meaning.
+
+Only accepted firsthand customer records with segment_relation=target can produce E probes. Adjacent and unresolved segment sources are comparator/discovery context, not target pain. Operator claims, creator transcripts, aggregate context and unreviewed stories cannot become customer voice. Missing/stale review or no eligible customer evidence stops generation before writes. In that case write a manually curated H hypothesis guide from the named customer/job hypothesis, clearly marked as hypotheses; do not fabricate an acceptance record to satisfy the generator. Discovery destinations remain unverified recruitment access until checked under the shared recruitment contract.

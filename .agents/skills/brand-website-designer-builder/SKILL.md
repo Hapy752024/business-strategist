@@ -1,27 +1,25 @@
 ---
 name: brand-website-designer-builder
-description: Build distinctive Next.js marketing and corporate websites from an approved brand or taste brief. Use when building landing pages, company sites, redesigns, Vercel delivery, or website A/B tests.
+description: Build and maintain Next.js websites. Use for landing pages, responsive fixes, speed, technical SEO, LLM-EO, browser testing, optional analytics, campaign tracking, or A/B experiments.
 ---
 
 # Brand Website Designer-Builder
 
-Follow `references/workflow.md` and keep the deliverable in a resumable website manifest.
-
-- Capture or load a versioned user preference profile and brand constraints.
-- Propose lightweight creative territories; do not build multiple full sites.
-- Get explicit selection (or record delegated selection) before production expansion.
-- Resolve and pin the newest stable Next.js App Router version; use server components by default.
-- Use approved local assets. Invoke the shared FAL adapter only for a concrete, approved asset need.
-- Run real-browser responsive, accessibility, performance, anti-template, and visual review gates.
-- Use experiment mode only for a declared one-variable control/treatment test.
-- Prepare GitHub/Vercel Preview release; production, analytics, and flags require explicit approval.
-
 ## Procedure
 
-Follow `references/workflow.md` and stop at each approval gate.
+Follow [workflow](references/workflow.md) and the repository subproject contract. Start standalone from the user's brief; consume Business/Branding only through explicit handoff. Preserve business-linked gates and resumable website manifests.
+
+- New builds: load preference profile/brand constraints, propose lightweight territories and obtain selection or delegated selection before expansion. Resolve/pin stable Next.js; server components by default.
+- Use approved assets; paid FAL needs an approved concrete need. Branding owns favicon production through brand-asset-producer; website integrates the handoff.
+- New build/release: apply [launch contract](references/launch-contract.md), [SEO/performance](references/seo-performance.md), [EU consent](references/consent-eu.md), [testing](references/testing.md).
+- Repairs/audits: use [maintenance](references/maintenance.md), preserving design and unrelated work.
+- Only when selected: [PostHog analytics](references/posthog.md), [A/B experiments](references/experimentation.md), [campaign tracking](references/campaign-tracking.md). Analytics and experiments are optional; never activate tracking silently.
+- Prepare a reviewable PR/Preview; production, account connections, analytics activation and traffic allocation retain owner authorization.
+
+## Output
+
+Return manifest, source/asset provenance, QA evidence, open gaps, release state and next action.
 
 ## Quality Checklist
 
-Run build, accessibility, performance, responsive, provenance, and visual review gates before delivery.
-
-Read only the relevant references: preference/creative, FAL, Next/Vercel, experimentation, i18n, and QA.
+Run build and real-browser responsive, accessibility, performance, state and visual gates plus independent quality review. Structural checks do not prove site quality or compliance. Production recording requires the complete release-bound launch assessment.

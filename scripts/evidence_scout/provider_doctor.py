@@ -265,6 +265,11 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
                 {"page": 1},
             ),
         ],
+        "customer_reviews": [
+            _env_backend("trustpilot_reviews", ["TRUSTPILOT_API_KEY"], risk="paid_or_account_module"),
+            _env_backend("google_places_reviews", ["GOOGLE_PLACES_API_KEY"], risk="paid_credits"),
+            _env_backend("scrapecreators_social", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
+        ],
         "founder_community": [
             _public_http_backend(
                 "hn_algolia",

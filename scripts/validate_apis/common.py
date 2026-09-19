@@ -228,6 +228,8 @@ def http_request(
             result = {
                 "ok": True,
                 "status_code": response.status,
+                "final_url": getattr(response, "geturl", lambda: url)(),
+                "body_size_bytes": len(raw_body),
                 "headers": sanitize_headers(dict(response.headers.items())),
                 "body": parsed,
             }
@@ -252,6 +254,8 @@ def http_request(
         return {
             "ok": False,
             "status_code": exc.code,
+            "final_url": getattr(exc, "geturl", lambda: url)(),
+            "body_size_bytes": len(text.encode("utf-8")),
             "headers": sanitize_headers(dict(exc.headers.items())),
             "body": parsed,
             "error": str(exc),
@@ -260,6 +264,8 @@ def http_request(
         return {
             "ok": False,
             "status_code": None,
+            "final_url": None,
+            "body_size_bytes": 0,
             "headers": {},
             "body": None,
             "error": f"{type(exc).__name__}: {exc}",

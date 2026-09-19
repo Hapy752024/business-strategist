@@ -1,0 +1,14 @@
+{
+  "file_count": 378,
+  "baseline_count": 376,
+  "unchanged": false,
+  "added": [
+    "market_research/customer_segments/cyber-insurance-access-barriers.md",
+    "market_research/deep_dives/2026-09-13-cyber-refusal-brokers-commissions-audit.md"
+  ],
+  "missing": [],
+  "changed": [
+    "README.md",
+    "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md"
+  ]
+}

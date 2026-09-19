@@ -1,0 +1,73 @@
+{
+  "route_id": "case-appraisal",
+  "skill": "opportunity-risk-designer",
+  "mode": "appraisal",
+  "task_scope": "strategy",
+  "matched": [
+    "intent:case-appraisal"
+  ],
+  "forbidden_skills": [],
+  "ask_question": false,
+  "reason": "explicit intent",
+  "prerequisites": [
+    "registered case",
+    "initial segment, journey and pain research; evidence limits allowed"
+  ],
+  "required_references": [
+    "references/case-assessment.md"
+  ],
+  "expected_artifacts": [
+    "case README.md",
+    "feasibility.md",
+    "business-case.md",
+    "economics.json when needed"
+  ],
+  "side_effect": "none",
+  "estimated_cost": "medium",
+  "case_context": {
+    "project_root": "/tmp/case-semantic-eval-20260913/projects/topic",
+    "case_id": "b",
+    "layout_version": 2,
+    "output_root": "/tmp/case-semantic-eval-20260913/projects/topic/cases/b",
+    "assessment_revision": 3,
+    "selection_generation": 0,
+    "execution_binding": null,
+    "current_concept": "/tmp/case-semantic-eval-20260913/projects/topic/cases/b/README.md",
+    "source_bindings": [
+      {
+        "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+        "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+        "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+        "path": "cases/b/market_research/customer_segments/evidence.md"
+      },
+      {
+        "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+        "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+        "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+        "path": "cases/b/market_research/customer_journey/evidence.md"
+      },
+      {
+        "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+        "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+        "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+        "path": "cases/b/market_research/pain_points/evidence.md"
+      },
+      {
+        "applicability": "Comparison only; do not transfer foreign staffing or supplier claims into proof of local customer demand",
+        "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+        "locator": "Fixed synthetic evaluation evidence, paragraph 1: cross-case facts",
+        "path": "cases/a/market_research/pain_points/evidence.md"
+      }
+    ],
+    "open_blockers": [
+      "review_required: The complaint was hypothetical roleplay, not a firsthand customer report. Withdraw firsthand pain interpretations for A and refresh cross-case comparisons; no execution selection."
+    ],
+    "input_contract": [
+      "case_context",
+      "current concept",
+      "source/applicability bindings",
+      "requested sections"
+    ],
+    "output_owner": "opportunity-risk-designer"
+  }
+}

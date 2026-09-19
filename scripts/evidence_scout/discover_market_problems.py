@@ -149,6 +149,7 @@ def start_discovery(args: argparse.Namespace) -> int:
     run_dir, workspace = resolve_run_dir(
         topic=args.topic,
         workspace_arg=args.workspace,
+        case_id=getattr(args, "case", ""),
         out_dir=args.out_dir,
         legacy_output=args.legacy_output,
         workspace_subdir="market_research/market_discovery/runs",
@@ -163,7 +164,7 @@ def start_discovery(args: argparse.Namespace) -> int:
     if workspace:
         update_stage(
             workspace,
-            "market_discovery",
+            "market_discovery", run_dir=run_dir,
             status="in_progress",
             gate_result="not_run",
             artifacts=[run_dir / "research_plan.md", report_path],
@@ -250,13 +251,36 @@ def finalize_discovery(args: argparse.Namespace) -> int:
     if not evidence_summary:
         raise ValueError("Missing evidence/summary.json; run collection and disclose its source coverage before finalizing")
 
+    pack = Path(getattr(args, "voc_pack", "") or run_dir / "customer-feedback")
+    required = ["evidence.jsonl", "source-review.json", "customer-feedback-coverage.json", "customer-voc-synthesis.json"]
+    if any(not (pack / name).is_file() for name in required):
+        raise ValueError("Reviewed VoC research pack required before finalization: " + ", ".join(required))
+    synthesis = read_json(pack / "customer-voc-synthesis.json")
+    review = read_json(pack / "source-review.json")
+    coverage = read_json(pack / "customer-feedback-coverage.json")
+    if synthesis.get("schema_version") != 2:
+        raise ValueError("New discovery finalization requires VoC quality contract v2; legacy maps remain unassessed")
+    completed = subprocess.run([
+        sys.executable, str(ROOT / "scripts/evidence_scout/validate_customer_voc_synthesis.py"),
+        "--evidence", str(pack / "evidence.jsonl"), "--source-review", str(pack / "source-review.json"),
+        "--coverage", str(pack / "customer-feedback-coverage.json"),
+        "--synthesis", str(pack / "customer-voc-synthesis.json"),
+        "--customer-segment", str(review.get("target_segment") or ""),
+    ], capture_output=True, text=True, check=False)
+    if completed.returncode:
+        raise ValueError("VoC research pack failed validation: " + completed.stdout + completed.stderr)
+    links = synthesis.get("candidate_support", [])
+    needs = {item["id"] for item in synthesis.get("customer_needs", [])}
+    if len(links) != args.candidate_count or any(not row.get("u_ids") or not set(row["u_ids"]) <= needs for row in links):
+        raise ValueError("Each discovery candidate requires candidate_support with reviewed U IDs")
+
     summary = read_json(run_dir / "summary.json")
     failures = provider_failures(evidence_summary)
     quality_flags = list(evidence_summary.get("quality_flags") or [])
     alerts = list(evidence_summary.get("needs_user_attention") or [])
     record_count = int(evidence_summary.get("record_count") or 0)
     gate_result = "pass"
-    if failures or quality_flags or alerts or record_count == 0:
+    if failures or quality_flags or alerts or record_count == 0 or coverage.get("coverage_status") != "complete_for_declared_plan" or synthesis.get("status") != "supported":
         gate_result = "conditional_pass"
     next_action = (
         "Ask the user to choose one candidate for focused validation, change the market scope, extend a named source gap, or stop."
@@ -270,6 +294,8 @@ def finalize_discovery(args: argparse.Namespace) -> int:
             "status": "complete",
             "candidate_count": args.candidate_count,
             "gate_result": gate_result,
+            "voc_research_pack": str(pack),
+            "voc_claim_status": synthesis.get("status"),
             "evidence": {
                 "record_count": record_count,
                 "needs_user_attention": alerts,
@@ -291,7 +317,7 @@ def finalize_discovery(args: argparse.Namespace) -> int:
                 artifacts.append(artifact)
         update_stage(
             workspace,
-            "market_discovery",
+            "market_discovery", run_dir=run_dir,
             status="passed",
             gate_result=gate_result,
             artifacts=artifacts,
@@ -327,12 +353,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--geo", default="AUTO")
     parser.add_argument("--language", default="AUTO")
     parser.add_argument("--workspace", default="", help="Optional topic workspace path.")
+    parser.add_argument("--case", default="", help="Registered case ID within --workspace.")
     parser.add_argument("--out-dir", default="", help="Optional explicit discovery-run directory.")
     parser.add_argument("--legacy-output", action="store_true")
     parser.add_argument("--collect", action="store_true", help="Run the existing collector in discovery mode into this run's evidence/ directory.")
     parser.add_argument("--finalize", action="store_true", help="Validate the synthesized report and close the market-discovery stage.")
     parser.add_argument("--run-dir", default="", help="Existing discovery run directory; required with --finalize.")
     parser.add_argument("--candidate-count", type=int, default=None, help="Number of source-backed candidates in the finished report (0-7).")
+    parser.add_argument("--voc-pack", default="", help="Reviewed v2 VoC pack directory (default <run>/customer-feedback).")
     return parser.parse_args()
 
 

@@ -42,9 +42,9 @@ When the request also asks which opportunity the founder should pursue, apply re
    python3 scripts/evidence_scout/provider_doctor.py --json
    ```
 
-   Use default sources first. Ask before paid social, app-store, login-backed, or other paid enrichment exactly as required by the provider policy. Never silently substitute a paid source.
+   Use suitable default and paid sources; customer-evidence API spending is standing-authorized without a monetary cap. Disclose credit/access gaps and use valid fallbacks. This does not authorize deceptive/private access, recruitment or advertising.
 
-4. Inspect `<run>/evidence/research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, `irrelevant.jsonl`, and provider alerts. Exclude irrelevant records before clustering.
+4. Inspect `<run>/evidence/research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, `irrelevant.jsonl`, and provider alerts. Apply repo-root `references/customer-voice.md` and `references/voc-research-method.md`: review source-linked experiences, always cover topic-led discovery, and add entity feedback as verified alternatives emerge. Unknown segments remain explicit hypotheses.
 5. Synthesize the sources into `<run>/market-discovery-report.md`. Replace every template placeholder. Cite the evidence IDs or source URLs for material claims.
 6. Build 3–7 candidates only when the evidence supports them. A candidate needs a plausible segment, trigger/job, recurring pain or decision uncertainty, current workaround or alternative, and a named uncertainty. If evidence is thin, report fewer candidates or none.
    For each candidate, outline the journey in which the need arises using the customer-journey contract in `evidence-scout/references/workflow.md` (sibling skill). Existing providers do not exclude a candidate: assess potential customer choice and access, with unknowns, before calling a segment saturated.
@@ -62,35 +62,17 @@ When the request also asks which opportunity the founder should pursue, apply re
    python3 scripts/evidence_scout/discover_market_problems.py --finalize --run-dir "<run path>" --candidate-count <0-7>
    ```
 
-   If the run's evidence is mostly weak/medium, generate the interview kit for the leading candidates before or alongside the choice question: `python3 scripts/evidence_scout/build_interview_kit.py --run-dir "<run path>"`. Public evidence should screen interviews, not end the investigation.
+   Before finalization, provide the version-2 research pack under `<run>/customer-feedback/`: `evidence.jsonl`, `source-review.json`, `customer-feedback-coverage.json`, and `customer-voc-synthesis.json`. Pass `--voc-pack <path>` for another directory. Finalization validates these artifacts, not report headings alone. Choose the next method from the unanswered question; use interviews for missing context/motives/decisions, discovery for missing coverage, and authorized behavioral tests for payment questions.
 
 9. Ask exactly one decision question: `Which path should we take next: validate Candidate [X], broaden/narrow the market scope, extend a named source gap, or stop?`
 
 ## Candidate Ranking Rubric
 
-Rank candidates deterministically from the run's `evidence.jsonl`, not by intuition. Score each candidate on two axes:
+Prioritize learning from reviewed evidence using consequence, observed unmetness, decision relevance and uncertainty. Record a short comparison with evidence IDs, contrary cases and missing comparisons; do not use an opaque total score.
 
 This rubric ranks observed evidence within this run only. It does not estimate market prevalence, willingness to pay, or the best opportunity for the founder. Unequal source coverage and missing independence limit comparison; apply the shared positioning contract before an opportunity recommendation.
 
-**Frequency (0–3)** — independent support for the pain:
-- 0 = a single dramatic complaint
-- 1 = 2–3 records, or one source only
-- 2 = 4–9 records across at least 2 source types
-- 3 = 10+ records across at least 3 source types
-
-**Severity (0–3)** — evidenced consequence of the pain:
-- 0 = annoyance mentioned in passing
-- 1 = recurring frustration or time loss
-- 2 = money spent, risk taken, or a consequential workaround (spreadsheets, manual reconciliation, paid stopgaps)
-- 3 = documented spend plus workaround plus failed attempts to solve (provider switches, tools abandoned)
-
-**Priority score = severity × frequency (0–9):**
-- 6–9 = strongest candidate
-- 3–5 = moderate
-- 1–2 = weak lead
-- 0 = mention only — do not list as a candidate
-
-Anti-gaming rules: engagement metrics (likes, views, comments) never count toward frequency; repeated posts by the same author count once; competitor, editorial, and provider content counts as alternatives context only — never toward severity or frequency. Record both axis scores and the evidence IDs behind them in the report table so the ranking can be audited.
+Counts describe the sample, not importance or prevalence. Preserve rare high-consequence needs and explain where alternatives already work. Distinguish independent people from records; unknown independence is not corroboration. Supplier/editorial material remains alternatives context, not customer evidence.
 
 ## Analysis Rules
 
@@ -99,7 +81,7 @@ Anti-gaming rules: engagement metrics (likes, views, comments) never count towar
 - Treat competitor, provider, and editorial content as context about alternatives; do not treat it as customer demand.
 - Call an area a **candidate** opportunity by default. Use “potentially underserved” only when the report shows a recurring job, a consequential workaround or dissatisfaction pattern, and a concrete gap in current alternatives. State the uncertainty beside the claim.
 - Do not use demographic stereotypes to invent segments. Segment by trigger, job, consequence of failure, decision role, current workaround, and reachable community.
-- Surface negative findings. “No credible pocket found within this scope” is a useful result.
+- Apply the latent-outcome comparison in repo-root `references/voc-research-method.md` within existing candidate findings: shortfall, consequence, competing explanation and disconfirming test. Distinguish adequate service from insufficient evidence; neither requires a manufactured opportunity.
 - Do not ask the founder to choose a solution, price, or business model until they choose a candidate.
 
 ## Report Contract
@@ -127,6 +109,6 @@ Closing-question rule: end the response with exactly one question — the first 
 - The report names the scope, geography/language, sources searched, and source failures.
 - Every candidate includes a segment, trigger/job, workaround/alternative, source-backed observation, counter-evidence, and a named unknown.
 - Evidence, interpretation, and simulated possibilities are not blended.
-- Candidate rankings use the severity × frequency rubric with auditable axis scores and evidence IDs, not attention metrics or intuition.
+- Learning priorities show consequence, unmetness, decision relevance and uncertainty with auditable evidence and contrasts, not attention or raw mention volume.
 - The report offers a user-controlled choice, not an automatic handoff to product building.
 - The selected next step reduces uncertainty rather than merely producing more content.

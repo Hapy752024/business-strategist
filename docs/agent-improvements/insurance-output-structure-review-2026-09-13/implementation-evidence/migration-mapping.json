@@ -1,0 +1,32 @@
+{
+  "chinese-speakers": {
+    "sources": [
+      {
+        "applicability": "Historical Mandarin cohort hypotheses only; reassess applicability and buying evidence.",
+        "locator": "Multilingual segments and journey",
+        "path": "market_research/customer_segments/2026-06-multilingual-segments-and-journey.md"
+      }
+    ],
+    "title": "Insurance for Chinese speakers"
+  },
+  "discount-car-insurance": {
+    "sources": [
+      {
+        "applicability": "Legacy model/cost analysis to review; not current execution approval.",
+        "locator": "Motor MGA analysis",
+        "path": "strategy/annex-b-motor-mga.md"
+      }
+    ],
+    "title": "Discount car insurance"
+  },
+  "english-speakers": {
+    "sources": [
+      {
+        "applicability": "Historical English-speaking segment research; no inherited validation or selection.",
+        "locator": "English-speaking cohort",
+        "path": "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md"
+      }
+    ],
+    "title": "Insurance for English speakers"
+  }
+}

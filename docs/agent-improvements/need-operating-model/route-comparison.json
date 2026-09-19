@@ -1,0 +1,124 @@
+{
+  "mode": "deterministic-router-only",
+  "model_invoked": false,
+  "cases": [
+    {
+      "prompt": "Derive the operating model from our selected position.",
+      "intent": "company-operations",
+      "task_scope": "focused",
+      "before": {
+        "route_id": "company-operations",
+        "skill": "company-operating-system",
+        "mode": "default",
+        "required_references": []
+      },
+      "after": {
+        "route_id": "company-operations",
+        "skill": "company-operating-system",
+        "mode": "default",
+        "required_references": []
+      },
+      "unchanged": true
+    },
+    {
+      "prompt": "Only a weekly review for late orders.",
+      "intent": "company-operations",
+      "task_scope": "focused",
+      "before": {
+        "route_id": "company-operations",
+        "skill": "company-operating-system",
+        "mode": "default",
+        "required_references": []
+      },
+      "after": {
+        "route_id": "company-operations",
+        "skill": "company-operating-system",
+        "mode": "default",
+        "required_references": []
+      },
+      "unchanged": true
+    },
+    {
+      "prompt": "Write ad copy for our fixed-scope service.",
+      "intent": "marketing-strategy",
+      "task_scope": "execution",
+      "before": {
+        "route_id": "marketing-strategy",
+        "skill": "marketing-strategy-builder",
+        "mode": "default",
+        "required_references": []
+      },
+      "after": {
+        "route_id": "marketing-strategy",
+        "skill": "marketing-strategy-builder",
+        "mode": "default",
+        "required_references": []
+      },
+      "unchanged": true
+    },
+    {
+      "prompt": "Build a standalone brand identity.",
+      "intent": "standalone-brand",
+      "task_scope": "focused",
+      "before": {
+        "route_id": "standalone-brand",
+        "skill": "brand-designer",
+        "mode": "default",
+        "required_references": [
+          "references/subprojects.md"
+        ]
+      },
+      "after": {
+        "route_id": "standalone-brand",
+        "skill": "brand-designer",
+        "mode": "default",
+        "required_references": [
+          "references/subprojects.md"
+        ]
+      },
+      "unchanged": true
+    },
+    {
+      "prompt": "Compare strategic positions.",
+      "intent": "business-positioning",
+      "task_scope": "focused",
+      "before": {
+        "route_id": "business-positioning",
+        "skill": "archetype-gtm-strategist",
+        "mode": "positioning",
+        "required_references": []
+      },
+      "after": {
+        "route_id": "business-positioning",
+        "skill": "archetype-gtm-strategist",
+        "mode": "positioning",
+        "required_references": []
+      },
+      "unchanged": true
+    },
+    {
+      "prompt": "Explore underserved customer outcomes.",
+      "intent": "market-discovery",
+      "task_scope": "focused",
+      "before": {
+        "route_id": "market-discovery",
+        "skill": "market-problem-discovery",
+        "mode": "default",
+        "required_references": [
+          "references/customer-voice.md",
+          "references/voc-research-method.md"
+        ]
+      },
+      "after": {
+        "route_id": "market-discovery",
+        "skill": "market-problem-discovery",
+        "mode": "default",
+        "required_references": [
+          "references/customer-voice.md",
+          "references/voc-research-method.md"
+        ]
+      },
+      "unchanged": true
+    }
+  ]
+}

@@ -162,12 +162,18 @@ def render_matrix(topic: str, pains: list[dict[str, Any]], competitors: list[dic
     return "\n".join(lines) + "\n"
 
 
+from workspace import prepare_research_output, resolve_run_dir, cases, research_input_bindings, capture_run_scope
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Scaffold a pains × competitors whitespace matrix.")
     parser.add_argument("--topic", required=True)
     parser.add_argument("--evidence-jsonl", required=True, help="Path to an evidence run's evidence.jsonl.")
     parser.add_argument("--competitors-json", required=True, help="Path to competitors.json from discover_competitors.py.")
     parser.add_argument("--out", default="", help="Output path. Defaults to projects/<project-slug>/market_research/solution_alternatives/whitespace-matrix.md.")
+    parser.add_argument('--workspace', default='')
+    parser.add_argument('--case', default='')
+    parser.add_argument('--source-bindings', default='')
     parser.add_argument("--pains", type=int, default=8, help="Maximum pain rows.")
     parser.add_argument("--competitors", type=int, default=10, help="Maximum competitor columns.")
     return parser.parse_args()
@@ -187,10 +193,29 @@ def main() -> int:
         return 1
 
     out_path = (
-        Path(args.out).expanduser().resolve()
+        Path(args.out).expanduser().absolute()
         if args.out
         else ROOT / "projects" / slugify(args.topic) / "market_research" / "solution_alternatives" / "whitespace-matrix.md"
     )
+    source_root = cases.locate(Path(args.evidence_jsonl))
+    if not args.out and (source_root or args.workspace or args.case):
+        case_id = args.case
+        if source_root and not case_id and not args.workspace:
+            for cid, entry in cases.read_project(source_root)['cases'].items():
+                if not entry.get('retired') and Path(args.evidence_jsonl).absolute().is_relative_to(cases.resolve(source_root, cid)):
+                    case_id = cid
+                    break
+        root = cases.locate(Path(args.workspace)) if args.workspace else source_root
+        scope = cases.resolve(root, case_id) if root else None
+        bindings = research_input_bindings(root, scope, [args.evidence_jsonl, args.competitors_json], args.source_bindings) if root else []
+        run, _ = resolve_run_dir(topic=args.topic, workspace_arg=args.workspace or str(source_root or ''),
+            case_id=case_id, out_dir='', legacy_output=False, workspace_subdir='market_research/solution_alternatives/runs')
+        out_path = run / 'whitespace-matrix.md'
+        if root:
+            capture_run_scope(run, scope, bindings)
+    else:
+        prepare_research_output(out_path, workspace_arg=args.workspace, case_id=args.case, is_file=True,
+            input_paths=[args.evidence_jsonl, args.competitors_json], source_bindings_file=args.source_bindings)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(render_matrix(args.topic, pains, competitors), encoding="utf-8")
 

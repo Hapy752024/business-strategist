@@ -11,7 +11,10 @@
         "route decision"
       ],
       "side_effect": "none",
-      "cost": "low"
+      "cost": "low",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "market-problem-discovery": {
       "intent": [
@@ -27,7 +30,11 @@
         "market discovery report"
       ],
       "side_effect": "research",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/customer-voice.md",
+        "references/voc-research-method.md"
+      ]
     },
     "idea-grill": {
       "intent": [
@@ -57,7 +64,10 @@
         "evidence records"
       ],
       "side_effect": "research",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/customer-voice.md"
+      ]
     },
     "competitive-landscape-builder": {
       "intent": [
@@ -79,7 +89,10 @@
         "quality gate"
       ],
       "side_effect": "research",
-      "cost": "high"
+      "cost": "high",
+      "required_references": [
+        "references/customer-voice.md"
+      ]
     },
     "competitor-scout": {
       "intent": [
@@ -111,7 +124,10 @@
         "marketing analysis"
       ],
       "side_effect": "research",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/customer-voice.md"
+      ]
     },
     "competitor-monitoring": {
       "intent": [
@@ -142,7 +158,36 @@
         "risk matrix and tests"
       ],
       "side_effect": "none",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/customer-voice.md"
+      ],
+      "modes": {
+        "appraisal": {
+          "prerequisites": [
+            "registered case",
+            "initial segment, journey and pain research; evidence limits allowed"
+          ],
+          "strategy_stage_prerequisites": [],
+          "required_references": [
+            "references/case-assessment.md",
+            "references/subprojects.md"
+          ],
+          "artifacts": [
+            "case README.md",
+            "feasibility.md",
+            "business-case.md",
+            "economics.json when needed"
+          ],
+          "inputs": [
+            "case_context",
+            "current concept",
+            "source/applicability bindings",
+            "requested sections"
+          ],
+          "output_owner": "opportunity-risk-designer"
+        }
+      }
     },
     "brand-designer": {
       "intent": [
@@ -156,7 +201,10 @@
         "brand manifest"
       ],
       "side_effect": "workspace",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-discovery-interviewer": {
       "intent": [
@@ -171,7 +219,10 @@
         "preference profile"
       ],
       "side_effect": "workspace",
-      "cost": "low"
+      "cost": "low",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-workspace-manager": {
       "intent": [
@@ -183,7 +234,10 @@
         "brand workspace"
       ],
       "side_effect": "workspace",
-      "cost": "low"
+      "cost": "low",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-guideline-researcher": {
       "intent": [
@@ -197,7 +251,10 @@
         "guideline evidence"
       ],
       "side_effect": "research",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-typography-researcher": {
       "intent": [
@@ -209,7 +266,10 @@
         "font decision"
       ],
       "side_effect": "research",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-strategy-director": {
       "intent": [
@@ -225,7 +285,10 @@
         "brand strategy"
       ],
       "side_effect": "workspace",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-asset-producer": {
       "intent": [
@@ -241,7 +304,10 @@
         "approved imagery art-direction brief + style frames"
       ],
       "side_effect": "workspace",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-ui-kit-producer": {
       "intent": [
@@ -257,7 +323,10 @@
         "tokens"
       ],
       "side_effect": "workspace",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-motion-designer": {
       "intent": [
@@ -273,7 +342,10 @@
         "approved motion concept"
       ],
       "side_effect": "workspace",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-ui-component-producer": {
       "intent": [
@@ -287,7 +359,10 @@
         "component library"
       ],
       "side_effect": "workspace",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-frontend-app-designer": {
       "intent": [
@@ -304,7 +379,10 @@
         "app UI"
       ],
       "side_effect": "workspace",
-      "cost": "high"
+      "cost": "high",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-quality-reviewer": {
       "intent": [
@@ -318,7 +396,10 @@
         "brand QA report"
       ],
       "side_effect": "none",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-exporter": {
       "intent": [
@@ -334,7 +415,10 @@
         "export package"
       ],
       "side_effect": "workspace",
-      "cost": "low"
+      "cost": "low",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-guidelines-writer": {
       "intent": [
@@ -348,14 +432,21 @@
         "guidelines"
       ],
       "side_effect": "workspace",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "brand-website-designer-builder": {
       "intent": [
         "build distinctive branded Next.js website",
         "landing page",
         "Vercel release",
-        "simple A/B test"
+        "simple A/B test",
+        "maintain and test website",
+        "technical SEO and LLM-EO",
+        "responsive and load performance fixes",
+        "optional consent-aware campaign tracking and account integration"
       ],
       "excludes": [
         "product dashboard",
@@ -369,7 +460,11 @@
         "QA report"
       ],
       "side_effect": "workspace/external-approval",
-      "cost": "high"
+      "cost": "high",
+      "required_references": [
+        "references/subprojects.md",
+        ".agents/skills/brand-website-designer-builder/references/launch-contract.md"
+      ]
     },
     "setup-multiharness-project": {
       "intent": [
@@ -395,7 +490,18 @@
         "startup plan"
       ],
       "side_effect": "none",
-      "cost": "high"
+      "cost": "high",
+      "strategy_stage_prerequisites": [
+        "intake",
+        "segment_selection",
+        "customer_profile",
+        "problem_validation",
+        "opportunity_risk",
+        "operator_playbook"
+      ],
+      "required_references": [
+        "references/subprojects.md"
+      ]
     },
     "marketing-strategy-builder": {
       "intent": [
@@ -409,7 +515,15 @@
         "marketing strategy"
       ],
       "side_effect": "none",
-      "cost": "medium"
+      "cost": "medium",
+      "strategy_stage_prerequisites": [
+        "intake",
+        "segment_selection",
+        "customer_profile",
+        "problem_validation",
+        "opportunity_risk",
+        "operator_playbook"
+      ]
     },
     "archetype-gtm-strategist": {
       "intent": [
@@ -424,7 +538,15 @@
         "GTM plan"
       ],
       "side_effect": "none",
-      "cost": "high"
+      "cost": "high",
+      "strategy_stage_prerequisites": [
+        "intake",
+        "segment_selection",
+        "customer_profile",
+        "problem_validation",
+        "opportunity_risk",
+        "operator_playbook"
+      ]
     },
     "social-digital-marketing-planner": {
       "intent": [
@@ -438,7 +560,14 @@
         "channel plan"
       ],
       "side_effect": "none",
-      "cost": "medium"
+      "cost": "medium",
+      "strategy_stage_prerequisites": [
+        "intake",
+        "segment_selection",
+        "customer_profile",
+        "problem_validation",
+        "opportunity_risk"
+      ]
     },
     "social-media-idea-validator": {
       "intent": [
@@ -464,7 +593,7 @@
         "company context"
       ],
       "artifacts": [
-        "operating model or requested management routines"
+        "requested delivery configuration and feasible transition, or management routines"
       ],
       "side_effect": "none",
       "cost": "medium"
@@ -481,7 +610,14 @@
         "pilot plan"
       ],
       "side_effect": "none",
-      "cost": "high"
+      "cost": "high",
+      "strategy_stage_prerequisites": [
+        "intake",
+        "segment_selection",
+        "customer_profile",
+        "problem_validation",
+        "opportunity_risk"
+      ]
     },
     "service-customer-perspective-challenger": {
       "intent": [
@@ -495,7 +631,10 @@
         "customer perspective review"
       ],
       "side_effect": "none",
-      "cost": "medium"
+      "cost": "medium",
+      "required_references": [
+        "references/customer-voice.md"
+      ]
     },
     "business-archetype-playbook-researcher": {
       "intent": [
@@ -537,7 +676,10 @@
         "screener and guide"
       ],
       "side_effect": "none",
-      "cost": "low"
+      "cost": "low",
+      "required_references": [
+        "references/customer-voice.md"
+      ]
     },
     "startup-challenge-panel": {
       "intent": [
@@ -565,7 +707,14 @@
         "ranked drafts"
       ],
       "side_effect": "none",
-      "cost": "high"
+      "cost": "high",
+      "strategy_stage_prerequisites": [
+        "intake",
+        "segment_selection",
+        "customer_profile",
+        "problem_validation",
+        "opportunity_risk"
+      ]
     },
     "town-db-curator": {
       "intent": [

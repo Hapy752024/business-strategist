@@ -8,8 +8,12 @@ import json
 import platform
 import re
 import shutil
+import sys
 from datetime import datetime
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import run_staged, cases
 
 
 STAGES = ["discovery", "research", "strategy", "logo", "colors", "typography", "imagery-style", "motion-concept", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export"]
@@ -63,6 +67,12 @@ def write_manifest(root: Path, *, entry_mode: str, business_to_brand: str = "", 
             "next_action": "Complete the brand brief and select the first stage."
         }
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    elif entry_mode == 'business_linked' and business_to_brand:
+        manifest = json.loads(manifest_path.read_text())
+        if manifest.get('entry_mode') != entry_mode or manifest.get('business_to_brand') != business_to_brand:
+            manifest.update(entry_mode=entry_mode, business_to_brand=business_to_brand,
+                            manifest_revision=manifest.get('manifest_revision', 1) + 1)
+            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + '\n')
     return manifest_path
 
 
@@ -93,11 +103,26 @@ def main() -> int:
     parser.add_argument("--entry-mode", choices=("standalone", "business_linked"), default="standalone")
     parser.add_argument("--business-to-brand", default="")
     args = parser.parse_args()
+    return execute(args)
+
+
+def execute(args, root_override=None):
+    if args.entry_mode == 'business_linked' and not args.business_to_brand:
+        raise ValueError('business_linked entry requires --business-to-brand')
 
     if args.project:
         root = Path(__file__).resolve().parents[4] / "projects" / slugify(args.project) / "branding"
     else:
         root = args.base_dir / slugify(args.name)
+    root = root_override or root
+    if root_override is None and args.project and args.entry_mode == 'standalone':
+        from scripts import subprojects
+        parent = root.parent
+        if not (parent / cases.PROJECT).exists() and not (parent / 'market_research/manifest.json').exists():
+            subprojects.start(parent, 'branding', args.name)
+    if root_override is None and cases.locate_publication(root):
+        return run_staged(root, 'brand', lambda stage: execute(args, stage), entry_mode=args.entry_mode,
+            handoff=args.business_to_brand or None)
     created = create_workspace(root)
     manifest_path = write_manifest(root, entry_mode=args.entry_mode, business_to_brand=args.business_to_brand,
                                    brand_id=slugify(args.project) if args.project else "")

@@ -4,9 +4,13 @@
   "title": "Evidence Record",
   "description": "Normalized evidence record from any provider source.",
   "type": "object",
-  "required": ["source", "retrieved_at", "evidence_type", "text", "strength"],
+  "required": ["source", "retrieved_at", "evidence_type", "text", "strength", "sampling_frame", "author_voice_status"],
   "properties": {
     "schema_version": {"type": "string"},
+    "classification_basis": {"enum": ["heuristic", "provider_structure", "explicit_supplier_identity", "extraction_proposal"]},
+    "capture_unit": {"enum": ["document", "source_record", "episode", "experience"]},
+    "content_completeness": {"enum": ["unknown", "search_snippet", "extracted_page", "attributed_episode"]},
+    "sampling_metadata": {"type": "object", "description": "Observed sampling choices; null means unknown, never population coverage."},
     "evidence_id": {"type": "string", "minLength": 1},
     "published_at": {"type": "string", "format": "date-time"},
     "canonical_url": {"type": "string", "format": "uri"},
@@ -16,12 +20,13 @@
     "signal_quality": {"type": "object", "properties": {"directness": {"type": "string"}, "specificity": {"type": "string"}, "authenticity": {"type": "string"}, "recency": {"type": "string"}, "relevance": {"type": "string"}}},
     "source": {
       "type": "string",
-      "enum": ["reddit", "youtube", "youtube_comment", "youtube_transcript", "google_trends", "google_autocomplete", "forum", "web_search", "x", "xai_x_search", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "itunes_reviews", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "hn", "github", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu"]
+      "enum": ["reddit", "youtube", "youtube_comment", "youtube_transcript", "google_trends", "google_autocomplete", "google_places_review", "trustpilot_review", "forum", "web_search", "x", "xai_x_search", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "itunes_reviews", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "hn", "github", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu"]
     },
     "source_url": { "type": "string", "format": "uri" },
     "retrieved_at": { "type": "string", "format": "date-time" },
     "query": { "type": "string" },
     "customer_segment": { "type": "string" },
+    "segment_relation": {"enum": ["target", "adjacent", "unresolved"]},
     "hypothesis_id": { "type": "string" },
     "evidence_type": {
       "type": "string",
@@ -31,10 +36,18 @@
     "verbatim_quote": { "type": "string" },
     "author_context": { "type": "string" },
     "source_record_id": {"type": "string", "minLength": 1},
-    "source_role": {"enum": ["customer_statement", "customer_review", "creator_statement", "search_suggestion", "search_result", "competitor_context", "editorial_context", "community_context", "discovery_only"]},
+    "source_role": {"enum": ["customer_statement", "customer_review", "creator_statement", "search_suggestion", "search_result", "competitor_context", "editorial_context", "community_context", "discovery_only", "quoted_context", "unresolved_context"]},
+    "sampling_frame": {"enum": ["topic_led_voc", "entity_led_feedback"]},
+    "author_voice_status": {"enum": ["unreviewed", "firsthand_customer", "former_customer", "prospective_user", "nonadopter", "supplier_context", "non_customer", "unresolved"]},
+    "subject_entity_id": {"type": "string", "minLength": 1},
+    "collection_locale": {"type": "string", "pattern": "^[A-Z]{2}:[a-z]{2,3}(?:-[a-z0-9]{2,8})*$"},
+    "collection_source_lane": {"enum": ["independent_review_platforms", "google_business_reviews", "company_facebook_comments", "company_instagram_comments", "apple_app_store_reviews", "google_play_store_reviews", "external_forums_communities", "company_hosted_supplier_context"]},
+    "collection_locator": {"type": "string", "minLength": 1},
     "retrieval_backend": {"type": "string"},
     "query_language": {"type": "string"},
     "source_language": {"type": "string"},
+    "source_entity_type": {"enum": ["facebook_page", "facebook_group", "instagram_profile", "facebook_comment", "instagram_comment", "facebook_supplier_comment", "instagram_supplier_comment"]},
+    "author_relationship": {"enum": ["page_owner_or_unknown", "page_or_supplier_author", "group_participant_unverified", "commenter_unverified"]},
     "output_language": {"type": "string"},
     "engagement": {
       "type": "object",
@@ -50,5 +63,11 @@
       "enum": ["strong", "medium", "weak", "negative", "irrelevant"]
     },
     "confidence_notes": { "type": "string" }
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"sampling_frame": {"const": "entity_led_feedback"}}, "required": ["sampling_frame"]},
+      "then": {"required": ["subject_entity_id"]}
+    }
+  ]
 }

@@ -36,6 +36,31 @@
       "must_not_mention": [],
       "required_artifacts": ["evidence.jsonl", "summary.json", "report.md"],
       "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Our broad Reddit search found nothing useful, but this audience probably asks in local forums and Facebook groups. Systematically discover and verify suitable communities before collecting posts.",
+      "expected_output": "A two-stage community workflow: metadata-only discovery uses explicit country-language pairs, source-language lexicons (with explicit runtime source terms for unsupported languages), separate per-seed forum/Facebook Group/Facebook Page queries, per-seed result counts, lane-specific qualification, full typed observation provenance, and a discovery receipt signed with a distinct discovery key; then an evidence-bound promotion command verifies audience, segment, geography, language, activity, entity type and access before producing verified_communities.json plus a review-key-signed, authoritative-current-generation, endpoint-bound, maximum-30-day public-only capture_authorization.json and community_review_current.json receipt. A failed re-review revokes prior authorization, including replayed complete old bundles and alternate output directories. Packet-authored rechecks cannot authorize public API capture. This is an internal allowlist, not platform permission or terms compliance. User-supplied private material stays in a non-API artifact. Paid customer-evidence APIs have standing no-cap spend authorization. Current private exploratory research requires no GDPR or formal ethics dossier, while credential theft/sharing, technical bypass and deceptive private-group entry remain prohibited.",
+      "must_mention": ["forum", "Facebook", "review_candidates.json", "verified_communities.json", "capture_authorization.json", "metadata"],
+      "must_not_mention": ["no demand", "no communities exist", "Facebook posts verified by search", "ask before paid API", "GDPR approval required"],
+      "required_artifacts": ["community_candidates.json", "review_candidates.json", "community_discovery_receipt.json", "verified_communities.json", "capture_authorization.json", "community_review_current.json", "community_review_metrics.json", "report.md"],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Understand customer input for a market where we already know three competitors and two foreign similar companies. Analyse why and how customers use them and what concrete solution requirements appear in feedback.",
+      "expected_output": "Always run a topic-led VOC pass independent of competitor names, then a separate entity-led feedback pass for every verified applicable competitor/similar company. The entity pass covers independent review platforms, Google business/location reviews, company Facebook and Instagram customer comments, Apple App Store and Google Play reviews as separate applicable lanes, and external forums. Company posts, replies and testimonials remain supplier context. Keep entity/lane attempted and retrieved denominators, favorable and unfavorable feedback, target versus adjacent markets, and customer versus supplier roles explicit. Build separate U customer-needs and R solution-use-requirements maps and do not infer buying motives from feature complaints or star averages.",
+      "must_mention": ["topic-led", "entity-led", "customer needs", "solution-use requirements", "supplier"],
+      "must_not_mention": ["skip topic discovery", "ratings prove", "company post is customer voice"],
+      "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Research household moving needs in Switzerland in German and French. A forum post labelled editorial contains firsthand Erfahrungen; Facebook is inaccessible. Apple reviews came from one country-only storefront. We need useful findings without pretending both languages were covered.",
+      "expected_output": "Always run topic-led discovery. Preserve full documents and split located speaker episodes. Correct heuristic labels only with source and author evidence; exclude supplier replies. Track every requested locale, including unresolved storefront language; permit scoped findings while exposing the missing coverage. Map contextual independent needs separately from requirements and preserve successful self-packing/nonadoption counterexamples.",
+      "required_artifacts": ["customer-feedback-coverage.json", "customer-voc-synthesis.json"],
+      "files": []
     }
   ]
 }

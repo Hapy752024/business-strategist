@@ -1,0 +1,40 @@
+{
+  "date": "2026-09-13",
+  "status": "implemented",
+  "tests": {
+    "python_suite": 350,
+    "setup_errors": 0,
+    "route_catalog": "pass",
+    "eval_structural_cases": 143,
+    "eval_structural_errors": 0
+  },
+  "semantic": {
+    "saved_artifact_assertions_passed": 10,
+    "independent_review": "implementation-evidence/semantic/run/independent-review.md",
+    "exact_runtime_model": "unknown",
+    "separate_reviewer": true,
+    "final_contract_replay": "implementation-evidence/semantic/contract-replay/run/verification.json",
+    "limits": [
+      "Fixed synthetic evidence; no market validation",
+      "Follow-ups disclosed in advance; final write-contract replay reused identical saved agent-authored text",
+      "Selected-plan and numeric model safety tested structurally, not by a live business exercise"
+    ]
+  },
+  "live_insurance": {
+    "files": 376,
+    "changed": [],
+    "added": [],
+    "removed": [],
+    "migrated": false
+  },
+  "rehearsal": "implementation-evidence/migration-report.json",
+  "known_warnings": [
+    "Existing town-db-curator quality-checklist/eval coverage warnings"
+  ],
+  "implementation_review": "All identified P1/P2 findings closed by fixes and bounded independent rereads; see IMPLEMENTATION-REPORT.md",
+  "final_review": {
+    "cosmetic_publication_conflict": "closed on independent reread",
+    "decimal_break_even": "closed on independent arithmetic reproduction",
+    "later_direct_builder_and_relative_path_regressions": "passed in full suite; later small integration changes not separately rereviewed"
+  }
+}

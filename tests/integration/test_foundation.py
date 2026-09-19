@@ -64,7 +64,7 @@ def test_project_manifest_revision_and_cas(tmp_path: Path, monkeypatch: pytest.M
     revision = project.link_project(manifest_path, track="brand", workspace="/tmp/brand-workspace", active=True)
     assert revision == 2
     assert json.loads(manifest_path.read_text(encoding="utf-8"))["active_track"] == "brand"
-    with pytest.raises(RuntimeError, match="revision conflict"):
+    with pytest.raises(ValueError, match="publication helper"):
         project.write_json_atomic(manifest_path, data, expected_revision=1)
     discovered = project.discover_projects(tmp_path / "projects")
     assert discovered[0]["slug"] == "demo-product"
@@ -317,6 +317,7 @@ def test_claim_ledger_preserves_independence_and_requires_counter_scope(tmp_path
     for record in records:
         record["evidence_id"] = builder.stable_id(record)
     claims = [{"claim_id": "c1", "claim_type": "observation", "claim": "Manual invoices are painful", "supporting_evidence": [record["evidence_id"] for record in records], "counter_evidence": [], "confidence": "medium", "confidence_rationale": "Two independent posts", "none_found_scope": {"sources": ["reddit"], "queries": ["manual invoices"], "geography": "US", "date_range": "30d", "failed_routes": []}}]
+    claims[0].update(claim_scope_type="pattern", scope="Two source accounts, not market prevalence", confidence_assessment={key: "Limited source sample; wider applicability unknown" for key in ("provenance", "target_fit", "independence", "context", "recency", "counterevidence", "coverage")})
     ledger = builder.build(records, claims)
     assert ledger[0]["independence_count"] == 2
     assert validator.validate(ledger, records) == []
@@ -371,3 +372,23 @@ def test_website_fixture_contract() -> None:
 def test_mcp_profiles_are_optional_and_deterministic() -> None:
     sync = load_script("sync_brand_mcp_config", "scripts/sync-brand-mcp-config.py")
     assert sync.load_servers(["brand-ui", "website-qa"]) == sync.load_servers([])
+
+
+def test_extended_position_survives_handoff_without_upgrading_claims(tmp_path):
+    builder = load_script('extended_handoff', 'scripts/brand/build_business_to_brand_handoff.py')
+    validator = load_script('extended_snapshot', 'scripts/brand/validate_business_to_brand_handoff.py')
+    fixtures = load_script('extended_position_fixture', 'tests/test_strategy_review.py')
+    source = tmp_path / 'context.json'; source.write_text('{}')
+    data = fixtures.plan(); data['positioning'] = fixtures.detailed_position()
+    strategy = tmp_path / 'strategy-plan.json'; strategy.write_text(json.dumps(data))
+    snapshot = builder.build_snapshot(source, strategy)
+    assert snapshot['positioning'] == data['positioning']
+    assert validator.validate_data(snapshot) == []
+    snapshot['positioning']['value_proposition']['mechanism']['provenance'] = 'evidence_backed'
+    assert any('supporting evidence_refs' in e for e in validator.validate_data(snapshot))
+    snapshot['positioning']['value_proposition']['mechanism']['provenance'] = 'assumption'
+    snapshot['positioning']['activities'][0]['relations'][0]['target'] = 'missing'
+    assert any('unknown activity' in e for e in validator.validate_data(snapshot))
+    snapshot['positioning'] = fixtures.detailed_position()
+    snapshot['positioning']['defensibility']['status'] = 'supported'
+    assert any('supported assessment' in e for e in validator.validate_data(snapshot))

@@ -1,0 +1,20 @@
+{
+  "model": "transactional",
+  "unit": "completed sale",
+  "currency": "EUR",
+  "period": "month",
+  "revenue_basis": "venture_receipt",
+  "acquisition_basis": "customer",
+  "revenue_per_unit": 150,
+  "service_per_unit": 25,
+  "partner_per_unit": 10,
+  "refund_per_unit": 0,
+  "acquisition_per_new_customer": 15,
+  "fixed_per_month": 1500,
+  "owner_cash_per_month": 2500,
+  "owner_cash_in_service_cost": false,
+  "imputed_owner_labor_per_month": null,
+  "capacity_per_month": 60,
+  "scenario_limit_reason": "No downside assumptions supported yet",
+  "sensitivity_limit_reason": "Decision-changing ranges unresolved"
+}

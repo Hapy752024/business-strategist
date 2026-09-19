@@ -3,21 +3,249 @@
   "$id": "research-manifest.schema.json",
   "title": "Research Manifest",
   "type": "object",
-  "required": ["schema_version", "topic", "topic_slug", "created_at", "updated_at", "current_stage", "stages", "events", "open_blockers", "artifacts"],
+  "required": [
+    "schema_version",
+    "topic",
+    "topic_slug",
+    "created_at",
+    "updated_at",
+    "current_stage",
+    "stages",
+    "events",
+    "open_blockers",
+    "artifacts"
+  ],
   "properties": {
-    "schema_version": {"type": "string"},
-    "topic": {"type": "string", "minLength": 1},
-    "topic_slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
-    "created_at": {"type": "string", "format": "date-time"},
-    "updated_at": {"type": "string", "format": "date-time"},
-    "current_stage": {"type": "string"},
-    "gate_result": {"enum": ["pass", "fail", "conditional_pass", "not_run"]},
-    "blocked_reason": {"type": "string"},
-    "next_action": {"type": "string"},
-    "stages": {"type": "object", "additionalProperties": {"$ref": "stage-checkpoint.schema.json"}},
-    "events": {"type": "array", "items": {"type": "object", "required": ["ts", "event"], "properties": {"ts": {"type": "string", "format": "date-time"}, "event": {"type": "string", "minLength": 1}}}},
-    "open_blockers": {"type": "array", "items": {"type": "string"}},
-    "artifacts": {"type": "array", "items": {"type": "string"}}
+    "schema_version": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "current_stage": {
+      "type": "string"
+    },
+    "gate_result": {
+      "enum": [
+        "pass",
+        "fail",
+        "conditional_pass",
+        "not_run"
+      ]
+    },
+    "blocked_reason": {
+      "type": "string"
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "stages": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "stage-checkpoint.schema.json"
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ts",
+          "event"
+        ],
+        "properties": {
+          "ts": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "event": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "open_blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "manifest_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "coaching": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "known_answers",
+        "unresolved_inputs",
+        "pending_question"
+      ],
+      "properties": {
+        "known_answers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "field",
+              "value",
+              "provenance"
+            ],
+            "properties": {
+              "field": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provenance": {
+                "enum": [
+                  "user_confirmed",
+                  "assumption",
+                  "evidence"
+                ]
+              },
+              "source": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "unresolved_inputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "pending_question": {
+          "type": "string"
+        },
+        "decision_impact": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "case_id": {
+      "type": "string"
+    },
+    "assessment_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "source_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "digest",
+          "locator",
+          "applicability"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "type": "string",
+            "minLength": 1
+          },
+          "locator": {
+            "type": "string",
+            "minLength": 1
+          },
+          "applicability": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "required": [
+        "summary",
+        "principal_uncertainty",
+        "next_action",
+        "assessment_revision"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal_uncertainty": {
+          "type": "string",
+          "minLength": 1
+        },
+        "next_action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assessment_revision": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "document_bindings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "authored_digest",
+          "economics_input_digest",
+          "model_input_digest"
+        ],
+        "properties": {
+          "authored_digest": {
+            "type": "string"
+          },
+          "economics_input_digest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "model_input_digest": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
   },
   "additionalProperties": false
 }

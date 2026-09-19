@@ -1,12 +1,12 @@
 ---
 name: archetype-gtm-strategist
-description: Select business positioning and derive strategic trade-offs, or build stage-gated GTM plans. Use for business-position choices, first customers, channel tests, partnerships, or launch decisions; load archetype playbooks only where applicable.
+description: Select business positioning and strategic trade-offs, or build stage-gated GTM plans. Use for business-position choices, first customers, channel tests, partnerships, or launch decisions.
 ---
 
 # Archetype GTM Strategist
 
 ## Success Criteria
-- **Quantitative:** triggers on >=90% of GTM strategy queries; completes in <=20 tool calls; selects the correct archetype (SaaS/fintech/service) before producing output; zero stage gates skipped.
+- **Decision quality:** links reviewed need to a specific promise, feasible delivery and separately assessed defensibility; preserves scope, uncertainty and stage gates.
 - **Qualitative:** recommendations are grounded in the founder's evidence and constraints; archetype-specific patterns are applied; regional adaptations are explicit when geography differs.
 
 ## Workflow
@@ -21,3 +21,6 @@ description: Select business positioning and derive strategic trade-offs, or bui
 ## Output
 
 For focused positioning, return the decision and requested implications. For a full GTM plan, produce segment, positioning/offer, launch and first-customer motion, channels/partners, relevant regional adaptations, economics, KPIs, gates, and accountable actions.
+
+For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
+For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.

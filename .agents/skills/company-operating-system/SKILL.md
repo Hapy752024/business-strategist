@@ -8,16 +8,15 @@ description: Derive a delivery operating model from a selected strategic positio
 Use this after the customer, business model, and current company stage are sufficiently clear.
 
 ## Success Criteria
-- **Quantitative:** triggers on >=90% of company/team management queries; completes in <=12 tool calls; produces KPIs, meeting cadence, and decision rights; zero routines without a named owner and threshold.
-- **Qualitative:** every routine is tied to a decision; avoids premature hiring and big-company process theater; cadence matches the company's actual stage.
+- **Delivery:** activities support the specific promise within capacity, cash and service constraints; distinguish operating fit from defensibility.
+- **Management:** every requested routine has a decision, owner and threshold; avoid premature hiring and process theater.
 
 ## Workflow
 
-1. Read `references/workflow.md` completely.
-2. Diagnose stage, bottleneck, cash constraints, and decision ownership.
-3. Design the smallest useful cadence and scorecard.
-4. Tie every routine to a decision, owner, threshold, and follow-up.
-5. Avoid premature hiring and big-company process theater.
+1. Choose delivery-design or management-cadence mode from the requested outcome; read `references/workflow.md`.
+2. For delivery design or material strategic conflict, read repo-root `references/strategic-positioning.md`; derive activities and affordable transitions before routines.
+3. For cadence only, reuse the supplied position and design only necessary metrics, decision rights and routines.
+4. Return infeasible promises to position selection; uncertainty does not authorize execution or change existing gates.
 
 ## Output
 

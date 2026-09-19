@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from scripts.brand.validate_business_to_brand_handoff import validate_data
 from scripts.strategy_review import validate_plan
+from scripts import case_workspace as cases
 
 
 def now_iso() -> str:
@@ -33,6 +34,18 @@ SOURCE_KEYS = {
 
 
 def build_snapshot(source_path: Path, strategy_plan_path: Path | None = None) -> dict[str, Any]:
+    source_path = source_path.absolute()
+    strategy_plan_path = strategy_plan_path.absolute() if strategy_plan_path else None
+    roots = {r for p in (source_path, strategy_plan_path) if p is not None for r in [cases.locate(p)] if r}
+    if len(roots) > 1:
+        raise ValueError('handoff sources belong to different case projects')
+    case_root = next(iter(roots), None)
+    if case_root and strategy_plan_path != case_root / 'strategy/strategy-plan.json':
+        raise ValueError('case handoff requires the current selected root strategy plan')
+    if not case_root:
+        for ancestor in source_path.absolute().parents:
+            if (ancestor / cases.PROJECT).exists():
+                raise ValueError('explicit migration required for new business execution')
     source_bytes = source_path.read_bytes()
     source = json.loads(source_bytes)
     if not isinstance(source, dict):
@@ -46,6 +59,11 @@ def build_snapshot(source_path: Path, strategy_plan_path: Path | None = None) ->
         errors = validate_plan(plan)
         if errors:
             raise ValueError("invalid strategy plan: " + "; ".join(errors))
+        if case_root:
+            cases.check_plan(case_root, plan)
+            cases.safe(case_root, str(source_path.relative_to(case_root)))
+            if source.get('execution_binding') != plan['execution_binding']:
+                raise ValueError('business context must be reviewed against the selected execution binding')
         if not plan.get("positioning"):
             raise ValueError("selected strategy plan has no positioning; do not fall back to stale business context")
         positioning_source = {"path": str(strategy_plan_path.resolve()), "sha256": hashlib.sha256(plan_bytes).hexdigest()}
@@ -115,6 +133,9 @@ def build_snapshot(source_path: Path, strategy_plan_path: Path | None = None) ->
     }
     if positioning_source is not None:
         snapshot["positioning_source"] = positioning_source
+    if case_root:
+        snapshot['case_project_root'] = str(case_root)
+        snapshot['execution_binding'] = plan['execution_binding']
     errors = validate_data(snapshot)
     if errors:
         raise ValueError("invalid handoff: " + "; ".join(errors))
@@ -128,15 +149,39 @@ def main() -> int:
     parser.add_argument("--strategy-plan", type=Path, help="Explicitly selected strategy-plan.json; preserves its positioning and provenance.")
     args = parser.parse_args()
     try:
-        snapshot = build_snapshot(args.source_manifest.resolve(), args.strategy_plan)
+        snapshot = build_snapshot(args.source_manifest.absolute(), args.strategy_plan)
     except (OSError, ValueError) as exc:
         parser.exit(1, f"Cannot build handoff: {exc}\n")
-    args.output.parent.mkdir(parents=True, exist_ok=True)
     try:
-        with args.output.open("x", encoding="utf-8") as handle:
-            handle.write(json.dumps(snapshot, indent=2, sort_keys=True) + "\n")
+        if snapshot.get('case_project_root'):
+            root = Path(snapshot['case_project_root'])
+            output = args.output.absolute()
+            from scripts.case_outputs import run_staged, preflight
+            authority = preflight(output, 'brand', 'business_linked')
+            if not authority or authority['business_root'] != root:
+                raise ValueError('handoff source and destination subprojects conflict')
+            def write(stage):
+                if (stage / output.name).exists():
+                    raise FileExistsError(output)
+                fresh = build_snapshot(args.source_manifest.absolute(), args.strategy_plan.absolute())
+                if fresh != snapshot:
+                    # Timestamp is informational; source and positioning bytes are
+                    # the actual immutable input identity.
+                    if any(fresh.get(k) != snapshot.get(k) for k in ('source_sha256', 'positioning_source', 'execution_binding')):
+                        raise ValueError('handoff source changed')
+                (stage / output.name).write_text(cases.encoded(snapshot))
+            run_staged(output.parent, 'brand', write, entry_mode='business_linked', include=[output.name])
+        else:
+            from scripts.case_outputs import run_staged
+            def write_standalone(stage):
+                stage.mkdir(parents=True, exist_ok=True)
+                with (stage / args.output.name).open('x', encoding='utf-8') as handle:
+                    handle.write(json.dumps(snapshot, indent=2, sort_keys=True) + '\n')
+            run_staged(args.output.absolute().parent, 'brand', write_standalone, include=[args.output.name])
     except FileExistsError:
         parser.exit(1, "Snapshot already exists; choose a new revision path.\n")
+    except (ValueError, OSError) as exc:
+        parser.exit(1, f'Cannot publish handoff: {exc}\n')
     print(json.dumps({"snapshot_id": snapshot["snapshot_id"], "output": str(args.output), "unresolved": [key for key, value in snapshot["field_provenance"].items() if value == "unresolved"]}, indent=2))
     return 0
 

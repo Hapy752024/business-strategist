@@ -9,8 +9,12 @@ import json
 import os
 import shutil
 import tempfile
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.case_outputs import run_staged, preflight, cases
 
 
 def digest(path: Path) -> str:
@@ -47,7 +51,17 @@ def write_json_atomic(path: Path, data: dict, *, expected_revision: int) -> None
 
 
 def promote(project: Path, artifact_id: str, *, confirm: bool = False, replace_conflict: bool = False, replacement_approver: str = "") -> dict[str, object]:
-    project = project.resolve()
+    project = project.absolute()
+    if cases.locate_publication(project):
+        preflight(project, 'brand')
+        data = cases.load(project / 'brand-manifest.json')
+        if confirm:
+            result = run_staged(project, 'brand', lambda stage: promote(stage, artifact_id, confirm=confirm,
+                replace_conflict=replace_conflict, replacement_approver=replacement_approver), entry_mode=data.get('entry_mode', 'standalone'),
+                handoff=project / data['business_to_brand'] if data.get('business_to_brand') else None)
+            result['candidate'] = str(project / next(a for a in data['artifacts'] if a.get('artifact_id') == artifact_id)['candidate_path'])
+            result['destination'] = str(project / next(a for a in data['artifacts'] if a.get('artifact_id') == artifact_id)['destination'])
+            return result
     manifest_path = project / "brand-manifest.json"
     data = json.loads(manifest_path.read_text(encoding="utf-8"))
     expected_revision = int(data.get("manifest_revision", 1))

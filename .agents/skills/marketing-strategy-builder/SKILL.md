@@ -15,3 +15,6 @@ compatibility: Requires the business-strategist repository and its shared refere
 ## Output
 
 Focused/execution: the requested answer or deliverable, with material assumptions only. Strategy: the applicable strategy-workflow outputs. Never publish or spend without approval.
+
+For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
+For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.

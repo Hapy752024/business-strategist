@@ -13,6 +13,10 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
+
 
 def load_env_file(path: Path) -> None:
     if not path.exists():
@@ -82,6 +86,10 @@ def main() -> int:
     parser.add_argument("--alternatives", type=int, default=int(os.environ.get("OPENROUTER_IMAGE_ALTERNATIVES", "1")))
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
     args = parser.parse_args()
+    return namespace_writer(args, 'out_dir', execute, input_attributes=[])
+
+
+def execute(args):
 
     load_env_file(args.env_file)
     api_key = os.environ.get("OPENROUTER_API_KEY")

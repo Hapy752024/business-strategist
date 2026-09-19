@@ -1,0 +1,24 @@
+{
+  "active_track": "none",
+  "cases": {
+    "a": {
+      "path": "cases/a",
+      "retired": false,
+      "title": "a"
+    }
+  },
+  "created_at": "2026-09-13T18:31:18Z",
+  "last_completed_operation_id": "register-a",
+  "layout_version": 2,
+  "links": [],
+  "manifest_revision": 1,
+  "next_action": "Investigate cases.",
+  "open_blockers": [],
+  "project_id": "topic",
+  "schema_version": "1.0",
+  "selection": null,
+  "selection_generation": 0,
+  "slug": "topic",
+  "title": "Synthetic topic",
+  "updated_at": "2026-09-13T18:31:18Z"
+}

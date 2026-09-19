@@ -7,6 +7,8 @@ description: Create and manage per-project brand workspaces and archive earlier 
 
 Read `references/workflow.md` for the complete procedure. Load only the additional references needed for the requested stage.
 
+Apply the shared `references/subprojects.md` contract. New work belongs to umbrella `branding/`, independent of Business research. Use explicit business-linked entry only when consuming a selected Business handoff. Current outputs stay separate from dated decisions and archived versions.
+
 ## Procedure
 
 Use the imported workflow and keep state in the active manifest.

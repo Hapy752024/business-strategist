@@ -1,0 +1,36 @@
+{
+  "date": "2026-09-17",
+  "full_setup_command": "bash scripts/validate_setup.sh",
+  "full_setup_exit_code": 0,
+  "python_suite": "626 passed in 68.38s",
+  "other_checks": [
+    "offline routing repeated three times",
+    "agentic process comparison (offline)",
+    "installed skill route/catalog parity",
+    "eval structure",
+    "schema JSON checks",
+    "website route smoke and fixture"
+  ],
+  "warning": "Pre-existing town-db-curator missing Quality Checklist guidance",
+  "focused_tests": "68 passed in 8.25s before final guidance-only refinement",
+  "baseline_tests": "65 passed in 4.48s using python3 -m pytest",
+  "new_behavioral_cases": 12,
+  "behavioral_execution": "same-session inline sanity review; no independent model comparison",
+  "structural_skill_checks": [
+    "company-operating-system",
+    "archetype-gtm-strategist",
+    "market-problem-discovery"
+  ],
+  "sandbox_note": "Initial full run: 617 passed, 9 browser/socket/child-process restriction failures; unrestricted rerun passed all 626",
+  "schema_meta_validation": "passed",
+  "scoped_diff_check": "passed",
+  "syntax_compile": [
+    "scripts/strategy_review.py",
+    "scripts/brand/validate_business_to_brand_handoff.py"
+  ],
+  "limitations": [
+    "No live cross-harness verification",
+    "No measured model token savings",
+    "No independent strategic-quality improvement estimate"
+  ]
+}

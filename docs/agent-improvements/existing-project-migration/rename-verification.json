@@ -1,0 +1,15 @@
+{
+  "date": "2026-09-13",
+  "status": "passed",
+  "new_analysis_path": "business-analysis/",
+  "case_path": "business-analysis/cases/<case-id>/",
+  "existing_business_path_respected_until_migration": true,
+  "python_tests_passed": 404,
+  "structural_evals_passed": 143,
+  "setup_errors": 0,
+  "setup_reported_warnings": 1,
+  "live_migration_performed": false,
+  "live_document_cleanup_performed": false,
+  "inventory_is_cutover_baseline": false,
+  "log": "rename-setup-check.txt"
+}

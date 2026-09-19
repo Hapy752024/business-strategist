@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 import sys
@@ -35,11 +36,28 @@ class InterviewKitTests(unittest.TestCase):
         target = run_dir / "evidence" if nested else run_dir
         target.mkdir(parents=True, exist_ok=True)
         (target / "evidence.jsonl").write_text(
-            "\n".join(json.dumps(record) for record in RECORDS) + "\n", encoding="utf-8"
+            "\n".join(json.dumps({**record, "source_role": "community_context" if record["source"] == "reddit" else "creator_statement"}) for record in RECORDS) + "\n", encoding="utf-8"
         )
         (run_dir / "summary.json").write_text(
-            json.dumps({"topic": "pet care", "customer_segment": "owners"}), encoding="utf-8"
+            json.dumps({"topic": "invoice reconciliation", "customer_segment": "owner-managed businesses"}), encoding="utf-8"
         )
+        from scripts.evidence_scout.build_claim_ledger import stable_id
+        reviews = []
+        for index, record in enumerate(RECORDS):
+            reviews.append({
+                "evidence_id": stable_id(record), "source_url": record["source_url"],
+                "status": "rejected" if index == 3 else "accepted",
+                "reviewed_segment": "owner-managed businesses", "segment_relation": "target",
+                "journey_stage": "invoice reconciliation",
+                "relevance_rationale": "Business invoice incident" if index != 3 else "Unrelated spam",
+                "voice": "customer" if index < 2 else "operator",
+                "firsthand": index < 2,
+                "author_relationship": "firsthand_customer" if index < 2 else "operator_or_supplier",
+            })
+        (run_dir / "source-review.json").write_text(json.dumps({
+            "evidence_sha256": hashlib.sha256((target / "evidence.jsonl").read_bytes()).hexdigest(),
+            "target_segment": "owner-managed businesses", "reviews": reviews,
+        }))
         return run_dir
 
     def test_generates_kit_from_weak_medium_items(self) -> None:
@@ -48,7 +66,7 @@ class InterviewKitTests(unittest.TestCase):
             result = run_kit(run_dir)
             self.assertEqual(result.returncode, 0, result.stderr)
             out = json.loads(result.stdout)
-            # strong and irrelevant records are excluded from tracing
+            # operator voice and irrelevant records are excluded from tracing
             self.assertEqual(out["items_traced"], 2)
 
             guide = (run_dir / "interview" / "interview-guide.md").read_text(encoding="utf-8")

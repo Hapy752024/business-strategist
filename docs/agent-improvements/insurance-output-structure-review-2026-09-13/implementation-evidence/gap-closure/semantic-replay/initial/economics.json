@@ -1,0 +1,61 @@
+{
+  "input_digest": "7f33129454994f626bf1918bdb98027cf1f872905ebf04b6f5314e5d546b83a3",
+  "inputs": {
+    "acquisition_basis": "customer",
+    "acquisition_per_new_customer": 15,
+    "capacity_per_month": 60,
+    "currency": "EUR",
+    "fixed_per_month": 1500,
+    "imputed_owner_labor_per_month": null,
+    "model": "transactional",
+    "owner_cash_in_service_cost": false,
+    "owner_cash_per_month": 2500,
+    "partner_per_unit": 10,
+    "period": "month",
+    "refund_per_unit": 0,
+    "revenue_basis": "venture_receipt",
+    "revenue_per_unit": 100,
+    "scenario_limit_reason": "No downside assumptions supported yet",
+    "sensitivity_limit_reason": "Decision-changing ranges unresolved",
+    "service_per_unit": 25,
+    "unit": "completed sale"
+  },
+  "results": {
+    "assumption_inputs": [
+      "revenue_per_unit",
+      "service_per_unit",
+      "partner_per_unit",
+      "refund_per_unit",
+      "acquisition_per_new_customer",
+      "fixed_per_month",
+      "owner_cash_per_month",
+      "capacity_per_month"
+    ],
+    "capacity_meets_target": false,
+    "cash": {
+      "reason": "horizon_months required",
+      "status": "unresolved"
+    },
+    "contribution_per_unit": 50.0,
+    "coverage": {
+      "downside": {
+        "reason": "No downside assumptions supported yet",
+        "status": "unresolved"
+      },
+      "sensitivity": {
+        "reason": "Decision-changing ranges unresolved",
+        "status": "unresolved"
+      }
+    },
+    "labor_accounting": {
+      "imputed_labor_status": "unresolved",
+      "owner_cash_basis": "additional cash, excluding amounts already in service cost",
+      "service_allocation_status": "declared"
+    },
+    "payback_month": null,
+    "required_sales": 80,
+    "status": "conditional",
+    "unresolved_inputs": []
+  },
+  "schema_version": "1.0"
+}

@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-16",
+  "scope": "Bounded source-fixture research; no claim of exhaustive community discovery",
+  "queries": [
+    {"provider": "web", "query": "site.gardening.stackexchange.com watering plants vacation two weeks", "outcome": "relevant customer source"},
+    {"provider": "web", "query": "Umzugsfirma Erfahrungen Forum Schäden Umzug", "outcome": "relevant forums and Reddit; non-Reddit forum selected"},
+    {"provider": "web", "query": "forum déménagement déménageur expérience satisfait", "outcome": "Routard overseas-move thread; adjacent not mainland local scope"},
+    {"provider": "web", "query": "site.apps.apple.com gb todoist ratings reviews", "outcome": "official app review page with customers and developer responses"},
+    {"provider": "web", "query": "forum trasloco ditta esperienza soddisfatta", "outcome": "Arredamento forum and other leads"},
+    {"provider": "web", "query": "site.facebook.com/groups déménagement France entraide", "outcome": "no relevant indexed group returned"},
+    {"provider": "web", "query": "\"déménagement\" \"entraide\" \"facebook.com/groups\"", "outcome": "empty results"},
+    {"provider": "web", "query": "site.gardening.stackexchange.com plants vacation \"I use\"", "outcome": "balcony thread includes failed-then-resolved workaround and named successful alternative"},
+    {"provider": "firecrawl", "query": "site.gardening.stackexchange.com watering plants vacation", "requested_limit": 2, "scrape": true, "outcome": "success; two results, one tag index and one question; full raw response retained", "raw": "raw/firecrawl-topic-search.json", "feedback": "partial, supplied useful source and missing chronological/speaker context"}
+  ],
+  "failures_and_recoveries": [
+    {"route": "Firecrawl initial sandbox request", "failure": "EAI_AGAIN DNS", "recovery": "approved outside-sandbox retry"},
+    {"route": "First outside-sandbox wrapper", "failure": "HTTP 401 because research wrapper assigned get_secret key-name instead of secret value", "recovery": "corrected tuple unpacking; designated HGINVESTOR key request succeeded", "provider_outage": false},
+    {"route": "Balcony thread with noredirect query string", "failure": "web cache miss", "recovery": "canonical URL full-page open succeeded"},
+    {"route": "Unverified guessed Facebook locator probe", "failure": "internal fetch error", "recovery": "discarded guessed locator; ran actual discovery queries instead", "candidate_verified": false, "customer_material_captured": false}
+  ],
+  "unattempted": ["Authenticated/private group material", "Google business review capture", "Trustpilot capture", "App Store pagination or rating-filtered comparison", "Dedicated feedback collection for newly found plant product"],
+  "credit_failure": false,
+  "coverage_interpretation": "No relevant indexed Facebook result is a discovery gap, not evidence that no relevant Facebook community exists. Firecrawl default-key status was not the designated account and is not a credit-outage finding."
+}

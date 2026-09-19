@@ -54,21 +54,21 @@ def test_distinct_requested_workflows_need_resolution():
 
 def test_research_default_and_old_root_rejection(tmp_path, monkeypatch):
     monkeypatch.setattr(workspace, "ROOT", tmp_path)
-    root = workspace.create_topic_workspace("Scope test")
+    root = workspace.create_topic_workspace("Scope test", layout_version=1)
     assert root == tmp_path / "projects" / "scope-test"
     assert (root / "market_research" / "manifest.json").exists()
-    assert workspace.create_topic_workspace("Scope test") == root
+    assert workspace.create_topic_workspace("Scope test", layout_version=1) == root
     assert workspace.find_existing_workspaces()[0]["path"] == str(root)
     with pytest.raises(ValueError, match="relocated"):
-        workspace.create_topic_workspace("Old", "research/topics/old")
+        workspace.create_topic_workspace("Old", "research/topics/old", layout_version=1)
     with pytest.raises(ValueError, match="relocated"):
-        workspace.create_topic_workspace("Old", "projects/research/topics/old")
+        workspace.create_topic_workspace("Old", "projects/research/topics/old", layout_version=1)
     with pytest.raises(ValueError, match="relocated"):
-        workspace.create_topic_workspace("Old", "projects/brand-projects/old")
+        workspace.create_topic_workspace("Old", "projects/brand-projects/old", layout_version=1)
     with pytest.raises(ValueError, match="reserved"):
-        workspace.create_topic_workspace("Old", "projects/_infra/thing")
+        workspace.create_topic_workspace("Old", "projects/_infra/thing", layout_version=1)
     with pytest.raises(ValueError, match="reserved"):
-        workspace.create_topic_workspace("Old", "projects/_archive/thing")
+        workspace.create_topic_workspace("Old", "projects/_archive/thing", layout_version=1)
     assert not (tmp_path / "research").exists()
 
 

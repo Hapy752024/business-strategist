@@ -1,0 +1,56 @@
+{
+  "scope": "Changes relative to pre-task working tree, not git HEAD",
+  "changed_files": [
+    ".agents/skills/archetype-gtm-strategist/SKILL.md",
+    ".agents/skills/company-operating-system/SKILL.md",
+    ".agents/skills/market-problem-discovery/SKILL.md",
+    ".agents/skills/archetype-gtm-strategist/references/workflow.md",
+    ".agents/skills/business-archetype-playbook-researcher/references/workflow.md",
+    ".agents/skills/company-operating-system/references/workflow.md",
+    ".agents/skills/evidence-scout/references/workflow.md",
+    ".agents/skills/idea-grill/references/workflow.md",
+    ".agents/skills/market-problem-discovery/references/workflow.md",
+    ".agents/skills/marketing-strategy-builder/references/workflow.md",
+    ".agents/skills/opportunity-risk-designer/references/workflow.md",
+    ".agents/skills/startup-business-builder/references/workflow.md",
+    ".agents/skills/archetype-gtm-strategist/assets/gtm-strategy-template.md",
+    ".agents/skills/archetype-gtm-strategist/evals/evals.json",
+    ".agents/skills/company-operating-system/evals/evals.json",
+    ".agents/skills/market-problem-discovery/evals/evals.json",
+    ".agents/skills/opportunity-risk-designer/evals/evals.json",
+    "references/case-assessment.md",
+    "references/strategic-positioning.md",
+    "references/voc-research-method.md",
+    "config/skill-catalog.json",
+    "schemas/strategy-plan.schema.json",
+    "templates/project/value-proposition-canvas.md",
+    "scripts/strategy_review.py",
+    "scripts/brand/validate_business_to_brand_handoff.py",
+    "tests/test_strategy_review.py",
+    "tests/integration/test_foundation.py"
+  ],
+  "skill_count_before": 39,
+  "skill_count_after": 39,
+  "runtime_markdown_net_bytes": 582,
+  "selected_loads": {
+    "company-operating-system": {
+      "scope": "entrypoint + workflow; not measured model tokens",
+      "before_bytes": 10254,
+      "after_bytes": 6665
+    },
+    "marketing-strategy-builder": {
+      "scope": "entrypoint + workflow; not measured model tokens",
+      "before_bytes": 17023,
+      "after_bytes": 16800
+    },
+    "archetype-gtm-strategist": {
+      "scope": "entrypoint + workflow; not measured model tokens",
+      "before_bytes": 12877,
+      "after_bytes": 12863
+    }
+  },
+  "additional_changed_test_files": [
+    "tests/test_case_end_to_end.py"
+  ],
+  "baseline_patch": "/tmp/need-operating-model-implementation.patch"
+}

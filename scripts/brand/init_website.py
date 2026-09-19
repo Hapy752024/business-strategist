@@ -6,7 +6,12 @@ from __future__ import annotations
 import argparse
 import json
 import time
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.case_outputs import run_staged
+from scripts.brand.website_launch import pending
 
 
 def now_iso() -> str:
@@ -21,6 +26,10 @@ def main() -> int:
     parser.add_argument("--next-version", default="16.3.3")
     parser.add_argument("--preferences", default="website-preferences.json")
     args = parser.parse_args()
+    return run_staged(args.website_dir, 'website', lambda stage: initialize(stage, args), entry_mode=args.entry_mode, include=['website-manifest.json'])
+
+
+def initialize(destination, args):
     timestamp = now_iso()
     manifest = {
         "schema_version": "1.0",
@@ -33,6 +42,7 @@ def main() -> int:
         "brand_refs": [],
         "concept": {"territories": [], "selected": "", "signature_device": "", "approval_status": "pending"},
         "pages": [],
+        "launch": pending(),
         "fal_assets": [],
         "experiment": None,
         "qa": {"build": "pending", "accessibility": "pending", "performance": "pending", "responsive": "pending", "visual_review": "pending"},
@@ -40,8 +50,8 @@ def main() -> int:
         "next_action": "Select a creative territory and build the vertical slice.",
         "open_blockers": [],
     }
-    args.website_dir.mkdir(parents=True, exist_ok=True)
-    output = args.website_dir / "website-manifest.json"
+    destination.mkdir(parents=True, exist_ok=True)
+    output = destination / "website-manifest.json"
     if output.exists():
         raise SystemExit(f"refusing to overwrite existing manifest: {output}")
     output.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")

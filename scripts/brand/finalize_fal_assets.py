@@ -8,7 +8,11 @@ import importlib.util
 import json
 import os
 import tempfile
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.case_outputs import asset_operation
 
 
 def load_adapter():
@@ -40,6 +44,10 @@ def main() -> int:
     parser.add_argument("--expected-width", type=int)
     parser.add_argument("--expected-height", type=int)
     args = parser.parse_args()
+    return asset_operation(args, execute)
+
+
+def execute(args):
     adapter = load_adapter()
     payload = json.loads(args.response.read_text(encoding="utf-8"))
     try:

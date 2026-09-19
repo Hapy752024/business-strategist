@@ -4,23 +4,303 @@
   "title": "Business Strategist Project Manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "project_id", "slug", "created_at", "updated_at", "manifest_revision", "active_track", "links", "next_action", "open_blockers"],
+  "required": [
+    "schema_version",
+    "project_id",
+    "slug",
+    "created_at",
+    "updated_at",
+    "manifest_revision",
+    "active_track",
+    "links",
+    "next_action",
+    "open_blockers"
+  ],
   "properties": {
-    "schema_version": {"type": "string"},
-    "project_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
-    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
-    "created_at": {"type": "string", "format": "date-time"},
-    "updated_at": {"type": "string", "format": "date-time"},
-    "manifest_revision": {"type": "integer", "minimum": 0},
-    "active_track": {"enum": ["business", "brand", "website", "none"]},
-    "business_workspace": {"$ref": "#/$defs/workspace"},
-    "brand_workspace": {"$ref": "#/$defs/workspace"},
-    "website_workspace": {"$ref": "#/$defs/workspace"},
-    "links": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["track", "workspace", "linked_at"], "properties": {"track": {"enum": ["business", "brand", "website"]}, "workspace": {"$ref": "#/$defs/workspace"}, "linked_at": {"type": "string", "format": "date-time"}, "validated": {"type": "boolean"}}}},
-    "next_action": {"type": "string"},
-    "open_blockers": {"type": "array", "items": {"type": "string"}}
+    "schema_version": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "manifest_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "active_track": {
+      "enum": [
+        "business",
+        "brand",
+        "website",
+        "none"
+      ]
+    },
+    "business_workspace": {
+      "$ref": "#/$defs/workspace"
+    },
+    "brand_workspace": {
+      "$ref": "#/$defs/workspace"
+    },
+    "website_workspace": {
+      "$ref": "#/$defs/workspace"
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "track",
+          "workspace",
+          "linked_at"
+        ],
+        "properties": {
+          "track": {
+            "enum": [
+              "business",
+              "brand",
+              "website"
+            ]
+          },
+          "workspace": {
+            "$ref": "#/$defs/workspace"
+          },
+          "linked_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validated": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "open_blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "layout_version": {
+      "enum": [
+        2,
+        3
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "cases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "title",
+          "path",
+          "retired"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "retired": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "selection_generation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "selection": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "case_id",
+            "configuration",
+            "decision_id"
+          ],
+          "properties": {
+            "case_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "configuration": {
+              "type": "string",
+              "minLength": 1
+            },
+            "decision_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "last_completed_operation_id": {
+      "type": "string"
+    },
+    "last_selection_decision_id": {
+      "type": "string"
+    },
+    "controller_kind": {
+      "enum": [
+        "business",
+        "umbrella"
+      ]
+    },
+    "subprojects": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
   },
   "$defs": {
-    "workspace": {"type": ["object", "null"], "additionalProperties": false, "required": ["path", "external"], "properties": {"path": {"type": "string", "minLength": 1}, "external": {"type": "boolean"}}}
-  }
+    "workspace": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "external"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "external": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "layout_version"
+        ],
+        "properties": {
+          "layout_version": {
+            "const": 2
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "cases",
+          "selection",
+          "selection_generation"
+        ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "layout_version"
+        ],
+        "properties": {
+          "layout_version": {
+            "const": 3
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "controller_kind",
+          "subprojects"
+        ],
+        "properties": {
+          "controller_kind": {
+            "const": "umbrella"
+          },
+          "subprojects": {
+            "enum": [
+              {
+                "business": {
+                  "path": "business-analysis"
+                },
+                "branding": {
+                  "path": "branding"
+                },
+                "website": {
+                  "path": "digital-assets/website"
+                },
+                "others": {
+                  "path": "digital-assets/others"
+                }
+              },
+              {
+                "business": {
+                  "path": "business"
+                },
+                "branding": {
+                  "path": "branding"
+                },
+                "website": {
+                  "path": "digital-assets/website"
+                },
+                "others": {
+                  "path": "digital-assets/others"
+                }
+              }
+            ]
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "cases"
+              ]
+            },
+            {
+              "required": [
+                "selection"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
 }

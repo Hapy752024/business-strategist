@@ -10,7 +10,7 @@ import sys
 import time
 from pathlib import Path
 
-from workspace import create_topic_workspace, slugify, update_stage
+from workspace import create_topic_workspace, slugify, update_stage, resolve_run_dir, cases
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -28,11 +28,22 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=20)
     parser.add_argument("--providers", default="default")
     parser.add_argument("--workspace", default="")
+    parser.add_argument("--case", default="")
     args = parser.parse_args()
-
+    candidate = Path(args.workspace) if args.workspace else ROOT / 'projects' / slugify(args.topic)
+    if args.case and ((candidate / cases.PROJECT).exists() or (candidate / 'market_research/manifest.json').exists()):
+        cases.read_project(candidate)
     workspace = create_topic_workspace(args.topic, args.workspace, args.customer_segment)
-    run_dir = workspace / "strategy" / "playbooks" / "runs" / f"{time.strftime('%Y%m%d-%H%M%S', time.gmtime())}-{slugify(args.archetype)}"
-    evidence_dir = run_dir / "evidence"
+    modern = cases.locate(workspace)
+    if modern:
+        run_dir, workspace = resolve_run_dir(topic=args.topic, workspace_arg=str(workspace), case_id=args.case,
+            out_dir='', legacy_output=False, workspace_subdir='market_research/operator_playbooks/runs')
+    else:
+        if args.case:
+            raise ValueError('Explicit migration required for case mode')
+        import uuid
+        run_dir = workspace / 'strategy/playbooks/runs' / (slugify(args.archetype) + '-' + uuid.uuid4().hex)
+    evidence_dir = run_dir / 'evidence'
     run_dir.mkdir(parents=True, exist_ok=True)
     plan = f"""# Founder / Operator Playbook Research Plan
 
@@ -57,7 +68,7 @@ def main() -> int:
 - Triangulate material tactics before recommending transfer.
 """
     (run_dir / "research_plan.md").write_text(plan, encoding="utf-8")
-    update_stage(workspace, "operator_playbook", status="in_progress", gate_result="not_run", artifacts=[run_dir / "research_plan.md"], next_action="Collect and synthesize comparable operator evidence.")
+    update_stage(workspace, "operator_playbook", run_dir=run_dir, status="in_progress", gate_result="not_run", artifacts=[run_dir / "research_plan.md"], next_action="Collect and synthesize comparable operator evidence.")
 
     research_topic = f"{args.archetype} founders validating launching finding first customers and scaling {args.topic}"
     command = [
@@ -83,13 +94,13 @@ def main() -> int:
         "run_dir": str(run_dir),
         "evidence_dir": str(evidence_dir),
         "collector_exit_code": completed.returncode,
-        "next_artifact": str(workspace / "strategy" / "playbooks" / f"{slugify(args.archetype)}.md"),
+        "next_artifact": str(run_dir / "playbook.md"),
     }
     (run_dir / "run_summary.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     gate = "pass" if completed.returncode == 0 else "fail"
     update_stage(
         workspace,
-        "operator_playbook",
+        "operator_playbook", run_dir=run_dir,
         status="passed" if completed.returncode == 0 else "failed",
         gate_result=gate,
         artifacts=[run_dir / "research_plan.md", run_dir / "run_summary.json", evidence_dir / "report.md", evidence_dir / "evidence.jsonl"],

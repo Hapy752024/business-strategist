@@ -171,6 +171,10 @@ def render_compact(items: list[dict[str, Any]], args: argparse.Namespace, valida
         lines.append(f"  Runtime: {runtime['status']} ({checks})")
         if item.get("approval_required"):
             lines.append("  Approval: ask before spending credits or using login/browser-backed access")
+        elif item.get("authorization_policy") == "standing_authorized_no_cap_for_customer_evidence":
+            lines.append("  Authorization: customer-evidence API spend is standing-authorized with no cap; report insufficient credits")
+        if item.get("login_or_member_access_policy"):
+            lines.append("  Access: private/member material requires legitimate user access; never bypass controls")
         if item.get("fallbacks"):
             lines.append(f"  Fallbacks: {', '.join(item['fallbacks'])}")
         lines.append(f"  Evidence: {item.get('evidence_strength')}")

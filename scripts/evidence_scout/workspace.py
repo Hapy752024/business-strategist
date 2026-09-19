@@ -16,6 +16,10 @@ from pathlib import Path
 from typing import Any
 
 import fcntl
+import sys
+import uuid
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import case_workspace as cases
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -135,7 +139,11 @@ def _project_workspace_module() -> Any:
     return module
 
 
-def create_project_workspace(project: str, workspace: str = "", customer_segment: str = "") -> Path:
+def create_project_workspace(project: str, workspace: str = "", customer_segment: str = "", *, layout_version: int = 2) -> Path:
+    try:
+        from scripts import subprojects
+    except ModuleNotFoundError:
+        import subprojects
     projects_root = ROOT / "projects"
     path = Path(workspace).expanduser() if workspace else projects_root / slugify(project)
     if not path.is_absolute():
@@ -152,6 +160,20 @@ def create_project_workspace(project: str, workspace: str = "", customer_segment
     for reserved in (projects_root / "_infra", projects_root / "_archive"):
         if path.resolve().is_relative_to(reserved.resolve()):
             raise ValueError(f"{reserved.name} is reserved for shared infrastructure/archive, not project workspaces.")
+    modern_root = cases.locate_publication(path)
+    if modern_root:
+        controller = cases.read_project(modern_root)
+        if controller.get('controller_kind') == 'umbrella':
+            if path.absolute() not in {modern_root, subprojects.path(modern_root, 'business')}:
+                raise ValueError('research belongs to the business subproject')
+            return subprojects.start(modern_root, 'business', project)
+        if path.absolute() != modern_root:
+            cid = path.name
+            if cases.resolve(modern_root, cid) != path.absolute():
+                raise ValueError("Workspace must be the project or registered case root")
+        return path
+    if layout_version == 2 and not (path / RESEARCH_MANIFEST_REL).exists() and not (path / "project-manifest.json").exists():
+        return subprojects.start(path, 'business', project)
     path.mkdir(parents=True, exist_ok=True)
     for relative in PROJECT_SUBDIRS:
         (path / relative).mkdir(parents=True, exist_ok=True)
@@ -228,7 +250,7 @@ def read_manifest(workspace: Path) -> dict[str, Any]:
     return json.loads((workspace / RESEARCH_MANIFEST_REL).read_text(encoding="utf-8"))
 
 
-def update_stage(
+def _update_legacy_stage(
     workspace: Path,
     stage: str,
     *,
@@ -320,6 +342,84 @@ def update_stage(
             manifest["events"].append({"ts": timestamp, "event": f"gate_override:{stage}:{override}"})
         manifest["artifacts"] = sorted(set(manifest.get("artifacts", []) + relative_artifacts))
         write_json(workspace / RESEARCH_MANIFEST_REL, manifest)
+
+
+def update_stage(workspace: Path, stage: str, **kwargs) -> None:
+    workspace = Path(workspace).absolute()
+    root = cases.locate(workspace)
+    if not root:
+        kwargs.pop('run_dir', None)
+        kwargs.pop('expected_assessment_revision', None)
+        return _update_legacy_stage(workspace, stage, **kwargs)
+    if stage not in STAGES:
+        raise ValueError("Unsupported stage: " + stage)
+    status, gate = kwargs['status'], kwargs['gate_result']
+    if status not in {"pending", "in_progress", "passed", "failed", "blocked"} or gate not in {"not_run", "pass", "conditional_pass", "fail"}:
+        raise ValueError("Invalid stage status/gate")
+    if (status == 'passed') != (gate in {'pass', 'conditional_pass'}):
+        # Existing producers use conditional_pass/in_progress for incomplete lanes.
+        if not (status == 'in_progress' and gate == 'conditional_pass'):
+            raise ValueError("Passing checkpoint requires matching passed status")
+    cid = '' if root == workspace else workspace.name
+    cases.resolve(root, cid)
+    artifacts = kwargs.get('artifacts') or []
+    rels = []
+    for a in artifacts:
+        a = Path(a).absolute()
+        if not a.is_relative_to(workspace):
+            raise ValueError('Case checkpoints require case-local assessments')
+        cases.safe(root, str(a.relative_to(root)))
+        if status == 'passed' and (not a.is_file() or not a.stat().st_size):
+            raise ValueError('Passed checkpoints need nonempty local files')
+        rels.append(str(a.relative_to(workspace)))
+    if status == 'passed' and not rels:
+        raise ValueError('Passed stages require artifacts')
+    if stage == PAIN_GATE_STAGE and status == 'passed' and not kwargs.get('override'):
+        if not any(Path(a).is_file() and Path(a).absolute().is_relative_to(workspace / 'market_research/pain_points') for a in artifacts):
+            raise ValueError('Pain gate requires pain-point evidence')
+    with cases.project_lock(root):
+        project = cases.read_project(root)
+        manifest_path = workspace / RESEARCH_MANIFEST_REL
+        if manifest_path.exists():
+            m = cases.load(manifest_path)
+        else:
+            m = {'schema_version': '1.0', 'manifest_revision': 0, 'assessment_revision': 1,
+                 'topic': project.get('title', project['slug']), 'topic_slug': project['slug'],
+                 'created_at': now_iso(), 'stages': {}, 'events': [], 'artifacts': [], 'open_blockers': []}
+        expected = kwargs.get('expected_assessment_revision')
+        inputs = []
+        if kwargs.get('run_dir'):
+            context = cases.safe(root, str((Path(kwargs['run_dir']).absolute() / '.case-context.json').relative_to(root)))
+            token = cases.load(context)
+            if token['case_id'] != cid:
+                raise ValueError('run belongs to a different case')
+            expected = token['assessment_revision']
+            inputs = token.get('source_bindings', [])
+            for b in inputs:
+                if b != cases.source_binding(root, b['path'], locator=b['locator'], applicability=b['applicability']):
+                    raise ValueError('stale research input at stage closure')
+        if cid and expected != m['assessment_revision']:
+            raise ValueError('stale or missing expected assessment revision')
+        if stage in PAIN_GATE_DOWNSTREAM and status in {'in_progress', 'passed'}:
+            if not cid:
+                raise ValueError('Select a case before commitment work')
+            cases.binding(root, cid)  # selection cannot be overridden
+            pain = m.get('stages', {}).get(PAIN_GATE_STAGE, {})
+            if not kwargs.get('override') and (pain.get('status') != 'passed' or pain.get('reviewed_revision') != m['assessment_revision']):
+                raise ValueError('Commitment requires current pain-first gate')
+        entry = {'stage': stage, 'status': status, 'gate_result': gate, 'timestamp': now_iso(),
+                 'reviewed_revision': m['assessment_revision'],
+                 'artifacts': [{'path': a, 'type': Path(a).suffix.lstrip('.') or 'file', 'description': stage} for a in rels],
+                 'source_bindings': inputs + [cases.source_binding(root, str(Path(a).absolute().relative_to(root)), locator='whole artifact', applicability=stage + ' within ' + (cid or 'topic')) for a in artifacts if Path(a).is_file() and Path(a).stat().st_size],
+                 'provider_failures': kwargs.get('provider_failures') or [], 'open_gaps': kwargs.get('open_gaps') or [],
+                 'next_action': kwargs.get('next_action', '')}
+        m.setdefault('stages', {})[stage] = entry
+        m.update(current_stage=stage, updated_at=now_iso(), gate_result=gate, next_action=entry['next_action'], manifest_revision=m.get('manifest_revision', 0) + 1)
+        m['artifacts'] = sorted(set(m.get('artifacts', []) + rels))
+        decision = 'stage-' + uuid.uuid4().hex
+        m.setdefault('events', []).append({'ts': now_iso(), 'event': 'stage:' + stage, 'decision_id': decision, 'override': kwargs.get('override', '')})
+        cases.publish_locked(root, {str(manifest_path.relative_to(root)): cases.encoded(m)}, expected_revision=project['manifest_revision'],
+                             decision_id=decision, reason=f'{cid or "topic"}: {stage} {status}', affected=[cid] if cid else [])
 
 
 def create_run_manifest(
@@ -424,12 +524,12 @@ def find_existing_workspaces() -> list[dict[str, Any]]:
     projects_root = ROOT / "projects"
     if not projects_root.exists():
         return workspaces
-    for manifest_path in sorted(projects_root.glob(f"*/{RESEARCH_DIR}/manifest.json")):
+    for manifest_path in sorted([*projects_root.glob(f"*/{RESEARCH_DIR}/manifest.json"), *projects_root.glob(f"*/business/{RESEARCH_DIR}/manifest.json"), *projects_root.glob(f"*/business-analysis/{RESEARCH_DIR}/manifest.json")]):
         try:
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
             project_manifest = manifest_path.parent.parent / "project-manifest.json"
             entry: dict[str, Any] = {
-                "slug": manifest_path.parent.parent.name,
+                "slug": cases.load(project_manifest).get('slug', manifest_path.parent.parent.name) if project_manifest.exists() else manifest_path.parent.parent.name,
                 "path": str(manifest_path.parent.parent),
                 "topic": manifest.get("topic", ""),
                 "current_stage": manifest.get("current_stage", "unknown"),
@@ -443,6 +543,22 @@ def find_existing_workspaces() -> list[dict[str, Any]]:
             workspaces.append(entry)
         except (json.JSONDecodeError, OSError):
             continue
+    known = {item['path'] for item in workspaces}
+    for controller in sorted([*projects_root.glob('*/project-manifest.json'), *projects_root.glob('*/business/project-manifest.json'), *projects_root.glob('*/business-analysis/project-manifest.json')]):
+        if cases.load(controller).get('layout_version') != 2:
+            continue
+        root = controller.parent
+        m = cases.read_project(root)
+        for cid, entry in m['cases'].items():
+            if entry.get('retired'):
+                continue
+            cm = cases.case_manifest(root, cid)
+            workspaces.append({'slug': m['slug'], 'case_id': cid, 'path': str(root / entry['path']),
+                               'topic': entry['title'], 'current_stage': cm.get('current_stage'),
+                               'updated_at': cm.get('updated_at'), 'next_action': cm.get('next_action'),
+                               'open_blockers': cm.get('open_blockers', []), 'project_manifest': str(controller)})
+        if str(root) not in known and not m['cases']:
+            workspaces.append({'slug': m['slug'], 'path': str(root), 'topic': m.get('title'), 'current_stage': 'market_discovery', 'updated_at': m['updated_at'], 'next_action': m['next_action'], 'open_blockers': []})
     return workspaces
 
 
@@ -503,6 +619,118 @@ def resume_from_last_gate(run_dir: Path) -> dict[str, Any]:
     }
 
 
+def capture_run_scope(run_dir: Path, scope: Path, source_bindings=()) -> None:
+    root = cases.locate(scope)
+    if root:
+        with cases.project_lock(root):
+            cases.read_project(root)
+            cases.safe(root, str(Path(run_dir).absolute().relative_to(root)))
+            cid = '' if scope == root else scope.name
+            cases.resolve(root, cid)
+            manifest = scope / RESEARCH_MANIFEST_REL
+            revision = cases.load(manifest).get('assessment_revision', 1) if manifest.exists() else 1
+            cases.atomic(run_dir / '.case-context.json', cases.encoded({'case_id': cid, 'assessment_revision': revision,
+                         'source_bindings': list(source_bindings)}))
+
+
+def prepare_research_output(output: Path, *, workspace_arg='', case_id='', is_file=False,
+                            input_paths=(), source_bindings_file=''):
+    """Preflight direct builders before writing. V2 outputs are fresh run artifacts."""
+    output = Path(output).absolute()
+    try:
+        from scripts.subprojects import business
+    except ModuleNotFoundError:
+        from subprojects import business
+    if workspace_arg:
+        workspace_arg = str(business(Path(workspace_arg)))
+    owner = cases.locate_publication(output)
+    if owner and cases.read_project(owner).get('controller_kind') == 'umbrella':
+        raise ValueError('research outputs require an initialized business subproject')
+    destination_root = cases.locate(output)
+    workspace_root = cases.locate(Path(workspace_arg)) if workspace_arg else None
+    if workspace_arg and destination_root != workspace_root:
+        if destination_root or workspace_root:
+            raise ValueError('workspace and destination authorities conflict')
+    root = destination_root or workspace_root
+    if not root:
+        if case_id:
+            raise ValueError('Explicit migration required for case mode')
+        return Path(workspace_arg) if workspace_arg else None
+    m = cases.read_project(root)
+    if workspace_arg:
+        scope = cases.resolve(root, case_id) if case_id else Path(workspace_arg).absolute()
+    else:
+        scope = root
+        for cid in m['cases']:
+            candidate = cases.resolve(root, cid)
+            if output.is_relative_to(candidate):
+                scope = candidate
+                break
+        if case_id:
+            scope = cases.resolve(root, case_id)
+    if scope != root and scope not in [cases.resolve(root, cid) for cid in m['cases'] if not m['cases'][cid].get('retired')]:
+        raise ValueError('Unregistered research scope')
+    cases.safe(root, str(output.relative_to(root)))
+    relative = output.relative_to(scope)
+    if relative.parts[0] != 'market_research' or 'runs' not in relative.parts or 'cases' in relative.parts:
+        raise ValueError('Case research builders must write immutable research runs')
+    directory = output.parent if is_file else output
+    if directory.exists() and any(directory.iterdir()):
+        raise ValueError('Research runs are immutable; choose a fresh run directory')
+    bindings = research_input_bindings(root, scope, input_paths, source_bindings_file)
+    directory.mkdir(parents=True, exist_ok=True)
+    capture_run_scope(directory, scope, bindings)
+    return scope
+
+
+def research_input_bindings(root, scope, input_paths, source_bindings_file=''):
+    """Record actual inputs and their declared upstream lineage, never inferred uses."""
+    declared = cases.load(Path(source_bindings_file)) if source_bindings_file else []
+    if not isinstance(declared, list):
+        raise ValueError('source bindings must be a list')
+    bindings, visited, visiting = {}, set(), set()
+
+    def check(binding):
+        current = cases.source_binding(root, binding['path'], locator=binding['locator'], applicability=binding['applicability'])
+        if current != binding:
+            raise ValueError('stale research input binding')
+        bindings[(binding['path'], binding['locator'], binding['applicability'])] = binding
+
+    for b in declared:
+        check(b)
+
+    def visit(path):
+        path = cases.safe(root, str(Path(path).absolute().relative_to(root)))
+        if path in visiting:
+            raise ValueError('cyclic declared research dependencies')
+        if len(visiting) >= 64:
+            raise ValueError('research dependency chain exceeds bounded review scope')
+        if path in visited:
+            return
+        visiting.add(path)
+        relative = str(path.relative_to(root))
+        if not any(b['path'] == relative for b in bindings.values()):
+            if not path.is_relative_to(scope) or scope == root:
+                raise ValueError('shared research input requires explicit --source-bindings applicability: ' + relative)
+            check(cases.source_binding(root, relative, locator='whole artifact', applicability='Input to derived research within ' + scope.name))
+        # Only declared run contexts confer upstream dependencies. Raw bytes stay put.
+        for parent in path.parents:
+            if parent == root or not parent.is_relative_to(root):
+                break
+            context = cases.safe(root, str((parent / '.case-context.json').relative_to(root)))
+            if context.is_file():
+                for upstream in cases.load(context).get('source_bindings', []):
+                    check(upstream)
+                    visit(cases.safe(root, upstream['path']))
+                break
+        visiting.remove(path)
+        visited.add(path)
+    for path in input_paths:
+        if path:
+            visit(Path(path))
+    return list(bindings.values())
+
+
 def resolve_run_dir(
     *,
     topic: str,
@@ -512,10 +740,35 @@ def resolve_run_dir(
     workspace_subdir: str,
     legacy_subdir: str = "",
     customer_segment: str = "",
+    case_id: str = "",
 ) -> tuple[Path, Path | None]:
+    try:
+        from scripts.subprojects import business, is_umbrella
+    except ModuleNotFoundError:
+        from subprojects import business, is_umbrella
+    if workspace_arg and is_umbrella(Path(workspace_arg)):
+        # Initialization below may create Business; explicit outputs cannot cross
+        # into another independent subproject.
+        if (business(Path(workspace_arg)) / cases.PROJECT).exists():
+            workspace_arg = str(business(Path(workspace_arg)))
+    owner = cases.locate_publication(Path(out_dir)) if out_dir else None
+    if owner and cases.read_project(owner).get('controller_kind') == 'umbrella':
+        raise ValueError('research outputs require an initialized business subproject')
     timestamp = time.strftime("%Y%m%d-%H%M%S", time.gmtime())
-    run_name = f"{timestamp}-{slugify(topic)}"
-    if out_dir:
+    run_name = f"{timestamp}-{slugify(topic)}-{uuid.uuid4().hex[:12]}"
+    existing = cases.locate(Path(workspace_arg)) if workspace_arg else None
+    candidate = Path(workspace_arg) if workspace_arg else ROOT / 'projects' / slugify(topic)
+    if case_id and not existing and ((candidate / RESEARCH_MANIFEST_REL).exists() or (candidate / cases.PROJECT).exists()):
+        raise ValueError('Explicit migration required for case mode')
+    output_root = cases.locate(Path(out_dir)) if out_dir else None
+    if out_dir and workspace_arg and output_root != existing and (output_root or existing):
+        raise ValueError('workspace and destination authorities conflict')
+    if output_root and not workspace_arg and not case_id:
+        # A parent producer may collect evidence into its own immutable run.
+        output = Path(out_dir).absolute()
+        prepare_research_output(output)
+        return output, None
+    if out_dir and not case_id and not existing and not cases.locate(Path(out_dir)):
         return Path(out_dir), None
     if legacy_output:
         raise ValueError(
@@ -523,4 +776,25 @@ def resolve_run_dir(
             "projects/_archive (read-only). Use --out-dir for an explicit path."
         )
     workspace = create_project_workspace(topic, workspace_arg, customer_segment)
-    return workspace / workspace_subdir / run_name, workspace
+    root = cases.locate(workspace)
+    if case_id:
+        if not root:
+            raise ValueError('Explicit migration required for case mode')
+        workspace = cases.resolve(root, case_id)
+    if root:
+        if not workspace_subdir.startswith('market_research/'):
+            raise ValueError('Research producers may only allocate research outputs')
+        if out_dir:
+            output = Path(out_dir).absolute()
+            if not output.is_relative_to(workspace / workspace_subdir):
+                raise ValueError('out-dir conflicts with case/output purpose')
+            cases.safe(root, str(output.relative_to(root)))
+            if output.exists() and any(output.iterdir()):
+                raise ValueError('Research runs are immutable; choose a new output directory')
+        else:
+            output = workspace / workspace_subdir / run_name
+        cases.safe(root, str(output.absolute().relative_to(root)))
+        output.mkdir(parents=True, exist_ok=False)
+        capture_run_scope(output, workspace)
+        return output, workspace
+    return Path(out_dir) if out_dir else workspace / workspace_subdir / run_name, None if out_dir else workspace

@@ -1,0 +1,17 @@
+{
+  "artifacts": [],
+  "assessment_revision": 1,
+  "case_id": "a",
+  "created_at": "2026-09-13T18:31:18Z",
+  "current_stage": "intake",
+  "events": [],
+  "manifest_revision": 1,
+  "next_action": "Research segment, journey and pain.",
+  "open_blockers": [],
+  "schema_version": "1.0",
+  "source_bindings": [],
+  "stages": {},
+  "topic": "a",
+  "topic_slug": "a",
+  "updated_at": "2026-09-13T18:31:18Z"
+}

@@ -1,0 +1,55 @@
+{
+  "artifacts": [],
+  "assessment_revision": 2,
+  "case_id": "a",
+  "comparison": {
+    "assessment_revision": 2,
+    "next_action": "Investigate the actual buyer, recent problem, workaround and credible purchase terms without launching. Separately obtain support for decision-changing fee, delivery cost, owner-cash and capacity assumptions, then recalculate only evidenced or explicitly supplied alternatives. A specific experienced problem supports further investigation; stated intent or complaints alone do not establish purchase demand. Supported economics that fit capacity permit further consideration but still do not prove demand or authorize execution. If neither willingness to transact nor feasible delivery terms can be substantiated, pause commitment.",
+    "principal_uncertainty": "Whether an identifiable buyer will complete a purchase on terms that support a capacity-feasible model. Current complaints do not answer that question; the supplied economics also fail the current capacity test.",
+    "summary": "The supplied base case cannot meet its fixed expenses and additional owner cash requirement within the stated capacity. This is conditional arithmetic, not proof that customers will buy or that every alternative is infeasible. Doing nothing avoids committing resources to an unvalidated offer. Redesign may be investigated, but no alternative case or supported downside range was supplied, so there is no justified winner or execution selection."
+  },
+  "created_at": "2026-09-13T18:31:18Z",
+  "current_stage": "intake",
+  "document_bindings": {
+    "README.md": {
+      "authored_digest": "97873211750ae2d327344b9d16927896967956fa93b50b80d238e31ea1f974c4",
+      "economics_input_digest": "7f33129454994f626bf1918bdb98027cf1f872905ebf04b6f5314e5d546b83a3",
+      "model_input_digest": "7f33129454994f626bf1918bdb98027cf1f872905ebf04b6f5314e5d546b83a3"
+    },
+    "business-case.md": {
+      "authored_digest": "d4f52207bd9ac66f6344422924d1d9a52103315f81750dd7219b21ac4217b384",
+      "economics_input_digest": "7f33129454994f626bf1918bdb98027cf1f872905ebf04b6f5314e5d546b83a3",
+      "model_input_digest": "7f33129454994f626bf1918bdb98027cf1f872905ebf04b6f5314e5d546b83a3"
+    },
+    "feasibility.md": {
+      "authored_digest": "e2110838922f158cd40a65d6ec7a7b185ba467ca9e6ea30d84945578570b0425",
+      "economics_input_digest": "7f33129454994f626bf1918bdb98027cf1f872905ebf04b6f5314e5d546b83a3",
+      "model_input_digest": "7f33129454994f626bf1918bdb98027cf1f872905ebf04b6f5314e5d546b83a3"
+    }
+  },
+  "events": [
+    {
+      "decision_id": "semantic-initial",
+      "event": "appraisal",
+      "ts": "2026-09-13T18:31:18Z"
+    }
+  ],
+  "manifest_revision": 2,
+  "next_action": "Research segment, journey and pain.",
+  "open_blockers": [
+    "review_required: Synthetic author initial"
+  ],
+  "schema_version": "1.0",
+  "source_bindings": [
+    {
+      "applicability": "a",
+      "digest": "9a7533957b0043623c7d8a0eff9b4d603a476e0e2fe0aa94ffe59bb6ba5e45d7",
+      "locator": "first line",
+      "path": "cases/a/market_research/pain_points/evidence.md"
+    }
+  ],
+  "stages": {},
+  "topic": "a",
+  "topic_slug": "a",
+  "updated_at": "2026-09-13T18:31:18Z"
+}

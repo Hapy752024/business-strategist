@@ -21,6 +21,10 @@ import re
 import sys
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
+
 # Map common Tailwind color classes to brand semantic tokens.
 # This is a starting point; the skill refines per-component.
 COLOR_CLASS_MAP = {
@@ -63,6 +67,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--motion-css", required=True, type=Path)
     parser.add_argument("--motion-ts", required=True, type=Path)
     args = parser.parse_args(argv)
+    return namespace_writer(args, 'component', execute, is_file=True, include=[], input_attributes=["tokens","motion_css","motion_ts"])
+
+
+def execute(args):
 
     if not args.component.exists():
         print(f"Component file not found: {args.component}", file=sys.stderr)

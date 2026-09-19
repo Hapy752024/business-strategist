@@ -1,0 +1,428 @@
+=== Validate Setup: Sun Sep 13 18:12:24 CEST 2026 ===
+
+--- .gitignore ---
+  PASS  .gitignore exists
+  PASS  .gitignore covers '__pycache__'
+  PASS  .gitignore covers '*.pyc'
+  PASS  .gitignore covers '.venv'
+  PASS  .gitignore covers 'node_modules'
+  PASS  .gitignore covers '.env'
+  PASS  .gitignore covers '*.sqlite'
+  PASS  .gitignore covers '*.local.json'
+  PASS  .gitignore covers '.claude/plans'
+  PASS  .gitignore covers '.codex/artifacts'
+  PASS  .gitignore covers '.firecrawl/'
+
+--- .env.example ---
+  PASS  .env.example exists
+  PASS  .env.example covers BRAVE_SEARCH_API_KEY
+  PASS  .env.example covers FIRECRAWL_API_KEY_HGINVESTOR
+
+--- Git ---
+  PASS  Git is functional
+
+--- Committed junk ---
+  PASS  No committed junk matching '__pycache__'
+  PASS  No committed junk matching '*.pyc'
+  PASS  No committed junk matching '*.sqlite'
+  PASS  No committed junk matching '*.local.json'
+
+--- Settings ---
+  PASS  .claude/settings.json exists
+  PASS  .claude/settings.local.json is an optional local override
+  PASS  .claude/settings.json is valid JSON
+  PASS  .mcp.json is valid JSON
+  PASS  AGENTS.md excludes generated memory blocks
+
+--- Dependencies ---
+  PASS  requirements.txt exists
+
+--- Source Capabilities ---
+  PASS  config/source-capabilities.json exists
+source capability catalog ok
+  PASS  source capability catalog is valid
+Source capabilities: 2 shown
+Catalog: config/source-capabilities.json
+Question: customer pain evidence
+
+[customer_pain]
+- reddit: Reddit API
+  Use: customer pain; workarounds; communities; complaints
+  Run: providers=default; collector=reddit
+  Runtime: ok (reddit=ok)
+  Evidence: medium_when_repeated_otherwise_weak
+  Caveat: Anecdotal. Cluster independent posts and separate user pain from provider/editorial content.
+  Example: python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --problem-keywords '<pain>' --workaround-keywords '<workaround>' --hypothesis-id H1 --providers default
+[ad_intel]
+- meta_ad_library: Meta Ad Library API (official)
+  Use: competitor ads; facebook ads; instagram ads; ad library
+  Run: providers=collect_ads.py; collector=collect_ads.py
+  Runtime: stale (meta=stale)
+  Evidence: medium_for_active_messaging_and_positioning_weak_for_performance
+  Caveat: Requires one-time Meta developer app + government ID verification; token expires ~60 days (ads_read scope). Commercial ads EU/UK/EEA-only (DSA), ~1-year retention, coarse spend ranges, no engagement metrics. Ad longevity signals what keeps running, not proven performance.
+  Example: python3 scripts/evidence_scout/collect_ads.py --topic '<topic>' --competitors-json 'projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json' --countries DE,AT,CH --limit 20
+
+Rule: provider failure is a coverage gap, not evidence of no demand. Record fallback and confidence impact before synthesis.
+  PASS  source capability lookup runs
+
+--- Registries ---
+=== Registry Validation ===
+
+  PASS  source_intents.json
+  PASS  known_competitors.json
+  PASS  query_expansion.json
+
+All registry checks passed.
+  PASS  registry files are valid and consistent
+
+--- Skills ---
+  PASS  .claude/skills is a symlink
+  INFO  Found 39 skill(s)
+  PASS  archetype-gtm-strategist has frontmatter
+  PASS  archetype-gtm-strategist entry is within 30-line budget
+  PASS  archetype-gtm-strategist progressive-disclosure workflow exists
+  PASS  archetype-gtm-strategist has 'Procedure' guidance
+  PASS  archetype-gtm-strategist has 'Output' guidance
+  PASS  archetype-gtm-strategist has 'Quality Checklist' guidance
+  PASS  brand-asset-producer has frontmatter
+  PASS  brand-asset-producer entry is within 30-line budget
+  PASS  brand-asset-producer progressive-disclosure workflow exists
+  PASS  brand-asset-producer has 'Procedure' guidance
+  PASS  brand-asset-producer has 'Output' guidance
+  PASS  brand-asset-producer has 'Quality Checklist' guidance
+  PASS  brand-designer has frontmatter
+  PASS  brand-designer entry is within 30-line budget
+  PASS  brand-designer progressive-disclosure workflow exists
+  PASS  brand-designer has 'Procedure' guidance
+  PASS  brand-designer has 'Output' guidance
+  PASS  brand-designer has 'Quality Checklist' guidance
+  PASS  brand-discovery-interviewer has frontmatter
+  PASS  brand-discovery-interviewer entry is within 30-line budget
+  PASS  brand-discovery-interviewer progressive-disclosure workflow exists
+  PASS  brand-discovery-interviewer has 'Procedure' guidance
+  PASS  brand-discovery-interviewer has 'Output' guidance
+  PASS  brand-discovery-interviewer has 'Quality Checklist' guidance
+  PASS  brand-exporter has frontmatter
+  PASS  brand-exporter entry is within 30-line budget
+  PASS  brand-exporter progressive-disclosure workflow exists
+  PASS  brand-exporter has 'Procedure' guidance
+  PASS  brand-exporter has 'Output' guidance
+  PASS  brand-exporter has 'Quality Checklist' guidance
+  PASS  brand-frontend-app-designer has frontmatter
+  PASS  brand-frontend-app-designer entry is within 30-line budget
+  PASS  brand-frontend-app-designer progressive-disclosure workflow exists
+  PASS  brand-frontend-app-designer has 'Procedure' guidance
+  PASS  brand-frontend-app-designer has 'Output' guidance
+  PASS  brand-frontend-app-designer has 'Quality Checklist' guidance
+  PASS  brand-guideline-researcher has frontmatter
+  PASS  brand-guideline-researcher entry is within 30-line budget
+  PASS  brand-guideline-researcher progressive-disclosure workflow exists
+  PASS  brand-guideline-researcher has 'Procedure' guidance
+  PASS  brand-guideline-researcher has 'Output' guidance
+  PASS  brand-guideline-researcher has 'Quality Checklist' guidance
+  PASS  brand-guidelines-writer has frontmatter
+  PASS  brand-guidelines-writer entry is within 30-line budget
+  PASS  brand-guidelines-writer progressive-disclosure workflow exists
+  PASS  brand-guidelines-writer has 'Procedure' guidance
+  PASS  brand-guidelines-writer has 'Output' guidance
+  PASS  brand-guidelines-writer has 'Quality Checklist' guidance
+  PASS  brand-motion-designer has frontmatter
+  PASS  brand-motion-designer entry is within 30-line budget
+  PASS  brand-motion-designer progressive-disclosure workflow exists
+  PASS  brand-motion-designer has 'Procedure' guidance
+  PASS  brand-motion-designer has 'Output' guidance
+  PASS  brand-motion-designer has 'Quality Checklist' guidance
+  PASS  brand-quality-reviewer has frontmatter
+  PASS  brand-quality-reviewer entry is within 30-line budget
+  PASS  brand-quality-reviewer progressive-disclosure workflow exists
+  PASS  brand-quality-reviewer has 'Procedure' guidance
+  PASS  brand-quality-reviewer has 'Output' guidance
+  PASS  brand-quality-reviewer has 'Quality Checklist' guidance
+  PASS  brand-strategy-director has frontmatter
+  PASS  brand-strategy-director entry is within 30-line budget
+  PASS  brand-strategy-director progressive-disclosure workflow exists
+  PASS  brand-strategy-director has 'Procedure' guidance
+  PASS  brand-strategy-director has 'Output' guidance
+  PASS  brand-strategy-director has 'Quality Checklist' guidance
+  PASS  brand-typography-researcher has frontmatter
+  PASS  brand-typography-researcher entry is within 30-line budget
+  PASS  brand-typography-researcher progressive-disclosure workflow exists
+  PASS  brand-typography-researcher has 'Procedure' guidance
+  PASS  brand-typography-researcher has 'Output' guidance
+  PASS  brand-typography-researcher has 'Quality Checklist' guidance
+  PASS  brand-ui-component-producer has frontmatter
+  PASS  brand-ui-component-producer entry is within 30-line budget
+  PASS  brand-ui-component-producer progressive-disclosure workflow exists
+  PASS  brand-ui-component-producer has 'Procedure' guidance
+  PASS  brand-ui-component-producer has 'Output' guidance
+  PASS  brand-ui-component-producer has 'Quality Checklist' guidance
+  PASS  brand-ui-kit-producer has frontmatter
+  PASS  brand-ui-kit-producer entry is within 30-line budget
+  PASS  brand-ui-kit-producer progressive-disclosure workflow exists
+  PASS  brand-ui-kit-producer has 'Procedure' guidance
+  PASS  brand-ui-kit-producer has 'Output' guidance
+  PASS  brand-ui-kit-producer has 'Quality Checklist' guidance
+  PASS  brand-website-designer-builder has frontmatter
+  PASS  brand-website-designer-builder entry is within 30-line budget
+  PASS  brand-website-designer-builder progressive-disclosure workflow exists
+  PASS  brand-website-designer-builder has 'Procedure' guidance
+  PASS  brand-website-designer-builder has 'Output' guidance
+  PASS  brand-website-designer-builder has 'Quality Checklist' guidance
+  PASS  brand-workspace-manager has frontmatter
+  PASS  brand-workspace-manager entry is within 30-line budget
+  PASS  brand-workspace-manager progressive-disclosure workflow exists
+  PASS  brand-workspace-manager has 'Procedure' guidance
+  PASS  brand-workspace-manager has 'Output' guidance
+  PASS  brand-workspace-manager has 'Quality Checklist' guidance
+  PASS  business-archetype-playbook-researcher has frontmatter
+  PASS  business-archetype-playbook-researcher entry is within 30-line budget
+  PASS  business-archetype-playbook-researcher progressive-disclosure workflow exists
+  PASS  business-archetype-playbook-researcher has 'Procedure' guidance
+  PASS  business-archetype-playbook-researcher has 'Output' guidance
+  PASS  business-archetype-playbook-researcher has 'Quality Checklist' guidance
+  PASS  business-strategist has frontmatter
+  PASS  business-strategist entry is within 30-line budget
+  PASS  business-strategist progressive-disclosure workflow exists
+  PASS  business-strategist has 'Procedure' guidance
+  PASS  business-strategist has 'Output' guidance
+  PASS  business-strategist has 'Quality Checklist' guidance
+  PASS  company-operating-system has frontmatter
+  PASS  company-operating-system entry is within 30-line budget
+  PASS  company-operating-system progressive-disclosure workflow exists
+  PASS  company-operating-system has 'Procedure' guidance
+  PASS  company-operating-system has 'Output' guidance
+  PASS  company-operating-system has 'Quality Checklist' guidance
+  PASS  competitive-landscape-builder has frontmatter
+  PASS  competitive-landscape-builder entry is within 30-line budget
+  PASS  competitive-landscape-builder progressive-disclosure workflow exists
+  PASS  competitive-landscape-builder uses 'Workflow' as procedure guidance
+  PASS  competitive-landscape-builder has 'Output' guidance
+  PASS  competitive-landscape-builder has 'Quality Checklist' guidance
+  PASS  competitor-marketing-analyzer has frontmatter
+  PASS  competitor-marketing-analyzer entry is within 30-line budget
+  PASS  competitor-marketing-analyzer progressive-disclosure workflow exists
+  PASS  competitor-marketing-analyzer has 'Procedure' guidance
+  PASS  competitor-marketing-analyzer has 'Output' guidance
+  PASS  competitor-marketing-analyzer has 'Quality Checklist' guidance
+  PASS  competitor-monitoring has frontmatter
+  PASS  competitor-monitoring entry is within 30-line budget
+  PASS  competitor-monitoring progressive-disclosure workflow exists
+  PASS  competitor-monitoring has 'Procedure' guidance
+  PASS  competitor-monitoring has 'Output' guidance
+  PASS  competitor-monitoring has 'Quality Checklist' guidance
+  PASS  competitor-scout has frontmatter
+  PASS  competitor-scout entry is within 30-line budget
+  PASS  competitor-scout progressive-disclosure workflow exists
+  PASS  competitor-scout has 'Procedure' guidance
+  PASS  competitor-scout has 'Output' guidance
+  PASS  competitor-scout has 'Quality Checklist' guidance
+  PASS  evidence-scout has frontmatter
+  PASS  evidence-scout entry is within 30-line budget
+  PASS  evidence-scout progressive-disclosure workflow exists
+  PASS  evidence-scout has 'Procedure' guidance
+  PASS  evidence-scout has 'Output' guidance
+  PASS  evidence-scout has 'Quality Checklist' guidance
+  PASS  growth-case-analyzer has frontmatter
+  PASS  growth-case-analyzer entry is within 30-line budget
+  PASS  growth-case-analyzer progressive-disclosure workflow exists
+  PASS  growth-case-analyzer has 'Procedure' guidance
+  PASS  growth-case-analyzer has 'Output' guidance
+  PASS  growth-case-analyzer has 'Quality Checklist' guidance
+  PASS  idea-grill has frontmatter
+  PASS  idea-grill entry is within 30-line budget
+  PASS  idea-grill progressive-disclosure workflow exists
+  PASS  idea-grill has 'Procedure' guidance
+  PASS  idea-grill has 'Output' guidance
+  PASS  idea-grill has 'Quality Checklist' guidance
+  PASS  interview-bridge has frontmatter
+  PASS  interview-bridge entry is within 30-line budget
+  PASS  interview-bridge progressive-disclosure workflow exists
+  PASS  interview-bridge has 'Procedure' guidance
+  PASS  interview-bridge has 'Output' guidance
+  PASS  interview-bridge has 'Quality Checklist' guidance
+  PASS  market-problem-discovery has frontmatter
+  PASS  market-problem-discovery entry is within 30-line budget
+  PASS  market-problem-discovery progressive-disclosure workflow exists
+  PASS  market-problem-discovery has 'Procedure' guidance
+  PASS  market-problem-discovery has 'Output' guidance
+  PASS  market-problem-discovery has 'Quality Checklist' guidance
+  PASS  marketing-strategy-builder has frontmatter
+  PASS  marketing-strategy-builder entry is within 30-line budget
+  PASS  marketing-strategy-builder progressive-disclosure workflow exists
+  PASS  marketing-strategy-builder has 'Procedure' guidance
+  PASS  marketing-strategy-builder has 'Output' guidance
+  PASS  marketing-strategy-builder has 'Quality Checklist' guidance
+  PASS  opportunity-risk-designer has frontmatter
+  PASS  opportunity-risk-designer entry is within 30-line budget
+  PASS  opportunity-risk-designer progressive-disclosure workflow exists
+  PASS  opportunity-risk-designer has 'Procedure' guidance
+  PASS  opportunity-risk-designer has 'Output' guidance
+  PASS  opportunity-risk-designer has 'Quality Checklist' guidance
+  PASS  saas-fintech-pilot-designer has frontmatter
+  PASS  saas-fintech-pilot-designer entry is within 30-line budget
+  PASS  saas-fintech-pilot-designer progressive-disclosure workflow exists
+  PASS  saas-fintech-pilot-designer has 'Procedure' guidance
+  PASS  saas-fintech-pilot-designer has 'Output' guidance
+  PASS  saas-fintech-pilot-designer has 'Quality Checklist' guidance
+  PASS  service-customer-perspective-challenger has frontmatter
+  PASS  service-customer-perspective-challenger entry is within 30-line budget
+  PASS  service-customer-perspective-challenger progressive-disclosure workflow exists
+  PASS  service-customer-perspective-challenger has 'Procedure' guidance
+  PASS  service-customer-perspective-challenger has 'Output' guidance
+  PASS  service-customer-perspective-challenger has 'Quality Checklist' guidance
+  PASS  setup-multiharness-project has frontmatter
+  PASS  setup-multiharness-project entry is within 30-line budget
+  PASS  setup-multiharness-project progressive-disclosure workflow exists
+  PASS  setup-multiharness-project has 'Procedure' guidance
+  PASS  setup-multiharness-project has 'Output' guidance
+  PASS  setup-multiharness-project has 'Quality Checklist' guidance
+  PASS  social-digital-marketing-planner has frontmatter
+  PASS  social-digital-marketing-planner entry is within 30-line budget
+  PASS  social-digital-marketing-planner progressive-disclosure workflow exists
+  PASS  social-digital-marketing-planner has 'Procedure' guidance
+  PASS  social-digital-marketing-planner has 'Output' guidance
+  PASS  social-digital-marketing-planner has 'Quality Checklist' guidance
+  PASS  social-media-idea-validator has frontmatter
+  PASS  social-media-idea-validator entry is within 30-line budget
+  PASS  social-media-idea-validator progressive-disclosure workflow exists
+  PASS  social-media-idea-validator uses 'Workflow' as procedure guidance
+  PASS  social-media-idea-validator has 'Output' guidance
+  PASS  social-media-idea-validator has 'Quality Checklist' guidance
+  PASS  startup-business-builder has frontmatter
+  PASS  startup-business-builder entry is within 30-line budget
+  PASS  startup-business-builder progressive-disclosure workflow exists
+  PASS  startup-business-builder has 'Procedure' guidance
+  PASS  startup-business-builder has 'Output' guidance
+  PASS  startup-business-builder has 'Quality Checklist' guidance
+  PASS  startup-challenge-panel has frontmatter
+  PASS  startup-challenge-panel entry is within 30-line budget
+  PASS  startup-challenge-panel progressive-disclosure workflow exists
+  PASS  startup-challenge-panel has 'Procedure' guidance
+  PASS  startup-challenge-panel has 'Output' guidance
+  PASS  startup-challenge-panel has 'Quality Checklist' guidance
+  PASS  strategy-draft-tournament has frontmatter
+  PASS  strategy-draft-tournament entry is within 30-line budget
+  PASS  strategy-draft-tournament progressive-disclosure workflow exists
+  PASS  strategy-draft-tournament uses 'Workflow' as procedure guidance
+  PASS  strategy-draft-tournament has 'Output' guidance
+  PASS  strategy-draft-tournament has 'Quality Checklist' guidance
+  PASS  town-db-curator has frontmatter
+  PASS  town-db-curator entry is within 30-line budget
+  PASS  town-db-curator progressive-disclosure workflow exists
+  PASS  town-db-curator has 'Procedure' guidance
+  PASS  town-db-curator has 'Output' guidance
+  WARN  town-db-curator missing 'Quality Checklist' guidance
+
+--- Symlinks ---
+  PASS  .claude/skills -> .agents/skills
+
+--- Agent Modes ---
+  PASS  agent-modes/research.md exists
+  PASS  agent-modes/source-audit.md exists
+  PASS  agent-modes/coding.md exists
+
+--- Workspace Tests ---
+........................................................................ [ 20%]
+........................................................................ [ 41%]
+........................................................................ [ 61%]
+........................................................................ [ 82%]
+..............................................................           [100%]
+350 passed in 19.34s
+  PASS  full Python test suite passes
+{
+  "passed": true,
+  "errors": []
+}
+  PASS  all installed skills are catalogued and routable
+=== Skill Eval Coverage ===
+
+  PASS  archetype-gtm-strategist — 14 cases
+  PASS  brand-asset-producer — 1 cases
+  PASS  brand-designer — 1 cases
+  PASS  brand-discovery-interviewer — 1 cases
+  PASS  brand-exporter — 1 cases
+  PASS  brand-frontend-app-designer — 1 cases
+  PASS  brand-guideline-researcher — 1 cases
+  PASS  brand-guidelines-writer — 1 cases
+  PASS  brand-motion-designer — 1 cases
+  PASS  brand-quality-reviewer — 1 cases
+  PASS  brand-strategy-director — 2 cases
+  PASS  brand-typography-researcher — 1 cases
+  PASS  brand-ui-component-producer — 1 cases
+  PASS  brand-ui-kit-producer — 1 cases
+  PASS  brand-website-designer-builder — 4 cases
+  PASS  brand-workspace-manager — 2 cases
+  PASS  business-archetype-playbook-researcher — 4 cases
+  PASS  business-strategist — 24 cases
+  PASS  company-operating-system — 4 cases
+  PASS  competitive-landscape-builder — 3 cases
+  PASS  competitor-marketing-analyzer — 4 cases
+  PASS  competitor-monitoring — 3 cases
+  PASS  competitor-scout — 4 cases
+  PASS  evidence-scout — 4 cases
+  PASS  growth-case-analyzer — 3 cases
+  PASS  idea-grill — 5 cases
+  PASS  interview-bridge — 2 cases
+  PASS  market-problem-discovery — 3 cases
+  PASS  marketing-strategy-builder — 7 cases
+  PASS  opportunity-risk-designer — 4 cases
+  PASS  saas-fintech-pilot-designer — 4 cases
+  PASS  service-customer-perspective-challenger — 7 cases
+  PASS  setup-multiharness-project — 1 cases
+  PASS  social-digital-marketing-planner — 10 cases
+  PASS  social-media-idea-validator — 4 cases
+  PASS  startup-business-builder — 4 cases
+  PASS  startup-challenge-panel — 2 cases
+  PASS  strategy-draft-tournament — 3 cases
+  WARN  town-db-curator — no evals.json
+
+=== Routing Evals ===
+
+  PASS  routing-evals.json — 31 cases across 11 collision pairs
+
+=== Summary ===
+
+  Skills with evals:    38/39
+  Skills missing evals: town-db-curator
+  Total eval cases:     143
+  Structural errors:    0
+
+All eval structure checks passed.
+Some skills are missing evals — this is acceptable but should be addressed.
+  PASS  eval structure is valid
+
+--- Schemas ---
+  PASS  schemas/evidence-record.schema.json exists
+  PASS  schemas/evidence-record.schema.json is valid JSON
+  PASS  schemas/ads-record.schema.json exists
+  PASS  schemas/ads-record.schema.json is valid JSON
+  PASS  schemas/competitor.schema.json exists
+  PASS  schemas/competitor.schema.json is valid JSON
+  PASS  schemas/entity-landscape.schema.json exists
+  PASS  schemas/entity-landscape.schema.json is valid JSON
+  PASS  schemas/stage-checkpoint.schema.json exists
+  PASS  schemas/stage-checkpoint.schema.json is valid JSON
+  PASS  schemas/research-manifest.schema.json exists
+  PASS  schemas/research-manifest.schema.json is valid JSON
+  PASS  schemas/project-manifest.schema.json exists
+  PASS  schemas/project-manifest.schema.json is valid JSON
+  PASS  schemas/business-to-brand.schema.json exists
+  PASS  schemas/business-to-brand.schema.json is valid JSON
+  PASS  schemas/brand-manifest.schema.json exists
+  PASS  schemas/brand-manifest.schema.json is valid JSON
+  PASS  schemas/website-preferences.schema.json exists
+  PASS  schemas/website-preferences.schema.json is valid JSON
+  PASS  schemas/website-manifest.schema.json exists
+  PASS  schemas/website-manifest.schema.json is valid JSON
+  PASS  schemas/claim-record.schema.json exists
+  PASS  schemas/claim-record.schema.json is valid JSON
+  PASS  schemas/strategy-plan.schema.json exists
+  PASS  schemas/strategy-plan.schema.json is valid JSON
+  PASS  skill catalog is valid JSON
+  PASS  workflow routes are valid JSON
+  PASS  website route smoke test passes
+Website fixture validation passed
+  PASS  website fixture contract passes
+
+==================================
+1 warning(s), 0 errors — acceptable.

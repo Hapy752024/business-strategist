@@ -10,7 +10,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
-from workspace import update_stage
+from workspace import update_stage, prepare_research_output
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -126,8 +126,12 @@ def main() -> int:
     parser.add_argument("--entities-json", required=True)
     parser.add_argument("--marketing-json", default="")
     parser.add_argument("--workspace", default="")
+    parser.add_argument("--case", default="")
+    parser.add_argument("--source-bindings", default="", help="JSON source-use bindings; required for shared case inputs.")
     parser.add_argument("--out-dir", required=True)
     args = parser.parse_args()
+    scope = prepare_research_output(Path(args.out_dir), workspace_arg=args.workspace, case_id=args.case, is_file=False, input_paths=[args.entities_json, args.marketing_json], source_bindings_file=args.source_bindings)
+    args.workspace = str(scope) if scope else ""
     out = Path(args.out_dir)
     landscape = load(args.entities_json, {})
     validate_landscape(landscape)
@@ -183,7 +187,7 @@ def main() -> int:
             out / "positioning-hypotheses.md", out / "quality-gate.json", out / "competitive-insight-handoff.json",
         ]
         open_gaps = [*gate["coverage_gaps"], *[f"Unresolved entity: {name}" for name in unresolved], *[f"Incomplete inspiration record: {name}" for name in incomplete_inspiration], *[f"Unchecked social coverage: {name}" for name in incomplete_social]]
-        update_stage(Path(args.workspace), "competitive_landscape", status="passed" if gate["passed"] else "failed", gate_result="pass" if gate["passed"] else "fail", artifacts=artifact_paths, open_gaps=open_gaps, next_action="Use verified landscape findings in positioning tests." if gate["passed"] else "Resolve quality-gate gaps before competitive or inspiration synthesis.")
+        update_stage(Path(args.workspace), "competitive_landscape", run_dir=out, status="passed" if gate["passed"] else "failed", gate_result="pass" if gate["passed"] else "fail", artifacts=artifact_paths, open_gaps=open_gaps, next_action="Use verified landscape findings in positioning tests." if gate["passed"] else "Resolve quality-gate gaps before competitive or inspiration synthesis.")
     print(json.dumps({"competitive": len(competitive), "similar": len(similar), "references": len(references), "quality_gate_passed": gate["passed"], "out_dir": str(out)}, indent=2))
     return 0 if gate["passed"] else 2
 

@@ -1,0 +1,124 @@
+{
+  "freeze_cross_case": {
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "",
+    "exists": true,
+    "project_revision": 11
+  },
+  "shared_builder": {
+    "returncode": 0,
+    "stdout": "{\n  \"competitive\": 1,\n  \"similar\": 0,\n  \"references\": 0,\n  \"quality_gate_passed\": true,\n  \"out_dir\": \"/tmp/fresh-case-adversary/dependency/topic/cases/a/market_research/solution_alternatives/runs/derived\"\n}\n",
+    "stderr": "",
+    "stage_before": "passed",
+    "bindings": [
+      "cases/a/market_research/solution_alternatives/runs/derived/competitive-market-matrix.md",
+      "cases/a/market_research/solution_alternatives/runs/derived/offer-price-matrix.json",
+      "cases/a/market_research/solution_alternatives/runs/derived/social-presence.json",
+      "cases/a/market_research/solution_alternatives/runs/derived/similar-company-inspiration.md",
+      "cases/a/market_research/solution_alternatives/runs/derived/capability-reference-library.md",
+      "cases/a/market_research/solution_alternatives/runs/derived/positioning-hypotheses.md",
+      "cases/a/market_research/solution_alternatives/runs/derived/quality-gate.json",
+      "cases/a/market_research/solution_alternatives/runs/derived/competitive-insight-handoff.json"
+    ],
+    "revision_before_after": [
+      1,
+      1
+    ],
+    "stage_after": "passed"
+  },
+  "builder_conflicting_workspace": {
+    "returncode": 0,
+    "stdout": "{\n  \"competitive\": 1,\n  \"similar\": 0,\n  \"references\": 0,\n  \"quality_gate_passed\": true,\n  \"out_dir\": \"/tmp/fresh-case-adversary/dependency/topic/cases/a/market_research/solution_alternatives/runs/derived\"\n}\n",
+    "stderr": "",
+    "original_run_preserved": false
+  },
+  "brand_pending": {
+    "returncode": 0,
+    "stdout": "{\n  \"workspace\": \"/tmp/fresh-case-adversary/downstream/topic/branding\",\n  \"manifest\": \"/tmp/fresh-case-adversary/downstream/topic/branding/brand-manifest.json\",\n  \"project_manifest\": \"\"\n}\n",
+    "stderr": "",
+    "brand_manifest_exists": true
+  },
+  "website_pending": {
+    "returncode": 0,
+    "stdout": "{\n  \"root\": \"/tmp/fresh-case-adversary/downstream/topic/web-site\",\n  \"command\": \"pnpm create next-app@latest source --ts --eslint --tailwind --app --src-dir --use-pnpm --import-alias '@/*'\",\n  \"next_step\": \"review website-preferences.json and run the recorded command after approval\"\n}\n",
+    "stderr": "",
+    "scaffold_exists": true
+  },
+  "route_review_required_plan": {
+    "route_id": "website-build",
+    "skill": "brand-website-designer-builder",
+    "mode": "default",
+    "task_scope": "execution",
+    "matched": [
+      "intent:website-build"
+    ],
+    "forbidden_skills": [
+      "brand-frontend-app-designer",
+      "competitor-marketing-analyzer"
+    ],
+    "ask_question": false,
+    "reason": "explicit intent",
+    "prerequisites": [],
+    "required_references": [],
+    "expected_artifacts": [
+      "website manifest",
+      "Next.js site",
+      "QA report"
+    ],
+    "side_effect": "workspace/external-approval",
+    "estimated_cost": "high",
+    "case_context": {
+      "project_root": "/tmp/fresh-case-adversary/routing/projects/topic",
+      "case_id": "a",
+      "layout_version": 2,
+      "output_root": "/tmp/fresh-case-adversary/routing/projects/topic/cases/a",
+      "assessment_revision": 2,
+      "manifest_revision": 8,
+      "selection_generation": 1,
+      "execution_binding": {
+        "case_id": "a",
+        "configuration": "One service",
+        "selection_generation": 1,
+        "assessment_revision": 2,
+        "economics_input_digest": "b349430c90c2c1aaa885a72e7a6d3c219a1196e33187ecd7000b94d52c98dee9"
+      },
+      "current_concept": "/tmp/fresh-case-adversary/routing/projects/topic/cases/a/README.md",
+      "source_bindings": [
+        {
+          "applicability": "a",
+          "digest": "9a7533957b0043623c7d8a0eff9b4d603a476e0e2fe0aa94ffe59bb6ba5e45d7",
+          "locator": "first line",
+          "path": "cases/a/market_research/pain_points/evidence.md"
+        }
+      ],
+      "open_blockers": [
+        "review_required: Conditional assessment"
+      ],
+      "input_contract": [],
+      "output_owner": "brand-website-designer-builder"
+    }
+  },
+  "ignored_economics_inputs": {
+    "status": "conditional",
+    "unresolved_inputs": [],
+    "assumption_inputs": [
+      "revenue_per_unit",
+      "service_per_unit",
+      "partner_per_unit",
+      "refund_per_unit",
+      "acquisition_per_new_customer",
+      "fixed_per_month",
+      "owner_cash_per_month",
+      "capacity_per_month"
+    ],
+    "contribution_per_unit": 50.0,
+    "required_sales": 80,
+    "capacity_meets_target": false,
+    "cash": {
+      "status": "unresolved",
+      "reason": "horizon_months required"
+    },
+    "payback_month": null
+  }
+}

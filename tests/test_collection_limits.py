@@ -13,7 +13,7 @@ common = importlib.import_module('common')
 
 def test_partial_run_preserves_evidence_and_lists_remaining_providers(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, 'argv', ['collect.py', '--topic', 'task scheduling', '--customer-segment', 'operators',
-                                     '--providers', 'hn,github', '--max-http-requests', '1'])
+                                     '--segment-keywords', 'operations managers', '--providers', 'hn,github', '--max-http-requests', '1'])
     monkeypatch.setattr(collect, 'resolve_run_dir', lambda **kwargs: (tmp_path, None))
     monkeypatch.setattr(collect, 'load_provider_routing', lambda: {})
     def provider(*args):
@@ -41,7 +41,7 @@ def test_partial_run_preserves_evidence_and_lists_remaining_providers(tmp_path, 
 
 
 def test_budget_validation_precedes_any_workspace_write(monkeypatch):
-    monkeypatch.setattr(sys, 'argv', ['collect.py', '--topic', 'test', '--max-http-requests', '0'])
+    monkeypatch.setattr(sys, 'argv', ['collect.py', '--topic', 'test', '--research-mode', 'discovery', '--max-http-requests', '0'])
     monkeypatch.setattr(collect, 'resolve_run_dir', lambda **kw: pytest.fail('Unexpected workspace write'))
     with pytest.raises(SystemExit) as exc:
         collect.main()
@@ -50,5 +50,5 @@ def test_budget_validation_precedes_any_workspace_write(monkeypatch):
 
 def test_credit_and_unknown_statuses_remain_explicit():
     tasks = collect.remaining_tasks({'social': {'status': 'insufficient_credits'}, 'unknown': {}}, [])
-    assert 'do not retry automatically' in tasks[0]['action']
+    assert 'top-up route' in tasks[0]['action'] and 'preserve this source gap' in tasks[0]['action']
     assert tasks[1]['status'] == 'unknown'

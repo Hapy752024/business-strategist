@@ -8,9 +8,14 @@ import json
 import os
 import re
 import tempfile
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.case_outputs import run_staged, preflight, cases
+from scripts.brand.website_launch import errors as launch_errors
 
 
 COMMIT_RE = re.compile(r"^[a-f0-9]{7,40}$")
@@ -38,7 +43,13 @@ def valid_https(url: str) -> bool:
     return parsed.scheme == "https" and bool(parsed.hostname) and not parsed.username and not parsed.password and not parsed.query and not parsed.fragment
 
 
-def update(path: Path, *, status: str, commit: str, url: str = "", rollback_commit: str = "", confirm_production: bool = False, github_repo: str = "", github_branch: str = "", vercel_project: str = "") -> dict:
+def update(path: Path, *, status: str, commit: str, url: str = "", rollback_commit: str = "", confirm_production: bool = False, github_repo: str = "", github_branch: str = "", vercel_project: str = "", deployment_id: str = "") -> dict:
+    if cases.locate_publication(path):
+        preflight(path, 'website')
+        entry_mode = cases.load(path).get('entry_mode', 'standalone')
+        return run_staged(path.absolute().parent, 'website', lambda stage: update(stage / path.name,
+            status=status, commit=commit, url=url, rollback_commit=rollback_commit, confirm_production=confirm_production,
+            github_repo=github_repo, github_branch=github_branch, vercel_project=vercel_project, deployment_id=deployment_id), entry_mode=entry_mode, include=[path.name])
     data = json.loads(path.read_text(encoding="utf-8"))
     expected_revision = int(data.get("manifest_revision", 1))
     if not COMMIT_RE.fullmatch(commit):
@@ -58,6 +69,9 @@ def update(path: Path, *, status: str, commit: str, url: str = "", rollback_comm
         incomplete = sorted(key for key in ("build", "accessibility", "performance", "responsive", "visual_review") if qa.get(key) != "pass")
         if incomplete:
             raise ValueError(f"production release has incomplete QA gates: {', '.join(incomplete)}")
+        failures = launch_errors(data.get("launch"), commit=commit, url=url, deployment_id=deployment_id)
+        if failures:
+            raise ValueError("production launch checks: " + "; ".join(failures))
     release = data.setdefault("release", {})
     resolved_repo = github_repo or str(release.get("github_repo", ""))
     resolved_branch = github_branch or str(release.get("github_branch", ""))
@@ -77,6 +91,8 @@ def update(path: Path, *, status: str, commit: str, url: str = "", rollback_comm
     for key, value in (("github_repo", resolved_repo), ("github_branch", resolved_branch), ("vercel_project", resolved_vercel)):
         if value:
             release[key] = value
+    if status == "production":
+        release["deployment_id"] = deployment_id
     if url:
         release["preview_url" if status == "preview" else "production_url"] = url
     if rollback_commit:
@@ -98,9 +114,10 @@ def main() -> int:
     parser.add_argument("--github-repo", default="")
     parser.add_argument("--github-branch", default="")
     parser.add_argument("--vercel-project", default="")
+    parser.add_argument("--deployment-id", default="", help="Tested deployment/configuration identifier; required for production")
     args = parser.parse_args()
     try:
-        release = update(args.manifest, status=args.status, commit=args.commit, url=args.url, rollback_commit=args.rollback_commit, confirm_production=args.confirm_production, github_repo=args.github_repo, github_branch=args.github_branch, vercel_project=args.vercel_project)
+        release = update(args.manifest, status=args.status, commit=args.commit, url=args.url, rollback_commit=args.rollback_commit, confirm_production=args.confirm_production, github_repo=args.github_repo, github_branch=args.github_branch, vercel_project=args.vercel_project, deployment_id=args.deployment_id)
     except (OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:
         parser.error(str(exc))
     print(json.dumps({"status": "recorded", "release": release}, indent=2))

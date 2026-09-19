@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["collector_version", "query_plan", "requested_providers", "provider_outcomes", "raw_content_retained"],
+  "properties": {
+    "collector_version": {"const": "community-discovery-v2"},
+    "query_plan": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["query_id", "query", "kind", "country", "language"], "additionalProperties": true}},
+    "requested_providers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["brave_search", "firecrawl", "serper_search", "offline_fixture"]}},
+    "provider_outcomes": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "object", "required": ["status"], "properties": {"status": {"type": "string", "minLength": 1}}, "additionalProperties": true}},
+    "raw_content_retained": {"const": false},
+    "request_budget": {"type": "object"}
+  },
+  "additionalProperties": true
+}

@@ -19,4 +19,9 @@ description: Build a zero-to-one startup plan covering segment, discovery, MVP, 
 
 ## Output
 
+For a versioned case project, read repo-root `references/case-assessment.md`. Assemble only the selected idea's root business plan from the existing structured strategy authority and current case findings; preserve full prerequisites. Case comparison and hypothetical feasibility/economics use `case-appraisal`, not this full planning mode. Publish through the shared helper; do not create parallel plans for unselected cases.
+
 Produce thesis, canvases, assumptions, discovery and MVP plans, first-ten-customer plan, model/pricing, metrics, risks, gates, and 7/30/60/90-day actions.
+
+For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
+For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.

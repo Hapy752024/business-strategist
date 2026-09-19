@@ -5,8 +5,20 @@
       "id": 1,
       "prompt": "Based on our evidence collection (moderate pain signals on Reddit about PKV switching, weak Trends, no willingness-to-pay evidence yet), design the next round of low-cost tests for our digital insurance advice startup.",
       "expected_output": "A risk register ranked by importance × uncertainty, with test cards for the top 2-3 risks. Must recommend testing willingness to pay before building anything (e.g., fake-door test, pre-sale landing page, paid consultation pilot). Must define explicit pass/pivot/repeat thresholds for each test.",
-      "must_mention": ["risk", "test", "threshold", "willingness to pay", "pass", "pivot", "cost"],
-      "must_not_mention": ["build MVP", "start development", "hire a team"],
+      "must_mention": [
+        "risk",
+        "test",
+        "threshold",
+        "willingness to pay",
+        "pass",
+        "pivot",
+        "cost"
+      ],
+      "must_not_mention": [
+        "build MVP",
+        "start development",
+        "hire a team"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -14,8 +26,19 @@
       "id": 2,
       "prompt": "We have strong evidence of pain (repeated independent Reddit/forum complaints about expense tracking), multiple workarounds described, and a reachable freelancer community. But no competitor is doing well in this space. What are the risks?",
       "expected_output": "A risk analysis that treats 'no successful competitor' as a yellow flag (possible missing willingness to pay, not just blue ocean). Must rank risks: willingness to pay (despite pain), monetization model, segment size vs willingness, incumbent bundling threat. Must recommend a paid pilot or concierge test before product investment.",
-      "must_mention": ["willingness to pay", "pilot", "risk", "monetization", "paid", "threshold"],
-      "must_not_mention": ["blue ocean", "no competition is great", "uncontested market"],
+      "must_mention": [
+        "willingness to pay",
+        "pilot",
+        "risk",
+        "monetization",
+        "paid",
+        "threshold"
+      ],
+      "must_not_mention": [
+        "blue ocean",
+        "no competition is great",
+        "uncontested market"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -23,8 +46,20 @@
       "id": 3,
       "prompt": "Our first 10 design partner conversations all went well and 3 said they'd pay. What should we test next?",
       "expected_output": "A pushback that design partner enthusiasm ≠ market demand. Must recommend a structured test: put a price in front of the 3 who said they'd pay, measure actual conversion, interview the 7 who didn't offer to pay, and define a minimum paying-customer threshold before scaling. Must warn against premature optimism from small-N positive signals.",
-      "must_mention": ["conversion", "actual", "pay", "small", "threshold", "test"],
-      "must_not_mention": ["raise funding", "scale up", "hire sales team", "proven"],
+      "must_mention": [
+        "conversion",
+        "actual",
+        "pay",
+        "small",
+        "threshold",
+        "test"
+      ],
+      "must_not_mention": [
+        "raise funding",
+        "scale up",
+        "hire sales team",
+        "proven"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -32,9 +67,23 @@
       "id": 4,
       "prompt": "Competitors already serve the same local trade. We have evidence that customers complain about slow quotes, but no proof that the gap is unserved. Is the opportunity dead?",
       "expected_output": "Does not require a whitespace finding. Ranks entry/customer-choice, acquisition/relationship and delivery economics risks; asks why customers would notice, trust and choose the entrant; proposes the cheapest bounded test instead of declaring the market saturated.",
-      "must_mention": ["entry", "customer", "test", "risk"],
-      "must_not_mention": ["market is saturated", "whitespace is required"],
+      "must_mention": [
+        "entry",
+        "customer",
+        "test",
+        "risk"
+      ],
+      "must_not_mention": [
+        "market is saturated",
+        "whitespace is required"
+      ],
       "required_artifacts": [],
+      "files": []
+    },
+    {
+      "id": "need-model-complaints-not-demand",
+      "prompt": "Synthetic packet: 200 complaints contain no recent episode, consequential loss or willingness-to-switch behavior. Founder asks for risk prioritization and says scale is obviously justified.",
+      "expected_output": "Do not promote complaint volume into validated demand. Rank urgency/customer-choice uncertainty, request better episode evidence and design a bounded test before scale; no forced opportunity winner.",
       "files": []
     }
   ]

@@ -1,0 +1,48 @@
+{
+  "scope": [
+    "README.md",
+    "strategy/current-recommendation.md",
+    "strategy/annex-a-personal-insurance.md",
+    "strategy/annex-b-motor-mga.md",
+    "market_research/customer_segments/surelius-and-language-segments.md"
+  ],
+  "missing_relative_targets": [
+    {
+      "file": "strategy/current-recommendation.md",
+      "target": "player-directory.md"
+    },
+    {
+      "file": "strategy/current-recommendation.md",
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "file": "strategy/annex-a-personal-insurance.md",
+      "target": "player-directory.md"
+    },
+    {
+      "file": "strategy/annex-a-personal-insurance.md",
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "file": "strategy/annex-b-motor-mga.md",
+      "target": "three-ideas-evidence-audit.md"
+    },
+    {
+      "file": "market_research/customer_segments/surelius-and-language-segments.md",
+      "target": "current-recommendation.md"
+    },
+    {
+      "file": "market_research/customer_segments/surelius-and-language-segments.md",
+      "target": "player-directory.md"
+    },
+    {
+      "file": "market_research/customer_segments/surelius-and-language-segments.md",
+      "target": "sources-language-and-surelius.md"
+    },
+    {
+      "file": "market_research/customer_segments/surelius-and-language-segments.md",
+      "target": "sources.md"
+    }
+  ],
+  "note": "Sample only; checks path existence, not anchor correctness or evidence validity. Existing files not edited."
+}

@@ -1,8 +1,14 @@
 # Workspace Lifecycle — Resume, Replay, and Run-Manifest
 
-Canonical root is `projects/<project-slug>/` per venture. The research stage machine lives at `projects/<slug>/market_research/manifest.json`; the controller manifest is `projects/<slug>/project-manifest.json`. `_infra` and `_archive` are reserved directory names, not project slugs. Former roots (`research/`, `brand-projects/`, `projects/research/`, `projects/brand-projects/`) are rejected by relocation guards — do not recreate them. Legacy pre-restructure runs live read-only under `projects/_archive/`; preserve frozen evidence paths as historical provenance. Repair only operational links after checking their targets. A new unrelated request does not inherit another workspace's active track.
+New projects use the independent subproject layout in [subprojects.md](subprojects.md): `business-analysis/`, `branding/`, `digital-assets/website/`, and `digital-assets/others/`. The umbrella has layout version 3; Business reuses case layout version 2. In the case contract below, root means the Business root for new projects and the existing project root for older version-2 projects. Read [case-assessment.md](case-assessment.md) for its authoritative outputs, selection, publication and recovery contract. Root `project-manifest.json` is the explicit version switch. `README.md` is current comparison/navigation; investigated cases have their own current findings and research stage manifests. The root `strategy/` belongs to the single selected execution target. Case changes do not select an idea. Detect versioned projects even before a root research manifest exists.
 
-## Layout and stage → folder map
+Before writes, check `history/pending.json`. Recover through `python3 scripts/case_workspace.py recover --workspace <project>`; do not bypass unresolved or outside-edit conflicts. Case collectors use `--workspace <project> --case <id>` and unique immutable run destinations. The allocator saves the reviewed assessment revision in `.case-context.json`; stage writers require that run context or an explicit `expected_assessment_revision`. A stale run may remain historical evidence but cannot close the current case checkpoint. Direct builders require a fresh path under the case's `market_research/.../runs/`.
+
+Explicit migration: inventory files and links, copy the project, then run `python3 scripts/project_workspace.py migrate-cases <copy> --mapping <mapping.json> --decision-id <id> --reason <scope>`. Mapping is an object keyed by stable case ID; each entry has a title and optional sources (project-relative path, locator, applicability). The helper snapshots previous root outputs, registers cases with no inherited passes and no selection, and switches the root version last. Test interruption/recovery and verify original evidence hashes before any separately authorized live migration.
+
+The remaining layout and legacy stage instructions below apply to unversioned projects. Ordinary legacy research continues without creating cases; new business-linked execution requires migration; standalone branding and website work remain independent. Repository-root `research/` and `brand-projects/` roots are retired. A new unrelated request does not inherit another workspace's active track.
+
+## Legacy layout and stage → folder map
 
 ```
 projects/<project-slug>/
@@ -88,6 +94,8 @@ When the user chooses to continue a workspace:
 ## Current executive document
 
 Keep `README.md` as the sole current reader-facing narrative at the project root. It contains the current date/status, founder context, the segment/journey/pain foundation, options and trade-offs, recommendation and evidence strength, acquisition/relationship feasibility, decisive unknowns and next action. A reader should understand the decision without opening an annex. Supporting narratives belong under `market_research/deep_dives/`; source/run outputs and machine state retain their established paths.
+
+README must explicitly cover the current findings, corrections/contradictions, segment and journey hypotheses, solution alternatives, country/segment trade-offs, feasibility/licensing where relevant, researched first-interview recruitment, applied/reused/pending skill coverage, and one next owner decision. Link each substantive conclusion to the relevant dated deep dive or source; links alone do not replace the self-contained synthesis. Pending founder choices and weak evidence must agree with the manifest; generated artifacts are not passed stages.
 
 After substantive follow-ups, update the affected README sections and link directly to relevant evidence or deep dives. Use verified website links for named players; label unavailable addresses. For a material reversal, preserve the previous decision in `strategy/decisions/`, record why the affected assumption changed, and keep README consistent with the current manifest and strategy record. Preserve frozen experiment baselines.
 

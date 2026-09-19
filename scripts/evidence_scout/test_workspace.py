@@ -24,7 +24,7 @@ from workspace import create_topic_workspace, resolve_run_dir, update_stage  # n
 class WorkspaceTests(unittest.TestCase):
     def test_resume_preserves_reader_document_state_and_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            workspace = create_topic_workspace("Repair service", temporary, "local homeowners")
+            workspace = create_topic_workspace("Repair service", temporary, "local homeowners", layout_version=1)
             readme = workspace / "README.md"
             for target in re.findall(r"\]\(([^)]+)\)", readme.read_text()):
                 self.assertTrue((workspace / target).exists(), target)
@@ -34,12 +34,12 @@ class WorkspaceTests(unittest.TestCase):
             evidence.write_bytes(b'{"evidence_id":"fixture"}\n')
             protected = [readme, evidence, workspace / "market_research" / "manifest.json"]
             before = {p: p.read_bytes() for p in protected}
-            create_topic_workspace("Repair service", temporary, "local homeowners")
+            create_topic_workspace("Repair service", temporary, "local homeowners", layout_version=1)
             self.assertEqual(before, {p: p.read_bytes() for p in protected})
 
     def test_scaffold_and_manifest_update(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            workspace = create_topic_workspace("Accounting document SaaS", temporary, "small accounting firms")
+            workspace = create_topic_workspace("Accounting document SaaS", temporary, "small accounting firms", layout_version=1)
             expected = [
                 "market_research/manifest.json",
                 "README.md",
@@ -79,7 +79,7 @@ class WorkspaceTests(unittest.TestCase):
 
     def test_passed_stage_rejects_missing_artifacts_but_preserves_explicit_output(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            workspace = create_topic_workspace("Example", temporary)
+            workspace = create_topic_workspace("Example", temporary, layout_version=1)
             with self.assertRaisesRegex(ValueError, "does not exist"):
                 update_stage(
                     workspace, "evidence_collection", status="passed", gate_result="pass",

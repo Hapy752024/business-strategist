@@ -1,0 +1,17 @@
+{
+  "b_assessment_revision_before": 4,
+  "b_assessment_revision_after": 4,
+  "b_revision_preserved": true,
+  "b_source_bindings_preserved": true,
+  "only_spelling_changed": true,
+  "comparison_preserved": true,
+  "selection": null,
+  "selection_generation": 0,
+  "assessment_revisions": {
+    "a": 4,
+    "b": 4
+  },
+  "pending_transaction": false,
+  "calculator_run": false,
+  "evidence_note": "Original fixture files unchanged; interpretation correction recorded and bound in history."
+}

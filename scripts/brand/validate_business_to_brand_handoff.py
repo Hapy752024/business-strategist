@@ -6,14 +6,17 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from scripts import case_workspace as cases, subprojects
+from scripts.strategy_review import validate_positioning
 SCHEMA = json.loads((ROOT / "schemas/business-to-brand.schema.json").read_text())
-POSITIONING_SCHEMA = json.loads((ROOT / "schemas/strategy-plan.schema.json").read_text())["properties"]["positioning"]
 
 
 def validate_data(data: object) -> list[str]:
@@ -29,12 +32,9 @@ def validate_data(data: object) -> list[str]:
             errors.append(f"{field}: evidence_backed requires field-specific supporting references")
     position = data.get("positioning", {})
     if "decision_status" in position:
-        position_errors = [error.message for error in Draft202012Validator(POSITIONING_SCHEMA).iter_errors(position)]
+        position_errors = validate_positioning(position)
         errors.extend(position_errors)
         if not position_errors:
-            for item in [position, *position["activities"]]:
-                if item["provenance"] == "evidence_backed" and not item["evidence_refs"]:
-                    errors.append("positioning: evidence_backed requires supporting evidence_refs")
             if data["field_provenance"].get("positioning") != position["provenance"]:
                 errors.append("positioning: field provenance must match the selected decision's provenance")
     return errors
@@ -42,10 +42,34 @@ def validate_data(data: object) -> list[str]:
 
 def validate(path: Path, *, check_sources: bool = False) -> list[str]:
     try:
+        owner = cases.locate_publication(path)
+        if owner:
+            cases.read_project(owner)
+            cases.safe(owner, str(path.absolute().relative_to(owner)))
         data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, ValueError) as exc:
         return [f"invalid JSON: {exc}"]
     errors = validate_data(data)
+    if errors:
+        return errors
+    try:
+        roots = {r for p in [path, Path(data.get('source_path', '.')), Path(data.get('positioning_source', {}).get('path', '.'))]
+                 for r in [cases.locate(p)] if r}
+        if len(roots) > 1:
+            raise ValueError('conflicting handoff project roots')
+        root = next(iter(roots), None)
+        if owner and cases.read_project(owner).get('controller_kind') == 'umbrella' and root and root != subprojects.business(owner):
+            raise ValueError('handoff source belongs to another project')
+        if root or data.get('case_project_root') or data.get('execution_binding'):
+            if not root or data.get('case_project_root') != str(root):
+                raise ValueError('missing or mismatched case project identity')
+            with cases.project_lock(root):
+                cases.check_binding(root, data.get('execution_binding', {}))
+                plan = cases.load(root / 'strategy/strategy-plan.json')
+                cases.check_plan(root, plan)
+            check_sources = True
+    except (ValueError, OSError, KeyError) as exc:
+        errors.append(str(exc))
     if errors or not check_sources:
         return errors
     sources = [{"path": data.get("source_path"), "sha256": data["source_sha256"]}]

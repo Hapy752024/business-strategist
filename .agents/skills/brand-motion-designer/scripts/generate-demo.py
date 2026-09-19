@@ -20,6 +20,10 @@ import json
 import sys
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
+
 OPTION_LABELS = ["Snappy", "Smooth", "Bouncy"]
 
 
@@ -137,6 +141,10 @@ def main(argv: list[str] | None = None) -> int:
     p_elem.add_argument("--output-dir", required=True, type=Path)
 
     args = parser.parse_args(argv)
+    return namespace_writer(args, 'output_dir', execute, input_attributes=["tokens"])
+
+
+def execute(args):
     tokens = json.loads(args.tokens.read_text())
     args.output_dir.mkdir(parents=True, exist_ok=True)
 

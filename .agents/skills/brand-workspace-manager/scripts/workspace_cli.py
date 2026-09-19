@@ -9,8 +9,12 @@ import json
 import os
 import shutil
 import tempfile
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import run_staged, cases
 
 
 STAGES = ("discovery", "research", "strategy", "logo", "colors", "typography", "imagery-style", "motion-concept", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export")
@@ -103,6 +107,10 @@ def main() -> int:
     promote.add_argument("--replace-conflict", action="store_true")
     promote.add_argument("--replacement-approver", default="")
     args = parser.parse_args()
+    return execute(args)
+
+
+def execute(args, root_override=None):
 
     if args.command == "create":
         from importlib.util import spec_from_file_location, module_from_spec
@@ -118,7 +126,14 @@ def main() -> int:
                 raise SystemExit("business-to-brand handoff must be an existing local file")
         repo = Path(__file__).resolve().parents[4]
         project_slug = module.slugify(args.project) if args.project else ""
-        root = repo / "projects" / project_slug / "branding" if project_slug else args.base_dir / module.slugify(args.name)
+        root = root_override or (repo / "projects" / project_slug / "branding" if project_slug else args.base_dir / module.slugify(args.name))
+        if root_override is None and project_slug and args.entry_mode == 'standalone':
+            from scripts import subprojects
+            parent = repo / 'projects' / project_slug
+            if not (parent / cases.PROJECT).exists() and not (parent / 'market_research/manifest.json').exists():
+                subprojects.start(parent, 'branding', args.name)
+        if root_override is None and cases.locate_publication(root):
+            return run_staged(root, 'brand', lambda stage: execute(args, stage), entry_mode=args.entry_mode, handoff=handoff)
         module.create_workspace(root)
         handoff_ref = ""
         if handoff is not None:
@@ -130,18 +145,26 @@ def main() -> int:
             handoff_ref = snapshot.relative_to(root).as_posix()
         path = module.write_manifest(root, entry_mode=args.entry_mode, business_to_brand=handoff_ref, brand_id=project_slug)
         controller_ref = ""
-        if project_slug:
+        if project_slug and root_override is None:
             controller = repo / "projects" / project_slug / "project-manifest.json"
             if controller.exists():
                 pw_source = repo / "scripts" / "project_workspace.py"
                 pw_spec = spec_from_file_location("project_workspace", pw_source)
                 pw = module_from_spec(pw_spec); assert pw_spec and pw_spec.loader; pw_spec.loader.exec_module(pw)
                 pw.link_project(controller, track="brand", workspace=f"projects/{project_slug}/branding",
-                                active=False, standalone=args.standalone)
+                                active=False, standalone=args.entry_mode == 'standalone')
                 controller_ref = str(controller)
         print(json.dumps({"workspace": str(root), "manifest": str(path), "project_manifest": controller_ref}, indent=2)); return 0
 
-    root = args.project_dir.resolve()
+    root = root_override or args.project_dir.absolute()
+    if root_override is None and cases.locate_publication(root):
+        owner = cases.locate_publication(root)
+        cases.read_project(owner)
+        cases.safe(owner, str(root.relative_to(owner)))
+        state = load(manifest(root))
+        if args.command != 'resume':
+            return run_staged(root, 'brand', lambda stage: execute(args, stage), entry_mode=state.get('entry_mode', 'standalone'),
+                handoff=root / state['business_to_brand'] if state.get('business_to_brand') else None)
     path = manifest(root)
     data = load(path)
     revision = int(data.get("manifest_revision", 1))

@@ -15,6 +15,10 @@ import tempfile
 import time
 from pathlib import Path
 from typing import Any
+try:
+    from scripts import case_workspace as cases
+except ModuleNotFoundError:
+    import case_workspace as cases
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,6 +60,10 @@ def write_json_atomic(path: Path, value: dict[str, Any], *, expected_revision: i
     current: dict[str, Any] | None = None
     if path.exists():
         current = read_json(path)
+    if (path.parent / cases.PENDING).exists():
+        raise ValueError('pending publication: recover before changing project state')
+    if (current or {}).get('layout_version') in {2, 3}:
+        raise ValueError('Case project state must use the project publication helper')
     actual = int((current or {}).get("manifest_revision", 0))
     if expected_revision is not None and actual != expected_revision:
         raise RuntimeError(f"manifest revision conflict: expected {expected_revision}, found {actual}")
@@ -89,6 +97,13 @@ def create_project(slug: str, *, business_workspace: str = "", brand_workspace: 
     directory = PROJECTS_ROOT / slug
     manifest_path = directory / "project-manifest.json"
     if manifest_path.exists():
+        return manifest_path
+    if not business_workspace and not brand_workspace and not (directory / 'market_research/manifest.json').exists():
+        try:
+            from scripts.subprojects import initialize
+        except ModuleNotFoundError:
+            from subprojects import initialize
+        initialize(directory, slug.replace('-', ' ').title())
         return manifest_path
     timestamp = now_iso()
     manifest: dict[str, Any] = {
@@ -131,10 +146,32 @@ def _pain_gate_passed(manifest: dict[str, Any]) -> bool:
             and gate.get("gate_result") in ("pass", "conditional_pass"))
 
 
-def link_project(manifest_path: Path, *, track: str, workspace: str, active: bool = False, standalone: bool = False) -> int:
+def link_project(manifest_path: Path, *, track: str, workspace: str, active: bool = False, standalone: bool = True) -> int:
     if track not in {"business", "brand", "website"}:
         raise ValueError("track must be business, brand, or website")
     manifest = read_json(manifest_path)
+    if manifest.get('layout_version') in {2, 3}:
+        root = manifest_path.absolute().parent
+        with cases.project_lock(root):
+            manifest = cases.read_project(root)
+            if track in {'brand', 'website'} and not standalone:
+                from scripts.case_outputs import business_root
+                source = business_root(root)
+                cases.check_plan(source, cases.load(source / 'strategy/strategy-plan.json'))
+            destination = Path(workspace)
+            destination = destination.absolute() if destination.is_absolute() else (ROOT / destination).absolute()
+            if destination.is_relative_to(root):
+                cases.safe(root, str(destination.relative_to(root)))
+            elif not standalone:
+                raise ValueError('business-linked workspace must belong to this project')
+            manifest[f'{track}_workspace'] = _safe_path(workspace, allow_external=True)
+            manifest['links'] = [l for l in manifest.get('links', []) if l.get('track') != track]
+            manifest['links'].append({'track': track, 'workspace': manifest[f'{track}_workspace'], 'linked_at': now_iso()})
+            if active:
+                manifest['active_track'] = track
+            import uuid
+            return cases.publish_locked(root, {}, expected_revision=manifest['manifest_revision'],
+                decision_id='link-' + uuid.uuid4().hex, reason='Link ' + track + ' workspace', project=manifest)['manifest_revision']
     entry = _safe_path(workspace, allow_external=True)
     manifest[f"{track}_workspace"] = entry
     links = [link for link in manifest.get("links", []) if link.get("track") != track]
@@ -220,19 +257,27 @@ def main() -> int:
     link.add_argument("--workspace", required=True)
     link.add_argument("--active", action="store_true")
     link.add_argument("--standalone", action="store_true", help="Exempt a brand/website link from the pain-first gate check.")
+    link.add_argument('--entry-mode', choices=['standalone', 'business_linked'], default='standalone')
     discover = subparsers.add_parser("discover")
     discover.add_argument("--projects-root", type=Path, default=PROJECTS_ROOT)
     actions = subparsers.add_parser("next-actions")
     actions.add_argument("manifest", type=Path)
+    migration = subparsers.add_parser('migrate-cases', help='Explicit layout switch; rehearse on a copy first.')
+    migration.add_argument('workspace', type=Path)
+    migration.add_argument('--mapping', type=Path, required=True)
+    migration.add_argument('--decision-id', required=True)
+    migration.add_argument('--reason', required=True)
     args = parser.parse_args()
     if args.command == "create":
         result = create_project(args.slug, business_workspace=args.business_workspace, brand_workspace=args.brand_workspace)
         print(json.dumps({"manifest": str(result), "revision": read_json(result)["manifest_revision"]}, indent=2))
     elif args.command == "link":
-        revision = link_project(args.manifest.resolve(), track=args.track, workspace=args.workspace, active=args.active, standalone=args.standalone)
+        revision = link_project(args.manifest.absolute(), track=args.track, workspace=args.workspace, active=args.active, standalone=args.standalone or args.entry_mode == 'standalone')
         print(json.dumps({"manifest": str(args.manifest), "revision": revision}, indent=2))
     elif args.command == "discover":
         print(json.dumps(discover_projects(args.projects_root), indent=2))
+    elif args.command == 'migrate-cases':
+        print(cases.encoded(cases.migrate(args.workspace, read_json(args.mapping), args.decision_id, args.reason)))
     else:
         print(json.dumps(next_actions(args.manifest.resolve()), indent=2))
     return 0

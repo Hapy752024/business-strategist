@@ -62,26 +62,7 @@ Rank these risks:
 - Evidence coverage risk: key sources failed, lacked credits, lacked permissions, or were not run.
 - Sequencing risk: the plan amplifies before proof. Check against the sequencing rule and canonical failure modes in `references/evidence-registry.md`: paid or discount-driven acquisition before retained-value proof (Homejoy scaled Groupon cohorts with inconsistent delivery and negative contribution margin), loops before single-user value, waitlists or press treated as PMF (Robinhood's earlier products; Socialcam). When the test plan or roadmap skips manual learning → proof → one repeatable motion, name the skip as a ranked risk and make the skipped stage the next test.
 - Trust-pattern risk: the model or plan depends on tactics the registry classifies as dark patterns or compliance violations — incentivized/fake reviews, hidden fees, obstructed cancellation, pressure selling. For consumer services, also rank the absence of uncertainty reducers (scope, total price, credentials, human access, redress) relative to the service's risk level.
-- Competitive durability risk: the business cannot defend its position after initial traction. Moats are structural advantages that protect value against competitors. A business can validate demand, find customers, and still fail if the first well-funded competitor that copies it destroys margins.
-
-  For competitive durability, sub-rank these moat sources by relevance to the specific business:
-
-  - Switching costs (high for B2B enterprise, low for B2C unless significant learning curve or artifact migration)
-  - Network effects (each additional user makes the product more valuable for all users; note: fads are not network effects)
-  - Brand/status (only relevant for visible consumer products; aspirational brands are strongest)
-  - Share of mind / habit (relevant for frequently consumed, low-cost products)
-  - Trust / asymmetric downside (relevant when the cost of being wrong exceeds the cost of the product)
-  - Cost advantage (structural only, not passing through cheap inputs; weaker for visible consumer products)
-  - Efficient scale (market only supports one or two profitable players)
-  - Regulatory / contractual barriers
-  - Data / learning advantage (can be copied over time, so medium-low durability)
-  - Distribution / entrenchment (channel control)
-  - Physical asset (irreplaceable location or access)
-  - Product superiority (gets replicated over time unless structural bottleneck)
-
-  For each relevant moat source, assess: (a) does the business have this moat? (b) does it map to a top customer priority? (c) can a well-funded competitor replicate it, and if so, on what timeline? (d) would a rational competitor choose not to copy it (incentive barrier, e.g., copying would cannibalize their own cash cow)?
-
-  Judge durability relative to founder ambition, required margin, operating horizon and credible competitor response. A weak moat is a risk to examine, not a universal rejection of a small profitable service. Require a durability test only when it could change the next decision.
+- Competitive durability risk: apply the benefit/barrier/value-capture test in repo-root `references/strategic-positioning.md`, including incumbent and new-entrant responses, formation and erosion. Keep maturity separate from evidence and selection; no fixed moat taxonomy or additive score. Rank this risk relative to founder goals and the next decision, not automatically above unproven demand or delivery.
 
 ## Tests
 
@@ -93,10 +74,8 @@ Design tests that minimize investment:
 - Paid-search or community-post test for problem language.
 - Competitor review mining for unmet needs.
 - Preorder, waitlist, or paid pilot only when the segment and pain are specific enough.
-- Competitor moat audit: for the top 2-3 direct competitors, identify their moat sources and map them to customer decision priorities. If competitors have strong moats, the startup needs a wedge where those moats do not apply.
-- Switching-cost interview: interview 5 customers of a competitor and ask what it would take to switch. If the answer is "nothing, I'd switch for a 10% better price," switching costs are low.
-- Incumbent-response simulation: assume the top incumbent copies the startup's core feature within 12 months. What does the startup have that the incumbent cannot copy at reasonable cost? If the answer is "nothing," competitive durability risk is high.
-- Customer decision hierarchy interview: ask 5 target customers to rank what matters most when choosing a solution (price, function, reliability, convenience, trust, brand, etc.). If the startup's moat source does not appear in the top 3 priorities, the moat is decorative.
+- When durability changes the decision, investigate the claimed economic benefit and obstacle to imitation against actual alternatives. Distinguish observed switching cost from hypothetical willingness to switch. Test a competent incumbent and a new entrant, allowing for separate-unit responses and formation costs.
+- Investigate customer priorities through recent decisions and acceptable sacrifices; an invisible cost/process barrier need not appear in their stated preferences. A fixed interview count or score is not proof.
 
 Every test must specify:
 
@@ -142,7 +121,7 @@ Before finalizing, check:
 - The next 7 days are concrete and executable.
 - Competitive durability risk is assessed and ranked alongside the other risks.
 - Sequencing risk (amplification before proof) and trust-pattern risk (dark patterns, missing uncertainty reducers) are ranked when the plan touches channels, loops, or consumer-service offers.
-- If no moat source scores above "weak" on evidence and durability, this is explicitly called out.
+- Defensibility maturity and evidence are explicit; none identified is valid, and test priority follows the founder's objective.
 - The test plan challenges competitive durability when it is material to the next decision.
 - The decision gate factors in competitive durability, not just demand evidence.
 - When a claimed competitor gap matters, a coverage matrix was scaffolded and its cells rated from citable evidence; otherwise entry/customer-choice evidence was assessed directly.

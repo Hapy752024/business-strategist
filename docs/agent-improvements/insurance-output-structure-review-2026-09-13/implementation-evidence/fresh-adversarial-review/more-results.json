@@ -1,0 +1,28 @@
+{
+  "initial_returncode": 0,
+  "updated_returncode": 0,
+  "business_case": "# Current business case\n\nContribution is EUR 50 per completed sale; 80 completed sales are required per month.\n\nEconomics input digest: `6eb8d4b41b0d260377ed987ea25b3430a5e0fd393db38a3dbfdcac85b5ca9d57`\n\nCalculated contribution per unit: 100.0. Required monthly sales: 40. Capacity meets target: True. Unknowns remain unresolved; see economics.json.\n",
+  "calculated": {
+    "assumption_inputs": [
+      "revenue_per_unit",
+      "service_per_unit",
+      "partner_per_unit",
+      "refund_per_unit",
+      "acquisition_per_new_customer",
+      "fixed_per_month",
+      "owner_cash_per_month",
+      "capacity_per_month"
+    ],
+    "capacity_meets_target": true,
+    "cash": {
+      "reason": "horizon_months required",
+      "status": "unresolved"
+    },
+    "contribution_per_unit": 100.0,
+    "payback_month": null,
+    "required_sales": 40,
+    "status": "conditional",
+    "unresolved_inputs": []
+  },
+  "root_readme": "# Synthetic topic\n\nCurrent execution selection: none.\n\n| Case | Current findings | Feasibility | Business case |\n|---|---|---|---|\n| a  | [a](cases/a/README.md) | [Read](cases/a/feasibility.md) | [Read](cases/a/business-case.md) |\n| b  | [b](cases/b/README.md) | Not assessed | Not assessed |\n\n[Decision history](history/evolution.md)\n"
+}

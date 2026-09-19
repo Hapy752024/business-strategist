@@ -34,7 +34,7 @@ If missing context would materially change the plan, ask one focused question be
 
 If the user wants a fast draft, state assumptions clearly and create a testable plan.
 
-Use `market-problem-discovery` when the user wants to explore a market or discover which customer problems and segments to pursue. Use `idea-grill` when the user has chosen a candidate idea but needs to make it researchable. Use `evidence-scout` for demand validation. Use `competitor-scout` for alternatives and substitutes. Use `saas-fintech-pilot-designer` when the user needs detailed SaaS, fintech, or insurtech MVP, POC, paid pilot, sandbox trial, or regulated test design. Use `archetype-gtm-strategist` for stage-gated first-customer, launch, partnership, and regional GTM design. Use `company-operating-system` after the startup has enough clarity to set operating cadence. Use `marketing-strategy-builder` or `social-digital-marketing-planner` for detailed campaign and channel execution.
+Use `market-problem-discovery` when the user wants to explore a market or discover which customer problems and segments to pursue. Use `idea-grill` when the user has chosen a candidate idea but needs to make it researchable. Use `evidence-scout` for demand validation. Use `competitor-scout` for alternatives and substitutes. Use `saas-fintech-pilot-designer` when the user needs detailed SaaS, fintech, or insurtech MVP, POC, paid pilot, sandbox trial, or regulated test design. Use `archetype-gtm-strategist` for stage-gated first-customer, launch, partnership, and regional GTM design. Use `company-operating-system` to derive delivery choices from the selected promise or set requested management cadence. Use `marketing-strategy-builder` or `social-digital-marketing-planner` for detailed campaign and channel execution.
 
 Before substantial research or a full startup plan, make source availability explicit with:
 
@@ -81,33 +81,9 @@ Use this sequence unless the user requests a narrower slice:
 2. Urgency and workaround.
 3. Buyer and willingness to pay.
 4. Existing alternatives and substitutes.
-5. Competitive durability and moat.
+5. Specific promise, delivery fit and competitive durability.
 
-   Before building an MVP, assess whether the business can defend its position after winning early customers. A startup that validates demand but has no moat is a feature waiting to be copied by incumbents.
-
-   For each relevant moat source, assess:
-   - Switching costs: how hard is it for a customer to leave for a competitor?
-   - Network effects: does each additional user make the product more valuable for all users?
-   - Brand/status: does the product signal something about the customer? (Only relevant for visible B2C products.)
-   - Share of mind / habit: will customers default to this product out of habit?
-   - Trust: is the cost of being wrong high enough that customers stick with the known provider?
-   - Cost advantage: can the business structurally produce at lower cost than competitors?
-   - Efficient scale: is the market too small for another profitable entrant?
-   - Regulatory / contractual barriers: are there licenses, permits, or long-dated contracts?
-   - Data / learning advantage: does proprietary data improve with scale?
-   - Distribution / entrenchment: does the business control a channel that competitors cannot access?
-   - Physical asset: does the business own an irreplaceable location or asset?
-   - Product superiority: is the product technically superior in a way that creates a structural bottleneck?
-
-   Calibrate each moat source by business model type. Switching costs are narrow for B2C but very strong for B2B enterprise. Network effects are very strong for B2C and B2B marketplaces. Brand matters only for visible consumer products. Cost advantage is weaker for visible products where social signaling dominates.
-
-   For each moat source that the business claims, apply the Capability vs. Incentive test:
-   - Capability: What physically or contractually stops a well-funded competitor from copying this?
-   - Incentive: Even if they could copy it, why would a rational competitor choose not to? (e.g., copying would cannibalize their own cash cow at a worse margin.)
-
-   If neither track has a substantive answer, the moat claim is weak. If the business has no moat source that scores above "weak" on both evidence and durability, treat competitive durability as the riskiest assumption and prioritize moat-building actions before scaling.
-
-   Map moat sources to the customer's actual decision hierarchy. A moat that does not appear in the customer's top 3 purchase priorities is decorative — it exists on paper but does not actually protect the business. For B2C, use the Consumer Hierarchy of Preferences (price, quality, convenience, status, habit, trust, variety, experience). For B2B, use the elimination sequence (Function → Reliability → Convenience → Price). For SMEs, prioritize trust/relationships and price.
+   Reuse repo-root `references/strategic-positioning.md`: connect reviewed need to a testable promise, feasible activities and separately assessed benefit/barrier/value capture. Preserve inherited evidence status. Assess an incumbent and a new entrant, formation costs and erosion. No moat is an exposure to judge against founder goals, not automatic MVP rejection. Do not impose business-type stereotypes or require invisible barriers to rank among customers' stated priorities. Reuse the selected decision rather than creating a second moat checklist.
 6. Wedge market and beachhead.
 7. MVP or concierge test.
 8. First 10 customers.
@@ -192,7 +168,7 @@ Do not recommend scaling until enough of these are true:
 - Acquisition has at least one repeatable path.
 - Cost to serve is plausible.
 - Founder team can keep operating without self-destruction.
-- At least one structural moat source is identified that (a) maps to a top-3 customer priority and (b) passes the Capability vs. Incentive test on at least one track. If the business depends entirely on temporary advantages (speed, novelty, under-pricing), scaling is premature.
+- Competitive response, durability limits and formation costs are acceptable for the intended scale and investment horizon; a temporary advantage is not labelled a proven moat.
 
 ## Failure Checks
 
@@ -210,7 +186,7 @@ Call out these anti-patterns:
 - Founder conflict or unclear decision rights.
 - Trend-chasing without durable user behavior.
 - Overbuilding the easy part while ignoring the hard "monkey".
-- No structural moat. The business depends on being first, being cheaper, or having a better product — all of which competitors can copy. Without at least one structural moat source (switching costs, network effects, trust, efficient scale, regulatory barrier, distribution lock-in, or counter-positioning), the business will face margin compression as competitors enter.
+- Unsupported defensibility: recurring revenue, product quality or growth is presented as protection without benefit/barrier evidence. Report the exposure relative to founder goals and the next decision.
 
 ## Good And Bad Examples
 
@@ -266,10 +242,8 @@ Before finalizing, check:
 - Failure checks are explicit.
 - The 7-day plan can actually be executed.
 - Competitive durability is assessed before recommending scaling.
-- At least one moat source is identified and calibrated by business model type (B2C/B2B).
-- The Capability vs. Incentive test is applied to the primary moat claim.
-- Moat sources are mapped to the customer's actual decision priorities.
-- If no structural moat exists, this is explicitly called out before scaling.
+- Claimed economic benefits and imitation barriers are separately supported or labelled hypotheses; value capture and incumbent/new-entrant responses are assessed.
+- No identified moat remains an explicit exposure, not an automatic rejection or invented claim.
 
 ## Suggested First Question
 

@@ -4,7 +4,7 @@
     {"id": "market-discovery", "match": ["market discovery", "find customer problems", "underserved segment"], "skill": "market-problem-discovery", "forbidden": ["idea-grill", "brand-website-designer-builder"]},
     {"id": "idea-validation", "match": ["validate my idea", "pressure test", "pressure-test", "this idea", "specific customer problem"], "skill": "idea-grill", "forbidden": ["market-problem-discovery"]},
     {"id": "standalone-brand", "match": ["logo", "brand identity", "brand guidelines", "branding", "segment-informed brand"], "skill": "brand-designer", "forbidden": ["market-problem-discovery", "idea-grill"], "requires_pain_gate": true},
-    {"id": "website-build", "match": ["landing page", "branded website", "marketing website", "company website", "visually stunning website", "unique website", "Vercel"], "skill": "brand-website-designer-builder", "requires_pain_gate": true, "forbidden": ["brand-frontend-app-designer", "competitor-marketing-analyzer"]},
+    {"id": "website-build", "match": ["landing page", "branded website", "marketing website", "company website", "visually stunning website", "unique website", "Vercel", "Next.js website", "Next.js site", "create website", "make a website", "maintain website", "website maintenance", "website SEO", "technical SEO", "website performance", "website audit", "LLM-EO", "GEO audit", "website tracking", "campaign tracking", "integrate GA4", "integrate Meta Pixel", "install Google Tag Manager", "PostHog analytics"], "skill": "brand-website-designer-builder", "requires_pain_gate": true, "forbidden": ["brand-frontend-app-designer", "competitor-marketing-analyzer"]},
     {"id": "website-experiment", "match": ["A/B test", "ab test", "experiment conversion"], "skill": "brand-website-designer-builder", "mode": "experiment", "requires_pain_gate": true, "forbidden": ["brand-frontend-app-designer"]},
     {"id": "app-ui", "match": ["dashboard UI", "product interface", "app screens"], "skill": "brand-frontend-app-designer", "forbidden": ["brand-website-designer-builder"], "requires_pain_gate": true},
     {"id": "competitor-discovery", "match": ["find competitors", "discover competitors", "competitor list", "competitor candidates"], "skill": "competitor-scout", "forbidden": ["competitive-landscape-builder", "competitor-marketing-analyzer"]},
@@ -17,7 +17,7 @@
     {"id": "company-operations", "match": ["operating cadence", "company operating system", "weekly leadership meeting", "company KPIs", "operating model", "delivery model"], "skill": "company-operating-system", "requires_pain_gate": true, "forbidden": ["archetype-gtm-strategist"]},
     {"id": "opportunity-prioritization", "match": ["prioritize ideas", "rank opportunities", "what should I validate next", "decision gates"], "skill": "opportunity-risk-designer", "forbidden": ["strategy-draft-tournament"]},
     {"id": "brand-research", "match": ["brand references", "design benchmark", "visual codes"], "skill": "brand-guideline-researcher", "forbidden": ["market-problem-discovery", "evidence-scout"]},
-    {"id": "brand-asset", "match": ["FAL", "brand hero image", "generate brand asset"], "skill": "brand-asset-producer", "forbidden": ["brand-website-designer-builder"], "requires_pain_gate": true},
+    {"id": "brand-asset", "match": ["FAL", "brand hero image", "generate brand asset", "favicon set", "create favicon"], "skill": "brand-asset-producer", "forbidden": ["brand-website-designer-builder"], "requires_pain_gate": true},
     {"id": "business-positioning", "match": ["business positioning", "strategic positioning", "compare strategic positions", "reposition the business"], "skill": "archetype-gtm-strategist", "mode": "positioning", "artifacts": ["positioning decision and requested implications"], "requires_pain_gate": true, "forbidden": ["brand-designer"]},
     {"id": "brand-discovery-interviewer", "match": [], "skill": "brand-discovery-interviewer", "forbidden": []},
     {"id": "brand-exporter", "match": [], "skill": "brand-exporter", "forbidden": [], "requires_pain_gate": true},
@@ -30,7 +30,7 @@
     {"id": "brand-ui-kit-producer", "match": [], "skill": "brand-ui-kit-producer", "forbidden": [], "requires_pain_gate": true},
     {"id": "brand-workspace-manager", "match": [], "skill": "brand-workspace-manager", "forbidden": []},
     {"id": "business-archetype-playbook-researcher", "match": ["founder playbooks", "operator playbooks"], "skill": "business-archetype-playbook-researcher", "forbidden": []},
-    {"id": "evidence-scout", "match": ["collect customer evidence", "validate customer pain"], "skill": "evidence-scout", "forbidden": []},
+    {"id": "evidence-scout", "match": ["collect customer evidence", "validate customer pain", "voice of customer", "customer feedback about competitors", "competitor customer reviews", "customer needs from reviews", "solution requirements from reviews"], "skill": "evidence-scout", "forbidden": []},
     {"id": "growth-case-analyzer", "match": ["company growth case", "analyze a company failure"], "skill": "growth-case-analyzer", "forbidden": []},
     {"id": "interview-bridge", "match": ["customer interview guide", "interview screener"], "skill": "interview-bridge", "forbidden": []},
     {"id": "saas-fintech-pilot-designer", "match": ["design a paid pilot", "fintech pilot"], "skill": "saas-fintech-pilot-designer", "forbidden": [], "requires_pain_gate": true},
@@ -40,7 +40,8 @@
     {"id": "startup-business-builder", "match": ["zero-to-one startup plan"], "skill": "startup-business-builder", "forbidden": [], "requires_pain_gate": true},
     {"id": "startup-challenge-panel", "match": ["startup challenge panel"], "skill": "startup-challenge-panel", "forbidden": []},
     {"id": "strategy-draft-tournament", "match": ["compare strategy drafts"], "skill": "strategy-draft-tournament", "forbidden": [], "requires_pain_gate": true},
-    {"id": "town-db-curator", "match": ["refresh town data", "italy-town-db", "town database"], "skill": "town-db-curator", "forbidden": []}
+    {"id": "town-db-curator", "match": ["refresh town data", "italy-town-db", "town database"], "skill": "town-db-curator", "forbidden": []},
+    {"id": "case-appraisal", "match": ["assess case feasibility", "case feasibility and economics", "compare case business cases"], "skill": "opportunity-risk-designer", "mode": "appraisal", "forbidden": []}
   ],
   "ambiguity_policy": "ask one question only when the top two routes would materially change work; otherwise choose the most specific explicit intent"
 }

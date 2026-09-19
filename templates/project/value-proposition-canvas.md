@@ -25,6 +25,8 @@ The customer profile is observed; the value map is designed. Do not present desi
 
 ## Fit judgment
 
+- Specific promise (segment/situation, outcome versus alternative, mechanism, boundaries, sacrifices):
+- Evidence of customer choice versus inference from unmet need:
 - Strongest supported fit:
 - Largest unsupported assumption:
 - Next test:

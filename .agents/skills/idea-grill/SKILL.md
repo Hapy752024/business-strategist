@@ -25,3 +25,5 @@ Use this skill to turn a founder-chosen candidate into a researchable customer/p
 ## Output
 
 Produce a core hypothesis, assumptions, counter-hypotheses, customer-language search terms, riskiest assumption, and next evidence command.
+
+For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).

@@ -15,7 +15,7 @@ If it is genuinely unclear whether the user wants exploration or validation, ask
 
 Be direct, truthful, and useful. Do not encourage vague ideas. Push back when the customer, pain, buyer, willingness to pay, or acquisition path is unclear.
 
-Ask one question at a time until the chosen candidate is specific enough to research. Track which minimum inputs remain unanswered and close every response with exactly the first unresolved one — never stack multiple questions in one message. Push for concrete nouns, real segments, and observable behavior. Do not run validation evidence collection until the minimum inputs are captured.
+Ask one question at a time until the chosen candidate is specific enough to research. Track which decision-changing inputs remain unanswered; ask one early and wait for its answer before deciding the dependent branch — never stack multiple questions in one message. Push for concrete nouns, real segments, and observable behavior. Do not run validation collection until segment, painful job, geography and a testable hypothesis are researchable. Other inputs may remain explicitly labelled assumptions or unknowns; independent desk discovery can help resolve them.
 
 ## Ambiguity and Unknowns
 
@@ -35,6 +35,8 @@ For a request that compares candidates or asks which opportunity to pursue, also
 ## Procedure
 
 Begin with the customer/need hypothesis in repo-root `references/strategic-positioning.md`, even when the input is an app, feature or technology. State the segment, triggering situation, desired outcome, current alternative and consequence before proposing a product test. If the customer/need is genuinely unknown, offer focused discovery rather than forcing the founder to invent pain. Reuse previous answers; this does not apply to fixed-scope execution for an already selected business.
+
+Keep need, proposed promise, delivery feasibility and defensibility as separate assumptions. An observed workaround can justify researching latent need without proving urgency, switching or payment. Do not ask a founder to invent a moat; its absence is not an automatic rejection. Store provisional analysis in current research/case artifacts, not an execution plan before its gates pass.
 
 1. Ask one focused question at a time until the minimum inputs are known.
 2. Convert broad customer segments into a specific early-adopter segment.
@@ -105,7 +107,7 @@ Produce:
 Recommended command shape:
 
 ```bash
-python3 scripts/evidence_scout/collect.py --topic "<problem/category>" --customer-segment "<specific segment>" --problem-keywords "<pain phrase 1>,<pain phrase 2>" --workaround-keywords "<workaround 1>,<workaround 2>" --hypothesis-id H1 --days 30 --limit 20 --providers default
+python3 scripts/evidence_scout/collect.py --topic "<problem/category>" --customer-segment "<specific segment>" --segment-keywords "<short source-language audience term>" --problem-keywords "<pain phrase 1>,<pain phrase 2>" --workaround-keywords "<workaround 1>,<workaround 2>" --hypothesis-id H1 --days 30 --limit 20 --providers default
 ```
 
 Use `--providers default,social` only when TikTok, Instagram, Threads, or X evidence is likely to matter enough to spend paid credits.

@@ -44,18 +44,24 @@ def check_dispatch(event: dict) -> dict:
     project = route.get('project', '')
     if not isinstance(project, str):
         raise ValueError('Project must be a slug')
+    case_id = route.get('case', '')
+    if not isinstance(case_id, str):
+        raise ValueError('Case must be a registered identifier')
     standalone = route.get('standalone', False)
-    if type(standalone) is not bool or bool(project) == standalone:
-        raise ValueError('Declare exactly one project slug or standalone=true')
+    if type(standalone) is not bool or not (project or standalone):
+        raise ValueError('Declare a project slug or standalone=true')
     # Context may strengthen the caller's declaration, never silently weaken it.
     cwd = Path(event.get('cwd', str(ROOT))).resolve()
     try:
         parts = cwd.relative_to(ROOT / 'projects').parts
     except ValueError:
         parts = ()
-    if parts and (ROOT / 'projects' / parts[0] / 'market_research/manifest.json').is_file():
-        if standalone or project != parts[0]:
+    if parts and ((ROOT / 'projects' / parts[0] / 'market_research/manifest.json').is_file() or (ROOT / 'projects' / parts[0] / 'project-manifest.json').is_file()):
+        if project and project != parts[0]:
             raise ValueError('Route project conflicts with the current business workspace')
+        if standalone and not name.startswith('brand-'):
+            raise ValueError('Standalone bypass within a business workspace is limited to independent design work')
+        project = parts[0]
     if type(route.get('override_gate', False)) is not bool:
         raise ValueError('override_gate must be boolean')
     task = envelope.get('input', route['request'])
@@ -67,7 +73,7 @@ def check_dispatch(event: dict) -> dict:
             raise ValueError('Audited override requires a session ID')
         override_id = hashlib.sha256((event['session_id'] + ':' + str(event.get('tool_use_id', args))).encode()).hexdigest()
     packet = route_request(route['request'], intent=route['intent'], task_scope=route['task_scope'],
-                           project=project, override_gate=route.get('override_gate', False), check_skill=name, override_id=override_id)
+                           project=project, case_id=case_id, entry_mode=route.get('entry_mode', 'standalone'), subproject=route.get('subproject', ''), override_gate=route.get('override_gate', False), override_stages=route.get('override_stages', []), check_skill=name, override_id=override_id)
     if packet.get('gate_blocked'):
         raise ValueError(packet['reason'])
     context = 'Route checked against current policy: ' + json.dumps(packet, sort_keys=True)

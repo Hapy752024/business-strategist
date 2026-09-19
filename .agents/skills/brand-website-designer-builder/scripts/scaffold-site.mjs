@@ -2,9 +2,18 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const root = resolve(process.argv[2] || "website");
 const run = process.argv.includes("--run");
+if (run && process.env.CONFIRM_INSTALL !== "1") throw new Error("set CONFIRM_INSTALL=1 to install the selected stack");
+if (existsSync(root) && process.argv.includes('--refuse-nonempty') && readdirSync(root).length) throw new Error(`refusing non-empty target: ${root}`);
+if (run && existsSync(join(root, 'source')) && readdirSync(join(root, 'source')).length) throw new Error(`refusing non-empty source target: ${join(root, 'source')}`);
+const bridge = fileURLToPath(new URL('../../../../scripts/case_output_command.py', import.meta.url));
+if (execFileSync('python3', [bridge, '--inspect', '--destination', root], {encoding: 'utf8'}).trim() === 'managed') {
+  execFileSync('python3', [bridge, '--destination', root, '--', process.execPath, fileURLToPath(import.meta.url), root, ...process.argv.slice(3)], {stdio: 'inherit'});
+  process.exit(0);
+}
 if (existsSync(root) && process.argv.includes("--refuse-nonempty") && readdirSync(root).length) {
   throw new Error(`refusing non-empty target: ${root}`);
 }

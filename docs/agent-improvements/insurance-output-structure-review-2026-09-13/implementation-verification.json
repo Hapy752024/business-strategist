@@ -1,0 +1,65 @@
+{
+  "date": "2026-09-13",
+  "status": "ready_for_reviewed_implementation_scope",
+  "architecture": {
+    "new_project_layout": 3,
+    "business_controller_layout": 2,
+    "paths": [
+      "business-analysis/",
+      "branding/",
+      "digital-assets/website/",
+      "digital-assets/others/"
+    ],
+    "independent_start": true,
+    "live_migration_performed": false
+  },
+  "tests": {
+    "full_python_passed": 401,
+    "structural_evals_passed": 143,
+    "setup_errors": 0,
+    "setup_warnings": 1,
+    "final_targeted_passed": 5,
+    "final_targeted_deselected": 56,
+    "full_suite_predates_final_nested_resume_change": true,
+    "setup_log": "implementation-evidence/gap-closure/setup-check.txt"
+  },
+  "fresh_adversarial_review": {
+    "verdict": "READY for reviewed F1-F8 scope",
+    "closed_findings": 8,
+    "targeted_passed": 71,
+    "node_cases_deselected": 7,
+    "report": "implementation-evidence/gap-closure/independent-review.md",
+    "final_nested_resume_change_separately_reviewed": false
+  },
+  "semantic": {
+    "later_correction_disclosed_in_advance": false,
+    "execution_selection": null,
+    "author_prose_modified_by_harness": false,
+    "initial_comparison_field_names_normalized": true,
+    "verification": "implementation-evidence/gap-closure/semantic-replay/verification.json"
+  },
+  "live_insurance": {
+    "file_count": 378,
+    "baseline_count": 376,
+    "unchanged": false,
+    "added": [
+      "market_research/customer_segments/cyber-insurance-access-barriers.md",
+      "market_research/deep_dives/2026-09-13-cyber-refusal-brokers-commissions-audit.md"
+    ],
+    "missing": [],
+    "changed": [
+      "README.md",
+      "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md"
+    ]
+  },
+  "limitations": [
+    "Supported CLI boundary, not arbitrary filesystem containment",
+    "Bounded numerical prose checks and synthetic semantic exercise, not universal model quality or market validation",
+    "Concurrent live research changes preserved; provenance not established"
+  ],
+  "naming_amendment": {
+    "verification": "../existing-project-migration/rename-verification.json",
+    "migration_plan": "../existing-project-migration-plan.md",
+    "independently_reviewed": false
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "artifacts": [],
+  "assessment_revision": 3,
+  "case_id": "a",
+  "comparison": {
+    "assessment_revision": 3,
+    "next_action": "Investigate actual buyers, recent problems, workarounds and evidence of acceptance of the corrected receipt terms without launching. Verify acquisition, delivery and capacity assumptions, and obtain supported cash timing and downside inputs before judging resilience. A specific experienced problem supports further investigation; complaints or stated intent alone do not establish purchase demand. The conditional capacity fit permits further consideration but does not authorize execution. If purchase behavior or operational terms cannot be substantiated, pause commitment.",
+    "principal_uncertainty": "Whether an identifiable buyer will complete a purchase on the corrected receipt terms at a sustainable acquisition and delivery cost. Complaints do not answer that question. The numerical capacity hurdle is now cleared conditionally, while actual demand, delivery capacity and cash timing remain unverified.",
+    "summary": "The corrected receipt assumption makes required sales fit within the supplied capacity while covering fixed expenses and additional owner cash. This is conditional arithmetic, not proof of purchase demand, verified operational capacity or cash sufficiency. Doing nothing remains an alternative to committing resources to an unvalidated offer. Further investigation is justified, but no other case or supported downside range was supplied, so there is no comparative winner or execution selection."
+  },
+  "created_at": "2026-09-13T18:31:18Z",
+  "current_stage": "intake",
+  "document_bindings": {
+    "README.md": {
+      "authored_digest": "0da43a8949f58971d4ab547ae95868343f337013c4240324f99b08d7f7bf7734",
+      "economics_input_digest": "d3fa444418cac1c8c45721e92b2ce1c5903c2435e8c9c0fd184b0c3817292040",
+      "model_input_digest": "d3fa444418cac1c8c45721e92b2ce1c5903c2435e8c9c0fd184b0c3817292040"
+    },
+    "business-case.md": {
+      "authored_digest": "fb58f6896dc34898b0411924a36902829a0f7d68d467efc3dbde5184916d0ced",
+      "economics_input_digest": "d3fa444418cac1c8c45721e92b2ce1c5903c2435e8c9c0fd184b0c3817292040",
+      "model_input_digest": "d3fa444418cac1c8c45721e92b2ce1c5903c2435e8c9c0fd184b0c3817292040"
+    },
+    "feasibility.md": {
+      "authored_digest": "a89f5b8db61f3fb2f6b4da53685ed736bbeda7a1b8d0b981e540a858bcffa0e8",
+      "economics_input_digest": "d3fa444418cac1c8c45721e92b2ce1c5903c2435e8c9c0fd184b0c3817292040",
+      "model_input_digest": "d3fa444418cac1c8c45721e92b2ce1c5903c2435e8c9c0fd184b0c3817292040"
+    }
+  },
+  "events": [
+    {
+      "decision_id": "semantic-initial",
+      "event": "appraisal",
+      "ts": "2026-09-13T18:31:18Z"
+    },
+    {
+      "decision_id": "semantic-updated",
+      "event": "appraisal",
+      "ts": "2026-09-13T18:31:18Z"
+    }
+  ],
+  "manifest_revision": 3,
+  "next_action": "Research segment, journey and pain.",
+  "open_blockers": [
+    "review_required: Synthetic author updated"
+  ],
+  "schema_version": "1.0",
+  "source_bindings": [
+    {
+      "applicability": "a",
+      "digest": "9a7533957b0043623c7d8a0eff9b4d603a476e0e2fe0aa94ffe59bb6ba5e45d7",
+      "locator": "first line",
+      "path": "cases/a/market_research/pain_points/evidence.md"
+    }
+  ],
+  "stages": {},
+  "topic": "a",
+  "topic_slug": "a",
+  "updated_at": "2026-09-13T18:31:18Z"
+}

@@ -683,6 +683,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--analog-market", action="append", default=[], help="Additional market/segment scope for Lane B analog discovery. Repeatable.")
     parser.add_argument("--reference-capability", action="append", default=[], help="Narrow Lane C capability to study, such as website or YouTube. Repeatable.")
     parser.add_argument("--fixture-results-json", default="", help="Offline replay fixture keyed by lane; bypasses provider calls for deterministic tests.")
+    parser.add_argument("--case", default="", help="Registered case ID within --workspace.")
     parser.add_argument("--out-dir", default="")
     parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
     parser.add_argument("--legacy-output", action="store_true", help="Removed: the projects/research/evidence-scout layout is gone (now projects/_archive, read-only). Use --out-dir for an explicit path.")
@@ -694,6 +695,7 @@ def main() -> int:
     run_dir, workspace = resolve_run_dir(
         topic=args.topic,
         workspace_arg=args.workspace,
+        case_id=getattr(args, "case", ""),
         out_dir=args.out_dir,
         legacy_output=args.legacy_output,
         workspace_subdir="market_research/solution_alternatives/runs",
@@ -701,7 +703,7 @@ def main() -> int:
         customer_segment=args.customer_segment,
     )
     if workspace:
-        update_stage(workspace, "competitor_discovery", status="in_progress", gate_result="not_run", next_action="Classify discovered alternatives and false positives.")
+        update_stage(workspace, "competitor_discovery", run_dir=run_dir, status="in_progress", gate_result="not_run", next_action="Classify discovered alternatives and false positives.")
     write_competitor_plan(run_dir, args)
     query_sets = query_plan(args.topic, args.customer_segment, args.known_competitors, args.analog_market, args.reference_capability)
     raw: dict[str, Any] = {"query_sets": query_sets}
@@ -791,7 +793,7 @@ def main() -> int:
         gate_result = "fail" if not candidates else ("conditional_pass" if failures else "pass")
         update_stage(
             workspace,
-            "competitor_discovery",
+            "competitor_discovery", run_dir=run_dir,
             status="failed" if gate_result == "fail" else "passed",
             gate_result=gate_result,
             artifacts=[run_dir / "competitors.json", run_dir / "summary.json", run_dir / "report.md", run_dir / "competitor_plan.md"],

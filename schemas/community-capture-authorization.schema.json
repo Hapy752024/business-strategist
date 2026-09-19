@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["artifact_type", "schema_version", "policy_version", "purpose", "platform_authorization_claim", "spend_authorization", "state_id", "generation_id", "generation_version", "review_run_id", "candidates_artifact_digest", "decisions_packet_digest", "targets", "verified_artifact_digest", "review_log_digest", "generated_at", "status", "signature_algorithm", "key_id", "signature"],
+  "properties": {
+    "artifact_type": {"const": "community_capture_authorization"}, "schema_version": {"const": 4},
+    "policy_version": {"const": "private-exploratory-research-v3"}, "purpose": {"const": "internal_voice_of_customer_research"}, "platform_authorization_claim": {"const": "none_internal_gate_only"},
+    "spend_authorization": {"const": "standing_authorized_no_cap"}, "state_id": {"type": "string", "pattern": "^(unit-test-state|[0-9a-f]{64})$"}, "generation_id": {"type": "string", "format": "uuid"}, "generation_version": {"type": "integer", "minimum": 0}, "review_run_id": {"type": "string", "format": "uuid"},
+    "candidates_artifact_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "decisions_packet_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "verified_artifact_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "review_log_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generated_at": {"type": "string", "format": "date-time"}, "status": {"enum": ["valid", "no_public_api_targets", "revoked_invalid_packet", "revoked_missing_signing_key"]},
+    "signature_algorithm": {"const": "ed25519"}, "key_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "signature": {"type": "string", "minLength": 80},
+    "targets": {"type": "array", "items": {"type": "object", "required": ["url", "candidate_digest", "platform", "entity_type", "endpoint_family", "access_class", "access_method", "no_credential_or_technical_bypass", "reviewed_at", "reviewer", "valid_until"], "properties": {
+      "url": {"type": "string", "format": "uri"}, "candidate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "platform": {"const": "facebook"},
+      "entity_type": {"enum": ["facebook_group", "facebook_page"]}, "endpoint_family": {"enum": ["facebook_group_posts", "facebook_page_posts"]},
+      "access_class": {"const": "public"}, "access_method": {"enum": ["public_web", "paid_public_api"]}, "no_credential_or_technical_bypass": {"const": true},
+      "reviewed_at": {"type": "string", "format": "date-time"}, "reviewer": {"type": "string", "minLength": 1}, "valid_until": {"type": "string", "format": "date-time"}
+    }, "additionalProperties": false}}
+  }, "additionalProperties": false
+}

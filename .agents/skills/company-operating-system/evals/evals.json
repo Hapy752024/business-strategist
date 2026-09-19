@@ -24,6 +24,30 @@
       "prompt": "Our selected position is predictable low-cost fixed-scope paperwork support. Customers accept 3-day delivery and self-service intake. Bespoke advice is excluded. Derive only the operating model and second-order consequences.",
       "expected_output": "Recognize coherent sacrifices; derive necessary activities, exception boundaries, capacity/costs and reinforcing choices before routines. Explain reversal costs and customer-outcome/delivery/economic guardrails.",
       "files": []
+    },
+    {
+      "id": "need-model-clean-sheet-unaffordable",
+      "prompt": "Synthetic packet: The selected promise is next-day parts delivery. A dedicated warehouse would cut picking time, but costs 150,000 upfront; available cash is 15,000. A partner offers a manual pilot. Derive only an operating model.",
+      "expected_output": "Compare available assets, target and affordable transition; evaluate partner economics/capacity and service test. Do not equate faster picking with optimal economics or prescribe an unfunded warehouse. No automatic meeting cadence.",
+      "files": []
+    },
+    {
+      "id": "need-model-coherent-overserved",
+      "prompt": "Synthetic packet: Small venues accept a weekly fixed menu, no customization and self-service ordering for a lower price. Their current full-service caterer meets quality requirements but costs more for features they do not use. Derive delivery choices.",
+      "expected_output": "Recognize overservice as a possible simplification opportunity, trace standardization and batch purchasing to costs, capacity and exclusions; verify choice/economics. Do not require novelty or a proven moat.",
+      "files": []
+    },
+    {
+      "id": "need-model-cadence-only-no-expansion",
+      "prompt": "Our customer promise and delivery configuration are fixed. Give only a weekly review routine for late orders. Do not revisit strategy or add a moat analysis.",
+      "expected_output": "Provide owner, inputs, customer-outcome metric and decision/threshold with explicit assumptions. Stay in cadence mode and do not load strategic-positioning or introduce new strategy artifacts.",
+      "files": []
+    },
+    {
+      "id": "need-model-conflicting-promises",
+      "prompt": "Synthetic packet: One founder has eight service hours per day and each bespoke job takes four hours. The proposed promise is ten bespoke jobs daily at the lowest price with instant delivery. Design feasible delivery.",
+      "expected_output": "Expose the capacity conflict with concrete arithmetic, propose scope/price/delivery changes or a bounded feasibility test, and return the promise to positioning. Do not assume an unsupported automation gain or say every ambitious combination is impossible.",
+      "files": []
     }
   ]
 }

@@ -22,11 +22,142 @@ If ambiguity materially changes provider choice, query wording, geography, langu
 5. Run the collector with scoped topic, segment, problem keywords, workaround keywords, hypothesis ID, date range, limit, and providers.
 6. Inspect `research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, raw provider outputs, and provider alerts.
 7. Exclude irrelevant records and verify the strongest records materially match topic, geography, pain, and segment.
-   Automated relevance and user-pain labels are provisional. Read every record supporting a consequential claim; check the actual buyer/job, geography, source role and context rather than keyword overlap. Record accepted/rejected/unresolved judgments with evidence ID or URL and reason; retain raw runs. For claim-ledger validation use `validate_synthesis.py --require-source-review` with reviewed evidence records carrying `analyst_review.status=accepted` and a nonempty `analyst_review.reason`. Report only audited counts as customer evidence; never compare unaudited collection totals. If false positives remain, withdraw affected claims and reopen synthesis. Failed or badly targeted searches do not establish weak demand or exhaustion of desk research.
+   Automated relevance and user-pain labels are provisional. Read every record supporting a consequential claim; check the actual buyer/job, geography, source role and context rather than keyword overlap. Apply repo-root `references/voc-research-method.md` for located experiences, shared digest-bound source review, qualitative coding and scoped version-2 U/R synthesis. For claim-ledger validation use `validate_synthesis.py --source-review <source-review.json> --customer-segment '<segment>'`; this uses the same decisions as U/R and interview consumers. Report only audited counts as customer evidence; never compare unaudited collection totals. If false positives remain, withdraw affected claims and reopen synthesis. Failed or badly targeted searches do not establish weak demand or exhaustion of desk research.
 8. Separate evidence, interpretation, counter-evidence, missing evidence, source intent, and comment intent.
 9. Report the truth about evidence strength, provider gaps, unresolved risks, and next low-cost tests.
 
+## Forum and Facebook community discovery
+
+Do not equate adding `forum` to a generic query with finding the target audience. When community discussion is likely but known communities are missing, run a separate discovery pass before targeted collection:
+
+```bash
+python3 scripts/evidence_scout/discover_communities.py \
+  --topic "<problem/job in source language>" \
+  --customer-segment "<specific segment>" \
+  --community-keywords "<audience phrase>,<problem phrase>" \
+  --locale <country-code>:<language-code> \
+  --workspace projects/<slug>/business-analysis --case <case-id>
+```
+
+Use `--geo <country-code> --language <language-code>` for one locale. For a
+multi-market study, repeat explicit pairs such as `--locale CH:de --locale
+CA:fr`; never pass comma-separated country or language lists. Locale values and
+topic lexicons come from the investigated case. The reusable classifier must
+not contain case-specific country, industry, supplier, or pain vocabulary.
+When markets need different vocabulary, add repeatable mappings such as
+`--locale-keywords 'CH:de=phrase one|phrase two' --locale-keywords
+'CA:fr=expression une|expression deux'`; do not mix every language into every
+market query.
+
+The discovery pass must:
+
+1. Generate separate source-language queries for forums and Facebook communities.
+2. Search multiple web indexes and preserve each original result locator, rank,
+   query ID, locale, retrieval time/status, response ID where available,
+   content digest, and collector version. The canonical community URL is only a
+   deduplication key; distinct post locators must remain distinct provenance.
+   Reject unassigned country codes. Bind each provider request to the declared
+   country/language when that provider supports locale parameters; otherwise
+   mark that provider-locale lane unsupported rather than counting a generic
+   search as localized coverage.
+3. Record planned, executed, skipped and failed query lanes. Run separate forum
+   and Facebook queries for every locale-specific seed and record per-seed
+   result counts; do not hide a low-recall phrase inside one top-N OR query.
+4. Canonicalize and deduplicate candidate URLs.
+5. Reject supplier, directory and editorial pages that merely contain community words.
+6. Distinguish `source_shape_verified`, `indexed_candidate` and `rejected`.
+   Source-shape verification proves only that retrieved material looks like a
+   discussion page. Keep ownership, target-member presence, segment fit,
+   geography, language, activity, public access and recent experience as
+   separate unresolved dimensions until manually evidenced.
+7. Store metadata, digests and derived labels by default—not copied posts,
+   comments, usernames, profiles or exact customer quotations. Save
+   `community_candidates.json`, `review_candidates.json`,
+   `rejected_candidates.json`, `summary.json`, `report.md`, metadata-only
+   `raw.json` and `run-manifest.json`.
+8. Treat the result set as a capped, ranked convenience sample. Never infer
+   prevalence, representativeness or demand; multiple indexes of the same item
+   are not independent observations.
+9. Review candidates before any targeted collection. A quiet or failed run is a
+   coverage gap, not evidence that no community exists.
+
+Discovery never authorizes content capture or recruitment. Promote candidates
+through `review_community_candidates.py`, recording audience/market/activity
+fit and the named access route. Paid-API spending is standing-authorized by the user for internal research without GDPR paperwork or a formal ethics review. Facebook targets are only internally allowlisted; this does not claim Meta permission, platform authorization, or terms compliance. Private or invite-only material must be
+user-supplied from legitimate access. Never steal/share credentials, circumvent
+technical controls or use false-pretext membership. Preserve source locators;
+deletion, privatization or change must be recorded as a status transition rather
+than silently erased.
+
+Recruitment eligibility defaults false. It may be manually enabled only after
+public access, current activity, target-member presence, segment, geography,
+language, recent experience and an acceptable contact route are evidenced. The repository's unpaid founder
+recruitment preference still applies.
+
+Promote reviewed candidates with:
+
+```bash
+python3 scripts/evidence_scout/review_community_candidates.py \
+  --candidates <discovery-run>/review_candidates.json \
+  --discovery-receipt <discovery-run>/community_discovery_receipt.json \
+  --discovery-audit <discovery-run>/raw.json \
+  --decisions <review-decisions.json> \
+  --out-dir <discovery-run>/review
+```
+
+The decision packet follows `schemas/community-review.schema.json`. Each fit
+dimension needs a dated evidence locator that matches candidate provenance or a
+signed discovery-role direct recheck, plus the candidate digest. Create a
+metadata-only recheck receipt when freshness must be renewed:
+
+```bash
+python3 scripts/evidence_scout/recheck_community_source.py \
+  --url <canonical-community-url> \
+  --entity-type <forum|facebook_group|facebook_page> \
+  --out <direct-recheck.json>
+```
+
+Add that whole signed receipt to the decision packet's `direct_rechecks` array.
+Public capture requires its semantic checks to establish public content, entity
+shape, and recent activity; a search-engine 2xx or opaque target 2xx is not a
+direct source observation. Facebook checks require target-bound structured
+Group/Page identifiers and a timestamp attached to a post/thread object;
+navigation routes, personal-profile ambiguity, loose words such as "post
+today", and multilingual login/challenge pages remain unresolved. Unsigned or edited packet entries, login/challenge
+pages, failed HTTP responses, stale observations, and redirects cannot support
+promotion. The signed discovery audit binds the query plan, provider outcomes,
+request coverage, and collector version. A stable scope lineage and increasing
+generation version supersede earlier reviews across rediscovery runs. Discovery
+creates separate per-seed forum, Facebook Group, and Facebook Page lanes;
+languages without a built-in pack require explicit `--locale-source-terms`. The command emits
+`verified_communities.json`, signed public-only `capture_authorization.json`, a same-generation `community_review_current.json` receipt backed by the authoritative state registry, a separate
+`user_supplied_private_sources.json`, a review log, per-run quality metrics and lifecycle transitions. Record reviewed false
+positives, known-positive misses and query adjustments per locale/provider.
+Source-shape classification alone can never promote a source. Before synthesis
+or publication, rerun discovery and pass the earlier verified artifact to the
+review command with `--prior-verified`; directly recheck any
+`not_observed_in_rerun` or `changed_since_capture` source.
+Do not silently erase the prior audit record.
+
+Facebook Page posts and reels remain competitor context. Group posts or comments
+whose returned author metadata identifies a Page, admin, business or supplier
+also remain competitor context. Other Facebook Group posts and social comments
+remain unverified community context until author relationship and target-customer
+fit are separately established; neither is customer voice by default. Reports
+show source-role counts and reserve "Highest-Signal Items" for records already
+classified as customer statements.
+
 ## Customer-journey contract
+
+For substantive VOC work, run the topic-led pass even when incumbent names are
+known. If verified competitors, substitutes or similar companies exist, also
+run `scripts/evidence_scout/plan_customer_feedback.py` and complete the
+entity-by-locale source matrix described in repo-root
+`references/customer-voice.md`. Topic-led and entity-led records keep distinct
+sampling-frame labels and counts until reviewed U/R synthesis. Run
+`finalize_customer_feedback.py` before synthesis and
+`validate_customer_voc_synthesis.py` before publishing the U/R map; a plausible
+initial matrix is not completion evidence.
 
 For venture research, reconstruct the customer journey from web context and relevant social/community posts, comments and reviews. Branch where different triggers or roles materially change the need; do not collapse every user into one funnel. Cover trigger, discovery, evaluation, purchase, onboarding, use/service, renewal/referral and exit where applicable. For each stage record `segment/trigger | desired outcome | current action/alternative | pain and consequence | source ID/URL/date and role | counter-evidence | unknown/next check`. Customer-language quotes must be real, not composites; company tutorials show an intended journey, not actual customer behavior.
 
@@ -62,7 +193,7 @@ It writes `projects/_infra/provider-doctor/doctor.summary.json` and `doctor.md`.
 
 If any requested or important provider reports `missing_credentials`, `billing_required`, `insufficient_credits`, `permission_denied`, `rate_limited`, `unsupported`, or `failed`, notify the user before interpreting the evidence. Explain which source was unavailable, why it matters, and how to fix or bypass it. Do not bury API failures in the final caveats.
 
-On `insufficient_credits` specifically, follow the Insufficient Credits Protocol in `references/provider-policy.md`: pause, ask the user to add credits or continue without the source, rerun validation + collection if they topped up, or record the coverage gap if they continue.
+Paid API spend for customer evidence and voice-of-customer work is standing-authorized with no monetary cap. Use and expand relevant providers without a spend question; query/sample bounds serve reproducibility, relevance and safe execution rather than cost control. On `insufficient_credits`, follow the protocol in `references/provider-policy.md`: notify the user of the provider, lost coverage and top-up route; continue with valid fallbacks where possible; preserve the gap; and rerun validation plus collection if the user reports a top-up.
 
 Then collect evidence with currently available providers:
 
@@ -74,7 +205,7 @@ The collector writes `research_plan.md` before provider calls. Inspect it before
 
 Provider sets:
 
-- `default`: Reddit, SerpAPI Google Trends, YouTube Data API, Firecrawl, Brave Search.
+- `default`: Reddit, SerpAPI Google Trends, YouTube Data API, Serper.dev Google SERP, Firecrawl, Brave Search, HN Algolia, GitHub issues, and Google autocomplete.
 - `social`: direct X API and ScrapeCreators. Grok/xAI X Search is explicit only via `xai_x_search`.
 - `local_web`: crawl4ai local page extraction after lightweight URL discovery.
 - `china_public`: Bilibili public search with Serper/Brave/Firecrawl site-search fallback, V2EX topic search/public fallback, and China web/domain search.
@@ -85,7 +216,9 @@ Provider sets:
 
 Use `default` first. Add `social` only when consumer, creator, trend, local community, or brand-comment evidence is material enough to spend paid credits.
 
-For Facebook/Instagram evidence via ScrapeCreators (paid, ask first), add explicit flags — the endpoints run only when the flags are present: `--fb-groups` (public group posts), `--fb-pages` (page posts + reels), `--ig-handles` (profile posts), `--ig-hashtags` (hashtag search), `--social-comments` (comments on top posts). Full route details and caveats: `references/provider-policy.md`.
+Generic Reddit, HN or GitHub results do not substitute for audience-appropriate community discovery. If those sources are structurally mismatched to the segment, record the mismatch and use `discover_communities.py`; do not interpret irrelevant or quiet results as low demand.
+
+For Facebook/Instagram evidence via ScrapeCreators (paid API spend pre-authorized), add explicit flags — the endpoints run only when the flags are present: `--fb-groups` (reviewed public group posts), `--fb-pages` (supplier/context Page posts only), `--fb-entity-pages entity_id=URL` (entity-led company Page comments), `--ig-handles entity_id=handle` (entity-led company profile posts), `--ig-hashtags` (topic-led hashtag search), `--social-comments` (comments on top posts). Facebook flags require the fresh, signed, same-generation `capture_authorization.json`, `verified_communities.json`, and `community_review_current.json` produced by `review_community_candidates.py`; each target is digest-, locale- and endpoint-family-bound and expires within 30 days. Entity Page/Instagram handles also require `--customer-feedback-source-plan` with a locale-scoped human-accepted locator and reason. Company profile posts and comments authored by the verified company identity are supplier context; other comments remain unresolved until author/use review. A failed re-review writes a revocation receipt. Full route details and caveats: `references/provider-policy.md`.
 
 Use local extraction only when it adds concrete coverage:
 
@@ -103,19 +236,11 @@ Ask the user exactly one question before running `china_social`:
 
 If the user says yes, run with explicit `--providers china_social` or `--providers default,china_public,china_social`. If the source fails with `missing_cli` or `login_required_or_failed`, report that China social coverage is missing before interpreting the evidence.
 
-For app-store or mobile-app markets, ask the user exactly one question before running paid app-market enrichment:
-
-`Do you want app-store enrichment via Sonar for keyword demand, app reviews, and competitor app context?`
-
-If the user says yes, rerun or extend collection with explicit `--providers default,sonar`. If known competitor app IDs are available, pass them with `--sonar-apps ios:<app_id>,android:<package_name>`. Treat Sonar keyword metrics as weak search-demand context and Sonar revenue estimates as weak monetization context. Treat Sonar app reviews as app-review evidence, but remember store reviews are biased toward existing app users.
+For app-store or mobile-app markets, use paid Sonar enrichment when it is methodologically relevant; customer-evidence API spend is pre-authorized. Run or extend collection with explicit `--providers default,sonar`. Bind known competitor apps with `--sonar-entity-apps entity_id=ios:<app_id>,entity_id=android:<package_name>`; use `--itunes-entity-apps entity_id=<app_id>` for Apple RSS review collection. Legacy unbound `--sonar-apps` and `--itunes-app-ids` are rejected because a named app is an entity locator, not topic-led VOC. The default includes all review ratings rather than filtering to complaints. Treat Sonar keyword metrics as weak search-demand context and Sonar revenue estimates as weak monetization context. Treat app reviews as feedback from store users, report every entity/storefront attempt and denominator, and do not let successful keyword records hide a failed review lane.
 
 Do not add `enrichment` or `competitor_monitoring` as `--providers` aliases. Enrichment is a user checkpoint; competitor monitoring belongs to the separate `competitor-monitoring` skill.
 
-For local, physical-location, retail, restaurant, clinic, hospitality, property, or REIT-style markets, ask one question before running Google Maps-style enrichment:
-
-`Is physical-location evidence important enough to run Google Maps enrichment for ratings, review counts, review text, locations, and popular-times context?`
-
-If the user says yes, use the separate `competitor-monitoring` skill with the `compass/crawler-google-places` actor rather than adding it to the default Evidence Scout provider set. Treat Google Maps ratings, review volume, and occupancy as market context. Treat repeated review complaints across independent locations as possible local pain evidence, not proof of willingness to pay.
+For local or physical-location entities, use the entity matrix to decide applicability and run the exact `entity_id=place_id` bindings with `google_places_reviews`; customer-evidence API spend is already authorized. Report that Google returns a provider-selected review subset alongside the aggregate denominator. Ratings and review volume are context; reviewed text may inform customer voice, but repeated complaints still do not prove willingness to pay.
 
 If the topic is written as a solution, translate it into user language before collecting evidence. Example: do not only search "AI client status reporting assistant"; also search phrases like "client updates", "status reports", "client communication", "project tracking", "scattered email", and "manual follow up".
 
@@ -185,6 +310,8 @@ If any quality gate fails, say so before interpreting the evidence. Do not descr
 
 ## Analysis Rules
 
+For unmet or latent-need synthesis, apply the outcome comparisons and falsification rule in repo-root `references/voc-research-method.md` within existing U/R assessments. No separate opportunity ledger or scoring system.
+
 Separate:
 
 - Evidence: what users actually said or did.
@@ -197,7 +324,7 @@ Separate:
 
 For German insurance records, classify decision uncertainty before generic spend. Posts about `PKV oder GKV`, `Rückkehr/Rueckkehr`, `Gesundheitsfragen`, `Risikovoranfrage`, tariff choice, or being `überfragt` are decision/pain evidence even if they mention `€`, `Beiträge`, `Provision`, or `Zuschlag`. Generic money words alone are not enough to infer willingness to pay.
 
-Never claim demand from views, likes, search volume, or one complaint alone. Demand requires repeated pain, urgency, workaround/spend, and a reachable segment.
+Never claim demand from views, likes, search volume, complaint counts or reachable communities. Pain, urgency and workaround spend can motivate a demand test; they do not establish demand for the proposed offer.
 
 Evidence strength:
 
@@ -212,7 +339,7 @@ The collector writes:
 - `projects/<topic>/market_research/pain_points/runs/<run>/summary.json`
 - `projects/<topic>/market_research/pain_points/runs/<run>/report.md`
 
-Use `--legacy-output` only when a downstream consumer still requires the former global layout.
+Use the resolved workspace/case output path; `--legacy-output` is removed.
 
 Always inspect `summary.json.needs_user_attention` and the Provider Alerts section in `report.md`. If either is non-empty, include those alerts in the response to the user.
 
@@ -220,7 +347,7 @@ Always inspect `summary.json.needs_user_attention` and the Provider Alerts secti
 
 When involving the user, ask exactly one question per response — the first unresolved item from the run's `assumptions.md` / `user_review_plan.md`, or the strongest evidence item needing review. Where relevant, include a recommendation for the next or extended research step, but never bundle multiple questions in one message; wait for the answer, mark the item resolved, and move to the next.
 
-When weak/medium items dominate the run and the user has reviewed them, the next uncertainty-reducing step is interviews, not more desk research — route to `interview-bridge`, which turns the selected items into a screener, guide, and tracker via `python3 scripts/evidence_scout/build_interview_kit.py --run-dir <run dir>`.
+Choose the next method from the unanswered question, not the aggregate weak/medium/strong label. Missing local sources need discovery; unknown motives, decisions or handoffs may need interviews; solution-use uncertainty needs observation/usability testing; payment claims need separately authorized behavioral evidence. When interviews fit, route to `interview-bridge` via `python3 scripts/evidence_scout/build_interview_kit.py --run-dir <run dir>`.
 
 When improving this skill or the collector, run:
 

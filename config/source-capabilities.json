@@ -8,6 +8,24 @@
   ],
   "capabilities": [
     {
+      "id": "community_discovery",
+      "family": "customer_pain",
+      "label": "Systematic local forum and Facebook discovery",
+      "description": "Metadata-only, locale-paired discovery with separate per-seed forum, Facebook Group, and Facebook Page lanes followed by signed source review.",
+      "use_when": ["voice of customer", "forums", "facebook groups", "facebook pages", "community discovery", "local communities", "multilingual communities"],
+      "avoid_when": ["representative prevalence estimate", "automatic private-group access"],
+      "evidence_strength": "discovery_only_until_signed_source_review",
+      "collector_provider": "discover_communities.py",
+      "provider_aliases": [],
+      "validation_providers": ["firecrawl", "serper_search", "brave_search"],
+      "requires_env": ["COMMUNITY_DISCOVERY_PRIVATE_KEY_B64", "COMMUNITY_DISCOVERY_PUBLIC_KEY_B64", "COMMUNITY_REVIEW_PRIVATE_KEY_B64", "COMMUNITY_REVIEW_PUBLIC_KEY_B64"],
+      "approval_required": false,
+      "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
+      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/discover_communities.py --topic '<problem>' --customer-segment '<segment>' --locale '<CC>:<language>' --locale-keywords '<CC>:<language>=<phrase>|<phrase>'",
+      "caveat": "Search results are convenience-sample leads. Private material must be user-supplied from legitimate access. The signed internal gate is not platform authorization."
+    },
+    {
       "id": "reddit",
       "family": "customer_pain",
       "label": "Reddit API",
@@ -293,7 +311,8 @@
       "optional_env": [
         "XAI_API_KEY"
       ],
-      "approval_required": true,
+      "approval_required": false,
+      "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers xai_x_search --x-from-date 2026-07-01",
       "caveat": "Discovery layer only. Save citations and verify underlying posts before treating any claim as evidence."
@@ -322,7 +341,7 @@
       "avoid_when": [
         "default free evidence",
         "unclear segment or query language",
-        "private facebook groups (no compliant access exists)"
+        "private Facebook material not supplied by a user with legitimate access"
       ],
       "evidence_strength": "weak_to_medium_when_repeated_user_pain",
       "collector_provider": "scrapecreators",
@@ -336,10 +355,12 @@
       "requires_env": [
         "SCRAPE_CREATORS_API_KEY"
       ],
-      "approval_required": true,
+      "approval_required": false,
+      "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
+      "login_or_member_access_policy": "explicit_legitimate_user_access_required",
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers scrapecreators --fb-groups '<public-group-url>' --ig-hashtags '<tag1,tag2>'",
-      "caveat": "Credit-based (1 credit/call). Facebook group/page posts return 3 posts per call and are cursor-paginated up to --fb-max-posts. Public groups/pages only; an empty group response means private OR inactive — never report it as 'no posts exist'. Broad X search is not the default route here; use --x-handles for public profile/user-tweet enrichment."
+      "caveat": "Credit-based customer-evidence use has standing authorization with no cap; report insufficient credits and a top-up route. Facebook API targets require a signed current source-review bundle. User-supplied private material from legitimate membership stays outside the API allowlist. An empty response is never evidence that no discussion exists."
     },
     {
       "id": "meta_ad_library",
@@ -408,10 +429,12 @@
       "id": "sonar",
       "family": "app_store",
       "label": "Sonar ASO/app-market API",
-      "description": "App-store keyword demand, competitor app reviews, app context, and optional revenue estimates.",
+      "description": "Apple App Store and Google Play keyword demand, competitor app reviews, app context, and optional revenue estimates.",
       "use_when": [
         "mobile app",
         "app reviews",
+        "google play reviews",
+        "apple app store reviews",
         "app store",
         "aso",
         "sonar",
@@ -431,10 +454,11 @@
       "requires_env": [
         "SONAR_API_KEY"
       ],
-      "approval_required": true,
+      "approval_required": false,
+      "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default,sonar --sonar-apps ios:<id>,android:<package>",
-      "caveat": "Ask before use. Revenue estimates and keyword metrics are weak context, not monetization proof."
+      "caveat": "Customer-evidence API spend is standing-authorized with no cap; report insufficient credits. Revenue estimates and keyword metrics are weak context, not monetization proof."
     },
     {
       "id": "crawl4ai",
@@ -768,14 +792,53 @@
       "caveat": "Unofficial endpoint. Suggestions show attention/language, never volume or intent strength."
     },
     {
+      "id": "trustpilot_reviews",
+      "family": "customer_reviews",
+      "label": "Trustpilot public business-unit reviews",
+      "description": "Entity-bound public Trustpilot review text, ratings, verification labels, dates, and separately retained company replies.",
+      "use_when": ["Trustpilot", "competitor customer reviews", "service reviews", "entity-led feedback"],
+      "avoid_when": ["topic-led VOC without an identified entity", "star average as demand proof"],
+      "evidence_strength": "medium_when_firsthand_and_repeated_otherwise_weak",
+      "collector_provider": "trustpilot_reviews",
+      "provider_aliases": ["entity_reviews"],
+      "validation_providers": ["trustpilot_reviews"],
+      "requires_env": ["TRUSTPILOT_API_KEY"],
+      "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
+      "arg_requirements": "--trustpilot-domains <entity-id=domain,...>",
+      "fallbacks": ["serper_search", "firecrawl"],
+      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<job>' --customer-segment '<segment>' --providers trustpilot_reviews --trustpilot-domains '<entity-id=domain>'",
+      "caveat": "A Trustpilot business-unit match must be exact. Platform verification is not target-segment verification; company replies are supplier context and review counts describe the retrieved sample only."
+    },
+    {
+      "id": "google_places_reviews",
+      "family": "customer_reviews",
+      "label": "Google Places review subset",
+      "description": "Entity- and location-bound Google Places ratings plus the review subset returned for exact Place IDs.",
+      "use_when": ["Google reviews", "local business reviews", "competitor locations", "entity-led feedback"],
+      "avoid_when": ["entities without a physical or service-area listing", "representative review sampling"],
+      "evidence_strength": "medium_when_firsthand_and_repeated_otherwise_weak",
+      "collector_provider": "google_places_reviews",
+      "provider_aliases": ["entity_reviews"],
+      "validation_providers": ["google_places_reviews"],
+      "requires_env": ["GOOGLE_PLACES_API_KEY"],
+      "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
+      "arg_requirements": "--google-place-ids <entity-id=place-id,...>",
+      "fallbacks": ["serper_search"],
+      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<job>' --customer-segment '<segment>' --providers google_places_reviews --google-place-ids '<entity-id=place-id>'",
+      "caveat": "Use exact Place IDs. Ratings are context and the API-returned reviews are a provider-selected subset, not a population or prevalence sample."
+    },
+    {
       "id": "itunes_reviews_free",
       "family": "app_store",
-      "label": "iTunes Customer Review RSS (free)",
-      "description": "Free public RSS of App Store customer reviews per app/storefront. Zero-key alternative to paid Sonar for competitor review mining.",
+      "label": "Apple App Store Customer Review RSS (free)",
+      "description": "Free public RSS of Apple App Store customer reviews per app/storefront. Zero-key Apple alternative to paid Sonar for competitor review mining.",
       "use_when": [
         "app reviews",
         "competitor app pain",
         "ios app",
+        "apple app store reviews",
         "app store ratings text"
       ],
       "avoid_when": [

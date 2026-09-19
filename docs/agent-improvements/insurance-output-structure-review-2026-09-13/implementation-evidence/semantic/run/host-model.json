@@ -1,0 +1,10 @@
+{
+  "host": "Codex agent tool session",
+  "agent_task": "/root/case_semantic_runner",
+  "model": "unknown",
+  "model_note": "No exact model identifier exposed to this agent. Developer describes agent as based on GPT-6; this is not independent runtime identification.",
+  "evaluation": "actual agent-authored appraisal of synthetic fixed evidence",
+  "web_retrieval": false,
+  "numerical_model": "not run: material monetary and operating inputs absent",
+  "fixture_note": "B document headings intentionally contain the clerical typo transations to exercise a later spelling correction. Registry title is correctly spelled and unchanged."
+}

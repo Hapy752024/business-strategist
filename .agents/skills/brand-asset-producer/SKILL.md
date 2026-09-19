@@ -18,3 +18,5 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 ## Quality Checklist
 
 Run the relevant validators before delivery; never promote unapproved artifacts.
+
+For website favicons read [favicon handoff](references/favicon-handoff.md). Branding owns the set; website consumes the approved handoff.

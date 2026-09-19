@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "customer-voc-synthesis.schema.json",
+  "type": "object",
+  "required": ["topic_led_evidence_ids", "entity_led_evidence_ids", "customer_needs", "solution_requirements"],
+  "properties": {
+    "schema_version": {"enum": [1, 2]},
+    "status": {"enum": ["supported", "scoped", "provisional", "insufficient_evidence"]},
+    "codebook": {"type": "object"},
+    "next_investigations": {"type": "array", "items": {"type": "object"}},
+    "topic_led_evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "entity_led_evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "customer_needs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "outcome", "evidence_ids", "perspectives", "attribution"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^U[0-9]+$"},
+          "outcome": {"type": "string", "minLength": 1},
+          "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "perspectives": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["customer", "former_customer", "prospective_user", "nonadopter"]}},
+          "attribution": {"enum": ["customer_stated", "analyst_inferred", "unknown"]}
+        }
+      }
+    },
+    "solution_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "condition_or_capability", "evidence_ids", "perspectives", "linked_u_ids", "operational_root_unknown", "attribution"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^R[0-9]+$"},
+          "condition_or_capability": {"type": "string", "minLength": 1},
+          "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "perspectives": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["customer", "former_customer", "prospective_user", "nonadopter"]}},
+          "linked_u_ids": {"type": "array", "items": {"type": "string", "pattern": "^U[0-9]+$"}},
+          "operational_root_unknown": {"type": "boolean"},
+          "attribution": {"enum": ["customer_stated", "analyst_inferred", "unknown"]}
+        },
+        "anyOf": [
+          {"properties": {"linked_u_ids": {"minItems": 1}}},
+          {"properties": {"operational_root_unknown": {"const": true}}}
+        ]
+      }
+    }
+  }
+}

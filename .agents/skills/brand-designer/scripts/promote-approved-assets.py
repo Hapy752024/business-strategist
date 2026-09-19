@@ -7,6 +7,10 @@ import argparse
 import shutil
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
+
 
 PROMOTIONS = {
     "stages/colors": "colors",
@@ -37,6 +41,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("project_dir", type=Path)
     args = parser.parse_args()
+    return namespace_writer(args, 'project_dir', execute, input_attributes=[])
+
+
+def execute(args):
 
     project = args.project_dir
     total = 0

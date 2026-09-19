@@ -191,11 +191,15 @@ def check_query_expansion(errors, warnings):
 
 
 def check_fallback_sync(registry, warnings):
-    """Detect drift between query_expansion.json and the fallbacks in collect.py."""
+    """Detect drift only when optional emergency fallbacks are configured."""
     try:
         sys.path.insert(0, str(ROOT / "scripts" / "evidence_scout"))
         import collect  # noqa: F401
 
+        # The registry is the source of truth. Empty fallback dictionaries are
+        # intentional so project-specific markets stay out of reusable code.
+        if not collect.FALLBACK_QUERY_MARKETS and not collect.FALLBACK_PHRASE_VARIANTS:
+            return
         for market_name, market in registry.get("markets", {}).items():
             fallback = collect.FALLBACK_QUERY_MARKETS.get(market_name)
             if fallback is None:

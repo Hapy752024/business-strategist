@@ -1,0 +1,1 @@
+Synthetic evidence; conditional interpretation, no market claim.

@@ -1,12 +1,14 @@
 # Website workflow
 
+Existing-site repairs use `references/maintenance.md` without repeating creative selection. Every new site applies `references/launch-contract.md` and executable `references/testing.md`.
+
 1. Inspect an explicit brand manifest or start a standalone brief. Do not trigger business research automatically.
 2. Load/create `website-preferences.json`; separate brand-locked, user-stated, user-selected, and agent-inferred choices.
 3. Resolve the current stable Next.js version with `scripts/resolve-next-stable.mjs`; pin it and the lockfile.
 4. Produce two or three lightweight territories (tokens, layout sketch, type, imagery, motion, signature device). Use screenshots or small proofs, not three production builds.
 5. Ask for selection unless the user delegated it. Record the decision and rationale in `website-manifest.json`.
 6. Build the hero/navigation/primary CTA vertical slice, capture 375px and desktop screenshots, and fix concrete issues.
-7. Complete pages, content states, localization, metadata, assets, reduced motion, and performance budgets.
+7. Complete every launch-contract item including Branding favicon handoff, EU consent, analytics, legal/contact inputs and measured performance. Missing owner inputs stay pending.
 8. Run `scripts/validate-site.mjs`, Playwright/axe across mobile/tablet/desktop, keyboard and reduced-motion checks, visual review, and the independent `brand-quality-reviewer`.
 9. If requested, run experiment mode from `references/experimentation.md`.
 10. Prepare a GitHub PR and Vercel Preview. Do not connect, merge, deploy production, enable analytics, or split traffic without approval.

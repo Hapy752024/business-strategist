@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
+  "required": ["artifact_type", "schema_version", "discovery_run_id", "review_lineage_id", "review_candidates_digest", "audit_digest", "generated_at", "signature_algorithm", "key_id", "signature"],
+  "properties": {"artifact_type": {"const": "community_discovery_receipt"}, "schema_version": {"const": 2}, "discovery_run_id": {"type": "string", "format": "uuid"}, "review_lineage_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "review_candidates_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "audit_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "generated_at": {"type": "string", "format": "date-time"}, "signature_algorithm": {"const": "ed25519"}, "key_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "signature": {"type": "string", "minLength": 80}},
+  "additionalProperties": false
+}

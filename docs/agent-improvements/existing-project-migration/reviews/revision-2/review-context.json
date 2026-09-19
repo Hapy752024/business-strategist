@@ -1,0 +1,20 @@
+{
+  "revision": 2,
+  "captured_at": "2026-09-13T19:22:55.818971+00:00",
+  "reviewer": "/root/migration_revision2_adversary",
+  "reviewer_context": "none",
+  "plan_sha256": "3c337639b466e5a622579f52d80ecfe005c85b3e51bc1bb255c604194909034f",
+  "inventory_sha256": "1864351801fd83ebdabb96dee02bcce0aa9af588905ee42fdbc485805eab815d",
+  "original_plan_path": "docs/agent-improvements/existing-project-migration-plan.md",
+  "status": "PASS",
+  "changes": [
+    "Archive old aggregate manifests; current state belongs to cases",
+    "Stable external shared/exclusive migration lock and journal; consumer coverage and crash tests",
+    "Layout-aware external tools, conditional external-edit rollback and quiesced SQLite verification"
+  ],
+  "material_findings": [],
+  "review_completed_at": "2026-09-13T19:24:52.686107+00:00",
+  "report": "REVIEW.md",
+  "plan_unchanged_after_review": true,
+  "implementation_review": false
+}

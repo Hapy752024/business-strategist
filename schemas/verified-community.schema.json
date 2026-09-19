@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "array",
+  "items": {"type": "object", "required": ["url", "content_digest", "review_status", "reviewer", "reviewed_at", "valid_until", "verified_entity_type", "public_access", "access", "dimension_evidence", "ownership_cluster", "independence_status", "eligible_for_targeted_collection"],
+    "properties": {"url": {"type": "string", "format": "uri"}, "content_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "review_status": {"const": "accepted"}, "verified_entity_type": {"enum": ["forum", "facebook_group", "facebook_page"]}, "public_access": {"enum": ["public", "legitimate_member_access"]}, "eligible_for_targeted_collection": {"const": true}},
+    "additionalProperties": true}
+}

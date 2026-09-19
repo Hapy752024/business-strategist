@@ -59,7 +59,7 @@ def test_dispatch_rejects_mismatch_and_ambiguity():
 def test_commitment_routes_do_not_bypass_pain_gate(tmp_path, monkeypatch, intent):
     monkeypatch.setattr(route_workflow, 'ROOT', tmp_path)
     route = next(r for r in route_workflow.load_routes() if r['id'] == intent)
-    packet = route_workflow.route_request('venture task', intent=intent, project='missing', check_skill=route['skill'])
+    packet = route_workflow.route_request('venture task', intent=intent, project='missing', entry_mode='business_linked', check_skill=route['skill'])
     assert packet['gate_blocked']
 
 

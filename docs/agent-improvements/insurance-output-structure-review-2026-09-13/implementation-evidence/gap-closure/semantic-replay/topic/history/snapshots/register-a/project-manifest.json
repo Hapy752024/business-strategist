@@ -1,0 +1,17 @@
+{
+  "active_track": "none",
+  "cases": {},
+  "created_at": "2026-09-13T18:31:18Z",
+  "layout_version": 2,
+  "links": [],
+  "manifest_revision": 0,
+  "next_action": "Investigate cases.",
+  "open_blockers": [],
+  "project_id": "topic",
+  "schema_version": "1.0",
+  "selection": null,
+  "selection_generation": 0,
+  "slug": "topic",
+  "title": "Synthetic topic",
+  "updated_at": "2026-09-13T18:31:18Z"
+}

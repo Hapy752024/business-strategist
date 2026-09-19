@@ -1,0 +1,1887 @@
+{
+  "project": "projects/german-insurance-opportunity",
+  "review_date": "2026-09-13",
+  "file_count": 376,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 13430,
+      "sha256": "8dab60a3fa5d3c2cda63f08053002d77f8225d411e72118e4abd0db559b3c5d1"
+    },
+    {
+      "path": "market_research/customer_journey/self-employment-journeys-it-and-doctors.md",
+      "bytes": 8547,
+      "sha256": "62ece4e5baf23d2d9923330a62609f6b7af745b74e0a9a315f47586213133e64"
+    },
+    {
+      "path": "market_research/customer_segments/2026-06-multilingual-segments-and-journey.md",
+      "bytes": 16779,
+      "sha256": "e0c53d63bd82a06938768bf2fa454f534f50280981accfce3999a8c1ff2b9be4"
+    },
+    {
+      "path": "market_research/customer_segments/profession-segments-and-relationship-model.md",
+      "bytes": 9709,
+      "sha256": "b6f6057a279f9e60d3848e859ec4efbcf8b0763ac1a1ae5fbce0ea2ab5990fdc"
+    },
+    {
+      "path": "market_research/customer_segments/surelius-and-language-segments.md",
+      "bytes": 15717,
+      "sha256": "27894183728c05312b89869365b80307c08df9428cbaa35f7ceed1862edd78f4"
+    },
+    {
+      "path": "market_research/deep_dives/2026-06-surelius-pain-points/current-pain-points.md",
+      "bytes": 32794,
+      "sha256": "f4e8eb1cfaee7a82782b416b684ace8dae750d4f9a86ea45b6c1d392f1347f9b"
+    },
+    {
+      "path": "market_research/deep_dives/2026-06-surelius-pain-points/life-change-triggers.md",
+      "bytes": 27035,
+      "sha256": "5d3f2a3cd7e47b2f8b54c0e88541646976d3359adaa514dab368775c93334f16"
+    },
+    {
+      "path": "market_research/deep_dives/2026-09-06-operator-and-international-patterns.md",
+      "bytes": 3321,
+      "sha256": "f5d4ab006e8d66d76c67dc21fa8d0debc93b55ee954c18edbf5c8e23a4a04ba0"
+    },
+    {
+      "path": "market_research/deep_dives/2026-09-06-rerun-evidence-audit.md",
+      "bytes": 4466,
+      "sha256": "15357edae74735a9e877de49750f6748143b347264b0f8ced7efd1df6e165405"
+    },
+    {
+      "path": "market_research/deep_dives/2026-09-06-three-idea-reassessment.md",
+      "bytes": 4295,
+      "sha256": "f7c5f347b11196a76554ffa7bd5550a8f7d78cd76ad48875801273b51af48dba"
+    },
+    {
+      "path": "market_research/deep_dives/2026-09-11-challenge-review.md",
+      "bytes": 23026,
+      "sha256": "a51cebab06052150bb1090e461aa3d64f1be49cedad4cfa2db0d1753ae4f849b"
+    },
+    {
+      "path": "market_research/deep_dives/2026-09-11-retirement-55plus-selfemployed-register-mail-channel.md",
+      "bytes": 16695,
+      "sha256": "3bf3ab01856058ca6423a44f250bb7ba71f85a55992c5f80dc856290cc8593fd"
+    },
+    {
+      "path": "market_research/deep_dives/2026-09-11-segment-pain-deep-dive.md",
+      "bytes": 13847,
+      "sha256": "ed8c7330cffe527ee1ec136bbb8ffa37d1d9b920bc86836f27919fe15c95c8ec"
+    },
+    {
+      "path": "market_research/deep_dives/traditional-broker-acquisition-and-portfolio.md",
+      "bytes": 9200,
+      "sha256": "c92fb2ab4ad0759c8c6c8d60b68084a99cdc6311d776e55947c6ed7fd1ba620f"
+    },
+    {
+      "path": "market_research/manifest.json",
+      "bytes": 19037,
+      "sha256": "960b11681094ca838e3959b4c2175e55b143a38154b1d728085494aa4a6f3c44"
+    },
+    {
+      "path": "market_research/manifest.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "market_research/market_discovery/runs/2026-09-06-self-employment/market-discovery-report.md",
+      "bytes": 3306,
+      "sha256": "3303598c075e1d82f3fe5f6e0525d7533a7655a24ba1d4f44ff43d4e44b5d751"
+    },
+    {
+      "path": "market_research/market_discovery/runs/2026-09-06-self-employment/research_plan.md",
+      "bytes": 1451,
+      "sha256": "bf746f91a3901439ad1bd2ea171769012eca7979b875416da551eee286a11666"
+    },
+    {
+      "path": "market_research/market_discovery/runs/2026-09-06-self-employment/run-manifest.json",
+      "bytes": 634,
+      "sha256": "f52c131d1dbfd78b1b235117bbcd71846848e3afef11704eaaa00f01fdd12956"
+    },
+    {
+      "path": "market_research/market_discovery/runs/2026-09-06-self-employment/summary.json",
+      "bytes": 1147,
+      "sha256": "2334043d60ca43b9e3b0e6025e9ff30f1d6101ee8b588746467acdc75e748754"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/collector.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/collector.stdout.log",
+      "bytes": 6082,
+      "sha256": "5b6dc47720a317c9e6499f152ad38d0982a8055aa575e8e07156ab5aa8670583"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/assumptions.md",
+      "bytes": 2316,
+      "sha256": "5499a4a9641e828a4516b578ebe91f28e8e368489611455e0b17253ee4a53f05"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/evidence.jsonl",
+      "bytes": 80795,
+      "sha256": "ce0a526515c5fc3a27543442fa9e7bca1dc063b07a3fb34de7c80b4ef7705555"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/irrelevant.jsonl",
+      "bytes": 121186,
+      "sha256": "a5e772b08e4357cb637cb7dd95a9ca2460f43426541e385516beda0813e505da"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/raw/brave_search.json",
+      "bytes": 173440,
+      "sha256": "a282131c713890c016388002d397bc1025c4ab737f873942b85f445488ddbd0c"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/raw/firecrawl.json",
+      "bytes": 3346,
+      "sha256": "84dc568a7d1cda4e4bbe7356b4ccd033e59edcd2418000d028a448c825d2f993"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/raw/reddit.json",
+      "bytes": 1215696,
+      "sha256": "ba597c618e42b05304ce4900c7aa5362222bd589db21de6884a04bc078229e83"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/raw/serpapi_google_trends.json",
+      "bytes": 1007,
+      "sha256": "526d89915c33866b2aa28095e34533c8ef296dacac9d9a5ad0fab64930aa27a6"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/raw/serper_search.json",
+      "bytes": 16995,
+      "sha256": "306b984429b630cd3ed166d09a4fbb57b6eafd67d4dfa063ee6ca11269267be0"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/raw/youtube.json",
+      "bytes": 47326,
+      "sha256": "1ba907fd7f050af78ad00a9b393363d4fcc10e85eb291a350f38c685a609eb01"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/report.md",
+      "bytes": 9641,
+      "sha256": "0fe1040205b5a9627c4b2b7899fb94da6a481e88301466e4a783e1116d65599f"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/research_plan.md",
+      "bytes": 2173,
+      "sha256": "579010ff0f67e1bd85bc3bfcdccb630f5eba8cbf3915e70885d68a0411328a48"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/run-manifest.json",
+      "bytes": 1731,
+      "sha256": "ab9e3f316463a9cf389e01aaf3b6fb65e3160e4bc3275d63c932fd9f957fe105"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/summary.json",
+      "bytes": 6081,
+      "sha256": "e261280051a763eeea9faca6070b8fc3f71a18852b9fc2db603e8359d4ddfe59"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/evidence/user_review_plan.md",
+      "bytes": 4956,
+      "sha256": "58de037dd7ee8b61c62ad065ec19251b73b20e0dc6416ac367bd2798649e11e0"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/market-discovery-report.md",
+      "bytes": 25777,
+      "sha256": "f9342d8ada1f21384a66675576fc998c1da27469fc5f0a4ea8dc1c43117c5a3c"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/research_plan.md",
+      "bytes": 1379,
+      "sha256": "17730a86dc6af44b69bc794bc070f0ddb9fc7d4893c53e3d989b88cbed5e032d"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/run-manifest.json",
+      "bytes": 1934,
+      "sha256": "82448d1f6bd66842c83e9e0fe4eb0fb85ce0dcde70775f161dba0c9b3656780b"
+    },
+    {
+      "path": "market_research/market_discovery/runs/20260718-083557-self-employed-professionals-germany/summary.json",
+      "bytes": 2712,
+      "sha256": "65fb797ee10b89963371f8f01fa016737e4e08830c7bdae061610fdb3355502c"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/assumptions.md",
+      "bytes": 3377,
+      "sha256": "61d1294ae0771f1a4dbec9435b4505418d4536fbf7b24b9b664de791cdd8e0c9"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/evidence.jsonl",
+      "bytes": 211612,
+      "sha256": "39a85571cbdf1791f503f7c678240c137d654485944733e5c0731d7d97d0d3a9"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/irrelevant.jsonl",
+      "bytes": 89310,
+      "sha256": "73bcf492c25179e125d64d4980fbc4d0f433a15375ada45a32c24dc45f659f9f"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/brave_search.json",
+      "bytes": 159278,
+      "sha256": "307d6e3c7a5cfd597854b42f2eb816b95ee37957ccacd273660463d61e059be9"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/firecrawl.json",
+      "bytes": 259859,
+      "sha256": "1c224cd030d49b6674e3fcfab33ebda3372bd8630f8ab075f257074fe1a6123b"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/github.json",
+      "bytes": 74211,
+      "sha256": "cb1fa18f4dc457841e8b36c562de39566c425feacbd3cf7777d91a5720aaa91b"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/google_autocomplete.json",
+      "bytes": 5147,
+      "sha256": "34db528f5202c2ad184e85bddf35709aed423ebf1a86d7a78ea51ad7a89a84f6"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/hn.json",
+      "bytes": 95633,
+      "sha256": "f13fe19de5af77d5925861357e5823c2b843ba8afba814204d70b6350ea76168"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/reddit.json",
+      "bytes": 245056,
+      "sha256": "81ce327aafdfd3cdeab206f0803deed6c953fdf0437556d853439bfea1c6285e"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/scrapecreators.json",
+      "bytes": 1294822,
+      "sha256": "177e6eb27b4f475f7d1c4fb519122ad2973068bf943634600e53280528d17fb2"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/serpapi_google_trends.json",
+      "bytes": 283663,
+      "sha256": "4aa12024b15aabadeeb08ef7e83cfc585b2f6d366a3711ab55f4bc764f700094"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/serper_search.json",
+      "bytes": 10631,
+      "sha256": "b95ae8afa2178cfca0f48ef1394e1f28e895af2c031f9194275fc9a1f7ffa6e6"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/x.json",
+      "bytes": 1509,
+      "sha256": "bfffc4e4e302966625ee40bdf9fca562ecfc87c1bf46d222559c5b3ade56252b"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/raw/youtube.json",
+      "bytes": 40558,
+      "sha256": "bba9d41325ed363e6afad9ab4c692fc81906a164c2f9955cced73b08a46d0897"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/report.md",
+      "bytes": 15776,
+      "sha256": "987f3de8e898195af75f6ec7e02c7ecd8c0203f6cf8e45896f2f04ced6d5b548"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/research_plan.md",
+      "bytes": 2297,
+      "sha256": "bb08569a70cc7f32fc84ae0cdb939f02eedc66e25a3c06eebcc6699d3dc9a830"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/run-manifest.json",
+      "bytes": 1689,
+      "sha256": "eb1b08cd9fc6eeb5fd681879f956543ddb4026c8eebfb45a5c06d51e46d940e9"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/summary.json",
+      "bytes": 8188,
+      "sha256": "cf2510c31e6f3575a25a5a1d488bd81a020d66f5e488f4902998dd9c8bd76c19"
+    },
+    {
+      "path": "market_research/pain_points/idea-1-personal/run-2026-09-06/user_review_plan.md",
+      "bytes": 13128,
+      "sha256": "63e2059aef9a6ee01669a3c42be1a1c5a456ca3ba9180782b8886c678d8bca05"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/assumptions.md",
+      "bytes": 3455,
+      "sha256": "c19d6f636e00a444ec2b5cb8615d9d66ae25d65b0c87b51d99ad2dfd27de51b3"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/evidence.jsonl",
+      "bytes": 203038,
+      "sha256": "d04b96da2fc9b07449b44480ea5755ac54b0482af22fdd8336243f3c121eb6f6"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/irrelevant.jsonl",
+      "bytes": 94010,
+      "sha256": "bf743fab109fe0768bedf59cfacdd44b483365f7d3958baede6ec92eafba8296"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/brave_search.json",
+      "bytes": 159278,
+      "sha256": "8613f78ff7e663f7c5cf990d55584b05920f054f940a1f4219706971e89637f1"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/firecrawl.json",
+      "bytes": 259835,
+      "sha256": "795ce79d51f017adedaa258c08ef86c116ad94778ba01f6cc32e4695bba1b65e"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/github.json",
+      "bytes": 74217,
+      "sha256": "1a381ae1e08d97f9a5cdd38086d22a4523e353d5579c7f1248cab8b3c789b9b5"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/google_autocomplete.json",
+      "bytes": 5161,
+      "sha256": "a410f0f2c0db91651f4854fe89394583164829e61e653d3434a3abd73d6068dd"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/hn.json",
+      "bytes": 95606,
+      "sha256": "7e0967b4677966d04cd363520149d236052f62934672b9d46785d211e64f0889"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/reddit.json",
+      "bytes": 245057,
+      "sha256": "66547be5215535cde12fe76a10001a167e06e5ff886160d6de33b7847b1084b2"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/scrapecreators.json",
+      "bytes": 1528046,
+      "sha256": "4edfcc60a9029ce418de04e6ddc4433b2b3a660c4c39d6002e96216aafebb3a4"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/serpapi_google_trends.json",
+      "bytes": 283646,
+      "sha256": "e72d195702621cf18360017c2f55328349407f14cf895343f09ebe60929f844a"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/serper_search.json",
+      "bytes": 11494,
+      "sha256": "96fb26714684338f612c3be322923763c05d9731fb8415cf6b64d0e63b5468f8"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/x.json",
+      "bytes": 1534,
+      "sha256": "d9ddd786798ce765e3417a056309399c2dd1ea70750adb1a29a3998410539b05"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/raw/youtube.json",
+      "bytes": 40558,
+      "sha256": "dabbbd75b6b79a1ac4fe9f7a0426738a2d794f9e6df1b0baf26bf2b4c9129b5d"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/report.md",
+      "bytes": 16876,
+      "sha256": "90746343ce409ab563865acb30080e21950f674ab60e22a281980ee6b51ffdda"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/research_plan.md",
+      "bytes": 2327,
+      "sha256": "b3e80ab87ba474d32e4f0338de537ba085aab4186ddd45a56245d2afb0c46461"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/run-manifest.json",
+      "bytes": 1780,
+      "sha256": "a754af1101bb23df27ed3a880d5e8631f5802020cb93becf997f544e4354cdbf"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/summary.json",
+      "bytes": 8296,
+      "sha256": "8d74186261ccbaac1ed6a08ee1ad455352c7cf5b9c7448bc40356997f898599a"
+    },
+    {
+      "path": "market_research/pain_points/idea-2-professionals/run-2026-09-06/user_review_plan.md",
+      "bytes": 13229,
+      "sha256": "5d1d3169980d48b3d2c71942f0b84243f847c7932802bdc1c1a5c9c7d14dc22a"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/assumptions.md",
+      "bytes": 3450,
+      "sha256": "48ff8cf73d6534feb0e7302e94bb3a8488e2163fb7a414fd6b5a4cb03993c600"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/evidence.jsonl",
+      "bytes": 203309,
+      "sha256": "64364cb586d366d004b42a2088a250f3dc0cb7be34d88854ca0c8947d780a880"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/irrelevant.jsonl",
+      "bytes": 56855,
+      "sha256": "92b9bdc3e069054c8e476d4925ddc2f9ee14db9cddfbe7b7b7004b2cc6c546a4"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/brave_search.json",
+      "bytes": 159277,
+      "sha256": "59ac6436676eaad061cc2805b6b6ae227985fc14e7fd9564fa4c9c5e58b65ada"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/firecrawl.json",
+      "bytes": 294142,
+      "sha256": "2b026405e9d5aefa99229a9181f9c2046b38218a0e235c789310a4d6b0bd0cc7"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/github.json",
+      "bytes": 5741,
+      "sha256": "284e29e40263118489d6ac2ba2726cfc2ee2221b0e010614fb0051e923ce7084"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/google_autocomplete.json",
+      "bytes": 5017,
+      "sha256": "d2dba53994483c161d245144f4fb8b9a1dd8c5ad06be60e117bc50068170176a"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/hn.json",
+      "bytes": 95441,
+      "sha256": "0f3db1baebe6609981093618f02b3d3bcbed04f4304e417947e0d85972c4ed1b"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/reddit.json",
+      "bytes": 245059,
+      "sha256": "f66bd6dbf77cca1c3f0118730452773b33e16ccbcc81859df272116cad5ac2b0"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/scrapecreators.json",
+      "bytes": 1475631,
+      "sha256": "50c3d8fe9f4d5eef47f9a1c80f252ef96b3aba5620f07fc4435b8768c357540b"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/serpapi_google_trends.json",
+      "bytes": 283664,
+      "sha256": "289eaff1fc0f28386e1e59a32eb7b7546da5434d021d5cd03ae307f1559dbf00"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/serper_search.json",
+      "bytes": 11497,
+      "sha256": "ffc7b6e3f8fab8fb03c8de1e161fdd6186ed027791c4d05f7a02a27ad23b777c"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/x.json",
+      "bytes": 1545,
+      "sha256": "ddf0bfff11e9270f2d0f39dbd3f779699d5f876e357cd092fa79a70de5607d06"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/raw/youtube.json",
+      "bytes": 35809,
+      "sha256": "4ae4b8bb1cf8e1080bdce0d65606b33f5b8f37897ffb78b970299099c5bb43ea"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/report.md",
+      "bytes": 17646,
+      "sha256": "ac2c1f70c8441fc219cd9f6cc1afe1d00308b248d5d016bb8b7756860b565f8a"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/research_plan.md",
+      "bytes": 2339,
+      "sha256": "9c9cbe8cffa46ed8c54452fbb5cee640c634d5ff7005d553a55288ee6c28a78f"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/run-manifest.json",
+      "bytes": 1634,
+      "sha256": "48812d2ca85c39e27c545617172a74015b22773129ab774f58b07365b4d9e5c9"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/summary.json",
+      "bytes": 8276,
+      "sha256": "a4d04d8ceba2689582f6ebf6ac7e53f72b9ea8a2cc9b062ae381089f0c61e999"
+    },
+    {
+      "path": "market_research/pain_points/idea-3-motor-mga/run-2026-09-06/user_review_plan.md",
+      "bytes": 13117,
+      "sha256": "0aeb7e3d13f31d6a9969ed94500c333930c63c2dc0323fb7665c07bbe8989a75"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/assumptions.md",
+      "bytes": 3357,
+      "sha256": "e12d5275e53c47277e3161e07a40f5b9a4ab3d686659fe66e0c57318402151bf"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/evidence.jsonl",
+      "bytes": 179551,
+      "sha256": "e9b2ff808c6ad743c8526c0ccf0a0dd0e82b01df01d484c51cbcb26ba87bf9f1"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/irrelevant.jsonl",
+      "bytes": 74603,
+      "sha256": "3a5f34dad890e8e285fdebf31dc9bfecf8620a074a363e0d5cfaeab303ec407b"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/brave_search.json",
+      "bytes": 159445,
+      "sha256": "65751e563955bf7091d16df6853e222b53ae43a00f3a293a8a540375c29261eb"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/firecrawl.json",
+      "bytes": 165146,
+      "sha256": "fbc686a2ee0b5d88c8ebf5ee194508c81d10ccd16e97642e42150e438efb0999"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/github.json",
+      "bytes": 63287,
+      "sha256": "a006170d260a198b8dd9afbd23d99fe00dde2545d3bc637afb9dfee12d080c80"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/google_autocomplete.json",
+      "bytes": 5111,
+      "sha256": "50e2236279c9f3f519c6483a5ed1c91ae7728670edfa5180afdf51f16d91b693"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/hn.json",
+      "bytes": 112628,
+      "sha256": "c599e6998093798ee64bd8d83a6bc3b59f5496cc0b2c8c86ef9ae318b8d9e54d"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/reddit.json",
+      "bytes": 245060,
+      "sha256": "833d72e264b0a13e368069c1b95a53a8c848615e8dba8bc1449aab0aab822498"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/serpapi_google_trends.json",
+      "bytes": 61259,
+      "sha256": "b5a53ae78b3241b68902fbe70469ffe8d15ca68e2d38619ddead82d32a4193b5"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/serper_search.json",
+      "bytes": 11495,
+      "sha256": "6c4b7d06fa118d75ac47ccb66ee37b88699d7d018bead83d21f32d86ab2092fa"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/raw/youtube.json",
+      "bytes": 37882,
+      "sha256": "d7806b7953e2f2312b21494efeda8392c818b304a15c60bd240c9be3eb48d7da"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/report.md",
+      "bytes": 15895,
+      "sha256": "e156e485d55197f146f89c84baaea50643eea2ec4fba2714499d4ca7b2ca696a"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/research_plan.md",
+      "bytes": 2254,
+      "sha256": "9ccf8b7808d16e1a5babb070ca1effc944107878bd48d284d268a8d66a380968"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/run-manifest.json",
+      "bytes": 1555,
+      "sha256": "e7b49961cce790efff2b3daecc7aa568f2904a6141eceb79e9610d90102fbad6"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/summary.json",
+      "bytes": 6939,
+      "sha256": "f80941c2e07fc9fc69b3d2b53288aca20ef750af06cd0971f784bcb2c884634b"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga/user_review_plan.md",
+      "bytes": 13254,
+      "sha256": "c8d2a00ceda1f2ddc0d6e7b13b475a1d68a912d90c2cdb860967e911917de4b6"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/assumptions.md",
+      "bytes": 3828,
+      "sha256": "b2818ca6fdeb0c287cdd5ed854c60500414dc7b47210d8cd2849b73f57fc3d3d"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/evidence.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/irrelevant.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/brave_search.json",
+      "bytes": 951,
+      "sha256": "e2fafbb0cb8259ac70065d57d80d69c9bb62c326002d21d5807dc62e74737a9c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/firecrawl.json",
+      "bytes": 1274,
+      "sha256": "2662cbfc2bb494e4642a244ac522ec07e9121f9bfa214d5284543c02171edcf9"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/github.json",
+      "bytes": 1029,
+      "sha256": "91d89d2dc1b6a1d89e1b973953b52d035a2f94c14c3e41a4fa75055e7ae31cc2"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/google_autocomplete.json",
+      "bytes": 1183,
+      "sha256": "aa135bd92b97cbf51cef22a2f37eb621433c962624c0eeb385966125e49ef389"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/hn.json",
+      "bytes": 2520,
+      "sha256": "534076ddaea879ad4eb0274cae6213b26bd1ea87f39b683a69b42c7a71c39d43"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/reddit.json",
+      "bytes": 38,
+      "sha256": "e1666f7d1dd3f06b1b8a0dffc2314fb57028c25a4218d7a5f7a016de9bcfa872"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/serpapi_google_trends.json",
+      "bytes": 233,
+      "sha256": "7f3cdc1e09d8b8b18a2da1de4a47c2d85eaea0e0ed1913edd75cc96e5705d5ec"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/serper_search.json",
+      "bytes": 945,
+      "sha256": "226e4a623357a6eae841ad1194545e06925eb4ca784db25f38aaeed0b17311bc"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/raw/youtube.json",
+      "bytes": 993,
+      "sha256": "e4825759d4ee641a9b1ba9f2984a57cfb77aa444e787d7d9ef6f0fc8cd04f6a3"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/report.md",
+      "bytes": 5422,
+      "sha256": "a70c531be4d6563cb67d06d603bdbe27dd65d1a93b22f4a3a6b0ce882f79bb42"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/research_plan.md",
+      "bytes": 2887,
+      "sha256": "2821396312d02b5786ead8ad9ced6f006bcb6b2f9fc102b25033c3e7f71126fe"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/run-manifest.json",
+      "bytes": 1340,
+      "sha256": "a712d97ff3a17db0e89edc51be74146a04026c08cf7da21576bee95bdc67cd68"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/summary.json",
+      "bytes": 5832,
+      "sha256": "a2af72f051c84086bfffd2ab9c14a8b77afc7672a8b67d65eea552f480744044"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v2/user_review_plan.md",
+      "bytes": 2173,
+      "sha256": "3ade614f5cc198a20f8f427685ca46de3a8adb18340e4c527fbf99d9bc92bba5"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/assumptions.md",
+      "bytes": 4620,
+      "sha256": "cbd32b0312a56f9c0ec9114950239aff595ae84012793e5236bf95790f3c7e1d"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/evidence.jsonl",
+      "bytes": 90806,
+      "sha256": "402a77e03d03502aab0963348afb2f792ba500f08f56ddbec5045fe423d47897"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/irrelevant.jsonl",
+      "bytes": 157080,
+      "sha256": "b407b31567e2797dd1a19b10f614dd8c223ce1dd64507da6b35506548e0577c6"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/brave_search.json",
+      "bytes": 163722,
+      "sha256": "ee6c34ec893ffcb741fb9e312d6afbde661b637f0571ecd1ea249832c8a20b3b"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/firecrawl.json",
+      "bytes": 161685,
+      "sha256": "a041f7332547a17506a87a41c935618dd483bf6ff24de04c28fa3925592d9e96"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/github.json",
+      "bytes": 83803,
+      "sha256": "b574466a7d6e664caf967f4836cd43c91120dca8900c90427df324f14ff4bc82"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/google_autocomplete.json",
+      "bytes": 4732,
+      "sha256": "959a59d6f1fb4f921d42ff243c8718c10d5298d41c1328b6debe7a55641ab7bf"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/hn.json",
+      "bytes": 12375,
+      "sha256": "eca83c5481a464d0b0d697a35914b67dc23f9a4e94c6bf67c6166c677dc354bc"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/reddit.json",
+      "bytes": 578297,
+      "sha256": "92c87e2295fc07fc386e99705765ebc27235c81c1fa23999352301e0480173b7"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/serpapi_google_trends.json",
+      "bytes": 2660,
+      "sha256": "df64f38bb1e6d1ba00664f082f412bf07f4e60528ce23bf55f52a9175f17690f"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/serper_search.json",
+      "bytes": 14584,
+      "sha256": "45580982585ba0483956843fc28494fa6e90ea2c787f78560b5cbcd085661023"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/raw/youtube.json",
+      "bytes": 36815,
+      "sha256": "94f7a03cfcc18be8cab8a63d7a2f63e6fa8b563608020a5468293b7de900512c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/report.md",
+      "bytes": 11802,
+      "sha256": "5b1bdb7a87ea028bb11c67b3d292e7d873aeeb67788fdd876cd349d0770cbf95"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/research_plan.md",
+      "bytes": 3734,
+      "sha256": "c97d12b3038d10749745feba249537c1528f77d7fe3c336b8fbea8fea9fb0b1d"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/run-manifest.json",
+      "bytes": 1591,
+      "sha256": "a3011ab2bc057d8c6de63e4a7bb5a510ab35f6b4ddb5e644f84ae160995cdfe3"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/summary.json",
+      "bytes": 7300,
+      "sha256": "f5482fcbff95a8ba952e5057efe9e37e9bb59df7eaebf4ca416480099a00ff08"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v3/user_review_plan.md",
+      "bytes": 2951,
+      "sha256": "9eaa0d71e35630604cbfb08360bd8c52de565c413eb3aea2acc549f7a6b07346"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/assumptions.md",
+      "bytes": 4620,
+      "sha256": "cbd32b0312a56f9c0ec9114950239aff595ae84012793e5236bf95790f3c7e1d"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/evidence.jsonl",
+      "bytes": 94280,
+      "sha256": "93be470de9c961acceb6f4408653cc6b30484017c0ec117d07b665a9d80b4c74"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/irrelevant.jsonl",
+      "bytes": 153393,
+      "sha256": "3e3a0abc3eda029ad27ddf96d51b22329787d29a308bf4785189c3337cb8a81c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/brave_search.json",
+      "bytes": 163719,
+      "sha256": "1474064fe25b6846a9f9d5c6bfed9e2b109dfe331fff80371a21997c8433b565"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/firecrawl.json",
+      "bytes": 170517,
+      "sha256": "a1c7abe08b575a7661d91b05716d817a69ec4446e319614e78efa1220b3bea64"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/github.json",
+      "bytes": 83797,
+      "sha256": "325b97c47900bfd499f9db5af9ec61ac5a1318d1c2c5f29af78ef2e17051cd20"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/google_autocomplete.json",
+      "bytes": 4860,
+      "sha256": "1110b40101e87c6fc672490bb7e4b7f53dd0aeaa07690daea96e2973dfdd293d"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/hn.json",
+      "bytes": 12379,
+      "sha256": "a8e6e650ac782e36a1cb2b51311215143b46018dd1e431fd76f5b39eb67101c3"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/reddit.json",
+      "bytes": 578298,
+      "sha256": "7efa0c03e909c8f06e13bbe8d0f7e64a46a85c146313ac9ec625a5d7340a63c2"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/serpapi_google_trends.json",
+      "bytes": 2678,
+      "sha256": "c539c0942d797ec6c5bff0e97a615f9c90cb80d8f159978be2315a579b68078c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/serper_search.json",
+      "bytes": 11740,
+      "sha256": "60d9ab48804a39607a941fb0fb4fb4607ba2662c2703d876fe9e63abc4dd6b36"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/raw/youtube.json",
+      "bytes": 36815,
+      "sha256": "fa754727dfecd6687c2b733ecbdb790f8b2836df29332a26acaf9bb7f13d585c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/report.md",
+      "bytes": 11447,
+      "sha256": "c3f2eced405a04478da0bcd6a65b3fdb81a197a87c6e075637f489360ff8c262"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/research_plan.md",
+      "bytes": 3734,
+      "sha256": "c97d12b3038d10749745feba249537c1528f77d7fe3c336b8fbea8fea9fb0b1d"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/run-manifest.json",
+      "bytes": 1591,
+      "sha256": "e796cb7d88a7570733a353a85c29c7fd88214118d173d87035da4efe709be229"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/summary.json",
+      "bytes": 7331,
+      "sha256": "8391ab0af18c8147d38438485430ebed75f1e93c0f37fe0762af56280327d783"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-mga-v4/user_review_plan.md",
+      "bytes": 2951,
+      "sha256": "93987f38aec003db7c9f04591743f6dfe100185e4042a2c266c8378596dca302"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/assumptions.md",
+      "bytes": 3357,
+      "sha256": "9ec0ad9a2b5e75fe87d1ddd1ee3d779f7e35422b4004a6ab5e7d8adbe1d7503c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/evidence.jsonl",
+      "bytes": 197423,
+      "sha256": "a141a7a79227631a6e95a2a809ee71ba93cd2db92fd9a7caea976716d120d669"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/irrelevant.jsonl",
+      "bytes": 76950,
+      "sha256": "901fb15123f3e96a14dcaa01ed1d9b8e00b3ce7f62cf7f3c2a79d05fbddc6e80"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/brave_search.json",
+      "bytes": 159444,
+      "sha256": "b037bc7f11b1bdf6bad8846bc0161badfc00b1c929dd2c86be8da16810c2d039"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/firecrawl.json",
+      "bytes": 294142,
+      "sha256": "0ea9c1ccd4c42e90b9121b8b4da308cb840ba3b74caa51219096975e89330db8"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/github.json",
+      "bytes": 63295,
+      "sha256": "46dd7c74bf21b574afdbcdbd3bd16f6497c02def1ed98650546dbcddc7cf86f6"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/google_autocomplete.json",
+      "bytes": 4997,
+      "sha256": "eafc6d87f298e3d3e1f0da641b44c6cea4505e7262c572122a15cc5f7fe3e5d4"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/hn.json",
+      "bytes": 112434,
+      "sha256": "1a578064cec7a229a22cd052fd833d5847558a2a2e100a92f305138db2312f67"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/reddit.json",
+      "bytes": 245061,
+      "sha256": "37db55c1a205688ee512573635147f3b7f3ddab3f7585fae8e325550d79f854b"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/scrapecreators.json",
+      "bytes": 1189132,
+      "sha256": "1474ff6578b80f56b45b225304f8b323a9974936097783f2cb88ad55a1e1b892"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/serpapi_google_trends.json",
+      "bytes": 61258,
+      "sha256": "27d9fb8ac9d243eb222e036b92062cddb65bff8c7e129729012a0d2ac2030431"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/serper_search.json",
+      "bytes": 11503,
+      "sha256": "1535b8a71a241d80f8872a28db4d2611b008f2a723c05d2426cc1291b756fa7a"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/x.json",
+      "bytes": 1522,
+      "sha256": "e104023f25673e2e530df1157d67bd93abc17acbaf9a0eaa073384c11cbc8e38"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/raw/youtube.json",
+      "bytes": 37864,
+      "sha256": "b42734ecb302671c7b3ac052bbefad85a0fdf085165265e7e494289d67911af8"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/report.md",
+      "bytes": 15947,
+      "sha256": "cd7ebca097d8a2829ab864e553ca9751e13ce9db2403ed36ee0398a7a71eae9f"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/research_plan.md",
+      "bytes": 2291,
+      "sha256": "9ce9ee1f7c2d1ef185b67f99f98dc79a8cc76b244bf92b868383615f75d7d176"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/run-manifest.json",
+      "bytes": 1486,
+      "sha256": "6cceeef321e485c35944776bcdfa56c70d987144fb80f5e5ed2166aa067a3d86"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/summary.json",
+      "bytes": 7021,
+      "sha256": "3ab5b607f8afd2f22ea865cc7d11506cbe1edbc14b7b4c9376f84926870af899"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-personal/user_review_plan.md",
+      "bytes": 13298,
+      "sha256": "9edfbd1c7d3ff6b7ae200e0bcdad1ae56cf9ee721e24d99745e2190b7a228897"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/assumptions.md",
+      "bytes": 3446,
+      "sha256": "4f0fa46793e3b53c7e9c48ad4c36607690b745a021f062601e2779f5e1afd645"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/evidence.jsonl",
+      "bytes": 192974,
+      "sha256": "ae6069bf760b13f271b831eb68e127ae39d85612d45ff369292c7adcb66eca93"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/irrelevant.jsonl",
+      "bytes": 77999,
+      "sha256": "e578c4a672e3152bfffd4b21a6328b6e4ce2b4de2827bb96ea1d6b233bd59734"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/brave_search.json",
+      "bytes": 159445,
+      "sha256": "6660d38601a16624654d79098046e391e20e266297f99bea35a6079031ad3d5b"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/firecrawl.json",
+      "bytes": 294142,
+      "sha256": "f367f47e4846f69038962c07ca479edc7ec6b1a09edfaa9c093ad3dd1cc97165"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/github.json",
+      "bytes": 63290,
+      "sha256": "c2fb74726fa3c614749a75b6dce222592256e386de3543a2889d543cbd4b932c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/google_autocomplete.json",
+      "bytes": 5195,
+      "sha256": "ddde314f8c94b7d32116dc4ed6cc1b49274cc13407cc3fd0e19e7534c6b5a1a7"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/hn.json",
+      "bytes": 112624,
+      "sha256": "452c0bc80a460078c201899d37e583f54700a8a88f72103fae575a23be2e7578"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/reddit.json",
+      "bytes": 245060,
+      "sha256": "0deaedab8f1c68248dbaad5f0064cff33209b91f66a3d5e393fd9e0ea8cf0605"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/serpapi_google_trends.json",
+      "bytes": 61258,
+      "sha256": "fce0535fbc5f295d108a9dabf9af39b5d822191fb38138b4d21495b9c32c2bb2"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/serper_search.json",
+      "bytes": 11341,
+      "sha256": "a6e36116a5b40e54cb58e1b85f71cd93f905bfa69fa9a600f24ee666b122f8eb"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/raw/youtube.json",
+      "bytes": 37864,
+      "sha256": "cd41a48e2be74baf55d45aa764f571f8c372d67c96422e49d059bdd904b0a1aa"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/report.md",
+      "bytes": 18254,
+      "sha256": "4b033ca836d1af1214f25fdd61524b909a23f762411219874d70f203d8c4a54f"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/research_plan.md",
+      "bytes": 2288,
+      "sha256": "98f8897539b8696f8ec6c93d66a6939bca23b2aa9d5292b267c127541fffd76b"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/run-manifest.json",
+      "bytes": 1606,
+      "sha256": "d659ab146124c02cfe1b0066ce405f5cbb421999e1f69473b37c160944afa070"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/summary.json",
+      "bytes": 7139,
+      "sha256": "5acabaf5207fa7ebae993d7a7338707de397554c73174582070fa1af292fb672"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it/user_review_plan.md",
+      "bytes": 13382,
+      "sha256": "4972c5a1d1f6a80b96c225a67dfbe652cf34ef208e0e49cbabf0a22ad1abadca"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/assumptions.md",
+      "bytes": 4402,
+      "sha256": "83603f579462035eb182954e5de8d7255f04e45ca516a4bda2a40b56fb7fb724"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/evidence.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/irrelevant.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/brave_search.json",
+      "bytes": 1085,
+      "sha256": "af66c3a8f3b6247fd8934a11b7092dc2391eaefe5251a6df179c1e64b0adcbad"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/firecrawl.json",
+      "bytes": 1441,
+      "sha256": "f9a95e5d0e6cb181ca3353106d5ceee91e0946a4afc227e1b2bfbc0ec718ea60"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/github.json",
+      "bytes": 1163,
+      "sha256": "ffc86e74aa12e83e869ac7d6a3285492a371a3ab4101627fed1a4221e858f843"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/google_autocomplete.json",
+      "bytes": 1359,
+      "sha256": "630938634ab3bf408eb163fd98646edd00067e2f0bc8db1906569fac690ae808"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/hn.json",
+      "bytes": 2932,
+      "sha256": "1a70b645b8a8da5f55c5f58cb3d9cec1b731a28795e9cd3810c78aeaa6d3f6c5"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/reddit.json",
+      "bytes": 38,
+      "sha256": "e1666f7d1dd3f06b1b8a0dffc2314fb57028c25a4218d7a5f7a016de9bcfa872"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/serpapi_google_trends.json",
+      "bytes": 233,
+      "sha256": "7f3cdc1e09d8b8b18a2da1de4a47c2d85eaea0e0ed1913edd75cc96e5705d5ec"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/serper_search.json",
+      "bytes": 1079,
+      "sha256": "b42b02735563a2fc38608533406c7fb52b74934615f6f0d80ee64fce5cb0983c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/raw/youtube.json",
+      "bytes": 1122,
+      "sha256": "732541d4b65bfdad5aea378fc9c6e5835957a408bc66f15a1f5ae4a74ae9c595"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/report.md",
+      "bytes": 7714,
+      "sha256": "2e2d843f141c49297466b3bf011c1e25be7ab93eea6706258d0439ab721e21c5"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/research_plan.md",
+      "bytes": 3410,
+      "sha256": "49d535dfcf6b1ccaa67d61bbdfadac17e19020b550c50406101168b148716fda"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/run-manifest.json",
+      "bytes": 1430,
+      "sha256": "2a57cc14400142c6579202a886be0a5f8a4f03f076f650b38345821b0e031172"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/summary.json",
+      "bytes": 5974,
+      "sha256": "2ca0026b33c387975e7412d0e8c459ffa8af3819b1b18e34e06b35fc07091b3d"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v2/user_review_plan.md",
+      "bytes": 2249,
+      "sha256": "eb517321ca653020760ab234a316455aa4af357da32a1b2c807c7e99e9b71741"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/assumptions.md",
+      "bytes": 5034,
+      "sha256": "c08a76aa54d69165c906d3753f00e165d63e3087a6f502464e7d60aef76be41e"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/evidence.jsonl",
+      "bytes": 205373,
+      "sha256": "e59c54aff8cce82e9f6148d28f222cfdca7329437d628d09a5d17b8205f84ec7"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/irrelevant.jsonl",
+      "bytes": 140580,
+      "sha256": "c2a8551e3b324f3000054f2b7dfa6c075df5d912cf3a2ae57acc4f88ad9fe0d8"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/brave_search.json",
+      "bytes": 290264,
+      "sha256": "f3bbb9348f822f4d18f8e3931d4a68ba37f40235467f9032d817e8abd0e33483"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/firecrawl.json",
+      "bytes": 279777,
+      "sha256": "00b1a927921306b92c8b7a1f545d3871c18589da8058f9b1537fdb776af218f0"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/github.json",
+      "bytes": 60896,
+      "sha256": "97b6f883fb62d6f717e732b01f3049bc79f125e08c57588f6e766424ad574abc"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/google_autocomplete.json",
+      "bytes": 4980,
+      "sha256": "fa716fb7799dcd14e2ffeacb2d141c1de10ae4bae3ddb6df83244cfc7f1f7a0c"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/hn.json",
+      "bytes": 12680,
+      "sha256": "dafa1ee8e8dafc7cf4e9c2eeecc7ccae7c3ca4c00fd3147856bb66559dbb2f02"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/reddit.json",
+      "bytes": 700246,
+      "sha256": "cfe03b19ed5f069d29e42331f6591cc58864c9f543d07db74b1b6d421e44a411"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/serpapi_google_trends.json",
+      "bytes": 23405,
+      "sha256": "3a242c92f4633b3cb3494d88b158dbaaa3b17130e2c088265c09dfb896ee38a9"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/serper_search.json",
+      "bytes": 11797,
+      "sha256": "a99afad308f632d79300cada8732dc756e8ee7adce8a3e460d1dbd92ac386a70"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/raw/youtube.json",
+      "bytes": 37244,
+      "sha256": "e386b0c74d20fe1202472cff7427446cb4c2008d6d6bfbef3462e6ef93b3bba1"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/report.md",
+      "bytes": 12378,
+      "sha256": "4baf1c8c4625eeeeac594bb5ae824d2a8056bc0167abb0613b81be9c9c76e096"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/research_plan.md",
+      "bytes": 4102,
+      "sha256": "49f68b2f0e31726cfafa0fda07d674610e2e01c1d3131e076adb980523d6cf46"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/run-manifest.json",
+      "bytes": 1654,
+      "sha256": "eb57a3f99cc3f74bc7a4a166ff206086579db4025b123df6caa2b49fbfe83bf1"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/summary.json",
+      "bytes": 7442,
+      "sha256": "143b53fd0e2d37e39e311a38e78220dedf0ab70cfb3e5d76c2e8eb4fe32913d9"
+    },
+    {
+      "path": "market_research/pain_points/runs/2026-09-06-refresh-professional-it-v3/user_review_plan.md",
+      "bytes": 6093,
+      "sha256": "24263c259954631f96cfe14a9cea4a87b53408f0ec354e1f702c78506f98ce03"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/evidence.jsonl",
+      "bytes": 17361,
+      "sha256": "04119fd38e52243711f9ca2a7d2e8f2e924e3f6fc36a8561126b3051d8f5e418"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/foreign-youtube-hailan.json",
+      "bytes": 65241,
+      "sha256": "48ea3dbf3983bb2336685babc9d23a5b4342323fe095b675915007f1b15214db"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/foreign-youtube-ja.json",
+      "bytes": 3032,
+      "sha256": "4a04a926ef5b1cc66d25e458f56fc473ff946684bf64a246f23c1c32d884f036"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/foreign-youtube-ko.json",
+      "bytes": 3000,
+      "sha256": "afe272e1584a00412715aaf1e1a7a009ff794e49e7edb0cfcbd05f4301eaac59"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/foreign-youtube-videos.json",
+      "bytes": 51653,
+      "sha256": "9cc1c6785a8b1374d05869455b28099ff7dcc1dc38d9df79de1c65b93f770049"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/foreign-youtube-zh.json",
+      "bytes": 2981,
+      "sha256": "a05a8a541b03bba33be1ea4da76a477e49df8cbb01f4772f5e37b30cc2e54ede"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/retrieval-notes.md",
+      "bytes": 2586,
+      "sha256": "51e872e34f4529802c2a1825517018d8a3545846420360adaf339f317b3f1475"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-feather-search.json",
+      "bytes": 2600,
+      "sha256": "7598d406c832f418999910175449fb3f7dc5e8e2da719ce1dbf34d8949bab64b"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-instagram-first.json",
+      "bytes": 855586,
+      "sha256": "5a0b9d702fe5f06ea33f439208dbc3cf4212b9f4f0b61d5ef8351a251d218a72"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-instagram-second.json",
+      "bytes": 1213762,
+      "sha256": "a1ed13323f81ce023a790a2a714814e72d0ad779527d75d71a11424c1a3ee402"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-instagram-third.json",
+      "bytes": 438618,
+      "sha256": "8e799c6a25d48c71fc68a3c043187f931aa5390c3446ea29f94c61d42f50beab"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-official-links.json",
+      "bytes": 176284,
+      "sha256": "d3a4469c8e2db961e0820294a45c0c115b6eb3e6ed45b401a6fb2ead57c50b23"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-youtube-channels-more.json",
+      "bytes": 117257,
+      "sha256": "a225c25953f9cab1cee094fd6893ad6b9612d6de487d0890311ad39fa7d1b219"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-youtube-channels.json",
+      "bytes": 305575,
+      "sha256": "5e2a72e238191c00f88bd6d880b549b73059a1fea0515a3735f07e2fdcae9b69"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-youtube-discovery-more.json",
+      "bytes": 22059,
+      "sha256": "e32ecd80ebd32a9d0940b99f6940df279e97cf82894a9423779046b9a4525f03"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/raw/social-youtube-discovery.json",
+      "bytes": 36426,
+      "sha256": "8d6978eae655eac692c20c224a222d17c2404ef670b5a431a816a203c75589c7"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/report.md",
+      "bytes": 19206,
+      "sha256": "f6f249fdecfb283e6d31859b844bb5e6b7fcbce54c50f8bee7a7cf6b355916f1"
+    },
+    {
+      "path": "market_research/pain_points/runs/legacy-root-20260906/summary.json",
+      "bytes": 3642,
+      "sha256": "f986567b54e066fde1fcc58327f61c150890fb6e58525b3a4b5bd8b2778f1efd"
+    },
+    {
+      "path": "market_research/solution_alternatives/ads/2026-09-06-social/ads.jsonl",
+      "bytes": 569951,
+      "sha256": "010eca24abfba7e36d2290c0c9384d387ff65274e9374156a8729e1b96864f9a"
+    },
+    {
+      "path": "market_research/solution_alternatives/ads/2026-09-06-social/raw/providers.json",
+      "bytes": 676175,
+      "sha256": "d9966df325c28dcad78fbcb18a273c506db93cd3c61562e7a8e0f6e1a6647f9a"
+    },
+    {
+      "path": "market_research/solution_alternatives/ads/2026-09-06-social/report.md",
+      "bytes": 10737,
+      "sha256": "af727b0b75d0155cfad754e4f2cb477abd936d29b665c45e846095756847de07"
+    },
+    {
+      "path": "market_research/solution_alternatives/ads/2026-09-06-social/summary.json",
+      "bytes": 1475,
+      "sha256": "973a97ead1538965ee68bd64325d0d9d8b56e2366cd6cb972a87fa74dddf5210"
+    },
+    {
+      "path": "market_research/solution_alternatives/ads/20260723-064709-self-employed-professionals-germany/ads.jsonl",
+      "bytes": 9658,
+      "sha256": "9666aa832836d0491b181fa81e80da68a12e9107dd36588303916abeefbfafeb"
+    },
+    {
+      "path": "market_research/solution_alternatives/ads/20260723-064709-self-employed-professionals-germany/raw/providers.json",
+      "bytes": 11327,
+      "sha256": "271e736b340ef867a448c03d8e09d62f0833f2b566f5784add12ced2231a9a95"
+    },
+    {
+      "path": "market_research/solution_alternatives/ads/20260723-064709-self-employed-professionals-germany/report.md",
+      "bytes": 3389,
+      "sha256": "b088f3bc4dd3a8d4be9c18d7dcc86710d515f91fd90b1e58cdb66fcea13b361a"
+    },
+    {
+      "path": "market_research/solution_alternatives/ads/20260723-064709-self-employed-professionals-germany/summary.json",
+      "bytes": 1476,
+      "sha256": "61610db5a8b4381dbe9628a21cb03f80e00e733b31df10c69c539a65cb3cf962"
+    },
+    {
+      "path": "market_research/solution_alternatives/competitor-advisory-walkthrough.md",
+      "bytes": 11680,
+      "sha256": "c8b5e10ee5c46cdab6605e6d65f70170f0ec0817c2c9ac1ed1ae11ccb763d421"
+    },
+    {
+      "path": "market_research/solution_alternatives/marketing/2026-09-06-professional-content/marketing_analysis.json",
+      "bytes": 19934,
+      "sha256": "0a9679135425c6e7b7a2d9bcc22f9af00d37bc9d9cd5d38adb0126c0ba44a056"
+    },
+    {
+      "path": "market_research/solution_alternatives/marketing/2026-09-06-professional-content/marketing_plan.md",
+      "bytes": 1358,
+      "sha256": "fb7684c1cb0c38ca74dcd7695c100b75b97eaa2468b9bb51c13967ccd6fd4a30"
+    },
+    {
+      "path": "market_research/solution_alternatives/marketing/2026-09-06-professional-content/raw.json",
+      "bytes": 94431,
+      "sha256": "bd4fbc6bf4e1085be33bd012b0dfff798a320cc3aa197ff9d30ae00fc1f99671"
+    },
+    {
+      "path": "market_research/solution_alternatives/marketing/2026-09-06-professional-content/report.md",
+      "bytes": 6897,
+      "sha256": "b8acd00ab417fcd1371d8eb5348539e8556087be4bab9b91fd0128f8ea3a6791"
+    },
+    {
+      "path": "market_research/solution_alternatives/marketing/2026-09-06-professional-content/summary.json",
+      "bytes": 906,
+      "sha256": "105b54ccf51954bf8ead933f625e6c4028bf5b137228766635a08aaa7087f63a"
+    },
+    {
+      "path": "market_research/solution_alternatives/pain-versus-offer-matrix.md",
+      "bytes": 2900,
+      "sha256": "ba0047d58d447b1904d2c5ef7c0362a0619b2bb6e941bc709e774eb56881f586"
+    },
+    {
+      "path": "market_research/solution_alternatives/player-directory.md",
+      "bytes": 9175,
+      "sha256": "52a0377ba409a23911709195d401a60ac69ff2422a179bf03df43dd00d8ab98e"
+    },
+    {
+      "path": "market_research/solution_alternatives/professional-insurance-content-competitors.md",
+      "bytes": 7681,
+      "sha256": "0ee805e07badd64ecd4a79683ecd3a68d1d4dae09e9f9a06098b6c90bd49027a"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/competitor_plan.md",
+      "bytes": 1483,
+      "sha256": "23e6cba4e547ea05522bfcf3e95ab18b93340934d8d6f5b1a11df9c72b107477"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/competitors.json",
+      "bytes": 15343,
+      "sha256": "0703e2780b7d1c975dc7e89e507629390efc1df665149b97b47e0c4ef9053617"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/entity-landscape.json",
+      "bytes": 28827,
+      "sha256": "df422272d3ffdb547f911d97920fe6662a5c807ef1d0b31e53740be561b00a6e"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/landscape/capability-reference-library.md",
+      "bytes": 311,
+      "sha256": "94d7f70768eaae45a6ff6ae511f2cc8bb007b551aa97d43234d8f9e24efbf073"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/landscape/competitive-insight-handoff.json",
+      "bytes": 321,
+      "sha256": "38247a215b5412c2d06bd6bc529ed505b8512ba1f3610eeda787ecaa77a4daa3"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/landscape/competitive-market-matrix.md",
+      "bytes": 534,
+      "sha256": "159af3135b1343de2dbef0c1f540bffd99527e45f6aef21085fcd63f09609426"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/landscape/offer-price-matrix.json",
+      "bytes": 9199,
+      "sha256": "6eb481fd28d70b4fb9c5de62db9cc09c7680b9edf210c0408b93ded7fe0a85b9"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/landscape/positioning-hypotheses.md",
+      "bytes": 154,
+      "sha256": "4ae3d613cc2221654c5f031874e63d6318fbc9c556889328be6b4f7a6e0406d6"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/landscape/quality-gate.json",
+      "bytes": 598,
+      "sha256": "087d36d48c04e45ed81abb5af79d75e036af6648ec997f9249919452fe2f15b5"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/landscape/similar-company-inspiration.md",
+      "bytes": 638,
+      "sha256": "fac2343438cdffb7a52cfc2c2f37351a763207b5d2be8b2ac8b4d48b9c04ee16"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/landscape/social-presence.json",
+      "bytes": 1177,
+      "sha256": "7c363bb1a7c9c8f443acb53452ddbbb67c5c4f2c0f3807ccd05b6c8c7a238680"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/marketing/marketing_analysis.json",
+      "bytes": 68913,
+      "sha256": "0d990f11a250cadb67bf7f48f6957c4dbd8b879662c91c63dcf13ce9cd551e15"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/marketing/marketing_plan.md",
+      "bytes": 1415,
+      "sha256": "7b2471ca9e9e69cd95f3e27de9a039b3c6b8c2c5f87bd5b0588b825140bcd0e3"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/marketing/raw.json",
+      "bytes": 290995,
+      "sha256": "f108ce4ec6fb2fb44a525f15fecc7fb47e80d1a563a5fa38831b5b8d4ac7effb"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/marketing/report.md",
+      "bytes": 18637,
+      "sha256": "166da227803f12e62c950570b052439312c68bc29176ead1edcf5819acbc21c7"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/marketing/summary.json",
+      "bytes": 930,
+      "sha256": "3dbf32a42b2a771eb829e333afcb9815c81109e17eb2a56dbdba67955a510307"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/raw.json",
+      "bytes": 337601,
+      "sha256": "791b87b306e50495d7f59838bd2162d076c0b1d99245217e38a22e8bb7a97b53"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/report.md",
+      "bytes": 4559,
+      "sha256": "c7b147a6482e3d5eae3045dc768630a128e0a271f807d51bcd1e71dfdbc90eb0"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/social-observations.json",
+      "bytes": 16524,
+      "sha256": "b7f340f8dc04fa3c96ff97cf7017eac529110d4c1170c04b925a39b16abe9e5e"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-four-languages/summary.json",
+      "bytes": 2034,
+      "sha256": "a3798b37e604f7928e6209ffb3e204fb2a6679da15a0f8140da454c4e395d006"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/competitor_plan.md",
+      "bytes": 1449,
+      "sha256": "74839098e32fc0c178fba662cf78a331f429485081690d5566eec2526d97dd5f"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/competitors.json",
+      "bytes": 23267,
+      "sha256": "dd43276935336d74330e92214a4cf70edd40338538febaece9804b5c82ffafe2"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/marketing/marketing_analysis.json",
+      "bytes": 28078,
+      "sha256": "fc04bb033f3343370c6c5dd6b39f316a0545e3177a0e2c7bb9eab2e9e55529e9"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/marketing/marketing_plan.md",
+      "bytes": 1323,
+      "sha256": "4d8c435a936e57b98290be190b7255bc147ceacbabef6b9ae020642146e5861f"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/marketing/raw.json",
+      "bytes": 173491,
+      "sha256": "f4f9145d247c895f7bed8e2ffb1ef9b5ab140e1fe59221b5336f24e61d18febd"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/marketing/report.md",
+      "bytes": 8864,
+      "sha256": "5926655952749c5f522493190c9260d30361e2d038356902051ed6323b87f563"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/marketing/summary.json",
+      "bytes": 1018,
+      "sha256": "f6d2a297cf7928f6d079564650d785ae64d6f081b7f6a53fbc8fe5c987b13823"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/raw.json",
+      "bytes": 734054,
+      "sha256": "0f7966603c0d223b97a56ce33d681c87b16cbd913986265b87caa72a55f5df0f"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/report.md",
+      "bytes": 6547,
+      "sha256": "d791f2f31c9f7be5c7b6218e9d2cf2b01ab9f2c0a12ab7ea417f3c2568dcd16d"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-motor/summary.json",
+      "bytes": 2128,
+      "sha256": "2eccc2da3ae6816267b5c86f269a6ad15b3851bed7783051dd972874a5e3e74a"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/competitor_plan.md",
+      "bytes": 1442,
+      "sha256": "9dfff7005027206594c60eca962ab4efd5f5ae9451d30ed2166e648e7dc7fd7c"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/competitors.json",
+      "bytes": 29703,
+      "sha256": "038a32b4f3d613f4bee854baa63a7ccee90375f57047c63882125db4bd13e70d"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/marketing/marketing_analysis.json",
+      "bytes": 22228,
+      "sha256": "4f76d52b87168b88e3e8e75a7e930c7c29d037432776a199ab087f4057658a06"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/marketing/marketing_plan.md",
+      "bytes": 1343,
+      "sha256": "3b1a1fa23f6bf81626ce1204ba522d0a1138d45e9731545c5ba96232a6757067"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/marketing/raw.json",
+      "bytes": 150455,
+      "sha256": "8bfb1d88e03b8fbe40397065faa77bb7cc5362d11e79f1c8523b13abc0507a2c"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/marketing/report.md",
+      "bytes": 8955,
+      "sha256": "fc5371dae09bb6368e47dbd80da196d1d3669a8244bfacf0ce74702c2773c5b1"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/marketing/summary.json",
+      "bytes": 1077,
+      "sha256": "9ad38e4d6fa35057283ee28d0a44a919c69b55fb43f7dbb4d4974cee81c09976"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/raw.json",
+      "bytes": 604521,
+      "sha256": "4dd450999cb01595b446543a8c6280309ce34465d60f388e3874ea957a906099"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/report.md",
+      "bytes": 6727,
+      "sha256": "8a4a5acf7e38e92b8fdd505f69b6d9773dfe8b820a55bd78e8b2a6073136d572"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-personal/summary.json",
+      "bytes": 2191,
+      "sha256": "b2ff6e390f39f08117de2c4dca9e4d12d9cd3d8aa143ead17e25e7f382100fe2"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/competitor_plan.md",
+      "bytes": 1514,
+      "sha256": "80c50be550b87ba0748e91221e349ae06d376faf592b096aa53df97eaa292a56"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/competitors.json",
+      "bytes": 22688,
+      "sha256": "9c85c81dc1e6bf7f8387c1b99b498c076c241ecb890e3ecb6779cae6d48e935b"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/marketing/marketing_analysis.json",
+      "bytes": 26671,
+      "sha256": "21dc60d51bfa0fe6918cfb5d041df2d5aee475519a1b670e7b98364590dcb362"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/marketing/marketing_plan.md",
+      "bytes": 1343,
+      "sha256": "adf0172bd115d7d164f1cdd5855021a4e268536b484c52eeb0fa4f9c9d35a79e"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/marketing/raw.json",
+      "bytes": 76813,
+      "sha256": "09709c14b0bb11ba2617ac72bd7bf5023e397c82296fcbfd8336ea5009469e54"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/marketing/report.md",
+      "bytes": 5913,
+      "sha256": "251c830085618692f0dcaefd5df6fa746dca7403c4998f7d4f4af0871e2f632c"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/marketing/summary.json",
+      "bytes": 889,
+      "sha256": "8553b12e32376ec486febb858e7597193003847c1befac2907020b4146f3b456"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/raw.json",
+      "bytes": 241315,
+      "sha256": "6f18364de989ce308875812feb25101baf99f07f5c56cd9af0be502feeae3835"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/report.md",
+      "bytes": 6619,
+      "sha256": "3917e77c6f7a8eebdc536f1d12c85649a7d8aad401757f9394e873903c12d5bf"
+    },
+    {
+      "path": "market_research/solution_alternatives/runs/2026-09-06-professionals/summary.json",
+      "bytes": 2190,
+      "sha256": "74a50df0b938fd40e7d95c0d02b49e21a27ce133a4a12a45074762705819f310"
+    },
+    {
+      "path": "market_research/sources-2026-06-multilingual.md",
+      "bytes": 7530,
+      "sha256": "5f71002d3606275c20a36882aa7356f912c02d7a399cf77a3ab923142ef66fcf"
+    },
+    {
+      "path": "market_research/sources-language-and-surelius.md",
+      "bytes": 5377,
+      "sha256": "420e7b331f76d7fe1a8829ba00b07a82b59686d6602568c0c85680b0b1e3e0dd"
+    },
+    {
+      "path": "market_research/sources.md",
+      "bytes": 15550,
+      "sha256": "637efc173135dc18719f7005da5788e1f9c3650fea1da2fee2e7f0019587999e"
+    },
+    {
+      "path": "marketing/2026-06-social-media-playbook.md",
+      "bytes": 14071,
+      "sha256": "1fe53475d69563206943b33bbf58db616cd22783b2586287e77fab93464729f3"
+    },
+    {
+      "path": "project-manifest.json",
+      "bytes": 1218,
+      "sha256": "2db316a27b2eb9ec75425a76dddabacb69ee397fc688bbdb5ebcaa81eaecbfd6"
+    },
+    {
+      "path": "strategy/2026-06-digital-workflow-and-app.md",
+      "bytes": 10239,
+      "sha256": "86a6e65e57fc04baa891b221af42f7376c8654cf1feb90d6628a5bebb3ec4449"
+    },
+    {
+      "path": "strategy/annex-a-personal-insurance.md",
+      "bytes": 8444,
+      "sha256": "7cc557a775bbff5d4890f036eda4d4372d4c66d6f7423283ebe06b866193cb56"
+    },
+    {
+      "path": "strategy/annex-b-motor-mga.md",
+      "bytes": 5420,
+      "sha256": "f3c11213123b610ae819308c69fcc8ea9d4e39abb60d460a43ed2683319f7d68"
+    },
+    {
+      "path": "strategy/annex-c-broker-succession.md",
+      "bytes": 3185,
+      "sha256": "d6826d8de1df6905d3e00ac4c2ec5cf315c9a03aef070cee539e67ac441ba9a7"
+    },
+    {
+      "path": "strategy/arabic-brokerage-assessment.md",
+      "bytes": 9467,
+      "sha256": "d6d40f120995c669995bc6421a03a430b422573940766cc22f609c1aff92e0c0"
+    },
+    {
+      "path": "strategy/canvases/business-model-canvas.md",
+      "bytes": 1205,
+      "sha256": "6e6f460ded2727a7cb2440dc72ade1f38e914c2864372846ab0ab507098519e9"
+    },
+    {
+      "path": "strategy/canvases/value-proposition-bootstrapped-founder-building-a-small-direct-to-consumer-insurance-brokerage.md",
+      "bytes": 939,
+      "sha256": "d34227a7e0b89825281176d71bdc9cd4f63f96a258cf271887548f54cade9a61"
+    },
+    {
+      "path": "strategy/canvases/value-proposition-comparison-candidates-residents-seeking-bu-or-pkv-advice-non-german-speaking-pro.md",
+      "bytes": 1004,
+      "sha256": "db9839d09d1a2bf64578561dcd0ae064c3682a04c8c3d471bceef83e115e90fe"
+    },
+    {
+      "path": "strategy/content-reachability-validation.md",
+      "bytes": 34122,
+      "sha256": "4f0dd1e5a31c2136c3d83a25744e6eac480f8beae36818dd85da7ef9f7c3bd17"
+    },
+    {
+      "path": "strategy/current-recommendation.md",
+      "bytes": 12764,
+      "sha256": "92784b9a7d2f2b69bf1a8a53bcb7550ed6e7581f33c6bcdc48881e21bb6465dc"
+    },
+    {
+      "path": "strategy/decisions/2026-09-11-workspace-consolidation-map.md",
+      "bytes": 5070,
+      "sha256": "636d0f4ecce78a614d4f20b98a29306ac30b5ba417c7bc2f14a8fc4e3ca2c0d3"
+    },
+    {
+      "path": "strategy/decisions/three-ideas-decision-memo.md",
+      "bytes": 35496,
+      "sha256": "0044f42a2242b96923ec91555321f569bd5000b497f043c21a7a605c87f82791"
+    },
+    {
+      "path": "strategy/decisions/three-ideas-evidence-audit.md",
+      "bytes": 13194,
+      "sha256": "3bc267587a2e93328d8d3a6daafe301654b0fa40acec7f7351071a83c881dd23"
+    },
+    {
+      "path": "strategy/economics.csv",
+      "bytes": 409,
+      "sha256": "85b9ab7667660f924d989d1616b41823b41226e08b188102a3e42d69259ed2fd"
+    },
+    {
+      "path": "strategy/experiments/pilot-evidence-log-template.csv",
+      "bytes": 448,
+      "sha256": "46be321a28dd4c1ae98d4f8aae53e90aae3e0beeaeb4dc340f0d3e120c96ec47"
+    },
+    {
+      "path": "strategy/gtm/2026-06-multilingual-gtm-strategy.md",
+      "bytes": 11738,
+      "sha256": "e17d76056e7a80685ffc992fe3548f63af15fd552315c0cc683f46d37895593c"
+    },
+    {
+      "path": "strategy/intake/2026-07-templates/business-model-canvas-sepg.md",
+      "bytes": 1060,
+      "sha256": "1dd6233b18a51339fe009ae11c2de5f341c65718cf73649379d6b8a3d17b9b7e"
+    },
+    {
+      "path": "strategy/intake/2026-07-templates/startup-thesis-sepg.md",
+      "bytes": 492,
+      "sha256": "2090b211387ffa0d6ef398b92a219e35b43d3baa61c6fe0073d1073f2e3647d9"
+    },
+    {
+      "path": "strategy/intake/2026-07-templates/value-proposition-segment.md",
+      "bytes": 875,
+      "sha256": "74c3337c38d969e7ba3b716420199387a9e7da8287569db505c65988107c81be"
+    },
+    {
+      "path": "strategy/intake/ideas/idea-1-personal.md",
+      "bytes": 1723,
+      "sha256": "4840a93a89f5cf079e1922988783cd76ecc797fed58cc785af563a284eb819a4"
+    },
+    {
+      "path": "strategy/intake/ideas/idea-2-professionals.md",
+      "bytes": 2558,
+      "sha256": "6a5bd04d90794662de4c9fba8a933ff3c01f9a35b8cc17a8bce8eaaf8ed2af75"
+    },
+    {
+      "path": "strategy/intake/ideas/idea-3-motor-mga.md",
+      "bytes": 1967,
+      "sha256": "be40effb27e2d57c97f2cfeedff1ebdd22cf5cae5ba4e05c2a11ed32b1e2c6c5"
+    },
+    {
+      "path": "strategy/intake/process-status.md",
+      "bytes": 5269,
+      "sha256": "9c84061dc85d836041bf03051a19cfc6b150a7311352393f76a46f057b9a0065"
+    },
+    {
+      "path": "strategy/intake/startup-thesis.md",
+      "bytes": 5395,
+      "sha256": "080b663c0bef67277aac9f1e2577f3d02953e66535228d85a3b05eb3e51d6b0d"
+    },
+    {
+      "path": "strategy/language-market-scenarios.csv",
+      "bytes": 1204,
+      "sha256": "4ae92ca5c81f2870a37f7e8365f05d7d97c9e7f90fa67c96935a607200eccf59"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/assumptions.md",
+      "bytes": 3472,
+      "sha256": "20850791da6d720c608a1623e3112a48082925ec81fdf02c5f01b0ae23533a94"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/evidence.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/irrelevant.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/brave_search.json",
+      "bytes": 870,
+      "sha256": "b99b2a430e905ef6f44761f18e35b4c5c1cb5b8e49b99047bdda6423c248db25"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/firecrawl.json",
+      "bytes": 1158,
+      "sha256": "7b75eed339ef2dd47596877d7029ddcb8eb57864bc8d017511151ef55ef1a5df"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/github.json",
+      "bytes": 948,
+      "sha256": "133420a8939927b13537df0eb4b391dd2c052f60fba6e80de974d869a71a4dd2"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/google_autocomplete.json",
+      "bytes": 1321,
+      "sha256": "12265e3fc2c29960694c387632c559919173b6a2492e0cdb238875f4fd41512c"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/hn.json",
+      "bytes": 2336,
+      "sha256": "6ec710db449c78288455c70b4515082d6647f59b0877881e2818f69a8a1bf3d4"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/reddit.json",
+      "bytes": 38,
+      "sha256": "e1666f7d1dd3f06b1b8a0dffc2314fb57028c25a4218d7a5f7a016de9bcfa872"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/serpapi_google_trends.json",
+      "bytes": 233,
+      "sha256": "7f3cdc1e09d8b8b18a2da1de4a47c2d85eaea0e0ed1913edd75cc96e5705d5ec"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/serper_search.json",
+      "bytes": 864,
+      "sha256": "655f153cc1c49697ee24d852d0fb8baa04204394d3ff9cc0b0956e1b8c65bc80"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/raw/youtube.json",
+      "bytes": 909,
+      "sha256": "4d9613ed31b9416aab19122916a7806f7dd15271766e14ce215dab65649a87b6"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/report.md",
+      "bytes": 8454,
+      "sha256": "f166090c414ef3b1d60b3bcf411cb72119ad5261a4d545b5169533d1d00f01e2"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/research_plan.md",
+      "bytes": 2861,
+      "sha256": "217834f71271c641de6216a14883aac30598efde8a0cca57663ef3c4278d3154"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/run-manifest.json",
+      "bytes": 1812,
+      "sha256": "86ac6907d8ff35a71fd3af7d732d0800d41247d81f71b60008ecf851fcafed66"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/summary.json",
+      "bytes": 6754,
+      "sha256": "2170b313d961b2006ba2dd67e6fca66985e96fcf29304816d69fc4cfcfdd1c5a"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/evidence/user_review_plan.md",
+      "bytes": 2604,
+      "sha256": "9aacb8583de8e2e101df54769ae126d3b8a75ff2800b1afbebf279f02dd328e5"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/research_plan.md",
+      "bytes": 998,
+      "sha256": "7b8f92e4a1b1f9ee20b6a51f76cd43ec02c2862623e2e243833d1becd5e09d0c"
+    },
+    {
+      "path": "strategy/playbooks/runs/20260906-174559-regulated-insurance-broker-digital-intermediary/run_summary.json",
+      "bytes": 905,
+      "sha256": "d3508c08bae5ef2b7dbf1f41447ee43a38d665cae7c8a74f457e07b41fffdcef"
+    },
+    {
+      "path": "strategy/progressive-advice-language-markets-and-coverage.md",
+      "bytes": 31398,
+      "sha256": "e9739d2937db23d1f894763704bb9ae8d72d8ea003b4a44eac184c2c7ffcc209"
+    },
+    {
+      "path": "strategy/runs/2026-09-06-language-review/evidence.jsonl",
+      "bytes": 4918,
+      "sha256": "1c06055efb006472b0158ef4b8032786bbafa722ce6ca91e804a8c6d21b0386b"
+    },
+    {
+      "path": "strategy/runs/2026-09-06-language-review/run-manifest.json",
+      "bytes": 817,
+      "sha256": "39bad1789dfdbfbbc961361225938add983848692a3d26a885a1d092f8027126"
+    },
+    {
+      "path": "strategy/runs/2026-09-06-positioning/run-manifest.json",
+      "bytes": 1733,
+      "sha256": "67b442c1f6a81e4baa519949e04b22a8cc0e788dc7a1b04493869b4a2dbc1be2"
+    },
+    {
+      "path": "strategy/strategy-plan.json",
+      "bytes": 11519,
+      "sha256": "52be136c9a92870be8e69c443c27867ab0bdf2626356519aac05d890b7167636"
+    },
+    {
+      "path": "strategy/surelius-personalised-why-and-simulation.md",
+      "bytes": 13518,
+      "sha256": "fef1acda28202c9c2aeedd3de75dfcfaa8574dc784297df305c37b61493f62c6"
+    },
+    {
+      "path": "strategy/surelius-pilot-mvp-brief.md",
+      "bytes": 22953,
+      "sha256": "323c0db0e4e99715b2653c47cdce37c2130292710e521852ead7c81f1b2cae69"
+    }
+  ]
+}

@@ -16,9 +16,14 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import sys
 from pathlib import Path
+
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -28,6 +33,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--name", required=True)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args(argv)
+    pieces = args.name.split('/')
+    if len(pieces) != (1 if args.phase == 'pillar' else 2) or any(not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*', piece) for piece in pieces):
+        parser.error('name must contain safe pillar or category/element identifiers, without absolute paths or traversal')
+    return namespace_writer(args, 'project', execute, is_file=False, include=["stages/motion","motion"], input_attributes=[])
+
+
+def execute(args):
 
     stages_root = args.project / "stages" / "motion"
     canonical_root = args.project / "motion"

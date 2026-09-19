@@ -23,6 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fal_assets import download_assets, now_iso  # noqa: E402
+from case_outputs import asset_operation
 
 SYNC_BASE = "https://fal.run"
 
@@ -57,6 +58,10 @@ def main() -> int:
     ap.add_argument("--output-dir", type=Path, required=True)
     ap.add_argument("--record", type=Path)
     args = ap.parse_args()
+    return asset_operation(args, execute)
+
+
+def execute(args):
 
     mime = "image/png" if args.reference_file.suffix.lower() == ".png" else "image/jpeg"
     reference = base64.b64encode(args.reference_file.read_bytes()).decode()

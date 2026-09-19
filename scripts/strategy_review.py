@@ -16,6 +16,53 @@ from jsonschema import Draft202012Validator, FormatChecker
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = json.loads((ROOT / "schemas" / "strategy-plan.schema.json").read_text(encoding="utf-8"))
 VALIDATOR = Draft202012Validator(SCHEMA, format_checker=FormatChecker())
+POSITIONING_VALIDATOR = VALIDATOR.evolve(schema=SCHEMA["properties"]["positioning"])
+
+
+def validate_positioning(position: object, *, experiment_ids: list[str] | None = None,
+                         kpi_names: list[str] | None = None) -> list[str]:
+    """Check declared support and local links, not strategic truth.
+
+    Snapshots can check activity links and provenance without carrying duplicate
+    experiment/KPI definitions. Plan validation supplies those authoritative IDs.
+    """
+    errors = [f"positioning{'.' if error.absolute_path else ''}{'.'.join(map(str, error.absolute_path))}: {error.message}"
+              for error in POSITIONING_VALIDATOR.iter_errors(position)]
+    if errors:
+        return sorted(errors)
+    rows = position["activities"]
+    activity_ids = [row["id"] for row in rows if "id" in row]
+    if len(activity_ids) != len(set(activity_ids)):
+        errors.append("positioning.activities: IDs must be unique")
+    items = [("positioning", position)]
+    for index, row in enumerate(rows):
+        label = f"positioning.activities.{index}"
+        items.append((label, row))
+        if row.get("relations") and not row.get("id"):
+            errors.append(f"{label}: relations require a source activity id")
+        for relation in row.get("relations", []):
+            if relation["target"] not in activity_ids:
+                errors.append(f"{label}.relations: unknown activity {relation['target']}")
+    items.extend((f"positioning.value_proposition.{field}", claim)
+                 for field, claim in position.get("value_proposition", {}).items())
+    defense = position.get("defensibility", {})
+    for index, hypothesis in enumerate(defense.get("hypotheses", [])):
+        label = f"positioning.defensibility.hypotheses.{index}"
+        items.append((label, hypothesis))
+        for field in ("economic_benefit", "imitation_barrier", "value_capture"):
+            claim = hypothesis[field]
+            items.append((f"{label}.{field}", claim))
+            if defense["status"] == "supported" and claim["provenance"] != "evidence_backed":
+                errors.append(f"{label}.{field}: supported assessment requires evidence_backed provenance")
+    for label, item in items:
+        if item.get("provenance") == "evidence_backed" and not item["evidence_refs"]:
+            errors.append(f"{label}: evidence_backed requires supporting evidence_refs")
+        for field, known in (("activity_ids", activity_ids), ("experiment_ids", experiment_ids), ("kpi_names", kpi_names)):
+            if known is not None:
+                unknown = set(item.get(field, [])) - set(known)
+                if unknown:
+                    errors.append(f"{label}.{field}: unknown references {sorted(unknown)}")
+    return sorted(errors)
 
 
 def validate_plan(plan: dict[str, Any]) -> list[str]:
@@ -33,14 +80,7 @@ def validate_plan(plan: dict[str, Any]) -> list[str]:
         if isinstance(kpi, dict) and kpi.get("cadence") == "cohort" and not kpi.get("cohort"):
             errors.append("cohort KPIs require a named cohort")
     if "positioning" in plan and not any(error.startswith(("positioning:", "positioning.")) for error in errors):
-        position = plan["positioning"]
-        for label, item in [("positioning", position), *[(f"positioning.activities.{i}", row) for i, row in enumerate(position["activities"])]]:
-            if item["provenance"] == "evidence_backed" and not item["evidence_refs"]:
-                errors.append(f"{label}: evidence_backed requires supporting evidence_refs")
-            for field, known in (("experiment_ids", identifiers), ("kpi_names", names)):
-                unknown = set(item.get(field, [])) - set(known)
-                if unknown:
-                    errors.append(f"{label}.{field}: unknown references {sorted(unknown)}")
+        errors.extend(validate_positioning(plan["positioning"], experiment_ids=identifiers, kpi_names=names))
     return sorted(errors)
 
 
@@ -81,6 +121,26 @@ def freeze_plan(plan: dict[str, Any], destination: Path) -> None:
     errors = validate_plan(plan)
     if errors:
         raise ValueError("; ".join(errors))
+    try:
+        from scripts.case_outputs import preflight, cases
+    except ModuleNotFoundError:
+        from case_outputs import preflight, cases
+    import uuid
+    destination = destination.absolute()
+    authority = preflight(destination, 'strategy', 'business_linked' if plan.get('execution_binding') else 'standalone')
+    if authority:
+        root = authority['root']
+        with cases.project_lock(root):
+            if not plan.get('execution_binding'):
+                raise ValueError('business baseline requires a selected-plan binding')
+            cases.check_plan(root, plan)
+            if destination.exists():
+                raise FileExistsError(destination)
+            current = cases.read_project(root)
+            cases.publish_locked(root, {str(destination.relative_to(root)): cases.encoded(plan)},
+                expected_revision=current['manifest_revision'], decision_id='baseline-' + uuid.uuid4().hex,
+                reason='Freeze selected strategy baseline', affected=[plan['execution_binding']['case_id']])
+        return
     with destination.open("x", encoding="utf-8") as handle:
         json.dump(plan, handle, indent=2)
 
@@ -99,7 +159,30 @@ def main() -> int:
     freeze_parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     plan = json.loads(args.plan.read_text(encoding="utf-8"))
+    try:
+        try:
+            from scripts import case_workspace as cases
+        except ModuleNotFoundError:
+            import case_workspace as cases
+        root = cases.locate(args.plan)
+        if root:
+            destination_root = cases.locate_publication(args.output) if args.command == 'freeze' else None
+            if destination_root and destination_root != root:
+                raise ValueError('strategy source and destination controllers conflict')
+            with cases.project_lock(root):
+                cases.check_plan(root, plan)
+    except (ValueError, OSError, KeyError) as exc:
+        print(json.dumps({'status': 'fail', 'errors': [str(exc)]}))
+        return 1
     if args.command == "freeze":
+        if root:
+            with cases.project_lock(root):
+                cases.check_plan(root, plan)
+                if cases.load(args.plan) != plan:
+                    raise ValueError('strategy source changed before freeze')
+                if not cases.locate_publication(args.output):
+                    freeze_plan(plan, args.output)
+                    return 0
         freeze_plan(plan, args.output)
         return 0
     if args.command == "validate":

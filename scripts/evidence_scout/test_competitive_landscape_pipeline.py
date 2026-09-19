@@ -89,7 +89,7 @@ class LandscapePipelineTests(unittest.TestCase):
     def test_capability_reference_with_only_cta_remains_uncertain(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            workspace = create_topic_workspace("onboarding reference", workspace=str(root / "workspace"))
+            workspace = create_topic_workspace("onboarding reference", workspace=str(root / "workspace"), layout_version=1)
             candidates = root / "competitors.json"
             page_fixture = root / "pages.json"
             marketing_dir = root / "marketing"
@@ -122,7 +122,7 @@ class LandscapePipelineTests(unittest.TestCase):
     def test_builder_keeps_lifecycle_conditional_when_entity_is_unresolved(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            workspace = create_topic_workspace("care scheduling", workspace=str(root / "workspace"), customer_segment="small business")
+            workspace = create_topic_workspace("care scheduling", workspace=str(root / "workspace"), customer_segment="small business", layout_version=1)
             candidates = root / "competitors.json"
             marketing = root / "marketing.json"
             candidates.write_text(json.dumps([

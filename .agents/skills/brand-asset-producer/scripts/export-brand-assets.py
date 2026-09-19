@@ -9,7 +9,11 @@ import shutil
 import subprocess
 from pathlib import Path
 
-PNG_SIZES = [16, 32, 48, 64, 128, 256, 512, 1024]
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
+
+PNG_SIZES = [16, 32, 48, 64, 128, 180, 192, 256, 512, 1024]
 
 
 def run(cmd: list[str]) -> bool:
@@ -67,7 +71,7 @@ def build_ico(out_dir: Path, stem: str) -> dict | None:
 
     if Image and existing_paths:
         images = [Image.open(path) for path in existing_paths]
-        images[0].save(out, format="ICO", sizes=[image.size for image in images])
+        max(images, key=lambda image: image.width).save(out, format="ICO", sizes=[image.size for image in images])
         if out.exists() and out.stat().st_size > 0:
             return {"file": str(out), "type": "ico", "sources": [str(path) for path in existing_paths]}
 
@@ -89,6 +93,10 @@ def main() -> int:
     parser.add_argument("--eps", action="store_true")
     parser.add_argument("--sizes", default=",".join(str(size) for size in PNG_SIZES))
     args = parser.parse_args()
+    return namespace_writer(args, 'out_dir', execute, is_file=False, include=[], input_attributes=["svg_dir"])
+
+
+def execute(args):
     args.out_dir.mkdir(parents=True, exist_ok=True)
     sizes = [int(size.strip()) for size in args.sizes.split(",") if size.strip()]
     manifest = []

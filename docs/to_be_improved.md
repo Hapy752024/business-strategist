@@ -1,5 +1,12 @@
 # To Be Improved
 
+## 2026-09-11 - Skill-Dispatch Error Message Not Actionable
+
+Observed live: an agent invoking a repository skill via the Skill tool with plain-text args got `Skill route rejected: JSONDecodeError: Expecting value: line 1 column 1 (char 0)` from `scripts/enforce_skill_route.py:35` (`json.loads(args)` on non-JSON input). This is by design — the hook requires a JSON route envelope (`references/runtime-routing.md`) — but the error message gives no hint of the expected format, so the calling agent cannot self-correct without reading the hook source.
+
+- Catch `JSONDecodeError` around `json.loads(args)` in `check_dispatch` and re-raise a `ValueError` that names the contract, e.g. `Repository skill dispatch requires args as a JSON route envelope {"route": {request, intent, task_scope, project|standalone}, "input": ...}; see references/runtime-routing.md`. The existing helpful message at line 37 is unreachable when the input isn't JSON at all.
+- Optionally surface the envelope requirement in the skill-catalog / skill descriptions so agents learn the contract before the first failed call rather than after.
+
 ## 2026-08-15 - Setup/Skill Improvement Batches Landed
 
 Addressed from the 2026-06-21 list:

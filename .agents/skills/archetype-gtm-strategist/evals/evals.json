@@ -98,6 +98,30 @@
       "prompt": "I previously insisted instant custom delivery works without evidence. Now a pilot shows checklist automation reduces each standard case from 5 hours to 20 minutes, 12 buyers paid EUR 50, and 2 required costly exceptions. Reconsider our position.",
       "expected_output": "Revise the recommendation on new evidence, distinguish standard cases and exceptions, revisit exclusions/capacity/economics and affected downstream work while retaining the original experiment interpretation.",
       "files": []
+    },
+    {
+      "id": "need-model-need-not-choice",
+      "prompt": "Synthetic packet: Technicians demonstrably lose time ordering parts. They reject our prepaid delivery offer because their supplier offers credit and flexible quantities. Assess our specific value proposition.",
+      "expected_output": "Preserve the need evidence but revise the proposition. Explain switching/credit/quantity requirements and test a specific alternative promise before claiming choice or launching.",
+      "files": []
+    },
+    {
+      "id": "need-model-subscription-not-moat",
+      "prompt": "We have a subscription and 20,000 support messages. Therefore our recurring AI service has a data moat. No retention or measurable learning results yet. Assess only that claim.",
+      "expected_output": "Separate recurring billing from benefit/barrier; data quantity is not a learning advantage. Assess replication, access, economic value, incumbent and new entrant, value capture and a next test. Keep hypothesis or none identified.",
+      "files": []
+    },
+    {
+      "id": "need-model-counterposition-new-entrant",
+      "prompt": "Synthetic packet: An incumbent would sacrifice profitable bespoke contracts by copying our standardized low-cost service. A new entrant has no such legacy customers. Evaluate defensibility.",
+      "expected_output": "Counter-positioning may deter the incumbent but does not block the entrant; consider a separate incumbent unit, formation costs and erosion. No additive moat score or automatic durable conclusion.",
+      "files": []
+    },
+    {
+      "id": "need-model-small-profitable-no-moat",
+      "prompt": "Synthetic packet: A local service has observed repeat purchases and positive contribution including owner labor. The founder wants a modest income in one district. Competitors can copy its service; no structural barrier is evidenced. Assess fit.",
+      "expected_output": "Acknowledge a potentially suitable business at the stated scale while exposing competitive risk; do not automatically reject it or invent a moat. Separate observed economics from future durability.",
+      "files": []
     }
   ]
 }

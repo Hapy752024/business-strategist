@@ -1,0 +1,55 @@
+=== Skill Eval Coverage ===
+
+  PASS  archetype-gtm-strategist — 14 cases
+  PASS  brand-asset-producer — 1 cases
+  PASS  brand-designer — 1 cases
+  PASS  brand-discovery-interviewer — 1 cases
+  PASS  brand-exporter — 1 cases
+  PASS  brand-frontend-app-designer — 1 cases
+  PASS  brand-guideline-researcher — 1 cases
+  PASS  brand-guidelines-writer — 1 cases
+  PASS  brand-motion-designer — 1 cases
+  PASS  brand-quality-reviewer — 1 cases
+  PASS  brand-strategy-director — 2 cases
+  PASS  brand-typography-researcher — 1 cases
+  PASS  brand-ui-component-producer — 1 cases
+  PASS  brand-ui-kit-producer — 1 cases
+  PASS  brand-website-designer-builder — 4 cases
+  PASS  brand-workspace-manager — 2 cases
+  PASS  business-archetype-playbook-researcher — 4 cases
+  PASS  business-strategist — 24 cases
+  PASS  company-operating-system — 4 cases
+  PASS  competitive-landscape-builder — 3 cases
+  PASS  competitor-marketing-analyzer — 4 cases
+  PASS  competitor-monitoring — 3 cases
+  PASS  competitor-scout — 4 cases
+  PASS  evidence-scout — 4 cases
+  PASS  growth-case-analyzer — 3 cases
+  PASS  idea-grill — 5 cases
+  PASS  interview-bridge — 2 cases
+  PASS  market-problem-discovery — 3 cases
+  PASS  marketing-strategy-builder — 7 cases
+  PASS  opportunity-risk-designer — 4 cases
+  PASS  saas-fintech-pilot-designer — 4 cases
+  PASS  service-customer-perspective-challenger — 7 cases
+  PASS  setup-multiharness-project — 1 cases
+  PASS  social-digital-marketing-planner — 10 cases
+  PASS  social-media-idea-validator — 4 cases
+  PASS  startup-business-builder — 4 cases
+  PASS  startup-challenge-panel — 2 cases
+  PASS  strategy-draft-tournament — 3 cases
+  WARN  town-db-curator — no evals.json
+
+=== Routing Evals ===
+
+  PASS  routing-evals.json — 31 cases across 11 collision pairs
+
+=== Summary ===
+
+  Skills with evals:    38/39
+  Skills missing evals: town-db-curator
+  Total eval cases:     143
+  Structural errors:    0
+
+All eval structure checks passed.
+Some skills are missing evals — this is acceptable but should be addressed.

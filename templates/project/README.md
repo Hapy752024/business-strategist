@@ -8,13 +8,13 @@ This is the current reader-facing decision document. It must remain understandab
 
 ## Foundation: segment, journey, pain points (pain-first rule)
 
-Before any solution, strategy, brand, or website work, this venture needs its three foundations pinned with web-searched evidence:
+Before Business commitments, this venture needs its three foundations pinned with web-searched evidence. Independent Branding and Website work may start from their own brief:
 
 1. **Customer segment** — who exactly: [`market_research/customer_segments/`](market_research/customer_segments/)
 2. **Customer journey** — how they move through the topic today: [`market_research/customer_journey/`](market_research/customer_journey/)
 3. **Pain points** — detected/validated from public evidence: [`market_research/pain_points/`](market_research/pain_points/) (collection runs under `pain_points/runs/`)
 
-Even when the founder arrives with a solution, these come first. Downstream commitment stages (business model, offer, GTM, brand, website) stay gated until `problem_validation` passes in the manifest — or the founder records an explicit override.
+Even when the founder arrives with a solution, these come first within Business. Business model, offer and GTM stay gated until `problem_validation` passes or the founder records an explicit override. Explicit business-linked handoffs preserve those checks; standalone design does not require research.
 
 - Initial customer segment: {{CUSTOMER_SEGMENT}}
 - Segment status: [UNRESOLVED]
@@ -54,6 +54,14 @@ State the best-supported next decision, not a forced winner. Explain why the alt
 For the leading option, state how a suitable customer first discovers an unknown entrant; why they would return, engage or trust it before a buying event; and how that becomes an enquiry, purchase and subsequent service. Separate discovery, relationship and commercial evidence. Attention alone is not willingness to pay.
 
 State the specific audience destination, initial exposure mechanism, content angle, presenter, repeat-contact path, CTA, recruitment method, production effort and attribution. Compare required customers/sales and service capacity with funnel and contribution scenarios over 12–24 months (or the founder's deadline), including earlier income/cash constraints. Mark every unverified input. Summarize comparable foreign entrants' early customer acquisition, starting advantages and verified outcomes; explain transfer limits.
+
+## First interviewees and learning funnel
+
+Record founder access (including zero contacts), researched destinations and checked dates, how the first eligible candidates are discovered, invitation/screening/consent, founder effort and estimated cash. Link the recruitment plan in `market_research/interviews/` when created. Separate recruiting interviews from testing demand and selling. A page needs a distribution route; clicks and contacts alone do not validate the business.
+
+## Research coverage and corrections
+
+Summarize material contradictions/corrections and their decision impact. Record applicable skills as applied, reused (artifact/scope/date), pending or not applicable (reason). Link dated deep dives; do not infer a passed stage from document existence. Keep pending founder decisions consistent with the manifest.
 
 ## Decisive unknowns and next bounded action
 

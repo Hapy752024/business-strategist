@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts import enforce_skill_route as hook, route_workflow as router
+from scripts import enforce_skill_route as hook, route_workflow as router, case_workspace as cases
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -35,16 +35,30 @@ def test_invalid_routes_block(field, value):
 
 def test_gate_rechecked_on_each_call_and_override_is_replay_safe(tmp_path, monkeypatch):
     monkeypatch.setattr(router, 'ROOT', tmp_path)
-    path = tmp_path / 'projects/venture/market_research/manifest.json'
-    path.parent.mkdir(parents=True)
-    path.write_text(json.dumps({'stages': {'problem_validation': {'status': 'passed', 'gate_result': 'pass'}}, 'events': []}))
+    root = tmp_path / 'projects/venture'
+    cases.initialize(root, 'Venture')
+    scope = cases.add_case(root, 'a', 'A')
+    cases.select(root, 'a', 'Test', 'select-fixture', 'Explicit fixture selection')
+    path = scope / 'market_research/manifest.json'
+    data = cases.case_manifest(root, 'a')
+    evidence = scope / 'market_research/pain_points/current.md'
+    evidence.parent.mkdir(parents=True)
+    evidence.write_text('Synthetic evidence')
+    data['stages'] = {'problem_validation': {'status': 'passed', 'gate_result': 'pass', 'reviewed_revision': 1,
+        'artifacts': [{'path': 'market_research/pain_points/current.md'}]}}
+    path.write_text(json.dumps(data))
     payload = event('venture', False)
+    packet = json.loads(payload['tool_input']['args'])
+    packet['route'].update(request='Create a social media plan', intent='social-marketing')
+    payload['tool_input'].update(skill='social-digital-marketing-planner', args=json.dumps(packet))
     hook.check_dispatch(payload)
-    path.write_text(json.dumps({'stages': {}, 'events': []}))
+    data['stages'] = {}
+    path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match='pain-first'):
         hook.check_dispatch(payload)
     args = json.loads(payload['tool_input']['args'])
     args['route']['override_gate'] = True
+    args['route']['override_stages'] = ['problem_validation']
     payload['tool_input']['args'] = json.dumps(args)
     hook.check_dispatch(payload)
     before = path.read_bytes()
@@ -60,7 +74,9 @@ def test_cwd_prevents_silent_standalone_bypass(tmp_path, monkeypatch):
     path.write_text('{}')
     payload = event()
     payload['cwd'] = str(path.parent)
-    with pytest.raises(ValueError, match='conflicts'):
+    assert hook.check_dispatch(payload)['hookSpecificOutput']['updatedInput']['args'] == 'The page brief'
+    payload['tool_input']['skill'] = 'social-digital-marketing-planner'
+    with pytest.raises(ValueError, match='Standalone bypass'):
         hook.check_dispatch(payload)
 
 

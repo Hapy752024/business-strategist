@@ -1,0 +1,8 @@
+{
+  "all_six_final_documents_identical": true,
+  "model_generation": "none; deterministic replay of the earlier actual agent-authored documents",
+  "new_write_revision_contract_exercised": true,
+  "saved_agent_text_unchanged": true,
+  "scope": "metadata adapter only; semantic review refers to original responses",
+  "selection": null
+}

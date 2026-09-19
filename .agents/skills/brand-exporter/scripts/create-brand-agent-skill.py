@@ -9,6 +9,10 @@ import re
 import sys
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
+
 
 DEFAULT_TOKENS = {
     "color": {
@@ -259,6 +263,10 @@ def main() -> int:
     parser.add_argument("--font-heading", help="Override heading font stack")
     parser.add_argument("--font-body", help="Override body font stack")
     args = parser.parse_args()
+    return namespace_writer(args, 'workspace', execute, is_file=False, include=["tokens","agent-skill"], input_attributes=["tokens"])
+
+
+def execute(args):
 
     slug = slugify(args.brand_name)
     tokens = load_tokens(args.tokens, args.font_heading, args.font_body)

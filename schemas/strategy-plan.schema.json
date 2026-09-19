@@ -310,6 +310,37 @@
                   "minLength": 1
                 },
                 "uniqueItems": true
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "relations": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "target"
+                  ],
+                  "properties": {
+                    "type": {
+                      "enum": [
+                        "requires",
+                        "reinforces",
+                        "conflicts_with"
+                      ]
+                    },
+                    "target": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    }
+                  },
+                  "additionalProperties": false
+                }
               }
             }
           }
@@ -331,8 +362,317 @@
           },
           "uniqueItems": true,
           "minItems": 1
+        },
+        "need_refs": {
+          "$ref": "#/$defs/positionRefs"
+        },
+        "value_proposition": {
+          "type": "object",
+          "required": [
+            "segment",
+            "situation",
+            "outcome",
+            "alternative",
+            "mechanism",
+            "boundaries",
+            "sacrifices"
+          ],
+          "properties": {
+            "segment": {
+              "$ref": "#/$defs/positionClaim"
+            },
+            "situation": {
+              "$ref": "#/$defs/positionClaim"
+            },
+            "outcome": {
+              "$ref": "#/$defs/positionClaim"
+            },
+            "alternative": {
+              "$ref": "#/$defs/positionClaim"
+            },
+            "mechanism": {
+              "$ref": "#/$defs/positionClaim"
+            },
+            "boundaries": {
+              "$ref": "#/$defs/positionClaim"
+            },
+            "sacrifices": {
+              "$ref": "#/$defs/positionClaim"
+            }
+          },
+          "additionalProperties": false
+        },
+        "defensibility": {
+          "type": "object",
+          "required": [
+            "status",
+            "rationale",
+            "scope",
+            "assessed_at",
+            "hypotheses"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "not_assessed",
+                "none_identified",
+                "hypothesis",
+                "emerging",
+                "supported"
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "scope": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "assessed_at": {
+              "type": "string",
+              "format": "date"
+            },
+            "hypotheses": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "economic_benefit",
+                  "imitation_barrier",
+                  "value_capture",
+                  "formation",
+                  "incumbent_response",
+                  "entrant_response",
+                  "erosion_conditions",
+                  "activity_ids",
+                  "experiment_ids"
+                ],
+                "properties": {
+                  "economic_benefit": {
+                    "$ref": "#/$defs/positionClaim"
+                  },
+                  "imitation_barrier": {
+                    "$ref": "#/$defs/positionClaim"
+                  },
+                  "value_capture": {
+                    "$ref": "#/$defs/positionClaim"
+                  },
+                  "formation": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "incumbent_response": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "entrant_response": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "erosion_conditions": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "activity_ids": {
+                    "$ref": "#/$defs/positionRefs",
+                    "minItems": 1
+                  },
+                  "experiment_ids": {
+                    "$ref": "#/$defs/positionRefs",
+                    "minItems": 1
+                  },
+                  "kpi_names": {
+                    "$ref": "#/$defs/positionRefs"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "not_assessed",
+                      "none_identified"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "hypotheses": {
+                    "maxItems": 0
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "hypotheses": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          ]
         }
       }
+    },
+    "execution_binding": {
+      "type": "object",
+      "required": [
+        "case_id",
+        "configuration",
+        "selection_generation",
+        "assessment_revision"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "configuration": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selection_generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "assessment_revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "economics_input_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "business_plan_sections": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "status",
+          "text"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "supported",
+              "provisional",
+              "missing",
+              "not_applicable"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_bindings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "digest",
+                "locator",
+                "applicability"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "digest": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "locator": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "applicability": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "economics_input_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "review_required": {
+      "type": "string"
+    },
+    "publication_base_digest": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "positionClaim": {
+      "type": "object",
+      "required": [
+        "statement",
+        "provenance",
+        "evidence_refs"
+      ],
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "provenance": {
+          "enum": [
+            "evidence_backed",
+            "user_confirmed",
+            "inference",
+            "assumption",
+            "unresolved"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "positionRefs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      },
+      "uniqueItems": true
     }
   }
 }

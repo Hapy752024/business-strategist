@@ -4,13 +4,19 @@
     {
       "id": 1,
       "prompt": "Our evidence run on freelance accountant invoicing pain returned 60 records, mostly weak. The founders want to know if the idea is validated. What now?",
-      "expected_output": "Explains that weak public evidence is an interview trigger, not a verdict; builds the interview kit from the run, defines disqualifying screener criteria, and plans non-leading past-behavior probes traced to the evidence items.",
+      "expected_output": "Diagnoses the unresolved question rather than choosing a method from weak evidence alone. Missing local-source coverage calls for better discovery; unknown motives/decisions may call for interviews. Builds probes only from reviewed target experiences or explicitly labelled hypotheses and preserves successful alternatives and contrary cases.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "I have the interview kit. Draft the outreach and the questions so I can show early users our AI bookkeeping demo and get their reaction.",
       "expected_output": "Refuses to pitch the demo inside discovery interviews, rewrites the plan around last-time behavior and workaround cost, keeps solution reaction testing separate and later, and keeps evidence traces and the refutation log intact.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "We have eight painful incidents, one successful family workaround and one customer who declined the service. Make a short interview guide; our buying-process understanding is missing despite strong public accounts.",
+      "expected_output": "Use interviews for the unknown buying process regardless of the strong evidence label. Preserve the successful alternative and nonadopter as contrasting contexts; keep omitted selection decisions visible, use neutral incident questions, and set hypothesis-specific criteria without fixed confirmation counts.",
       "files": []
     }
   ]

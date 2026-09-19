@@ -1,0 +1,9 @@
+{
+  "returncode": 2,
+  "stderr": "error: Project paths must not be symlinks\n",
+  "outside_files": [
+    "runs/20260913-170228-synthetic-topic-f193a1e7d8fe/.case-context.json",
+    "runs/20260913-170228-synthetic-topic-f193a1e7d8fe/market-discovery-report.md",
+    "runs/20260913-170228-synthetic-topic-f193a1e7d8fe/research_plan.md"
+  ]
+}

@@ -1,0 +1,1 @@
+Correct B's document title spelling from 'Discount transations' to 'Discount transactions' only. No meaning changes. Preserve its assessment revision, source bindings, comparison conclusion and unset execution selection.

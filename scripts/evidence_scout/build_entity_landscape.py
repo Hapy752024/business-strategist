@@ -13,7 +13,7 @@ from typing import Any
 from jsonschema import Draft202012Validator, FormatChecker
 
 from entity_landscape import classify_entity, normalize_evidence_quality, normalize_social_presence, stable_entity_id
-from workspace import update_stage
+from workspace import update_stage, prepare_research_output
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -114,8 +114,12 @@ def main() -> int:
     parser.add_argument("--buyer", default="")
     parser.add_argument("--price-tier", default="")
     parser.add_argument("--workspace", default="")
+    parser.add_argument("--case", default="")
+    parser.add_argument("--source-bindings", default="", help="JSON source-use bindings; required for shared case inputs.")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
+    scope = prepare_research_output(Path(args.out), workspace_arg=args.workspace, case_id=args.case, is_file=True, input_paths=[args.competitors_json, args.discovery_summary_json, args.marketing_json, args.social_json], source_bindings_file=args.source_bindings)
+    args.workspace = str(scope) if scope else ""
 
     candidates = rows(read(args.competitors_json, []), "entities")
     discovery_summary = read(args.discovery_summary_json, {})
@@ -233,7 +237,7 @@ def main() -> int:
         verified = [entity for entity in entities if entity.get("verification_status") == "verified"]
         unresolved = [entity for entity in entities if entity.get("verification_status") not in {"verified", "excluded"}]
         gate = "pass" if verified and not unresolved and not gaps else "conditional_pass" if entities else "fail"
-        update_stage(Path(args.workspace), "competitive_landscape", status="passed" if gate == "pass" else "in_progress" if gate == "conditional_pass" else "failed", gate_result=gate, artifacts=[out], open_gaps=gaps, next_action="Enrich unresolved entities and synthesize only verified lanes.")
+        update_stage(Path(args.workspace), "competitive_landscape", run_dir=out.parent, status="passed" if gate == "pass" else "in_progress" if gate == "conditional_pass" else "failed", gate_result=gate, artifacts=[out], open_gaps=gaps, next_action="Enrich unresolved entities and synthesize only verified lanes.")
     print(json.dumps({"entities": len(entities), "verified": sum(entity.get("verification_status") == "verified" for entity in entities), "output": str(out), "lanes_checked": checked}, indent=2))
     return 0
 

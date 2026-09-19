@@ -1,0 +1,11 @@
+{
+  "rendered_all_documents": true,
+  "historical_inputs_preserved": {
+    "author-initial.json": "2cdf8b9021afa66fd1b9a36653700789e7093480326f68b622023e89532ee94b",
+    "economics-inputs.json": "ac7192e423a68cf7d72d9fea6452d4a64697780a65503dc333a39efa704303e9",
+    "economics-record.json": "e39c0a8858cbe2bd0ce9c774e18a049a250cc571ea369632b4025a9105f17177"
+  },
+  "economics_input_digest": "d3fa444418cac1c8c45721e92b2ce1c5903c2435e8c9c0fd184b0c3817292040",
+  "capacity_conclusion": "conditional fit; does not authorize execution",
+  "metadata": "revision/source bindings intentionally absent"
+}

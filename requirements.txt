@@ -1,5 +1,6 @@
-# Core: no third-party dependencies required.
-# All scripts under scripts/ use only Python 3.10+ standard library.
+# Core validation and signed community-review receipts.
+jsonschema>=4.18
+cryptography>=41
 
 # Optional: for pytrends fallback Google Trends access
 # pytrends>=4.9.0

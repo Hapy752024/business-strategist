@@ -10,7 +10,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-SMALL_SIZES = [16, 32, 48, 64, 128, 256, 512, 1024]
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from scripts.case_outputs import namespace_writer
+
+SMALL_SIZES = [16, 32, 48, 64, 128, 180, 192, 256, 512, 1024]
 WORDMARK_SIZES = [512, 1024, 2048]
 
 
@@ -101,7 +105,7 @@ def build_ico(svg: Path, out_dir: Path, stem: str) -> dict | None:
         return None
     out = out_dir / f"{stem}.ico"
     images = [Image.open(path) for path in existing]
-    images[0].save(out, format="ICO", sizes=[image.size for image in images])
+    max(images, key=lambda image: image.width).save(out, format="ICO", sizes=[image.size for image in images])
     if out.exists() and out.stat().st_size > 0:
         return {"source": str(svg), "file": str(out), "type": "ico", "sources": [str(path) for path in existing]}
     return None
@@ -162,6 +166,10 @@ def main() -> int:
     parser.add_argument("export_dir", type=Path)
     parser.add_argument("--check", action="store_true", help="Validate manifests (provenance, presence, freshness) instead of exporting")
     args = parser.parse_args()
+    return namespace_writer(args, 'export_dir', execute, is_file=False, include=[], input_attributes=["source_dir"])
+
+
+def execute(args):
 
     if args.check:
         return check_exports(args.source_dir, args.export_dir)

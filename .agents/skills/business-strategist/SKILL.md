@@ -9,7 +9,7 @@ Use `scripts/route_workflow.py` to make an explicit route decision before loadin
 
 Rules:
 
-- Preserve standalone branding: independent brand or website requests need no business research; venture-linked commitment work must pass the pain-first gate or carry an explicit audited user override.
+- Follow `references/subprojects.md`: Business, Branding, Website and other Digital Assets start independently or connect through explicit handoffs. Brand/Website routing defaults to standalone, including inside existing projects; only explicit business-linked consumption inherits Business evidence/selection checks.
 - A validated business may offer a brand handoff, but never start branding automatically.
 - Keep research, brand, website, and experiment state in their authoritative manifests.
 - Ask at most one question when ambiguity would materially change the workflow.
@@ -27,3 +27,4 @@ Return the route packet and next action.
 ## Quality Checklist
 
 No unrelated skill or research workflow was loaded; approvals and state ownership are explicit.
+For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).

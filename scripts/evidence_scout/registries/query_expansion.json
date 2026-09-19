@@ -1,5 +1,12 @@
 {
   "description": "Per-market query expansion data for evidence collection. Add or edit markets here without touching collection code. A market activates when its geo matches the run geo AND any trigger_marker appears in the combined topic/problem/workaround text.",
+  "locale_inference": [
+    {"geo": "DE", "language": "de", "markers": ["germany", "german", "deutschland", "deutsche", "pkv", "gkv", "berufsun", "rückkehr", "rueckkehr", "voranfrage", "versicherung", "finanztip", "check24", "verivox"]},
+    {"geo": "CH", "language": "de", "english_language": "en", "markers": ["switzerland", "swiss", "schweiz", "suisse", "svizzera"]},
+    {"geo": "FR", "language": "fr", "markers": ["france", "french", "français", "francais"]},
+    {"geo": "IT", "language": "it", "markers": ["italy", "italian", "italia", "italiano"]},
+    {"geo": "CN", "language": "zh", "markers": ["china", "chinese", "xiaohongshu", "bilibili", "zhihu", "weibo", "douyin", "v2ex", "wechat", "taobao", "jd.com", "小红书", "知乎", "微博", "抖音", "微信", "淘宝", "京东"]}
+  ],
   "markets": {
     "de-insurance": {
       "geo": "DE",
@@ -20,6 +27,8 @@
         "health insurance Germany broker subreddit:germany"
       ],
       "target_subreddits": ["Finanzen", "Versicherung", "Krankenkassen", "beamte", "germany"],
+      "problem_first_terms": ["PKV Entscheidung", "PKV wechseln", "PKV oder GKV", "BU Gesundheitsfragen", "anonyme Risikovoranfrage", "Makler Provision Vertrauen", "Honorarberater Versicherung", "Versicherungsmakler Vertrauen"],
+      "demand_terms": ["Private Krankenversicherung", "private Krankenversicherung Kosten", "PKV Kosten", "PKV Vergleich", "PKV Rechner", "GKV oder PKV", "Berufsunfähigkeitsversicherung", "BU Versicherung", "BU Gesundheitsfragen", "Versicherungsmakler", "Honorarberater Versicherung", "CHECK24 PKV", "Verivox PKV", "Finanztip PKV"],
       "phrase_variants": {
         "rueckkehr": "Rückkehr",
         "rückkehr": "Rueckkehr",

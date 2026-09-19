@@ -27,13 +27,14 @@
 - Category and actual alternative (including doing nothing):
 - Buying situation, minimum requirements, deciding preferences, and acceptable sacrifices (evidence or hypothesis):
 - Selected position and deliberate exclusions; compare alternatives only if unresolved:
-- Outcome promise:
-- Differentiation:
+- Specific promise: segment/situation → outcome versus alternative → mechanism → boundaries and sacrifices; reviewed need/evidence references:
+- Customer-choice evidence and remaining switching/trust uncertainty:
+- Defensibility maturity, benefit/barrier/value capture, competitor response, formation/erosion and next test (or none identified):
 - Offer, scope, price, and risk reversal:
 - Activation moment:
 - Required proof:
 
-Include only consequential rows; present the same decision saved in the active strategy record. Reuse evidence, economics, and experiment sections below.
+Where decision-changing, compare available assets, clean-sheet target and affordable transition; show entry-scale economics and reinforcing/conflicting choices. Include only consequential rows; present the same decision saved in the active strategy record. Reuse evidence, economics, and experiment sections below.
 
 | Customer priority and evidence | Promise and exclusion | Operating choice | Consequences and trade-offs | Service, brand and marketing implications | Existing test/KPI reference |
 |---|---|---|---|---|---|
