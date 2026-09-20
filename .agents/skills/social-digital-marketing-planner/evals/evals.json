@@ -84,6 +84,17 @@
       "files": [],
       "must_mention": ["discovery", "relationship", "conversion", "repeat"],
       "must_not_mention": ["views prove demand"]
+    },
+    {
+      "id": 11,
+      "prompt": "Set up our Reddit and community presence to improve AI visibility.",
+      "expected_output": "Bottleneck justification required before any recurring program; human posting stated as repository operating policy, not a platform prohibition; authentic viewpoint non-delegable; owner actions surfaced via contract.",
+      "files": [],
+      "must_mention": [
+        "bottleneck",
+        "owner",
+        "policy"
+      ]
     }
   ]
 }

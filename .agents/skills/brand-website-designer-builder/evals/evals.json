@@ -87,6 +87,18 @@
         "deduplication",
         "authorization"
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "Run an AEO/GEO visibility audit of our existing marketing site and tell me what to fix first.",
+      "expected_output": "Existing-site audit loads maintenance path plus aeo-geo-visibility procedure; bottleneck and measurement limits stated; no citation guarantees; owner actions surfaced via contract.",
+      "files": [],
+      "must_mention": [
+        "aeo-geo-visibility",
+        "maintenance",
+        "owner",
+        "evidence"
+      ]
     }
   ]
 }

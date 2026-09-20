@@ -27,6 +27,18 @@
       "must_not_mention": [],
       "required_artifacts": [],
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Set up AI citation tracking and brand-mention monitoring for our own brand.",
+      "expected_output": "Own-brand observation run using watchlist/snapshot conventions and the ai_answer_engines measurement contract; coverage gaps recorded for failed engines; no demand-evidence claims.",
+      "files": [],
+      "must_mention": [
+        "watchlist",
+        "observation",
+        "coverage",
+        "owner"
+      ]
     }
   ]
 }

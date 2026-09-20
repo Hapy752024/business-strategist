@@ -61,6 +61,18 @@
       "expected_output": "Always run topic-led discovery. Preserve full documents and split located speaker episodes. Correct heuristic labels only with source and author evidence; exclude supplier replies. Track every requested locale, including unresolved storefront language; permit scoped findings while exposing the missing coverage. Map contextual independent needs separately from requirements and preserve successful self-packing/nonadoption counterexamples.",
       "required_artifacts": ["customer-feedback-coverage.json", "customer-voc-synthesis.json"],
       "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Track whether ChatGPT and Perplexity mention our brand for category questions.",
+      "expected_output": "AI answer-engine observation under the measurement contract; success/error/unsupported states with failure as unknown; coverage-gap protocol for credit-blocked engines; observations never treated as demand evidence; cadence and cost note recorded.",
+      "files": [],
+      "must_mention": [
+        "coverage",
+        "observation",
+        "demand",
+        "cadence"
+      ]
     }
   ]
 }

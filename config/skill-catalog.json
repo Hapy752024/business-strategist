@@ -131,7 +131,8 @@
     },
     "competitor-monitoring": {
       "intent": [
-        "monitor competitor pricing, messaging, and product changes"
+        "monitor competitor pricing, messaging, and product changes",
+        "monitor own-brand mentions and AI-answer visibility observations"
       ],
       "excludes": [
         "one-off competitor teardown"
@@ -141,7 +142,8 @@
       ],
       "artifacts": [
         "monitoring baseline",
-        "change report"
+        "change report",
+        "visibility observation report"
       ],
       "side_effect": "research",
       "cost": "medium"
@@ -446,7 +448,8 @@
         "maintain and test website",
         "technical SEO and LLM-EO",
         "responsive and load performance fixes",
-        "optional consent-aware campaign tracking and account integration"
+        "optional consent-aware campaign tracking and account integration",
+        "audit and improve AEO/GEO answer-engine visibility and agent readiness of websites"
       ],
       "excludes": [
         "product dashboard",

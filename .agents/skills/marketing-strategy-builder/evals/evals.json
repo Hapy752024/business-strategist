@@ -70,6 +70,18 @@
       "prompt": "Only write three short ad-copy variants. Selected promise: checklist preparation in 3 days after complete intake; no legal advice. Use these supplied assumptions; do not research or redo positioning.",
       "expected_output": "Deliver only the requested copy, preserving timing and exclusion without invented proof, a full strategy plan, new positioning alternatives or unrelated reference loads.",
       "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Should we invest in AI answer-engine visibility work this quarter?",
+      "expected_output": "Bottleneck diagnosis first (exposure, proof, conversion path, offer); smallest justified intervention with a named business outcome and stop rule; visibility metrics labelled intermediate measures; handoff to the website skill or an own-brand monitoring run; owner actions via contract.",
+      "files": [],
+      "must_mention": [
+        "bottleneck",
+        "stop",
+        "owner",
+        "handoff"
+      ]
     }
   ]
 }

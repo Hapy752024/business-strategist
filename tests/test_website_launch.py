@@ -106,6 +106,16 @@ def test_scope_boundaries(prompt, expected):
     assert route_request(prompt)['skill'] == expected
 
 
+@pytest.mark.parametrize('prompt,expected', [
+    ('Run an AEO audit', 'brand-website-designer-builder'),
+    ('Structured data audit', 'brand-website-designer-builder'),
+    ('Track brand mentions', 'competitor-monitoring'),
+    ('Set up AI citation tracking', 'competitor-monitoring'),
+])
+def test_visibility_routes(prompt, expected):
+    assert route_request(prompt)['skill'] == expected
+
+
 def test_lighthouse_budget():
     r = {'audits': {k: {'numericValue': v} for k,v in [('largest-contentful-paint',2400),('cumulative-layout-shift',.05),('total-blocking-time',100)]}, 'categories': {'performance': {'score': .95}, 'seo': {'score': 1}}}
     assert lighthouse_errors(r) == []
