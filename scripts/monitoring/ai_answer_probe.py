@@ -81,10 +81,11 @@ def main():
     args = p.parse_args()
     try:
         panel = json.loads(args.panel.read_text())
-        assert isinstance(panel.get('prompts'), list) and panel['prompts'], 'panel.prompts must be a nonempty list'
+        if not (isinstance(panel.get('prompts'), list) and panel['prompts']):
+            raise ValueError('panel.prompts must be a nonempty list')
         rows = [normalize_observation(json.loads(line)) for line in args.recorded.read_text().splitlines() if line.strip()]
         prior = [normalize_observation(json.loads(line)) for line in args.prior.read_text().splitlines() if line.strip()] if args.prior else []
-    except (OSError, ValueError, AttributeError, AssertionError) as exc:
+    except (OSError, ValueError, AttributeError) as exc:
         print(json.dumps({'status': 'fail', 'errors': [str(exc)]}))
         return True
     args.out.mkdir(parents=True, exist_ok=True)

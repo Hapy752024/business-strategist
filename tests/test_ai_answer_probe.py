@@ -68,4 +68,6 @@ def test_summary_reports_coverage_gap_for_failed_engine():
     rows = [obs(engine='perplexity', status='error', brand_mentioned=None, url_cited=None, recommended=None, answer_text='')]
     summary = build_summary(rows, prior_rows=[])
     assert summary['coverage_gaps'] == [{'engine': 'perplexity', 'reason': 'error'}]
-    assert 'demand' in summary['boundary'] or 'observation' in summary['boundary']
+    assert summary['boundary'] == (
+        'observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence'
+    )

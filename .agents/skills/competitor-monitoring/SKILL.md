@@ -1,6 +1,6 @@
 ---
 name: competitor-monitoring
-description: Set up or run recurring competitor monitoring for pricing, messaging, changelogs, docs, careers, SERPs, ads, traffic context, local presence, and app stores. Use whenever the user asks to watch, track, alert, or diff changes over time.
+description: Set up or run recurring monitoring for competitor pricing, messaging, changelogs, docs, careers, SERPs, ads, traffic context, local presence, and app stores, plus own-brand mention and AI-answer-engine visibility/citation tracking. Use whenever the user asks to watch, track, alert, or diff changes over time.
 ---
 
 # Competitor Monitoring
