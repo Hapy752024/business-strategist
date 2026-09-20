@@ -47,3 +47,6 @@ eval-workspaces/
 
 # Local git worktrees (machine-local checkouts)
 .claude/worktrees/
+
+# Subagent-driven-development workspaces (machine-local task briefs and ledgers)
+.superpowers/
