@@ -110,6 +110,8 @@ Choose platforms by audience behavior, customer job, content fit, conversion bri
 
 Do not recommend a platform unless you can explain its customer job, audience/context fit, discovery mechanism for an unknown entrant, relationship role where relevant, operating requirement, conversion bridge, source-cohort metric, and stop rule. Run the eight-question channel/loop recommendation protocol in `references/evidence-registry.md` (stage, customer context, channel job, mechanism, prerequisites, cohort gate, transfer limit, stop rule) for each primary and supporting platform. Name one primary platform and one supporting/owned motion; explicitly defer the rest.
 
+Treat AI-answer visibility and brand-mention observation as inputs that require the same bottleneck justification as any channel; do not append monitoring or recurring posting programs to focused requests. Own-brand mention watch hands off to a monitoring run that applies competitor-monitoring's watchlist/snapshot conventions to the user's own brand; on-site answer-structure work hands off to the website skill. Surface owner-only work (authentic posting, community participation, creator outreach) through `references/owner-actions.md`. Ownership of an authentic viewpoint is non-delegable, while the mechanics of publishing an owner-approved post may be delegated where the platform permits. Human posting is the repository's selected operating policy; compliant disclosed automation is a per-platform, per-use-case check — never claim a blanket external prohibition.
+
 ## Product, Referral, And Community Loops
 
 Do not call a share button, contact upload, waitlist, follower base, or branded group a loop by default. Diagnose:
