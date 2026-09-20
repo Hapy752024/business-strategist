@@ -50,10 +50,15 @@ def test_diff_compares_only_compatible_successful():
     current = [obs(brand_mentioned=True), obs(prompt_id='p02', status='error', brand_mentioned=None, url_cited=None, recommended=None, answer_text='')]
     result = diff_observations(current, prior)
     assert result['changes'] == [
-        {'prompt_id': 'p01', 'engine': 'openai', 'field': 'brand_mentioned', 'from': False, 'to': True}
+        {'prompt_id': 'p01', 'engine': 'openai', 'repetition': 1, 'field': 'brand_mentioned',
+         'from': False, 'to': True}
     ]
+    p01 = [t for t in result['trends'] if t['prompt_id'] == 'p01' and t['field'] == 'brand_mentioned']
+    assert len(p01) == 1 and p01[0]['prior_rate'] == 0.0 and p01[0]['current_rate'] == 1.0
+    assert {t['prompt_id'] for t in result['trends']} == {'p01'}
     assert result['coverage']['compared'] == 1
     assert result['coverage']['skipped_failed'] == 1
+    assert result['coverage']['skipped_incompatible'] == 0
 
 
 def test_diff_skips_incompatible_config():
@@ -61,6 +66,8 @@ def test_diff_skips_incompatible_config():
     current = [obs(), obs(prompt_id='p03')]
     result = diff_observations(current, prior)
     assert result['changes'] == []
+    assert result['trends'] == []
+    assert result['coverage']['compared'] == 0
     assert result['coverage']['skipped_incompatible'] == 2
 
 
@@ -138,3 +145,31 @@ def test_summary_reports_coverage_gap_for_failed_engine():
     assert summary['boundary'] == (
         'observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence'
     )
+
+
+def test_reordering_the_prior_file_does_not_change_the_result():
+    prior = [obs(repetition=1, brand_mentioned=False), obs(repetition=2, brand_mentioned=True)]
+    current = [dict(r, timestamp='2026-09-21T10:00:00Z') for r in prior]
+    assert diff_observations(current, prior)['changes'] == []
+    assert diff_observations(current, list(reversed(prior)))['changes'] == []
+
+
+def test_identical_windows_report_no_movement_in_either_direction():
+    prior = [obs(repetition=1, brand_mentioned=False), obs(repetition=2, brand_mentioned=True)]
+    current = [dict(r, timestamp='2026-09-21T10:00:00Z') for r in prior]
+    trends = diff_observations(current, prior)['trends']
+    mention = [t for t in trends if t['field'] == 'brand_mentioned'][0]
+    assert mention['prior_rate'] == mention['current_rate'] == 0.5
+    assert mention['delta'] == 0
+    assert mention['prior_n'] == mention['current_n'] == 2
+
+
+def test_duplicate_repetition_in_one_window_is_rejected():
+    with pytest.raises(ValueError, match='duplicate'):
+        diff_observations([obs(repetition=1), obs(repetition=1, brand_mentioned=False)], [])
+
+
+def test_prompt_type_is_part_of_comparison_identity():
+    result = diff_observations([obs(prompt_type='brand_seeded')], [obs(brand_mentioned=False)])
+    assert result['changes'] == []
+    assert result['coverage']['skipped_incompatible'] == 1

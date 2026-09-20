@@ -96,25 +96,81 @@ def _key(row):
     return tuple(row[k] for k in KEY)
 
 
-def diff_observations(current, prior):
-    prior_ok = {_key(r): r for r in prior if r.get('status') == 'success'}
-    changes, skipped_failed, skipped_incompatible, compared = [], 0, 0, 0
-    for row in current:
-        if row.get('status') != 'success':
-            skipped_failed += 1
+def _index_success(rows):
+    seen = {}
+    for r in rows:
+        if r.get('status') != 'success':
             continue
-        old = prior_ok.get(_key(row))
-        if old is None:
-            skipped_incompatible += 1
+        k = (_key(r), r['repetition'])
+        if k in seen:
+            raise ValueError(
+                f"duplicate successful observation for prompt {r['prompt_id']} "
+                f"engine {r['engine']} repetition {r['repetition']}: "
+                'repetitions are independent samples and must be retained, not overwritten')
+        seen[k] = r
+    return seen
+
+
+def _group(indexed):
+    grouped = {}
+    for (key, _rep), row in indexed.items():
+        grouped.setdefault(key, []).append(row)
+    return grouped
+
+
+def _window(rows):
+    stamps = sorted(r['timestamp'] for r in rows if r.get('status') == 'success')
+    return {'start': stamps[0], 'end': stamps[-1]} if stamps else None
+
+
+def _rate(rows, field):
+    return sum(1 for r in rows if r[field]) / len(rows) if rows else None
+
+
+def _fmt_rate(value):
+    return 'n/a' if value is None else f'{value:.2f}'
+
+
+def diff_observations(current, prior):
+    indexed_current, indexed_prior = _index_success(current), _index_success(prior)
+    by_current, by_prior = _group(indexed_current), _group(indexed_prior)
+
+    changes, trends = [], []
+    compared, skipped_incompatible, skipped_unpaired = 0, 0, 0
+
+    for key in sorted(set(by_current) | set(by_prior)):
+        cur, old = by_current.get(key), by_prior.get(key)
+        if cur is None or old is None:
+            skipped_incompatible += len(cur or [])
             continue
         compared += 1
         for field in TRACKED:
-            if row[field] != old[field]:
-                changes.append({'prompt_id': row['prompt_id'], 'engine': row['engine'],
-                                'field': field, 'from': old[field], 'to': row[field]})
-    return {'changes': changes,
+            prior_rate, current_rate = _rate(old, field), _rate(cur, field)
+            trends.append({'prompt_id': key[6], 'engine': key[0], 'prompt_type': key[5],
+                           'field': field, 'prior_rate': prior_rate, 'current_rate': current_rate,
+                           'delta': current_rate - prior_rate,
+                           'prior_n': len(old), 'current_n': len(cur)})
+        old_by_rep = {r['repetition']: r for r in old}
+        cur_by_rep = {r['repetition']: r for r in cur}
+        skipped_unpaired += len(set(old_by_rep) ^ set(cur_by_rep))
+        for rep in sorted(set(old_by_rep) & set(cur_by_rep)):
+            for field in TRACKED:
+                if old_by_rep[rep][field] != cur_by_rep[rep][field]:
+                    changes.append({'prompt_id': key[6], 'engine': key[0], 'repetition': rep,
+                                    'field': field, 'from': old_by_rep[rep][field],
+                                    'to': cur_by_rep[rep][field]})
+
+    prior_window, current_window = _window(prior), _window(current)
+    overlapping = bool(prior_window and current_window
+                       and prior_window['start'] <= current_window['end']
+                       and current_window['start'] <= prior_window['end'])
+    return {'changes': changes, 'trends': trends,
             'coverage': {'current': len(current), 'prior': len(prior), 'compared': compared,
-                         'skipped_incompatible': skipped_incompatible, 'skipped_failed': skipped_failed}}
+                         'skipped_incompatible': skipped_incompatible,
+                         'skipped_failed': sum(1 for r in current if r.get('status') != 'success'),
+                         'skipped_unpaired': skipped_unpaired,
+                         'prior_window': prior_window, 'current_window': current_window,
+                         'overlapping_windows': overlapping}}
 
 
 def _panel_coverage(rows, panel):
@@ -198,7 +254,17 @@ def main():
     if summary['off_panel']['count']:
         lines.append(f"Off-panel rows (excluded from coverage): {summary['off_panel']['count']}")
     if summary['diff']:
-        lines.append(f"Compared: {summary['diff']['coverage']['compared']}; changes: {len(summary['diff']['changes'])}")
+        cov = summary['diff']['coverage']
+        lines.append(f"Compared: {cov['compared']} probe targets; "
+                     f"response changes: {len(summary['diff']['changes'])}; "
+                     f"unpaired repetitions: {cov['skipped_unpaired']}")
+        if cov['overlapping_windows']:
+            lines.append('Warning: prior and current collection windows overlap; '
+                         'treat movement as unestablished.')
+        for t in summary['diff'].get('trends') or []:
+            lines.append(f"{t['prompt_id']}/{t['engine']}/{t['field']}: "
+                         f"{_fmt_rate(t['prior_rate'])} (n={t['prior_n']}) -> "
+                         f"{_fmt_rate(t['current_rate'])} (n={t['current_n']})")
     (args.out / 'report.md').write_text('\n'.join(lines) + '\n')
     if summary['unmeasured']:
         summary['status'] = 'unmeasured'
