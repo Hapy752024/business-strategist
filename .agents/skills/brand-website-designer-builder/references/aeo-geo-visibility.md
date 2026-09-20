@@ -1,6 +1,6 @@
 # AEO/GEO visibility procedure
 
-Apply for answer/generative-engine visibility audits and content work on existing or new sites. Load from maintenance.md for existing-site audits. Eligibility work never guarantees citations; quote only the binding evidence table in docs/digital-marketing-optimization-plan.md §1.
+Apply for answer/generative-engine visibility audits and content work on existing or new sites, after the marketing bottleneck diagnosis justifies it (docs/digital-marketing-optimization-plan.md §0). Load from maintenance.md for existing-site audits. Eligibility work never guarantees citations; quote only the binding evidence table in docs/digital-marketing-optimization-plan.md §1.
 
 Question mining: derive questions from actual audience evidence — People Also Ask APIs, Search Console question-regex pulls (`^(who|what|when|where|why|how|is|are|can|do|does|should)\b`), reviewed community sources — and produce a clustered question→URL map. Never invent question demand from model memory.
 

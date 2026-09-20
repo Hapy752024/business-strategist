@@ -4,7 +4,7 @@ Use when a deliverable surfaces work only the owner can do or decide. Apply with
 
 States: `proposed` (agent suggestion, not adopted), `accepted` (owner agreed), `deferred` (explicitly postponed), `completed`. Only `accepted` actions and genuine blockers persist; a `proposed` action never recurs on resume as if adopted.
 
-Persistence: write accepted actions and blockers into the project manifest's existing `next_action` and `open_blockers` fields — these are what the workspace-lifecycle resume flow reads, and they are the source of truth. A human-readable `owner-actions.md` inside the project may render the same rows but never replaces manifest updates.
+Persistence: write accepted actions and blockers into the project manifest's existing `next_action` and `open_blockers` fields — these are what the workspace-lifecycle resume flow reads, and they are the source of truth. A human-readable `owner-actions.md` inside the project may render the same rows but never replaces manifest updates. `next_action` is a single string in schemas/project-manifest.schema.json and schemas/research-manifest.schema.json, so with several accepted actions write only the highest-priority one there, carry each remaining accepted action as its own `open_blockers` entry prefixed `owner action: `, and render the full set as rows in the project's `owner-actions.md`.
 
 Each row: action, layer or area it feeds, cadence (one-off/weekly/monthly/quarterly), rough effort, expected evidence payoff, state. Cadence is a proposal until `accepted`.
 

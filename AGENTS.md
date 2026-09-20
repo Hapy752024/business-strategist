@@ -135,6 +135,7 @@ Legacy projects continue ordinary research under their existing paths and stage 
 - **Implementation plan:** `docs/implementation-plan.md` — full architecture and phase details.
 - **Workspace lifecycle:** `references/workspace-lifecycle.md` — resume, replay, and run-manifest procedures.
 - **Cross-skill evidence registry:** `references/evidence-registry.md` — distilled sourced findings (sequencing rule, weak-evidence list, pull signals, regional notes) shared across GTM and marketing skills.
+- **Owner-action contract:** `references/owner-actions.md` — states, manifest persistence, row shape, and the owner-only vs agent-verifiable split for work only the owner can do or decide.
 - **Command reference:** `references/commands.md` — full CLI command variants and provider routing.
 - **Context budget:** `templates/CONTEXT-BUDGET.md` — planning checklist for broad, multi-topic, or long-running work (scope, action boundaries, load plan, subagent splits, evaluation plan).
 - **CI:** `.github/workflows/validate.yml` runs `scripts/validate_setup.sh` and `scripts/run_evals.py` on push and pull requests; keep both green.
