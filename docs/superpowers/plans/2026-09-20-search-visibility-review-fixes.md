@@ -532,3 +532,55 @@ git commit -m "fix: reserve open_blockers for dependencies and correct DEO marku
 
 - The review's F1–F3 corrections **change the module's output contract**. Tasks 1 and 2 must update the tests that encoded the old contract, and each such update must be justified in the task report as a contract correction rather than a test weakened to pass.
 - An empty recording now exits non-zero. That is deliberate fail-closed behaviour: no successful observation means nothing was measured, which must not read as a clean result.
+
+---
+
+## Round 2 — defects introduced by the Round 1 fixes
+
+A whole-branch adversarial review of Tasks 1–2 returned **CHANGES REQUIRED**: F1–F5 are genuinely closed and could not be falsified, but the fixes left new defects on ordinary inputs. All were reproduced independently before being written here.
+
+### Task 4: probe reporting and coverage identity (findings 1–5, nits a and c)
+
+**Files:** `scripts/monitoring/ai_answer_probe.py`, `tests/test_ai_answer_probe.py`
+
+**Finding 1 — `report.md` cannot distinguish "nothing comparable" from "no movement". MUST FIX.**
+Reproduced: panel `{p01}`, prior recorded under `model: gpt-other` → `exit 0`, `status: pass`, and `report.md` reads `Coverage: 1/1 declared prompts fully covered; gaps: 0` / `Compared: 0 probe targets; response changes: 0`. A configuration change — the exact case spec §3.1 requires be tested before trusting trends — renders as a clean, unchanged, fully covered run. `skipped_incompatible` and `skipped_failed` are never printed; gap rows are counted but not identified; `unmeasured` never reaches the file. A credit-blocked engine is likewise invisible: the reader cannot tell which engine failed or that it failed.
+*Fix:* print `skipped_incompatible` and `skipped_failed`; list the gap rows (prompt, engine, reason) rather than only counting them; print `unmeasured`/`status`.
+
+**Finding 2 — an undeclared engine suppresses the fail-closed gate. MUST FIX.**
+Reproduced: panel `{prompts:[p01], engines:['openai']}`, recording = one success from `engine: 'gemini'` → `exit 0`, `unmeasured: false`, `covered_prompts: 0/1`, `off_panel: {count: 0}`. Nothing the panel declared was measured, the undeclared row appears in no counter, and the run is not fail-closed.
+*Cause:* `_panel_coverage` decides on/off-panel from `(prompt_id, prompt_version, prompt_type)` only — `engine` is absent — while `unmeasured` is `not successful` over all on-panel successes regardless of the declared engine set.
+*Fix:* when `panel['engines']` is declared, a row whose engine is not in that set is **off-panel** (separated, not counted toward coverage), and `unmeasured` is computed over successes matching the declared engine set.
+
+**Finding 3 — duplicate repetitions satisfy coverage but are rejected by comparison. SHOULD FIX.**
+Same recording, two contradictory verdicts: panel `repetitions: 2` with rows `[rep1, rep1]` → `Coverage: 1/1 fully covered`, `gaps: []`, `exit 0`; add `--prior` and the same run hard-fails on duplicate `(key, repetition)`. Two rows sharing a repetition index are not independent samples.
+*Fix:* count **distinct** repetition indices for the `repetitions` comparison, and report a `duplicate_repetitions` gap so coverage and comparison agree.
+
+**Finding 4 — `skipped_incompatible` undercounts prior-only observations, and a test locks the bug in. SHOULD FIX.**
+`skipped_incompatible += len(cur or [])` should be `len(cur or []) + len(old or [])`. Reproduced: prior `[p01, p02]`, current `[p01]` → `skipped_incompatible: 0` although a prior observation was dropped. Worse, `test_diff_skips_incompatible_config` asserts `== 2`, a value only the asymmetric code produces — so the suite **rejects a fix to this line**.
+*Fix:* make the count symmetric and update that assertion to the corrected value (4), documenting it as a contract correction.
+
+**Finding 5 — window-overlap detection compares timestamps lexicographically. SHOULD FIX.**
+`_window` string-sorts and string-compares, but `_usable_timestamp` accepts any ISO offset and its message claims the offset exists "so collection windows are comparable". Reproduced: prior `2026-09-20T10:00:00Z` vs current `2026-09-20T05:00:00-05:00` — the same instant — → `overlapping_windows: false`, suppressing the "treat movement as unestablished" warning.
+*Fix:* compare parsed aware datetimes, not strings.
+
+**Nits:** (a) `summary.json` never contains `status`; add it. (c) `args.out.mkdir` sits outside the `try`, so an unwritable `--out` exits 1 with empty stdout and a raw traceback instead of the documented `{"status": "fail"}` envelope; move it inside.
+
+**Finding 7 — tests that must be added (surviving mutations).** All five survived the current suite:
+- `covered += 1` unconditionally — no test asserts `coverage['covered_prompts']`, the headline number in `report.md`.
+- `successful = list(on_panel)` (failures counted as coverage) — no test asserts that an all-failed on-panel recording is `unmeasured`. The shipped code is correct; the fail-closed path is unasserted.
+- `overlapping = False` — the overlap warning is never exercised.
+- `panel.engines` validation disabled — the `load_panel` engines error path is untested.
+- removing `sorted()` over comparison keys — the order-invariance test uses a single key, so multi-key order dependence could return unnoticed.
+
+Each of the above needs a test that kills it. Use multi-key inputs for the order-invariance case.
+
+### Task 5: replay-safety and instruction nits (finding 6, nit d)
+
+**Files:** `docs/superpowers/plans/2026-09-20-search-visibility-setup.md`, `.agents/skills/brand-website-designer-builder/references/deo-agent-readiness.md`
+
+**Finding 6 — the errata misses two defective route literals. SHOULD FIX.**
+The executed plan still carries the bare tokens the earlier fix dispatch bounded: `"agent readiness"` at lines 320 and 350, `"brand mentions"` at lines 247, 320 and 354. Shipped `config/workflow-routes.json` correctly carries `"agent readiness audit"` / `"website agent readiness"` and `"track brand mentions"` / `"own-brand mentions"`, but the plan's own progress log records that these bare tokens were must-fix defects (they stole voice-of-customer requests and hijacked app-UI prompts) — and only the `"AEO"` token was corrected in the plan text. A replayer following the errata's instruction would reintroduce both.
+*Fix:* correct those literals to the shipped bounded tokens, and extend the errata to name them plus the `prompt_type`-in-`KEY` omission that was half of F3.
+
+**Nit d.** `deo-agent-readiness.md:5` states offer-level "outranks" organization-level but omits Google's stated *preference* for a site-wide organization policy with offer-level reserved for overrides. Add that qualification.

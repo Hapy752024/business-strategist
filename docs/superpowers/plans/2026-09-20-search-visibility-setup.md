@@ -317,7 +317,7 @@ git commit -m "Register AI answer-engine and mention-listening observation provi
 
 **Interfaces:**
 - Consumes: capability IDs from Task 3 (eval text references them); Task 2 workflow changes (their evals assert the new behavior).
-- Produces: route match terms `"AEO audit"`, `"AEO/GEO"`, `"answer engine optimization"`, `"structured data audit"`, `"agent readiness"` → `brand-website-designer-builder`; `"brand mentions"`, `"social listening"`, `"AI citation tracking"`, `"AI visibility monitoring"` → `competitor-monitoring`.
+- Produces: route match terms `"AEO audit"`, `"AEO/GEO"`, `"answer engine optimization"`, `"structured data audit"`, `"agent readiness audit"`, `"website agent readiness"` → `brand-website-designer-builder`; `"track brand mentions"`, `"own-brand mentions"`, `"social listening"`, `"AI citation tracking"`, `"AI visibility monitoring"` → `competitor-monitoring`.
 
 - [x] **Step 1: Write the failing routing tests**
 
@@ -347,11 +347,13 @@ In the `website-build` route, append to `match` (after `"GEO audit"`):
 "AEO/GEO",
 "answer engine optimization",
 "structured data audit",
-"agent readiness"
+"agent readiness audit",
+"website agent readiness"
 ```
 In the `competitor-monitoring` route, append to `match`:
 ```json
-"brand mentions",
+"track brand mentions",
+"own-brand mentions",
 "social listening",
 "AI citation tracking",
 "AI visibility monitoring"
@@ -839,6 +841,14 @@ Residuals accepted, not fixed — each recorded with its cost:
 - `config/source-capabilities.json`: the four `requires_env` keys are per-engine alternatives but read as
   all-required. `requires_env` is display-only (`capability_lookup.py:86`); recorded mode reads no key at all.
 
+### Plan-text replay corrections — appended post-review (2026-09-20)
+
+The Task 4 row above records only the `"AEO"` bounding and its plan-text update. The whole-branch fix dispatch
+bounded two further router tokens that this plan's Task 4 text still carried bare — `"brand mentions"` →
+`"track brand mentions"` / `"own-brand mentions"` (review item 2) and `"agent readiness"` →
+`"agent readiness audit"` / `"website agent readiness"` (review item 3) — and did not correct the plan literals.
+They are corrected now to the shipped `config/workflow-routes.json` values; see erratum 4.
+
 ## Errata — superseded after an independent review (2026-09-20)
 
 This plan is executed; the progress log above is the record of that execution. An independent review
@@ -854,10 +864,22 @@ without these corrections.**
 2. **Line 145 (Task 2) and the `owner action: ` encoding rule** — superseded. `open_blockers` is now reserved for
    genuine dependencies; accepted-but-optional actions go to `next_action` as a concise ordered set. Corrected at
    `references/owner-actions.md:7`.
-3. **The `ai_answer_probe.py` literals in Task 5** shipped three defects the plan did not anticipate: repeated
+3. **The `ai_answer_probe.py` literals in Task 5** shipped four defects the plan did not anticipate: repeated
    observations collapsed to last-row-wins so file order could flip a reported gain/loss; the selected panel was
-   validated then ignored, so an empty recording reported zero coverage gaps; and successful observations were
-   accepted without locale, timestamp or source answer. Fixed in the follow-up plan.
+   validated then ignored, so an empty recording reported zero coverage gaps; successful observations were
+   accepted without locale, timestamp or source answer; and `prompt_type` was left out of the comparison `KEY`,
+   so a `brand_seeded` row was compared against an `unbranded_discovery` row as an ordinary change — the second
+   half of F3, alongside the contextual validation. Fixed in the follow-up plan.
+4. **The Task 4 route literals — two more bare tokens.** The plan text still carried `"agent readiness"` (Task 4
+   Interfaces and Step 3) and `"brand mentions"` (Task 4 Interfaces and Step 3) as router match terms. The later
+   fix dispatch bounded them because `scripts/route_workflow.py:230` matches casefolded substrings with no word
+   boundary: `"brand mentions"` stole voice-of-customer requests (which `AGENTS.md` requires reach
+   `business-strategist`) and `"agent readiness"` hijacked app-UI prompts into a lane that forbids the website
+   skill. Superseded by the shipped `config/workflow-routes.json` tokens `"agent readiness audit"` /
+   `"website agent readiness"` and `"track brand mentions"` / `"own-brand mentions"`, now copied into the Task 4
+   Interfaces line and Step 3 blocks. The `"brand mentions"` entry in the Task 3 `brand_mention_listening`
+   `use_when` list is **not** a route token — it is a `capability_lookup.py` keyword, the router never reads it,
+   and the shipped `config/source-capabilities.json` keeps it unchanged, so it is left as written.
 
 Two of the residuals listed immediately above are now closed rather than accepted: the boundary assertion is
 exact-equality (`tests/test_ai_answer_probe.py`) and the panel check raises `ValueError` instead of asserting.
