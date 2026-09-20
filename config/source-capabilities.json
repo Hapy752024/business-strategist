@@ -860,6 +860,66 @@
       "status_check": "python3 scripts/validate_apis/validate_itunes_reviews.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --providers itunes_reviews --itunes-app-ids '<app-id>' --days 365 --limit 30",
       "caveat": "Public reviews only, most-recent-first, no historical depth beyond RSS pages; ratings are context, repeated complaint text is the signal."
+    },
+    {
+      "id": "ai_answer_engines",
+      "family": "visibility_observation",
+      "label": "AI answer-engine observation panels",
+      "description": "Fixed prompt panels against LLM APIs producing normalized mention/recommendation/citation observations under a strict measurement contract; read-only pilot via scripts/monitoring/ai_answer_probe.py.",
+      "use_when": [
+        "AI citation tracking",
+        "AI visibility monitoring",
+        "answer engine visibility",
+        "share of model"
+      ],
+      "avoid_when": [
+        "customer demand evidence",
+        "market-wide visibility share claims",
+        "representative prevalence estimate"
+      ],
+      "evidence_strength": "observation_only_not_demand_evidence",
+      "collector_provider": "ai_answer_probe.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [
+        "OPENAI_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "GEMINI_API_KEY",
+        "PERPLEXITY_API_KEY"
+      ],
+      "approval_required": false,
+      "authorization_policy": "standing_authorized_no_cap_with_cadence_note",
+      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/monitoring/ai_answer_probe.py --panel panel.json --recorded observations.jsonl --out runs/<run>/",
+      "caveat": "Measures the configured API experience, not consumer products. Failed or credit-blocked engines are coverage gaps (unknown), never absence of mention. Recurring panels x engines x repetitions need a recorded cadence/cost note."
+    },
+    {
+      "id": "brand_mention_listening",
+      "family": "visibility_observation",
+      "label": "Own-brand mention watch",
+      "description": "Licensed-API mention monitoring for the user's own brand with sentiment and earned/owned/paid source classification; applies competitor-monitoring watchlist/snapshot conventions to the user's own brand.",
+      "use_when": [
+        "brand mentions",
+        "social listening",
+        "own-brand monitoring"
+      ],
+      "avoid_when": [
+        "competitor teardown",
+        "ToS-violating scraping"
+      ],
+      "evidence_strength": "observation_only_sampled",
+      "collector_provider": "pending_pilot",
+      "provider_aliases": [],
+      "validation_providers": [
+        "serper_search",
+        "brave_search"
+      ],
+      "requires_env": [],
+      "approval_required": false,
+      "authorization_policy": "licensed_apis_only",
+      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "pending pilot; apply competitor-monitoring watchlist/snapshot conventions to own-brand rows",
+      "caveat": "Listening coverage is API-gated (Meta/LinkedIn/TikTok limited). Samples are not market-wide share."
     }
   ]
 }

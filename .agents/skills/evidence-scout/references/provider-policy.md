@@ -175,6 +175,14 @@ When a paid provider (ScrapeCreators, Apify, Sonar, DataForSEO, Bright Data) rep
 
 ScrapeCreators specifics: `collect_scrapecreators` does a free pre-flight credit-balance check before any paid call and aborts mid-run if credits exhaust (remaining endpoints are marked `skipped:insufficient_credits`), so a depleted balance can never silently look like "no evidence found". Top up at https://app.scrapecreators.com/.
 
+## AI answer-engine probing and brand-mention listening
+
+Observation providers (OpenAI, Anthropic, Gemini, Perplexity APIs for answer panels; licensed listening APIs for own-brand mentions) produce visibility observations, never customer-demand evidence. Saved model answers retain their surface label, prompt-type label, model/version, search/tool configuration, locale, timestamp, prompt version and collection status (success/error/unsupported).
+
+If a provider reports `insufficient_credits`/`billing_required`, record a coverage gap for that engine, notify the user with the lost coverage and top-up route, and continue with remaining engines. A credit-blocked or failed engine is never evidence of absence of mentions; after a reported top-up, re-validate and re-run that engine's panel.
+
+Recurring panels multiply cost (prompts x engines x repetitions x cadence): record the cadence and a cost note in the run's `summary.json` before scheduling, even under the standing pre-authorized spend policy. Publishing, posting and outreach remain separately authorized; observation providers are read-only.
+
 ## Source Priority Order
 
 Prefer sources in this order:
