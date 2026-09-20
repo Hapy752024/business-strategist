@@ -397,9 +397,9 @@ def main():
         print(json.dumps({'status': 'fail', 'errors': [str(exc)]}))
         return True
     if summary['unmeasured']:
-        print(json.dumps({'status': summary['status'], 'out': str(args.out), **summary}, default=str))
+        print(json.dumps({'out': str(args.out), **summary}, default=str))
         return True
-    print(json.dumps({'status': 'pass', 'out': str(args.out), **summary}, default=str))
+    print(json.dumps({'out': str(args.out), **summary}, default=str))
     return False
 
 
