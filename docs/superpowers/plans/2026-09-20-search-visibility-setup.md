@@ -883,3 +883,72 @@ without these corrections.**
 
 Two of the residuals listed immediately above are now closed rather than accepted: the boundary assertion is
 exact-equality (`tests/test_ai_answer_probe.py`) and the panel check raises `ValueError` instead of asserting.
+
+The four probe defects in item 3 are not the whole list. Replaying the literal Task 5 block and applying only
+the corrections named above still ships a probe that the later review rounds found defective — several of them
+on ordinary inputs, not edge cases. Each item below was reproduced against the literal block
+(`2026-09-20-search-visibility-setup.md` lines 589–694, extracted and run unmodified) or against the correction
+this errata points to; the corrections are in `2026-09-20-search-visibility-review-fixes.md`.
+
+5. **Task 5 literal block, `diff_observations` (line 644) — `skipped_incompatible` counts one side only.**
+   The loop walks `current` (line 638) and increments for each current row with no prior match; prior-only
+   observations are never counted. Reproduced against the literal block: prior `[p01, p02]` with current
+   `[p01]` reports `skipped_incompatible: 0`, although a prior observation was dropped — the reader cannot
+   tell a config change from a dropped window. The plan's own `test_diff_skips_incompatible_config` (line 570)
+   asserts `== 2`, the value only the asymmetric code produces, so copying the test block re-locks the defect.
+   Superseded by fix plan Task 2 Step 3 (symmetric count) and Task 4 finding 4 (assertion becomes 4, recorded
+   as a contract correction).
+
+6. **Task 5 literal block, `build_summary` (line 656) and `main` (line 673) — the panel's `engines` and
+   `repetitions` are never read, and nothing fails closed.** Item 3 names the panel being validated then
+   ignored for empty recordings; the same root cause is broader. Reproduced against the literal block: a
+   recording whose engine is not in the declared engine set, a panel declaring `repetitions: 2` with duplicate
+   `(key, repetition)` rows, and a panel declaring two engines with only one observed all exit **0** with
+   `status: pass` and `coverage_gaps: []` — no engine-scoped gap, no repetition requirement, no off-panel
+   separation, no `unmeasured`. Superseded by fix plan Task 1 Step 4 (panel-driven coverage and `unmeasured`),
+   Task 1 Step 5 (fail-closed exit), and Task 4 findings 2–3.
+
+7. **Task 5 literal block, the rendered surface (`main`, line 684, plus `summary.json`) — gaps are counted but
+   never listed, and a failed prior window reads as a clean pass.** Reproduced against the literal block:
+   `report.md` prints `coverage gaps: {len(...)}` only, `skipped_incompatible`/`skipped_failed` are never
+   printed, gap rows carry `engine`/`reason` but no prompt identity, and `summary.json` carries no `status`. A
+   prior window consisting entirely of `error` rows is folded into `skipped_incompatible` and renders as
+   `status: pass` with `skipped_failed: 0`, so a credit-blocked prior window is indistinguishable from a
+   config mismatch and from no movement. The run also writes no copy of the selected panel and never reads
+   `panel_version`, so a later reader cannot identify what was measured. Superseded by fix plan Task 4
+   finding 1 and nits (a)/(c), and Task 6 findings 1–3 with nits 6–8.
+
+8. **Task 5 literal block, `main` (line 679) — `args.out.mkdir` sits outside the `try`.** Reproduced:
+   pre-creating `out/report.md` as a directory exits 1 with empty stdout and a raw `IsADirectoryError`
+   traceback instead of the documented `{"status": "fail"}` envelope, leaving a stale `summary.json` on disk.
+   Superseded by fix plan Task 4 nit (c). Note the coupling: adding `status` to `summary.json` (nit a) turns
+   that stale artifact into a false pass claim, which Task 6 finding 3 closes by making the output write
+   atomic — apply both or neither.
+
+9. **Task 5 literal block — there is no window comparison at all, and the correction this errata points at
+   compares timestamp strings.** The block's `diff_observations` returns no window keys (only `changes` and
+   `coverage{current, prior, compared, skipped_incompatible, skipped_failed}`), so overlapping collection
+   windows are never detected and the "treat movement as unestablished" warning does not exist. The
+   lexicographic comparison is introduced by the fix plan's own Task 2 Step 3 `_window`, which `sorted()`s and
+   compares the raw timestamp strings — so applying only the corrections named above still compares instants
+   as strings (`2026-09-20T10:00:00Z` vs `2026-09-20T05:00:00-05:00`, the same instant, do not overlap).
+   Apply fix plan Task 4 finding 5 (compare parsed aware datetimes) and Task 6 finding 4 (multi-row
+   mixed-offset window test), not just Task 2.
+
+10. **Task 5 literal block — duplicate `(key, repetition)` rows are accepted, and after the listed corrections
+    the two paths disagree.** The literal block accepts duplicates with `exit 0` on both the `--prior` and
+    no-`--prior` paths (item 6). Once the Round 1 corrections are applied, the same recording yields a
+    `duplicate_repetitions` coverage gap and `exit 0` without `--prior`, but a hard failure and no report with
+    `--prior`. Two rows sharing a repetition index are not independent samples. Apply fix plan Task 6 finding 5:
+    reject duplicate `(entity, repetition)` at load time in `main`, for both files, so both paths fail closed
+    identically.
+
+11. **Task 5 test block (lines 506–578) and Interfaces block (lines 494–500) — not replayable verbatim.**
+    The tests encode the defective contracts: `test_diff_skips_incompatible_config` asserts the asymmetric
+    `skipped_incompatible: 2` (line 570); `test_summary_reports_coverage_gap_for_failed_engine` (line 573)
+    calls the two-argument `build_summary(rows, prior_rows=[])` with no panel and asserts a gap row carrying
+    only `engine`/`reason`; `test_diff_compares_only_compatible_successful` asserts the per-row change shape
+    with no `repetition`. The Interfaces block declares the same superseded signatures (`diff_observations`
+    coverage keys, `build_summary(rows, prior_rows)`, `coverage_gaps` shape). Adapt both to fix plan Tasks 1–2
+    rather than copying them, and add the rendering-consistency test layer in Task 7 — it is what catches the
+    rendering defects in items 7 and 8, which the internal-dict assertions do not.
