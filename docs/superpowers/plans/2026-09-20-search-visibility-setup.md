@@ -787,3 +787,54 @@ no parallel dispatch.
 | 4. Routing/catalog/eval parity | done | `fb8e073` + fix `388b9a1` | 0 errors / 167 evals / routes pass / 568 tests | 1 fix round: bare `"AEO"` matched as an unbounded substring and hijacked `Kaeon`/`Aeon`/archaeology prompts. Bounded to `"AEO audit"` + `"AEO/GEO"`; 233-prompt probe clean. Plan text updated to match |
 | 5. AI-answer observation pilot | done | `60b6db6` | 0 errors / 167 evals / routes pass / 576 tests | SPEC PASS + QUALITY PASS; offline grep clean, no false-negative survives adversarial fixtures, 4 of 5 reviewer mutations caught. 6 nits, 0 must-fix |
 | 6. Final gate run | done | n/a (verification only) | 1 warning / **0 errors**, `All eval structure checks passed.`, `{"passed": true, "errors": []}`, **576 passed** | Every target in the plan hit exactly |
+
+### Final whole-branch review — VERDICT: SHIP
+
+One review pass on the most capable model over `12d83ad..60b6db6`, one fix dispatch, one scoped re-review.
+
+Three must-fixes, all of them coherence defects only a whole-branch view could surface. Two are further
+instances of the Task 4 defect class — the plan mandated bare match tokens and `scripts/route_workflow.py:230`
+matches casefolded substrings with no word boundary:
+
+1. **Routed destination had no instructions.** `competitor-monitoring` was advertised in the router and catalog
+   for own-brand AI-visibility work while its `references/workflow.md` was untouched and its line 8 provider
+   exclusion actively steered away from it. Fixed by a new paragraph at `references/workflow.md:16`: own-brand
+   watchlist rows under the existing snapshot/diff conventions, `ai_answer_probe.py` in recorded mode, both
+   capability IDs, all four §3.1 measurement elements inline, a provider carve-out scoped to those two
+   capabilities only, and a customer-voice handoff to `references/customer-voice.md`.
+2. **`"brand mentions"` stole voice-of-customer requests.** "What do customers say about us — pull brand
+   mentions" moved `business-strategist` → `competitor-monitoring`, so the VOC pass mandated by `AGENTS.md:64`
+   never ran. Bounded to `"track brand mentions"` + `"own-brand mentions"`.
+3. **`"agent readiness"` hijacked app-UI prompts.** At 15 characters it beat `"app screens"` and `"dashboard UI"`
+   under longest-phrase-wins, routing into a lane that declares `"forbidden": ["brand-website-designer-builder"]`.
+   Bounded to `"agent readiness audit"` + `"website agent readiness"`.
+
+Nits closed in the same dispatch: the two unresolvable pointers in `marketing-strategy-builder/references/workflow.md`
+(now qualified to `brand-website-designer-builder/references/{experimentation,campaign-tracking}.md`); the missing
+`next_action` encoding in `references/owner-actions.md:7` (highest-priority action in `next_action`, remainder as
+`open_blockers` entries prefixed `owner action: `, verified against `schemas/project-manifest.schema.json`); the
+§0 bottleneck-gate clause missing from `aeo-geo-visibility.md:3`; and the §1 line citation in the spec (`143–147`).
+
+| Stage | Commits | Outcome |
+| --- | --- | --- |
+| Fix dispatch (1 of 1 permitted) | `f7c9dfc`, `a75a0cf` | 3 must-fix + 5 nits closed |
+| Scoped re-review | n/a | **SHIP** — all 3 must-fixes verified closed; substring test over the new tokens found **zero** substring relations in either direction, eliminating the bare-token failure mode; spec walk §0–§6 found no silent drops; evidence-discipline audit clean on every forbidden pattern |
+| Docs | `c0be157` | Spec, adversarial review and this plan committed |
+
+Final gates: **1 warning / 0 errors**, **167 eval cases**, `{"passed": true, "errors": []}`, **576 passed**, clean tree.
+
+Residuals accepted, not fixed — each recorded with its cost:
+
+- `scripts/route_workflow.py:230` has no word-boundary logic, so `"AEO audit"` still fires inside a synthetic
+  `archaeo audit`. Adding boundaries would re-scope all ~40 routes on the strength of prompts that are not
+  plausible English. Cost if wrong: a contrived prompt reaches `website-build`.
+- `competitor-monitoring/SKILL.md:3` still describes the skill as competitor-only. The router and catalog carry
+  the authoritative intent and `references/workflow.md:16` now carries the instructions.
+- "agent readiness audit of our dashboard UI" resolves to `website-build`. The prompt is genuinely ambiguous.
+- `tests/test_ai_answer_probe.py:71` asserts `'demand' in boundary or 'observation' in boundary`, so a mutated
+  boundary of `'validated market demand signal'` passes. The shipped boundary string is correct; the test is the
+  weak part, and it is byte-exact to this plan.
+- `scripts/monitoring/ai_answer_probe.py:84` validates panel input with `assert`, which `python3 -O` strips. The
+  evidence-discipline checks use real `raise ValueError` and are unaffected.
+- `config/source-capabilities.json`: the four `requires_env` keys are per-engine alternatives but read as
+  all-required. `requires_env` is display-only (`capability_lookup.py:86`); recorded mode reads no key at all.

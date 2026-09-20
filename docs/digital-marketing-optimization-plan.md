@@ -16,7 +16,7 @@ Feedback procedure for everything below: **observation → proposed change → e
 
 ## 1. What the evidence actually supports
 
-Every consequential claim is bound to source, population, measured outcome and applicability limit. The full register is in §8.
+Every consequential claim is bound to source, population, measured outcome and applicability limit. The full register is in §7.
 
 | Claim usable in agent outputs | Source / population / outcome | Applicability limit |
 |---|---|---|
