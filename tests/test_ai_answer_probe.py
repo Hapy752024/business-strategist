@@ -189,7 +189,7 @@ PANEL_ONE = {'prompts': [{'id': 'p01', 'version': 1, 'type': 'unbranded_discover
                           'text': 'Which provider?'}]}
 
 
-def _run_cli(monkeypatch, tmp_path, panel, recorded, prior=None):
+def _run_cli(monkeypatch, tmp_path, panel, recorded, prior=None, prior_panel=None):
     (tmp_path / 'panel.json').write_text(json.dumps(panel))
     (tmp_path / 'recorded.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in recorded))
     argv = ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
@@ -198,6 +198,9 @@ def _run_cli(monkeypatch, tmp_path, panel, recorded, prior=None):
     if prior is not None:
         (tmp_path / 'prior.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in prior))
         argv += ['--prior', str(tmp_path / 'prior.jsonl')]
+    if prior_panel is not None:
+        (tmp_path / 'prior_panel.json').write_text(json.dumps(prior_panel))
+        argv += ['--prior-panel', str(tmp_path / 'prior_panel.json')]
     monkeypatch.setattr(sys, 'argv', argv)
     return main()
 
@@ -218,12 +221,16 @@ def test_distinct_repetitions_satisfy_coverage_but_duplicates_do_not():
                           obs(prompt_id='p01', repetition=2, brand_mentioned=False)], [], panel)
     assert good['coverage']['covered_prompts'] == 1
     assert good['coverage_gaps'] == []
+    # Contract correction (Round 3, finding 5): rows sharing a repetition index are
+    # no longer an accepted coverage input that merely reports a `duplicate_repetitions`
+    # gap. `main` now rejects them at load time for both files, so the surviving
+    # coverage statement is that shared indices do not count as independent samples:
+    # coverage is incomplete for want of distinct samples, not satisfied.
     dup = build_summary([obs(prompt_id='p01', repetition=1),
                          obs(prompt_id='p01', repetition=1, brand_mentioned=False)], [], panel)
     assert dup['coverage']['covered_prompts'] == 0
-    reasons = {g['reason'] for g in dup['coverage_gaps']}
-    assert 'duplicate_repetitions' in reasons
-    assert 'insufficient_repetitions' in reasons
+    assert [g['reason'] for g in dup['coverage_gaps']] == ['insufficient_repetitions']
+    assert dup['coverage_gaps'][0]['observed'] == 1
 
 
 def test_undeclared_engine_rows_are_off_panel_and_fail_closed():
@@ -310,8 +317,11 @@ def test_report_names_gaps_and_skipped_counts(monkeypatch, tmp_path):
     report = (tmp_path / 'out' / 'report.md').read_text()
     assert 'Status: pass' in report
     assert 'Coverage: 0/2 declared prompts fully covered' in report
-    assert 'p01/perplexity (error)' in report
-    assert 'p02 (missing_no_observation)' in report
+    # Contract correction (Round 3, nit 6): a gap row is identified by prompt id and
+    # version, so a panel declaring the same id at two versions no longer renders two
+    # identical lines.
+    assert 'p01 v1/perplexity (error)' in report
+    assert 'p02 v1 (missing_no_observation)' in report
     assert 'Compared: 1 probe targets' in report
     assert 'skipped incompatible: 0' in report
     assert 'skipped failed: 1' in report
@@ -330,3 +340,169 @@ def test_unwritable_out_returns_fail_envelope(monkeypatch, tmp_path, capsys):
     assert main() is True
     envelope = json.loads(capsys.readouterr().out)
     assert envelope['status'] == 'fail' and envelope['errors']
+
+
+# --- Round 3 (Task 6): the rendered artifact surface ------------------------
+
+ERROR_BASE = {**BASE, 'status': 'error', 'brand_mentioned': None,
+              'url_cited': None, 'recommended': None, 'answer_text': ''}
+
+
+def err_obs(**kw):
+    return obs(status='error', brand_mentioned=None, url_cited=None,
+               recommended=None, answer_text='', **kw)
+
+
+def test_diff_reports_prior_window_failures_separately():
+    coverage = diff_observations([obs()], [err_obs()])['coverage']
+    assert coverage['skipped_failed'] == 0
+    assert coverage['skipped_failed_prior'] == 1
+    assert coverage['prior_window'] is None
+
+
+def test_credit_blocked_prior_window_is_not_rendered_as_a_clean_pass(monkeypatch, tmp_path):
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, [BASE], prior=[ERROR_BASE]) is False
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert 'skipped failed prior: 1' in report
+    assert 'Warning: the prior window contained 1 failed observation' in report
+    assert 'no successful prior observation established a prior collection window' in report
+    summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['diff']['coverage']['skipped_failed_prior'] == 1
+    assert summary['diff']['coverage']['skipped_failed'] == 0
+    assert summary['diff']['coverage']['prior_window'] is None
+
+
+def test_clean_prior_window_prints_no_prior_failure_warning(monkeypatch, tmp_path):
+    prior = [{**BASE, 'timestamp': '2026-09-19T10:00:00Z'}]
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, [BASE], prior=prior) is False
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert 'skipped failed prior: 0' in report
+    assert 'Warning: the prior window contained' not in report
+
+
+def test_panel_is_preserved_with_the_output_and_its_version_is_printed(monkeypatch, tmp_path):
+    panel = {**PANEL_ONE, 'panel_version': '2026-09'}
+    assert _run_cli(monkeypatch, tmp_path, panel, [BASE]) is False
+    copied = (tmp_path / 'out' / 'panel.json').read_text()
+    assert json.loads(copied) == panel
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert 'Panel version: 2026-09' in report
+
+
+def test_changed_panel_version_is_recorded_and_not_compared(monkeypatch, tmp_path):
+    prior_panel = {**PANEL_ONE, 'panel_version': 'v1'}
+    current_panel = {**PANEL_ONE, 'panel_version': 'v2'}
+    prior = [{**BASE, 'timestamp': '2026-09-19T10:00:00Z', 'brand_mentioned': False}]
+    assert _run_cli(monkeypatch, tmp_path, current_panel, [BASE], prior=prior,
+                    prior_panel=prior_panel) is False
+    summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['diff']['coverage']['panel_version'] == {
+        'current': 'v2', 'prior': 'v1', 'compatible': False}
+    assert summary['diff']['changes'] == []
+    assert summary['diff']['trends'] == []
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert 'panel version differs between windows (v1 -> v2)' in report
+    assert '/brand_mentioned:' not in report
+
+
+def test_same_panel_version_compares_normally(monkeypatch, tmp_path):
+    panel = {**PANEL_ONE, 'panel_version': 'v1'}
+    prior = [{**BASE, 'timestamp': '2026-09-19T10:00:00Z', 'brand_mentioned': False}]
+    assert _run_cli(monkeypatch, tmp_path, panel, [BASE], prior=prior,
+                    prior_panel=panel) is False
+    summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['diff']['coverage']['panel_version']['compatible'] is True
+    assert summary['diff']['coverage']['compared'] == 1
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert '/brand_mentioned:' in report
+
+
+def test_missing_prior_panel_version_is_recorded_as_unverified(monkeypatch, tmp_path):
+    panel = {**PANEL_ONE, 'panel_version': 'v1'}
+    prior = [{**BASE, 'timestamp': '2026-09-19T10:00:00Z'}]
+    assert _run_cli(monkeypatch, tmp_path, panel, [BASE], prior=prior) is False
+    summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['diff']['coverage']['panel_version'] == {
+        'current': 'v1', 'prior': None, 'compatible': None}
+    assert 'Prior panel version not supplied' in (tmp_path / 'out' / 'report.md').read_text()
+
+
+def test_failed_run_leaves_no_pass_claiming_summary(monkeypatch, tmp_path, capsys):
+    out = tmp_path / 'out'
+    out.mkdir()
+    (out / 'report.md').mkdir()          # the later artifact write cannot succeed
+    (out / 'summary.json').write_text('{"status": "stale-prior-run"}')
+    (tmp_path / 'panel.json').write_text(json.dumps(PANEL_ONE))
+    (tmp_path / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
+    monkeypatch.setattr(sys, 'argv', ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
+                                      '--recorded', str(tmp_path / 'recorded.jsonl'),
+                                      '--out', str(out)])
+    assert main() is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail' and envelope['errors']
+    # The failed run must not have published a pass claim, and must not have
+    # overwritten the previous run's summary either.
+    assert (out / 'summary.json').read_text() == '{"status": "stale-prior-run"}'
+    assert not (tmp_path / 'out.staging').exists()
+
+
+def test_duplicate_repetitions_fail_closed_identically_with_and_without_prior(
+        monkeypatch, tmp_path, capsys):
+    dup = [BASE, {**BASE, 'brand_mentioned': False}]
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, dup) is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail' and 'duplicate' in envelope['errors'][0]
+    assert not (tmp_path / 'out').exists()
+    prior = [{**BASE, 'timestamp': '2026-09-19T10:00:00Z'}]
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, dup, prior=prior) is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail' and 'duplicate' in envelope['errors'][0]
+    assert not (tmp_path / 'out').exists()
+    # The same validation applies to the prior file, so neither window can smuggle a
+    # shared repetition index past the gate.
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, [BASE], prior=dup) is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail' and 'prior' in envelope['errors'][0]
+
+
+def test_multi_row_mixed_offset_windows_use_instants_for_bounds_and_overlap():
+    # Prior instants are 11:00Z and 12:00Z, written with different offsets. String
+    # ordering inverts them, so both the bounds and the overlap verdict depend on
+    # comparing instants.
+    prior = [obs(repetition=1, timestamp='2026-09-20T11:00:00Z'),
+             obs(repetition=2, timestamp='2026-09-20T07:00:00-05:00')]
+    overlapping = [obs(repetition=1, timestamp='2026-09-20T06:30:00-05:00'),   # 11:30Z
+                   obs(repetition=2, timestamp='2026-09-20T12:30:00Z')]        # 12:30Z
+    apart = [obs(timestamp='2026-09-20T08:00:00-05:00')]                       # 13:00Z
+    coverage = diff_observations(overlapping, prior)['coverage']
+    assert coverage['prior_window'] == {'start': '2026-09-20T11:00:00Z',
+                                        'end': '2026-09-20T07:00:00-05:00'}
+    assert coverage['current_window'] == {'start': '2026-09-20T06:30:00-05:00',
+                                          'end': '2026-09-20T12:30:00Z'}
+    assert coverage['overlapping_windows'] is True
+    assert diff_observations(apart, prior)['coverage']['overlapping_windows'] is False
+
+
+def test_gap_rows_carry_prompt_version(monkeypatch, tmp_path):
+    panel = {'prompts': [
+        {'id': 'p01', 'version': 1, 'type': 'unbranded_discovery', 'text': 'Which provider?'},
+        {'id': 'p01', 'version': 2, 'type': 'unbranded_discovery', 'text': 'Which provider now?'}]}
+    assert _run_cli(monkeypatch, tmp_path, panel, []) is True
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert '- coverage gap: p01 v1 (missing_no_observation)' in report
+    assert '- coverage gap: p01 v2 (missing_no_observation)' in report
+
+
+def test_off_panel_line_is_unambiguous_when_the_id_is_also_declared(monkeypatch, tmp_path):
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE,
+                    [BASE, {**BASE, 'prompt_version': 2}]) is False
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert 'Off-panel rows (excluded from coverage): 1 [p01]' in report
+    assert 'matched on prompt id, version, type and declared engine' in report
+
+
+def test_unmeasured_envelope_carries_out(monkeypatch, tmp_path, capsys):
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, []) is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'unmeasured'
+    assert envelope['out'] == str(tmp_path / 'out')
