@@ -13,6 +13,8 @@ Separate observed changes from interpretation. A pricing-page edit, SERP movemen
 
 Ask one focused setup question at a time when required. Prefer a small watchlist over broad scraping: 3-5 competitors and 2-5 high-signal URLs per competitor are easier to interpret and cheaper to run.
 
+Watchlist entities may be the user's own brand as well as competitors; own-brand rows use the same watchlist, snapshot, and diff conventions and do not require a competitor list before proceeding. Collect AI-answer visibility observations with `scripts/monitoring/ai_answer_probe.py` in recorded mode under the `ai_answer_engines` and `brand_mention_listening` capabilities registered in `config/source-capabilities.json`; the Evidence Scout provider exclusion above is waived for those two registered observation capabilities only and still governs every other Evidence Scout alias. Keep the measurement contract intact: label every observation row with its `surface` and `prompt_type`, record status as `success`, `error`, or `unsupported`, compare only compatible windows, and treat a failed or credit-blocked engine as a coverage gap recorded as `unknown` — never as absence of mention and never as absence of demand. Model output is an observation of the configured surface, never customer-demand evidence. Hand customer-voice phrasing — what customers say, complaints, review sentiment — back to Evidence Scout and `references/customer-voice.md`; this skill detects change over time and does not run the voice-of-customer pass.
+
 ## Inputs To Collect
 
 Before spending credits or setting schedules, identify:
