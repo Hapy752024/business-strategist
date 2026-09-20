@@ -506,3 +506,240 @@ def test_unmeasured_envelope_carries_out(monkeypatch, tmp_path, capsys):
     envelope = json.loads(capsys.readouterr().out)
     assert envelope['status'] == 'unmeasured'
     assert envelope['out'] == str(tmp_path / 'out')
+
+
+# --- Round 3 (Task 7): the artifact-consistency layer ------------------------
+#
+# The probe renders one internal state four ways: `report.md`, `summary.json`,
+# the stdout envelope and the exit code. Asserting the internal dict cannot
+# catch a rendering that disagrees with it, so the tests below read the
+# rendered artifacts back and cross-check them against each other and against
+# the exit code. Every scenario picks inputs whose correct value is non-trivial
+# and non-zero: an assertion such as `skipped incompatible: 0` on a run whose
+# true value is 0 is satisfied by hard-coding `0`, which is how Round 1's
+# lock-in pattern arose.
+#
+# The two formatters are reimplemented here rather than imported from the
+# module under test: an oracle that calls the code it is checking cannot detect
+# a change to that code.
+
+TREND_FIELDS = ('brand_mentioned', 'url_cited', 'recommended')
+
+
+def _rate(value):
+    return 'n/a' if value is None else f'{value:.2f}'
+
+
+def _version(value):
+    return 'unversioned' if value is None else str(value)
+
+
+def _line(report, label):
+    """The single rendered `Label: value` line, or a failure naming the count."""
+    prefix = label + ': '
+    hits = [ln for ln in report.splitlines() if ln.startswith(prefix)]
+    assert len(hits) == 1, f'expected exactly one {label!r} line, found {hits}'
+    return hits[0][len(prefix):]
+
+
+def _artifacts(monkeypatch, tmp_path, capsys, panel, recorded, prior=None, prior_panel=None):
+    """Run the CLI and return (exit_code, stdout_envelope, report.md, summary.json, out)."""
+    rc = _run_cli(monkeypatch, tmp_path, panel, recorded, prior=prior, prior_panel=prior_panel)
+    envelope = json.loads(capsys.readouterr().out)
+    out = tmp_path / 'out'
+    return (rc, envelope, (out / 'report.md').read_text(),
+            json.loads((out / 'summary.json').read_text()), out)
+
+
+def _expected_gap_lines(summary):
+    lines = []
+    for gap in summary['coverage_gaps']:
+        target = f"{gap['prompt_id']} v{gap['prompt_version']}"
+        target += f"/{gap['engine']}" if gap.get('engine') else ''
+        lines.append(f'- coverage gap: {target} ({gap["reason"]})')
+    return lines
+
+
+def _expected_off_panel_lines(summary):
+    off = summary['off_panel']
+    if not off['count']:
+        return []
+    return [f"Off-panel rows (excluded from coverage): {off['count']} "
+            f"[{', '.join(off['prompt_ids'])}] "
+            '(matched on prompt id, version, type and declared engine, so an id that is '
+            'also declared in the panel appears here when its version, type or engine '
+            'was not selected)']
+
+
+def _expected_compared_line(summary):
+    diff = summary['diff']
+    if diff is None:
+        return []
+    coverage = diff['coverage']
+    return [f"Compared: {coverage['compared']} probe targets; "
+            f"response changes: {len(diff['changes'])}; "
+            f"unpaired repetitions: {coverage['skipped_unpaired']}; "
+            f"skipped incompatible: {coverage['skipped_incompatible']}; "
+            f"skipped failed: {coverage['skipped_failed']}; "
+            f"skipped failed prior: {coverage['skipped_failed_prior']}"]
+
+
+def _expected_trend_lines(summary):
+    diff = summary['diff']
+    if diff is None:
+        return []
+    return [f"{t['prompt_id']}/{t['engine']}/{t['field']}: "
+            f"{_rate(t['prior_rate'])} (n={t['prior_n']}) -> "
+            f"{_rate(t['current_rate'])} (n={t['current_n']})"
+            for t in diff['trends']]
+
+
+def _assert_renderings_agree(rc, envelope, report, summary, out):
+    """The four renderings of one run must not disagree with each other."""
+    # stdout envelope <-> summary.json <-> exit code
+    assert envelope['out'] == str(out)
+    assert {k: v for k, v in envelope.items() if k != 'out'} == summary
+    assert envelope['status'] == summary['status']
+    assert rc == (summary['status'] != 'pass')
+    # report.md <-> summary.json, line by line
+    assert _line(report, 'Status') == summary['status']
+    assert _line(report, 'Panel version') == _version(summary['panel_version'])
+    assert _line(report, 'Observations') == (
+        f"{summary['observations']}; coverage gaps: {len(summary['coverage_gaps'])}")
+    coverage = summary['coverage']
+    assert _line(report, 'Coverage') == (
+        f"{coverage['covered_prompts']}/{coverage['declared_prompts']} "
+        'declared prompts fully covered')
+    assert [ln for ln in report.splitlines() if ln.startswith('- coverage gap: ')] == \
+        _expected_gap_lines(summary)
+    assert [ln for ln in report.splitlines() if ln.startswith('Off-panel rows ')] == \
+        _expected_off_panel_lines(summary)
+    assert [ln for ln in report.splitlines() if ln.startswith('Compared: ')] == \
+        _expected_compared_line(summary)
+    assert [ln for ln in report.splitlines() if '(n=' in ln] == _expected_trend_lines(summary)
+
+
+RICH_PANEL = {
+    'panel_version': '2026-09',
+    'engines': ['openai', 'perplexity'],
+    # Declared out of sorted order, so a report that falls back to panel order is
+    # distinguishable from one that renders the declared sorted order.
+    'prompts': [
+        {'id': 'pC', 'version': 1, 'type': 'decision_stage', 'text': 'C'},
+        {'id': 'pA', 'version': 1, 'type': 'unbranded_discovery', 'text': 'A'},
+        {'id': 'pB', 'version': 1, 'type': 'educational', 'text': 'B'},
+    ],
+}
+
+
+def test_rich_run_renders_one_state_across_all_four_artifacts(monkeypatch, tmp_path, capsys):
+    recorded = [
+        err_obs(prompt_id='pC', prompt_type='decision_stage', engine='perplexity'),
+        obs(prompt_id='pA', engine='openai', brand_mentioned=True),
+        obs(prompt_id='pA', engine='perplexity', brand_mentioned=False),
+        obs(prompt_id='pB', prompt_type='educational', engine='openai', brand_mentioned=True),
+        # Off-panel rows: two ids, one repeated, plus a declared id whose prompt_type
+        # was not selected. The count (4) differs from the deduped count (3) and from
+        # the truncated list (1), and the ids are not already in sorted order.
+        obs(prompt_id='z9', repetition=1),
+        obs(prompt_id='m4', repetition=1),
+        obs(prompt_id='z9', repetition=2, brand_mentioned=False),
+        obs(prompt_id='pA', prompt_type='brand_seeded'),
+    ]
+    rc, envelope, report, summary, out = _artifacts(
+        monkeypatch, tmp_path, capsys, RICH_PANEL, recorded)
+    _assert_renderings_agree(rc, envelope, report, summary, out)
+    assert rc is False and envelope['status'] == 'pass'
+    # Rendered coverage, spelled out rather than cross-checked: 8 rows, 3 gaps and
+    # 1 of 3 prompts fully covered are all values a hard-coded rendering cannot fake.
+    assert _line(report, 'Observations') == '8; coverage gaps: 3'
+    assert _line(report, 'Coverage') == '1/3 declared prompts fully covered'
+    # Gap rows are rendered in sorted (prompt_id, engine) order, which is neither the
+    # panel's declaration order (pC, pA, pB) nor the order the gaps were detected in.
+    assert [ln for ln in report.splitlines() if ln.startswith('- coverage gap: ')] == [
+        '- coverage gap: pB v1/perplexity (missing_engine_observation)',
+        '- coverage gap: pC v1/openai (missing_engine_observation)',
+        '- coverage gap: pC v1/perplexity (error)',
+    ]
+    # The off-panel line is the only user-visible trace of the excluded rows: the
+    # count is the row count, the ids are sorted and deduped, and a declared id is
+    # listed when its version, type or engine was not selected.
+    assert 'Off-panel rows (excluded from coverage): 4 [m4, pA, z9]' in report
+    # A measured run must not claim nothing was measured.
+    assert not any(ln.startswith('No successful observation') for ln in report.splitlines())
+    # The same values, read back from summary.json, must be what report.md rendered.
+    assert summary['coverage'] == {'declared_prompts': 3, 'covered_prompts': 1,
+                                   'successful_observations': 3}
+    assert [g['prompt_id'] for g in summary['coverage_gaps']] == ['pB', 'pC', 'pC']
+    assert summary['off_panel'] == {'count': 4, 'prompt_ids': ['m4', 'pA', 'z9']}
+
+
+DIFF_PANEL = {'panel_version': 'v1',
+              'prompts': [{'id': 'pA', 'version': 1, 'type': 'unbranded_discovery',
+                           'text': 'Which provider?'}]}
+
+
+def test_diff_run_renders_compared_counts_overlap_and_trends(monkeypatch, tmp_path, capsys):
+    prior = [
+        {**BASE, 'prompt_id': 'pA', 'timestamp': '2026-09-19T10:00:00Z', 'repetition': 1,
+         'brand_mentioned': False},
+        {**BASE, 'prompt_id': 'pA', 'timestamp': '2026-09-19T11:00:00Z', 'repetition': 2,
+         'brand_mentioned': False},
+        {**BASE, 'prompt_id': 'pD', 'timestamp': '2026-09-19T12:00:00Z', 'brand_mentioned': False},
+    ]
+    current = [
+        # Inside the prior window (10:00Z-12:00Z), so the overlap warning must render.
+        {**BASE, 'prompt_id': 'pA', 'timestamp': '2026-09-19T10:30:00Z', 'brand_mentioned': True},
+        {**BASE, 'prompt_id': 'pE', 'timestamp': '2026-09-19T10:30:00Z', 'brand_mentioned': False},
+    ]
+    rc, envelope, report, summary, out = _artifacts(
+        monkeypatch, tmp_path, capsys, DIFF_PANEL, current, prior=prior, prior_panel=DIFF_PANEL)
+    _assert_renderings_agree(rc, envelope, report, summary, out)
+    coverage = summary['diff']['coverage']
+    # Every count on the rendered line is non-zero and distinct, so a hard-coded
+    # rendering cannot satisfy it by accident.
+    assert coverage['compared'] == 1
+    assert coverage['skipped_unpaired'] == 1
+    assert coverage['skipped_incompatible'] == 2
+    assert coverage['overlapping_windows'] is True
+    assert _line(report, 'Compared') == (
+        '1 probe targets; response changes: 1; unpaired repetitions: 1; '
+        'skipped incompatible: 2; skipped failed: 0; skipped failed prior: 0')
+    assert ('Warning: prior and current collection windows overlap; '
+            'treat movement as unestablished.') in report.splitlines()
+    assert [ln for ln in report.splitlines() if '(n=' in ln] == [
+        'pA/openai/brand_mentioned: 0.00 (n=2) -> 1.00 (n=1)',
+        'pA/openai/url_cited: 0.00 (n=2) -> 0.00 (n=1)',
+        'pA/openai/recommended: 0.00 (n=2) -> 0.00 (n=1)',
+    ]
+
+
+def test_unmeasured_run_renders_unknown_not_absence(monkeypatch, tmp_path, capsys):
+    failed = {**BASE, 'status': 'error', 'brand_mentioned': None,
+              'url_cited': None, 'recommended': None, 'answer_text': ''}
+    rc, envelope, report, summary, out = _artifacts(
+        monkeypatch, tmp_path, capsys, {**PANEL_ONE, 'engines': ['openai']}, [failed])
+    _assert_renderings_agree(rc, envelope, report, summary, out)
+    assert rc is True and envelope['status'] == 'unmeasured'
+    # The sentence that says nothing was measured is the whole user-visible point of
+    # an unmeasured run; the status line alone does not carry it.
+    assert ('No successful observation: nothing was measured; failures are unknown, not absence.'
+            in report.splitlines())
+    assert '- coverage gap: p01 v1/openai (error)' in report.splitlines()
+
+
+def test_panel_repetitions_are_validated_at_load():
+    for bad in (0, -1, 2.0, '2', True):
+        with pytest.raises(ValueError, match='repetitions'):
+            load_panel({**PANEL_ONE, 'repetitions': bad})
+    assert load_panel({**PANEL_ONE, 'repetitions': 1})['repetitions'] == 1
+    assert load_panel(PANEL_ONE)['repetitions'] is None
+
+
+def test_panel_repetitions_zero_fails_the_run_before_any_artifact(monkeypatch, tmp_path, capsys):
+    # Rendered consequence: a panel declaring zero repetitions would make every prompt
+    # vacuously covered, so it must fail the run and leave no artifact behind.
+    assert _run_cli(monkeypatch, tmp_path, {**PANEL_ONE, 'repetitions': 0}, [BASE]) is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail' and 'repetitions' in envelope['errors'][0]
+    assert not (tmp_path / 'out').exists()
