@@ -838,3 +838,26 @@ Residuals accepted, not fixed — each recorded with its cost:
   evidence-discipline checks use real `raise ValueError` and are unaffected.
 - `config/source-capabilities.json`: the four `requires_env` keys are per-engine alternatives but read as
   all-required. `requires_env` is display-only (`capability_lookup.py:86`); recorded mode reads no key at all.
+
+## Errata — superseded after an independent review (2026-09-20)
+
+This plan is executed; the progress log above is the record of that execution. An independent review
+(`docs/search-visibility-implementation-review-2026-09-20.md`) subsequently found five material defects that
+this plan's literal content either mandated or failed to catch, and the fixes are tracked in
+`docs/superpowers/plans/2026-09-20-search-visibility-review-fixes.md`. **Do not replay the literal blocks below
+without these corrections.**
+
+1. **Line 74 (Task 1) — wrong markup scopes.** "Organization-level MerchantReturnPolicy and OfferShippingDetails"
+   conflates scopes: `OfferShippingDetails` is an offer-level type (`Offer.shippingDetails`); the organization-level
+   shipping equivalent is `Organization.hasShippingService` → `ShippingService`. Corrected in the working tree at
+   `.agents/skills/brand-website-designer-builder/references/deo-agent-readiness.md:5`.
+2. **Line 145 (Task 2) and the `owner action: ` encoding rule** — superseded. `open_blockers` is now reserved for
+   genuine dependencies; accepted-but-optional actions go to `next_action` as a concise ordered set. Corrected at
+   `references/owner-actions.md:7`.
+3. **The `ai_answer_probe.py` literals in Task 5** shipped three defects the plan did not anticipate: repeated
+   observations collapsed to last-row-wins so file order could flip a reported gain/loss; the selected panel was
+   validated then ignored, so an empty recording reported zero coverage gaps; and successful observations were
+   accepted without locale, timestamp or source answer. Fixed in the follow-up plan.
+
+Two of the residuals listed immediately above are now closed rather than accepted: the boundary assertion is
+exact-equality (`tests/test_ai_answer_probe.py`) and the panel check raises `ValueError` instead of asserting.

@@ -109,7 +109,7 @@ The AI-referrer channel group does **not** supply the visitor's conversation or 
 ### 4.3 Owner-action contract — integrated with existing manifests
 - Scope: include only decisions/actions relevant to the requested deliverable; never append recurring programs to narrow copy work.
 - States: `proposed / accepted / deferred / completed` — a suggestion the owner never accepted does not recur on resume.
-- **Persistence: write accepted actions and genuine blockers into the project manifest's existing `next_action` / `open_blockers` fields** (the fields the workspace-lifecycle resume flow already reads). A human-readable `owner-actions.md` may render them, but the manifest is the source of truth — no parallel tracking artifact.
+- **Persistence: write accepted actions into the project manifest's existing `next_action` field and genuine blockers into `open_blockers`** (the fields the workspace-lifecycle resume flow already reads). Acceptance alone does not make work a blocker: `open_blockers` is reserved for actual dependencies, because the resume flow renders each entry as a blocker. A human-readable `owner-actions.md` may render the full rows, but the manifest is the source of truth — no parallel tracking artifact.
 - Reuse approved factual inputs across runs; ask the owner only about unavailable firsthand facts, changed commercial commitments and actual decisions. Preserve publication authorization already granted in the session.
 
 ### 4.4 Provider registration

@@ -14,4 +14,4 @@ Measurement: track decision-stage prompts ("which X with A and B under price P")
 
 Deferred until a selected integration needs them: MCP commerce servers, `/.well-known` discovery files, llms.txt.
 
-Sources: living documents checked in-session 2026-09-19 — the OpenAI product-feed specification, Google Merchant Center/UCP onboarding guides and OpenAI shopping help. Re-fetch them before implementation; do not quote their details from memory, and add them to the spec §7 register when they inform a binding claim.
+Sources: living documents checked in-session 2026-09-19 — the OpenAI product-feed specification, Google Merchant Center/UCP onboarding guides and OpenAI shopping help — plus the Google structured-data pages for [merchant return policy](https://developers.google.com/search/docs/appearance/structured-data/return-policy) and [shipping policy](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy), checked 2026-09-20 for the markup scopes above. Re-fetch them before implementation; do not quote their details from memory, and add them to the spec §7 register when they inform a binding claim.
