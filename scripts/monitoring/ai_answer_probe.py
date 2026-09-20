@@ -49,11 +49,15 @@ def load_panel(raw):
             'panel_version': raw.get('panel_version')}
 
 
+def _stamp(value):
+    return datetime.fromisoformat(value.replace('Z', '+00:00'))
+
+
 def _usable_timestamp(value):
     if not isinstance(value, str) or not value:
         raise ValueError('timestamp: nonempty ISO-8601 string required on success')
     try:
-        parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+        parsed = _stamp(value)
     except ValueError:
         raise ValueError(f'timestamp: not ISO-8601 parseable: {value!r}')
     if parsed.tzinfo is None:
@@ -119,8 +123,12 @@ def _group(indexed):
 
 
 def _window(rows):
-    stamps = sorted(r['timestamp'] for r in rows if r.get('status') == 'success')
-    return {'start': stamps[0], 'end': stamps[-1]} if stamps else None
+    stamps = [r['timestamp'] for r in rows if r.get('status') == 'success']
+    if not stamps:
+        return None
+    # Ordered by the instant each timestamp denotes, not by its literal text: the
+    # same instant may be written with different offsets and still be one window.
+    return {'start': min(stamps, key=_stamp), 'end': max(stamps, key=_stamp)}
 
 
 def _rate(rows, field):
@@ -141,7 +149,9 @@ def diff_observations(current, prior):
     for key in sorted(set(by_current) | set(by_prior)):
         cur, old = by_current.get(key), by_prior.get(key)
         if cur is None or old is None:
-            skipped_incompatible += len(cur or [])
+            # Both sides count: a prior-only observation was dropped just as a
+            # current-only one was added, and neither has a comparable counterpart.
+            skipped_incompatible += len(cur or []) + len(old or [])
             continue
         compared += 1
         for field in TRACKED:
@@ -162,8 +172,8 @@ def diff_observations(current, prior):
 
     prior_window, current_window = _window(prior), _window(current)
     overlapping = bool(prior_window and current_window
-                       and prior_window['start'] <= current_window['end']
-                       and current_window['start'] <= prior_window['end'])
+                       and _stamp(prior_window['start']) <= _stamp(current_window['end'])
+                       and _stamp(current_window['start']) <= _stamp(prior_window['end']))
     return {'changes': changes, 'trends': trends,
             'coverage': {'current': len(current), 'prior': len(prior), 'compared': compared,
                          'skipped_incompatible': skipped_incompatible,
@@ -174,14 +184,19 @@ def diff_observations(current, prior):
 
 
 def _panel_coverage(rows, panel):
-    declared = panel['declared']
+    declared, declared_engines = panel['declared'], panel['engines']
     on_panel_keys = {(p['prompt_id'], p['prompt_version'], p['prompt_type']) for p in declared}
     on_panel, off_panel_ids = [], []
     for r in rows:
-        if (r['prompt_id'], r['prompt_version'], r['prompt_type']) in on_panel_keys:
-            on_panel.append(r)
-        else:
+        if (r['prompt_id'], r['prompt_version'], r['prompt_type']) not in on_panel_keys:
             off_panel_ids.append(r['prompt_id'])
+            continue
+        if declared_engines is not None and r['engine'] not in declared_engines:
+            # An undeclared engine is not a surface the panel selected, so the row
+            # cannot stand as coverage for the prompt it names.
+            off_panel_ids.append(r['prompt_id'])
+            continue
+        on_panel.append(r)
 
     gaps, covered = [], 0
     for p in declared:
@@ -190,7 +205,7 @@ def _panel_coverage(rows, panel):
         if not mine:
             gaps.append({**p, 'reason': 'missing_no_observation'})
             continue
-        engines = panel['engines'] or sorted({r['engine'] for r in mine})
+        engines = declared_engines or sorted({r['engine'] for r in mine})
         fully_covered = True
         for engine in engines:
             ok = [r for r in mine if r['engine'] == engine and r['status'] == 'success']
@@ -201,9 +216,16 @@ def _panel_coverage(rows, panel):
                 fully_covered = False
                 continue
             want = panel['repetitions']
-            if want is not None and len(ok) < want:
+            if want is None:
+                continue
+            samples = {r['repetition'] for r in ok}
+            if len(samples) != len(ok):
+                gaps.append({**p, 'engine': engine, 'reason': 'duplicate_repetitions',
+                             'expected': want, 'observed': len(samples)})
+                fully_covered = False
+            if len(samples) < want:
                 gaps.append({**p, 'engine': engine, 'reason': 'insufficient_repetitions',
-                             'expected': want, 'observed': len(ok)})
+                             'expected': want, 'observed': len(samples)})
                 fully_covered = False
         covered += 1 if fully_covered else 0
 
@@ -217,7 +239,8 @@ def _panel_coverage(rows, panel):
 
 def build_summary(rows, prior_rows, panel):
     pc = _panel_coverage(rows, panel)
-    return {'observations': len(rows),
+    return {'status': 'unmeasured' if pc['unmeasured'] else 'pass',
+            'observations': len(rows),
             'panel_version': panel['panel_version'],
             'coverage': {'declared_prompts': pc['declared'], 'covered_prompts': pc['covered'],
                          'successful_observations': pc['successful_observations']},
@@ -226,6 +249,39 @@ def build_summary(rows, prior_rows, panel):
             'unmeasured': pc['unmeasured'],
             'diff': diff_observations(rows, prior_rows) if prior_rows else None,
             'boundary': 'observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence'}
+
+
+def _report_lines(summary):
+    coverage = summary['coverage']
+    lines = ['# AI-answer observation report', '', f"Boundary: {summary['boundary']}", '',
+             f"Status: {summary['status']}",
+             f"Observations: {summary['observations']}; coverage gaps: {len(summary['coverage_gaps'])}",
+             f"Coverage: {coverage['covered_prompts']}/{coverage['declared_prompts']} "
+             'declared prompts fully covered']
+    if summary['unmeasured']:
+        lines.append('No successful observation: nothing was measured; failures are unknown, not absence.')
+    for gap in summary['coverage_gaps']:
+        target = gap['prompt_id'] + (f"/{gap['engine']}" if gap.get('engine') else '')
+        lines.append(f"- coverage gap: {target} ({gap['reason']})")
+    if summary['off_panel']['count']:
+        lines.append(f"Off-panel rows (excluded from coverage): {summary['off_panel']['count']} "
+                     f"[{', '.join(summary['off_panel']['prompt_ids'])}]")
+    diff = summary['diff']
+    if diff:
+        cov = diff['coverage']
+        lines.append(f"Compared: {cov['compared']} probe targets; "
+                     f"response changes: {len(diff['changes'])}; "
+                     f"unpaired repetitions: {cov['skipped_unpaired']}; "
+                     f"skipped incompatible: {cov['skipped_incompatible']}; "
+                     f"skipped failed: {cov['skipped_failed']}")
+        if cov['overlapping_windows']:
+            lines.append('Warning: prior and current collection windows overlap; '
+                         'treat movement as unestablished.')
+        for t in diff['trends']:
+            lines.append(f"{t['prompt_id']}/{t['engine']}/{t['field']}: "
+                         f"{_fmt_rate(t['prior_rate'])} (n={t['prior_n']}) -> "
+                         f"{_fmt_rate(t['current_rate'])} (n={t['current_n']})")
+    return lines
 
 
 def main():
@@ -239,35 +295,15 @@ def main():
         panel = load_panel(json.loads(args.panel.read_text()))
         rows = [normalize_observation(json.loads(line)) for line in args.recorded.read_text().splitlines() if line.strip()]
         prior = [normalize_observation(json.loads(line)) for line in args.prior.read_text().splitlines() if line.strip()] if args.prior else []
+        args.out.mkdir(parents=True, exist_ok=True)
+        summary = build_summary(rows, prior, panel)
+        (args.out / 'evidence.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
+        (args.out / 'summary.json').write_text(json.dumps(summary, indent=2))
+        (args.out / 'report.md').write_text('\n'.join(_report_lines(summary)) + '\n')
     except (OSError, ValueError, AttributeError) as exc:
         print(json.dumps({'status': 'fail', 'errors': [str(exc)]}))
         return True
-    args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / 'evidence.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
-    summary = build_summary(rows, prior, panel)
-    (args.out / 'summary.json').write_text(json.dumps(summary, indent=2))
-    lines = ['# AI-answer observation report', '', f"Boundary: {summary['boundary']}", '',
-             f"Observations: {summary['observations']}; coverage gaps: {len(summary['coverage_gaps'])}"]
-    lines.append(f"Coverage: {summary['coverage']['covered_prompts']}/"
-                 f"{summary['coverage']['declared_prompts']} declared prompts fully covered; "
-                 f"gaps: {len(summary['coverage_gaps'])}")
-    if summary['off_panel']['count']:
-        lines.append(f"Off-panel rows (excluded from coverage): {summary['off_panel']['count']}")
-    if summary['diff']:
-        cov = summary['diff']['coverage']
-        lines.append(f"Compared: {cov['compared']} probe targets; "
-                     f"response changes: {len(summary['diff']['changes'])}; "
-                     f"unpaired repetitions: {cov['skipped_unpaired']}")
-        if cov['overlapping_windows']:
-            lines.append('Warning: prior and current collection windows overlap; '
-                         'treat movement as unestablished.')
-        for t in summary['diff'].get('trends') or []:
-            lines.append(f"{t['prompt_id']}/{t['engine']}/{t['field']}: "
-                         f"{_fmt_rate(t['prior_rate'])} (n={t['prior_n']}) -> "
-                         f"{_fmt_rate(t['current_rate'])} (n={t['current_n']})")
-    (args.out / 'report.md').write_text('\n'.join(lines) + '\n')
     if summary['unmeasured']:
-        summary['status'] = 'unmeasured'
         print(json.dumps(summary, default=str))
         return True
     print(json.dumps({'status': 'pass', 'out': str(args.out), **summary}, default=str))

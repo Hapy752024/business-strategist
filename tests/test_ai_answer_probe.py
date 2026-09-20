@@ -1,6 +1,8 @@
 import json
+import sys
 import pytest
-from scripts.monitoring.ai_answer_probe import normalize_observation, diff_observations, build_summary, load_panel
+from scripts.monitoring.ai_answer_probe import (
+    normalize_observation, diff_observations, build_summary, load_panel, main)
 
 BASE = {
     'engine': 'openai', 'model': 'gpt-x', 'search_config': 'web_search:on',
@@ -58,7 +60,10 @@ def test_diff_compares_only_compatible_successful():
     assert {t['prompt_id'] for t in result['trends']} == {'p01'}
     assert result['coverage']['compared'] == 1
     assert result['coverage']['skipped_failed'] == 1
-    assert result['coverage']['skipped_incompatible'] == 0
+    # The p02 prior observation has no compatible current counterpart (its current
+    # sample failed), so it is one incompatible/unpaired observation on each side:
+    # the count is symmetric over current and prior rows.
+    assert result['coverage']['skipped_incompatible'] == 1
 
 
 def test_diff_skips_incompatible_config():
@@ -68,7 +73,9 @@ def test_diff_skips_incompatible_config():
     assert result['changes'] == []
     assert result['trends'] == []
     assert result['coverage']['compared'] == 0
-    assert result['coverage']['skipped_incompatible'] == 2
+    # Two configurations are incompatible on each side (p01 by model, p03 by
+    # locale), so the symmetric count is 4, not the 2 an asymmetric count reports.
+    assert result['coverage']['skipped_incompatible'] == 4
 
 
 PANEL = {
@@ -172,4 +179,154 @@ def test_duplicate_repetition_in_one_window_is_rejected():
 def test_prompt_type_is_part_of_comparison_identity():
     result = diff_observations([obs(prompt_type='brand_seeded')], [obs(brand_mentioned=False)])
     assert result['changes'] == []
+    assert result['trends'] == []
+    assert result['coverage']['compared'] == 0
+    # One current row and one prior row, each without a compatible counterpart.
+    assert result['coverage']['skipped_incompatible'] == 2
+
+
+PANEL_ONE = {'prompts': [{'id': 'p01', 'version': 1, 'type': 'unbranded_discovery',
+                          'text': 'Which provider?'}]}
+
+
+def _run_cli(monkeypatch, tmp_path, panel, recorded, prior=None):
+    (tmp_path / 'panel.json').write_text(json.dumps(panel))
+    (tmp_path / 'recorded.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in recorded))
+    argv = ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
+            '--recorded', str(tmp_path / 'recorded.jsonl'),
+            '--out', str(tmp_path / 'out')]
+    if prior is not None:
+        (tmp_path / 'prior.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in prior))
+        argv += ['--prior', str(tmp_path / 'prior.jsonl')]
+    monkeypatch.setattr(sys, 'argv', argv)
+    return main()
+
+
+def test_coverage_counts_only_fully_covered_prompts():
+    panel = load_panel({**PANEL_ONE, 'engines': ['openai', 'perplexity']})
+    incomplete = build_summary([obs(prompt_id='p01', engine='openai')], [], panel)
+    assert incomplete['coverage']['covered_prompts'] == 0
+    complete = build_summary([obs(prompt_id='p01', engine='openai'),
+                              obs(prompt_id='p01', engine='perplexity')], [], panel)
+    assert complete['coverage']['covered_prompts'] == 1
+    assert complete['coverage_gaps'] == []
+
+
+def test_distinct_repetitions_satisfy_coverage_but_duplicates_do_not():
+    panel = load_panel({**PANEL_ONE, 'engines': ['openai'], 'repetitions': 2})
+    good = build_summary([obs(prompt_id='p01', repetition=1),
+                          obs(prompt_id='p01', repetition=2, brand_mentioned=False)], [], panel)
+    assert good['coverage']['covered_prompts'] == 1
+    assert good['coverage_gaps'] == []
+    dup = build_summary([obs(prompt_id='p01', repetition=1),
+                         obs(prompt_id='p01', repetition=1, brand_mentioned=False)], [], panel)
+    assert dup['coverage']['covered_prompts'] == 0
+    reasons = {g['reason'] for g in dup['coverage_gaps']}
+    assert 'duplicate_repetitions' in reasons
+    assert 'insufficient_repetitions' in reasons
+
+
+def test_undeclared_engine_rows_are_off_panel_and_fail_closed():
+    panel = load_panel({**PANEL_ONE, 'engines': ['openai']})
+    summary = build_summary([obs(prompt_id='p01', engine='gemini')], [], panel)
+    assert summary['off_panel'] == {'count': 1, 'prompt_ids': ['p01']}
+    assert summary['coverage']['covered_prompts'] == 0
+    assert summary['coverage']['successful_observations'] == 0
+    assert summary['unmeasured'] is True
+    assert [g['reason'] for g in summary['coverage_gaps']] == ['missing_no_observation']
+
+
+def test_all_failed_on_panel_recording_is_unmeasured():
+    panel = load_panel({**PANEL_ONE, 'engines': ['openai']})
+    rows = [obs(prompt_id='p01', status='error', brand_mentioned=None,
+                url_cited=None, recommended=None, answer_text='')]
+    summary = build_summary(rows, [], panel)
+    assert summary['unmeasured'] is True
+    assert summary['coverage']['successful_observations'] == 0
+    assert summary['coverage_gaps'] == [
+        {'prompt_id': 'p01', 'prompt_version': 1, 'prompt_type': 'unbranded_discovery',
+         'engine': 'openai', 'reason': 'error'}]
+
+
+def test_unmeasured_run_exits_nonzero_and_says_so_in_report(monkeypatch, tmp_path):
+    failed = {**BASE, 'status': 'error', 'brand_mentioned': None,
+              'url_cited': None, 'recommended': None, 'answer_text': ''}
+    assert _run_cli(monkeypatch, tmp_path, {**PANEL_ONE, 'engines': ['openai']}, [failed]) is True
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert 'Status: unmeasured' in report
+    summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['unmeasured'] is True and summary['status'] == 'unmeasured'
+
+
+def test_prior_only_observation_counts_as_incompatible():
+    result = diff_observations([obs()], [obs(), obs(prompt_id='p02')])
+    assert result['coverage']['compared'] == 1
     assert result['coverage']['skipped_incompatible'] == 1
+
+
+def test_overlapping_windows_are_compared_as_instants_not_strings():
+    prior = [obs(timestamp='2026-09-20T10:00:00Z', brand_mentioned=False)]
+    current = [obs(timestamp='2026-09-20T05:00:00-05:00', brand_mentioned=True)]
+    coverage = diff_observations(current, prior)['coverage']
+    assert coverage['overlapping_windows'] is True
+    apart = diff_observations([obs(timestamp='2026-09-21T10:00:00Z')], prior)['coverage']
+    assert apart['overlapping_windows'] is False
+
+
+def test_panel_engines_validation_rejects_malformed_declarations():
+    for bad in ([], '', 'openai', [1], [None]):
+        with pytest.raises(ValueError, match='engines'):
+            load_panel({**PANEL_ONE, 'engines': bad})
+    assert load_panel({**PANEL_ONE, 'engines': ['openai']})['engines'] == ['openai']
+    assert load_panel(PANEL_ONE)['engines'] is None
+
+
+def test_multi_key_comparison_is_input_order_independent():
+    ids = ('p08', 'p01', 'p07', 'p02', 'p06', 'p03', 'p05', 'p04')
+    prior = [obs(prompt_id=pid, brand_mentioned=False) for pid in ids]
+    current = [dict(r, timestamp='2026-09-21T10:00:00Z', brand_mentioned=True)
+               for r in reversed(prior)]
+    forward = diff_observations(current, prior)
+    backward = diff_observations(current, list(reversed(prior)))
+    assert forward['trends'] == backward['trends']
+    assert forward['changes'] == backward['changes']
+    # Comparison output is ordered by comparison key, not by the file order the
+    # rows arrived in and not by set-iteration (hash) order.
+    trend_ids = [t['prompt_id'] for t in forward['trends']]
+    assert len(trend_ids) == 24 and trend_ids == sorted(trend_ids)
+    assert trend_ids[::3] == sorted(ids)
+    change_ids = [c['prompt_id'] for c in forward['changes']]
+    assert len(change_ids) == 8 and change_ids == sorted(ids)
+
+
+def test_report_names_gaps_and_skipped_counts(monkeypatch, tmp_path):
+    panel = {'prompts': [
+        {'id': 'p01', 'version': 1, 'type': 'unbranded_discovery', 'text': 'Which provider?'},
+        {'id': 'p02', 'version': 1, 'type': 'educational', 'text': 'How does this work?'}],
+        'engines': ['openai', 'perplexity']}
+    blocked = {**BASE, 'engine': 'perplexity', 'status': 'error', 'brand_mentioned': None,
+               'url_cited': None, 'recommended': None, 'answer_text': ''}
+    assert _run_cli(monkeypatch, tmp_path, panel, [BASE, blocked], prior=[BASE]) is False
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert 'Status: pass' in report
+    assert 'Coverage: 0/2 declared prompts fully covered' in report
+    assert 'p01/perplexity (error)' in report
+    assert 'p02 (missing_no_observation)' in report
+    assert 'Compared: 1 probe targets' in report
+    assert 'skipped incompatible: 0' in report
+    assert 'skipped failed: 1' in report
+    summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['status'] == 'pass'
+
+
+def test_unwritable_out_returns_fail_envelope(monkeypatch, tmp_path, capsys):
+    blocker = tmp_path / 'blocked'
+    blocker.write_text('not a directory')
+    (tmp_path / 'panel.json').write_text(json.dumps(PANEL_ONE))
+    (tmp_path / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
+    monkeypatch.setattr(sys, 'argv', ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
+                                      '--recorded', str(tmp_path / 'recorded.jsonl'),
+                                      '--out', str(blocker)])
+    assert main() is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail' and envelope['errors']
