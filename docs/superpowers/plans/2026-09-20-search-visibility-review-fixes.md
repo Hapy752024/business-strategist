@@ -584,3 +584,62 @@ The executed plan still carries the bare tokens the earlier fix dispatch bounded
 *Fix:* correct those literals to the shipped bounded tokens, and extend the errata to name them plus the `prompt_type`-in-`KEY` omission that was half of F3.
 
 **Nit d.** `deo-agent-readiness.md:5` states offer-level "outranks" organization-level but omits Google's stated *preference* for a site-wide organization policy with offer-level reserved for overrides. Add that qualification.
+
+---
+
+## Round 3 — the artifact surface
+
+A Round 2 adversarial review returned **CHANGES REQUIRED**: Round 2's own mandate (findings 1–5 + nits) is genuinely closed and all five claimed mutation kills reproduce, but the rewritten report/coverage surface is under-asserted — **18 mutations survived** — and two evidence-discipline holes remain open in that same area.
+
+**Root cause, and why this round is shaped differently.** The probe renders one internal state four ways: `report.md`, `summary.json`, stdout, and the exit code. Every test asserts the internal dict. So each review round finds a *rendering* that lies while the dict is correct. Findings 1 and 3 below are both exactly that. Patching them individually invites a Round 4. The durable fix is a test layer that asserts the four renderings against each other, which is why Task 7 exists and why it is not optional.
+
+### Task 6: probe behaviour (findings 1–5, nits 6–8)
+
+**Files:** `scripts/monitoring/ai_answer_probe.py`, `tests/test_ai_answer_probe.py`
+
+**Finding 1 — a credit-blocked prior window renders as a clean pass. MUST FIX.**
+Reproduced: prior file = one `status: 'error'` row; current = one success → `exit 0`, and `report.md` reads `Status: pass` / `Coverage: 1/1 declared prompts fully covered` / `Compared: 0 probe targets; … skipped incompatible: 1; skipped failed: 0`. `summary.json`'s `diff.coverage` has no prior-failure field at all, and `prior_window` is `None`.
+`skipped_failed` is computed over `current` only; prior rows are dropped by `_index_success` before grouping. Round 2 is what put the misleading `skipped failed: 0` on the page. Spec §3.1 requires a credit-blocked engine to be a *reported* coverage gap.
+*Fix:* account for prior-window failures separately (`skipped_failed_prior`), surface them in `report.md` and `summary.json`, and make the report state plainly when the prior window contained failures rather than implying a clean comparison.
+
+**Finding 2 — the panel is neither preserved nor version-checked. SHOULD FIX.**
+`build_summary` records `panel_version` but `diff_observations` never receives the panel, so no panel-version compatibility check exists; `main` writes only `evidence.jsonl`, `summary.json`, `report.md`. Reproduced: bumping `panel_version` and editing a prompt's text between windows yields `Status: pass` / `response changes: 1` with no indication the panel changed. Spec §3.1 requires comparing only observations from the "same … panel version", and the external review's correction (`docs/search-visibility-implementation-review-2026-09-20.md:45`) says "Preserve the selected panel alongside the output so a later reader can identify what was measured" — the fix plan dropped that clause.
+*Fix:* copy the panel into `--out`; print `panel_version` in `report.md`; compare panel versions between windows and record incompatibility rather than silently comparing across a changed panel.
+
+**Finding 3 — a failed run can leave a `summary.json` claiming `status: pass`. SHOULD FIX.**
+`main` writes `summary.json` before `report.md`; a failure on the later write hits the `except`, prints the fail envelope and returns 1 — but the already-written `summary.json` says `pass`. Reproduced: pre-create `out/report.md` as a directory → `exit 1`, fail envelope on stdout, and on-disk `summary.json` with `"status": "pass"`. Round 2's new `status` field is what turns the stale artifact into a false pass claim.
+*Fix:* make the output stage atomic — write to a temporary directory and rename on success, or write `summary.json` last — so no failure path leaves a pass-claiming artifact.
+
+**Finding 4 — multi-row window ordering is unasserted. SHOULD FIX.**
+`_window` now uses `min`/`max` over parsed instants, but every overlap test uses single-row windows where min/max is trivial. Survivor S13 (restore string sort) inverts the prior window and suppresses the overlap warning while the suite stays green.
+*Fix:* add a multi-row, mixed-offset window test that asserts both the window bounds and `overlapping_windows`.
+
+**Finding 5 — duplicate repetitions give opposite verdicts depending on an unrelated flag. SHOULD FIX.**
+Without `--prior`: `exit 0` with a `duplicate_repetitions` gap. With `--prior`: `exit 1` and no report, because `_index_success` hard-rejects.
+*Fix:* validate duplicate `(entity, repetition)` at load time in `main`, for both files, so both paths behave identically. Two rows sharing a repetition index are not independent samples, so this fails closed consistently. Update the tests that assert the old `duplicate_repetitions` gap accordingly, and justify each change as a contract correction.
+
+**Nits:** (6) `report.md` gap rows must include `prompt_version` — a panel with `p01 v1` and `p01 v2` currently prints two identical `p01` lines. (7) the off-panel line should not be ambiguous when the id is also a declared prompt. (8) the unmeasured stdout envelope should carry `out` like the pass envelope does.
+
+### Task 7: artifact-consistency test layer (the 18 survivors)
+
+**Files:** `tests/test_ai_answer_probe.py`
+
+The review's survivor table lists 18 mutations that the suite does not catch. They cluster on the rendering surface: deleting the overlap-warning line, the trend-line loop, the off-panel line, the `Observations:` line, hard-coding `skipped incompatible: 0`, dropping `prompt_version` or `prompt_type` from the on-panel key, removing `sorted()` on gap or off-panel ids, disabling `panel.repetitions` validation, zeroing `skipped_unpaired`, truncating `prompt_ids`, and emitting `status: fail` or dropping `out` in the success envelope.
+
+Task: add a test layer that asserts the **rendered artifacts**, not the internal dict — for each scenario, parse `report.md`, `summary.json` and stdout and assert they agree with each other and with the exit code. At minimum this must kill every mutation in the review's survivor table, plus the ones Round 2 claimed to kill (re-verified, so a regression is caught).
+
+Every survivor must be named in the task report with the test that now kills it, and the kill verified by applying the mutation, observing the failure, and restoring byte-identically.
+
+### Task 8: errata completeness (finding 9)
+
+**Files:** `docs/superpowers/plans/2026-09-20-search-visibility-setup.md`
+
+The Task 5 literal code block in the executed plan is still defective in ways the errata does not name, so a replayer applying only the four listed corrections still ships a defective probe. Extend the errata to name them, pointing at the fix plan.
+
+**Correction to this task's original framing.** The first draft of this section claimed four defects were present *in the Task 5 literal block*. Two of them are not. The implementer extracted the block (lines 589–694), ran it unmodified, and showed:
+- *"duplicate repetitions satisfy declared coverage"* — not present; the block never reads `panel['repetitions']` or `panel['engines']` at all, so there is no declared coverage for duplicates to satisfy. The defect appears only **after** the Round 1 corrections.
+- *"window bounds compared lexicographically"* — not present; the block has no window logic whatsoever. The lexicographic comparison is introduced by this fix plan's own Task 2 `_window`, so it is still a replay hazard, but it is a hazard in the correction, not in the block.
+
+Verified in the block: one-sided `skipped_incompatible`, and the absence of gap-row listing and undeclared-engine fail-closed. The implementer also found three omissions this section had not listed — `args.out.mkdir` outside the `try`, the missing panel copy and `panel_version` check, and the fact that the Task 5 **test and Interfaces blocks** encode the superseded contracts (`build_summary(rows, prior_rows)` two-arg, the change shape without `repetition`, `skipped_incompatible == 2`) and would re-lock F1/F4 if copied.
+
+The errata was written to say exactly this rather than assert the block contains defects it does not.
