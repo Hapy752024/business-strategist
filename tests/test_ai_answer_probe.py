@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -1161,3 +1162,194 @@ def test_prior_duplicate_rejection_leaves_no_out_and_no_staging_residue(
     assert envelope['status'] == 'fail' and 'prior' in envelope['errors'][0]
     assert not (tmp_path / 'out').exists()
     assert list(tmp_path.glob('.out.*')) == []
+
+
+# --- Round 5 (Task 11): the cleanup path ------------------------------------
+#
+# Round 4's publish was atomic but its *cleanup* was not safe. Staging and outgoing
+# paths were hand-rolled as `.<out-name>.<role>.<pid>` in `out.parent` and the
+# `finally` discarded **both unconditionally**, whether or not this run created them.
+# A run could therefore delete a directory it never created — and, worse, do so while
+# reporting `status: pass`. The two data-loss tests below are the reason this section
+# exists; both were verified in-process with the pid pinned, because the derived name
+# is pid-dependent and the collision is only reachable when the pids coincide.
+#
+# The fix removes the possibility rather than defending the name: `tempfile.mkdtemp`
+# reserves the staging name with an exclusive create, so no user path and no
+# concurrent run can already be sitting at it, and `finally` now discards only the
+# paths this run actually created.
+
+
+def _pid_pinned_derived_names():
+    """The sibling names Round 4 derived from `out` and the current pid."""
+    pid = os.getpid()
+    return [f'.out.staging.{pid}', f'.out.outgoing.{pid}']
+
+
+@pytest.mark.parametrize('derived', _pid_pinned_derived_names())
+def test_preexisting_directory_at_a_derived_sibling_name_is_never_discarded(
+        monkeypatch, tmp_path, capsys, derived):
+    # F-A, reproduced before the fix: a real directory pre-existing at
+    # `.out.outgoing.<pid>` with `out` absent was **destroyed** by a run that never
+    # created it, and the run returned `status: pass`. The probe itself creates these
+    # names on a crash, so pid reuse after a crash is a live route to the same
+    # collision. A run must never discard a path it did not create.
+    occupant = tmp_path / derived
+    occupant.mkdir()
+    (occupant / 'user-data.txt').write_text('precious user data')
+    (occupant / 'nested').mkdir()
+    (occupant / 'nested' / 'deep.txt').write_text('deeper user data')
+    _out_setup(monkeypatch, tmp_path)
+    rc = main()
+    envelope = json.loads(capsys.readouterr().out)
+    assert rc is False, envelope
+    assert envelope['status'] == 'pass'
+    assert sorted(p.name for p in (tmp_path / 'out').iterdir()) == [
+        'evidence.jsonl', 'panel.json', 'report.md', 'summary.json']
+    assert (occupant / 'user-data.txt').read_text() == 'precious user data'
+    assert (occupant / 'nested' / 'deep.txt').read_text() == 'deeper user data'
+
+
+@pytest.mark.parametrize('derived', _pid_pinned_derived_names())
+def test_symlink_at_a_derived_sibling_name_is_not_followed_or_emptied(
+        monkeypatch, tmp_path, capsys, derived):
+    # F-B, reproduced before the fix: a symlink at `.out.outgoing.<pid>` pointing at a
+    # directory made the run **succeed** while the symlink's target was **emptied** and
+    # the symlink itself was left behind. `_discard_tree` checked *children*
+    # (`if child.is_dir() and not child.is_symlink()`) but never the root it was handed,
+    # while its docstring claimed "A symlink is unlinked rather than followed".
+    target = tmp_path / 'user-dir'
+    target.mkdir()
+    (target / 'keep.txt').write_text('keep me')
+    (target / 'nested').mkdir()
+    (target / 'nested' / 'deep.txt').write_text('keep me too')
+    link = tmp_path / derived
+    link.symlink_to(target, target_is_directory=True)
+    _out_setup(monkeypatch, tmp_path)
+    rc = main()
+    envelope = json.loads(capsys.readouterr().out)
+    assert rc is False, envelope
+    assert envelope['status'] == 'pass'
+    assert link.is_symlink()
+    assert (target / 'keep.txt').read_text() == 'keep me'
+    assert (target / 'nested' / 'deep.txt').read_text() == 'keep me too'
+
+
+def test_out_symlink_loop_fails_with_an_envelope_naming_the_flag(monkeypatch, tmp_path, capsys):
+    # F-C, reproduced before the fix: on Python 3.12 `Path.resolve()` raises
+    # `RuntimeError` — not the `OSError`/`ValueError`/`AttributeError` the fail-envelope
+    # tuple catches — for a symlink loop, so `--out <loop>` exited 1 with a traceback
+    # and **empty stdout**. That breaks the machine-readable-envelope contract the
+    # module states elsewhere: a caller parsing stdout gets nothing at all.
+    (tmp_path / 'panel.json').write_text(json.dumps(PANEL_ONE))
+    (tmp_path / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
+    loop, other = tmp_path / 'loop', tmp_path / 'other'
+    loop.symlink_to(other)
+    other.symlink_to(loop)
+    monkeypatch.setattr(sys, 'argv', ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
+                                      '--recorded', str(tmp_path / 'recorded.jsonl'),
+                                      '--out', str(loop)])
+    assert main() is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail' and envelope['errors']
+    assert '--out' in envelope['errors'][0]
+
+
+def test_version_incompatible_skipped_count_is_symmetric(monkeypatch, tmp_path, capsys):
+    # F-F: the version-incompatible branch must count the observations it skipped on
+    # *both* sides, exactly as the version-compatible path does. Two current and two
+    # prior observations make the correct value 4 and the current-window-only value 2
+    # — the mutation `len(indexed_current) + len(indexed_prior)` -> `len(indexed_current)`
+    # (Round 4 survivor M22) — and the two are distinguishable only because the inputs
+    # are non-empty on both sides. The compatible path already asserts this symmetry
+    # (`test_diff_skips_incompatible_config`); this is the branch Round 4 added.
+    prior_panel = {**PANEL_ONE, 'panel_version': 'v1'}
+    current_panel = {**PANEL_ONE, 'panel_version': 'v2'}
+    prior = [{**BASE, 'timestamp': '2026-09-19T10:00:00Z', 'brand_mentioned': False},
+             {**BASE, 'timestamp': '2026-09-19T11:00:00Z', 'repetition': 2}]
+    current = [{**BASE, 'timestamp': '2026-09-20T10:00:00Z'},
+               {**BASE, 'timestamp': '2026-09-20T11:00:00Z', 'repetition': 2,
+                'brand_mentioned': False}]
+    rc, envelope, report, summary, out = _artifacts(
+        monkeypatch, tmp_path, capsys, current_panel, current,
+        prior=prior, prior_panel=prior_panel)
+    _assert_renderings_agree(rc, envelope, report, summary, out)
+    coverage = summary['diff']['coverage']
+    assert coverage['panel_version']['compatible'] is False
+    assert coverage['skipped_incompatible'] == 4
+    assert _line(report, 'Compared') == (
+        '0 probe targets; response changes: 0; unpaired repetitions: 0; '
+        'skipped incompatible: 4; skipped failed: 0; skipped failed prior: 0')
+
+
+def test_unmeasured_outranks_incomparable(monkeypatch, tmp_path, capsys):
+    # F-G: with no successful observation there is no measurement to declare
+    # incomparable, so a changed panel version must not downgrade the status — the
+    # order of `build_summary`'s status branches is load-bearing. The scenario is
+    # reachable end to end: one declared engine, a single `error` row, and a `--prior`
+    # window collected under a different panel version, so both conditions hold at once
+    # and the correct answer is `unmeasured`.
+    panel = {**PANEL_ONE, 'engines': ['openai'], 'panel_version': 'v2'}
+    prior_panel = {**PANEL_ONE, 'engines': ['openai'], 'panel_version': 'v1'}
+    prior = [{**ERROR_BASE, 'timestamp': '2026-09-19T10:00:00Z'}]
+    rc, envelope, report, summary, out = _artifacts(
+        monkeypatch, tmp_path, capsys, panel, [ERROR_BASE],
+        prior=prior, prior_panel=prior_panel)
+    _assert_renderings_agree(rc, envelope, report, summary, out)
+    assert summary['unmeasured'] is True
+    assert summary['diff']['coverage']['panel_version']['compatible'] is False
+    assert summary['status'] == envelope['status'] == 'unmeasured'
+    assert rc is True
+
+
+def test_read_only_tree_set_aside_by_a_successful_run_is_not_left_behind(
+        monkeypatch, tmp_path, capsys):
+    # F-H, reproduced before the fix: with read-only content inside the outgoing `out`
+    # (here `out/sub` at mode 0555) `_discard_tree` swallowed the `OSError`, so the run
+    # **succeeded** and left the whole previous epoch sitting beside `out` forever —
+    # while the `finally` comment claims nothing is left behind. The tree is one this
+    # run created, so its modes are the run's to change: the directory is made
+    # removable and the claim is made true rather than hedged.
+    out = tmp_path / 'out'
+    (out / 'sub').mkdir(parents=True)
+    (out / 'sub' / 'prior-epoch.txt').write_text('the whole previous epoch')
+    (out / 'summary.json').write_text('{"status": "pass"}')
+    os.chmod(out / 'sub', 0o555)
+    _out_setup(monkeypatch, tmp_path)
+    try:
+        rc = main()
+        envelope = json.loads(capsys.readouterr().out)
+    finally:
+        # Leave the tmp tree removable even if the run did leak it.
+        for stale in tmp_path.glob('.out.*'):
+            for d in stale.rglob('*'):
+                if d.is_dir():
+                    os.chmod(d, 0o755)
+    assert rc is False and envelope['status'] == 'pass'
+    assert list(tmp_path.glob('.out.*')) == []
+    assert sorted(p.name for p in out.iterdir()) == [
+        'evidence.jsonl', 'panel.json', 'report.md', 'summary.json']
+
+
+def test_interrupt_during_cleanup_still_reports_the_envelope(monkeypatch, tmp_path, capsys):
+    # Nit: a second interrupt during the `finally` cleanup escaped as an unhandled
+    # `KeyboardInterrupt` — exit 130, no envelope — even though the run had already
+    # decided its outcome. The caller is owed the machine-readable envelope whatever
+    # the cleanup does, and one interrupted target must not abandon the other.
+    out = tmp_path / 'out'
+    out.mkdir()
+    (out / 'summary.json').write_text('{"status": "pass"}')
+    _out_setup(monkeypatch, tmp_path)
+    _fail_rename_on_call(monkeypatch, 2, KeyboardInterrupt())
+    discarded = []
+
+    def interrupting(path):
+        discarded.append(path)
+        raise KeyboardInterrupt()
+
+    monkeypatch.setattr(ai_answer_probe, '_discard_tree', interrupting)
+    rc = main()
+    envelope = json.loads(capsys.readouterr().out)
+    assert rc is True
+    assert envelope['status'] == 'fail' and envelope['errors']
+    assert len(discarded) == 2, 'both cleanup targets are still attempted'

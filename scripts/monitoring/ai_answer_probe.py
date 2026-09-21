@@ -1,7 +1,7 @@
 """Normalize and diff AI answer-engine observations; observations are not demand evidence."""
 import argparse
 import json
-import os
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -390,11 +390,36 @@ def _report_lines(summary):
     return lines
 
 
+def _make_removable(path):
+    """Give the owner read, write and traverse on a directory being discarded.
+
+    A read-only directory (0555, say) cannot have its entries unlinked, so discarding
+    a tree that contains one would fail and leave the whole tree behind. The mode is
+    this run's to change: the directory was created by this run as part of its own
+    staging or set-aside tree, and it is about to be deleted.
+    """
+    try:
+        mode = path.stat().st_mode
+        if mode & 0o700 != 0o700:
+            path.chmod(mode | 0o700)
+    except OSError:
+        pass
+
+
 def _discard_tree(path):
-    """Best-effort removal of a directory tree a run staged or set aside."""
-    if path is None or not path.exists():
+    """Best-effort removal of a directory tree a run staged or set aside.
+
+    Only ever called with a path this run created, and never follows a symlink: a
+    symlink standing *at* the root is left alone rather than unlinked, and a symlink
+    *inside* the tree is unlinked rather than followed, so nothing outside the tree
+    being discarded can be deleted.
+    """
+    if path is None:
         return
     try:
+        if path.is_symlink() or not path.exists():
+            return
+        _make_removable(path)
         for child in path.iterdir():
             # A symlink is unlinked rather than followed: recursing through one would
             # delete content that lives outside the directory being discarded.
@@ -405,6 +430,17 @@ def _discard_tree(path):
         path.rmdir()
     except OSError:
         pass
+
+
+def _fresh_dir(parent, prefix):
+    """Create a directory this run owns, at a name nothing else can be holding.
+
+    `mkdtemp` reserves the name with an exclusive create, so neither a user path nor a
+    concurrent run can already be sitting at it: the collision that let a run discard a
+    directory it never created cannot be constructed. The holder it returns is the only
+    path handed to `_discard_tree`, and it is never a name derived from `out`.
+    """
+    return Path(tempfile.mkdtemp(prefix=prefix, dir=parent))
 
 
 def _rename(src, dst):
@@ -420,6 +456,10 @@ def _publish(out, staging, trash):
     all — which reads as "the run did not complete" — rather than a tree mixing a
     fresh evidence file with a previous run's pass-claiming summary. Absent is
     recoverable; misleading is not.
+
+    `trash` is a name inside a directory this run created, never a name derived from
+    `out`: renaming onto a pre-existing directory or symlink at a derived name is what
+    let a run destroy user data while reporting success.
     """
     if out.is_dir():
         _rename(out, trash)
@@ -436,12 +476,18 @@ def main():
                         'a changed panel version is recorded and the windows are not compared')
     p.add_argument('--out', type=Path, required=True)
     args = p.parse_args()
-    staging = trash = None
+    staging_root = trash_root = None
     try:
-        # Resolved before the staging name is derived: `.` and `..` are valid
+        # Resolved before the sibling names are derived: `.` and `..` are valid
         # destinations with no usable name of their own, and the staging directory
         # must be a sibling of `out` for the rename to publish it atomically.
-        out = args.out.resolve()
+        try:
+            out = args.out.resolve()
+        except RuntimeError as exc:
+            # Python 3.12 raises `RuntimeError`, not `OSError`, when `--out` sits
+            # behind a symlink loop. Uncaught it would escape as a traceback with empty
+            # stdout, so a caller parsing the envelope would get nothing at all.
+            raise ValueError(f'--out: cannot resolve {args.out}: {exc}')
         if not out.name:
             raise ValueError(f'--out: cannot publish into the filesystem root ({out})')
         if out.exists() and not out.is_dir():
@@ -462,13 +508,22 @@ def main():
         summary = build_summary(rows, prior, panel,
                                 prior_panel_version=prior_panel['panel_version'] if prior_panel else None,
                                 prior_supplied=args.prior is not None)
-        # Stage every artifact in a directory unique to this process, then publish by
-        # renaming the directory into place. Two runs sharing `--out` therefore cannot
-        # write into the same staging directory, and no failure path can leave a
-        # partially published tree.
-        staging = out.parent / f'.{out.name}.staging.{os.getpid()}'
-        trash = out.parent / f'.{out.name}.outgoing.{os.getpid()}'
-        staging.mkdir(parents=True)
+        # Stage every artifact in a directory this run creates, then publish by
+        # renaming the directory into place. `mkdtemp` picks both sibling names with an
+        # exclusive create, so two runs sharing `--out` cannot write into the same
+        # staging directory and no user path can already be sitting at either name;
+        # `finally` therefore knows exactly which paths this run created, and discards
+        # only those. The directory that gets published is made by `mkdir` so it keeps
+        # the mode a plain `mkdir` would have produced, not `mkdtemp`'s 0700.
+        out.parent.mkdir(parents=True, exist_ok=True)
+        staging_root = _fresh_dir(out.parent, f'.{out.name}.staging.')
+        staging = staging_root / out.name
+        staging.mkdir()
+        # The outgoing `out` is set aside inside a directory this run created rather
+        # than at a name derived from `out`: a derived name can collide with a user
+        # directory, and renaming onto it or discarding it is what destroyed user data.
+        trash_root = _fresh_dir(out.parent, f'.{out.name}.outgoing.')
+        trash = trash_root / out.name
         (staging / 'evidence.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
         (staging / 'panel.json').write_text(json.dumps(panel_raw))
         (staging / 'report.md').write_text('\n'.join(_report_lines(summary)) + '\n')
@@ -485,9 +540,16 @@ def main():
         return True
     finally:
         # Runs for every exit, including KeyboardInterrupt, so neither an unfinished
-        # staging tree nor a set-aside previous epoch is left behind.
-        _discard_tree(staging)
-        _discard_tree(trash)
+        # staging tree nor a set-aside previous epoch is left behind: the read-only
+        # tree that used to be abandoned is made removable and discarded like any
+        # other. A second interrupt here is swallowed rather than allowed to escape,
+        # because the run has already decided its outcome and still owes the caller
+        # the envelope it produced; one interrupted target must not abandon the other.
+        for created in (staging_root, trash_root):
+            try:
+                _discard_tree(created)
+            except KeyboardInterrupt:
+                pass
     print(json.dumps({'out': str(out), **summary}, default=str))
     return summary['status'] != 'pass'
 
