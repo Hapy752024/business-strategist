@@ -615,6 +615,69 @@ def _expected_trend_lines(summary):
             for t in diff['trends']]
 
 
+def _expected_report_lines(summary):
+    """The complete `report.md` body, reimplemented from the summary.
+
+    Round 3's oracle compared filtered per-category subsets, so it could not see a
+    line that was added, a line that was deleted, or a line emitted in the wrong
+    category — only a wrong *value* inside a category it already looked at. This
+    reconstructs the whole document instead, so the assertion below is over the exact
+    line set and the exact line order.
+    """
+    coverage = summary['coverage']
+    lines = ['# AI-answer observation report', '', f"Boundary: {summary['boundary']}", '',
+             f"Status: {summary['status']}",
+             f"Panel version: {_version(summary['panel_version'])}",
+             f"Observations: {summary['observations']}; coverage gaps: {len(summary['coverage_gaps'])}",
+             f"Coverage: {coverage['covered_prompts']}/{coverage['declared_prompts']} "
+             'declared prompts fully covered']
+    if summary['unmeasured']:
+        lines.append('No successful observation: nothing was measured; failures are unknown, not absence.')
+    lines.extend(_expected_gap_lines(summary))
+    lines.extend(_expected_off_panel_lines(summary))
+    diff = summary['diff']
+    if diff is None:
+        return lines
+    cov = diff['coverage']
+    lines.extend(_expected_compared_line(summary))
+    if cov['skipped_failed_prior']:
+        lines.append(f"Warning: the prior window contained {cov['skipped_failed_prior']} "
+                     'failed observation(s); failures are unknown, not absence, so the '
+                     'comparison is partial and the prior window is not a clean baseline.')
+    if cov['prior'] == 0:
+        lines.append('Warning: the prior window was supplied but contains no observations; '
+                     'no movement is comparable.')
+    elif cov['prior_window'] is None:
+        lines.append('Warning: no successful prior observation established a prior collection '
+                     'window; no movement is comparable.')
+    versions = cov['panel_version']
+    if versions['compatible'] is False:
+        lines.append(f"Warning: panel version differs between windows "
+                     f"({_version(versions['prior'])} -> {_version(versions['current'])}); "
+                     'observations from different panel versions are not comparable, so no '
+                     'movement is reported.')
+    elif versions['compatible'] is None:
+        lines.append('Panel-version comparability unverified '
+                     f"(current: {_version(versions['current'])}, "
+                     f"prior: {_version(versions['prior'])}); an unversioned or "
+                     'unsupplied panel version cannot be shown to be comparable.')
+    if cov['overlapping_windows']:
+        lines.append('Warning: prior and current collection windows overlap; '
+                     'treat movement as unestablished.')
+    lines.extend(_expected_trend_lines(summary))
+    return lines
+
+
+def _assert_no_warnings(report):
+    """No `Warning:`/qualifier line may render in a scenario that does not warrant one.
+
+    The per-category oracle only ever asserted a warning's *presence*; a mutation
+    that emits a warning unconditionally adds a line nothing was looking for.
+    """
+    assert [ln for ln in report.splitlines() if ln.startswith('Warning:')] == []
+    assert 'Panel-version comparability unverified' not in report
+
+
 def _assert_renderings_agree(rc, envelope, report, summary, out):
     """The four renderings of one run must not disagree with each other."""
     # stdout envelope <-> summary.json <-> exit code
@@ -622,6 +685,8 @@ def _assert_renderings_agree(rc, envelope, report, summary, out):
     assert {k: v for k, v in envelope.items() if k != 'out'} == summary
     assert envelope['status'] == summary['status']
     assert rc == (summary['status'] != 'pass')
+    # report.md is the expected document exactly: same lines, same order, no extras.
+    assert report.splitlines() == _expected_report_lines(summary)
     # report.md <-> summary.json, line by line
     assert _line(report, 'Status') == summary['status']
     assert _line(report, 'Panel version') == _version(summary['panel_version'])
@@ -671,6 +736,13 @@ def test_rich_run_renders_one_state_across_all_four_artifacts(monkeypatch, tmp_p
         monkeypatch, tmp_path, capsys, RICH_PANEL, recorded)
     _assert_renderings_agree(rc, envelope, report, summary, out)
     assert rc is False and envelope['status'] == 'pass'
+    # The module's evidence-discipline statement is the report's own statement of what
+    # an observation is not; deleting the line leaves nothing else asserting it.
+    assert _line(report, 'Boundary') == summary['boundary'] == (
+        'observation of configured surfaces only; not customer-demand evidence; '
+        'failures are unknown, not absence')
+    # A run with no prior window must render no comparison warning of any kind.
+    _assert_no_warnings(report)
     # Rendered coverage, spelled out rather than cross-checked: 8 rows, 3 gaps and
     # 1 of 3 prompts fully covered are all values a hard-coded rendering cannot fake.
     assert _line(report, 'Observations') == '8; coverage gaps: 3'
@@ -978,3 +1050,114 @@ def test_panel_copy_is_read_once_and_matches_the_measured_panel(monkeypatch, tmp
     assert rc is False
     assert reads.count(tmp_path / 'panel.json') == 1
     assert json.loads((out / 'panel.json').read_text()) == PANEL_ONE
+
+
+# --- Round 4 (Task 10): the oracle's remaining blind spots ------------------
+#
+# Round 3's oracle compared *filtered per-category* line lists. That shape has no
+# "no unexpected lines" assertion, never asserts a warning's absence, and cannot see
+# cross-category order, so eight mutations survived it: the panel's version/type
+# dimensions, the off-panel id order (which the old assertions only caught under
+# most hash seeds, by luck), the `Boundary:` line, an added line, an unconditional
+# warning, and a reorder across categories. `_assert_renderings_agree` now compares
+# the whole document, which is the general fix; the tests below add the inputs whose
+# correct answer is non-trivial, so the general fix has something to bite on.
+
+
+def test_panel_declaring_two_versions_credits_only_the_measured_version(
+        monkeypatch, tmp_path, capsys):
+    # A panel may declare `p01` at two versions. Crediting the v1 observation to the
+    # v2 declaration reports 2/2 covered where the correct answer is 1/2, and the
+    # `mine` filter is the only place the version dimension is applied.
+    panel = {'prompts': [
+        {'id': 'p01', 'version': 1, 'type': 'unbranded_discovery', 'text': 'Which provider?'},
+        {'id': 'p01', 'version': 2, 'type': 'unbranded_discovery', 'text': 'Which provider now?'}]}
+    rc, envelope, report, summary, out = _artifacts(monkeypatch, tmp_path, capsys, panel, [BASE])
+    _assert_renderings_agree(rc, envelope, report, summary, out)
+    assert rc is False and envelope['status'] == 'pass'
+    assert summary['coverage'] == {'declared_prompts': 2, 'covered_prompts': 1,
+                                   'successful_observations': 1}
+    assert _line(report, 'Coverage') == '1/2 declared prompts fully covered'
+    assert [ln for ln in report.splitlines() if ln.startswith('- coverage gap: ')] == [
+        '- coverage gap: p01 v2 (missing_no_observation)']
+
+
+def test_coverage_credits_only_rows_of_the_declared_prompt_type():
+    # The type dimension of prompt identity. `load_panel` refuses two prompts sharing
+    # (id, version) — `duplicate panel prompt id/version` — so this panel cannot be
+    # expressed through the CLI and the mutation is not CLI-reachable; `_panel_coverage`
+    # is reachable as a library call, and the report's own off-panel line documents that
+    # type is part of prompt identity. Crediting an `unbranded_discovery` row to an
+    # `educational` declaration reports 2/2 where the correct answer is 1/2.
+    panel = load_panel({'prompts': [
+        {'id': 'p01', 'version': 1, 'type': 'unbranded_discovery', 'text': 'Which provider?'}]})
+    panel['declared'].append({'prompt_id': 'p01', 'prompt_version': 1,
+                              'prompt_type': 'educational'})
+    summary = build_summary([obs(prompt_id='p01')], [], panel)
+    assert summary['coverage'] == {'declared_prompts': 2, 'covered_prompts': 1,
+                                   'successful_observations': 1}
+    assert summary['coverage_gaps'] == [
+        {'prompt_id': 'p01', 'prompt_version': 1, 'prompt_type': 'educational',
+         'reason': 'missing_no_observation'}]
+
+
+def test_off_panel_ids_render_sorted_regardless_of_hash_order(monkeypatch, tmp_path, capsys):
+    # Six off-panel ids whose set-iteration order differs from sorted order under every
+    # hash seed 0-20 tested, including PYTHONHASHSEED=2 — where a `list(set(...))`
+    # mutant renders `pA, k1, z9, m4, q3, b7`. Round 3's assertion was a membership
+    # check on a three-id line, so the mutant survived whenever the hash order happened
+    # to coincide with sorted order. This asserts the exact rendered order, and the
+    # order of the summary's own list, so the kill does not depend on the seed.
+    ids = ['z9', 'm4', 'pA', 'k1', 'b7', 'q3']
+    recorded = [BASE] + [obs(prompt_id=pid) for pid in ids]
+    rc, envelope, report, summary, out = _artifacts(
+        monkeypatch, tmp_path, capsys, PANEL_ONE, recorded)
+    _assert_renderings_agree(rc, envelope, report, summary, out)
+    assert summary['off_panel'] == {'count': 6, 'prompt_ids': sorted(ids)}
+    assert summary['off_panel']['prompt_ids'] == sorted(summary['off_panel']['prompt_ids'])
+    assert [ln for ln in report.splitlines() if ln.startswith('Off-panel rows')] == [
+        'Off-panel rows (excluded from coverage): 6 [b7, k1, m4, pA, q3, z9] '
+        '(matched on prompt id, version, type and declared engine, so an id that is '
+        'also declared in the panel appears here when its version, type or engine '
+        'was not selected)']
+
+
+def test_clean_diff_run_renders_exactly_the_expected_lines(monkeypatch, tmp_path, capsys):
+    # A comparable, non-overlapping prior window: every warning branch is false, so the
+    # report must contain no warning line at all. An unconditional overlap or
+    # comparability warning is invisible to the per-category oracle in the overlapping
+    # scenario (where the warning is expected anyway) and only shows up here.
+    prior = [{**BASE, 'prompt_id': 'pA', 'timestamp': '2026-09-19T10:00:00Z',
+              'brand_mentioned': False}]
+    current = [{**BASE, 'prompt_id': 'pA', 'timestamp': '2026-09-20T10:00:00Z',
+                'brand_mentioned': True}]
+    rc, envelope, report, summary, out = _artifacts(
+        monkeypatch, tmp_path, capsys, DIFF_PANEL, current, prior=prior, prior_panel=DIFF_PANEL)
+    _assert_renderings_agree(rc, envelope, report, summary, out)
+    assert rc is False and envelope['status'] == 'pass'
+    coverage = summary['diff']['coverage']
+    assert coverage['compared'] == 1 and coverage['overlapping_windows'] is False
+    assert coverage['panel_version']['compatible'] is True
+    _assert_no_warnings(report)
+    assert _line(report, 'Compared') == (
+        '1 probe targets; response changes: 1; unpaired repetitions: 0; '
+        'skipped incompatible: 0; skipped failed: 0; skipped failed prior: 0')
+    # The comparison line precedes the trend lines: a pure cross-category reorder keeps
+    # every within-category list intact, so only the full-document comparison sees it.
+    body = report.splitlines()
+    assert next(i for i, ln in enumerate(body) if ln.startswith('Compared: ')) < \
+        min(i for i, ln in enumerate(body) if '(n=' in ln)
+
+
+def test_prior_duplicate_rejection_leaves_no_out_and_no_staging_residue(
+        monkeypatch, tmp_path, capsys):
+    # A shared repetition index in the prior window fails the run closed before any
+    # artifact is published: no `out`, and no staging or set-aside directory left in
+    # its parent. The check also runs at load time in `main`, so it cannot be reached
+    # only after `build_summary` has already done work.
+    dup = [BASE, {**BASE, 'brand_mentioned': False}]
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, [BASE], prior=dup) is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail' and 'prior' in envelope['errors'][0]
+    assert not (tmp_path / 'out').exists()
+    assert list(tmp_path.glob('.out.*')) == []
