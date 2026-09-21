@@ -1,6 +1,7 @@
 """Normalize and diff AI answer-engine observations; observations are not demand evidence."""
 import argparse
 import json
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -45,8 +46,13 @@ def load_panel(raw):
     repetitions = raw.get('repetitions')
     if repetitions is not None and (type(repetitions) is not int or repetitions < 1):
         raise ValueError('panel.repetitions: integer >= 1 required when present')
+    panel_version = raw.get('panel_version')
+    # Validated at the boundary so two windows can only ever be compared
+    # like-for-like: `1` and `'1'` are different values that render identically.
+    if panel_version is not None and (not isinstance(panel_version, str) or not panel_version):
+        raise ValueError('panel.panel_version: nonempty string required when present')
     return {'declared': declared, 'engines': engines, 'repetitions': repetitions,
-            'panel_version': raw.get('panel_version')}
+            'panel_version': panel_version}
 
 
 def _stamp(value):
@@ -149,6 +155,16 @@ def _fmt_version(value):
     return 'unversioned' if value is None else str(value)
 
 
+def _comparable_version(value):
+    """A panel version is comparable only when it is a nonempty string.
+
+    `load_panel` already refuses a non-string version, but this function is also a
+    library entry point: comparing `1` with `'1'` would report a change that did not
+    happen, so an unusable pair is left unknown instead.
+    """
+    return isinstance(value, str) and bool(value)
+
+
 def _panel_version_compatibility(panel_versions):
     """Compare the panel versions the two windows were collected under.
 
@@ -157,7 +173,7 @@ def _panel_version_compatibility(panel_versions):
     """
     current_version = (panel_versions or {}).get('current')
     prior_version = (panel_versions or {}).get('prior')
-    if current_version is None or prior_version is None:
+    if not _comparable_version(current_version) or not _comparable_version(prior_version):
         compatible = None
     else:
         compatible = current_version == prior_version
@@ -220,6 +236,11 @@ def diff_observations(current, prior, panel_versions=None):
 
 
 def _panel_coverage(rows, panel):
+    # Shared repetition indices are not independent samples. `main` rejects them at
+    # load time, but coverage is also reachable as a library call, and whether a
+    # window earns credit for a prompt must not depend on whether an unrelated
+    # `--prior` window was supplied. Enforced here so both paths fail closed alike.
+    _index_success(rows, 'recorded observation')
     declared, declared_engines = panel['declared'], panel['engines']
     on_panel_keys = {(p['prompt_id'], p['prompt_version'], p['prompt_type']) for p in declared}
     on_panel, off_panel_ids = [], []
@@ -255,8 +276,8 @@ def _panel_coverage(rows, panel):
             if want is None:
                 continue
             # Only distinct repetition indices are samples. Rows sharing an index are
-            # rejected at load time by `main` before coverage is computed, so a
-            # shortfall here is reported as insufficient distinct samples.
+            # rejected before coverage is computed, so a shortfall here is reported as
+            # insufficient distinct samples.
             samples = {r['repetition'] for r in ok}
             if len(samples) < want:
                 gaps.append({**p, 'engine': engine, 'reason': 'insufficient_repetitions',
@@ -272,9 +293,27 @@ def _panel_coverage(rows, panel):
             'unmeasured': not successful}
 
 
-def build_summary(rows, prior_rows, panel, prior_panel_version=None):
+def build_summary(rows, prior_rows, panel, prior_panel_version=None, prior_supplied=None):
     pc = _panel_coverage(rows, panel)
-    return {'status': 'unmeasured' if pc['unmeasured'] else 'pass',
+    # A supplied-but-empty prior is a different state from no prior at all: the
+    # probe's own zero-row run writes an empty evidence.jsonl, and rendering that as
+    # "no prior window" would present unknown as absence. `prior_supplied=None`
+    # infers the flag from the rows for callers that only have the rows.
+    has_prior = bool(prior_rows) if prior_supplied is None else prior_supplied
+    diff = diff_observations(
+        rows, prior_rows,
+        {'current': panel['panel_version'], 'prior': prior_panel_version}
+    ) if has_prior else None
+    # A measured run whose panel changed between windows abandoned the comparison,
+    # so the machine-readable status must not read `pass`. `unmeasured` outranks it:
+    # with no successful observation there is no measurement to declare incomparable.
+    if pc['unmeasured']:
+        status = 'unmeasured'
+    elif diff and diff['coverage']['panel_version']['compatible'] is False:
+        status = 'incomparable'
+    else:
+        status = 'pass'
+    return {'status': status,
             'observations': len(rows),
             'panel_version': panel['panel_version'],
             'coverage': {'declared_prompts': pc['declared'], 'covered_prompts': pc['covered'],
@@ -282,10 +321,7 @@ def build_summary(rows, prior_rows, panel, prior_panel_version=None):
             'coverage_gaps': sorted(pc['gaps'], key=lambda g: (g['prompt_id'], g.get('engine') or '')),
             'off_panel': pc['off_panel'],
             'unmeasured': pc['unmeasured'],
-            'diff': diff_observations(
-                rows, prior_rows,
-                {'current': panel['panel_version'], 'prior': prior_panel_version}
-            ) if prior_rows else None,
+            'diff': diff,
             'boundary': 'observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence'}
 
 
@@ -324,7 +360,10 @@ def _report_lines(summary):
             lines.append(f"Warning: the prior window contained {cov['skipped_failed_prior']} "
                          'failed observation(s); failures are unknown, not absence, so the '
                          'comparison is partial and the prior window is not a clean baseline.')
-        if cov['prior'] and cov['prior_window'] is None:
+        if cov['prior'] == 0:
+            lines.append('Warning: the prior window was supplied but contains no observations; '
+                         'no movement is comparable.')
+        elif cov['prior_window'] is None:
             lines.append('Warning: no successful prior observation established a prior collection '
                          'window; no movement is comparable.')
         versions = cov['panel_version']
@@ -333,8 +372,14 @@ def _report_lines(summary):
                          f"({_fmt_version(versions['prior'])} -> {_fmt_version(versions['current'])}); "
                          'observations from different panel versions are not comparable, so no '
                          'movement is reported.')
-        elif versions['prior'] is None:
-            lines.append('Prior panel version not supplied; panel-version comparability is unverified.')
+        elif versions['compatible'] is None:
+            # Testing `compatible is None` rather than `prior is None`: an unversioned
+            # *current* panel with a versioned prior also compares as unknown, and a
+            # reader must be able to tell `null` from `true` in both directions.
+            lines.append('Panel-version comparability unverified '
+                         f"(current: {_fmt_version(versions['current'])}, "
+                         f"prior: {_fmt_version(versions['prior'])}); an unversioned or "
+                         'unsupplied panel version cannot be shown to be comparable.')
         if cov['overlapping_windows']:
             lines.append('Warning: prior and current collection windows overlap; '
                          'treat movement as unestablished.')
@@ -345,16 +390,40 @@ def _report_lines(summary):
     return lines
 
 
-def _discard_staging(staging):
-    """Best-effort removal of a staging directory a failed run left behind."""
-    if staging is None:
+def _discard_tree(path):
+    """Best-effort removal of a directory tree a run staged or set aside."""
+    if path is None or not path.exists():
         return
     try:
-        for child in staging.iterdir():
-            child.unlink()
-        staging.rmdir()
+        for child in path.iterdir():
+            # A symlink is unlinked rather than followed: recursing through one would
+            # delete content that lives outside the directory being discarded.
+            if child.is_dir() and not child.is_symlink():
+                _discard_tree(child)
+            else:
+                child.unlink()
+        path.rmdir()
     except OSError:
         pass
+
+
+def _rename(src, dst):
+    """Rename a path; a module-level seam so tests can inject a publish failure."""
+    src.rename(dst)
+
+
+def _publish(out, staging, trash):
+    """Publish staged artifacts by swapping directories into place.
+
+    The outgoing `out` is renamed aside and only then is the staging directory
+    renamed into its place, so a crash between the two renames leaves no `out` at
+    all — which reads as "the run did not complete" — rather than a tree mixing a
+    fresh evidence file with a previous run's pass-claiming summary. Absent is
+    recoverable; misleading is not.
+    """
+    if out.is_dir():
+        _rename(out, trash)
+    _rename(staging, out)
 
 
 def main():
@@ -367,9 +436,21 @@ def main():
                         'a changed panel version is recorded and the windows are not compared')
     p.add_argument('--out', type=Path, required=True)
     args = p.parse_args()
-    staging = None
+    staging = trash = None
     try:
-        panel = load_panel(json.loads(args.panel.read_text()))
+        # Resolved before the staging name is derived: `.` and `..` are valid
+        # destinations with no usable name of their own, and the staging directory
+        # must be a sibling of `out` for the rename to publish it atomically.
+        out = args.out.resolve()
+        if not out.name:
+            raise ValueError(f'--out: cannot publish into the filesystem root ({out})')
+        if out.exists() and not out.is_dir():
+            raise ValueError(f'--out: existing path is not a directory ({out})')
+        # The panel is parsed once and the copy is rendered from that object, so the
+        # panel.json in `out` is the panel that was measured rather than whatever a
+        # second read of the path happened to return.
+        panel_raw = json.loads(args.panel.read_text())
+        panel = load_panel(panel_raw)
         rows = [normalize_observation(json.loads(line)) for line in args.recorded.read_text().splitlines() if line.strip()]
         prior = [normalize_observation(json.loads(line)) for line in args.prior.read_text().splitlines() if line.strip()] if args.prior else []
         prior_panel = load_panel(json.loads(args.prior_panel.read_text())) if args.prior_panel else None
@@ -378,29 +459,37 @@ def main():
         # must not depend on whether an unrelated --prior window was supplied.
         _index_success(rows, 'recorded observation')
         _index_success(prior, 'prior observation')
-        args.out.mkdir(parents=True, exist_ok=True)
         summary = build_summary(rows, prior, panel,
-                                prior_panel_version=prior_panel['panel_version'] if prior_panel else None)
-        # Stage every artifact, then publish. summary.json moves last, so no failure
-        # path can leave an artifact claiming a pass for a run that did not complete.
-        staging = args.out.with_name(args.out.name + '.staging')
-        staging.mkdir(parents=True, exist_ok=True)
+                                prior_panel_version=prior_panel['panel_version'] if prior_panel else None,
+                                prior_supplied=args.prior is not None)
+        # Stage every artifact in a directory unique to this process, then publish by
+        # renaming the directory into place. Two runs sharing `--out` therefore cannot
+        # write into the same staging directory, and no failure path can leave a
+        # partially published tree.
+        staging = out.parent / f'.{out.name}.staging.{os.getpid()}'
+        trash = out.parent / f'.{out.name}.outgoing.{os.getpid()}'
+        staging.mkdir(parents=True)
         (staging / 'evidence.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
-        (staging / 'panel.json').write_text(args.panel.read_text())
+        (staging / 'panel.json').write_text(json.dumps(panel_raw))
         (staging / 'report.md').write_text('\n'.join(_report_lines(summary)) + '\n')
         (staging / 'summary.json').write_text(json.dumps(summary, indent=2))
-        for name in ('evidence.jsonl', 'panel.json', 'report.md', 'summary.json'):
-            (staging / name).replace(args.out / name)
-        staging.rmdir()
+        _publish(out, staging, trash)
     except (OSError, ValueError, AttributeError) as exc:
-        _discard_staging(staging)
         print(json.dumps({'status': 'fail', 'errors': [str(exc)]}))
         return True
-    if summary['unmeasured']:
-        print(json.dumps({'out': str(args.out), **summary}, default=str))
+    except KeyboardInterrupt:
+        # An interrupt is a failure like any other and owes the caller the same
+        # machine-readable envelope and non-zero exit, not a traceback.
+        print(json.dumps({'status': 'fail',
+                          'errors': ['interrupted before the output was published']}))
         return True
-    print(json.dumps({'out': str(args.out), **summary}, default=str))
-    return False
+    finally:
+        # Runs for every exit, including KeyboardInterrupt, so neither an unfinished
+        # staging tree nor a set-aside previous epoch is left behind.
+        _discard_tree(staging)
+        _discard_tree(trash)
+    print(json.dumps({'out': str(out), **summary}, default=str))
+    return summary['status'] != 'pass'
 
 
 if __name__ == '__main__':

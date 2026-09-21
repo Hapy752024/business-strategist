@@ -1,6 +1,9 @@
 import json
+import subprocess
 import sys
+from pathlib import Path
 import pytest
+from scripts.monitoring import ai_answer_probe
 from scripts.monitoring.ai_answer_probe import (
     normalize_observation, diff_observations, build_summary, load_panel, main)
 
@@ -221,16 +224,16 @@ def test_distinct_repetitions_satisfy_coverage_but_duplicates_do_not():
                           obs(prompt_id='p01', repetition=2, brand_mentioned=False)], [], panel)
     assert good['coverage']['covered_prompts'] == 1
     assert good['coverage_gaps'] == []
-    # Contract correction (Round 3, finding 5): rows sharing a repetition index are
-    # no longer an accepted coverage input that merely reports a `duplicate_repetitions`
-    # gap. `main` now rejects them at load time for both files, so the surviving
-    # coverage statement is that shared indices do not count as independent samples:
-    # coverage is incomplete for want of distinct samples, not satisfied.
-    dup = build_summary([obs(prompt_id='p01', repetition=1),
-                         obs(prompt_id='p01', repetition=1, brand_mentioned=False)], [], panel)
-    assert dup['coverage']['covered_prompts'] == 0
-    assert [g['reason'] for g in dup['coverage_gaps']] == ['insufficient_repetitions']
-    assert dup['coverage_gaps'][0]['observed'] == 1
+    # Contract correction (Round 3 finding 5, extended by Round 4 finding 5): rows
+    # sharing a repetition index are not independent samples and no longer earn
+    # coverage at all. Round 3 only rejected them at `main`'s load step, so the same
+    # rows handed straight to `build_summary` were credited as a fully covered prompt
+    # while the CLI path raised — the verdict depended on whether an unrelated
+    # `--prior` window happened to be supplied. The rejection now lives in the
+    # coverage path too, so a direct library call cannot grant credit to duplicates.
+    with pytest.raises(ValueError, match='duplicate'):
+        build_summary([obs(prompt_id='p01', repetition=1),
+                       obs(prompt_id='p01', repetition=1, brand_mentioned=False)], [], panel)
 
 
 def test_undeclared_engine_rows_are_off_panel_and_fail_closed():
@@ -393,14 +396,21 @@ def test_changed_panel_version_is_recorded_and_not_compared(monkeypatch, tmp_pat
     prior_panel = {**PANEL_ONE, 'panel_version': 'v1'}
     current_panel = {**PANEL_ONE, 'panel_version': 'v2'}
     prior = [{**BASE, 'timestamp': '2026-09-19T10:00:00Z', 'brand_mentioned': False}]
+    # Contract correction (Round 4, nit 7): a measured run whose panel changed
+    # between windows abandoned the comparison, so it must not report `pass` in the
+    # machine-readable status. The exit code follows the status, so this now exits
+    # non-zero as well, and report.md renders the same status the envelope carries.
     assert _run_cli(monkeypatch, tmp_path, current_panel, [BASE], prior=prior,
-                    prior_panel=prior_panel) is False
+                    prior_panel=prior_panel) is True
     summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['status'] == 'incomparable'
+    assert summary['unmeasured'] is False
     assert summary['diff']['coverage']['panel_version'] == {
         'current': 'v2', 'prior': 'v1', 'compatible': False}
     assert summary['diff']['changes'] == []
     assert summary['diff']['trends'] == []
     report = (tmp_path / 'out' / 'report.md').read_text()
+    assert 'Status: incomparable' in report
     assert 'panel version differs between windows (v1 -> v2)' in report
     assert '/brand_mentioned:' not in report
 
@@ -424,26 +434,37 @@ def test_missing_prior_panel_version_is_recorded_as_unverified(monkeypatch, tmp_
     summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
     assert summary['diff']['coverage']['panel_version'] == {
         'current': 'v1', 'prior': None, 'compatible': None}
-    assert 'Prior panel version not supplied' in (tmp_path / 'out' / 'report.md').read_text()
+    # The rendered line names both sides and each unknown version, so a reader can
+    # tell `compatible: null` from `compatible: true` and can tell which window was
+    # the unversioned one.
+    assert ('Panel-version comparability unverified (current: v1, prior: unversioned); '
+            'an unversioned or unsupplied panel version cannot be shown to be '
+            'comparable.') in (tmp_path / 'out' / 'report.md').read_text()
 
 
 def test_failed_run_leaves_no_pass_claiming_summary(monkeypatch, tmp_path, capsys):
+    # Round 4 (finding 1) changed the trigger. Round 3's version made `out/report.md`
+    # a directory so the per-file write would fail after `summary.json` was already
+    # live, which is the non-atomic publish this task removes. Directory rename has no
+    # per-file step to fail, so the equivalent failure is injected at the rename that
+    # moves the outgoing `out` aside — the run fails with the previous out untouched.
     out = tmp_path / 'out'
     out.mkdir()
-    (out / 'report.md').mkdir()          # the later artifact write cannot succeed
     (out / 'summary.json').write_text('{"status": "stale-prior-run"}')
     (tmp_path / 'panel.json').write_text(json.dumps(PANEL_ONE))
     (tmp_path / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
     monkeypatch.setattr(sys, 'argv', ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
                                       '--recorded', str(tmp_path / 'recorded.jsonl'),
                                       '--out', str(out)])
+    _fail_rename_on_call(monkeypatch, 1, OSError('simulated rename failure'))
     assert main() is True
     envelope = json.loads(capsys.readouterr().out)
     assert envelope['status'] == 'fail' and envelope['errors']
     # The failed run must not have published a pass claim, and must not have
     # overwritten the previous run's summary either.
     assert (out / 'summary.json').read_text() == '{"status": "stale-prior-run"}'
-    assert not (tmp_path / 'out.staging').exists()
+    assert sorted(p.name for p in out.iterdir()) == ['summary.json']
+    assert list(tmp_path.glob('.out.*')) == []
 
 
 def test_duplicate_repetitions_fail_closed_identically_with_and_without_prior(
@@ -743,3 +764,217 @@ def test_panel_repetitions_zero_fails_the_run_before_any_artifact(monkeypatch, t
     envelope = json.loads(capsys.readouterr().out)
     assert envelope['status'] == 'fail' and 'repetitions' in envelope['errors'][0]
     assert not (tmp_path / 'out').exists()
+
+
+# --- Round 4 (Task 9): the publish path and the report's remaining blind spots -
+#
+# Round 3 published by writing each artifact over its live counterpart in order,
+# with `staging.rmdir()` as the last statement inside the `try`. Anything failing
+# after that loop left all four artifacts live beside a non-zero exit. The publish
+# is now a directory rename, so the failure injection point is the rename itself:
+# `_rename` is a one-line module-level seam, and these tests drive it to fault at
+# a chosen one of the two renames. That is what makes the crash window testable
+# rather than asserted in a comment.
+
+
+def _fail_rename_on_call(monkeypatch, call, exc):
+    """Make the `call`-th `_rename` raise `exc`, letting earlier ones work."""
+    real = ai_answer_probe._rename
+    seen = []
+
+    def fake(src, dst):
+        seen.append((src, dst))
+        if len(seen) == call:
+            raise exc
+        return real(src, dst)
+
+    monkeypatch.setattr(ai_answer_probe, '_rename', fake)
+
+
+def _out_setup(monkeypatch, tmp_path):
+    (tmp_path / 'panel.json').write_text(json.dumps(PANEL_ONE))
+    (tmp_path / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
+    monkeypatch.setattr(sys, 'argv', ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
+                                      '--recorded', str(tmp_path / 'recorded.jsonl'),
+                                      '--out', str(tmp_path / 'out')])
+
+
+def _no_pass_claiming_out(out):
+    """`out/summary.json` must be absent or must not claim a pass."""
+    summary = out / 'summary.json'
+    assert not summary.exists() or json.loads(summary.read_text())['status'] != 'pass'
+
+
+def test_interrupt_mid_publish_leaves_no_out_and_no_pass_claim(monkeypatch, tmp_path, capsys):
+    out = tmp_path / 'out'
+    out.mkdir()
+    (out / 'summary.json').write_text('{"status": "pass"}')   # a previous run's claim
+    _out_setup(monkeypatch, tmp_path)
+    # The second rename is the crash window: the outgoing `out` has been moved
+    # aside and the staged tree has not yet taken its place.
+    _fail_rename_on_call(monkeypatch, 2, KeyboardInterrupt())
+    rc = main()                     # `raise SystemExit(main())` exits 1 here
+    envelope = json.loads(capsys.readouterr().out)
+    assert rc is True, 'an interrupted publish must exit non-zero'
+    assert envelope['status'] == 'fail' and envelope['errors']
+    _no_pass_claiming_out(out)
+    # The chosen trade-off: no `out` at all reads as "the run did not complete",
+    # where a mixed-epoch `out` would carry the previous run's pass claim beside
+    # fresh evidence from the interrupted one.
+    assert not out.exists()
+    assert list(tmp_path.glob('.out.*')) == []
+
+
+def test_exception_mid_publish_leaves_no_out_and_no_pass_claim(monkeypatch, tmp_path, capsys):
+    out = tmp_path / 'out'
+    out.mkdir()
+    (out / 'summary.json').write_text('{"status": "pass"}')
+    _out_setup(monkeypatch, tmp_path)
+    _fail_rename_on_call(monkeypatch, 2, OSError('simulated publish failure'))
+    rc = main()
+    envelope = json.loads(capsys.readouterr().out)
+    assert rc is True, 'a failed publish must exit non-zero'
+    assert envelope['status'] == 'fail' and envelope['errors']
+    _no_pass_claiming_out(out)
+    assert not out.exists()
+    assert list(tmp_path.glob('.out.*')) == []
+
+
+def test_successful_run_leaves_no_staging_or_outgoing_directory(monkeypatch, tmp_path, capsys):
+    rc, envelope, report, summary, out = _artifacts(monkeypatch, tmp_path, capsys, PANEL_ONE, [BASE])
+    assert rc is False and envelope['status'] == 'pass'
+    assert sorted(p.name for p in out.iterdir()) == [
+        'evidence.jsonl', 'panel.json', 'report.md', 'summary.json']
+    assert list(tmp_path.glob('.out.*')) == []
+
+
+def test_concurrent_runs_sharing_out_never_publish_a_mixed_tree(tmp_path):
+    # The staging directory is named with the process id, so two runs sharing `--out`
+    # can no longer write into the same staging directory. The published tree is
+    # always one run's complete output, and a run that fails to publish says so in
+    # its envelope instead of leaving a pass claim behind.
+    script = Path(__file__).resolve().parents[1] / 'scripts' / 'monitoring' / 'ai_answer_probe.py'
+    (tmp_path / 'panel.json').write_text(json.dumps(PANEL_ONE))
+    (tmp_path / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
+    out = tmp_path / 'out'
+    argv = [sys.executable, str(script), '--panel', str(tmp_path / 'panel.json'),
+            '--recorded', str(tmp_path / 'recorded.jsonl'), '--out', str(out)]
+    procs = [subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              text=True) for _ in range(6)]
+    results = [(p.wait(), p.stdout.read(), p.stderr.read()) for p in procs]
+    assert any(rc == 0 for rc, _, _ in results), results
+    for rc, stdout, stderr in results:
+        if rc != 0:
+            assert json.loads(stdout)['status'] == 'fail', (rc, stdout, stderr)
+    assert sorted(p.name for p in out.iterdir()) == [
+        'evidence.jsonl', 'panel.json', 'report.md', 'summary.json']
+    summary = json.loads((out / 'summary.json').read_text())
+    assert summary['status'] == 'pass'
+    evidence = [json.loads(ln) for ln in (out / 'evidence.jsonl').read_text().splitlines()]
+    assert len(evidence) == summary['observations']
+    assert list(tmp_path.glob('.out.*')) == []
+
+
+def test_out_dot_publishes_into_the_resolved_directory(monkeypatch, tmp_path, capsys):
+    root = tmp_path / 'root'
+    root.mkdir()
+    (root / 'panel.json').write_text(json.dumps(PANEL_ONE))
+    (root / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
+    cwd = root / 'here'
+    cwd.mkdir()
+    monkeypatch.chdir(cwd)
+    monkeypatch.setattr(sys, 'argv', ['ai_answer_probe', '--panel', str(root / 'panel.json'),
+                                      '--recorded', str(root / 'recorded.jsonl'), '--out', '.'])
+    assert main() is False
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'pass'
+    assert envelope['out'] == str(cwd.resolve())
+    assert sorted(p.name for p in cwd.iterdir()) == [
+        'evidence.jsonl', 'panel.json', 'report.md', 'summary.json']
+
+
+def test_out_filesystem_root_fails_naming_the_out_flag(monkeypatch, tmp_path, capsys):
+    # A resolved path with no name has no staging name to derive; the failure must
+    # name the flag the user can fix rather than the internal `PosixPath` type.
+    (tmp_path / 'panel.json').write_text(json.dumps(PANEL_ONE))
+    (tmp_path / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
+    monkeypatch.setattr(sys, 'argv', ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
+                                      '--recorded', str(tmp_path / 'recorded.jsonl'),
+                                      '--out', str(Path('/').resolve())])
+    assert main() is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail'
+    assert '--out' in envelope['errors'][0]
+
+
+def test_unversioned_current_panel_renders_comparability_as_unverified(monkeypatch, tmp_path):
+    # Round 4, finding 3: the unverified branch tested `prior is None`, so an
+    # unversioned *current* panel against a versioned prior compared away and printed
+    # no comparability line at all — a reader could not tell `null` from `true`.
+    prior_panel = {**PANEL_ONE, 'panel_version': 'v1'}
+    prior = [{**BASE, 'timestamp': '2026-09-19T10:00:00Z'}]
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, [BASE], prior=prior,
+                    prior_panel=prior_panel) is False
+    summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['diff']['coverage']['panel_version'] == {
+        'current': None, 'prior': 'v1', 'compatible': None}
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert ('Panel-version comparability unverified (current: unversioned, prior: v1); '
+            'an unversioned or unsupplied panel version cannot be shown to be '
+            'comparable.') in report
+    assert 'panel version differs' not in report
+
+
+def test_empty_prior_file_is_unknown_not_absence(monkeypatch, tmp_path):
+    # Round 4, finding 4: `if prior_rows else None` made a supplied-but-empty
+    # `--prior` byte-identical to omitting it. The probe's own zero-row run writes an
+    # empty evidence.jsonl, so this is a natural artifact, and the two states must not
+    # render the same.
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, [BASE], prior=[]) is False
+    summary = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert summary['diff'] is not None
+    assert summary['diff']['coverage']['prior'] == 0
+    assert summary['diff']['coverage']['prior_window'] is None
+    report = (tmp_path / 'out' / 'report.md').read_text()
+    assert ('Warning: the prior window was supplied but contains no observations; '
+            'no movement is comparable.') in report.splitlines()
+    # Omitting the flag is a different state: no comparison at all.
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, [BASE]) is False
+    omitted = json.loads((tmp_path / 'out' / 'summary.json').read_text())
+    assert omitted['diff'] is None
+    assert 'prior window was supplied' not in (tmp_path / 'out' / 'report.md').read_text()
+
+
+def test_panel_version_must_be_a_nonempty_string_when_present():
+    for bad in (1, 1.0, True, '', [], {}):
+        with pytest.raises(ValueError, match='panel_version'):
+            load_panel({**PANEL_ONE, 'panel_version': bad})
+    assert load_panel({**PANEL_ONE, 'panel_version': 'v1'})['panel_version'] == 'v1'
+    assert load_panel(PANEL_ONE)['panel_version'] is None
+
+
+def test_panel_version_comparison_is_like_for_like():
+    # Round 4, nit 6: `1` vs `'1'` rendered "panel version differs (1 -> 1)". A
+    # non-string version cannot be compared with a string one, so the pair is
+    # unknown rather than reported as a change that did not happen.
+    versions = diff_observations([obs()], [obs(brand_mentioned=False)],
+                                 {'current': '1', 'prior': 1})['coverage']['panel_version']
+    assert versions == {'current': '1', 'prior': 1, 'compatible': None}
+
+
+def test_panel_copy_is_read_once_and_matches_the_measured_panel(monkeypatch, tmp_path, capsys):
+    # Round 4, nit 8: the panel was read twice, so a change between the two reads
+    # would publish a panel.json that was not the one measured. Counting reads of the
+    # panel path is the direct assertion that the copy comes from the parsed object.
+    real_read_text = Path.read_text
+    reads = []
+
+    def counting(self, *args, **kwargs):
+        reads.append(self)
+        return real_read_text(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'read_text', counting)
+    rc, envelope, report, summary, out = _artifacts(monkeypatch, tmp_path, capsys, PANEL_ONE, [BASE])
+    assert rc is False
+    assert reads.count(tmp_path / 'panel.json') == 1
+    assert json.loads((out / 'panel.json').read_text()) == PANEL_ONE
