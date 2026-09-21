@@ -1353,3 +1353,125 @@ def test_interrupt_during_cleanup_still_reports_the_envelope(monkeypatch, tmp_pa
     assert rc is True
     assert envelope['status'] == 'fail' and envelope['errors']
     assert len(discarded) == 2, 'both cleanup targets are still attempted'
+
+
+# --- Round 5 (Task 12): the Round 4 survivors --------------------------------
+#
+# Eight mutations survived Round 4's suite. Re-tested against the post-Task-11
+# module, three of them no longer need anything here:
+#
+#   M22 (`len(indexed_current) + len(indexed_prior)` -> `len(indexed_current)`)
+#       is killed by `test_version_incompatible_skipped_count_is_symmetric`.
+#   M21 (reordering the `unmeasured`/`incomparable` status branches) is killed by
+#       `test_unmeasured_outranks_incomparable`.
+#   N7 (dropping `.{os.getpid()}` from the staging name) is **obsolete**: the name
+#       is no longer derived from the pid at all. `tempfile.mkdtemp` builds
+#       `.{out.name}.staging.` / `.{out.name}.outgoing.` and there is no `os`
+#       import left in the module, so the mutation has no site to apply to.
+#
+# The five below are the ones that are still alive, each verified by applying the
+# mutation to a scratch copy, observing the failure, and restoring byte-identically.
+
+
+def test_symlink_inside_the_set_aside_tree_is_unlinked_not_followed(
+        monkeypatch, tmp_path, capsys):
+    # N11. `_discard_tree` checks the *root* it is handed for a symlink, and the
+    # recursion re-enters through `_discard_tree(child)`, so a symlink nested inside
+    # the tree is caught by that root check — but only if the child guard gets there
+    # first. The guard decides between recursing and unlinking; dropping it
+    # (`if child.is_dir():` alone) hands the symlink to the recursion, which declines
+    # to follow it and also declines to unlink it, so the enclosing directory can no
+    # longer be removed and the whole set-aside epoch leaks beside `out`. Both halves
+    # are asserted: the target's content is what a follow would destroy, and the
+    # residue is what a swallowed `OSError` hides.
+    out = tmp_path / 'out'
+    (out / 'sub').mkdir(parents=True)
+    (out / 'sub' / 'prior-epoch.txt').write_text('the whole previous epoch')
+    elsewhere = tmp_path / 'elsewhere'
+    (elsewhere / 'nested').mkdir(parents=True)
+    (elsewhere / 'keep.txt').write_text('keep me')
+    (elsewhere / 'nested' / 'deep.txt').write_text('keep me too')
+    (out / 'shortcut').symlink_to(elsewhere, target_is_directory=True)
+    _out_setup(monkeypatch, tmp_path)
+    rc = main()
+    envelope = json.loads(capsys.readouterr().out)
+    assert rc is False and envelope['status'] == 'pass'
+    assert (elsewhere / 'keep.txt').read_text() == 'keep me'
+    assert (elsewhere / 'nested' / 'deep.txt').read_text() == 'keep me too'
+    assert list(tmp_path.glob('.out.*')) == []
+    assert sorted(p.name for p in out.iterdir()) == [
+        'evidence.jsonl', 'panel.json', 'report.md', 'summary.json']
+
+
+def test_cleanup_failure_does_not_escape_a_published_run(monkeypatch, tmp_path, capsys):
+    # N20. The cleanup runs in the `finally`, after the outcome has been decided but
+    # before the envelope has been printed. A filesystem that refuses an unlink
+    # inside the set-aside tree (EACCES, EBUSY) must not turn an already-successful
+    # publish into a traceback with no envelope: `_discard_tree` is best-effort by
+    # design, and re-raising its `OSError` would cost the caller the machine-readable
+    # result in exchange for nothing it can act on. The refusal is injected at
+    # `Path.unlink` because a real refusal is not constructible as an unprivileged
+    # user — `_make_removable` (F-H) fixes every read-only tree a single owner can
+    # build.
+    out = tmp_path / 'out'
+    (out / 'sub').mkdir(parents=True)
+    (out / 'sub' / 'stuck.txt').write_text('the whole previous epoch')
+    _out_setup(monkeypatch, tmp_path)
+    real_unlink = Path.unlink
+
+    def refusing(self, *args, **kwargs):
+        if self.name == 'stuck.txt':
+            raise OSError('simulated unlink failure')
+        return real_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'unlink', refusing)
+    rc = main()
+    envelope = json.loads(capsys.readouterr().out)
+    assert rc is False
+    assert envelope['status'] == 'pass'
+    assert sorted(p.name for p in out.iterdir()) == [
+        'evidence.jsonl', 'panel.json', 'report.md', 'summary.json']
+
+
+def test_out_that_is_an_existing_file_fails_naming_the_flag(monkeypatch, tmp_path, capsys):
+    # N4. Deleting the `--out is not a directory` guard does not change the exit
+    # code: the publish rename fails against the file anyway. It changes only the
+    # message — an internal `[Errno 20] Not a directory: <staging> -> <out>` in place
+    # of a failure that names the flag the user can fix — so the guard is pinned by
+    # the envelope's error text and by the occupant surviving untouched.
+    blocker = tmp_path / 'blocked'
+    blocker.write_text('not a directory')
+    (tmp_path / 'panel.json').write_text(json.dumps(PANEL_ONE))
+    (tmp_path / 'recorded.jsonl').write_text(json.dumps(BASE) + '\n')
+    monkeypatch.setattr(sys, 'argv', ['ai_answer_probe', '--panel', str(tmp_path / 'panel.json'),
+                                      '--recorded', str(tmp_path / 'recorded.jsonl'),
+                                      '--out', str(blocker)])
+    assert main() is True
+    envelope = json.loads(capsys.readouterr().out)
+    assert envelope['status'] == 'fail'
+    assert '--out' in envelope['errors'][0]
+    assert 'not a directory' in envelope['errors'][0]
+    assert blocker.read_text() == 'not a directory'
+    assert list(tmp_path.glob('.blocked.*')) == []
+
+
+def test_duplicate_messages_name_the_window_that_held_the_duplicate(monkeypatch, tmp_path, capsys):
+    # M23. Both rejection sites label the rows they were handed, and that label is
+    # the only thing telling a reader which window holds the shared repetition index:
+    # the coverage path rejects the recording it was given, and `main` rejects the
+    # recorded file and the prior file separately. Replacing either label with another
+    # string leaves `match='duplicate'` satisfied while the message points the reader
+    # at the wrong window.
+    panel = load_panel({**PANEL_ONE, 'engines': ['openai']})
+    with pytest.raises(ValueError) as library:
+        build_summary([obs(prompt_id='p01'), obs(prompt_id='p01', brand_mentioned=False)],
+                      [], panel)
+    assert 'duplicate recorded observation' in str(library.value)
+    assert 'prior observation' not in str(library.value)
+    assert 'p01' in str(library.value) and 'repetition 1' in str(library.value)
+
+    dup = [BASE, {**BASE, 'brand_mentioned': False}]
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, dup) is True
+    assert 'duplicate recorded observation' in json.loads(capsys.readouterr().out)['errors'][0]
+    assert _run_cli(monkeypatch, tmp_path, PANEL_ONE, [BASE], prior=dup) is True
+    assert 'duplicate prior observation' in json.loads(capsys.readouterr().out)['errors'][0]
