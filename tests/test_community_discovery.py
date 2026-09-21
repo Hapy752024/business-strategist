@@ -35,7 +35,7 @@ def forum_observation(**overrides):
         "country": "GB", "language": "en", "url": "https://community.example.org/forum/widow-navigation",
         "title": "Widow navigation community", "description": "Members discuss widow navigation questions and answers.",
         "markdown": "Forum topic. Members post questions and replies about widow navigation. I need guidance. " * 8,
-        "result_rank": 1, "fetched_at": "2026-09-14T10:00:00+00:00", "http_status": 200, "response_id": "r1",
+        "result_rank": 1, "fetched_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(), "http_status": 200, "response_id": "r1",
     }
     row.update(overrides)
     return row
@@ -171,7 +171,8 @@ def test_direct_recheck_rejects_login_wall_and_requires_semantic_activity() -> N
     assert portuguese["access_status"] == "not_verified_public"
     navigation = rechecks.semantic_assessment("https://facebook.com/groups/feed", {**response, "body": {"text": '\"group_id\":\"12345\", <article data-post=\"1\"><time datetime=\"2026-09-15\">'}})
     assert navigation["entity_type_observed"] == "unresolved"
-    verified = rechecks.semantic_assessment("https://facebook.com/groups/example", {**response, "body": {"text": '\"group_id\":\"12345\", \"post_id\":\"88\", \"created_time\":\"2026-09-15\" ' * 10}})
+    recent_day = datetime.now(timezone.utc).date().isoformat()
+    verified = rechecks.semantic_assessment("https://facebook.com/groups/example", {**response, "body": {"text": f'\"group_id\":\"12345\", \"post_id\":\"88\", \"created_time\":\"{recent_day}\" ' * 10}})
     assert verified["entity_type_observed"] == "facebook_group" and verified["activity_status"] == "active_recent"
 
 
