@@ -643,3 +643,132 @@ The Task 5 literal code block in the executed plan is still defective in ways th
 Verified in the block: one-sided `skipped_incompatible`, and the absence of gap-row listing and undeclared-engine fail-closed. The implementer also found three omissions this section had not listed — `args.out.mkdir` outside the `try`, the missing panel copy and `panel_version` check, and the fact that the Task 5 **test and Interfaces blocks** encode the superseded contracts (`build_summary(rows, prior_rows)` two-arg, the change shape without `repetition`, `skipped_incompatible == 2`) and would re-lock F1/F4 if copied.
 
 The errata was written to say exactly this rather than assert the block contains defects it does not.
+
+---
+
+## Round 4 — the publish path, and the oracle's blind spots
+
+A Round 3 adversarial review returned **CHANGES REQUIRED**. Round 3 closes Round 2's findings 1–5 and nits 6–8 (all reproduced independently), but the new atomic-write path is **not atomic** and re-creates the defect class it was written to kill; `--out .` is a **regression**; and the new oracle leaves **10 mutations alive**, three of which the plan claimed were killed.
+
+**Why Round 3's fix failed.** The plan offered two options — "write to a temporary directory and rename on success, **or** write `summary.json` last" — and the implementer took the weaker one. Per-file `Path.replace` in a fixed order with `staging.rmdir()` as the last statement *inside* the `try` is not atomic: anything failing after the loop lands in the `except` with all four artifacts already live. **An acceptance criterion written as a choice is not an acceptance criterion.** Task 9 must state one mechanism and require it be tested.
+
+### Task 9: publish-path correctness (findings 1–5, nits 6–9)
+
+**Files:** `scripts/monitoring/ai_answer_probe.py`, `tests/test_ai_answer_probe.py`
+
+**Finding 1 — the publish is not atomic. MUST FIX.** Five reproduced triggers, all leaving a pass-claiming `summary.json` beside a non-zero exit:
+- residue in `<out>.staging` → `rc 1`, `{"status":"fail","errors":["Directory not empty: …"]}`, while `out/summary.json` reads `"status": "pass"` and `report.md` reads `Status: pass`. All four renderings disagree.
+- `KeyboardInterrupt` during the publish loop (not in the caught tuple) → mixed-epoch `out/`: fresh `evidence.jsonl`+`panel.json` beside the **previous** run's `report.md`/`summary.json`.
+- hard kill mid-loop → same mixed-epoch state.
+- `out/summary.json` pre-existing as a directory → fail envelope while `out/report.md` is fresh and says `Status: pass`.
+- two concurrent runs sharing `--out` → **7 of 10 trials** returned `rc 1` with `out/summary.json` saying `pass`.
+*Fix — one mechanism, not a choice:* make the staging directory **unique per process** (so concurrent runs cannot collide), publish by **directory rename** with the outgoing `out` renamed aside first, and clean up staging in a `finally` that also covers `KeyboardInterrupt`. Choose the crash window deliberately: a crash between the two renames must leave **no** `out` (reads as "the run did not complete") rather than a mixed-epoch `out` carrying a pass claim. Absent must beat misleading.
+*Acceptance criterion, and it must be tested:* for each of an interrupt mid-publish and an exception mid-publish, assert the exit code is non-zero **and** that no reachable `out/summary.json` claims `status: pass`. A test that asserts only the exit code does not satisfy this.
+
+**Finding 2 — `--out .` is a regression. MUST FIX.** `args.out.with_name(args.out.name + '.staging')` raises `ValueError: PosixPath('.') has an empty name`. Verified: at `24abc32` `--out .` → `rc 0` with all four artifacts written; at HEAD → `rc 1`, `{"status":"fail","errors":["PosixPath('.') has an empty name"]}`, nothing written.
+*Fix:* resolve the output path before deriving the staging name, so `.`/`..`/relative paths work. A resolved path whose name is still empty (filesystem root) must fail with a message naming the `--out` flag, not an internal type name.
+
+**Finding 3 — `compatible: null` is invisible in `report.md` when the *current* panel is unversioned. SHOULD FIX.** The unverified branch tests `versions['prior'] is None`, so an unversioned current panel with a versioned prior proceeds to compare and prints no comparability line at all — a reader cannot tell `null` from `true`. Changing the branch to test `versions['compatible'] is None` is the fix and passes the suite unchanged.
+
+**Finding 4 — an empty `--prior` file renders as "no prior window supplied". SHOULD FIX.** `if prior_rows else None` means `prior == []` yields `diff: null`, byte-identical to omitting `--prior`. The probe's own zero-row run writes an empty `evidence.jsonl`, so this is a natural artifact. Distinguish "no prior supplied" from "prior supplied but empty", and render the latter as unknown, not as absence. This is the file-level twin of Round 2 finding 1.
+
+**Finding 5 — duplicate validation is not enforced where coverage is computed. SHOULD FIX.** `main` validates both files, but `_panel_coverage` does not: `build_summary(dup_rows, [], panel_without_declared_repetitions)` → `covered_prompts: 1`, no gaps, `status: pass`, while the same rows with a prior raise. Coverage semantics for shared repetition indices must not depend on whether an unrelated field was declared. Enforce it in the coverage path too, so a direct library call cannot grant credit to duplicates.
+
+**Nits.** (6) validate `panel_version`'s type and compare like-for-like — `1` vs `'1'` currently warns "panel version differs (1 -> 1)". (7) a panel-version mismatch reports `status: pass`; the machine-readable status should reflect the abandoned comparison. (8) the panel is read twice (`load_panel(...read_text())` and a second `read_text()` for the copy) — a TOCTOU; copy from the parsed panel so `out/panel.json` is what was actually measured. (9) the `unmeasured` and pass branches print identical statements and differ only in the return value; collapse them.
+
+### Task 10: oracle hardening and the 10 surviving mutations
+
+**Files:** `tests/test_ai_answer_probe.py`
+
+Round 3's oracle compares **filtered per-category** line lists, so it has no "no unexpected lines" assertion, never asserts a warning's *absence*, and cannot see cross-category order. That is exactly why these survive. Each must be killed, verified by applying the mutation, observing the failure, and restoring byte-identically:
+
+| # | Mutation | Why it survives today |
+|---|---|---|
+| 1 | `mine` lookup drops `prompt_version` | panel declaring `p01 v1` **and** `p01 v2` with only `v1` measured → mutant reports `2/2` covered |
+| 2 | `mine` lookup drops `prompt_type` | same site, type dimension |
+| 3 | off-panel ids unsorted | caught under 11 hash seeds, survives under `PYTHONHASHSEED=2` — the kill is hash-luck, not an order assertion |
+| 4 | `Boundary:` line deleted | the module's evidence-discipline statement never reaches `report.md` and nothing asserts it |
+| 5 | arbitrary extra report line added | no "no unexpected lines" assertion |
+| 6 | unconditional false overlap warning | additions of warning lines are unasserted; removals are caught |
+| 7 | unconditional false comparability warning | same |
+| 8 | pure cross-category reorder (trends before `Compared:`) | within-category order enforced, across categories not |
+| 9 | `main`'s prior duplicate check removed | message assertion passes; `out/` is then created and left empty |
+| 10 | `staging.rmdir()` removed | success-path cleanup unasserted |
+
+Tests 1–2 and 8 are the substantive ones: they need inputs where the correct value is non-trivial (a two-version panel; a run with a diff so category order is observable). Test 3 needs an order assertion that does not depend on hash seed — assert the exact expected list, not membership.
+
+Also add the **acceptance test** for Task 9 finding 1 (interrupt mid-publish → non-zero exit **and** no pass-claiming `summary.json`), and a test that a successful run leaves no staging directory behind.
+
+### Round 4 close-out
+
+After Tasks 9–10: run all four gates, then one more adversarial round. If that round again finds a fresh layer in the publish path, stop and revisit scope with the user rather than continuing to iterate — the user's instruction was to fix must and should findings, not to iterate without bound.
+
+**The stop condition triggered.** The Round 4 review found a fresh layer in the publish path — including two data-loss defects — so scope was escalated to the user, who elected to fix must and should findings and continue reviewing.
+
+---
+
+## Round 5 — the cleanup path (data loss)
+
+Round 4 fixed the atomicity of the *rename* sequence but left the *cleanup* logic unsafe. Round 4's review returned **CHANGES REQUIRED** with five must-fixes, three should-fixes and nits.
+
+**Root cause, and the shape of the fix.** Round 4 hand-rolled the staging and outgoing paths as `.<out-name>.staging.<pid>` / `.<out-name>.outgoing.<pid>` in `out.parent`, then discarded **both unconditionally in a `finally`** — regardless of whether this run created them. Every must-fix below descends from that: the run can delete a directory it never created, and it can follow a symlink standing at one of those names.
+
+The fix is a **simplification, not more complexity**: let `tempfile.mkdtemp` choose the staging name (which makes collisions with user paths and with other processes impossible by construction), record exactly which paths this run created, and discard only those.
+
+### Task 11: cleanup-path correctness (F-A, F-B, F-C, F-F, F-G, F-H)
+
+**Files:** `scripts/monitoring/ai_answer_probe.py`, `tests/test_ai_answer_probe.py`
+
+**F-A — `_discard_tree` recursively deletes a directory the run did not create, and reports success. MUST FIX.**
+Verified in-process with the pid pinned: a real directory pre-exists at `.out.outgoing.<pid>`, `out` is absent → the run **returns success** (`status: pass`) and the directory and its contents are **destroyed**. Trigger is a name collision in `out.parent`; the probe itself creates these names on a crash, so pid reuse after a crash is a live route.
+*Fix:* never discard a path this run did not create.
+
+**F-B — `_discard_tree` follows a symlink passed as its root, contradicting its own docstring. MUST FIX.**
+Verified: a symlink at `.out.outgoing.<pid>` pointing at a directory → run **succeeds**, the target is **emptied**, the symlink left behind. The guard at `_discard_tree` checks *children* (`if child.is_dir() and not child.is_symlink()`), never the root — while its docstring claims "A symlink is unlinked rather than followed".
+*Fix:* check the root before recursing, or remove the possibility by using `mkdtemp` so the name cannot pre-exist.
+
+**F-C — `Path.resolve()` can raise `RuntimeError`, escaping the fail envelope. MUST FIX.**
+On Python 3.12 a symlink loop makes `resolve()` raise `RuntimeError`, which is not in the `(OSError, ValueError, AttributeError)` tuple → `rc 1` with **empty stdout and a traceback**. That breaks the machine-readable-envelope contract the module states elsewhere.
+*Fix:* catch it, or resolve in a way that cannot raise for this input.
+
+**F-F — version-incompatible `skipped_incompatible` counts only the current window. SHOULD FIX.**
+
+> **Corrected after implementation — this described the mutant, not the code.** The shipped code has counted both windows since `554bf1a` (`skipped_incompatible = len(indexed_current) + len(indexed_prior)`); 2 current + 2 prior renders **4**, verified. The finding's real content is "mutation M22 survives the suite", i.e. a **test gap only**. Task 11 added the missing test; no code change was needed or made.
+
+**F-G — `unmeasured` no longer outranks `incomparable`. SHOULD FIX.**
+
+> **Corrected after implementation — also a test gap only.** `unmeasured` already outranks `incomparable` in the shipped code; verified. The finding's real content is "reordering the branches survives the suite". Task 11 added the test that kills the reorder.
+
+**F-H — a successful run can leak an entire previous epoch forever. SHOULD FIX.**
+With read-only content inside the outgoing `out` (e.g. `out/sub` mode 0555) the run **succeeds** and leaves `.out.outgoing.<pid>` holding the whole previous epoch, because `_discard_tree` swallows the `OSError`. The `finally` comment claims nothing is left behind — false on this path. Either surface the failure or make the claim true.
+
+**Nit.** A second interrupt during `finally` cleanup escapes as an unhandled `KeyboardInterrupt` (exit 130, no envelope).
+
+### Task 12: oracle hardening for the Round 4 survivors
+
+**Files:** `tests/test_ai_answer_probe.py`
+
+Round 4's review found 8 survivors. Two are equivalent mutants and need no test; the rest need one each, verified by applying the mutation, observing the failure and restoring byte-identically:
+
+| # | Mutation | Note |
+|---|---|---|
+| N11 | removing the child-symlink guard (`and not child.is_symlink()`) | the only thing between F-B and a realistic data loss; no test has a symlink inside the outgoing tree |
+| N7 | dropping `.{os.getpid()}` from the staging name | 20/20 clean trials today because of startup jitter; with a widened publish window the mutant gives **0 successes in 4 of 5 trials** |
+| M22 | `len(indexed_current) + len(indexed_prior)` → `len(indexed_current)` | reachable via two panels with different versions |
+| M21 | reordering `unmeasured` / `incomparable` | F-G |
+| M23 | coverage-path label `'recorded observation'` → any other string | assertions match `'duplicate'` only |
+| N20 | `_discard_tree` re-raising on `OSError` | would turn a successful publish into a traceback in `finally` |
+| M28 | `resolve()` → `absolute()` | differs for a dangling `--out` symlink; pin the behaviour deliberately |
+| N4 | deleting the `--out is not a directory` guard | only the message text differs |
+
+S9 (removing `main`'s prior-duplicate check) was verified as a **true equivalent mutant** over 19 differential scenarios — do not add a test for it; the implementer's pinning test is sufficient. S2 (the `prompt_type` dimension) is not CLI-reachable because `load_panel` rejects duplicate `(id, version)`; the direct-library test is the correct place for it.
+
+### Task 13: repair the date-bombed test (outside this work)
+
+**File:** `tests/test_community_discovery.py`
+
+Gate 1 fails as of 2026-09-21T10:00Z, independent of this work: the fixture pins `"fetched_at": "2026-09-14T10:00:00+00:00"` while `scripts/evidence_scout/review_community_candidates.py:29` rejects `activity_status`/`public_access` observations older than `DIMENSION_MAX_AGE = 7 days`. It fails in a pristine archive of both `12d83ad` and `HEAD`.
+
+*Fix:* make the fixture's timestamp relative to the current time (or re-pin to a date that cannot expire) so the test stops being time-bombed. Verify it passes now and that the assertion's intent is unchanged — do not weaken what it asserts.
+
+**Caution:** a concurrent external workstream is editing `scripts/evidence_scout/` and evidence-scout skill files. This task touches only the test file; if the working tree shows the workstream has already changed that test, stop and report rather than conflicting with it.
