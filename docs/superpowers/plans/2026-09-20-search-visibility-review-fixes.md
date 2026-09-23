@@ -1,5 +1,7 @@
 # Search-Visibility Review Fixes Implementation Plan
 
+> Historical executed plan. Do not replay its code or acceptance criteria. Current contract: `references/ai-answer-recordings.md`; current closure plan: `docs/search-visibility-closure-plan-2026-09-21.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Fix the five verified defects raised by the independent implementation review, so the recorded-observation pilot cannot report movement or coverage that did not occur.

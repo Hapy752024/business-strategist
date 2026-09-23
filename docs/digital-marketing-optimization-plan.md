@@ -1,6 +1,6 @@
 # Digital-Marketing Optimization Plan — Six-Layer Search Stack (revised)
 
-Status: revised 2026-09-20 after two adversarial reviews ([review record](digital-marketing-optimization-plan-adversarial-review.md) plus a Codex challenge review). This revision corrects evidence claims, reorders the approach around the business bottleneck, defines measurement validity, and narrows the initial change.
+Status: updated 2026-09-21; execution contract in `references/ai-answer-recordings.md`, decision output in `references/search-visibility-decisions.md`. Previously revised 2026-09-20 after two adversarial reviews ([review record](digital-marketing-optimization-plan-adversarial-review.md) plus a Codex challenge review). This revision corrects evidence claims, reorders the approach around the business bottleneck, defines measurement validity, and narrows the initial change.
 Framework source: James Dooley, "Modern Search Optimisation Stack" (x.com/james_dooley/status/2100907455890800881, 2026-09-18).
 
 ## 0. Decision rule first: diagnose the bottleneck before selecting layers
@@ -23,7 +23,7 @@ Every consequential claim is bound to source, population, measured outcome and a
 | AI-referred visitors can convert far above organic | Seer case study (2025-06-03): ChatGPT 15.9% vs organic 1.76% — **one client**; Adobe Q1 2026: 1.42x relative vs non-AI traffic — **US retail only** | Not a general benchmark; do not quote "4–9x" |
 | Brand web mentions correlate with AI Overview visibility more strongly than backlinks do (0.664 vs 0.218) | Ahrefs 75,000-brand correlation study (2025-12-12) | Ahrefs explicitly warns correlation does not establish that increasing mentions increases visibility; do not use as proof that outreach causes citations |
 | Adding citations, statistics and quotations improved visibility up to ~40% | Princeton et al., KDD 2024 (arXiv:2311.09735), benchmark queries | Benchmark visibility metric, varies by domain; does not establish qualified-customer uplift |
-| Answer-first capsules (≈40–60 words) are a reasonable structure to test | Practitioner consensus; Ahrefs word-count correlation ≈0.04 | A near-zero length correlation cannot establish capsule superiority; treat as hypothesis, not rule |
+| Answer-first capsules (≈shorts) are a reasonable structure to test | Practitioner consensus; Ahrefs word-count correlation ≈0.04 | A near-zero length correlation cannot establish capsule superiority; treat as hypothesis, not rule |
 | JSON-LD showed no measurable AI-citation improvement | Ahrefs matched observational study, 1,885 pages, May 2026 | Concurrent changes and a short window; say "no measurable improvement in this sample/window", not a universal causal null. Keep schema for entity clarity and rich results |
 | ~82–84% of AI citations come from "earned media" | Muck Rack (Dec 2025, May 2026) | Category includes research, government, encyclopedic and third-party corporate sources; **not** the fraction winnable via journalist outreach |
 | Blocking AI crawlers correlated with −23% monthly visits | Rutgers/Wharton (Dec 2025) | Publisher population; direction of causality not isolated |
@@ -45,7 +45,7 @@ Owner-action mechanics are defined in §4.3 — nothing below becomes a recurrin
 - **Policy framing (corrected):** human posting is this repository's **selected operating policy**, not a claimed platform prohibition. Reddit's Responsible Builder Policy does not establish a "90/10" ratio, and Reddit's app guidance explicitly supports compliant, disclosed automation. Check the platform, community and use case before stating any external restriction. The existing repository prohibition on unauthorized outreach/publishing stands regardless. Distinguish ownership of an authentic viewpoint (non-delegable) from the mechanics of publishing an owner-approved post (delegable where the platform permits).
 
 ### 2.3 AEO
-- **Agent:** question mining (PAA APIs, GSC question-regex pulls, community phrasing) → clustered question→URL map derived from actual audience evidence; answer-first restructuring drafts (capsules, comparison tables, HowTo steps) as testable hypotheses; schema drafts for currently supported features only; freshness flags per page type; snippet/PAA ownership tracking; Bing Webmaster Tools AI Performance pulls (only first-party AI citation feed).
+- **Agent:** question mining (PAA APIs, GSC question-regex pulls, community phrasing) → clustered question→URL map derived from actual audience evidence; answer-first restructuring drafts (capsules, comparison tables, HowTo steps) as testable hypotheses; schema drafts for currently supported features only; freshness flags per page type; snippet/PAA ownership tracking; available authorized first-party Google/Bing measurements, preserving their different metrics (§3.1).
 - **Owner:** verify owner-only facts in extractable blocks (prices, guarantees, firsthand claims) before publication. Note: Google deprecated HowTo rich results (2023) and FAQ rich results (May 2026) — do not present FAQ markup as a rich-result or citation lever.
 
 ### 2.4 GEO
@@ -66,16 +66,13 @@ Owner-action mechanics are defined in §4.3 — nothing below becomes a recurrin
 
 ## 3. Measurement contracts
 
-### 3.1 AI-answer observation (probe) contract
-An API probe measures **the configured API experience**, not what a buyer sees in a consumer product. Rules:
+### 3.1 AI-answer recording and first-party measurement contract
 
-- Label observations by surface: API-with-search-config, consumer product, AI Overviews — never pooled.
-- Prompts selected from relevant customer questions/search evidence; distinguish unbranded discovery prompts from brand-seeded reputation checks; version the panel.
-- Each observation records: engine, model/version, search/tool configuration, locale, timestamp, prompt ID/version, repetition index, and **collection status (success / error / unsupported)**. Failures are recorded as *unknown*, never as absence of mention.
-- Diff reports compare only compatible successful observations (same model, config, panel version, window); report panel coverage; test partial-provider failure and configuration-change handling before trusting trends.
-- Distinguish correct-entity mention, recommendation, and supporting citation; retain the full source answer so changes can be diagnosed.
-- Start with a narrow, decision-relevant panel (15–30 prompts); expand only when findings change a decision. Do not describe this as a replacement for commercial visibility tools, and never treat saved model responses as customer-demand evidence.
-- A credit-blocked or failed engine is a **coverage gap** (recorded, reported, re-run after top-up) — per the repository provider policy, never evidence of absence.
+Use available authorized first-party data before custom observation panels. Google Search Console's generative AI report measures link impressions; Bing's AI Performance reports citation activity. Check property access and the Search generative AI inclusion control. Dashboard/export access is not API availability, and placeholders exported as zero remain unknown. Do not pool these metrics with API observations or conversions.
+
+The implemented probe is offline-only. Apply [the format-2 recording contract](../references/ai-answer-recordings.md): declared subject and semantic prompt content, evidence-selection provenance, per-surface/model/config/locale sample targets, retained raw answers/citations/errors, immutable exclusively allocated output, digest-verified completion and prior-run reads. Off-panel observations are excluded from both coverage and comparison. Partial/unknown/changed context and overlapping/reversed windows yield no eligible trends. Rate differences are descriptive and never demand, statistical significance or causal uplift.
+
+There is no implemented live engine collector or listening integration. Start the smallest decision-relevant manual/read-only pilot; automate only if it changes decisions. Use [the decision handoff](../references/search-visibility-decisions.md) to connect evidence with changes, owner dependencies, QA and business follow-up. First-party sources checked 2026-09-21: [Google report](https://support.google.com/webmasters/answer/16984139), [inclusion control](https://support.google.com/webmasters/answer/16908024), [Bing](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview).
 
 ### 3.2 Analytics
 - GA4 AI-referrer channel group where analytics is installed; note the native GA4 AI channel misses Perplexity and referrer-stripped traffic.
@@ -161,3 +158,5 @@ All external sources retrieved 2026-09-19/2026-09-20; living documents are marke
 - Dooley stack post — 2026-09-18; DEO term origin: USA Today press release — 2026-09-03.
 
 Full per-layer research reports (SEO/SMO/AEO/GEO/DEO/SXO, each with dated source lists) were produced in-session on 2026-09-19; they inform this plan but the binding evidence for agent outputs is the table in §1 and this register.
+
+Current owner persistence follows [references/owner-actions.md](../references/owner-actions.md), including lossless accepted rows in the active track manifest, merge/resume behavior and completion. Current content guidance: [Google optimization guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide), checked 2026-09-21; no required capsule length, AI-specific rewriting or arbitrary freshness cadence.

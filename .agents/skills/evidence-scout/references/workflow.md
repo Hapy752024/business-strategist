@@ -18,15 +18,32 @@ If ambiguity materially changes provider choice, query wording, geography, langu
 1. Confirm the topic, customer segment, geography/language, hypothesis, and likely pain/workaround terms.
 2. Verify the documented scripts exist, run capability lookup for the research need, and validate API access before collection.
 3. Choose provider set from capability lookup: default first, social or paid enrichment only when justified or approved.
-4. Translate solution-led language into user pain, workaround, comparison, and search-intent terms.
-5. Run the collector with scoped topic, segment, problem keywords, workaround keywords, hypothesis ID, date range, limit, and providers.
+4. Translate solution-led language into user pain, workaround, comparison, and search-intent terms. When pain terms are inferred, calibrate them before the full run (see Pain-query calibration below).
+5. Run the collector with scoped topic, segment, problem keywords, workaround keywords, hypothesis ID, date range, limit, and providers. Pass a short `--topic-keywords` phrase; use `--query-plan` for deliberate exact probes.
 6. Inspect `research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, raw provider outputs, and provider alerts.
 7. Exclude irrelevant records and verify the strongest records materially match topic, geography, pain, and segment.
    Automated relevance and user-pain labels are provisional. Read every record supporting a consequential claim; check the actual buyer/job, geography, source role and context rather than keyword overlap. Apply repo-root `references/voc-research-method.md` for located experiences, shared digest-bound source review, qualitative coding and scoped version-2 U/R synthesis. For claim-ledger validation use `validate_synthesis.py --source-review <source-review.json> --customer-segment '<segment>'`; this uses the same decisions as U/R and interview consumers. Report only audited counts as customer evidence; never compare unaudited collection totals. If false positives remain, withdraw affected claims and reopen synthesis. Failed or badly targeted searches do not establish weak demand or exhaustion of desk research.
 8. Separate evidence, interpretation, counter-evidence, missing evidence, source intent, and comment intent.
 9. Report the truth about evidence strength, provider gaps, unresolved risks, and next low-cost tests.
 
+## Pain-query calibration
+
+For inferred vocabulary, a new locale/source or poor retrieval, apply
+`references/pain-query-calibration.md` before the full run. Reuse existing source
+cells and reviewed evidence; brainstorm both source-language phrasing and where
+the audience discusses the relevant episodes. Review the plan independently when
+available and authorized, otherwise label a separate inline review accurately.
+
+Use `--query-plan` for exact provider-specific probes, preview the actual schedule,
+and allocate results per query. Review underlying sources, unique experiences,
+coverage and contrary cases alongside precision. Diagnose missing coverage and
+refine with observed vocabulary/source locations; check fresh searches and record
+a scoped stop reason. Keep each round and its plan digest. Neither a judge score
+nor successful collection proves customer evidence or completed entity coverage.
+
 ## Forum and Facebook community discovery
+
+Before community collection, apply repo-root `references/research-query-calibration.md`: brainstorm local member vocabulary and source locations, review the locale/seed/source lanes with `discover_communities.py --query-preview`, and record the rationale. Use `--query-review` for revision notes and source-derived seed locators. After review of source shape, fit and rejected leads, refine terms and compare fresh communities with rediscovered seed sources; retain the parent plan digest. This does not replace signed source review or authorize capture.
 
 Do not equate adding `forum` to a generic query with finding the target audience. When community discussion is likely but known communities are missing, run a separate discovery pass before targeted collection:
 

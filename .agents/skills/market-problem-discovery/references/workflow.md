@@ -28,10 +28,10 @@ When the request also asks which opportunity the founder should pursue, apply re
 ## Procedure
 
 1. Restate the market/domain, any rough hunch, and the source scope. Treat the hunch as a search seed, not a claim.
-2. Initialize a discovery run. Use the repository-root command:
+2. Brainstorm local job/trigger vocabulary, alternative explanations and source locations; review candidate queries using repo-root `references/research-query-calibration.md`. Preview `--query-plan` with explicit locale/providers and result allocations before broad collection. Then initialize a discovery run with the reviewed plan. Use the repository-root command:
 
    ```bash
-   python3 scripts/evidence_scout/discover_market_problems.py --topic "<market or domain>" --focus "<optional hunch>" --geo <AUTO|country> --language <AUTO|language> --collect
+   python3 scripts/evidence_scout/discover_market_problems.py --topic "<market or domain>" --focus "<optional hunch>" --geo <AUTO|country> --language <language> --topic-keywords "<short local phrase>" --query-plan "<reviewed plan.json>" --providers "<plan providers>" --limit <allocated total> --results-per-query <depth> --collect
    ```
 
 3. Before substantial collection, run the required routing and runtime checks:
@@ -45,7 +45,7 @@ When the request also asks which opportunity the founder should pursue, apply re
    Use suitable default and paid sources; customer-evidence API spending is standing-authorized without a monetary cap. Disclose credit/access gaps and use valid fallbacks. This does not authorize deceptive/private access, recruitment or advertising.
 
 4. Inspect `<run>/evidence/research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, `irrelevant.jsonl`, and provider alerts. Apply repo-root `references/customer-voice.md` and `references/voc-research-method.md`: review source-linked experiences, always cover topic-led discovery, and add entity feedback as verified alternatives emerge. Unknown segments remain explicit hypotheses.
-5. Synthesize the sources into `<run>/market-discovery-report.md`. Replace every template placeholder. Cite the evidence IDs or source URLs for material claims.
+5. Inspect original speakers and rejected leads. Refine vocabulary/source choices with located evidence, preserve the initial run and parent plan digest, and count fresh useful sources separately from rediscoveries. Synthesize the sources into `<run>/market-discovery-report.md`. Replace every template placeholder. Cite the evidence IDs or source URLs for material claims.
 6. Build 3–7 candidates only when the evidence supports them. A candidate needs a plausible segment, trigger/job, recurring pain or decision uncertainty, current workaround or alternative, and a named uncertainty. If evidence is thin, report fewer candidates or none.
    For each candidate, outline the journey in which the need arises using the customer-journey contract in `evidence-scout/references/workflow.md` (sibling skill). Existing providers do not exclude a candidate: assess potential customer choice and access, with unknowns, before calling a segment saturated.
 7. For each candidate, separate:

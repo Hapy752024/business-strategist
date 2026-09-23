@@ -99,6 +99,24 @@
         "owner",
         "evidence"
       ]
+    },
+    {
+      "id": "visibility-quote-service",
+      "prompt": "Audit an existing B2B translation website. Pricing varies by language and length. The quote request is readable. We have no analytics.",
+      "expected_output": "Preserve quote pricing and scope. Inspect real evidence; no mandatory Product/Offer schema, fixed price or new instrumentation; unknown metrics remain unknown and no change is valid.",
+      "files": []
+    },
+    {
+      "id": "visibility-two-headings",
+      "prompt": "Rewrite exactly these two garden-maintenance headings: Our Services; Contact. No claims or other deliverables.",
+      "expected_output": "Return exactly two replacement headings; no visibility panel, research workspace or recurring owner program.",
+      "files": []
+    },
+    {
+      "id": "visibility-price-drift",
+      "prompt": "Product page shows EUR29; approved inventory says EUR35; last feed export is stale. Prepare local fixes only.",
+      "expected_output": "Bind product/variant to current authority, correct draft visible price and applicable markup, prepare fresh export only if freshness established. No publication, stale feed or redundant approval of already approved price.",
+      "files": []
     }
   ]
 }

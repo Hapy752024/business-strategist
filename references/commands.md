@@ -7,8 +7,18 @@ Extended CLI command variants for each skill. Prefer the AGENTS.md shorthand for
 ### Default providers
 
 ```bash
-python3 scripts/evidence_scout/collect.py --topic "<topic>" --customer-segment "<segment>" --problem-keywords "<pain phrase 1>,<pain phrase 2>" --workaround-keywords "<workaround 1>,<workaround 2>" --hypothesis-id H1 --days 30 --limit 20 --providers default
+python3 scripts/evidence_scout/collect.py --topic "<topic>" --topic-keywords "<short search phrase>" --customer-segment "<segment>" --problem-keywords "<pain phrase 1>,<pain phrase 2>" --workaround-keywords "<workaround 1>,<workaround 2>" --hypothesis-id H1 --days 30 --limit 20 --providers default
 ```
+
+For generated searches, pass short `--topic-keywords`; calibration uses exact
+`--query-plan <path>` candidates (schema: `schemas/pain-query-plan.schema.json`).
+Supply matching explicit `--geo`, `--language` and `--providers` (Reddit, Brave,
+Serper or Firecrawl). Preview with `--query-preview`. Set `--results-per-query`
+(1–10) and a per-provider `--limit` covering every selected allowance;
+`--query-limit` selects declared rows per provider. Collection saves the plan and
+its digest plus actual query/result ledgers. Brainstorm wording and source
+locations, review the plan, probe, review source experiences and refine; full
+method and runnable example: `.agents/skills/evidence-scout/references/pain-query-calibration.md`.
 
 ### With social enrichment (paid, ask first)
 
@@ -112,7 +122,7 @@ python3 scripts/evidence_scout/build_landscape_artifacts.py --entities-json "<en
 ## Founder/Operator Playbooks
 
 ```bash
-python3 scripts/evidence_scout/research_founder_playbooks.py --topic "<topic>" --archetype "<business archetype>" --customer-segment "<segment>"
+python3 scripts/evidence_scout/research_founder_playbooks.py --topic "<topic>" --archetype "<business archetype>" --customer-segment "<segment>" --geo <country> --language <language> --topic-keywords "<short source-language phrase>" --query-preview
 ```
 
 ## Interview Kit (interview-bridge)

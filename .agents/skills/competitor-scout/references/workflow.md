@@ -27,6 +27,8 @@ If the category, segment, geography, or competitor definition is ambiguous enoug
 
 ## Procedure
 
+Before broad collection apply repo-root `references/research-query-calibration.md`: brainstorm and review local provider/substitute names and source locations separately for all three lanes. Use `--query-preview`, local `--topic-keywords` / `--segment-keywords`, or an exact `--query-plan` with lane bindings. Search depth is separate from shortlist limits. Refine with terms from verified supplier/customer pages; preserve parent digest, counterexamples, failed queries and newly discovered entities.
+
 1. Define the category/job, target segment, buyer, geography, and what counts as competitive, similar, reference, or false positive.
 2. Preserve and pass any user-supplied known competitors into discovery.
 3. Run competitor discovery with the documented script.

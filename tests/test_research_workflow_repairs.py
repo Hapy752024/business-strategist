@@ -97,7 +97,8 @@ def test_one_override_event_for_multiple_blocked_prerequisites(tmp_path, monkeyp
 def test_validation_queries_keep_target_terms_and_discovery_can_be_broad():
     from scripts.evidence_scout.collect import query_plan
     queries = query_plan('supplier payment timing', 'French retail shop owners', problem_keywords='supplier invoice due', segment_keywords='commerçant,boutique')
-    assert queries and all(q.endswith((' commerçant', ' boutique')) for q in queries)
+    assert any(q.endswith((' commerçant', ' boutique')) for q in queries)
+    assert 'supplier invoice due' in queries
     assert not any('contractor' in q for q in queries)
     discovery = query_plan('retail operations', '', research_mode='discovery')
     assert discovery

@@ -1,6 +1,6 @@
 ---
 name: competitor-monitoring
-description: Set up or run recurring monitoring for competitor pricing, messaging, changelogs, docs, careers, SERPs, ads, traffic context, local presence, and app stores, plus own-brand mention and AI-answer-engine visibility/citation tracking. Use whenever the user asks to watch, track, alert, or diff changes over time.
+description: Monitor competitor changes, own-brand mentions, and recorded AI-answer visibility. Use for watchlists, snapshots, diffs, and scoped monitoring; live answer collection and listening automation need a selected implementation.
 ---
 
 # Competitor Monitoring
@@ -12,10 +12,11 @@ description: Set up or run recurring monitoring for competitor pricing, messagin
 ## Workflow
 
 1. Read `references/workflow.md` completely.
-2. Define entities, fields, cadence, baseline, and alert thresholds.
-3. Obtain approval before paid traffic or local-location actors.
-4. Diff like-for-like snapshots and suppress mechanical noise.
-5. Separate observed changes from strategic interpretation.
+2. For AI-answer recordings load repo-root `references/ai-answer-recordings.md`; consume results with `references/search-visibility-decisions.md`.
+3. Define entities, fields, cadence, baseline, and alert thresholds.
+4. Obtain approval before paid traffic or local-location actors.
+5. Diff like-for-like snapshots and suppress mechanical noise.
+6. Separate observed changes from strategic interpretation.
 
 ## Output
 

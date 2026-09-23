@@ -61,7 +61,8 @@ def test_intent_schedule_contains_success_nonadoption_and_local_communities():
     queries = c.query_plan("Umzug", "Familien", geo="DE", language="de", segment_keywords="Familien")
     intents = {c.query_intent(q) for q in queries[:8]}
     assert {"successful_alternative", "nonadoption", "switching_exit", "community_discovery", "facebook_discovery"} <= intents
-    assert all("Familien" in q for q in queries)
+    assert any("Familien" in q for q in queries)
+    assert any("Familien" not in q for q in queries)
 
 
 def test_native_language_queries_do_not_default_to_english_pain_scaffolding():

@@ -1,5 +1,7 @@
 # Search-Visibility Setup Implementation Plan
 
+> Historical executed plan. Do not replay its code or acceptance criteria. Current contract: `references/ai-answer-recordings.md`; current closure plan: `docs/search-visibility-closure-plan-2026-09-21.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Implement the revised digital-marketing optimization plan: wire AEO/GEO/DEO procedures into the real agent entry points, add an owner-action contract persisted in existing manifest fields, register new observation providers, extend routing/evals, and ship a read-only AI-answer observation pilot script.

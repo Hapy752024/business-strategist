@@ -106,26 +106,37 @@ def infer_geo_language(topic: str, customer_segment: str, problem_keywords: str 
     return "US", "en"
 
 
-def segment_modifiers(customer_segment: str) -> list[str]:
+def segment_modifiers(customer_segment: str, language: str = "en") -> list[str]:
     """Return short audience/location phrases users might actually include in searches."""
     segment = customer_segment.lower()
-    modifiers: list[str] = []
+    language = language.split("-")[0].lower()
     candidates = [
-        ("expat", "expats"),
-        ("freelancer", "freelancers"),
-        ("self-employed", "self employed"),
-        ("founder", "founders"),
-        ("creator", "creators"),
-        ("student", "students"),
-        ("parent", "parents"),
-        ("family", "families"),
-        ("developer", "developers"),
-        ("engineer", "engineers"),
-        ("english-speaking", "English speaking"),
-        ("english speaking", "English speaking"),
+        "expat",
+        "freelancer",
+        "self-employed",
+        "founder",
+        "creator",
+        "student",
+        "parent",
+        "family",
+        "developer",
+        "engineer",
+        "english-speaking",
+        "english speaking",
     ]
-    for needle, phrase in candidates:
-        if needle in segment and phrase not in modifiers:
+    localized = {
+        "en": {"expat": "expats", "freelancer": "freelancers", "self-employed": "self employed", "founder": "founders", "creator": "creators", "student": "students", "parent": "parents", "family": "families", "developer": "developers", "engineer": "engineers", "english-speaking": "English speaking", "english speaking": "English speaking"},
+        "de": {"expat": "Expats", "freelancer": "Freelancer", "self-employed": "Selbstständige", "founder": "Gründer", "creator": "Creator", "student": "Studenten", "parent": "Eltern", "family": "Familien", "developer": "Entwickler", "engineer": "Ingenieure", "english-speaking": "Englischsprachige", "english speaking": "Englischsprachige"},
+        "fr": {"expat": "expatriés", "freelancer": "freelances", "self-employed": "indépendants", "founder": "fondateurs", "creator": "créateurs", "student": "étudiants", "parent": "parents", "family": "familles", "developer": "développeurs", "engineer": "ingénieurs", "english-speaking": "anglophones", "english speaking": "anglophones"},
+        "es": {"expat": "expats", "freelancer": "freelancers", "self-employed": "autónomos", "founder": "fundadores", "creator": "creadores", "student": "estudiantes", "parent": "padres", "family": "familias", "developer": "desarrolladores", "engineer": "ingenieros", "english-speaking": "angloparlantes", "english speaking": "angloparlantes"},
+        "it": {"expat": "expat", "freelancer": "freelance", "self-employed": "autonomi", "founder": "fondatori", "creator": "creator", "student": "studenti", "parent": "genitori", "family": "famiglie", "developer": "sviluppatori", "engineer": "ingegneri", "english-speaking": "anglofoni", "english speaking": "anglofoni"},
+        "zh": {"expat": "外国人", "freelancer": "自由职业者", "self-employed": "个体户", "founder": "创业者", "creator": "创作者", "student": "学生", "parent": "家长", "family": "家庭", "developer": "开发者", "engineer": "工程师", "english-speaking": "英语", "english speaking": "英语"},
+    }
+    phrases = localized.get(language, {})
+    modifiers: list[str] = []
+    for needle in candidates:
+        phrase = phrases.get(needle, "")
+        if phrase and any(term.casefold() in segment for term in (needle, localized["en"][needle], phrase)) and phrase not in modifiers:
             modifiers.append(phrase)
     return modifiers[:3]
 
@@ -223,6 +234,35 @@ def inferred_search_terms(topic: str) -> list[str]:
     return deduped[:5]
 
 
+# Natural, source-language search suffixes used to turn a bare pain/workaround
+# phrase into complaint-, experience- and community-seeking queries. English is
+# included so every language follows the same construction rather than the prose
+# topic being searched verbatim.
+INTENT_SUFFIXES: dict[str, list[str]] = {
+    "en": ["experience", "problems", "complaints", "forum", "reddit"],
+    "de": ["Erfahrungen", "Probleme", "Beschwerde", "Forum", "Reddit"],
+    "fr": ["expérience", "problèmes", "réclamation", "forum", "reddit"],
+    "es": ["experiencia", "problemas", "queja", "foro", "reddit"],
+    "it": ["esperienza", "problemi", "reclamo", "forum", "reddit"],
+    "zh": ["经验", "问题", "投诉", "论坛", "reddit"],
+}
+
+
+def query_base(topic: str, topic_keywords: str = "") -> str:
+    """Prefer an explicit short phrase over the prose topic as the query seed.
+
+    A long topic sentence searched verbatim produces noise; callers should pass
+    `--topic-keywords` when the topic is not already a short search phrase.
+    """
+    return " ".join((topic_keywords.strip() or topic).replace('"', "").split())
+
+
+def topic_is_prose(topic: str, topic_keywords: str = "") -> bool:
+    if topic_keywords.strip():
+        return False
+    return len(topic.split()) > 8
+
+
 def problem_first_terms(topic: str, geo: str, language: str) -> list[str]:
     lower = topic.lower()
     for market in QUERY_EXPANSION.get("markets", {}).values():
@@ -285,75 +325,60 @@ def query_plan(
     language: str = "en",
     research_mode: str = "validation",
     segment_keywords: str = "",
+    topic_keywords: str = "",
 ) -> list[str]:
+    base = query_base(topic, topic_keywords)
     if research_mode == "discovery":
-        return balanced_queries(discovery_query_plan(topic, problem_keywords, workaround_keywords, geo, language) + perspective_queries(topic, language))
-    if language.split("-")[0].lower() != "en":
-        seeds = discovery_query_plan(topic, problem_keywords, workaround_keywords, geo, language)
-        seeds.extend(problem_first_terms(topic, geo, language) if not (problem_keywords or workaround_keywords) else [])
-        anchors = csv_terms(segment_keywords)
-        return balanced_queries(list(dict.fromkeys(f"{query} {anchor}" for query in seeds for anchor in anchors)) if anchors else seeds)
-    base = topic.strip()
-    modifiers = segment_modifiers(customer_segment)
+        return balanced_queries(discovery_query_plan(base, problem_keywords, workaround_keywords, geo, language) + perspective_queries(base, language))
+    lang = language.split("-")[0].lower()
+    modifiers = segment_modifiers(customer_segment, language)
+    suffixes = INTENT_SUFFIXES.get(lang, [])
     explicit_terms = bool(csv_terms(problem_keywords) or csv_terms(workaround_keywords))
-    problem_terms = [] if explicit_terms else problem_first_terms(topic, geo, language)
+    queries: list[str] = []
+
+    # Topic/decision-level probes, including audience modifiers and emotion framing.
     scoped_terms = [base]
     scoped_terms.extend(f"{base} {modifier}" for modifier in modifiers)
-    queries = []
-    for term in problem_terms:
-        queries.extend(
-            [
-                term,
-                f"{term} Erfahrungen",
-                f"{term} Forum",
-                f"{term} Reddit",
-            ]
-        )
-    queries.extend([
-        *scoped_terms,
-        f'"why is it so hard to" {base}',
-        f'"how do you deal with" {base}',
-        f'"frustrated" {base}',
-        f'"alternative to" {base}',
-        f'"best way to" {base}',
-        f'{base} forum pain points',
-        f'{base} reddit complaints',
-    ])
+    queries.extend(scoped_terms)
+    queries.extend(
+        [
+            f'"why is it so hard to" {base}',
+            f'"how do you deal with" {base}',
+            f'"frustrated" {base}',
+            f'"alternative to" {base}',
+            f"{base} complaints",
+            f"{base} reviews problems",
+        ] if lang == "en" else [f"{base} {suffix}" for suffix in suffixes]
+    )
+
+    # Pain and workaround seeds carry the customer's own language. Each is kept
+    # bare (exact-phrase recall) and expanded with source-language intent suffixes
+    # instead of appending the segment keyword to every query.
     for term in expand_language_variants(csv_terms(problem_keywords), geo, language):
-        scoped_problem_terms = [term]
-        scoped_problem_terms.extend(f"{term} {modifier}" for modifier in modifiers)
-        queries.extend(
-            [
-                *scoped_problem_terms,
-                f'"why is it so hard to" {term}',
-                f'"how do you deal with" {term}',
-                f'"frustrated" {term}',
-                f'{term} forum complaints',
-                f'{term} reddit workflow',
-            ]
-        )
+        queries.append(term)
+        queries.extend(f"{term} {suffix}" for suffix in suffixes)
     for term in expand_language_variants(csv_terms(workaround_keywords), geo, language):
-        scoped_workaround_terms = [term]
-        scoped_workaround_terms.extend(f"{term} {modifier}" for modifier in modifiers)
-        queries.extend(
-            [
-                *scoped_workaround_terms,
-                f'"manually" {term}',
-                f'"spreadsheet" {term}',
-                f'"template" {term}',
-            ]
-        )
-    deduped: list[str] = []
-    for query in queries:
-        if query and query not in deduped:
-            deduped.append(query)
-    # Explicit short audience terms narrow every validation query. They are
-    # retrieval constraints, not proof that a retrieved author fits the target.
-    deduped.extend(perspective_queries(base, language))
-    anchors = csv_terms(segment_keywords)
+        queries.append(term)
+        queries.extend(f"{term} {suffix}" for suffix in suffixes)
+
+    # No customer-supplied pain language: fall back to market problem-first terms
+    # (not the topic prose).
+    if not explicit_terms and lang in INTENT_SUFFIXES:
+        for term in problem_first_terms(base, geo, language):
+            queries.append(term)
+            queries.extend(f"{term} {suffix}" for suffix in suffixes[:3])
+
+    # Countercase, non-adoption and switching perspectives.
+    queries.extend(perspective_queries(base, language))
+
+    # Preserve unanchored searches: membership may only appear in the surrounding
+    # thread. Interleave scoped variants; source review must establish target fit.
+    anchors = csv_terms(segment_keywords) or modifiers
     if anchors:
-        deduped = list(dict.fromkeys(f"{query} {anchor}" for query in deduped for anchor in anchors))
-    return balanced_queries(deduped)
+        queries = [variant for query in queries for variant in
+                   [query, *(f"{query} {anchor}" for anchor in anchors if anchor.casefold() not in query.casefold())]]
+
+    return balanced_queries(list(dict.fromkeys(query for query in queries if query)))
 
 
 def perspective_queries(topic: str, language: str) -> list[str]:
@@ -378,7 +403,7 @@ def query_intent(query: str) -> str:
         ("facebook_discovery", ["facebook"]),
         ("community_discovery", ["forum", "reddit", "foro", "论坛"]),
         ("workaround", ["workaround", "manually", "spreadsheet", "alternative", "alternativa", "deal with", "替代方案"]),
-        ("pain", ["complaint", "frustrated", "hard to", "pain", "expensive", "probleme", "beschwerden", "problèmes", "réclamations", "problemas", "quejas", "problemi", "reclami", "问题", "投诉"]),
+        ("pain", ["complaint", "frustrated", "hard to", "pain", "expensive", "problems", "probleme", "beschwerde", "problèmes", "réclamation", "problemas", "queja", "problemi", "reclam", "问题", "投诉"]),
     ):
         if any(marker in lower for marker in markers): return intent
     return "open_discovery"
@@ -395,8 +420,110 @@ def balanced_queries(queries: list[str]) -> list[str]:
     return output
 
 
-def scheduled_queries(args: argparse.Namespace, queries: list[str]) -> list[str]:
-    return balanced_queries(queries)[:max(1, getattr(args, "query_limit", 12))]
+QUERY_PLAN_PROVIDERS = {"reddit", "brave_search", "serper_search", "firecrawl", "hn", "github",
+                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators"}
+
+
+def load_query_plan(args: argparse.Namespace) -> dict[str, Any]:
+    """Validate exact probes before any workspace write, credentials or network."""
+    path = getattr(args, "query_plan", "")
+    if not path:
+        return {}
+    plan = json.loads(Path(path).read_text(encoding="utf-8"))
+    schema = json.loads((ROOT / "schemas/pain-query-plan.schema.json").read_text(encoding="utf-8"))
+    errors = list(Draft202012Validator(schema).iter_errors(plan))
+    if errors:
+        raise ValueError(f"Invalid --query-plan: {errors[0].message}")
+    if args.sampling_frame != "topic_led_voc":
+        raise ValueError("--query-plan is topic-led discovery; entity capture requires its reviewed source plan")
+    if args.geo.upper() == "AUTO" or args.language.upper() == "AUTO":
+        raise ValueError("--query-plan requires explicit --geo and --language")
+    locale = runtime_locale(args)
+    ids, pairs = set(), set()
+    for row in plan["queries"]:
+        if row["locale"] != locale:
+            raise ValueError(f"Query {row['query_id']} locale must match {locale}; run locales separately")
+        pair = (row["provider"], " ".join(row["query"].casefold().split()))
+        if row["query_id"] in ids or pair in pairs:
+            raise ValueError("Query IDs and provider/query pairs must be unique; share baseline results explicitly")
+        ids.add(row["query_id"]); pairs.add(pair)
+    if set(selected_providers(args.providers)) != {row["provider"] for row in plan["queries"]}:
+        raise ValueError("--providers must exactly match the provider set in --query-plan")
+    for provider in selected_providers(args.providers):
+        count = min(args.query_limit, sum(row["provider"] == provider for row in plan["queries"]))
+        if count * args.results_per_query > args.limit:
+            raise ValueError(f"--limit must be at least {count * args.results_per_query} for {provider} to allocate --results-per-query to every selected query")
+    return plan
+
+
+def provider_query_schedule(args: argparse.Namespace, queries: list[str], provider: str) -> list[dict[str, Any]]:
+    """One schedule for preview and execution; explicit probes are never expanded."""
+    plan = getattr(args, "query_plan_data", {})
+    if plan:
+        rows = [dict(row) for row in plan["queries"] if row["provider"] == provider]
+    else:
+        rows = [{"query_id": hashlib.sha256(f"{provider}:{runtime_locale(args)}:{query}".encode()).hexdigest()[:16],
+                 "query": query, "provider": provider, "locale": runtime_locale(args),
+                 "intent": query_intent(query), "seed_origin": "generated"}
+                for query in balanced_queries(queries)]
+    selected_count = min(len(rows), getattr(args, "query_limit", 12))
+    total_limit = getattr(args, "limit", 20)
+    if not plan:
+        selected_count = min(selected_count, total_limit)
+    per_query = getattr(args, "results_per_query", 5) if plan else max(1, total_limit // max(1, selected_count))
+    per_query = min(per_query, 100 if provider == "reddit" else 10)
+    for index, row in enumerate(rows):
+        row.update({"scheduled": index < selected_count, "per_query_result_limit": per_query,
+                    "attempted": False, "status": "not_attempted" if index < selected_count else "not_attempted:query_limit",
+                    "returned_count": None, "result_urls": [], "record_ids": [], "new_record_count": 0,
+                    "locale_filter_support": "none; requested scope requires source review" if provider in {"reddit", "hn", "github", "scrapecreators", "xai_x_search"} else
+                    "country only; language requires source review" if provider == "firecrawl" else
+                    "language only; geography requires source review" if provider == "x" else
+                    "country and language requested; author locale requires source review"})
+    return rows
+
+
+def unattempted_queries(ledger: list[dict[str, Any]], reason: str) -> None:
+    for row in ledger:
+        if row["scheduled"] and not row["attempted"]:
+            row["status"] = f"not_attempted:{reason}"
+
+
+def record_query_discovery(record: dict[str, Any], row: dict[str, Any]) -> None:
+    """Retain query attribution even when another query already found this URL."""
+    membership = {key: row[key] for key in ("query_id", "candidate_id", "query", "provider", "intent", "source_family", "seed_origin", "cell_id") if key in row}
+    membership.update({"sampling_frame": "topic_led_voc", "collection_locale": row["locale"]})
+    memberships = record.setdefault("discovery_memberships", [])
+    # Replace only the unbound default membership emitted by normalize_record.
+    memberships[:] = [m for m in memberships if m != {"sampling_frame": "topic_led_voc", "query": row["query"]}]
+    if membership not in memberships:
+        memberships.append(membership)
+    evidence_id = record.get("evidence_id")
+    if evidence_id and evidence_id not in row["record_ids"]:
+        row["record_ids"].append(evidence_id)
+
+
+def query_collection_status(ledger: list[dict[str, Any]]) -> str:
+    attempts = [row for row in ledger if row["attempted"]]
+    failures = [row["status"] for row in attempts if row["status"] != "ok"]
+    for status in ("request_budget_exhausted", "insufficient_credits", "billing_required"):
+        if any(row["status"] in {status, f"not_attempted:{status}"} for row in ledger):
+            return status
+    if failures:
+        return "partial" if any(row["status"] == "ok" for row in attempts) else failures[0]
+    return "ok" if attempts else "not_run"
+
+
+def query_plan_snapshot(args: argparse.Namespace, queries: list[str]) -> dict[str, Any]:
+    providers = selected_providers(args.providers)
+    plan = getattr(args, "query_plan_data", {})
+    searchable = QUERY_PLAN_PROVIDERS if getattr(args, "sampling_frame", "topic_led_voc") == "topic_led_voc" else set()
+    return {"input_plan": plan or None,
+            "input_plan_digest": hashlib.sha256(json.dumps(plan, sort_keys=True, ensure_ascii=False).encode()).hexdigest() if plan else None,
+            "provider_schedules": {p: provider_query_schedule(args, queries, p) for p in providers if p in searchable},
+            "providers_outside_preview": [p for p in providers if p not in searchable],
+            "warnings": (["No built-in language expansion for this locale; supplied seeds are preserved. Review local vocabulary and source coverage."]
+                         if args.language.split("-")[0].lower() not in INTENT_SUFFIXES and not plan else [])}
 
 
 def trend_terms(topic: str, problem_keywords: str = "", workaround_keywords: str = "", geo: str = "US", language: str = "en") -> list[str]:
@@ -429,20 +556,8 @@ def social_terms(topic: str, problem_keywords: str = "", workaround_keywords: st
     """Social search works best on compact pain/category/competitor phrases."""
     seeded_terms = [*csv_terms(problem_keywords), *csv_terms(workaround_keywords)]
     if not seeded_terms:
-        return expand_language_variants(inferred_search_terms(topic), geo, language)[:3]
-    return expand_language_variants(user_language_terms("", problem_keywords, workaround_keywords), geo, language)[:3]
-
-
-def reddit_queries(args: argparse.Namespace, queries: list[str]) -> list[str]:
-    if csv_terms(args.problem_keywords) or csv_terms(args.workaround_keywords):
-        return queries[:5]
-    topic_context = args.topic.lower()
-    markets = QUERY_EXPANSION.get("markets", {}) or FALLBACK_QUERY_MARKETS
-    for market in markets.values():
-        markers = [str(m).lower() for m in market.get("trigger_markers", [])]
-        if market.get("geo", "").upper() == args.geo.upper() and any(marker in topic_context for marker in markers):
-            return list(market.get("reddit_queries", [])) + queries[:4]
-    return queries[:5]
+        return expand_language_variants(inferred_search_terms(topic), geo, language)
+    return expand_language_variants(user_language_terms("", problem_keywords, workaround_keywords), geo, language)
 
 
 def tokenize_for_relevance(value: str) -> set[str]:
@@ -499,11 +614,14 @@ def assess_relevance(text: str, args: argparse.Namespace, query: str, url: str =
             "berufsun",
             "private health insurance",
             "health insurance",
+            "disability insurance",
+            "insurance broker",
+            "private insurance",
+            "public insurance",
             "krankenversicherung",
             "versicherungsmakler",
             "versicherungsberater",
             "versicher",
-            "makler",
             "risikovoranfrage",
             "voranfrage",
             "tarif",
@@ -514,8 +632,24 @@ def assess_relevance(text: str, args: argparse.Namespace, query: str, url: str =
             "getsafe",
             "clark",
         ]
-        if not any(anchor in haystack for anchor in insurance_anchors):
-            return "irrelevant", "Insurance topic requires a concrete PKV/GKV/BU/health-insurance/broker anchor; only generic terms matched.", score
+        # Acronyms occur next to punctuation ("BU)"), and English customers
+        # often describe the system transition rather than spell out PKV/GKV.
+        insurance_context = (
+            any(anchor in haystack for anchor in insurance_anchors)
+            or bool(re.search(r"\bbu\b", haystack))
+            or ("insurance" in haystack and any(term in haystack for term in ("public to private", "private to public")))
+        )
+        if not insurance_context:
+            if re.search(r"\bmakler\b", haystack) and not any(
+                marker in haystack for marker in ("immobil", "hauskauf", "wohnung", "real estate", "property broker")
+            ):
+                return "weak", "Ambiguous broker term without a concrete insurance anchor; hydrate before deciding industry and target fit.", score
+            # This specialty lexicon covers German/English only. An English
+            # research brief must not discard a matching French/Arabic/etc.
+            # source merely because its actual words are outside that lexicon.
+            if getattr(args, "language", "en").split("-")[0].lower() not in {"de", "en"} and score > 0:
+                return "weak", "Source-language terms matched; insurance anchor lexicon does not cover this language. Hydrate and review target fit.", score
+            return "irrelevant", "Insurance topic requires a concrete insurance-system/product/broker anchor; only generic terms matched.", score
         if "youtube" in query.lower() or "youtube.com" in url.lower():
             decision_markers = [
                 "pkv",
@@ -1151,19 +1285,27 @@ def reddit_token() -> tuple[str | None, dict[str, Any]]:
 
 
 def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    ledger = provider_query_schedule(args, queries, "reddit")
     token, token_raw = reddit_token()
     raw: dict[str, Any] = {"token": token_raw, "searches": []}
     if not token:
+        status = status_from_response(token_raw) if token_raw.get("status_code") or token_raw.get("error_type") else "missing_credentials"
+        unattempted_queries(ledger, status)
         write_json(run_dir / "raw" / "reddit.json", redact_sensitive(raw))
-        return [], {"status": status_from_response(token_raw) if token_raw.get("status_code") else "missing_credentials"}
+        return [], {"status": status, "query_ledger": ledger}
 
     headers = {"Authorization": f"Bearer {token}", "User-Agent": "evidence-scout/0.1"}
     cutoff = time.time() - (args.days * 86400)
     records: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    per_query_limit = max(3, args.limit // max(1, min(len(queries), 5)))
+    by_id: dict[str, dict[str, Any]] = {}
 
-    for query in reddit_queries(args, queries):
+    for row in ledger:
+        if not row["scheduled"]:
+            continue
+        if len(records) >= args.limit:
+            unattempted_queries(ledger, "sample_limit")
+            break
+        query, per_query_limit = row["query"], row["per_query_result_limit"]
         response = http_get(
             with_query(
                 "https://oauth.reddit.com/search",
@@ -1171,22 +1313,34 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
             ),
             headers=headers,
         )
-        raw["searches"].append({"query": query, "response": response})
+        raw["searches"].append({"query_id": row["query_id"], "query": query, "response": response})
+        status = status_from_response(response)
+        row.update({"attempted": status != "request_budget_exhausted", "status": status})
+        if status in {"request_budget_exhausted", "insufficient_credits", "billing_required"}:
+            unattempted_queries(ledger, status)
+            break
+        if status != "ok":
+            continue
         children = (((response.get("body") or {}).get("data") or {}).get("children") or []) if response.get("ok") else []
-        for child in children:
+        row["returned_count"] = len(children)
+        row["inspected_count"] = min(len(children), per_query_limit)
+        for child in children[:per_query_limit]:
             data = child.get("data") or {}
             post_id = data.get("id") or data.get("name") or ""
-            if not post_id or post_id in seen:
+            if not post_id:
+                continue
+            source_url = f"https://www.reddit.com{data.get('permalink', '')}"
+            row["result_urls"].append(source_url)
+            if post_id in by_id:
+                record_query_discovery(by_id[post_id], row)
                 continue
             if data.get("created_utc") and float(data["created_utc"]) < cutoff:
                 continue
-            seen.add(post_id)
             title = data.get("title") or ""
             body = data.get("selftext") or ""
             text = f"{title}\n\n{body}".strip()
             if not text:
                 continue
-            source_url = f"https://www.reddit.com{data.get('permalink', '')}"
             author_context = f"r/{data.get('subreddit', '')} u/{data.get('author', '')}"
             relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, source_url, author_context)
             records.append(
@@ -1207,99 +1361,121 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
                     relevance_score=relevance_score,
                 )
             )
+            by_id[post_id] = records[-1]
+            record_query_discovery(records[-1], row)
+            records[-1]["sampling_metadata"].update({"sort_requested": "relevance", "per_query_result_limit": per_query_limit,
+                "time_window": {"lookback_days": args.days, "applied_by": "collector"},
+                "subset_limitations": "Search-ranked posts; comments not fetched, no provider locale filter, missing dates remain unresolved."})
+            row["new_record_count"] += 1
             if len(records) >= args.limit:
                 break
-        if len(records) >= args.limit:
-            break
 
     outcomes = [item["response"] for item in raw["searches"]]
     succeeded = sum(1 for response in outcomes if response.get("ok"))
     failed = [response for response in outcomes if not response.get("ok")]
-    status = "ok" if succeeded and not failed else "partial" if succeeded else status_from_response(failed[0]) if failed else "failed"
+    status = query_collection_status(ledger)
     write_json(run_dir / "raw" / "reddit.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "request_count": len(outcomes), "successful_requests": succeeded, "failed_requests": len(failed), "fields": fields_present(raw)}
+    return records, {"status": status, "record_count": len(records), "query_ledger": ledger, "request_count": len(outcomes), "successful_requests": succeeded, "failed_requests": len(failed), "fields": fields_present(raw)}
+
+
+def collect_web_queries(args: argparse.Namespace, queries: list[str], run_dir: Path, provider: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Shared execution semantics for the three web-index calibration adapters."""
+    credential_names = {"firecrawl": ("FIRECRAWL_API_KEY_HGINVESTOR",),
+                        "brave_search": ("BRAVE_SEARCH_API_KEY",),
+                        "serper_search": ("SERPER_DEV_API_KEY", "SERPER_API_KEY")}
+    ledger = provider_query_schedule(args, queries, provider)
+    key_name, api_key = get_secret(*credential_names[provider])
+    raw: dict[str, Any] = {"credential_source": key_name, "searches": []}
+    if not api_key:
+        unattempted_queries(ledger, "missing_credentials")
+        write_json(run_dir / "raw" / f"{provider}.json", raw)
+        return [], {"status": "missing_credentials", "required_env": list(credential_names[provider]), "query_ledger": ledger}
+
+    records: list[dict[str, Any]] = []
+    by_url: dict[str, dict[str, Any]] = {}
+    for row in ledger:
+        if not row["scheduled"]:
+            continue
+        if len(records) >= args.limit:
+            unattempted_queries(ledger, "sample_limit")
+            break
+        query, per_query = row["query"], row["per_query_result_limit"]
+        if provider == "firecrawl":
+            response = http_post("https://api.firecrawl.dev/v1/search", headers={"Authorization": f"Bearer {api_key}"},
+                                 data={"query": query, "limit": per_query, "country": args.geo, "location": args.geo,
+                                       "scrapeOptions": {"formats": ["markdown"]}})
+        elif provider == "serper_search":
+            response = http_post("https://google.serper.dev/search", headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
+                                 data={"q": query, "num": per_query, "gl": args.geo.lower(), "hl": args.language})
+        else:
+            response = http_get(with_query("https://api.search.brave.com/res/v1/web/search",
+                                {"q": query, "count": per_query, "country": args.geo, "search_lang": args.language}),
+                                headers={"X-Subscription-Token": api_key, "Accept": "application/json"})
+        raw["searches"].append({"query_id": row["query_id"], "query": query, "response": response})
+        status = status_from_response(response)
+        row.update({"attempted": status != "request_budget_exhausted", "status": status})
+        if status in {"request_budget_exhausted", "insufficient_credits", "billing_required"}:
+            unattempted_queries(ledger, status)
+            break
+        if status != "ok":
+            continue
+        body = response.get("body") if isinstance(response.get("body"), dict) else {}
+        if provider == "firecrawl":
+            data = body.get("data", [])
+            items = data.get("web", []) if isinstance(data, dict) else data
+        elif provider == "serper_search":
+            items = body.get("organic", [])
+        else:
+            items = (body.get("web") or {}).get("results", [])
+        items = items if isinstance(items, list) else []
+        row["returned_count"] = len(items)
+        row["inspected_count"] = min(len(items), per_query)
+        for item in items[:per_query]:
+            if not isinstance(item, dict):
+                continue
+            url = item.get("url") or item.get("sourceURL") or item.get("link") or ""
+            if not url:
+                continue
+            row["result_urls"].append(url)
+            if url in by_url:
+                record_query_discovery(by_url[url], row)
+                continue
+            markdown = (item.get("markdown") or "") if provider == "firecrawl" else ""
+            text = str(markdown).strip() or "\n\n".join(str(part) for part in
+                [item.get("title", ""), item.get("description") or item.get("snippet", "")] if part).strip()
+            if not text:
+                continue
+            author = (item.get("siteName") or (item.get("metadata") or {}).get("siteName", "")) if provider == "firecrawl" else provider
+            relevance, notes, score = assess_relevance(text, args, query, url, author)
+            record = normalize_record(source="web_search", source_url=url, query=query,
+                customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text,
+                author_context=author, engagement={}, raw_id=url,
+                evidence_type="irrelevant" if relevance == "irrelevant" else None,
+                strength="irrelevant" if relevance == "irrelevant" else None,
+                relevance=relevance, relevance_notes=notes, relevance_score=score)
+            record["content_completeness"] = "extracted_page" if markdown else "search_snippet"
+            record["sampling_metadata"].update({"sort_requested": "provider_relevance", "pages_retrieved": 1,
+                "per_query_result_limit": per_query,
+                "subset_limitations": "Search-ranked extraction may omit replies/pagination; review speakers before accepting testimony." if markdown else
+                                      "Search snippet only; fetch original page before accepting an experience."})
+            record_query_discovery(record, row)
+            by_url[url] = record
+            records.append(record)
+            row["new_record_count"] += 1
+            if len(records) >= args.limit:
+                break
+    write_json(run_dir / "raw" / f"{provider}.json", redact_sensitive(raw))
+    summary = {"status": query_collection_status(ledger), "record_count": len(records),
+               "query_ledger": ledger, "fields": fields_present(raw)}
+    if summary["status"] in {"insufficient_credits", "billing_required"} and provider == "firecrawl":
+        summary["top_up_url"] = "https://www.firecrawl.dev/app"
+    return records, summary
 
 
 def collect_firecrawl(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     if getattr(args, "sampling_frame", "topic_led_voc") == "entity_led_feedback":
         return collect_reviewed_entity_page(args, run_dir)
-    key_name, api_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
-    raw: dict[str, Any] = {"credential_source": key_name, "searches": []}
-    if not api_key:
-        write_json(run_dir / "raw" / "firecrawl.json", raw)
-        return [], {"status": "missing_credentials", "required_env": ["FIRECRAWL_API_KEY_HGINVESTOR"]}
-
-    records: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    selected_queries = scheduled_queries(args, queries)
-    per_query_limit = max(1, args.limit // max(1, len(selected_queries)))
-    query_ledger: list[dict[str, Any]] = []
-    credit_exhausted = False
-    for position, query in enumerate(selected_queries):
-        response = http_post(
-            "https://api.firecrawl.dev/v1/search",
-            headers={"Authorization": f"Bearer {api_key}"},
-            data={"query": query, "limit": per_query_limit, "country": args.geo, "location": args.geo, "scrapeOptions": {"formats": ["markdown"]}},
-        )
-        raw["searches"].append({"query": query, "response": response})
-        response_status = status_from_response(response)
-        query_ledger.append({"query": query, "intent": query_intent(query), "locale": runtime_locale(args), "attempted": True, "status": response_status})
-        if is_credit_exhaustion(response):
-            credit_exhausted = True
-            for skipped in selected_queries[position + 1:]:
-                query_ledger.append({"query": skipped, "intent": query_intent(skipped), "locale": runtime_locale(args), "attempted": False, "status": "skipped:insufficient_credits"})
-            break
-        body = response.get("body") if isinstance(response.get("body"), dict) else {}
-        for item in (body.get("data") or [])[:per_query_limit]:
-            url = item.get("url") or item.get("sourceURL") or ""
-            if url in seen:
-                for record in records:
-                    if record["source_url"] == url:
-                        record["discovery_memberships"].append({"sampling_frame": "topic_led_voc", "query": query, "collection_locale": runtime_locale(args)})
-            if not url or url in seen:
-                continue
-            seen.add(url)
-            title = item.get("title") or ""
-            description = item.get("description") or ""
-            markdown = item.get("markdown") or ""
-            text = str(markdown).strip() or "\n\n".join(part for part in [title, description] if part).strip()
-            if not text:
-                continue
-            relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, item.get("siteName") or item.get("metadata", {}).get("siteName", ""))
-            records.append(
-                normalize_record(
-                    source="web_search",
-                    source_url=url,
-                    query=query,
-                    customer_segment=args.customer_segment,
-                    hypothesis=args.hypothesis_id,
-                    text=text,
-                    author_context=item.get("siteName") or item.get("metadata", {}).get("siteName", ""),
-                    engagement={},
-                    raw_id=url,
-                    evidence_type="irrelevant" if relevance == "irrelevant" else None,
-                    strength="irrelevant" if relevance == "irrelevant" else None,
-                    relevance=relevance,
-                    relevance_notes=relevance_notes,
-                    relevance_score=relevance_score,
-                )
-            )
-            records[-1]["content_completeness"] = "extracted_page" if markdown else "search_snippet"
-            records[-1]["sampling_metadata"].update({"sort_requested": "provider_relevance", "pages_retrieved": 1, "per_query_result_limit": per_query_limit, "subset_limitations": "Search-ranked pages; dynamic replies and pagination may be absent. Document is not an attributed experience."})
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
-
-    attempted_queries = {item["query"] for item in query_ledger}
-    query_ledger.extend({"query": query, "intent": query_intent(query), "locale": runtime_locale(args), "attempted": False, "status": "not_attempted:sample_limit"} for query in queries if query not in attempted_queries)
-    failures = [item for item in query_ledger if item.get("attempted") and item["status"] != "ok"]
-    status = "insufficient_credits" if credit_exhausted else "partial" if records and failures else "ok" if records else query_ledger[0]["status"] if query_ledger else "failed"
-    write_json(run_dir / "raw" / "firecrawl.json", redact_sensitive(raw))
-    summary = {"status": status, "record_count": len(records), "query_ledger": query_ledger, "fields": fields_present(raw)}
-    if credit_exhausted:
-        summary["top_up_url"] = "https://www.firecrawl.dev/app"
-    return records, summary
+    return collect_web_queries(args, queries, run_dir, "firecrawl")
 
 
 def collect_serpapi_google_trends(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -1365,71 +1541,119 @@ def collect_serpapi_google_trends(args: argparse.Namespace, queries: list[str], 
 
 
 def collect_brave_search(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    key_name, api_key = get_secret("BRAVE_SEARCH_API_KEY")
-    raw: dict[str, Any] = {"credential_source": key_name, "searches": []}
-    if not api_key:
-        write_json(run_dir / "raw" / "brave_search.json", raw)
-        return [], {"status": "missing_credentials", "required_env": ["BRAVE_SEARCH_API_KEY"]}
+    return collect_web_queries(args, queries, run_dir, "brave_search")
 
+
+def collect_scheduled_provider(args: argparse.Namespace, queries: list[str], run_dir: Path, provider: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Allocate each search independently; retain raw captures and duplicate memberships.
+
+    For enriched providers the allocation is retained evidence records, not videos
+    or HTTP requests. Raw responses retain unselected results and enrichment failures.
+    """
+    ledger = provider_query_schedule(args, queries, provider)
     records: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    for query in [queries[0], queries[3], queries[6]][:3]:
-        response = http_get(
-            with_query(
-                "https://api.search.brave.com/res/v1/web/search",
-                {"q": query, "count": min(max(args.limit, 1), 10), "country": args.geo, "search_lang": args.language},
-            ),
-            headers={"X-Subscription-Token": api_key, "Accept": "application/json"},
-        )
-        raw["searches"].append({"query": query, "response": response})
-        body = response.get("body") if isinstance(response.get("body"), dict) else {}
-        web = body.get("web", {}) if isinstance(body, dict) else {}
-        for item in web.get("results", []) if isinstance(web, dict) else []:
-            url = item.get("url") or ""
-            if not url or url in seen:
-                continue
-            seen.add(url)
-            text = "\n\n".join(part for part in [item.get("title", ""), item.get("description", "")] if part).strip()
-            if not text:
-                continue
-            relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "Brave Search")
-            records.append(
-                normalize_record(
-                    source="web_search",
-                    source_url=url,
-                    query=query,
-                    customer_segment=args.customer_segment,
-                    hypothesis=args.hypothesis_id,
-                    text=text,
-                    author_context="Brave Search",
-                    engagement={},
-                    raw_id=url,
-                    evidence_type="irrelevant" if relevance == "irrelevant" else None,
-                    strength="irrelevant" if relevance == "irrelevant" else None,
-                    relevance=relevance,
-                    relevance_notes=relevance_notes,
-                    relevance_score=relevance_score,
-                )
-            )
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
+    by_id: dict[str, dict[str, Any]] = {}
+    raw: dict[str, Any] = {"query_captures": []}
+    transcript_remaining = max(0, getattr(args, "youtube_transcript_max", 5))
+    transcript_totals: dict[str, Any] = {"attempted": 0, "fetched": 0, "statuses": {}}
+    provider_details: dict[str, Any] = {}
+    for row in ledger:
+        if not row["scheduled"]:
+            continue
+        local_args = argparse.Namespace(**vars(args))
+        local_args.limit = row["per_query_result_limit"]
+        local_args.youtube_transcript_max = transcript_remaining
+        capture_dir = run_dir / "raw" / f"{provider}-queries" / hashlib.sha256(row["query_id"].encode()).hexdigest()[:16]
+        found, summary = globals()[f"_collect_{provider}_query"](local_args, [row["query"]], capture_dir)
+        provider_details.update({key: summary[key] for key in ("required_env", "top_up_url") if key in summary})
+        capture_path = capture_dir / "raw" / f"{provider}.json"
+        capture = read_json(capture_path, {})
+        raw["query_captures"].append({"query_id": row["query_id"], "path": str(capture_path), "summary": summary})
+        responses = []
+        for name, value in capture.items():
+            if isinstance(value, list):
+                raw.setdefault(name, []).extend(value)
+                responses.extend(item["response"] for item in value if isinstance(item, dict) and "response" in item)
+            else:
+                raw[name] = value
+        statuses = [status_from_response(response) for response in responses]
+        row["attempted"] = any(status != "request_budget_exhausted" for status in statuses)
+        status = summary["status"]
+        # A successful empty API response is a searched-empty sample, not a failure.
+        if statuses:
+            failures = [value for value in statuses if value != "ok"]
+            status = ("partial" if "ok" in statuses else failures[0]) if failures else "ok"
+            for terminal in ("request_budget_exhausted", "insufficient_credits", "billing_required"):
+                if terminal in statuses:
+                    status = terminal
+                    break
+        row["status"] = status if row["attempted"] else f"not_attempted:{status}"
+        row["returned_count"] = len(found) if row["attempted"] and "ok" in statuses else None
+        row["returned_count_unit"] = "normalized records before per-query retention; see raw responses for search-result counts"
+        row["capture_path"] = str(capture_path)
+        if provider == "xai_x_search":
+            row["execution_boundary"] = "Seed sent in model prompt; underlying X queries are not observable. Cited leads require direct review."
+        for record in found[:row["per_query_result_limit"]]:
+            row["result_urls"].append(record["source_url"])
+            identity = record["evidence_id"]
+            if identity not in by_id:
+                by_id[identity] = record
+                records.append(record)
+                row["new_record_count"] += 1
+            record_query_discovery(by_id[identity], row)
+        transcripts = summary.get("transcripts", {})
+        for key in ("attempted", "fetched"):
+            transcript_totals[key] += transcripts.get(key, 0)
+        for key, value in transcripts.get("statuses", {}).items():
+            transcript_totals["statuses"][key] = transcript_totals["statuses"].get(key, 0) + value
+        transcript_remaining -= transcripts.get("attempted", 0)
+        if status in {"missing_credentials", "request_budget_exhausted", "insufficient_credits", "billing_required"}:
+            unattempted_queries(ledger, status)
             break
+    raw["query_ledger"] = ledger
+    write_json(run_dir / "raw" / f"{provider}.json", redact_sensitive(raw))
+    status = query_collection_status(ledger)
+    if status == "not_run":
+        status = next((row["status"].removeprefix("not_attempted:") for row in ledger if row["scheduled"]), status)
+    summary = {"status": status, "record_count": len(records), "query_ledger": ledger, "fields": fields_present(raw), **provider_details}
+    if provider == "youtube" and getattr(args, "youtube_transcripts", False):
+        summary["transcripts"] = transcript_totals
+    return records, summary
 
-    status = "ok" if records else status_from_response((raw["searches"][0] or {}).get("response", {})) if raw["searches"] else "failed"
-    write_json(run_dir / "raw" / "brave_search.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+
+def collect_hn(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "hn")
 
 
-def collect_hn(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def collect_github(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "github")
+
+
+def collect_google_autocomplete(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "google_autocomplete")
+
+
+def collect_youtube(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "youtube")
+
+
+def collect_x(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "x")
+
+
+def collect_xai_x_search(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "xai_x_search")
+
+
+def _collect_hn_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Hacker News via the free Algolia API. No credentials required."""
     raw: dict[str, Any] = {"searches": []}
     cutoff = int(time.time() - (args.days * 86400))
     records: list[dict[str, Any]] = []
     seen: set[str] = set()
-    per_tag_limit = max(2, args.limit // 2)
+    per_tag_limit = max(1, (args.limit + 1) // 2)
     for tag in ["story", "comment"]:
-        for query in [queries[0], queries[3], queries[6], queries[8]][:4]:
+        for query in queries:
             response = http_get(
                 with_query(
                     "https://hn.algolia.com/api/v1/search",
@@ -1444,7 +1668,7 @@ def collect_hn(args: argparse.Namespace, queries: list[str], run_dir: Path) -> t
             raw["searches"].append({"query": query, "tags": tag, "response": response})
             body = response.get("body") if isinstance(response.get("body"), dict) else {}
             hits = body.get("hits", []) if isinstance(body.get("hits"), list) else []
-            for hit in hits:
+            for hit in hits[:per_tag_limit]:
                 object_id = hit.get("objectID") or ""
                 url = hit.get("url") or (f"https://news.ycombinator.com/item?id={object_id}" if object_id else "")
                 if not object_id or object_id in seen:
@@ -1475,19 +1699,13 @@ def collect_hn(args: argparse.Namespace, queries: list[str], run_dir: Path) -> t
                         relevance_score=relevance_score,
                     )
                 )
-                if len(records) >= args.limit:
-                    break
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
 
     status = "ok" if records else "failed" if raw["searches"] else "failed"
     write_json(run_dir / "raw" / "hn.json", redact_sensitive(raw))
     return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
 
 
-def collect_github(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _collect_github_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """GitHub issue search via the free REST API. Optional GITHUB_TOKEN raises rate limits."""
     key_name, token = get_secret("GITHUB_TOKEN", "GH_TOKEN")
     raw: dict[str, Any] = {"credential_source": key_name, "searches": []}
@@ -1498,7 +1716,7 @@ def collect_github(args: argparse.Namespace, queries: list[str], run_dir: Path) 
     records: list[dict[str, Any]] = []
     seen: set[str] = set()
     per_query_limit = max(2, args.limit // max(1, min(len(queries), 3)))
-    for query in [queries[0], queries[3], queries[6]][:3]:
+    for query in queries:
         search_q = f"{query} type:issue created:>={cutoff_date}"
         response = http_get(
             with_query(
@@ -1550,12 +1768,12 @@ def collect_github(args: argparse.Namespace, queries: list[str], run_dir: Path) 
     return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
 
 
-def collect_google_autocomplete(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _collect_google_autocomplete_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Google autocomplete suggestions. Free demand-language proxy; no credentials."""
     raw: dict[str, Any] = {"searches": []}
     records: list[dict[str, Any]] = []
     seen: set[str] = set()
-    seeds = [queries[0], queries[3], queries[6], problem_first_terms(args.topic, args.problem_keywords, args.workaround_keywords)[0] if problem_first_terms(args.topic, args.problem_keywords, args.workaround_keywords) else args.topic][:4]
+    seeds = queries
     for seed in seeds:
         response = http_get(
             with_query(
@@ -1851,67 +2069,7 @@ def collect_google_places_reviews(args: argparse.Namespace, queries: list[str], 
 def collect_serper_search(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     if getattr(args, "sampling_frame", "topic_led_voc") == "entity_led_feedback":
         return [], {"status": "capture_gate_blocked", "reason": "Search is discovery only; use firecrawl with an exact reviewed --entity-source-url", "record_count": 0}
-    key_name, api_key = get_secret("SERPER_DEV_API_KEY", "SERPER_API_KEY")
-    raw: dict[str, Any] = {"credential_source": key_name, "searches": []}
-    if not api_key:
-        write_json(run_dir / "raw" / "serper_search.json", raw)
-        return [], {"status": "missing_credentials", "required_env": ["SERPER_DEV_API_KEY"]}
-
-    records: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    selected_queries = scheduled_queries(args, queries)
-    per_query_limit = max(1, args.limit // max(1, len(selected_queries)))
-    query_ledger: list[dict[str, Any]] = []
-    for query in selected_queries:
-        response = http_post(
-            "https://google.serper.dev/search",
-            headers={"X-API-KEY": api_key, "Content-Type": "application/json"},
-            data={"q": query, "num": min(per_query_limit, 10), "gl": args.geo.lower(), "hl": args.language},
-        )
-        raw["searches"].append({"query": query, "response": response})
-        query_ledger.append({"query": query, "intent": query_intent(query), "locale": runtime_locale(args), "attempted": True, "status": status_from_response(response)})
-        body = response.get("body") if isinstance(response.get("body"), dict) else {}
-        for item in (body.get("organic", []) if isinstance(body, dict) else [])[:per_query_limit]:
-            url = item.get("link") or ""
-            if not url or url in seen:
-                continue
-            seen.add(url)
-            text = "\n\n".join(part for part in [item.get("title", ""), item.get("snippet", "")] if part).strip()
-            if not text:
-                continue
-            relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "Serper.dev")
-            records.append(
-                normalize_record(
-                    source="web_search",
-                    source_url=url,
-                    query=query,
-                    customer_segment=args.customer_segment,
-                    hypothesis=args.hypothesis_id,
-                    text=text,
-                    author_context="Serper.dev Google SERP",
-                    engagement={},
-                    raw_id=url,
-                    evidence_type="irrelevant" if relevance == "irrelevant" else None,
-                    strength="irrelevant" if relevance == "irrelevant" else None,
-                    relevance=relevance,
-                    relevance_notes=relevance_notes,
-                    relevance_score=relevance_score,
-                    confidence_notes="Collected via Serper.dev Google-only SERP. Use SerpApi/DataForSEO only for non-Google engines, edge-case parsers, or SEO-depth datasets.",
-                )
-            )
-            records[-1]["content_completeness"] = "search_snippet"
-            records[-1]["sampling_metadata"].update({"sort_requested": "provider_relevance", "per_query_result_limit": min(per_query_limit, 10), "subset_limitations": "Search snippet only; fetch original page before accepting an experience."})
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
-
-    failures = [entry for entry in query_ledger if entry["status"] != "ok"]
-    status = "partial" if records and failures else "ok" if records else failures[0]["status"] if failures else "empty"
-    write_json(run_dir / "raw" / "serper_search.json", redact_sensitive(raw))
-    executed = {item["query"] for item in query_ledger}
-    query_ledger.extend({"query": query, "intent": query_intent(query), "locale": runtime_locale(args), "attempted": False, "status": "not_attempted:sample_limit"} for query in queries if query not in executed)
-    return records, {"status": status, "record_count": len(records), "query_ledger": query_ledger, "fields": fields_present(raw)}
+    return collect_web_queries(args, queries, run_dir, "serper_search")
 
 
 def collect_crawl4ai(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -2082,7 +2240,7 @@ def fetch_youtube_transcript(video_id: str, languages: list[str]) -> tuple[str, 
     return "ok", " ".join(text.split())[:YOUTUBE_TRANSCRIPT_MAX_CHARS]
 
 
-def collect_youtube(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _collect_youtube_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     key_name, api_key = get_secret("YOUTUBE_API_KEY", "GOOGLE_API_KEY")
     raw: dict[str, Any] = {"credential_source": key_name, "searches": [], "comments": [], "transcripts": []}
     if not api_key:
@@ -2094,11 +2252,11 @@ def collect_youtube(args: argparse.Namespace, queries: list[str], run_dir: Path)
     transcripts_attempted = 0
     transcripts_fetched = 0
     transcript_max = max(0, getattr(args, "youtube_transcript_max", 5))
-    for query in [queries[0], queries[2], queries[5]][:3]:
+    for query in queries:
         search_response = http_get(
             with_query(
                 "https://www.googleapis.com/youtube/v3/search",
-                {"part": "snippet", "q": query, "type": "video", "maxResults": min(max(args.limit, 1), 5), "key": api_key},
+                {"part": "snippet", "q": query, "type": "video", "maxResults": min(max(args.limit, 1), 10), "regionCode": args.geo, "relevanceLanguage": args.language, "key": api_key},
             )
         )
         raw["searches"].append({"query": query, "response": search_response})
@@ -2215,7 +2373,7 @@ def collect_youtube(args: argparse.Namespace, queries: list[str], run_dir: Path)
     return records, summary
 
 
-def collect_x(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _collect_x_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     key_name, bearer = get_secret("X_BEARER_TOKEN", "TWITTER_BEARER_TOKEN")
     raw: dict[str, Any] = {"credential_source": key_name, "searches": []}
     if not bearer:
@@ -2223,8 +2381,7 @@ def collect_x(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tu
         return [], {"status": "missing_credentials", "required_env": ["X_BEARER_TOKEN"]}
 
     terms = social_terms(args.topic, args.problem_keywords, args.workaround_keywords, args.geo, args.language)
-    quoted_terms = " OR ".join(f'"{term}"' for term in terms[:2])
-    query = f'({quoted_terms}) -is:retweet lang:{args.language}'
+    query = f'({queries[0]}) -is:retweet lang:{args.language}'
     response = http_get(
         with_query(
             "https://api.x.com/2/tweets/search/recent",
@@ -2279,7 +2436,7 @@ def extract_xai_text(body: Any) -> str:
     return "\n".join(parts)
 
 
-def collect_xai_x_search(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def _collect_xai_x_search_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     key_name, api_key = get_secret("GROK_API_KEY", "XAI_API_KEY")
     raw: dict[str, Any] = {"credential_source": key_name, "calls": []}
     if not api_key:
@@ -2291,8 +2448,11 @@ def collect_xai_x_search(args: argparse.Namespace, queries: list[str], run_dir: 
         "Search X for recent public posts about this business research topic. "
         "Focus on direct customer complaints, workarounds, buyer objections, investor/operator disagreement, and repeated themes. "
         "Return cited post URLs and separate evidence from interpretation. "
-        f"Topic: {args.topic}. Segment: {args.customer_segment}. Search terms: {', '.join(terms[:4])}."
+        f"Search seed: {queries[0]}. Geography: {args.geo}. Original source language: {args.language}. "
+        "Search this seed; do not silently translate it or replace it with broader English terms."
     )
+    if args.xai_prompt:
+        prompt += f"\nSearch seed: {queries[0]}. Geography: {args.geo}. Source language: {args.language}."
     tool: dict[str, Any] = {"type": "x_search"}
     handles = [handle.strip().lstrip("@") for handle in args.x_handles.split(",") if handle.strip()]
     if handles:
@@ -2577,11 +2737,13 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
         raw = {"credential_source": None, "calls": [], "facebook_capture_gate": capture_audit, "capture_reason": capture_reason}
         write_json(run_dir / "raw" / "scrapecreators.json", raw)
         return [], {"status": "capture_gate_blocked", "record_count": 0, "reason": capture_reason}
+    ledger = provider_query_schedule(args, queries or social_terms(args.topic, args.problem_keywords, args.workaround_keywords, args.geo, args.language), "scrapecreators") if getattr(args, "sampling_frame", "topic_led_voc") == "topic_led_voc" else []
     key_name, api_key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
     raw: dict[str, Any] = {"credential_source": key_name, "calls": [], "facebook_capture_gate": capture_audit, "capture_reason": capture_reason}
     if not api_key:
+        unattempted_queries(ledger, "missing_credentials")
         write_json(run_dir / "raw" / "scrapecreators.json", raw)
-        return [], {"status": "missing_credentials", "required_env": ["SCRAPE_CREATORS_API_KEY"]}
+        return [], {"status": "missing_credentials", "required_env": ["SCRAPE_CREATORS_API_KEY"], "query_ledger": ledger}
 
     # Pre-flight credit check (free endpoint) so an exhausted balance fails loudly
     # before any paid call is attempted.
@@ -2592,10 +2754,11 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
     if balance_response.get("ok") and isinstance(balance_body.get("creditCount"), int):
         credits_remaining = balance_body["creditCount"]
     if credits_remaining is not None and credits_remaining <= 0:
+        unattempted_queries(ledger, "insufficient_credits")
         write_json(run_dir / "raw" / "scrapecreators.json", redact_sensitive(raw))
         return [], {
             "status": "insufficient_credits",
-            "credits_remaining": credits_remaining,
+            "credits_remaining": credits_remaining, "query_ledger": ledger,
             "top_up_url": "https://app.scrapecreators.com/",
         }
 
@@ -2606,11 +2769,21 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
 
     # spec: (source, endpoint, params, items_key, cursor_key, cap, context, parser)
     # items_key None means a single-call endpoint parsed with list_candidates.
-    specs: list[tuple[str, str, dict[str, Any], str | None, str | None, int, str, Any]] = [
-        ("tiktok", "https://api.scrapecreators.com/v1/tiktok/search/keyword", {"query": social_query, "date_posted": "month", "sort_by": "relevance", "trim": "true"}, None, None, per_endpoint, "ScrapeCreators tiktok-search", stringify_social_item),
-        ("instagram", "https://api.scrapecreators.com/v2/instagram/reels/search", {"query": social_query, "date_posted": "last-month", "page": 1}, None, None, per_endpoint, "ScrapeCreators ig-reels-search", stringify_social_item),
-        ("threads", "https://api.scrapecreators.com/v1/threads/search", {"query": social_query, "trim": "true"}, None, None, per_endpoint, "ScrapeCreators threads-search", stringify_social_item),
-    ]
+    specs: list[tuple[str, str, dict[str, Any], str | None, str | None, int, str, Any]] = []
+    search_rows: dict[str, dict[str, Any]] = {}
+    for row in ledger:
+        if not row["scheduled"]:
+            continue
+        row["endpoint_ledger"] = []
+        for source, endpoint, extra in [
+            ("tiktok", "https://api.scrapecreators.com/v1/tiktok/search/keyword", {"date_posted": "month", "sort_by": "relevance", "trim": "true"}),
+            ("instagram", "https://api.scrapecreators.com/v2/instagram/reels/search", {"date_posted": "last-month", "page": 1}),
+            ("threads", "https://api.scrapecreators.com/v1/threads/search", {"trim": "true"}),
+        ]:
+            context = f"ScrapeCreators {source}-search:{row['query_id']}"
+            search_rows[context] = row
+            specs.append((source, endpoint, {"query": row["query"], **extra}, None, None,
+                          min(per_endpoint, row["per_query_result_limit"]), context, stringify_social_item))
     for handle in [item.strip().lstrip("@") for item in args.x_handles.split(",") if item.strip()]:
         specs.append(("x", "https://api.scrapecreators.com/v1/twitter/user-tweets", {"handle": handle, "trim": "true"}, None, None, per_endpoint, f"ScrapeCreators x-handle:{handle}", stringify_twitter_item))
     for group in [item.strip() for item in args.fb_groups.split(",") if item.strip()]:
@@ -2628,17 +2801,27 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
 
     records: list[dict[str, Any]] = []
     seen: set[str] = set()
+    search_records: dict[str, dict[str, Any]] = {}
     endpoint_statuses: dict[str, str] = {}
     comment_candidates: list[tuple[str, str, str, str]] = []
     comment_request_ledger: list[dict[str, Any]] = []
     credits_exhausted = False
     for source, endpoint, params, items_key, cursor_key, cap, context, parser in specs:
+        row = search_rows.get(context)
+        social_query = row["query"] if row else args.topic
         if credits_exhausted:
             endpoint_statuses[context] = "skipped:insufficient_credits"
             continue
         if items_key is None:
             response = http_get(with_query(endpoint, params), headers={"x-api-key": api_key})
             raw["calls"].append({"source": source, "endpoint": endpoint, "params": params, "response": response})
+            if row is not None:
+                call_status = status_from_response(response)
+                row["attempted"] |= call_status != "request_budget_exhausted"
+                row["endpoint_ledger"].append({"endpoint": endpoint, "status": call_status,
+                    "attempted": call_status != "request_budget_exhausted"})
+                if call_status == "ok":
+                    row["returned_count"] = (row["returned_count"] or 0) + len(list_candidates(response.get("body")))
             if not response.get("ok") or is_credit_exhaustion(response):
                 call_status = status_from_response(response)
                 endpoint_statuses[context] = call_status
@@ -2658,8 +2841,14 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
             if not isinstance(item, dict):
                 continue
             text, url, engagement, raw_id = parser(item)
-            identity = raw_id or url or text[:80]
-            if not text or identity in seen:
+            identity = f"{source}:{raw_id or url or text[:80]}"
+            if not text:
+                continue
+            if row is not None and identity in search_records:
+                record_query_discovery(search_records[identity], row)
+                row["result_urls"].append(url)
+                continue
+            if identity in seen or (row is not None and row["new_record_count"] >= row["per_query_result_limit"]):
                 continue
             seen.add(identity)
             relevance, relevance_notes, relevance_score = assess_relevance(text, args, social_query, url, context)
@@ -2696,6 +2885,11 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                     collection_locator=context.split(":", 2)[2] if subject_entity else "",
                 )
             )
+            if row is not None:
+                search_records[identity] = records[-1]
+                record_query_discovery(records[-1], row)
+                row["new_record_count"] += 1
+                row["result_urls"].append(url)
             if url and source in {"facebook", "instagram"}:
                 supplier_identity = facebook_context.get("author_label", "") if source == "facebook" and context.startswith(("ScrapeCreators fb-page", "ScrapeCreators fb-entity:")) else context.split(":", 2)[2] if instagram_entity else ""
                 comment_candidates.append((source, url, context, supplier_identity))
@@ -2722,6 +2916,7 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
             endpoint_statuses[skipped_key] = "skipped:comments_max"
             comment_request_ledger.append({"source": source, "target_url": url, "context": context, "attempted": False, "status": "skipped:comments_max", "http_status": None, "record_count": 0})
         for position, (source, url, context, known_supplier_identity) in enumerate(selected_comments):
+            social_query = search_rows[context]["query"] if context in search_rows else args.topic
             endpoint = comment_endpoints[source]
             ledger_key = f"{context} comments:{hashlib.sha256(url.encode()).hexdigest()[:12]}"
             params = {"url": url, "trim": "true"}
@@ -2782,6 +2977,14 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                         collection_locator=context.split(":", 2)[2] if subject_entity else "",
                     )
                 )
+            if context in search_rows:
+                for record in records[before:]:
+                    parent_ids = {membership.get("query_id") for parent in search_records.values()
+                                  if parent["source_url"] == url
+                                  for membership in parent.get("discovery_memberships", [])}
+                    for parent_row in ledger:
+                        if parent_row["query_id"] in parent_ids:
+                            record_query_discovery(record, parent_row)
             produced_comments = len(records) - before
             body = response.get("body") if isinstance(response.get("body"), dict) else {}
             continuation = body.get("cursor") or body.get("next_cursor") or body.get("nextCursor")
@@ -2800,8 +3003,23 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
         status = "partial"
     else:
         status = "ok" if records else status_from_response(first_response)
+    for row in ledger:
+        if not row["scheduled"]:
+            continue
+        outcomes = [entry["status"] for entry in row.get("endpoint_ledger", [])]
+        if not outcomes:
+            row["status"] = "not_attempted:insufficient_credits" if credits_exhausted else "not_attempted"
+        else:
+            failures = [value for value in outcomes if value != "ok"]
+            row["status"] = ("partial" if "ok" in outcomes else failures[0]) if failures else "ok"
+            if len(outcomes) < 3:
+                row["status"] = "partial" if not credits_exhausted else "insufficient_credits"
+        row["enrichment_boundary"] = "Keyword allocation covers posts across three endpoints; optional comments have a separate comments_max cap."
+    if ledger and status == "ok" and query_collection_status(ledger) != "ok":
+        status = query_collection_status(ledger)
+    raw["query_ledger"] = ledger
     write_json(run_dir / "raw" / "scrapecreators.json", redact_sensitive(raw))
-    summary: dict[str, Any] = {"status": status, "record_count": len(records), "endpoint_statuses": endpoint_statuses, "comment_request_ledger": comment_request_ledger, "fields": fields_present(raw), "coverage_alerts": targeted_failures}
+    summary: dict[str, Any] = {"status": status, "record_count": len(records), "endpoint_statuses": endpoint_statuses, "comment_request_ledger": comment_request_ledger, "fields": fields_present(raw), "coverage_alerts": targeted_failures, "query_ledger": ledger}
     if credits_remaining is not None:
         summary["credits_remaining_at_start"] = credits_remaining
     if credits_exhausted:
@@ -3790,6 +4008,11 @@ def quality_summary(records: list[dict[str, Any]], provider_summaries: dict[str,
     for provider, summary in provider_summaries.items():
         if summary.get("status") == "ok" and summary.get("record_count", 0) == 0:
             flags.append(f"{provider} API worked but produced zero relevant records.")
+    entity_records = [record for record in records if record.get("sampling_frame") == "entity_led_feedback" and record.get("subject_entity_id")]
+    if entity_records:
+        flags.append(f"Entity-led capture contains {len(entity_records)} entity-bound record(s); semantic customer review and study-wide entity/source coverage remain pending. Reconcile the source plan with finalize_customer_feedback.py; capture alone does not complete the feedback pass.")
+    else:
+        flags.append("No entity-bound records in this run: entity-led customer-feedback analysis is pending or a coverage gap. Selecting a review provider, an empty result or failed credentials cannot complete that pass; reconcile any separate runs with the reviewed source plan.")
     return flags
 
 
@@ -4023,10 +4246,30 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace, queries: list[s
             "- Keep Google Trends terms short and search-like.",
             "- Treat competitor/editorial/provider pages as category context, not user demand.",
             "",
+            "## Pain-Query Calibration",
+            "",
+            "- Brainstorm source-language query families and source locations; review the plan before collection (independent when available/authorized, otherwise label inline review).",
+            "- Use `--query-plan` with exact candidates, matching locale/providers and `--results-per-query`; preview allocations with `--query-preview`. See query_plan.json for the input and scheduled queries.",
+            "- Review actual source experiences before comparing precision, additional unique experiences, source/journey coverage and countercases. Keep failed and unreviewed denominators explicit.",
+            "- Diagnose query, source, access, extraction and classification gaps; revise using observed vocabulary and test fresh queries/sources. Record retained/dropped families, revision reason and scoped stop condition.",
+            "- Record candidate-to-evidence IDs, fetched/reviewed/unresolved counts and review decisions here. Query ledgers are execution evidence, not semantic customer judgments.",
+            "",
+            "## Entity-Led Check",
+            "",
+            "- If verified competitors or substitutes exist, an entity-led pass (Trustpilot, App Store, Google reviews, forums) is required in addition to this topic-led run.",
+            "- Without a reviewed entity source plan, this run is topic-led only and its coverage report must mark entity-led as pending.",
+            "",
             "## Google Trends Preview",
             "",
         ]
     )
+    if not getattr(args, "query_plan_data", {}) and topic_is_prose(args.topic, getattr(args, "topic_keywords", "")):
+        lines.extend(
+            [
+                "> **Query calibration warning:** `--topic` is a long sentence and no `--topic-keywords` was supplied, so queries may be noisy. Pass a short `--topic-keywords` phrase such as the search terms a customer would type.",
+                "",
+            ]
+        )
     lines.extend(f"- `{term}`" for term in trend_preview)
     lines.extend(
         [
@@ -4107,8 +4350,12 @@ PROVIDER_ROUTING_FAMILY = {
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Collect normalized business-idea evidence.")
     parser.add_argument("--topic", required=True, help="Business idea, problem, category, or job-to-be-done.")
+    parser.add_argument("--topic-keywords", default="", help="Short source-language search phrase used instead of the prose --topic for queries. Recommended whenever --topic is a sentence.")
     parser.add_argument("--customer-segment", default="", help="Target customer segment to test.")
-    parser.add_argument("--segment-keywords", default="", help="Short, comma-separated target-audience phrases in the source language; appended to every validation query. Not the full segment brief.")
+    parser.add_argument("--segment-keywords", default="", help="Short source-language audience phrases; generated validation mixes anchored and unanchored queries. Exact --query-plan rows are unchanged.")
+    parser.add_argument("--query-preview", action="store_true", help="Print the generated query plan and exit without collecting. Use to calibrate pain-query formulations cheaply.")
+    parser.add_argument("--query-plan", default="", help="Validated pain-query-plan JSON: execute exact topic-led candidates on Reddit, Brave, Serper or Firecrawl. Requires matching explicit locale and providers.")
+    parser.add_argument("--results-per-query", type=int, default=5, help="Result allowance per exact query with --query-plan (1-10). --limit must cover every selected query's allowance per provider.")
     parser.add_argument(
         "--research-mode",
         choices=["validation", "discovery"],
@@ -4317,37 +4564,61 @@ def parse_args() -> argparse.Namespace:
     if args.research_mode == "validation":
         if args.customer_segment.strip().casefold() in {"", "unknown", "unspecified", "unresolved", "tbd", "[unresolved: market discovery]"}:
             parser.error("validation requires --customer-segment; use --research-mode discovery before selecting a target hypothesis")
-        if not csv_terms(args.segment_keywords):
-            args.segment_keywords = ",".join(segment_modifiers(args.customer_segment))
-        if not csv_terms(args.segment_keywords):
-            parser.error("validation requires --segment-keywords for the selected target; use short source-language audience terms")
     if args.max_http_requests < 1:
         parser.error("--max-http-requests must be positive")
     if args.query_limit < 1 or args.limit < 1:
         parser.error("--query-limit and --limit must be positive")
+    if not 1 <= args.results_per_query <= 10:
+        parser.error("--results-per-query must be between 1 and 10")
     if args.sampling_frame == "entity_led_feedback" and not args.subject_entity_id.strip():
         parser.error("--sampling-frame entity_led_feedback requires --subject-entity-id")
     if args.trustpilot_max_pages < 1:
         parser.error("--trustpilot-max-pages must be positive")
     try:
+        args.query_plan_data = load_query_plan(args)
         parse_entity_locator_pairs(args.trustpilot_domains, "--trustpilot-domains")
         parse_entity_locator_pairs(args.google_place_ids, "--google-place-ids")
         parse_entity_locator_pairs(args.itunes_entity_apps, "--itunes-entity-apps")
         parse_entity_store_apps(args.sonar_entity_apps, "--sonar-entity-apps")
         if args.ig_handles:
             parse_entity_locator_pairs(args.ig_handles, "--ig-handles")
-    except ValueError as exc:
+    except (ValueError, OSError) as exc:
         parser.error(str(exc))
+    inferred_geo, inferred_language = infer_geo_language(args.topic, args.customer_segment, args.problem_keywords, args.workaround_keywords)
+    args.geo = inferred_geo if args.geo.upper() == "AUTO" else args.geo.upper()
+    args.language = inferred_language if args.language.upper() == "AUTO" else args.language.lower()
+    if args.research_mode == "validation" and not args.query_plan_data:
+        if not csv_terms(args.segment_keywords):
+            args.segment_keywords = ",".join(segment_modifiers(args.customer_segment, args.language))
+        if not csv_terms(args.segment_keywords):
+            parser.error("validation requires --segment-keywords in the source language, or an explicit --query-plan")
     return args
 
 
 def main() -> int:
     args = parse_args()
-    inferred_geo, inferred_language = infer_geo_language(args.topic, args.customer_segment, args.problem_keywords, args.workaround_keywords)
-    if args.geo.upper() == "AUTO":
-        args.geo = inferred_geo
-    if args.language.upper() == "AUTO":
-        args.language = inferred_language
+    queries = list(dict.fromkeys(row["query"] for row in args.query_plan_data["queries"])) if args.query_plan_data else query_plan(
+        args.topic, args.customer_segment, args.problem_keywords, args.workaround_keywords,
+        args.geo, args.language, args.research_mode, args.segment_keywords, args.topic_keywords)
+    snapshot = query_plan_snapshot(args, queries)
+    if args.query_preview:
+        json.dump(
+            {
+                "topic": args.topic,
+                "topic_keywords": args.topic_keywords,
+                "topic_is_prose": topic_is_prose(args.topic, args.topic_keywords),
+                "geo": args.geo,
+                "language": args.language,
+                "query_count": len(queries),
+                "queries": queries,
+                **snapshot,
+            },
+            sys.stdout,
+            ensure_ascii=False,
+            indent=2,
+        )
+        sys.stdout.write("\n")
+        return 0
     run_dir, workspace = resolve_run_dir(
         topic=args.topic,
         workspace_arg=args.workspace,
@@ -4359,6 +4630,7 @@ def main() -> int:
         customer_segment=args.customer_segment,
     )
     run_dir.mkdir(parents=True, exist_ok=True)
+    write_json(run_dir / "query_plan.json", snapshot)
     if workspace:
         update_stage(
             workspace,
@@ -4376,16 +4648,6 @@ def main() -> int:
         next_action="Complete provider collection and inspect source quality.",
     )
 
-    queries = query_plan(
-        args.topic,
-        args.customer_segment,
-        args.problem_keywords,
-        args.workaround_keywords,
-        args.geo,
-        args.language,
-        args.research_mode,
-        args.segment_keywords,
-    )
     requested_providers = selected_providers(args.providers)
     write_research_plan(run_dir, args, queries, requested_providers)
     provider_funcs = {
@@ -4427,6 +4689,10 @@ def main() -> int:
                 continue
             if budget.requests >= budget.max_requests:
                 provider_summaries[provider] = {"status": "request_budget_exhausted", "record_count": 0}
+                if provider in QUERY_PLAN_PROVIDERS:
+                    ledger = provider_query_schedule(args, queries, provider)
+                    unattempted_queries(ledger, "request_budget_exhausted")
+                    provider_summaries[provider]["query_ledger"] = ledger
                 continue
             blocked_before = budget.blocked_requests
             provider_records, provider_summary = func(args, queries, run_dir)
@@ -4462,12 +4728,14 @@ def main() -> int:
     append_jsonl(run_dir / "evidence.jsonl", relevant_records)
     append_jsonl(run_dir / "irrelevant.jsonl", irrelevant_records)
     alerts = provider_alerts(provider_summaries)
-    quality_flags = quality_summary(relevant_records, provider_summaries)
+    quality_flags = quality_summary(relevant_records, provider_summaries) + snapshot["warnings"]
     remaining = remaining_tasks(provider_summaries, quality_flags)
     budget_exhausted = any(s.get("status") == "request_budget_exhausted" for s in provider_summaries.values())
     summary = {
         "run_dir": str(run_dir),
         "topic": args.topic,
+        "topic_keywords": args.topic_keywords,
+        "query_plan_digest": snapshot["input_plan_digest"],
         "customer_segment": args.customer_segment,
         "segment_keywords": args.segment_keywords,
         "research_mode": args.research_mode,
@@ -4490,6 +4758,7 @@ def main() -> int:
             "irrelevant_jsonl": str(run_dir / "irrelevant.jsonl"),
             "report": str(run_dir / "report.md"),
             "research_plan": str(run_dir / "research_plan.md"),
+            "query_plan": str(run_dir / "query_plan.json"),
             "user_review_plan": str(run_dir / "user_review_plan.md"),
             "assumptions": str(run_dir / "assumptions.md"),
             "raw_dir": str(run_dir / "raw"),

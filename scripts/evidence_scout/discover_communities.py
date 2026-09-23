@@ -399,6 +399,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--locale-keywords", action="append", default=[], help="Optional per-locale phrases: COUNTRY:LANGUAGE=phrase|phrase.")
     parser.add_argument("--locale-source-terms", action="append", default=[], help="Required for languages without a built-in pack: COUNTRY:LANGUAGE=forum terms|group terms|page terms.")
     parser.add_argument("--seed-language", default="", help="Attest the language of shared --community-keywords for single-language locales.")
+    parser.add_argument("--query-preview", action="store_true", help="Print all locale/source queries without credentials, signing keys, network or workspace writes.")
+    parser.add_argument("--query-review", default="", help="Analyst vocabulary/source review JSON, including optional source-derived seed lineage; not capture approval.")
     parser.add_argument("--sensitivity", choices=("auto", "standard", "sensitive", "vulnerable"), default="auto")
     parser.add_argument("--providers", default="brave_search,firecrawl,serper_search"); parser.add_argument("--limit", type=int, default=10)
     parser.add_argument("--query-limit", type=int, default=100); parser.add_argument("--max-http-requests", type=int, default=500)
@@ -424,21 +426,61 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
+def reviewed_query_plan(args):
+    plan = query_plan(args.topic, args.community_keywords, args.locales, args.locale_keyword_map, args.locale_source_term_map)
+    review = read_json(Path(args.query_review)) if args.query_review else {}
+    if args.query_review:
+        if not isinstance(review, dict) or not isinstance(review.get("revision"), str) or not review["revision"].strip() or not isinstance(review.get("review_notes"), str) or not review["review_notes"].strip():
+            raise ValueError("Query review requires revision and review_notes; analyst notes are not source verification")
+        if review.get("previous_plan_digest") and not re.fullmatch(r"[a-f0-9]{64}", review["previous_plan_digest"]):
+            raise ValueError("previous_plan_digest must be a SHA256 digest")
+        seeds = review.get("seeds", [])
+        if not isinstance(seeds, list):
+            raise ValueError("Query review seeds must be an array")
+        seen = set()
+        for seed in seeds:
+            if not isinstance(seed, dict):
+                raise ValueError("Each reviewed seed must be an object")
+            key = (seed.get("locale"), seed.get("seed"))
+            if key in seen or not any((row["locale_id"], row["seed"]) == key for row in plan):
+                raise ValueError("Reviewed seeds must uniquely match a scheduled locale/seed")
+            seen.add(key)
+            if seed.get("seed_origin") not in {"supplied", "translated", "source_derived", "generated"}:
+                raise ValueError("Each reviewed seed requires a valid seed_origin")
+            locators = seed.get("seed_locators", [])
+            if seed["seed_origin"] == "source_derived" and (not isinstance(locators, list) or not locators or not all(isinstance(x, str) and x.strip() for x in locators)):
+                raise ValueError("Source-derived seeds require nonempty seed_locators")
+            for row in plan:
+                if (row["locale_id"], row["seed"]) == key:
+                    row.update({"seed_origin": seed["seed_origin"], "seed_locators": locators})
+    for row in plan:
+        row["candidate_id"] = hashlib.sha256(f"{row['locale_id']}:{row['seed']}".encode()).hexdigest()[:16]
+    return plan, review
+
+
 def main() -> int:
     args = parse_args()
+    try:
+        plan, query_review = reviewed_query_plan(args)
+        require_complete_locale_coverage(plan, args.query_limit)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    snapshot = {"query_plan": plan, "query_review": query_review,
+                "query_plan_digest": hashlib.sha256(json.dumps(plan, sort_keys=True, ensure_ascii=False).encode()).hexdigest()}
+    if args.query_preview:
+        print(json.dumps(snapshot, ensure_ascii=False, indent=2))
+        return 0
     signing_key = os.environ.get("COMMUNITY_DISCOVERY_PRIVATE_KEY_B64", "")
     try: Ed25519PrivateKey.from_private_bytes(base64.b64decode(signing_key))
     except Exception as exc: raise SystemExit("COMMUNITY_DISCOVERY_PRIVATE_KEY_B64 must contain a base64-encoded 32-byte Ed25519 private key.") from exc
     run_dir, workspace = resolve_run_dir(topic=args.topic, workspace_arg=args.workspace, case_id=args.case, out_dir=args.out_dir, legacy_output=False, workspace_subdir="market_research/pain_points/community_discovery/runs", legacy_subdir="community-discovery", customer_segment=args.customer_segment)
-    run_dir.mkdir(parents=True, exist_ok=True); plan = query_plan(args.topic, args.community_keywords, args.locales, args.locale_keyword_map, args.locale_source_term_map); write_plan(run_dir, args, plan)
-    try:
-        require_complete_locale_coverage(plan, args.query_limit)
-    except ValueError as exc:
-        raise SystemExit(str(exc)) from exc
+    run_dir.mkdir(parents=True, exist_ok=True)
+    write_plan(run_dir, args, plan)
+    write_json(run_dir / "query_plan.json", snapshot)
     create_run_manifest(run_dir, subject=args.topic, run_type="community_discovery", stage="evidence_collection", artifacts=[run_dir / "research_plan.md"], sources=csv_terms(args.providers), next_action="Manually review source shape and fit dimensions; capture remains separately gated.")
     if workspace:
         update_stage(workspace, "evidence_collection", run_dir=run_dir, status="in_progress", gate_result="not_run", artifacts=[run_dir / "research_plan.md"], next_action="Review community candidates; do not collect posts from discovery output.")
-    audit: dict[str, Any] = {"collector_version": COLLECTOR_VERSION, "query_plan": plan, "raw_content_retained": False}; providers: dict[str, Any] = {}; observations: list[dict[str, Any]] = []
+    audit: dict[str, Any] = {"collector_version": COLLECTOR_VERSION, **snapshot, "raw_content_retained": False}; providers: dict[str, Any] = {}; observations: list[dict[str, Any]] = []
     if args.fixture_results_json:
         observations = list(read_json(Path(args.fixture_results_json)).get("results", []))
         for item in observations:

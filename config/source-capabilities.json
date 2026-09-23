@@ -12,13 +12,33 @@
       "family": "customer_pain",
       "label": "Systematic local forum and Facebook discovery",
       "description": "Metadata-only, locale-paired discovery with separate per-seed forum, Facebook Group, and Facebook Page lanes followed by signed source review.",
-      "use_when": ["voice of customer", "forums", "facebook groups", "facebook pages", "community discovery", "local communities", "multilingual communities"],
-      "avoid_when": ["representative prevalence estimate", "automatic private-group access"],
+      "use_when": [
+        "voice of customer",
+        "forums",
+        "facebook groups",
+        "facebook pages",
+        "community discovery",
+        "local communities",
+        "multilingual communities"
+      ],
+      "avoid_when": [
+        "representative prevalence estimate",
+        "automatic private-group access"
+      ],
       "evidence_strength": "discovery_only_until_signed_source_review",
       "collector_provider": "discover_communities.py",
       "provider_aliases": [],
-      "validation_providers": ["firecrawl", "serper_search", "brave_search"],
-      "requires_env": ["COMMUNITY_DISCOVERY_PRIVATE_KEY_B64", "COMMUNITY_DISCOVERY_PUBLIC_KEY_B64", "COMMUNITY_REVIEW_PRIVATE_KEY_B64", "COMMUNITY_REVIEW_PUBLIC_KEY_B64"],
+      "validation_providers": [
+        "firecrawl",
+        "serper_search",
+        "brave_search"
+      ],
+      "requires_env": [
+        "COMMUNITY_DISCOVERY_PRIVATE_KEY_B64",
+        "COMMUNITY_DISCOVERY_PUBLIC_KEY_B64",
+        "COMMUNITY_REVIEW_PRIVATE_KEY_B64",
+        "COMMUNITY_REVIEW_PUBLIC_KEY_B64"
+      ],
       "approval_required": false,
       "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
       "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
@@ -796,16 +816,33 @@
       "family": "customer_reviews",
       "label": "Trustpilot public business-unit reviews",
       "description": "Entity-bound public Trustpilot review text, ratings, verification labels, dates, and separately retained company replies.",
-      "use_when": ["Trustpilot", "competitor customer reviews", "service reviews", "entity-led feedback"],
-      "avoid_when": ["topic-led VOC without an identified entity", "star average as demand proof"],
+      "use_when": [
+        "Trustpilot",
+        "competitor customer reviews",
+        "service reviews",
+        "entity-led feedback"
+      ],
+      "avoid_when": [
+        "topic-led VOC without an identified entity",
+        "star average as demand proof"
+      ],
       "evidence_strength": "medium_when_firsthand_and_repeated_otherwise_weak",
       "collector_provider": "trustpilot_reviews",
-      "provider_aliases": ["entity_reviews"],
-      "validation_providers": ["trustpilot_reviews"],
-      "requires_env": ["TRUSTPILOT_API_KEY"],
+      "provider_aliases": [
+        "entity_reviews"
+      ],
+      "validation_providers": [
+        "trustpilot_reviews"
+      ],
+      "requires_env": [
+        "TRUSTPILOT_API_KEY"
+      ],
       "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
       "arg_requirements": "--trustpilot-domains <entity-id=domain,...>",
-      "fallbacks": ["serper_search", "firecrawl"],
+      "fallbacks": [
+        "serper_search",
+        "firecrawl"
+      ],
       "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<job>' --customer-segment '<segment>' --providers trustpilot_reviews --trustpilot-domains '<entity-id=domain>'",
       "caveat": "A Trustpilot business-unit match must be exact. Platform verification is not target-segment verification; company replies are supplier context and review counts describe the retrieved sample only."
@@ -815,16 +852,32 @@
       "family": "customer_reviews",
       "label": "Google Places review subset",
       "description": "Entity- and location-bound Google Places ratings plus the review subset returned for exact Place IDs.",
-      "use_when": ["Google reviews", "local business reviews", "competitor locations", "entity-led feedback"],
-      "avoid_when": ["entities without a physical or service-area listing", "representative review sampling"],
+      "use_when": [
+        "Google reviews",
+        "local business reviews",
+        "competitor locations",
+        "entity-led feedback"
+      ],
+      "avoid_when": [
+        "entities without a physical or service-area listing",
+        "representative review sampling"
+      ],
       "evidence_strength": "medium_when_firsthand_and_repeated_otherwise_weak",
       "collector_provider": "google_places_reviews",
-      "provider_aliases": ["entity_reviews"],
-      "validation_providers": ["google_places_reviews"],
-      "requires_env": ["GOOGLE_PLACES_API_KEY"],
+      "provider_aliases": [
+        "entity_reviews"
+      ],
+      "validation_providers": [
+        "google_places_reviews"
+      ],
+      "requires_env": [
+        "GOOGLE_PLACES_API_KEY"
+      ],
       "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
       "arg_requirements": "--google-place-ids <entity-id=place-id,...>",
-      "fallbacks": ["serper_search"],
+      "fallbacks": [
+        "serper_search"
+      ],
       "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<job>' --customer-segment '<segment>' --providers google_places_reviews --google-place-ids '<entity-id=place-id>'",
       "caveat": "Use exact Place IDs. Ratings are context and the API-returned reviews are a provider-selected subset, not a population or prevalence sample."
@@ -865,7 +918,7 @@
       "id": "ai_answer_engines",
       "family": "visibility_observation",
       "label": "AI answer-engine observation panels",
-      "description": "Fixed prompt panels against LLM APIs producing normalized mention/recommendation/citation observations under a strict measurement contract; read-only pilot via scripts/monitoring/ai_answer_probe.py.",
+      "description": "Offline format-2 AI-answer recording processor with immutable verified runs and explicit panel/target comparison; no live collection or network calls.",
       "use_when": [
         "AI citation tracking",
         "AI visibility monitoring",
@@ -881,23 +934,19 @@
       "collector_provider": "ai_answer_probe.py",
       "provider_aliases": [],
       "validation_providers": [],
-      "requires_env": [
-        "OPENAI_API_KEY",
-        "ANTHROPIC_API_KEY",
-        "GEMINI_API_KEY",
-        "PERPLEXITY_API_KEY"
-      ],
+      "requires_env": [],
       "approval_required": false,
-      "authorization_policy": "standing_authorized_no_cap_with_cadence_note",
-      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
-      "example": "python3 scripts/monitoring/ai_answer_probe.py --panel panel.json --recorded observations.jsonl --out runs/<run>/",
-      "caveat": "Measures the configured API experience, not consumer products. Failed or credit-blocked engines are coverage gaps (unknown), never absence of mention. Recurring panels x engines x repetitions need a recorded cadence/cost note."
+      "authorization_policy": "offline_no_credentials_or_spend",
+      "status_check": "python3 -m pytest tests/test_ai_answer_probe.py -q",
+      "example": "python3 scripts/monitoring/ai_answer_probe.py --panel fixtures/monitoring/recorded-example/panel.json --recorded fixtures/monitoring/recorded-example/current.jsonl --out /tmp/<new-unique-run>/",
+      "caveat": "Synthetic fixture is format documentation, not measured visibility. Live collection unimplemented. Read references/ai-answer-recordings.md; incomplete or incompatible measurements never yield eligible trends.",
+      "implementation_status": "offline_only"
     },
     {
       "id": "brand_mention_listening",
       "family": "visibility_observation",
       "label": "Own-brand mention watch",
-      "description": "Licensed-API mention monitoring for the user's own brand with sentiment and earned/owned/paid source classification; applies competitor-monitoring watchlist/snapshot conventions to the user's own brand.",
+      "description": "Planned own-brand mention listening; no integrated collector or schedule. Manual source observations need explicit provenance and coverage limits.",
       "use_when": [
         "brand mentions",
         "social listening",
@@ -910,16 +959,14 @@
       "evidence_strength": "observation_only_sampled",
       "collector_provider": "pending_pilot",
       "provider_aliases": [],
-      "validation_providers": [
-        "serper_search",
-        "brave_search"
-      ],
+      "validation_providers": [],
       "requires_env": [],
       "approval_required": false,
       "authorization_policy": "licensed_apis_only",
-      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
+      "status_check": "No implemented listening collector; select and verify an appropriate source before a pilot.",
       "example": "pending pilot; apply competitor-monitoring watchlist/snapshot conventions to own-brand rows",
-      "caveat": "Listening coverage is API-gated (Meta/LinkedIn/TikTok limited). Samples are not market-wide share."
+      "caveat": "Listening coverage is API-gated (Meta/LinkedIn/TikTok limited). Samples are not market-wide share.",
+      "implementation_status": "pending_pilot"
     }
   ]
 }

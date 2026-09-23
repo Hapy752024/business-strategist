@@ -266,3 +266,5 @@ Before finalizing, check:
 If needed, ask:
 
 `What is the primary business outcome this social/digital plan must drive in the next 90 days: awareness, qualified leads, sales/bookings, retention, or community?`
+
+For a selected visibility intervention, use repo-root `references/search-visibility-decisions.md` for the evidence-to-change queue and outcome review. If recordings are needed, apply `references/ai-answer-recordings.md`; the processor is offline, and listening/live collection are not implemented capabilities. Do not run a mandatory multi-engine program.

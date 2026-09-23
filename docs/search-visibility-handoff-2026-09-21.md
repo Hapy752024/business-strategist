@@ -1,3 +1,5 @@
+> Historical handoff, not the current implementation contract. See [closure results](search-visibility-closure-2026-09-23.md) and [format-2 recording instructions](../references/ai-answer-recordings.md). Existing output replacement is now rejected; do not replay old cleanup plans.
+
 # Handoff brief — Search-visibility work (2026-09-21)
 
 **Purpose of this document.** It is written to be pasted as a prompt into another capable model or agent so it can pick up this work with full context. It states what the plan was and why, what was done and why, what is open, and where to look. It is deliberately blunt about mistakes, including mine, because the failure modes here are the useful part.

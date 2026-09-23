@@ -9,3 +9,5 @@ Inspect production-build behavior, fix affected routes/shared components and rep
 Before production recording refresh full launch assessment; changed content/config invalidates old evidence. Prepare diff, test results, unresolved issues and rollback commit. After authorized deployment verify production settings before recording success.
 
 Handoff owner/cadence for links/404s, indexing/sitemaps, field CWV, consent/vendor changes, advisories and content freshness. Use actual authorized Search Console/analytics evidence; separate observations from unknowns. Scheduling, connecting services, paid checks, sending reports and marketing publication need their own authorization.
+
+For scoped visibility improvements, consume observations using repo-root `references/search-visibility-decisions.md`. On resume, apply `references/owner-actions.md` to the website manifest and preserve unrelated next steps and launch blockers. Test on an isolated copy of an existing site; destructive failure fixtures belong in disposable directories. A new site is not a prerequisite.

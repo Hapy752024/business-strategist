@@ -107,8 +107,15 @@ Produce:
 Recommended command shape:
 
 ```bash
-python3 scripts/evidence_scout/collect.py --topic "<problem/category>" --customer-segment "<specific segment>" --segment-keywords "<short source-language audience term>" --problem-keywords "<pain phrase 1>,<pain phrase 2>" --workaround-keywords "<workaround 1>,<workaround 2>" --hypothesis-id H1 --days 30 --limit 20 --providers default
+python3 scripts/evidence_scout/collect.py --topic "<problem/category>" --topic-keywords "<short search phrase>" --customer-segment "<specific segment>" --segment-keywords "<short source-language audience term>" --problem-keywords "<pain phrase 1>,<pain phrase 2>" --workaround-keywords "<workaround 1>,<workaround 2>" --hypothesis-id H1 --days 30 --limit 20 --providers default
 ```
+
+Before the full run, calibrate inferred pain terms and new locales: brainstorm
+source-language phrases and source locations, review the plan, execute exact
+`--query-plan` probes, review actual customer experiences, and refine using observed
+vocabulary and missing perspectives. Apply the repo-root
+`.agents/skills/evidence-scout/references/pain-query-calibration.md`. Poor retrieval can reflect query, source,
+access, extraction or classification gaps; it does not prove absence of pain.
 
 Use `--providers default,social` only when TikTok, Instagram, Threads, or X evidence is likely to matter enough to spend paid credits.
 

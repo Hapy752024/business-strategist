@@ -125,7 +125,8 @@ def collector_command(args: argparse.Namespace, run_dir: Path) -> list[str]:
         command.extend(["--problem-keywords", args.problem_keywords])
     if args.workaround_keywords:
         command.extend(["--workaround-keywords", args.workaround_keywords])
-    return command
+    from research_queries import query_arguments
+    return command + query_arguments(args)
 
 
 def provider_failures(evidence_summary: dict[str, Any]) -> list[dict[str, str]]:
@@ -343,6 +344,8 @@ def finalize_discovery(args: argparse.Namespace) -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Discover market problems and candidate customer segments before validation.")
+    from research_queries import add_query_arguments
+    add_query_arguments(parser)
     parser.add_argument("--topic", default="", help="Rough market, category, domain, or problem space to explore.")
     parser.add_argument("--focus", default="", help="Optional hunch or boundary. It is a search seed, not a claim.")
     parser.add_argument("--problem-keywords", default="", help="Optional comma-separated user-problem language for a broader discovery query set.")
@@ -373,6 +376,8 @@ def main() -> int:
             return finalize_discovery(args)
         if not args.topic.strip():
             raise ValueError("--topic is required when starting a discovery run")
+        if args.query_preview:
+            return subprocess.run(collector_command(args, Path(args.out_dir or ".")), cwd=ROOT, check=False).returncode
         return start_discovery(args)
     except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)

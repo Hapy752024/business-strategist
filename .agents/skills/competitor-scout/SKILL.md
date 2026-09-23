@@ -11,6 +11,8 @@ description: Discover direct competitors, substitutes, analogs, threats, and fal
 
 ## Workflow
 
+For substantive query design and refinement, apply repo-root `references/research-query-calibration.md` (shared repository dependency) before broad collection. Keep each workflow's evidence type and source-review requirements distinct.
+
 1. Read `references/workflow.md` completely.
 2. Use the canonical repository discovery command documented in the workflow.
 3. Preserve supplied competitors and use the active topic workspace.

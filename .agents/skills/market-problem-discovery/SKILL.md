@@ -11,6 +11,8 @@ description: Discover sourced customer problems, workarounds, segments, and cand
 
 ## Workflow
 
+For substantive query design and refinement, apply repo-root `references/research-query-calibration.md` (shared repository dependency) before broad collection. Keep each workflow's evidence type and source-review requirements distinct.
+
 1. Read `references/workflow.md`, repo-root `references/customer-voice.md` and `references/voc-research-method.md` completely. Always run topic-led discovery; add entity feedback when alternatives are verified, without requiring a preselected segment.
 2. Infer discovery mode when explicit; otherwise ask the one routing question before collecting.
 3. Create a durable discovery run, validate source routes, and collect public evidence before proposing candidates.

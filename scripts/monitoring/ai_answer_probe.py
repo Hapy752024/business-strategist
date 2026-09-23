@@ -1,104 +1,143 @@
-"""Normalize and diff AI answer-engine observations; observations are not demand evidence."""
+"""Offline AI-answer recordings: immutable runs, explicit populations, descriptive comparisons."""
 import argparse
+import hashlib
 import json
-import tempfile
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlsplit
+from uuid import uuid4
 
 STATUSES = ('success', 'error', 'unsupported')
 SURFACES = ('api', 'consumer', 'ai_overview')
 PROMPT_TYPES = ('unbranded_discovery', 'brand_seeded', 'decision_stage', 'educational')
-FIELDS = ('engine', 'model', 'search_config', 'locale', 'timestamp', 'surface',
-          'prompt_type', 'prompt_id', 'prompt_version', 'repetition', 'status',
-          'brand_mentioned', 'url_cited', 'recommended', 'answer_text')
-KEY = ('engine', 'model', 'search_config', 'surface', 'locale', 'prompt_type',
-       'prompt_id', 'prompt_version')
+TARGET_FIELDS = ('engine', 'model', 'search_config', 'surface', 'locale')
+PROMPT_FIELDS = ('prompt_id', 'prompt_version', 'prompt_type')
+KEY = TARGET_FIELDS + PROMPT_FIELDS
 TRACKED = ('brand_mentioned', 'url_cited', 'recommended')
+BOUNDARY = ('Recorded observations of declared surfaces only; not customer-demand evidence. '
+            'Failures are unknown, not absence. Rate differences are descriptive, not causal or statistically established uplift.')
+ARTIFACTS = ('panel.json', 'raw.jsonl', 'evidence.jsonl', 'summary.json', 'report.md')
 
 
-def load_panel(raw):
-    if not isinstance(raw, dict):
-        raise ValueError('panel must be an object')
-    prompts = raw.get('prompts')
-    if not isinstance(prompts, list) or not prompts:
-        raise ValueError('panel.prompts must be a nonempty list')
-    declared, seen = [], set()
-    for entry in prompts:
-        if not isinstance(entry, dict):
-            raise ValueError('panel.prompts entries must be objects')
-        for k in ('id', 'type', 'text'):
-            if not isinstance(entry.get(k), str) or not entry[k]:
-                raise ValueError(f"panel.prompts[].{k}: nonempty string required")
-        if type(entry.get('version')) is not int:
-            raise ValueError('panel.prompts[].version: integer required')
-        if entry['type'] not in PROMPT_TYPES:
-            raise ValueError(f"panel.prompts[].type: must be one of {PROMPT_TYPES}")
-        key = (entry['id'], entry['version'])
-        if key in seen:
-            raise ValueError(f'duplicate panel prompt id/version: {key}')
-        seen.add(key)
-        declared.append({'prompt_id': entry['id'], 'prompt_version': entry['version'],
-                         'prompt_type': entry['type']})
-    engines = raw.get('engines')
-    if engines is not None and (not isinstance(engines, list) or not engines
-                                or not all(isinstance(e, str) and e for e in engines)):
-        raise ValueError('panel.engines: must be a nonempty list of nonempty strings when present')
-    repetitions = raw.get('repetitions')
-    if repetitions is not None and (type(repetitions) is not int or repetitions < 1):
-        raise ValueError('panel.repetitions: integer >= 1 required when present')
-    panel_version = raw.get('panel_version')
-    # Validated at the boundary so two windows can only ever be compared
-    # like-for-like: `1` and `'1'` are different values that render identically.
-    if panel_version is not None and (not isinstance(panel_version, str) or not panel_version):
-        raise ValueError('panel.panel_version: nonempty string required when present')
-    return {'declared': declared, 'engines': engines, 'repetitions': repetitions,
-            'panel_version': panel_version}
+def _text(value, label):
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f'{label}: nonempty string required')
+    return value
+
+
+def _positive(value, label):
+    if type(value) is not int or value < 1:
+        raise ValueError(f'{label}: positive integer required')
+    return value
+
+
+def _url(value, label):
+    _text(value, label)
+    parsed = urlsplit(value)
+    if parsed.scheme not in ('http', 'https') or not parsed.hostname or parsed.username or parsed.password:
+        raise ValueError(f'{label}: public HTTP(S) URL without credentials required')
+    return value
 
 
 def _stamp(value):
-    return datetime.fromisoformat(value.replace('Z', '+00:00'))
-
-
-def _usable_timestamp(value):
-    if not isinstance(value, str) or not value:
-        raise ValueError('timestamp: nonempty ISO-8601 string required on success')
+    _text(value, 'timestamp')
     try:
-        parsed = _stamp(value)
-    except ValueError:
-        raise ValueError(f'timestamp: not ISO-8601 parseable: {value!r}')
+        parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+    except ValueError as exc:
+        raise ValueError('timestamp: ISO-8601 required') from exc
     if parsed.tzinfo is None:
-        raise ValueError('timestamp: a timezone offset is required so collection windows are comparable')
-    return value
+        raise ValueError('timestamp: timezone required')
+    return parsed
+
+
+def _digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()).hexdigest()
+
+
+def load_panel(raw):
+    if not isinstance(raw, dict) or raw.get('schema_version') != 2:
+        raise ValueError('panel.schema_version: use version 2; see references/ai-answer-recordings.md and fixtures/monitoring/recorded-example/')
+    _text(raw.get('panel_version'), 'panel_version')
+    subject = raw.get('subject')
+    if not isinstance(subject, dict):
+        raise ValueError('panel.subject: name and domains required')
+    _text(subject.get('name'), 'subject.name')
+    domains = subject.get('domains')
+    if not isinstance(domains, list) or not domains:
+        raise ValueError('subject.domains: nonempty list required')
+    for domain in domains:
+        _text(domain, 'subject.domain')
+        if urlsplit('https://' + domain).hostname != domain or '/' in domain or ':' in domain:
+            raise ValueError('subject.domain: lowercase hostname only')
+    prompts, targets = raw.get('prompts'), raw.get('targets')
+    if not isinstance(prompts, list) or not prompts or not isinstance(targets, list) or not targets:
+        raise ValueError('panel.prompts and panel.targets: nonempty lists required')
+    declared, seen = [], set()
+    for prompt in prompts:
+        if not isinstance(prompt, dict):
+            raise ValueError('panel prompt: object required')
+        for field in ('id', 'text', 'source'):
+            _text(prompt.get(field), 'prompt.' + field)
+        _positive(prompt.get('version'), 'prompt.version')
+        if prompt.get('type') not in PROMPT_TYPES:
+            raise ValueError('prompt.type: unsupported type')
+        key = (prompt['id'], prompt['version'])
+        if key in seen:
+            raise ValueError('duplicate panel prompt id/version')
+        seen.add(key)
+        declared.append({'prompt_id': prompt['id'], 'prompt_version': prompt['version'],
+                         'prompt_type': prompt['type'], 'text': prompt['text']})
+    seen = set()
+    for target in targets:
+        if not isinstance(target, dict):
+            raise ValueError('panel target: object required')
+        for field in TARGET_FIELDS:
+            _text(target.get(field), 'target.' + field)
+        if target['surface'] not in SURFACES:
+            raise ValueError('target.surface: unsupported surface')
+        _positive(target.get('repetitions'), 'target.repetitions')
+        key = tuple(target[k] for k in TARGET_FIELDS)
+        if key in seen:
+            raise ValueError('duplicate panel target')
+        seen.add(key)
+    # Selection-source notes and ordering do not change the questions being asked.
+    semantic = {'subject': {'name': subject['name'], 'domains': sorted(set(domains))},
+                'panel_version': raw['panel_version'],
+                'prompts': sorted(declared, key=lambda p: (p['prompt_id'], p['prompt_version'])),
+                'targets': sorted([{k: t[k] for k in TARGET_FIELDS + ('repetitions',)} for t in targets],
+                                  key=lambda t: tuple(t[k] for k in TARGET_FIELDS))}
+    return {**semantic, 'digest': _digest(semantic), 'raw': raw}
 
 
 def normalize_observation(raw):
     if not isinstance(raw, dict):
-        raise ValueError('observation must be an object')
-    row = {k: raw.get(k) for k in FIELDS}
-    if row['status'] not in STATUSES:
-        raise ValueError(f"status: must be one of {STATUSES}")
-    if row['surface'] not in SURFACES:
-        raise ValueError(f"surface: must be one of {SURFACES}")
-    if row['prompt_type'] not in PROMPT_TYPES:
-        raise ValueError(f"prompt_type: must be one of {PROMPT_TYPES}")
-    if type(row['prompt_version']) is not int or type(row['repetition']) is not int:
-        raise ValueError('prompt_version and repetition: integer required')
-    for k in ('engine', 'model', 'search_config', 'prompt_id'):
-        if not isinstance(row[k], str) or not row[k]:
-            raise ValueError(f'{k}: nonempty string required')
+        raise ValueError('observation: object required')
+    row = dict(raw)  # Preserve supplied citation annotations, error detail and other provenance.
+    for field in TARGET_FIELDS + ('prompt_id', 'prompt_text', 'target_brand', 'recording_source'):
+        _text(row.get(field), field)
+    _url(row.get('target_url'), 'target_url')
+    _positive(row.get('prompt_version'), 'prompt_version')
+    _positive(row.get('repetition'), 'repetition')
+    _stamp(row.get('timestamp'))
+    if row.get('status') not in STATUSES or row.get('surface') not in SURFACES or row.get('prompt_type') not in PROMPT_TYPES:
+        raise ValueError('status, surface or prompt_type: unsupported value')
     if row['status'] == 'success':
-        if not isinstance(row['locale'], str) or not row['locale']:
-            raise ValueError('locale: nonempty string required on success; comparison needs collection context')
-        if not isinstance(row['answer_text'], str) or not row['answer_text']:
-            raise ValueError('answer_text: nonempty string required on success; a claim must retain its source answer')
-        _usable_timestamp(row['timestamp'])
-        for k in TRACKED:
-            if type(row[k]) is not bool:
-                raise ValueError(f'{k}: boolean required on success')
+        _text(row.get('answer_text'), 'answer_text')
+        _text(row.get('annotation_method'), 'annotation_method')
+        urls = row.get('citation_urls')
+        if not isinstance(urls, list):
+            raise ValueError('citation_urls: list required on success')
+        for url in urls:
+            _url(url, 'citation_url')
+        for field in TRACKED:
+            if type(row.get(field)) is not bool:
+                raise ValueError(f'{field}: boolean required on success')
+        if row['url_cited'] and not urls:
+            raise ValueError('url_cited requires citation_urls')
     else:
-        for k in TRACKED:
-            if row[k] is not None:
-                raise ValueError(f'{k}: must be null when status is {row["status"]}; failure is unknown, not absence')
+        _text(row.get('error_detail'), 'error_detail')
+        if any(row.get(field) is not None for field in TRACKED):
+            raise ValueError('failure flags must be null: unknown, not absence')
     return row
 
 
@@ -106,452 +145,200 @@ def _key(row):
     return tuple(row[k] for k in KEY)
 
 
-def _index_success(rows, label='successful observation'):
-    """Index successful rows by (comparison key, repetition), rejecting shared indices.
-
-    Two rows sharing a repetition index are not independent samples, so they fail
-    closed rather than being silently collapsed or partially credited as coverage.
-    """
-    seen = {}
-    for r in rows:
-        if r.get('status') != 'success':
+def _selection(rows, panel):
+    targets = {tuple(t[k] for k in TARGET_FIELDS): t for t in panel['targets']}
+    prompts = {tuple(p[k] for k in PROMPT_FIELDS): p for p in panel['prompts']}
+    selected, excluded, seen = [], [], set()
+    for row in rows:
+        target = targets.get(tuple(row[k] for k in TARGET_FIELDS))
+        prompt = prompts.get(tuple(row[k] for k in PROMPT_FIELDS))
+        if target is None or prompt is None or row['repetition'] > target['repetitions']:
+            excluded.append({**{k: row[k] for k in KEY}, 'repetition': row['repetition'], 'reason': 'outside_declared_panel'})
             continue
-        k = (_key(r), r['repetition'])
-        if k in seen:
-            raise ValueError(
-                f"duplicate {label} for prompt {r['prompt_id']} "
-                f"engine {r['engine']} repetition {r['repetition']}: "
-                'repetitions are independent samples and must be retained, not overwritten; '
-                'two rows sharing a repetition index are not independent samples')
-        seen[k] = r
-    return seen
+        if row['prompt_text'] != prompt['text']:
+            raise ValueError('recorded prompt_text differs from declared prompt; assign a new prompt version')
+        if row['target_brand'] != panel['subject']['name'] or urlsplit(row['target_url']).hostname not in panel['subject']['domains']:
+            raise ValueError('observation target does not match panel subject')
+        if row['status'] == 'success' and row['url_cited'] and not any(urlsplit(u).hostname in panel['subject']['domains'] for u in row['citation_urls']):
+            raise ValueError('url_cited requires a citation to a declared subject domain')
+        key = (_key(row), row['repetition'])
+        if key in seen:
+            raise ValueError('duplicate selected observation/repetition; retain retries in raw source and select one final outcome')
+        seen.add(key)
+        selected.append(row)
+    return selected, sorted(excluded, key=lambda r: tuple(str(r[k]) for k in KEY) + (r['repetition'],))
 
 
-def _group(indexed):
-    grouped = {}
-    for (key, _rep), row in indexed.items():
-        grouped.setdefault(key, []).append(row)
-    return grouped
+def _coverage(rows, panel):
+    indexed = {(_key(r), r['repetition']): r for r in rows}
+    gaps, counts = [], []
+    for target in panel['targets']:
+        for prompt in panel['prompts']:
+            identity = {k: target[k] for k in TARGET_FIELDS} | {k: prompt[k] for k in PROMPT_FIELDS}
+            count = 0
+            for rep in range(1, target['repetitions'] + 1):
+                row = indexed.get((_key(identity), rep))
+                if row and row['status'] == 'success':
+                    count += 1
+                else:
+                    gaps.append({**identity, 'repetition': rep, 'reason': row['status'] if row else 'missing',
+                                 'detail': row.get('error_detail') if row else None})
+            counts.append({**identity, 'expected': target['repetitions'], 'successful': count})
+    return {'expected_observations': sum(t['expected'] for t in counts),
+            'successful_observations': sum(t['successful'] for t in counts), 'targets': counts}, gaps
 
 
-def _window(rows):
-    stamps = [r['timestamp'] for r in rows if r.get('status') == 'success']
-    if not stamps:
-        return None
-    # Ordered by the instant each timestamp denotes, not by its literal text: the
-    # same instant may be written with different offsets and still be one window.
-    return {'start': min(stamps, key=_stamp), 'end': max(stamps, key=_stamp)}
+def diff_observations(current, prior, panel, prior_panel):
+    empty = {'eligible': False, 'reason': None, 'trends': []}
+    if prior_panel is None:
+        return {**empty, 'reason': 'prior_panel_unknown'}
+    if panel['digest'] != prior_panel['digest']:
+        return {**empty, 'reason': 'panel_or_collection_context_changed'}
+    current, _ = _selection(current, panel)
+    prior, _ = _selection(prior, prior_panel)
+    _, gaps = _coverage(current, panel)
+    _, prior_gaps = _coverage(prior, prior_panel)
+    if gaps or prior_gaps:
+        return {**empty, 'reason': 'incomplete_current_or_prior_coverage', 'prior_coverage_gaps': prior_gaps}
+    if max(_stamp(r['timestamp']) for r in prior) >= min(_stamp(r['timestamp']) for r in current):
+        return {**empty, 'reason': 'overlapping_or_reversed_windows'}
+    trends = []
+    for key in sorted({_key(r) for r in current}):
+        now, old = [r for r in current if _key(r) == key], [r for r in prior if _key(r) == key]
+        for field in TRACKED:
+            before, after = sum(r[field] for r in old) / len(old), sum(r[field] for r in now) / len(now)
+            trends.append({**dict(zip(KEY, key)), 'field': field, 'prior_rate': before,
+                           'current_rate': after, 'delta': after - before, 'prior_n': len(old), 'current_n': len(now)})
+    return {'eligible': True, 'reason': 'compatible_complete_nonoverlapping_windows', 'trends': trends}
 
 
-def _rate(rows, field):
-    return sum(1 for r in rows if r[field]) / len(rows) if rows else None
+def build_summary(rows, prior_rows, panel, prior_panel=None, prior_supplied=False):
+    selected, excluded = _selection(rows, panel)
+    coverage, gaps = _coverage(selected, panel)
+    diff = diff_observations(selected, prior_rows, panel, prior_panel) if prior_supplied else None
+    status = ('unmeasured' if not coverage['successful_observations'] else 'partial' if gaps else
+              'incomparable' if diff and not diff['eligible'] else 'compared' if diff else 'baseline')
+    return {'schema_version': 2, 'status': status, 'boundary': BOUNDARY, 'subject': panel['subject'],
+            'panel_digest': panel['digest'], 'panel_version': panel['panel_version'],
+            'observations': len(rows), 'coverage': coverage, 'coverage_gaps': gaps,
+            'off_panel': {'count': len(excluded), 'rows': excluded}, 'diff': diff,
+            'eligible_for_trend': bool(diff and diff['eligible'])}
 
 
-def _fmt_rate(value):
-    return 'n/a' if value is None else f'{value:.2f}'
-
-
-def _fmt_version(value):
-    return 'unversioned' if value is None else str(value)
-
-
-def _comparable_version(value):
-    """A panel version is comparable only when it is a nonempty string.
-
-    `load_panel` already refuses a non-string version, but this function is also a
-    library entry point: comparing `1` with `'1'` would report a change that did not
-    happen, so an unusable pair is left unknown instead.
-    """
-    return isinstance(value, str) and bool(value)
-
-
-def _panel_version_compatibility(panel_versions):
-    """Compare the panel versions the two windows were collected under.
-
-    `compatible` is None when either version is unknown: an unverifiable pair must
-    not be reported as compatible, but it also cannot be shown to have changed.
-    """
-    current_version = (panel_versions or {}).get('current')
-    prior_version = (panel_versions or {}).get('prior')
-    if not _comparable_version(current_version) or not _comparable_version(prior_version):
-        compatible = None
-    else:
-        compatible = current_version == prior_version
-    return {'current': current_version, 'prior': prior_version, 'compatible': compatible}
-
-
-def diff_observations(current, prior, panel_versions=None):
-    indexed_current = _index_success(current, 'recorded observation')
-    indexed_prior = _index_success(prior, 'prior observation')
-    by_current, by_prior = _group(indexed_current), _group(indexed_prior)
-    versions = _panel_version_compatibility(panel_versions)
-
-    changes, trends = [], []
-    compared, skipped_incompatible, skipped_unpaired = 0, 0, 0
-    if versions['compatible'] is False:
-        # The measurement contract compares only observations from the same panel
-        # version, so a changed panel is recorded as incompatible rather than
-        # silently compared as if the two windows asked the same questions.
-        skipped_incompatible = len(indexed_current) + len(indexed_prior)
-    else:
-        for key in sorted(set(by_current) | set(by_prior)):
-            cur, old = by_current.get(key), by_prior.get(key)
-            if cur is None or old is None:
-                # Both sides count: a prior-only observation was dropped just as a
-                # current-only one was added, and neither has a comparable counterpart.
-                skipped_incompatible += len(cur or []) + len(old or [])
-                continue
-            compared += 1
-            for field in TRACKED:
-                prior_rate, current_rate = _rate(old, field), _rate(cur, field)
-                trends.append({'prompt_id': key[6], 'engine': key[0], 'prompt_type': key[5],
-                               'field': field, 'prior_rate': prior_rate, 'current_rate': current_rate,
-                               'delta': current_rate - prior_rate,
-                               'prior_n': len(old), 'current_n': len(cur)})
-            old_by_rep = {r['repetition']: r for r in old}
-            cur_by_rep = {r['repetition']: r for r in cur}
-            skipped_unpaired += len(set(old_by_rep) ^ set(cur_by_rep))
-            for rep in sorted(set(old_by_rep) & set(cur_by_rep)):
-                for field in TRACKED:
-                    if old_by_rep[rep][field] != cur_by_rep[rep][field]:
-                        changes.append({'prompt_id': key[6], 'engine': key[0], 'repetition': rep,
-                                        'field': field, 'from': old_by_rep[rep][field],
-                                        'to': cur_by_rep[rep][field]})
-
-    prior_window, current_window = _window(prior), _window(current)
-    overlapping = bool(prior_window and current_window
-                       and _stamp(prior_window['start']) <= _stamp(current_window['end'])
-                       and _stamp(current_window['start']) <= _stamp(prior_window['end']))
-    return {'changes': changes, 'trends': trends,
-            'coverage': {'current': len(current), 'prior': len(prior), 'compared': compared,
-                         'skipped_incompatible': skipped_incompatible,
-                         'skipped_failed': sum(1 for r in current if r.get('status') != 'success'),
-                         # Prior-window failures are counted separately: a credit-blocked
-                         # prior engine is a reported coverage gap, never a clean comparison.
-                         'skipped_failed_prior': sum(1 for r in prior if r.get('status') != 'success'),
-                         'skipped_unpaired': skipped_unpaired,
-                         'prior_window': prior_window, 'current_window': current_window,
-                         'overlapping_windows': overlapping,
-                         'panel_version': versions}}
-
-
-def _panel_coverage(rows, panel):
-    # Shared repetition indices are not independent samples. `main` rejects them at
-    # load time, but coverage is also reachable as a library call, and whether a
-    # window earns credit for a prompt must not depend on whether an unrelated
-    # `--prior` window was supplied. Enforced here so both paths fail closed alike.
-    _index_success(rows, 'recorded observation')
-    declared, declared_engines = panel['declared'], panel['engines']
-    on_panel_keys = {(p['prompt_id'], p['prompt_version'], p['prompt_type']) for p in declared}
-    on_panel, off_panel_ids = [], []
-    for r in rows:
-        if (r['prompt_id'], r['prompt_version'], r['prompt_type']) not in on_panel_keys:
-            off_panel_ids.append(r['prompt_id'])
-            continue
-        if declared_engines is not None and r['engine'] not in declared_engines:
-            # An undeclared engine is not a surface the panel selected, so the row
-            # cannot stand as coverage for the prompt it names.
-            off_panel_ids.append(r['prompt_id'])
-            continue
-        on_panel.append(r)
-
-    gaps, covered = [], 0
-    for p in declared:
-        mine = [r for r in on_panel if (r['prompt_id'], r['prompt_version'], r['prompt_type'])
-                == (p['prompt_id'], p['prompt_version'], p['prompt_type'])]
-        if not mine:
-            gaps.append({**p, 'reason': 'missing_no_observation'})
-            continue
-        engines = declared_engines or sorted({r['engine'] for r in mine})
-        fully_covered = True
-        for engine in engines:
-            ok = [r for r in mine if r['engine'] == engine and r['status'] == 'success']
-            if not ok:
-                failed = [r for r in mine if r['engine'] == engine]
-                reason = failed[0]['status'] if failed else 'missing_engine_observation'
-                gaps.append({**p, 'engine': engine, 'reason': reason})
-                fully_covered = False
-                continue
-            want = panel['repetitions']
-            if want is None:
-                continue
-            # Only distinct repetition indices are samples. Rows sharing an index are
-            # rejected before coverage is computed, so a shortfall here is reported as
-            # insufficient distinct samples.
-            samples = {r['repetition'] for r in ok}
-            if len(samples) < want:
-                gaps.append({**p, 'engine': engine, 'reason': 'insufficient_repetitions',
-                             'expected': want, 'observed': len(samples)})
-                fully_covered = False
-        covered += 1 if fully_covered else 0
-
-    successful = [r for r in on_panel if r['status'] == 'success']
-    return {'gaps': gaps, 'covered': covered, 'declared': len(declared),
-            'successful_observations': len(successful),
-            'off_panel': {'count': len(off_panel_ids),
-                          'prompt_ids': sorted(set(off_panel_ids))},
-            'unmeasured': not successful}
-
-
-def build_summary(rows, prior_rows, panel, prior_panel_version=None, prior_supplied=None):
-    pc = _panel_coverage(rows, panel)
-    # A supplied-but-empty prior is a different state from no prior at all: the
-    # probe's own zero-row run writes an empty evidence.jsonl, and rendering that as
-    # "no prior window" would present unknown as absence. `prior_supplied=None`
-    # infers the flag from the rows for callers that only have the rows.
-    has_prior = bool(prior_rows) if prior_supplied is None else prior_supplied
-    diff = diff_observations(
-        rows, prior_rows,
-        {'current': panel['panel_version'], 'prior': prior_panel_version}
-    ) if has_prior else None
-    # A measured run whose panel changed between windows abandoned the comparison,
-    # so the machine-readable status must not read `pass`. `unmeasured` outranks it:
-    # with no successful observation there is no measurement to declare incomparable.
-    if pc['unmeasured']:
-        status = 'unmeasured'
-    elif diff and diff['coverage']['panel_version']['compatible'] is False:
-        status = 'incomparable'
-    else:
-        status = 'pass'
-    return {'status': status,
-            'observations': len(rows),
-            'panel_version': panel['panel_version'],
-            'coverage': {'declared_prompts': pc['declared'], 'covered_prompts': pc['covered'],
-                         'successful_observations': pc['successful_observations']},
-            'coverage_gaps': sorted(pc['gaps'], key=lambda g: (g['prompt_id'], g.get('engine') or '')),
-            'off_panel': pc['off_panel'],
-            'unmeasured': pc['unmeasured'],
-            'diff': diff,
-            'boundary': 'observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence'}
+def _label(row):
+    return ' / '.join(str(row[k]) for k in KEY)
 
 
 def _report_lines(summary):
-    coverage = summary['coverage']
-    lines = ['# AI-answer observation report', '', f"Boundary: {summary['boundary']}", '',
-             f"Status: {summary['status']}",
-             f"Panel version: {_fmt_version(summary['panel_version'])}",
-             f"Observations: {summary['observations']}; coverage gaps: {len(summary['coverage_gaps'])}",
-             f"Coverage: {coverage['covered_prompts']}/{coverage['declared_prompts']} "
-             'declared prompts fully covered']
-    if summary['unmeasured']:
-        lines.append('No successful observation: nothing was measured; failures are unknown, not absence.')
+    lines = ['# AI-answer recording report', '', 'Boundary: ' + summary['boundary'], '',
+             'Run: ' + summary['run_id'], 'Measurement status: ' + summary['status'],
+             'Subject: ' + summary['subject']['name'], 'Panel digest: ' + summary['panel_digest'],
+             f"Coverage: {summary['coverage']['successful_observations']}/{summary['coverage']['expected_observations']} expected observations",
+             f"Excluded observations: {summary['off_panel']['count']}"]
     for gap in summary['coverage_gaps']:
-        # Identified by prompt id and version: a panel declaring the same id at two
-        # versions would otherwise render two indistinguishable gap rows.
-        target = f"{gap['prompt_id']} v{gap['prompt_version']}"
-        target += f"/{gap['engine']}" if gap.get('engine') else ''
-        lines.append(f"- coverage gap: {target} ({gap['reason']})")
-    if summary['off_panel']['count']:
-        lines.append(f"Off-panel rows (excluded from coverage): {summary['off_panel']['count']} "
-                     f"[{', '.join(summary['off_panel']['prompt_ids'])}] "
-                     '(matched on prompt id, version, type and declared engine, so an id that is '
-                     'also declared in the panel appears here when its version, type or engine '
-                     'was not selected)')
-    diff = summary['diff']
-    if diff:
-        cov = diff['coverage']
-        lines.append(f"Compared: {cov['compared']} probe targets; "
-                     f"response changes: {len(diff['changes'])}; "
-                     f"unpaired repetitions: {cov['skipped_unpaired']}; "
-                     f"skipped incompatible: {cov['skipped_incompatible']}; "
-                     f"skipped failed: {cov['skipped_failed']}; "
-                     f"skipped failed prior: {cov['skipped_failed_prior']}")
-        if cov['skipped_failed_prior']:
-            lines.append(f"Warning: the prior window contained {cov['skipped_failed_prior']} "
-                         'failed observation(s); failures are unknown, not absence, so the '
-                         'comparison is partial and the prior window is not a clean baseline.')
-        if cov['prior'] == 0:
-            lines.append('Warning: the prior window was supplied but contains no observations; '
-                         'no movement is comparable.')
-        elif cov['prior_window'] is None:
-            lines.append('Warning: no successful prior observation established a prior collection '
-                         'window; no movement is comparable.')
-        versions = cov['panel_version']
-        if versions['compatible'] is False:
-            lines.append(f"Warning: panel version differs between windows "
-                         f"({_fmt_version(versions['prior'])} -> {_fmt_version(versions['current'])}); "
-                         'observations from different panel versions are not comparable, so no '
-                         'movement is reported.')
-        elif versions['compatible'] is None:
-            # Testing `compatible is None` rather than `prior is None`: an unversioned
-            # *current* panel with a versioned prior also compares as unknown, and a
-            # reader must be able to tell `null` from `true` in both directions.
-            lines.append('Panel-version comparability unverified '
-                         f"(current: {_fmt_version(versions['current'])}, "
-                         f"prior: {_fmt_version(versions['prior'])}); an unversioned or "
-                         'unsupplied panel version cannot be shown to be comparable.')
-        if cov['overlapping_windows']:
-            lines.append('Warning: prior and current collection windows overlap; '
-                         'treat movement as unestablished.')
-        for t in diff['trends']:
-            lines.append(f"{t['prompt_id']}/{t['engine']}/{t['field']}: "
-                         f"{_fmt_rate(t['prior_rate'])} (n={t['prior_n']}) -> "
-                         f"{_fmt_rate(t['current_rate'])} (n={t['current_n']})")
+        lines.append(f"- Unknown: {_label(gap)} / repetition {gap['repetition']}: {gap['reason']} ({gap['detail'] or 'no recording'})")
+    if summary['diff']:
+        lines.append('Comparison: ' + summary['diff']['reason'])
+        for gap in summary['diff'].get('prior_coverage_gaps', []):
+            lines.append(f"- Prior unknown: {_label(gap)} / repetition {gap['repetition']}: {gap['reason']}")
+        for trend in summary['diff']['trends']:
+            lines.append(f"- {_label(trend)} / {trend['field']}: {trend['prior_rate']:.3f} (n={trend['prior_n']}) -> {trend['current_rate']:.3f} (n={trend['current_n']}); descriptive delta {trend['delta']:+.3f}")
+    lines.extend(['', '## Decision handoff',
+                  'Inspect the retained source answers and citation annotations before proposing a change.',
+                  'Record affected URL/customer task, evidence and uncertainty, proposed change, expected customer benefit, agent work, owner dependency, acceptance check and review/stop rule in the existing improvement queue.',
+                  'No action warranted is a valid decision. No automatic publishing, cadence or demand inference follows from this report.'])
     return lines
 
 
-def _make_removable(path):
-    """Give the owner read, write and traverse on a directory being discarded.
-
-    A read-only directory (0555, say) cannot have its entries unlinked, so discarding
-    a tree that contains one would fail and leave the whole tree behind. The mode is
-    this run's to change: the directory was created by this run as part of its own
-    staging or set-aside tree, and it is about to be deleted.
-    """
-    try:
-        mode = path.stat().st_mode
-        if mode & 0o700 != 0o700:
-            path.chmod(mode | 0o700)
-    except OSError:
-        pass
+def _write(path, content):
+    # Exclusive files inside this run's exclusively allocated directory. Never delete old data.
+    with path.open('x', encoding='utf-8') as handle:
+        handle.write(content)
 
 
-def _discard_tree(path):
-    """Best-effort removal of a directory tree a run staged or set aside.
-
-    Only ever called with a path this run created, and never follows a symlink: a
-    symlink standing *at* the root is left alone rather than unlinked, and a symlink
-    *inside* the tree is unlinked rather than followed, so nothing outside the tree
-    being discarded can be deleted.
-    """
-    if path is None:
-        return
-    try:
-        if path.is_symlink() or not path.exists():
-            return
-        _make_removable(path)
-        for child in path.iterdir():
-            # A symlink is unlinked rather than followed: recursing through one would
-            # delete content that lives outside the directory being discarded.
-            if child.is_dir() and not child.is_symlink():
-                _discard_tree(child)
-            else:
-                child.unlink()
-        path.rmdir()
-    except OSError:
-        pass
-
-
-def _fresh_dir(parent, prefix):
-    """Create a directory this run owns, at a name nothing else can be holding.
-
-    `mkdtemp` reserves the name with an exclusive create, so neither a user path nor a
-    concurrent run can already be sitting at it: the collision that let a run discard a
-    directory it never created cannot be constructed. The holder it returns is the only
-    path handed to `_discard_tree`, and it is never a name derived from `out`.
-    """
-    return Path(tempfile.mkdtemp(prefix=prefix, dir=parent))
+def load_run(path):
+    """Read only digest-bound completed runs; partial runs remain diagnostic artifacts."""
+    path = Path(path)
+    if path.is_symlink() or not path.is_dir():
+        raise ValueError('run must be a real directory')
+    marker = path / 'run.json'
+    if marker.is_symlink():
+        raise ValueError('run completion marker must not be a symlink')
+    receipt = json.loads(marker.read_text(encoding='utf-8'))
+    if receipt.get('schema_version') != 2 or receipt.get('completion') != 'complete' or set(receipt.get('artifacts', {})) != set(ARTIFACTS):
+        raise ValueError('invalid run completion manifest')
+    _text(receipt.get('run_id'), 'run_id')
+    contents = {}
+    for name in ARTIFACTS:
+        artifact = path / name
+        if artifact.is_symlink() or not artifact.is_file():
+            raise ValueError('missing/linked run artifact: ' + name)
+        data = artifact.read_bytes()
+        if hashlib.sha256(data).hexdigest() != receipt['artifacts'][name]:
+            raise ValueError('changed/incomplete run artifact: ' + name)
+        contents[name] = data.decode('utf-8')
+    summary = json.loads(contents['summary.json'])
+    if summary.get('run_id') != receipt['run_id']:
+        raise ValueError('run identity mismatch')
+    panel = load_panel(json.loads(contents['panel.json']))
+    if summary.get('panel_digest') != panel['digest']:
+        raise ValueError('panel identity mismatch')
+    rows = _rows(contents['evidence.jsonl'])
+    return {'summary': summary, 'panel': panel, 'rows': rows}
 
 
-def _rename(src, dst):
-    """Rename a path; a module-level seam so tests can inject a publish failure."""
-    src.rename(dst)
-
-
-def _publish(out, staging, trash):
-    """Publish staged artifacts by swapping directories into place.
-
-    The outgoing `out` is renamed aside and only then is the staging directory
-    renamed into its place, so a crash between the two renames leaves no `out` at
-    all — which reads as "the run did not complete" — rather than a tree mixing a
-    fresh evidence file with a previous run's pass-claiming summary. Absent is
-    recoverable; misleading is not.
-
-    `trash` is a name inside a directory this run created, never a name derived from
-    `out`: renaming onto a pre-existing directory or symlink at a derived name is what
-    let a run destroy user data while reporting success.
-    """
-    if out.is_dir():
-        _rename(out, trash)
-    _rename(staging, out)
+def _rows(text):
+    return [normalize_observation(json.loads(line)) for line in text.splitlines() if line.strip()]
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--panel', type=Path, required=True)
-    p.add_argument('--recorded', type=Path, required=True)
-    p.add_argument('--prior', type=Path)
-    p.add_argument('--prior-panel', type=Path,
-                   help='the panel.json preserved alongside the prior run output; when supplied, '
-                        'a changed panel version is recorded and the windows are not compared')
-    p.add_argument('--out', type=Path, required=True)
-    args = p.parse_args()
-    staging_root = trash_root = None
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--panel', type=Path, required=True)
+    parser.add_argument('--recorded', type=Path, required=True)
+    prior_group = parser.add_mutually_exclusive_group()
+    prior_group.add_argument('--prior-run', type=Path, help='Completed immutable run; hashes verified before comparison')
+    prior_group.add_argument('--prior', type=Path, help='Raw prior recording; also supply --prior-panel for eligibility')
+    parser.add_argument('--prior-panel', type=Path)
+    parser.add_argument('--out', type=Path, required=True, help='New, non-existing run directory; existing destinations are rejected')
+    args = parser.parse_args()
+    run_id = uuid4().hex
+    out = args.out.absolute()
     try:
-        # Resolved before the sibling names are derived: `.` and `..` are valid
-        # destinations with no usable name of their own, and the staging directory
-        # must be a sibling of `out` for the rename to publish it atomically.
-        try:
-            out = args.out.resolve()
-        except RuntimeError as exc:
-            # Python 3.12 raises `RuntimeError`, not `OSError`, when `--out` sits
-            # behind a symlink loop. Uncaught it would escape as a traceback with empty
-            # stdout, so a caller parsing the envelope would get nothing at all.
-            raise ValueError(f'--out: cannot resolve {args.out}: {exc}')
-        if not out.name:
-            raise ValueError(f'--out: cannot publish into the filesystem root ({out})')
-        if out.exists() and not out.is_dir():
-            raise ValueError(f'--out: existing path is not a directory ({out})')
-        # The panel is parsed once and the copy is rendered from that object, so the
-        # panel.json in `out` is the panel that was measured rather than whatever a
-        # second read of the path happened to return.
-        panel_raw = json.loads(args.panel.read_text())
+        if out.exists() or out.is_symlink():
+            raise ValueError('--out must be a new, non-existing directory; existing destinations are never replaced')
+        if args.prior_panel and not args.prior:
+            raise ValueError('--prior-panel requires --prior; --prior-run includes its own panel')
+        panel_raw = json.loads(args.panel.read_text(encoding='utf-8'))
         panel = load_panel(panel_raw)
-        rows = [normalize_observation(json.loads(line)) for line in args.recorded.read_text().splitlines() if line.strip()]
-        prior = [normalize_observation(json.loads(line)) for line in args.prior.read_text().splitlines() if line.strip()] if args.prior else []
-        prior_panel = load_panel(json.loads(args.prior_panel.read_text())) if args.prior_panel else None
-        # Validate both files identically before anything is written: a duplicate
-        # (comparison key, repetition) is not independent sampling, and the verdict
-        # must not depend on whether an unrelated --prior window was supplied.
-        _index_success(rows, 'recorded observation')
-        _index_success(prior, 'prior observation')
-        summary = build_summary(rows, prior, panel,
-                                prior_panel_version=prior_panel['panel_version'] if prior_panel else None,
-                                prior_supplied=args.prior is not None)
-        # Stage every artifact in a directory this run creates, then publish by
-        # renaming the directory into place. `mkdtemp` picks both sibling names with an
-        # exclusive create, so two runs sharing `--out` cannot write into the same
-        # staging directory and no user path can already be sitting at either name;
-        # `finally` therefore knows exactly which paths this run created, and discards
-        # only those. The directory that gets published is made by `mkdir` so it keeps
-        # the mode a plain `mkdir` would have produced, not `mkdtemp`'s 0700.
+        raw = args.recorded.read_text(encoding='utf-8')
+        rows = _rows(raw)
+        prior, prior_panel = [], None
+        if args.prior_run:
+            loaded = load_run(args.prior_run)
+            prior, prior_panel = loaded['rows'], loaded['panel']
+        elif args.prior:
+            prior = _rows(args.prior.read_text(encoding='utf-8'))
+            prior_panel = load_panel(json.loads(args.prior_panel.read_text(encoding='utf-8'))) if args.prior_panel else None
+        summary = build_summary(rows, prior, panel, prior_panel, bool(args.prior or args.prior_run))
+        summary['run_id'] = run_id
+        summary['prior_source'] = str((args.prior_run or args.prior).absolute()) if args.prior_run or args.prior else None
         out.parent.mkdir(parents=True, exist_ok=True)
-        staging_root = _fresh_dir(out.parent, f'.{out.name}.staging.')
-        staging = staging_root / out.name
-        staging.mkdir()
-        # The outgoing `out` is set aside inside a directory this run created rather
-        # than at a name derived from `out`: a derived name can collide with a user
-        # directory, and renaming onto it or discarding it is what destroyed user data.
-        trash_root = _fresh_dir(out.parent, f'.{out.name}.outgoing.')
-        trash = trash_root / out.name
-        (staging / 'evidence.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
-        (staging / 'panel.json').write_text(json.dumps(panel_raw))
-        (staging / 'report.md').write_text('\n'.join(_report_lines(summary)) + '\n')
-        (staging / 'summary.json').write_text(json.dumps(summary, indent=2))
-        _publish(out, staging, trash)
-    except (OSError, ValueError, AttributeError) as exc:
-        print(json.dumps({'status': 'fail', 'errors': [str(exc)]}))
-        return True
-    except KeyboardInterrupt:
-        # An interrupt is a failure like any other and owes the caller the same
-        # machine-readable envelope and non-zero exit, not a traceback.
-        print(json.dumps({'status': 'fail',
-                          'errors': ['interrupted before the output was published']}))
-        return True
-    finally:
-        # Runs for every exit, including KeyboardInterrupt, so neither an unfinished
-        # staging tree nor a set-aside previous epoch is left behind: the read-only
-        # tree that used to be abandoned is made removable and discarded like any
-        # other. A second interrupt here is swallowed rather than allowed to escape,
-        # because the run has already decided its outcome and still owes the caller
-        # the envelope it produced; one interrupted target must not abandon the other.
-        for created in (staging_root, trash_root):
-            try:
-                _discard_tree(created)
-            except KeyboardInterrupt:
-                pass
-    print(json.dumps({'out': str(out), **summary}, default=str))
-    return summary['status'] != 'pass'
+        out.mkdir()  # Exclusive allocation: only one concurrent invocation can own this path.
+        contents = {'panel.json': json.dumps(panel_raw, indent=2) + '\n', 'raw.jsonl': raw,
+                    'evidence.jsonl': ''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in rows),
+                    'summary.json': json.dumps(summary, indent=2) + '\n',
+                    'report.md': '\n'.join(_report_lines(summary)) + '\n'}
+        for name, content in contents.items():
+            _write(out / name, content)
+        receipt = {'schema_version': 2, 'completion': 'complete', 'run_id': run_id,
+                   'artifacts': {name: hashlib.sha256(content.encode()).hexdigest() for name, content in contents.items()}}
+        _write(out / 'run.json', json.dumps(receipt, indent=2) + '\n')
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, KeyboardInterrupt) as exc:
+        print(json.dumps({'status': 'fail', 'completion': 'incomplete', 'run_id': run_id,
+                          'out': str(out), 'errors': [str(exc) or 'interrupted']}))
+        return 1
+    print(json.dumps({'completion': 'complete', 'out': str(out), **summary}))
+    return 0 if summary['status'] in ('baseline', 'compared') else 2
 
 
 if __name__ == '__main__':

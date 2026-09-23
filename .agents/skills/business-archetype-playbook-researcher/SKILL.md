@@ -11,6 +11,8 @@ description: Research sourced founder and operator playbooks for a specific busi
 
 ## Workflow
 
+For substantive query design and refinement, apply repo-root `references/research-query-calibration.md` (shared repository dependency) before broad collection. Keep each workflow's evidence type and source-review requirements distinct.
+
 1. Read `references/workflow.md` completely.
 2. Reuse the active topic workspace and identify archetype, stage, geography, and constraints.
 3. For a clear idea, search web and relevant social sources for comparable successful founders/operators; verify success claims and separate operator lessons from customer-demand evidence.

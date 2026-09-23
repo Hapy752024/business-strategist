@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+import copy
+import hashlib
 import json
 import sys
 import time
@@ -109,46 +111,81 @@ def segment_modifiers(segment: str) -> list[str]:
     return modifiers[:4]
 
 
-def query_plan(topic: str, segment: str, known: str, analog_markets: list[str] | None = None, reference_capabilities: list[str] | None = None) -> dict[str, list[dict[str, str]]]:
-    """Build bounded query sets that are executed independently per lane."""
-    modifiers = segment_modifiers(segment)
-    segment_scope = " ".join(modifiers)
-    scoped = f"{topic} {segment_scope}".strip()
-    competitive_queries = [
-        f"{scoped} software",
-        f"{scoped} tools",
-        f"{scoped} competitors",
-        f"{topic} alternatives",
-        f"{topic} vs",
-        f"best {topic} for {segment}",
-        f"{topic} reviews pricing",
-        f"{topic} comparison",
-        f"{topic} marketplace",
-        f"{segment} {topic} spreadsheet template",
-        f"{segment} {topic} agency service",
-        f"{segment} manual workflow {topic}",
-    ]
-    for competitor in known_competitor_terms(known):
-        competitive_queries.extend([
-            f"{competitor} alternatives",
-            f"{competitor} competitors",
-            f"{competitor} pricing reviews",
-        ])
-    similar_queries: list[dict[str, str]] = []
-    for market in analog_markets or []:
-        similar_queries.extend({"query": query, "scope_value": market} for query in [
-            f"{topic} {market} service",
-            f"{topic} {market} pricing",
-            f"{topic} {market} customers",
-        ])
-    reference_queries: list[dict[str, str]] = []
-    for capability in reference_capabilities or []:
-        reference_queries.append({"query": f"best company {capability} case study", "scope_value": capability})
+COMPETITOR_TERMS = {
+    "en": ["providers", "alternatives", "comparison", "reviews pricing", "agency service", "spreadsheet template", "manual workflow"],
+    "de": ["Anbieter", "Alternativen", "Vergleich", "Erfahrungen Preise", "Beratung Dienstleistung", "Tabellenvorlage", "selbst erledigen"],
+    "fr": ["prestataires", "alternatives", "comparatif", "avis tarifs", "service conseil", "modèle tableur", "faire soi-même"],
+    "es": ["proveedores", "alternativas", "comparativa", "opiniones precios", "servicio asesoría", "plantilla hoja de cálculo", "hacerlo uno mismo"],
+    "it": ["fornitori", "alternative", "confronto", "recensioni prezzi", "servizio consulenza", "modello foglio di calcolo", "fai da te"],
+}
+REFERENCE_TERMS = {"en": "company case study", "de": "Unternehmen Fallstudie",
+                   "fr": "entreprise étude de cas", "es": "empresa caso práctico", "it": "azienda caso studio"}
+
+
+def query_plan(topic: str, segment: str, known: str, analog_markets: list[str] | None = None,
+               reference_capabilities: list[str] | None = None, language: str = "en",
+               topic_keywords: str = "", segment_keywords: str = "") -> dict[str, list[dict[str, str]]]:
+    """Source-language seeds; no implicit English expansion for unsupported languages."""
+    lang = language.split("-")[0].lower()
+    seed = topic_keywords or topic
+    audience = segment_keywords or (" ".join(segment_modifiers(segment)) if lang == "en" else "")
+    scoped = f"{seed} {audience}".strip()
+    terms = COMPETITOR_TERMS.get(lang, [""])
+    competitive = [f"{scoped} {term}".strip() for term in terms]
+    for name in known_competitor_terms(known):
+        competitive.extend(f"{name} {term}".strip() for term in terms[:4])
     return {
-        "competitive_market": [{"query": query, "scope_value": segment} for query in competitive_queries],
-        "similar_company": similar_queries,
-        "capability_reference": reference_queries,
+        "competitive_market": [{"query": query, "scope_value": segment or seed} for query in dict.fromkeys(competitive)],
+        "similar_company": [{"query": f"{seed} {market} {term}".strip(), "scope_value": market}
+                            for market in analog_markets or [] for term in terms[:3]],
+        "capability_reference": [{"query": f"{capability} {REFERENCE_TERMS.get(lang, '')}".strip(), "scope_value": capability} for capability in reference_capabilities or []],
     }
+
+
+def execution_plan(args):
+    from jsonschema import Draft202012Validator
+    # The plan contract is shared; competitor rows additionally bind their lane.
+    if args.query_plan:
+        plan = json.loads(Path(args.query_plan).read_text(encoding="utf-8"))
+        schema = json.loads((ROOT / "schemas/pain-query-plan.schema.json").read_text())
+        errors = list(Draft202012Validator(schema).iter_errors(plan))
+        if errors:
+            raise ValueError(f"Invalid query plan: {errors[0].message}")
+        query_sets = {lane: [] for lane in ("competitive_market", "similar_company", "capability_reference")}
+        ids, pairs = set(), set()
+        for row in plan["queries"]:
+            lane = row.get("lane_scope")
+            if lane not in query_sets or not row.get("scope_value", "").strip():
+                raise ValueError("Competitor queries require lane_scope and nonempty scope_value")
+            if row["locale"] != f"{args.geo.upper()}:{args.language.lower()}":
+                raise ValueError("Query locale must match --geo and --language; run locales separately")
+            if row["provider"] not in {"brave_search", "firecrawl"}:
+                raise ValueError("Competitor discovery supports brave_search and firecrawl query plans")
+            pair = (row["provider"], lane, " ".join(row["query"].casefold().split()))
+            if row["query_id"] in ids or pair in pairs:
+                raise ValueError("Duplicate query ID or provider/lane/query")
+            ids.add(row["query_id"]); pairs.add(pair)
+            query_sets[lane].append(dict(row))
+    else:
+        query_sets = query_plan(args.topic, args.customer_segment, args.known_competitors,
+            args.analog_market, args.reference_capability, args.language, args.topic_keywords, args.segment_keywords)
+        for lane, rows in query_sets.items():
+            query_sets[lane] = [{**row, "query_id": f"{lane}-{index}-{provider}", "candidate_id": f"{lane}-{index}",
+                "provider": provider, "locale": f"{args.geo.upper()}:{args.language.lower()}", "lane_scope": lane,
+                "seed_origin": "generated", "intent": "competitor_discovery", "source_family": "supplier_discovery"}
+                for index, row in enumerate(rows) for provider in ("brave_search", "firecrawl")]
+        plan = {"schema_version": 1, "revision": "competitor-initial", "queries": [row for rows in query_sets.values() for row in rows]}
+    plan = copy.deepcopy(plan)
+    for rows in query_sets.values():
+        counts = {}
+        for row in rows:
+            provider = row["provider"]
+            counts[provider] = counts.get(provider, 0) + 1
+            row["scheduled"] = counts[provider] <= args.query_limit
+            row["per_query_result_limit"] = args.results_per_query
+    return {"input_plan": plan, "input_plan_digest": hashlib.sha256(json.dumps(plan, sort_keys=True, ensure_ascii=False).encode()).hexdigest(),
+            "query_sets": query_sets, "warnings": ["No built-in vocabulary for this language; review supplied seeds or use an exact query plan."]
+            if not args.query_plan and args.language.split("-")[0] not in COMPETITOR_TERMS else []}
 
 
 def classify_business_model(domain: str, url: str, text: str) -> str:
@@ -412,12 +449,7 @@ def enrich_known_competitors(candidates: dict[str, dict[str, Any]], known: str, 
             for candidate in candidates.values()
         ):
             continue
-        queries = [
-            f"{name} PKV",
-            f"{name} private health insurance Germany",
-            f"{name} Krankenversicherung",
-            f"{name} insurance Germany",
-        ]
+        queries = list(dict.fromkeys([name, f"{name} {topic}".strip()]))
         for query in queries:
             response = http_get(
                 with_query("https://api.search.brave.com/res/v1/web/search", {"q": query, "count": 3, "country": geo, "search_lang": language}),
@@ -448,7 +480,7 @@ def enrich_known_competitors(candidates: dict[str, dict[str, Any]], known: str, 
     return {"status": status, "credential_source": key_name, "candidate_count": added}
 
 
-def add_candidate(candidates: dict[str, dict[str, Any]], *, url: str, title: str, description: str, query: str, source: str, lane_scope: str, scope_value: str = "") -> None:
+def add_candidate(candidates: dict[str, dict[str, Any]], *, url: str, title: str, description: str, query: str, source: str, lane_scope: str, scope_value: str = "", query_spec: dict[str, Any] | None = None) -> None:
     domain = domain_of(url)
     if not domain:
         return
@@ -471,6 +503,7 @@ def add_candidate(candidates: dict[str, dict[str, Any]], *, url: str, title: str
         },
     )
     observation = {"source": source, "query": query, "url": url, "lane_scope": lane_scope, "scope_value": scope_value}
+    observation.update({key: query_spec[key] for key in ("query_id", "candidate_id", "locale", "seed_origin", "seed_locators") if query_spec and key in query_spec})
     if observation not in candidate["sources"]:
         candidate["sources"].append(observation)
     snippet = " ".join(part for part in [title, description] if part).strip()
@@ -478,74 +511,67 @@ def add_candidate(candidates: dict[str, dict[str, Any]], *, url: str, title: str
         candidate["evidence_snippets"].append(snippet[:500])
 
 
-def brave_search(queries: list[dict[str, str]], limit: int, raw: dict[str, Any], geo: str, language: str, lane_scope: str) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
-    key_name, api_key = get_secret("BRAVE_SEARCH_API_KEY")
-    candidates: dict[str, dict[str, Any]] = {}
+def search_candidates(queries, limit, raw, geo, language, lane_scope, provider):
+    # limit remains the downstream shortlist size. It cannot starve query probes.
+    from collect import query_collection_status, unattempted_queries
+    env = "BRAVE_SEARCH_API_KEY" if provider == "brave_search" else "FIRECRAWL_API_KEY_HGINVESTOR"
+    ledger = [{**spec, "query_id": spec.get("query_id", f"{lane_scope}-{provider}-{index}"),
+               "scheduled": spec.get("scheduled", True), "attempted": False,
+               "status": "not_attempted" if spec.get("scheduled", True) else "not_attempted:query_limit",
+               "returned_count": None, "result_urls": [], "candidate_domains": [],
+               "per_query_result_limit": spec.get("per_query_result_limit", min(limit, 10))}
+              for index, spec in enumerate(queries) if spec.get("provider", provider) == provider]
+    candidates = {}
+    if not ledger:
+        return candidates, {"status": "not_run", "query_ledger": [], "candidate_count": 0}
+    key_name, api_key = get_secret(env)
     if not api_key:
-        return candidates, {"status": "missing_credentials", "required_env": ["BRAVE_SEARCH_API_KEY"]}
-    status = "ok"
-    for query_spec in queries:
-        query = query_spec["query"]
-        response = http_get(
-            with_query("https://api.search.brave.com/res/v1/web/search", {"q": query, "count": min(limit, 10), "country": geo, "search_lang": language}),
-            headers={"X-Subscription-Token": api_key, "Accept": "application/json"},
-        )
-        raw.setdefault("brave_search", []).append({"query": query, "lane_scope": lane_scope, "scope_value": query_spec.get("scope_value", ""), "response": response})
-        if not response.get("ok"):
-            status = status_from_response(response)
+        unattempted_queries(ledger, "missing_credentials")
+        return candidates, {"status": "missing_credentials", "required_env": [env], "query_ledger": ledger, "candidate_count": 0}
+    for row in ledger:
+        if not row["scheduled"]:
             continue
-        web = (response.get("body") or {}).get("web") or {}
-        for item in web.get("results") or []:
-            add_candidate(
-                candidates,
-                url=item.get("url", ""),
-                title=item.get("title", ""),
-                description=item.get("description", ""),
-                query=query,
-                source="brave_search",
-                lane_scope=lane_scope,
-                scope_value=query_spec.get("scope_value", ""),
-            )
-            if len(candidates) >= limit:
-                break
-        if len(candidates) >= limit:
+        query, allowance = row["query"], row["per_query_result_limit"]
+        if provider == "brave_search":
+            response = http_get(with_query("https://api.search.brave.com/res/v1/web/search",
+                {"q": query, "count": allowance, "country": geo, "search_lang": language}),
+                headers={"X-Subscription-Token": api_key, "Accept": "application/json"})
+        else:
+            response = http_post("https://api.firecrawl.dev/v1/search", headers={"Authorization": f"Bearer {api_key}"},
+                data={"query": query, "limit": allowance, "country": geo, "location": geo})
+        raw.setdefault(provider, []).append({"query_id": row["query_id"], "query": query, "lane_scope": lane_scope,
+                                            "scope_value": row.get("scope_value", ""), "response": response})
+        status = status_from_response(response)
+        row.update({"status": status, "attempted": status != "request_budget_exhausted"})
+        if status in {"request_budget_exhausted", "insufficient_credits", "billing_required"}:
+            unattempted_queries(ledger, status)
             break
-    return candidates, {"status": status, "credential_source": key_name, "candidate_count": len(candidates)}
+        if status != "ok":
+            continue
+        body = response.get("body") or {}
+        items = (body.get("web") or {}).get("results", []) if provider == "brave_search" else body.get("data", [])
+        if isinstance(items, dict):
+            items = items.get("web", [])
+        items = items if isinstance(items, list) else []
+        row["returned_count"] = len(items)
+        for item in items[:allowance]:
+            url = item.get("url", "")
+            row["result_urls"].append(url)
+            add_candidate(candidates, url=url, title=item.get("title", ""), description=item.get("description", ""),
+                query=query, source=provider, lane_scope=lane_scope, scope_value=row.get("scope_value", ""), query_spec=row)
+            domain = domain_of(url)
+            if domain in candidates and domain not in row["candidate_domains"]:
+                row["candidate_domains"].append(domain)
+    return candidates, {"status": query_collection_status(ledger), "credential_source": key_name,
+                        "candidate_count": len(candidates), "query_ledger": ledger}
 
 
-def firecrawl_search(queries: list[dict[str, str]], limit: int, raw: dict[str, Any], lane_scope: str) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
-    key_name, api_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
-    candidates: dict[str, dict[str, Any]] = {}
-    if not api_key:
-        return candidates, {"status": "missing_credentials", "required_env": ["FIRECRAWL_API_KEY_HGINVESTOR"]}
-    status = "ok"
-    for query_spec in queries[:4]:
-        query = query_spec["query"]
-        response = http_post(
-            "https://api.firecrawl.dev/v1/search",
-            headers={"Authorization": f"Bearer {api_key}"},
-            data={"query": query, "limit": min(limit, 10)},
-        )
-        raw.setdefault("firecrawl", []).append({"query": query, "lane_scope": lane_scope, "scope_value": query_spec.get("scope_value", ""), "response": response})
-        if not response.get("ok"):
-            status = status_from_response(response)
-            continue
-        for item in (response.get("body") or {}).get("data") or []:
-            add_candidate(
-                candidates,
-                url=item.get("url", ""),
-                title=item.get("title", ""),
-                description=item.get("description", ""),
-                query=query,
-                source="firecrawl",
-                lane_scope=lane_scope,
-                scope_value=query_spec.get("scope_value", ""),
-            )
-            if len(candidates) >= limit:
-                break
-        if len(candidates) >= limit:
-            break
-    return candidates, {"status": status, "credential_source": key_name, "candidate_count": len(candidates)}
+def brave_search(queries, limit, raw, geo, language, lane_scope):
+    return search_candidates(queries, limit, raw, geo, language, lane_scope, "brave_search")
+
+
+def firecrawl_search(queries, limit, raw, lane_scope, geo="US", language="en"):
+    return search_candidates(queries, limit, raw, geo, language, lane_scope, "firecrawl")
 
 
 def merge_candidate_maps(target: dict[str, dict[str, Any]], incoming: dict[str, dict[str, Any]]) -> None:
@@ -672,6 +698,12 @@ def write_report(run_dir: Path, args: argparse.Namespace, candidates: list[dict[
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Discover potential competitors for a business idea.")
     parser.add_argument("--topic", required=True)
+    parser.add_argument("--topic-keywords", default="")
+    parser.add_argument("--segment-keywords", default="")
+    parser.add_argument("--query-plan", default="")
+    parser.add_argument("--query-limit", type=int, default=12, help="Queries per provider per lane; skipped rows stay in the ledger.")
+    parser.add_argument("--results-per-query", type=int, default=5)
+    parser.add_argument("--query-preview", action="store_true")
     parser.add_argument("--customer-segment", default="")
     parser.add_argument("--known-competitors", default="")
     parser.add_argument("--limit", type=int, default=20)
@@ -687,11 +719,26 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", default="")
     parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
     parser.add_argument("--legacy-output", action="store_true", help="Removed: the projects/research/evidence-scout layout is gone (now projects/_archive, read-only). Use --out-dir for an explicit path.")
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.query_limit < 1 or not 1 <= args.results_per_query <= 10:
+        parser.error("--query-limit must be positive and --results-per-query must be 1..10")
+    if min(args.limit, args.competitive_limit, args.similar_limit, args.reference_limit) < 1:
+        parser.error("Candidate limits must be positive")
+    if args.geo.upper() == "AUTO" or args.language.upper() == "AUTO":
+        parser.error("Competitor research requires explicit --geo and --language")
+    return args
 
 
 def main() -> int:
     args = parse_args()
+    try:
+        snapshot = execution_plan(args)
+    except (ValueError, OSError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    if args.query_preview:
+        print(json.dumps(snapshot, ensure_ascii=False, indent=2))
+        return 0
     run_dir, workspace = resolve_run_dir(
         topic=args.topic,
         workspace_arg=args.workspace,
@@ -705,8 +752,9 @@ def main() -> int:
     if workspace:
         update_stage(workspace, "competitor_discovery", run_dir=run_dir, status="in_progress", gate_result="not_run", next_action="Classify discovered alternatives and false positives.")
     write_competitor_plan(run_dir, args)
-    query_sets = query_plan(args.topic, args.customer_segment, args.known_competitors, args.analog_market, args.reference_capability)
-    raw: dict[str, Any] = {"query_sets": query_sets}
+    query_sets = snapshot["query_sets"]
+    write_json(run_dir / "query_plan.json", snapshot)
+    raw: dict[str, Any] = {"query_sets": query_sets, "input_plan_digest": snapshot["input_plan_digest"]}
     lane_limits = {
         "competitive_market": args.competitive_limit,
         "similar_company": args.similar_limit,
@@ -736,15 +784,16 @@ def main() -> int:
             provider_summaries[f"fixture:{lane_scope}"] = {"status": "ok", "candidate_count": len(fixture_lane)}
             continue
         brave_candidates, brave_summary = brave_search(lane_queries, lane_limit, raw, args.geo, args.language, lane_scope)
-        firecrawl_candidates, firecrawl_summary = firecrawl_search(lane_queries, lane_limit, raw, lane_scope)
+        firecrawl_candidates, firecrawl_summary = firecrawl_search(lane_queries, lane_limit, raw, lane_scope, args.geo, args.language)
         lane_candidates: dict[str, dict[str, Any]] = {}
         merge_candidate_maps(lane_candidates, brave_candidates)
         merge_candidate_maps(lane_candidates, firecrawl_candidates)
+        raw.setdefault("discovered_candidates", {})[lane_scope] = lane_candidates
         ranked_lane = sorted(lane_candidates.items(), key=lambda pair: (len(pair[1].get("sources", [])), len(pair[1].get("evidence_snippets", []))), reverse=True)
         merge_candidate_maps(merged, dict(ranked_lane[:lane_limit]))
         provider_summaries[f"brave_search:{lane_scope}"] = brave_summary
         provider_summaries[f"firecrawl:{lane_scope}"] = firecrawl_summary
-    known_lookup_summary = {"status": "not_run", "candidate_count": 0} if fixture_results is not None or not args.known_competitors else enrich_known_competitors(merged, args.known_competitors, raw, args.geo, args.language, args.topic)
+    known_lookup_summary = {"status": "not_run", "candidate_count": 0} if fixture_results is not None or not args.known_competitors or args.query_plan else enrich_known_competitors(merged, args.known_competitors, raw, args.geo, args.language, args.topic_keywords or args.topic)
     provider_summaries["known_competitor_lookup"] = known_lookup_summary
     add_known_competitors(merged, args.known_competitors)
     classified = [classify_candidate(item, args.topic, args.customer_segment) for item in merged.values()]

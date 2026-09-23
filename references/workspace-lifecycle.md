@@ -88,7 +88,7 @@ When the user chooses to continue a workspace:
 1. Read the full `market_research/manifest.json` to understand the current stage and all completed stages.
 2. Read the latest artifacts from the completed stages (evidence, competitors, reports).
 3. Read the `run-manifest.json` from the most recent run if it exists.
-4. Resume from the current stage's `next_action` field.
+4. Resume from the current stage's `next_action` field. For owner actions apply `references/owner-actions.md`: parse accepted rows from the active track manifest, load their linked details, and reconcile completed/deferred states before proposing work. Optional tasks do not become blockers.
 5. Do not re-run completed stages unless the user explicitly asks or source data has materially changed.
 
 ## Current executive document

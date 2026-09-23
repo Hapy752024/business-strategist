@@ -12,7 +12,7 @@ Follow [workflow](references/workflow.md) and the repository subproject contract
 - New builds: load preference profile/brand constraints, propose lightweight territories and obtain selection or delegated selection before expansion. Resolve/pin stable Next.js; server components by default.
 - Use approved assets; paid FAL needs an approved concrete need. Branding owns favicon production through brand-asset-producer; website integrates the handoff.
 - New build/release: apply [launch contract](references/launch-contract.md), [SEO/performance](references/seo-performance.md), [EU consent](references/consent-eu.md), [testing](references/testing.md).
-- Repairs/audits: use [maintenance](references/maintenance.md), preserving design and unrelated work.
+- Repairs/audits: use [maintenance](references/maintenance.md), preserving design and unrelated work. Visibility work also loads [AEO/GEO](references/aeo-geo-visibility.md), repo-root `references/search-visibility-decisions.md` and `references/owner-actions.md`; [DEO](references/deo-agent-readiness.md) only when applicable.
 - Only when selected: [PostHog analytics](references/posthog.md), [A/B experiments](references/experimentation.md), [campaign tracking](references/campaign-tracking.md). Analytics and experiments are optional; never activate tracking silently.
 - Prepare a reviewable PR/Preview; production, account connections, analytics activation and traffic allocation retain owner authorization.
 

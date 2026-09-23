@@ -13,7 +13,9 @@ Separate observed changes from interpretation. A pricing-page edit, SERP movemen
 
 Ask one focused setup question at a time when required. Prefer a small watchlist over broad scraping: 3-5 competitors and 2-5 high-signal URLs per competitor are easier to interpret and cheaper to run.
 
-Watchlist entities may be the user's own brand as well as competitors; own-brand rows use the same watchlist, snapshot, and diff conventions and do not require a competitor list before proceeding. Collect AI-answer visibility observations with `scripts/monitoring/ai_answer_probe.py` in recorded mode under the `ai_answer_engines` and `brand_mention_listening` capabilities registered in `config/source-capabilities.json`; the Evidence Scout provider exclusion above is waived for those two registered observation capabilities only and still governs every other Evidence Scout alias. Keep the measurement contract intact: label every observation row with its `surface` and `prompt_type`, record status as `success`, `error`, or `unsupported`, compare only compatible windows, and treat a failed or credit-blocked engine as a coverage gap recorded as `unknown` — never as absence of mention and never as absence of demand. Model output is an observation of the configured surface, never customer-demand evidence. Hand customer-voice phrasing — what customers say, complaints, review sentiment — back to Evidence Scout and `references/customer-voice.md`; this skill detects change over time and does not run the voice-of-customer pass.
+Watchlist entities may be the user's own brand as well as competitors; own-brand work does not require a competitor list. The `ai_answer_engines` capability is an offline recording processor, not a live provider: apply repo-root `references/ai-answer-recordings.md` and consume its verified output through `references/search-visibility-decisions.md`. Live engine collection is unimplemented. `brand_mention_listening` is a separate pending pilot; do not feed website mentions into the answer recorder or claim scheduled listening exists. An explicitly selected, accessible source may be manually inspected with provenance and sampling limits. Keep failed/credit-blocked sources unknown and model output separate from customer-demand evidence. Hand customer voice, complaints and review sentiment to Evidence Scout and `references/customer-voice.md`.
+
+Resolve the active subproject/case path through its manifest rather than creating a legacy market_research folder. For an existing website pilot, keep the improvement queue and immutable recording runs with that website's audit artifacts. Use `references/owner-actions.md` for real dependencies and accepted follow-up.
 
 ## Inputs To Collect
 
@@ -156,7 +158,7 @@ python3 scripts/validate_apis/validate_sonar.py
 Write monitoring outputs under the current project workspace (pass an explicit `--out-dir` to the scripts; `--legacy-output` is removed):
 
 ```text
-projects/<project-slug>/market_research/solution_alternatives/monitoring/<timestamp-topic>/
+<resolved-active-subproject>/monitoring/runs/<unique-run>/
 ```
 
 The former default location is a read-only archive of legacy runs: `projects/_archive/legacy-evidence-scout/competitor-monitoring/`.
