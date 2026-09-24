@@ -1,8 +1,3 @@
----
-name: interview-bridge
-description: Convert reviewed experiences and unanswered customer questions into a non-leading interview kit when conversations or observation can resolve the uncertainty.
----
-
 # Interview Bridge Workflow
 
 ## Purpose and Boundary
@@ -78,3 +73,5 @@ Each registry-derived probe is a hypothesis probe, not an evidence probe: tag it
 Read the actual source and decide whether its segment, incident/journey and voice support the intended probe. Keyword matches and automatic relevance labels are discovery aids, not acceptance. Preserve the raw run; write `<run>/source-review.json` (or pass `--source-review`) with `evidence_sha256` for exact evidence.jsonl bytes, `target_segment`, and `reviews`. Each review records `evidence_id`, `source_url`, `status` (accepted/rejected/unresolved), `reviewed_segment`, `journey_stage`, `relevance_rationale`, `voice` (customer/operator/context), `segment_relation` (target/adjacent/unresolved), and boolean `firsthand`. Accepted reviews must match the target segment. Explain rejection or unresolved meaning.
 
 Only accepted firsthand customer records with segment_relation=target can produce E probes. Adjacent and unresolved segment sources are comparator/discovery context, not target pain. Operator claims, creator transcripts, aggregate context and unreviewed stories cannot become customer voice. Missing/stale review or no eligible customer evidence stops generation before writes. In that case write a manually curated H hypothesis guide from the named customer/job hypothesis, clearly marked as hypotheses; do not fabricate an acceptance record to satisfy the generator. Discovery destinations remain unverified recruitment access until checked under the shared recruitment contract.
+
+After a smoke test, pass `--responders <run>/experiments/<smoke>/responders.json` to add responder rows to the tracker as unresolved. Screen each for segment fit and a recent incident before booking; unpaid volunteering is not evidence of need.

@@ -1,8 +1,3 @@
----
-name: saas-fintech-pilot-designer
-description: Design rigorous tests, MVPs, POCs, paid pilots, sandbox trials, and decision gates for SaaS, fintech, and insurtech products. Use when the user asks how to validate a SaaS/fintech/insurtech idea, run a pilot with a customer, design an MVP, choose between prototype/POC/pilot/beta, handle regulated pilots, use synthetic or real data safely, structure pilot success criteria, or avoid enterprise pilots that never convert.
----
-
 # SaaS Fintech Pilot Designer Workflow
 
 Use this skill to turn an early SaaS, fintech, or insurtech idea into a concrete learning plan: which test to run, with whom, under what constraints, using which data, with what success threshold, and what decision follows.

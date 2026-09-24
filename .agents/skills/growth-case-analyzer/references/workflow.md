@@ -1,8 +1,3 @@
----
-name: growth-case-analyzer
-description: Analyze successful and failed companies to extract practical management, strategy, marketing, operating, culture, product, distribution, timing, and capital-allocation lessons. Use this skill whenever the user asks for case studies, examples of successful companies, analysis of failed companies, why a company won or failed, lessons from Amazon/Toyota/Netflix/Apple/Kodak/Blockbuster/Nokia/WeWork/Theranos or similar, or wants to apply company case lessons to their own business.
----
-
 # Growth Case Analyzer Workflow
 
 Use this skill when the user asks for analysis of companies that succeeded, failed, scaled, declined, pivoted, or created strong marketing and management systems.

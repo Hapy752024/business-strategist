@@ -1,8 +1,3 @@
----
-name: competitor-scout
-description: Identify potential direct, indirect, and substitute competitors for a business idea or customer problem using script-based web discovery, then separate real solution providers from blogs, marketplaces, agencies, and review sites.
----
-
 # Competitor Scout Workflow
 
 Use this skill for narrow discovery or classification. For a complete market landscape with analogs, capability references, offer/price analysis and social usage, route to `competitive-landscape-builder`.

@@ -1,8 +1,3 @@
----
-name: startup-business-builder
-description: Help founders start a new startup from the business side: idea selection, customer discovery, painful problem validation, MVP scope, first customers, business model, pricing, positioning, go-to-market, operating cadence, traction metrics, and failure-risk checks. Use this skill whenever the user asks how to start a startup, evaluate a startup idea, build a startup plan, create a zero-to-one roadmap, find first customers, define MVP/business model/go-to-market, avoid startup failure, or learn from successful and failed startup examples. Focus on business execution and validation, not fundraising mechanics.
----
-
 # Startup Business Builder Workflow
 
 Use this skill when the user wants to start, evaluate, or structure a new startup from the business side. Financing can be mentioned as a constraint, but do not turn the answer into fundraising advice unless the user explicitly asks.

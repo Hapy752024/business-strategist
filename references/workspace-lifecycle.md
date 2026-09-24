@@ -142,6 +142,6 @@ To resume:
 
 If the user explicitly says to start fresh and discard existing work, ask for confirmation before deleting anything. Never delete a workspace silently.
 
-## Mode Files
+## Project Subagents
 
-Agent modes (`agent-modes/`) define tool permissions and stop conditions per workflow type. Each mode file governs what tools and scripts are available during that phase of work.
+Project subagents in `.claude/agents/` run bounded work packets with restricted tools and explicit output contracts.

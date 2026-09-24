@@ -1,80 +1,43 @@
 #!/usr/bin/env python3
-"""PreCompact hook: save manifest state and current plan before context is rewritten.
-
-Reads session context from stdin, writes current plan state to .claude/plans/resume.json
-so PostCompact can restore it. This is the single highest-risk moment for losing the thread.
-"""
-
+"""Save a compact, session-scoped workspace checkpoint before compaction."""
 import json
 import sys
 import time
 from pathlib import Path
 
-
-ROOT = Path(__file__).resolve().parents[2]
-RESUME_FILE = ROOT / ".claude" / "plans" / "resume.json"
-
-
-def now_iso() -> str:
-    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+from compaction_state import active_workspace, load_state, project_root, resume_path, write_state
 
 
 def main() -> int:
     try:
-        input_data = json.loads(sys.stdin.read())
-    except json.JSONDecodeError:
-        input_data = {}
-
-    # Collect active workspace state
-    active_workspaces: list[dict[str, str]] = []
-    projects_dir = ROOT / "projects"
-    if projects_dir.exists():
-        for manifest_path in sorted(projects_dir.glob("*/market_research/manifest.json")):
-            try:
-                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-                active_workspaces.append({
-                    "slug": manifest_path.parent.parent.name,
-                    "current_stage": manifest.get("current_stage", "unknown"),
-                    "updated_at": manifest.get("updated_at", ""),
-                    "next_action": manifest.get("next_action", ""),
-                    "open_blockers": manifest.get("open_blockers", []),
-                })
-            except (json.JSONDecodeError, OSError):
-                continue
-
-    # Collect recent run manifests
-    recent_runs: list[dict[str, str]] = []
-    for run_manifest_path in sorted(projects_dir.glob("*/market_research/**/run-manifest.json")):
-        try:
-            run = json.loads(run_manifest_path.read_text(encoding="utf-8"))
-            recent_runs.append({
-                "run_id": run.get("run_id", ""),
-                "current_stage": run.get("current_stage", ""),
-                "gate_result": run.get("gate_result", "not_run"),
-                "next_action": run.get("next_action", ""),
-            })
-        except (json.JSONDecodeError, OSError):
-            continue
-
-    resume_state = {
-        "compacted_at": now_iso(),
-        "active_workspaces": active_workspaces,
-        "recent_runs": recent_runs[-5:],  # Keep last 5
-        "session_hint": input_data.get("session_hint", ""),
+        data = json.loads(sys.stdin.read())
+    except (json.JSONDecodeError, TypeError):
+        data = {}
+    session_id = data.get("session_id")
+    root = project_root()
+    if not isinstance(session_id, str) or not session_id:
+        print(json.dumps({"continue": True}))
+        return 0
+    prior = load_state(resume_path(root, session_id), session_id) or {}
+    selection = prior.get('active_selection', {})
+    state = {
+        "schema_version": 1,
+        "session_id": session_id,
+        "compacted_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "active_selection": selection,
+        "workspace": active_workspace(root, data.get("cwd"),
+            selected_project=data.get("selected_project") or selection.get('project'),
+            selected_module=data.get("selected_module") or selection.get('module'),
+            selected_case=data.get("selected_case") or selection.get('case'),
+            selected_run=data.get("selected_run") or selection.get('run')),
+        "session_hint": str(data.get("session_hint", ""))[:2000],
+        "open_question": str(data.get("open_question") or selection.get('request') or prior.get('open_question', ''))[:1000],
+        "accepted_decisions": data.get("accepted_decisions", prior.get("accepted_decisions", [])) if isinstance(data.get("accepted_decisions", prior.get("accepted_decisions", [])), list) else [],
+        "custom_instructions": str(data.get("custom_instructions", ""))[:4000],
+        "compact_summary": "",
     }
-
-    RESUME_FILE.parent.mkdir(parents=True, exist_ok=True)
-    RESUME_FILE.write_text(json.dumps(resume_state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-
-    # Return allow — we never block compaction, just save state
-    output = {
-        "continue": True,
-        "hookSpecificOutput": {
-            "hookEventName": "PreCompact",
-            "message": f"Saved {len(active_workspaces)} workspace(s) and {len(recent_runs)} run(s) to resume file.",
-        },
-    }
-    print(json.dumps(output))
+    write_state(resume_path(root, session_id), state)
+    print(json.dumps({"continue": True}))
     return 0
 
 

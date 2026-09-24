@@ -1,8 +1,3 @@
----
-name: competitor-marketing-analyzer
-description: Analyze competitor marketing approaches from public landing pages, positioning copy, CTAs, audience language, pricing signals, proof points, and channel clues.
----
-
 # Competitor Marketing Analyzer Workflow
 
 Use this skill after entities have been identified, or when the user provides URLs and wants a narrow marketing teardown. For lane assignment and full competitive/analog/reference synthesis, use `competitive-landscape-builder`.

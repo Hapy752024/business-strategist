@@ -169,11 +169,11 @@ echo ""
 echo "--- Symlinks ---"
 check ".claude/skills -> .agents/skills" test -L .claude/skills
 
-# ── Agent modes ───────────────────────────────────────────
+# ── Project subagents ─────────────────────────────────────
 echo ""
-echo "--- Agent Modes ---"
-for mode in research source-audit coding; do
-    check "agent-modes/$mode.md exists" test -f "agent-modes/$mode.md"
+echo "--- Project Subagents ---"
+for agent in evidence-researcher competitor-researcher brand-critic; do
+    check ".claude/agents/$agent.md exists" test -f ".claude/agents/$agent.md"
 done
 
 echo ""
@@ -187,7 +187,7 @@ check "eval structure is valid" python3 scripts/run_evals.py
 # ── Schemas ───────────────────────────────────────────────
 echo ""
 echo "--- Schemas ---"
-for schema in evidence-record ads-record competitor entity-landscape stage-checkpoint research-manifest project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record strategy-plan; do
+for schema in evidence-record ads-record competitor entity-landscape stage-checkpoint research-manifest project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record strategy-plan content-brief; do
     check "schemas/$schema.schema.json exists" test -f "schemas/$schema.schema.json"
     check "schemas/$schema.schema.json is valid JSON" python3 -c "import json; json.load(open('schemas/$schema.schema.json'))" 2>/dev/null
 done
