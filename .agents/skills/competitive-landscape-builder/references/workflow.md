@@ -51,3 +51,5 @@ Include the marketing analyzer's visibility, sales, service and retention assess
 - [ ] Public follower/view metrics are labelled proxies, not performance proof.
 - [ ] Provider failures and coverage gaps are visible before synthesis.
 - [ ] Branding remains an optional handoff and never a research prerequisite.
+
+For independent market, analog and capability lanes, use one `competitor-researcher` per lane with exclusive output directories and source packets. The coordinator owns classification, deduplication and positioning decisions.
