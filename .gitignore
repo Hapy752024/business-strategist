@@ -41,8 +41,24 @@ research/
 research.sqlite
 
 # Local business/brand project workspaces and eval runs
-projects/
-brand-projects/
+projects/*
+!projects/us-retirees-italy/
+projects/us-retirees-italy/*
+!projects/us-retirees-italy/AGENTS.md
+!projects/us-retirees-italy/.agents/
+projects/us-retirees-italy/.agents/*
+!projects/us-retirees-italy/.agents/skills/
+projects/us-retirees-italy/.agents/skills/*
+!projects/us-retirees-italy/.agents/skills/town-db-curator/
+!projects/us-retirees-italy/.claude/
+projects/us-retirees-italy/.claude/*
+!projects/us-retirees-italy/.claude/skills/
+projects/us-retirees-italy/.claude/skills/*
+!projects/us-retirees-italy/.claude/skills/town-db-curator
+!projects/us-retirees-italy/scripts/
+projects/us-retirees-italy/scripts/*
+!projects/us-retirees-italy/scripts/town_db/
+brand-projects/*
 eval-workspaces/
 
 # Local git worktrees (machine-local checkouts)
@@ -50,3 +66,6 @@ eval-workspaces/
 
 # Subagent-driven-development workspaces (machine-local task briefs and ledgers)
 .superpowers/
+
+# Opt-in model eval outputs
+evals/live-results/
