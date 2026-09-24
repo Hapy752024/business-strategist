@@ -7,3 +7,5 @@ Produce the requested campaign scope: selected platform and audience, creative h
 Track relevant exposure through qualified response, conversion and contribution, accounting for media and operating costs. Set thresholds from the business economics or explicitly mark them as proposed test assumptions, not industry facts. When retained-value proof is missing, propose a capped learning experiment, not a scaling commitment. Low exposure is an acquisition-access result, not evidence of absent demand.
 
 Review claims, consent/tracking, sensitive targeting, landing-page consistency, exclusions and spending limits before recommending launch. Show the approval required. Drafting a plan never authorizes publishing, uploading customer data or spending.
+
+Plan first with `references/paid-campaign-planning.md`.

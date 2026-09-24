@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "marketing-workstream.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "owner",
+    "revision",
+    "status",
+    "brief",
+    "artifact_refs",
+    "imported_decisions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "owner": {
+      "const": "marketing"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "enum": [
+        "briefed",
+        "active",
+        "review_required",
+        "complete"
+      ]
+    },
+    "brief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "const": "brief.md"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "artifact_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "imported_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "owner",
+          "revision",
+          "path",
+          "sha256",
+          "purpose",
+          "applicability",
+          "approved_for",
+          "review_status",
+          "limits"
+        ],
+        "properties": {
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "purpose": {
+            "enum": [
+              "positioning",
+              "segment_and_pain",
+              "customer_language",
+              "brand_voice",
+              "brand_assets",
+              "keyword_map",
+              "validation_page",
+              "experiment_results"
+            ]
+          },
+          "applicability": {
+            "type": "string",
+            "minLength": 1
+          },
+          "approved_for": {
+            "type": "string",
+            "minLength": 1
+          },
+          "review_status": {
+            "enum": [
+              "pending",
+              "approved"
+            ]
+          },
+          "limits": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

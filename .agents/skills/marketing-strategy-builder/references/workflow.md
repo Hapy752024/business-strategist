@@ -1,8 +1,3 @@
----
-name: marketing-strategy-builder
-description: Build world-class marketing strategy from customer evidence: segmentation, positioning, messaging, offer design, funnel, channel strategy, launch plan, campaign calendar, proof assets, pricing signals, metrics, and testing roadmap. Use this skill whenever the user asks for marketing strategy, go-to-market, positioning, brand messaging, demand generation, growth campaigns, launch planning, funnels, acquisition channels, content strategy, paid ads strategy, or how to market a company or product.
----
-
 # Marketing Strategy Builder Workflow
 
 Use this skill when the user wants a marketing strategy, go-to-market plan, positioning, campaign plan, or growth plan.

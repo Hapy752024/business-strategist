@@ -1,8 +1,3 @@
----
-name: social-digital-marketing-planner
-description: Create detailed, actionable social media and digital marketing plans grounded in audience research, platform fit, content strategy, paid/organic channel mix, creative testing, campaign calendars, measurement, and risk review. Use this skill whenever the user asks for a social media plan, digital marketing plan, content calendar, paid social strategy, organic social strategy, influencer or creator strategy, campaign launch plan, Meta/TikTok/LinkedIn/Instagram/YouTube/X/Pinterest strategy, social audit, digital acquisition roadmap, or examples of good and bad social marketing to apply to their business.
----
-
 # Social / Digital Marketing Planner Workflow
 
 Use this skill when the user wants a detailed, actionable social or digital marketing plan. The goal is not to produce a list of post ideas; the goal is to connect audience behavior, offer, creative, channel execution, measurement, and learning cadence.
@@ -268,3 +263,5 @@ If needed, ask:
 `What is the primary business outcome this social/digital plan must drive in the next 90 days: awareness, qualified leads, sales/bookings, retention, or community?`
 
 For a selected visibility intervention, use repo-root `references/search-visibility-decisions.md` for the evidence-to-change queue and outcome review. If recordings are needed, apply `references/ai-answer-recordings.md`; the processor is offline, and listening/live collection are not implemented capabilities. Do not run a mandatory multi-engine program.
+
+Every planned asset is one content brief validated against `schemas/content-brief.schema.json` and stored under `marketing/briefs/<brief_id>.json` with a Markdown twin from `templates/project/content-brief.md`. A calendar is a list of brief IDs with publish windows. Do not deliver post ideas without a brief.

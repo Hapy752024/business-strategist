@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content-brief.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["brief_id", "platform", "format", "pillar", "audience_segment", "hook", "key_message", "proof", "cta", "conversion_bridge", "kpi", "owner", "evidence_refs", "brand_voice_ref", "status"],
+  "properties": {
+    "brief_id": {"type": "string", "pattern": "^CB-[0-9]{3,}$"},
+    "platform": {"enum": ["youtube", "instagram", "tiktok", "linkedin", "x", "facebook", "reddit", "newsletter", "blog", "podcast", "other"]},
+    "format": {"type": "string", "minLength": 1},
+    "pillar": {"type": "string", "minLength": 1},
+    "audience_segment": {"type": "string", "minLength": 1},
+    "hook": {"type": "string", "minLength": 1},
+    "key_message": {"type": "string", "minLength": 1},
+    "proof": {"type": "string", "minLength": 1},
+    "cta": {"type": "string", "minLength": 1},
+    "conversion_bridge": {"type": "string", "minLength": 1},
+    "kpi": {"type": "object", "required": ["name", "target", "window_days"], "additionalProperties": false,
+      "properties": {"name": {"type": "string"}, "target": {"type": "number"}, "window_days": {"type": "integer", "minimum": 1}}},
+    "owner": {"type": "string", "minLength": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "brand_voice_ref": {"type": ["string", "null"]},
+    "status": {"enum": ["planned", "in_production", "published", "measured", "dropped"]},
+    "publish_window": {"type": "string"},
+    "notes": {"type": "string"}
+  }
+}
