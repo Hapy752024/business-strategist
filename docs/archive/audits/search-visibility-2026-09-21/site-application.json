@@ -1,0 +1,131 @@
+{
+  "backup": "/tmp/visibility-italy-before-qyrw6phr",
+  "source": "isolated local production build and browser QA",
+  "files": [
+    {
+      "path": "app/legal.ts",
+      "before": "935c7576578f1ea6479027d46c12095351953dee3da5ea066f90aed44b7f2b0f",
+      "after": "f8650e1bac9f9bbb6204a54754fb00abbfd6660589bfdf12d6d655576317257d"
+    },
+    {
+      "path": "app/about/page.tsx",
+      "before": "53252d3f420ccf6ed3ecf832f97c4ca16ba80b81cdab12e9222fe3d02e2bd848",
+      "after": "4c46b86cd37d30d395155cd63c667983b0109c2c385a899cc89509aa6ff73704"
+    },
+    {
+      "path": "app/book/page.tsx",
+      "before": "38b7925e2a8a507acc354e587d57b499f6c6f23c3e3c584bdb6cf43cb0bb85c5",
+      "after": "1fb39d5d6d4b67257cc004888a47e137ec3b09f1bd3fc9608a9562317270bd47"
+    },
+    {
+      "path": "app/guide/page.tsx",
+      "before": "0bad4b92e2cea64a8656c79f2e8654832d78683e0ce4bb870ff01b523608f5fa",
+      "after": "a89a165bb10cb0bab508659f75179837c4114ebdf7a487215e692df0d3c3ed9b"
+    },
+    {
+      "path": "app/faq/page.tsx",
+      "before": "01412a9f188163a5458c1e39554976cfcb51fe3f322801fa580f507e5113a8cd",
+      "after": "0a71ed2cbedf4ae3572f9a21a4c0929942aa7cbd30743c52583cecbafec70ebd"
+    },
+    {
+      "path": "app/legal-pages/terms/page.tsx",
+      "before": "9dc8046510df3593098ad0241c3c8a5f188f892423946933367f8261ab799cf1",
+      "after": "999aa6c626323df34f753283e0f7eb82734e210d53aba06b7d0595f20e48e1e6"
+    },
+    {
+      "path": "app/mobile-sticky-cta.tsx",
+      "before": "40fc576a9c19eb433ca3d9a484a6d5fdcbeccaa6947a9d6bc3a509342645bef1",
+      "after": "468d7217d538db470680658094611efff7f00daccb27cd909f5c93058a4f1e78"
+    },
+    {
+      "path": "tests/search-visibility.spec.ts",
+      "before": null,
+      "after": "f1933f80090af86db098a67b22520fbe8c78521f5ae88e52ab83c2e522d8f8d9"
+    },
+    {
+      "path": "owner-actions.md",
+      "before": null,
+      "after": "c8766a5e65283b8488bd628ba066df7b732e96a84769096d09602c42701cf731"
+    },
+    {
+      "path": "website-manifest.json",
+      "before": "b3be5252e8a8f5db88002630073c9995d9d5d5d80f527673f0e1d85afa3d5ec9",
+      "after": "e81323aa4f99ba2224437dc43b36cdcda699cb551c6c1e46598fb60fb57a509b"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/typecheck.log",
+      "before": null,
+      "after": "8fa1cf5506304e8abac55868e7f1a136c9b1dde57a3981a382da4c21ea129a6f"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/browser.log",
+      "before": null,
+      "after": "3fe50890803036ab37baef022728ff4c3cd80804edddd37b157423aa8a9431aa"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/book-desktop.png",
+      "before": null,
+      "after": "61e26b9ee37548010714617688d21537759bcc0be3dbd2c43456bbad70a98f8a"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/baseline.json",
+      "before": null,
+      "after": "13790315a7bec11873c58edc3d4ef344864e90f4697842610b7af8828b78b70a"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/targeted-browser.log",
+      "before": null,
+      "after": "3db47b1eb95db2ed11cf26f01920a5de306ca2795a05f68a568d28da2c6f91d6"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/routes.json",
+      "before": null,
+      "after": "cccfca8c7070843abe5497fd51b1e04dd5a573eb93ef3a8eba9794d87581bf8c"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/current-rendered-hashes.json",
+      "before": null,
+      "after": "d26a2d96e0ff6e28efb66e9bdeacd84b2639ed03bb9aa271b7f2fed4ff607bad"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/tested-source-hashes.json",
+      "before": null,
+      "after": "d21ec1278106096ebe584814c57470b0ffaa28fe7b8ee1ae1a7ad7929c1bf213"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/report.md",
+      "before": null,
+      "after": "e01aa03d7ca1e50f7207bdcc4616c7ebc6f3037ab6200adb5be3390577545fd8"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/book-mobile.png",
+      "before": null,
+      "after": "9eacc1dfd392587aee352d988184187372d1414398b1037d929265b135be5adc"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/build.log",
+      "before": null,
+      "after": "14edeb863448fa467969ad9813247d0619ea9f04f5b2cffa1a22f7c23ef4d20f"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/lint.log",
+      "before": null,
+      "after": "537d99434f8b9a0603673ed2ba28fa263e49960c2c4d5db1410482bdfa25a1b1"
+    },
+    {
+      "path": "website-preferences.json",
+      "before": "0a3c7f4fc4ea1dcb1d86cbff53f8debbaa853f6315306810b15ef51205666876",
+      "after": "36fbbcb39221f7974e26bb71090a92d4a9b09a1897a62aeb64c5f6f292baefa1"
+    },
+    {
+      "path": "qa-evidence.md",
+      "before": "089ecbeb49714eebb6dfa7ace6cae3df791c920cccd9b66d4a56812cd9c83e3a",
+      "after": "49216cd68bd2429adab22a26bcaedf84d7f3921ed492e72ccf17324ed3fada23"
+    },
+    {
+      "path": "qa/search-visibility-2026-09-21/review.md",
+      "before": null,
+      "after": "342322d69212c2d589b5b51dc9cf4ef93e8816bdba8ecc2c00369999eb146fff"
+    }
+  ]
+}

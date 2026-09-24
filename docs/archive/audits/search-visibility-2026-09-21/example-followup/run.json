@@ -1,0 +1,12 @@
+{
+  "schema_version": 2,
+  "completion": "complete",
+  "run_id": "ac52afddd6ea45b79b489e23fc7099d7",
+  "artifacts": {
+    "panel.json": "1dc5a18f0d76e4f1c3b5c7a3109c3b921809133962ac2fa265588f1aee8705da",
+    "raw.jsonl": "03156e30f6daaea7ab304c53b1650b3061a8a40525ae0396fdc15ab846ac40d7",
+    "evidence.jsonl": "03156e30f6daaea7ab304c53b1650b3061a8a40525ae0396fdc15ab846ac40d7",
+    "summary.json": "450c2b5e68ec53e2db85435a1254b6f71488142e32aae9d047a29b769a474a5a",
+    "report.md": "55bdb8dd17635e9f6f9121fa8aa6b2c6886ee75251d8f46e00ea5153db6788db"
+  }
+}

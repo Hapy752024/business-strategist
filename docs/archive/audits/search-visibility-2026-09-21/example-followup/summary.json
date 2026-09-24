@@ -1,0 +1,94 @@
+{
+  "schema_version": 2,
+  "status": "compared",
+  "boundary": "Recorded observations of declared surfaces only; not customer-demand evidence. Failures are unknown, not absence. Rate differences are descriptive, not causal or statistically established uplift.",
+  "subject": {
+    "name": "Cedar",
+    "domains": [
+      "cedar.example"
+    ]
+  },
+  "panel_digest": "dbc8010c6b00c915b890b9bdfab064d5dac45148dcf35b9bb83ddc78051a9e68",
+  "panel_version": "v1",
+  "observations": 1,
+  "coverage": {
+    "expected_observations": 1,
+    "successful_observations": 1,
+    "targets": [
+      {
+        "engine": "example",
+        "model": "model-v1",
+        "search_config": "search:on",
+        "surface": "api",
+        "locale": "en-GB",
+        "prompt_id": "discover",
+        "prompt_version": 1,
+        "prompt_type": "unbranded_discovery",
+        "expected": 1,
+        "successful": 1
+      }
+    ]
+  },
+  "coverage_gaps": [],
+  "off_panel": {
+    "count": 0,
+    "rows": []
+  },
+  "diff": {
+    "eligible": true,
+    "reason": "compatible_complete_nonoverlapping_windows",
+    "trends": [
+      {
+        "engine": "example",
+        "model": "model-v1",
+        "search_config": "search:on",
+        "surface": "api",
+        "locale": "en-GB",
+        "prompt_id": "discover",
+        "prompt_version": 1,
+        "prompt_type": "unbranded_discovery",
+        "field": "brand_mentioned",
+        "prior_rate": 0.0,
+        "current_rate": 1.0,
+        "delta": 1.0,
+        "prior_n": 1,
+        "current_n": 1
+      },
+      {
+        "engine": "example",
+        "model": "model-v1",
+        "search_config": "search:on",
+        "surface": "api",
+        "locale": "en-GB",
+        "prompt_id": "discover",
+        "prompt_version": 1,
+        "prompt_type": "unbranded_discovery",
+        "field": "url_cited",
+        "prior_rate": 0.0,
+        "current_rate": 0.0,
+        "delta": 0.0,
+        "prior_n": 1,
+        "current_n": 1
+      },
+      {
+        "engine": "example",
+        "model": "model-v1",
+        "search_config": "search:on",
+        "surface": "api",
+        "locale": "en-GB",
+        "prompt_id": "discover",
+        "prompt_version": 1,
+        "prompt_type": "unbranded_discovery",
+        "field": "recommended",
+        "prior_rate": 0.0,
+        "current_rate": 0.0,
+        "delta": 0.0,
+        "prior_n": 1,
+        "current_n": 1
+      }
+    ]
+  },
+  "eligible_for_trend": true,
+  "run_id": "ac52afddd6ea45b79b489e23fc7099d7",
+  "prior_source": "/mnt/c/coding/general/business-strategist/docs/audits/search-visibility-2026-09-21/example-baseline"
+}

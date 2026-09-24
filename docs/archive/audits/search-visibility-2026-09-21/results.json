@@ -1,0 +1,518 @@
+{
+  "existing_output_data_loss": {
+    "exit": 0,
+    "status": "pass",
+    "sentinel_exists": false,
+    "summary": {
+      "out": "/tmp/visibility-review-4m7v0njf/existing_output_data_loss/out",
+      "status": "pass",
+      "observations": 1,
+      "panel_version": "v1",
+      "coverage": {
+        "declared_prompts": 1,
+        "covered_prompts": 1,
+        "successful_observations": 1
+      },
+      "coverage_gaps": [],
+      "off_panel": {
+        "count": 0,
+        "prompt_ids": []
+      },
+      "unmeasured": false,
+      "diff": null,
+      "boundary": "observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence"
+    },
+    "report": "# AI-answer observation report\n\nBoundary: observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence\n\nStatus: pass\nPanel version: v1\nObservations: 1; coverage gaps: 0\nCoverage: 1/1 declared prompts fully covered\n"
+  },
+  "out_dot_data_loss": {
+    "exit": 0,
+    "status": "pass",
+    "sentinel_exists": false,
+    "summary": {
+      "out": "/tmp/visibility-review-4m7v0njf/out_dot_data_loss/out",
+      "status": "pass",
+      "observations": 1,
+      "panel_version": "v1",
+      "coverage": {
+        "declared_prompts": 1,
+        "covered_prompts": 1,
+        "successful_observations": 1
+      },
+      "coverage_gaps": [],
+      "off_panel": {
+        "count": 0,
+        "prompt_ids": []
+      },
+      "unmeasured": false,
+      "diff": null,
+      "boundary": "observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence"
+    },
+    "report": "# AI-answer observation report\n\nBoundary: observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence\n\nStatus: pass\nPanel version: v1\nObservations: 1; coverage gaps: 0\nCoverage: 1/1 declared prompts fully covered\n"
+  },
+  "off_panel_trend": {
+    "exit": 0,
+    "status": "pass",
+    "sentinel_exists": false,
+    "summary": {
+      "out": "/tmp/visibility-review-4m7v0njf/off_panel_trend/out",
+      "status": "pass",
+      "observations": 2,
+      "panel_version": "v1",
+      "coverage": {
+        "declared_prompts": 1,
+        "covered_prompts": 1,
+        "successful_observations": 1
+      },
+      "coverage_gaps": [],
+      "off_panel": {
+        "count": 1,
+        "prompt_ids": [
+          "not-selected"
+        ]
+      },
+      "unmeasured": false,
+      "diff": {
+        "changes": [
+          {
+            "prompt_id": "not-selected",
+            "engine": "example",
+            "repetition": 1,
+            "field": "brand_mentioned",
+            "from": false,
+            "to": true
+          }
+        ],
+        "trends": [
+          {
+            "prompt_id": "not-selected",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "brand_mentioned",
+            "prior_rate": 0.0,
+            "current_rate": 1.0,
+            "delta": 1.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "not-selected",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "url_cited",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "not-selected",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "recommended",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "brand_mentioned",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "url_cited",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "recommended",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          }
+        ],
+        "coverage": {
+          "current": 2,
+          "prior": 2,
+          "compared": 2,
+          "skipped_incompatible": 0,
+          "skipped_failed": 0,
+          "skipped_failed_prior": 0,
+          "skipped_unpaired": 0,
+          "prior_window": {
+            "start": "2026-09-20T10:00:00Z",
+            "end": "2026-09-20T10:00:00Z"
+          },
+          "current_window": {
+            "start": "2026-09-21T10:00:00Z",
+            "end": "2026-09-21T10:00:00Z"
+          },
+          "overlapping_windows": false,
+          "panel_version": {
+            "current": "v1",
+            "prior": "v1",
+            "compatible": true
+          }
+        }
+      },
+      "boundary": "observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence"
+    },
+    "report": "# AI-answer observation report\n\nBoundary: observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence\n\nStatus: pass\nPanel version: v1\nObservations: 2; coverage gaps: 0\nCoverage: 1/1 declared prompts fully covered\nOff-panel rows (excluded from coverage): 1 [not-selected] (matched on prompt id, version, type and declared engine, so an id that is also declared in the panel appears here when its version, type or engine was not selected)\nCompared: 2 probe targets; response changes: 1; unpaired repetitions: 0; skipped incompatible: 0; skipped failed: 0; skipped failed prior: 0\nnot-selected/example/brand_mentioned: 0.00 (n=1) -> 1.00 (n=1)\nnot-selected/example/url_cited: 0.00 (n=1) -> 0.00 (n=1)\nnot-selected/example/recommended: 0.00 (n=1) -> 0.00 (n=1)\np1/example/brand_mentioned: 0.00 (n=1) -> 0.00 (n=1)\np1/example/url_cited: 0.00 (n=1) -> 0.00 (n=1)\np1/example/recommended: 0.00 (n=1) -> 0.00 (n=1)\n"
+  },
+  "unverified_version_trend": {
+    "exit": 0,
+    "status": "pass",
+    "sentinel_exists": false,
+    "summary": {
+      "out": "/tmp/visibility-review-4m7v0njf/unverified_version_trend/out",
+      "status": "pass",
+      "observations": 1,
+      "panel_version": "v1",
+      "coverage": {
+        "declared_prompts": 1,
+        "covered_prompts": 1,
+        "successful_observations": 1
+      },
+      "coverage_gaps": [],
+      "off_panel": {
+        "count": 0,
+        "prompt_ids": []
+      },
+      "unmeasured": false,
+      "diff": {
+        "changes": [
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "repetition": 1,
+            "field": "brand_mentioned",
+            "from": false,
+            "to": true
+          }
+        ],
+        "trends": [
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "brand_mentioned",
+            "prior_rate": 0.0,
+            "current_rate": 1.0,
+            "delta": 1.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "url_cited",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "recommended",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          }
+        ],
+        "coverage": {
+          "current": 1,
+          "prior": 1,
+          "compared": 1,
+          "skipped_incompatible": 0,
+          "skipped_failed": 0,
+          "skipped_failed_prior": 0,
+          "skipped_unpaired": 0,
+          "prior_window": {
+            "start": "2026-09-20T10:00:00Z",
+            "end": "2026-09-20T10:00:00Z"
+          },
+          "current_window": {
+            "start": "2026-09-21T10:00:00Z",
+            "end": "2026-09-21T10:00:00Z"
+          },
+          "overlapping_windows": false,
+          "panel_version": {
+            "current": "v1",
+            "prior": null,
+            "compatible": null
+          }
+        }
+      },
+      "boundary": "observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence"
+    },
+    "report": "# AI-answer observation report\n\nBoundary: observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence\n\nStatus: pass\nPanel version: v1\nObservations: 1; coverage gaps: 0\nCoverage: 1/1 declared prompts fully covered\nCompared: 1 probe targets; response changes: 1; unpaired repetitions: 0; skipped incompatible: 0; skipped failed: 0; skipped failed prior: 0\nPanel-version comparability unverified (current: v1, prior: unversioned); an unversioned or unsupplied panel version cannot be shown to be comparable.\np1/example/brand_mentioned: 0.00 (n=1) -> 1.00 (n=1)\np1/example/url_cited: 0.00 (n=1) -> 0.00 (n=1)\np1/example/recommended: 0.00 (n=1) -> 0.00 (n=1)\n"
+  },
+  "reverse_chronology": {
+    "exit": 0,
+    "status": "pass",
+    "sentinel_exists": false,
+    "summary": {
+      "out": "/tmp/visibility-review-4m7v0njf/reverse_chronology/out",
+      "status": "pass",
+      "observations": 1,
+      "panel_version": "v1",
+      "coverage": {
+        "declared_prompts": 1,
+        "covered_prompts": 1,
+        "successful_observations": 1
+      },
+      "coverage_gaps": [],
+      "off_panel": {
+        "count": 0,
+        "prompt_ids": []
+      },
+      "unmeasured": false,
+      "diff": {
+        "changes": [
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "repetition": 1,
+            "field": "brand_mentioned",
+            "from": false,
+            "to": true
+          }
+        ],
+        "trends": [
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "brand_mentioned",
+            "prior_rate": 0.0,
+            "current_rate": 1.0,
+            "delta": 1.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "url_cited",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "recommended",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          }
+        ],
+        "coverage": {
+          "current": 1,
+          "prior": 1,
+          "compared": 1,
+          "skipped_incompatible": 0,
+          "skipped_failed": 0,
+          "skipped_failed_prior": 0,
+          "skipped_unpaired": 0,
+          "prior_window": {
+            "start": "2026-09-21T10:00:00Z",
+            "end": "2026-09-21T10:00:00Z"
+          },
+          "current_window": {
+            "start": "2026-09-20T10:00:00Z",
+            "end": "2026-09-20T10:00:00Z"
+          },
+          "overlapping_windows": false,
+          "panel_version": {
+            "current": "v1",
+            "prior": "v1",
+            "compatible": true
+          }
+        }
+      },
+      "boundary": "observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence"
+    },
+    "report": "# AI-answer observation report\n\nBoundary: observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence\n\nStatus: pass\nPanel version: v1\nObservations: 1; coverage gaps: 0\nCoverage: 1/1 declared prompts fully covered\nCompared: 1 probe targets; response changes: 1; unpaired repetitions: 0; skipped incompatible: 0; skipped failed: 0; skipped failed prior: 0\np1/example/brand_mentioned: 0.00 (n=1) -> 1.00 (n=1)\np1/example/url_cited: 0.00 (n=1) -> 0.00 (n=1)\np1/example/recommended: 0.00 (n=1) -> 0.00 (n=1)\n"
+  },
+  "changed_question_same_version": {
+    "exit": 0,
+    "status": "pass",
+    "sentinel_exists": false,
+    "summary": {
+      "out": "/tmp/visibility-review-4m7v0njf/changed_question_same_version/out",
+      "status": "pass",
+      "observations": 1,
+      "panel_version": "v1",
+      "coverage": {
+        "declared_prompts": 1,
+        "covered_prompts": 1,
+        "successful_observations": 1
+      },
+      "coverage_gaps": [],
+      "off_panel": {
+        "count": 0,
+        "prompt_ids": []
+      },
+      "unmeasured": false,
+      "diff": {
+        "changes": [
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "repetition": 1,
+            "field": "brand_mentioned",
+            "from": false,
+            "to": true
+          }
+        ],
+        "trends": [
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "brand_mentioned",
+            "prior_rate": 0.0,
+            "current_rate": 1.0,
+            "delta": 1.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "url_cited",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          },
+          {
+            "prompt_id": "p1",
+            "engine": "example",
+            "prompt_type": "unbranded_discovery",
+            "field": "recommended",
+            "prior_rate": 0.0,
+            "current_rate": 0.0,
+            "delta": 0.0,
+            "prior_n": 1,
+            "current_n": 1
+          }
+        ],
+        "coverage": {
+          "current": 1,
+          "prior": 1,
+          "compared": 1,
+          "skipped_incompatible": 0,
+          "skipped_failed": 0,
+          "skipped_failed_prior": 0,
+          "skipped_unpaired": 0,
+          "prior_window": {
+            "start": "2026-09-20T10:00:00Z",
+            "end": "2026-09-20T10:00:00Z"
+          },
+          "current_window": {
+            "start": "2026-09-21T10:00:00Z",
+            "end": "2026-09-21T10:00:00Z"
+          },
+          "overlapping_windows": false,
+          "panel_version": {
+            "current": "v1",
+            "prior": "v1",
+            "compatible": true
+          }
+        }
+      },
+      "boundary": "observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence"
+    },
+    "report": "# AI-answer observation report\n\nBoundary: observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence\n\nStatus: pass\nPanel version: v1\nObservations: 1; coverage gaps: 0\nCoverage: 1/1 declared prompts fully covered\nCompared: 1 probe targets; response changes: 1; unpaired repetitions: 0; skipped incompatible: 0; skipped failed: 0; skipped failed prior: 0\np1/example/brand_mentioned: 0.00 (n=1) -> 1.00 (n=1)\np1/example/url_cited: 0.00 (n=1) -> 0.00 (n=1)\np1/example/recommended: 0.00 (n=1) -> 0.00 (n=1)\n"
+  },
+  "pooled_surfaces_coverage": {
+    "exit": 0,
+    "status": "pass",
+    "sentinel_exists": false,
+    "summary": {
+      "out": "/tmp/visibility-review-4m7v0njf/pooled_surfaces_coverage/out",
+      "status": "pass",
+      "observations": 2,
+      "panel_version": "v1",
+      "coverage": {
+        "declared_prompts": 1,
+        "covered_prompts": 1,
+        "successful_observations": 2
+      },
+      "coverage_gaps": [],
+      "off_panel": {
+        "count": 0,
+        "prompt_ids": []
+      },
+      "unmeasured": false,
+      "diff": null,
+      "boundary": "observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence"
+    },
+    "report": "# AI-answer observation report\n\nBoundary: observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence\n\nStatus: pass\nPanel version: v1\nObservations: 2; coverage gaps: 0\nCoverage: 1/1 declared prompts fully covered\n"
+  },
+  "lost_provenance": {
+    "exit": 0,
+    "status": "pass",
+    "sentinel_exists": false,
+    "summary": {
+      "out": "/tmp/visibility-review-4m7v0njf/lost_provenance/out",
+      "status": "pass",
+      "observations": 1,
+      "panel_version": "v1",
+      "coverage": {
+        "declared_prompts": 1,
+        "covered_prompts": 1,
+        "successful_observations": 1
+      },
+      "coverage_gaps": [],
+      "off_panel": {
+        "count": 0,
+        "prompt_ids": []
+      },
+      "unmeasured": false,
+      "diff": null,
+      "boundary": "observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence"
+    },
+    "report": "# AI-answer observation report\n\nBoundary: observation of configured surfaces only; not customer-demand evidence; failures are unknown, not absence\n\nStatus: pass\nPanel version: v1\nObservations: 1; coverage gaps: 0\nCoverage: 1/1 declared prompts fully covered\n"
+  },
+  "failed_publish_prior_loss": {
+    "exit": 1,
+    "prior_evidence_anywhere": false,
+    "out_exists": false
+  }
+}

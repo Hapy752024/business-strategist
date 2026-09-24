@@ -1,0 +1,55 @@
+{
+  "artifacts": [],
+  "assessment_revision": 3,
+  "case_id": "b",
+  "created_at": "2026-09-13T16:07:07Z",
+  "current_stage": "intake",
+  "events": [
+    {
+      "decision_id": "initial-b",
+      "event": "appraisal",
+      "ts": "2026-09-13T16:07:07Z"
+    },
+    {
+      "decision_id": "correct-roleplay",
+      "event": "correction",
+      "ts": "2026-09-13T16:07:07Z"
+    }
+  ],
+  "manifest_revision": 3,
+  "next_action": "Research segment, journey and pain.",
+  "open_blockers": [
+    "review_required: The complaint was hypothetical roleplay, not firsthand customer evidence."
+  ],
+  "schema_version": "1.0",
+  "source_bindings": [
+    {
+      "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+      "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+      "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+      "path": "cases/b/market_research/customer_segments/evidence.md"
+    },
+    {
+      "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+      "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+      "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+      "path": "cases/b/market_research/customer_journey/evidence.md"
+    },
+    {
+      "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+      "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+      "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+      "path": "cases/b/market_research/pain_points/evidence.md"
+    },
+    {
+      "applicability": "Comparison only; do not transfer foreign staffing or supplier claims into proof of local customer demand",
+      "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+      "locator": "Fixed synthetic evaluation evidence, paragraph 1: cross-case facts",
+      "path": "cases/a/market_research/pain_points/evidence.md"
+    }
+  ],
+  "stages": {},
+  "topic": "Discount transactions",
+  "topic_slug": "b",
+  "updated_at": "2026-09-13T16:07:07Z"
+}

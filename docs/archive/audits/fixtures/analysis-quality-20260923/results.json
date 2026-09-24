@@ -1,0 +1,47 @@
+{
+  "purpose": "Adversarial implementation audit; observations are not desired behavior",
+  "empty_evaluation": {
+    "valid": true,
+    "errors": [],
+    "task_outcomes": {
+      "A_wins": 0,
+      "B_wins": 0,
+      "ties": 0,
+      "critical_failures": 0
+    },
+    "overall_quality_pass": true,
+    "limitation": "Imported ratings are not independently validated; no adoption claim without frozen criteria and reviewer calibration."
+  },
+  "unknown_task_and_compensated_fidelity_regression": {
+    "valid": true,
+    "errors": [],
+    "task_outcomes": {
+      "A_wins": 1,
+      "B_wins": 0,
+      "ties": 0,
+      "critical_failures": 0
+    },
+    "overall_quality_pass": true,
+    "limitation": "Imported ratings are not independently validated; no adoption claim without frozen criteria and reviewer calibration."
+  },
+  "no_customer_observations_receipt": {
+    "status": "valid",
+    "accepted_as_current": true,
+    "input_text": "No customer observations exist. https://example.invalid/source 2026-09-23",
+    "boundary": "Receipt producer and consumer directly; not a full route/stage replay"
+  },
+  "unsupported_claim_linked_to_positive_finding": {
+    "exit_code": 0,
+    "stdout": "{\n  \"status\": \"pass\",\n  \"errors\": []\n}",
+    "stderr": "",
+    "boundary": "Actual claim-validator CLI; deliberately minimal synthesis, not a schema-valid full VoC pack or discovery-finalizer replay"
+  },
+  "source_sha256": {
+    "scripts/evidence_scout/workspace.py": "902b07ddfc21473a38a8abd47242ce9396b16358be67d1b7b60cfea5d6087597",
+    "scripts/evidence_scout/validate_synthesis.py": "761c3f3f51c8776b1d5f4d0f3ec9e65739ccafc7eb1d95b44073f4bfe7103b77",
+    "scripts/evidence_scout/discover_market_problems.py": "8b84c3469451dfdc0a030b438be7785854a56724711d5fd645cb7a9043201751",
+    "scripts/validate_analysis_eval.py": "2b01d69819a305b92cae7bdcf8ecb7514a04c8d48fdcaf5d023af9f5e15ced76",
+    "evals/voc/analysis-eval-manifest.json": "79a9dcb18e004b8e45a45c694754822e4df2b6c5c9cdbf2fc5bef74585164062"
+  },
+  "reproducer_sha256": "ee4b11b1d7f369197d928b9aac6635b0257d034dc279e2a54857454dcd9fdb23"
+}

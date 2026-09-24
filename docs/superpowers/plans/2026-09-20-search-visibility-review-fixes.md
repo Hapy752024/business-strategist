@@ -1,6 +1,6 @@
 # Search-Visibility Review Fixes Implementation Plan
 
-> Historical executed plan. Do not replay its code or acceptance criteria. Current contract: `references/ai-answer-recordings.md`; current closure plan: `docs/search-visibility-closure-plan-2026-09-21.md`.
+> Historical executed plan. Do not replay its code or acceptance criteria. Current contract: `references/ai-answer-recordings.md`; current closure plan: `docs/archive/search-visibility-closure-plan-2026-09-21.md`.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -10,9 +10,9 @@
 
 **Tech Stack:** Python 3 stdlib only (`argparse`, `json`, `pathlib`, `datetime`). No network, no credentials, no new dependencies.
 
-**Spec:** `docs/digital-marketing-optimization-plan.md` (§3.1 measurement contract)
+**Spec:** `docs/archive/digital-marketing-optimization-plan.md` (§3.1 measurement contract)
 
-**Review being addressed:** `docs/search-visibility-implementation-review-2026-09-20.md`
+**Review being addressed:** `docs/archive/search-visibility-implementation-review-2026-09-20.md`
 
 ## Global Constraints
 
@@ -605,7 +605,7 @@ Reproduced: prior file = one `status: 'error'` row; current = one success → `e
 *Fix:* account for prior-window failures separately (`skipped_failed_prior`), surface them in `report.md` and `summary.json`, and make the report state plainly when the prior window contained failures rather than implying a clean comparison.
 
 **Finding 2 — the panel is neither preserved nor version-checked. SHOULD FIX.**
-`build_summary` records `panel_version` but `diff_observations` never receives the panel, so no panel-version compatibility check exists; `main` writes only `evidence.jsonl`, `summary.json`, `report.md`. Reproduced: bumping `panel_version` and editing a prompt's text between windows yields `Status: pass` / `response changes: 1` with no indication the panel changed. Spec §3.1 requires comparing only observations from the "same … panel version", and the external review's correction (`docs/search-visibility-implementation-review-2026-09-20.md:45`) says "Preserve the selected panel alongside the output so a later reader can identify what was measured" — the fix plan dropped that clause.
+`build_summary` records `panel_version` but `diff_observations` never receives the panel, so no panel-version compatibility check exists; `main` writes only `evidence.jsonl`, `summary.json`, `report.md`. Reproduced: bumping `panel_version` and editing a prompt's text between windows yields `Status: pass` / `response changes: 1` with no indication the panel changed. Spec §3.1 requires comparing only observations from the "same … panel version", and the external review's correction (`docs/archive/search-visibility-implementation-review-2026-09-20.md:45`) says "Preserve the selected panel alongside the output so a later reader can identify what was measured" — the fix plan dropped that clause.
 *Fix:* copy the panel into `--out`; print `panel_version` in `report.md`; compare panel versions between windows and record incompatibility rather than silently comparing across a changed panel.
 
 **Finding 3 — a failed run can leave a `summary.json` claiming `status: pass`. SHOULD FIX.**

@@ -1,0 +1,55 @@
+=== Skill Eval Coverage ===
+
+[32m  PASS  archetype-gtm-strategist — 18 cases[0m
+[32m  PASS  brand-asset-producer — 1 cases[0m
+[32m  PASS  brand-designer — 1 cases[0m
+[32m  PASS  brand-discovery-interviewer — 1 cases[0m
+[32m  PASS  brand-exporter — 1 cases[0m
+[32m  PASS  brand-frontend-app-designer — 1 cases[0m
+[32m  PASS  brand-guideline-researcher — 1 cases[0m
+[32m  PASS  brand-guidelines-writer — 1 cases[0m
+[32m  PASS  brand-motion-designer — 1 cases[0m
+[32m  PASS  brand-quality-reviewer — 1 cases[0m
+[32m  PASS  brand-strategy-director — 2 cases[0m
+[32m  PASS  brand-typography-researcher — 1 cases[0m
+[32m  PASS  brand-ui-component-producer — 1 cases[0m
+[32m  PASS  brand-ui-kit-producer — 1 cases[0m
+[32m  PASS  brand-website-designer-builder — 11 cases[0m
+[32m  PASS  brand-workspace-manager — 2 cases[0m
+[32m  PASS  business-archetype-playbook-researcher — 4 cases[0m
+[32m  PASS  business-strategist — 24 cases[0m
+[32m  PASS  company-operating-system — 8 cases[0m
+[32m  PASS  competitive-landscape-builder — 3 cases[0m
+[32m  PASS  competitor-marketing-analyzer — 4 cases[0m
+[32m  PASS  competitor-monitoring — 4 cases[0m
+[32m  PASS  competitor-scout — 4 cases[0m
+[32m  PASS  evidence-scout — 8 cases[0m
+[32m  PASS  growth-case-analyzer — 3 cases[0m
+[32m  PASS  idea-grill — 5 cases[0m
+[32m  PASS  interview-bridge — 3 cases[0m
+[32m  PASS  market-problem-discovery — 6 cases[0m
+[32m  PASS  marketing-strategy-builder — 8 cases[0m
+[32m  PASS  opportunity-risk-designer — 5 cases[0m
+[32m  PASS  saas-fintech-pilot-designer — 4 cases[0m
+[32m  PASS  service-customer-perspective-challenger — 7 cases[0m
+[32m  PASS  setup-multiharness-project — 1 cases[0m
+[32m  PASS  social-digital-marketing-planner — 11 cases[0m
+[32m  PASS  social-media-idea-validator — 4 cases[0m
+[32m  PASS  startup-business-builder — 4 cases[0m
+[32m  PASS  startup-challenge-panel — 2 cases[0m
+[32m  PASS  strategy-draft-tournament — 3 cases[0m
+[33m  WARN  town-db-curator — no evals.json[0m
+
+=== Routing Evals ===
+
+[32m  PASS  routing-evals.json — 31 cases across 11 collision pairs[0m
+
+=== Summary ===
+
+  Skills with evals:    38/39
+[33m  Skills missing evals: town-db-curator[0m
+  Total eval cases:     170
+  Structural errors:    0
+[32m
+All eval structure checks passed.[0m
+[33mSome skills are missing evals — this is acceptable but should be addressed.[0m

@@ -1,0 +1,21 @@
+{
+  "review_date": "2026-09-21",
+  "head": "c5fd16547eb189459eb7a8d581768ada9d322eff",
+  "ahead_of_local_origin_main": 30,
+  "sha256": {
+    "scripts/monitoring/ai_answer_probe.py": "ccaa01962519b82b199a33515eaed341380c370e646550ee4d0008ca8c74e8f0",
+    "tests/test_ai_answer_probe.py": "384882152ade8144b28aee677ba56f0506b8f70bd6d89ca691e31623163d1c5a",
+    "references/owner-actions.md": "f76e40120f05a360e1760bc18b20550fee7a865f15169dc78a5c26811c81361d",
+    ".agents/skills/brand-website-designer-builder/references/aeo-geo-visibility.md": "71bf0304d3fdd8f7fb39cc3cb5356007c444f96f51a9fe2b25794a70028a6c16",
+    ".agents/skills/brand-website-designer-builder/references/deo-agent-readiness.md": "2f8a8304f677c96242ca99a9931182937d4fe794684ca139af528c75cfdc1e2e",
+    "config/source-capabilities.json": "797e444cff87c39e3c1b275d8edf6cc7e407397d9287cf3823de4a1315f0c8cb"
+  },
+  "checks": {
+    "targeted": "149 passed; probe, website launch and route coverage",
+    "routes": "passed true; errors []",
+    "evals": "167 structural cases; 0 errors; does not execute LLM outputs",
+    "setup_sandboxed": "11 failed, 699 passed; includes subprocess/socket permission failures",
+    "setup_unrestricted": "2 failed, 708 passed; both query-plan assertion sets pass when executing committed HEAD collect.py with current dependencies",
+    "scope": "Shared working tree changed during review; no whole-branch clean/green claim. No live probe/provider/account/website validation."
+  }
+}

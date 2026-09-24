@@ -1,0 +1,71 @@
+{
+  "artifacts": [],
+  "assessment_revision": 4,
+  "case_id": "b",
+  "created_at": "2026-09-13T15:45:46Z",
+  "current_stage": "intake",
+  "events": [
+    {
+      "decision_id": "appraise-b-initial",
+      "event": "appraisal",
+      "ts": "2026-09-13T15:48:20Z"
+    },
+    {
+      "decision_id": "correct-roleplay",
+      "event": "correction",
+      "ts": "2026-09-13T15:49:34Z"
+    },
+    {
+      "decision_id": "appraise-b-roleplay",
+      "event": "appraisal",
+      "ts": "2026-09-13T15:49:34Z"
+    },
+    {
+      "decision_id": "spell-b-title",
+      "event": "appraisal",
+      "ts": "2026-09-13T15:49:34Z"
+    }
+  ],
+  "manifest_revision": 4,
+  "next_action": "Research segment, journey and pain.",
+  "open_blockers": [
+    "review_required: Reappraise after material roleplay clarification and refresh all affected current narratives"
+  ],
+  "schema_version": "1.0",
+  "source_bindings": [
+    {
+      "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+      "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+      "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+      "path": "cases/b/market_research/customer_segments/evidence.md"
+    },
+    {
+      "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+      "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+      "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+      "path": "cases/b/market_research/customer_journey/evidence.md"
+    },
+    {
+      "applicability": "Case B appraisal: use relevant case facts only; synthetic fixture, not external market proof",
+      "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+      "locator": "Fixed synthetic evaluation evidence, paragraph 1",
+      "path": "cases/b/market_research/pain_points/evidence.md"
+    },
+    {
+      "applicability": "Comparison only; do not transfer foreign staffing or supplier claims into proof of local customer demand",
+      "digest": "ef645bc53e386aed58c2af48e291a56ed022ee115be2407a867b751ac6676cde",
+      "locator": "Fixed synthetic evaluation evidence, paragraph 1: cross-case facts",
+      "path": "cases/a/market_research/pain_points/evidence.md"
+    },
+    {
+      "applicability": "Overrides the apparent firsthand complaint in all duplicate fixture evidence; A pain/segment/journey and cross-case comparison must reflect this clarification",
+      "digest": "df1367d754b47873cc1811a391bcd7644f7bdc6130fc0d434e39a1bbac21b1f6",
+      "locator": "Decision reason: complaint was hypothetical roleplay",
+      "path": "history/decisions/correct-roleplay.md"
+    }
+  ],
+  "stages": {},
+  "topic": "Discount transactions",
+  "topic_slug": "b",
+  "updated_at": "2026-09-13T15:49:34Z"
+}

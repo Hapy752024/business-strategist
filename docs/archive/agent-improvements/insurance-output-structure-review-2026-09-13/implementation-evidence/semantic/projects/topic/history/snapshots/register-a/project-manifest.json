@@ -1,0 +1,17 @@
+{
+  "active_track": "none",
+  "cases": {},
+  "created_at": "2026-09-13T15:45:46Z",
+  "layout_version": 2,
+  "links": [],
+  "manifest_revision": 0,
+  "next_action": "Investigate cases.",
+  "open_blockers": [],
+  "project_id": "topic",
+  "schema_version": "1.0",
+  "selection": null,
+  "selection_generation": 0,
+  "slug": "topic",
+  "title": "Synthetic language service comparison",
+  "updated_at": "2026-09-13T15:45:46Z"
+}

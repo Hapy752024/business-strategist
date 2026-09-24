@@ -1,6 +1,6 @@
 # Search-Visibility Setup Implementation Plan
 
-> Historical executed plan. Do not replay its code or acceptance criteria. Current contract: `references/ai-answer-recordings.md`; current closure plan: `docs/search-visibility-closure-plan-2026-09-21.md`.
+> Historical executed plan. Do not replay its code or acceptance criteria. Current contract: `references/ai-answer-recordings.md`; current closure plan: `docs/archive/search-visibility-closure-plan-2026-09-21.md`.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -10,7 +10,7 @@
 
 **Tech Stack:** Python 3 (stdlib only), JSON config, Markdown skill references, pytest.
 
-**Spec:** `docs/digital-marketing-optimization-plan.md` (revised 2026-09-20) — the plan argues from this spec; read it first. Review record: `docs/digital-marketing-optimization-plan-adversarial-review.md`. This plan was itself gap-reviewed by a fresh subagent on 2026-09-20 (verdict NEEDS-FIXES); all 6 must-fix and 7 should-fix findings are incorporated below.
+**Spec:** `docs/archive/digital-marketing-optimization-plan.md` (revised 2026-09-20) — the plan argues from this spec; read it first. Review record: `docs/archive/digital-marketing-optimization-plan-adversarial-review.md`. This plan was itself gap-reviewed by a fresh subagent on 2026-09-20 (verdict NEEDS-FIXES); all 6 must-fix and 7 should-fix findings are incorporated below.
 
 ## Global Constraints
 
@@ -43,7 +43,7 @@
 ```markdown
 # AEO/GEO visibility procedure
 
-Apply for answer/generative-engine visibility audits and content work on existing or new sites. Load from maintenance.md for existing-site audits. Eligibility work never guarantees citations; quote only the binding evidence table in docs/digital-marketing-optimization-plan.md §1.
+Apply for answer/generative-engine visibility audits and content work on existing or new sites. Load from maintenance.md for existing-site audits. Eligibility work never guarantees citations; quote only the binding evidence table in docs/archive/digital-marketing-optimization-plan.md §1.
 
 Question mining: derive questions from actual audience evidence — People Also Ask APIs, Search Console question-regex pulls (`^(who|what|when|where|why|how|is|are|can|do|does|should)\b`), reviewed community sources — and produce a clustered question→URL map. Never invent question demand from model memory.
 
@@ -854,7 +854,7 @@ They are corrected now to the shipped `config/workflow-routes.json` values; see 
 ## Errata — superseded after an independent review (2026-09-20)
 
 This plan is executed; the progress log above is the record of that execution. An independent review
-(`docs/search-visibility-implementation-review-2026-09-20.md`) subsequently found five material defects that
+(`docs/archive/search-visibility-implementation-review-2026-09-20.md`) subsequently found five material defects that
 this plan's literal content either mandated or failed to catch, and the fixes are tracked in
 `docs/superpowers/plans/2026-09-20-search-visibility-review-fixes.md`. **Do not replay the literal blocks below
 without these corrections.**

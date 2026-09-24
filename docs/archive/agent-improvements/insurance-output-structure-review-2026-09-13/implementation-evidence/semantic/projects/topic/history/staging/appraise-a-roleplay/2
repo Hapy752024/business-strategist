@@ -1,0 +1,16 @@
+# Business case: Language assistance
+
+## Customer choice and commercial evidence
+The hypothesized trigger is an annual renewal with difficult wording; the roleplay does not establish that a real resident experienced it. User, contracting buyer and payer must be established separately. The complaint is hypothetical roleplay, not firsthand customer evidence; it establishes neither experienced pain nor purchase, paid workaround or stated willingness to pay. Actual alternatives, including self-reading, seeking informal help or doing nothing, are hypotheses for inquiry, not observed workarounds. Trust, switching friction and reasons to choose this entrant are unknown. The foreign staffing example supplies no contract for this case.
+
+## Reach, revenue and delivery economics
+The launch post's 1,000 first-day visits are not customers or conversion evidence. Audience fit, unique-person denominator, acquisition spend, founder time, qualified inquiries and purchases are unknown; CAC cannot be calculated. Annual assistance does not need daily usage, but renewal, referral, time to value and cancellation reasons were not measured.
+
+A per-assistance venture fee is a possible mechanism, not an established price or recurring subscription. Revenue basis, currency, fee, refunds, partner/service expense, owner cash, fixed cost, capacity and acquisition basis are unknown. Opening cash, sales schedule and payment lags are also missing. Contribution would depend on venture receipts less delivery, partner, refunds and attributable acquisition cost, without counting founder effort twice. No margin, break-even, LTV, runway or profit estimate is supported. No calculator was run and no economics input digest exists because the record lacks the model-defining inputs.
+
+## Alternatives and decision
+Both cases remain under investigation with no execution selection. A has a hypothetical roleplay scenario and unmeasured launch interest; there is no firsthand customer pain report in the supplied record. B has only a supplier discount promise. The correction weakens A's pain support; it supplies no new support for B and does not justify a winner. A's annual assistance cycle requires evidence from actual renewals; B's one-off model requires funded transaction economics and an observed repeat-use rationale. Missing founder budget, time, skills and intended scale prevent a founder-fit ranking. The older recommendation for A is superseded by the latest unresolved buying-trigger note and this roleplay clarification. Neither a forced winner nor rejection of both is justified.
+
+Doing nothing avoids committing scarce resources while uncertainties remain; its customer cost is unmeasured. The pivotal question now starts earlier: whether actual residents experience this renewal problem at all, before testing consequence and identifying a payer. The next unpaid interview can establish an experienced problem and workaround; only later behavioral/payment evidence could establish demand for this entrant. No commitments or selection follow from this appraisal.
+
+Current interpretation: the [recorded roleplay correction](../../history/decisions/correct-roleplay.md) overrides the original synthetic fixture wording wherever that wording appears. Original evidence bytes and superseded advice remain archived.
