@@ -7,6 +7,40 @@
   "required": ["claim_id", "claim_type", "claim", "supporting_evidence", "counter_evidence", "independence_count", "confidence", "confidence_rationale"],
   "properties": {
     "claim_id": {"type": "string", "minLength": 1},
+    "finding_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_sha256", "evidence_sha256", "source_review_sha256", "verification_question", "supporting_passages", "contrary_passages", "support_assessment", "rationale", "reviewer_type", "review_mode"],
+      "properties": {
+        "claim_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "evidence_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "source_review_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "verification_question": {"type": "string", "minLength": 1},
+        "supporting_passages": {"type": "array", "items": {"type": "string"}},
+        "contrary_passages": {"type": "array", "items": {"type": "string"}},
+        "finding_reviews": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["finding_id", "finding_sha256", "support_assessment", "supporting_passages", "rationale", "reviewer_type", "review_mode"],
+            "properties": {
+              "finding_id": {"type": "string", "minLength": 1},
+              "finding_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+              "support_assessment": {"enum": ["supported", "contradicted", "unsupported", "unresolved"]},
+              "supporting_passages": {"type": "array", "items": {"type": "string"}},
+              "rationale": {"type": "string", "minLength": 1},
+              "reviewer_type": {"enum": ["analyst", "independent_human", "model"]},
+              "review_mode": {"enum": ["inline", "fresh_context", "independent_review"]}
+            }
+          }
+        },
+        "support_assessment": {"enum": ["supported", "contradicted", "unsupported", "unresolved"]},
+        "rationale": {"type": "string", "minLength": 1},
+        "reviewer_type": {"enum": ["analyst", "independent_human", "model"]},
+        "review_mode": {"enum": ["inline", "fresh_context", "independent_review"]}
+      }
+    },
     "claim_type": {"enum": ["observation", "inference", "hypothesis", "recommendation", "occurrence", "pattern", "unmetness", "prevalence", "willingness_to_pay", "transfer"]},
     "claim_scope_type": {"enum": ["occurrence", "pattern", "unmetness", "prevalence", "willingness_to_pay", "transfer"]},
     "scope": {"type": ["string", "object"]},

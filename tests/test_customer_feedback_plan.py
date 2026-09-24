@@ -15,6 +15,39 @@ def test_topic_led_is_required_when_no_entities_exist() -> None:
     assert plan["analysis_contract"]["entity_led_feedback"] == "pending_entity_discovery"
 
 
+def test_research_intent_and_approach_packets_preserve_customer_question():
+    plan = feedback.build_plan("billing idea", "freelancers", ["DE:de"], [],
+                               intent="idea_validation",
+                               hypotheses=["Freelancers lose time reconciling invoices."],
+                               approaches=["customer_workflow", "alternatives_and_cases"])
+    assert plan["study_intent"] == "idea_validation"
+    assert "Assess" in plan["research_design"]["decision"]
+    assert [row["approach_id"] for row in plan["approach_work_packets"]] == ["customer_workflow", "alternatives_and_cases"]
+    assert all(row["output_owner"] == "coordinator" for row in plan["approach_work_packets"])
+
+
+def test_substantive_research_cannot_drop_customer_workflow():
+    with pytest.raises(ValueError, match="customer_workflow"):
+        feedback.build_plan("reporting", "small firms", ["DE:de"], [],
+                            approaches=["alternatives_and_cases"])
+
+
+def test_cli_writes_isolated_approach_assignments_for_selected_intent(tmp_path, monkeypatch, capsys):
+    out = tmp_path / "study"
+    monkeypatch.setattr("sys.argv", ["plan_customer_feedback.py", "--topic", "invoice reconciliation",
+        "--customer-segment", "freelancers", "--locale", "DE:de", "--intent", "idea_validation",
+        "--hypothesis", "Freelancers lose time reconciling invoices.", "--study-id", "study-1",
+        "--research-design-digest", "a" * 64, "--approach", "customer_workflow",
+        "--approach", "alternatives_and_cases", "--out-dir", str(out)])
+    assert feedback.main() == 0
+    assignments = sorted(out.glob("work-packets/*/assignment.json"))
+    assert [path.parent.name for path in assignments] == ["alternatives_and_cases", "customer_workflow"]
+    values = [json.loads(path.read_text()) for path in assignments]
+    assert all(item["study_intent"] == "idea_validation" for item in values)
+    assert all(item["synthesis_owner"] == "coordinator" for item in values)
+    assert (out / "customer-feedback-source-plan.json").is_file()
+
+
 def test_every_entity_locale_gets_every_feedback_lane() -> None:
     entities = [{"id": "e1", "name": "Example", "domain": "example.test", "lane": "competitive_market", "sources": {"company_facebook_comments": ["https://facebook.com/example"]}, "not_applicable": {"apple_app_store_reviews": "No customer app.", "google_play_store_reviews": "No customer app."}}]
     plan = feedback.build_plan("support", "families", ["DE:de", "FR:fr"], entities)

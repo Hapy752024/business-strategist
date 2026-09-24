@@ -262,6 +262,40 @@
                 "branding": {
                   "path": "branding"
                 },
+                "marketing": {
+                  "path": "marketing"
+                },
+                "website": {
+                  "path": "digital-assets/website"
+                },
+                "others": {
+                  "path": "digital-assets/others"
+                }
+              },
+              {
+                "business": {
+                  "path": "business"
+                },
+                "branding": {
+                  "path": "branding"
+                },
+                "marketing": {
+                  "path": "marketing"
+                },
+                "website": {
+                  "path": "digital-assets/website"
+                },
+                "others": {
+                  "path": "digital-assets/others"
+                }
+              },
+              {
+                "business": {
+                  "path": "business-analysis"
+                },
+                "branding": {
+                  "path": "branding"
+                },
                 "website": {
                   "path": "digital-assets/website"
                 },

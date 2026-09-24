@@ -7,6 +7,7 @@ from jsonschema import Draft202012Validator
 
 from scripts import route_workflow, case_workspace as cases
 from scripts.evidence_scout import workspace
+from problem_assessment_fixtures import prepare as prepare_problem_assessment
 
 
 def setup_project(tmp_path, monkeypatch):
@@ -21,6 +22,10 @@ def setup_project(tmp_path, monkeypatch):
     return scope
 
 
+def pain_validation_artifacts(ws, monkeypatch):
+    return prepare_problem_assessment(ws, workspace, monkeypatch, case_id=ws.name)[0]
+
+
 def test_explicit_specialist_alias_and_ambiguous_modes():
     assert route_workflow.route_request('grill', intent='idea-grill')['skill'] == 'idea-grill'
     with pytest.raises(ValueError, match='Unknown route intent'):
@@ -29,9 +34,8 @@ def test_explicit_specialist_alias_and_ambiguous_modes():
 
 def test_strategy_requires_reviewed_intake_and_risk_even_with_pain_pass(tmp_path, monkeypatch):
     ws = setup_project(tmp_path, monkeypatch)
-    artifact = ws / 'market_research/pain_points/evidence.jsonl'
-    artifact.write_text('{"evidence_id":"record-1"}\n')
-    workspace.update_stage(ws, 'problem_validation', expected_assessment_revision=1, status='passed', gate_result='pass', artifacts=[artifact])
+    artifacts = pain_validation_artifacts(ws, monkeypatch)
+    workspace.update_stage(ws, 'problem_validation', expected_assessment_revision=1, status='passed', gate_result='pass', artifacts=artifacts)
     packet = route_workflow.route_request('GTM strategy', intent='business-positioning', task_scope='strategy', project=ws.name)
     assert packet['gate_blocked'] and packet['first_skill'] == 'idea-grill'
     assert packet['missing_stages'] == ['intake', 'segment_selection', 'customer_profile', 'opportunity_risk', 'operator_playbook']
@@ -53,9 +57,13 @@ def test_completed_prerequisites_are_reused_and_stale_files_block(tmp_path, monk
     ws = setup_project(tmp_path, monkeypatch)
     required = ['intake', 'segment_selection', 'customer_profile', 'problem_validation', 'opportunity_risk', 'operator_playbook']
     for stage in required:
-        file = ws / 'market_research/pain_points' / f'{stage}.md'
-        file.write_text('Reviewed current scope artifact.')
-        workspace.update_stage(ws, stage, expected_assessment_revision=1, status='passed', gate_result='pass', artifacts=[file])
+        if stage == 'problem_validation':
+            files = pain_validation_artifacts(ws, monkeypatch)
+        else:
+            file = ws / 'market_research/pain_points' / f'{stage}.md'
+            file.write_text('Reviewed current scope artifact.')
+            files = [file]
+        workspace.update_stage(ws, stage, expected_assessment_revision=1, status='passed', gate_result='pass', artifacts=files)
     def route():
         return route_workflow.route_request('GTM strategy', intent='business-positioning', task_scope='strategy', project=ws.name)
     assert not route().get('gate_blocked')

@@ -5,26 +5,56 @@
       "id": 1,
       "prompt": "Collect evidence for a digital insurance advice product targeting self-employed Germans who are confused about PKV vs GKV. They currently use Google, ask colleagues, and post on Reddit. Hypothesis: H1 — there is repeatable, unsolved pain choosing and switching private health insurance.",
       "expected_output": "An evidence collection run report with provider statuses, supporting evidence records, counter-evidence, candidate communities (r/Finanzen, r/Versicherung), confidence assessment, and next test. Must use German geography (geo=DE) and language (de).",
-      "must_mention": ["provider", "evidence", "Reddit", "confidence", "geo=DE", "language=de"],
+      "must_mention": [
+        "provider",
+        "evidence",
+        "Reddit",
+        "confidence",
+        "geo=DE",
+        "language=de"
+      ],
       "must_not_mention": [],
-      "required_artifacts": ["evidence.jsonl", "summary.json", "report.md"],
+      "required_artifacts": [
+        "evidence.jsonl",
+        "summary.json",
+        "report.md"
+      ],
       "files": []
     },
     {
       "id": 2,
       "prompt": "Search for customer pain around small business expense tracking. Run with default providers only, 30-day window, limit 20. Target segment: US freelancers and micro-business owners with 2-20 employees.",
       "expected_output": "Evidence report covering Reddit, YouTube, Google Trends, web search. Must separate evidence from interpretation, classify source intent (user_pain vs editorial vs competitor), and flag weak signals like Trends-only demand.",
-      "must_mention": ["evidence", "weak", "interpretation", "source intent"],
+      "must_mention": [
+        "evidence",
+        "weak",
+        "interpretation",
+        "source intent"
+      ],
       "must_not_mention": [],
-      "required_artifacts": ["evidence.jsonl", "summary.json", "report.md"],
+      "required_artifacts": [
+        "evidence.jsonl",
+        "summary.json",
+        "report.md"
+      ],
       "files": []
     },
     {
       "id": 3,
       "prompt": "We found 500 Reddit posts about our problem space. Is that enough to prove demand?",
       "expected_output": "A pushback that post volume alone is not demand proof. Must distinguish complaints from casual mentions, check for workaround/spend language, verify segment fit, and note that engagement ≠ willingness to pay.",
-      "must_mention": ["willingness to pay", "workaround", "weak", "not proof", "segment"],
-      "must_not_mention": ["strong evidence", "proven demand", "validated"],
+      "must_mention": [
+        "willingness to pay",
+        "workaround",
+        "weak",
+        "not proof",
+        "segment"
+      ],
+      "must_not_mention": [
+        "strong evidence",
+        "proven demand",
+        "validated"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -32,26 +62,68 @@
       "id": 4,
       "prompt": "Run evidence collection for a China-market consumer app. Target: young professionals in Shanghai who want better personal finance tools. Use China public sources.",
       "expected_output": "Evidence report with China public providers (Bilibili, V2EX, Chinese web search), geo=CN, language=zh. Must note that china_social (XiaoHongShu) was not run and flag it as a gap. Must state whether china_public_native or china_public_search was the active backend.",
-      "must_mention": ["China", "geo=CN", "language=zh", "gap", "china_social"],
+      "must_mention": [
+        "China",
+        "geo=CN",
+        "language=zh",
+        "gap",
+        "china_social"
+      ],
       "must_not_mention": [],
-      "required_artifacts": ["evidence.jsonl", "summary.json", "report.md"],
+      "required_artifacts": [
+        "evidence.jsonl",
+        "summary.json",
+        "report.md"
+      ],
       "files": []
     },
     {
       "id": 5,
       "prompt": "Our broad Reddit search found nothing useful, but this audience probably asks in local forums and Facebook groups. Systematically discover and verify suitable communities before collecting posts.",
       "expected_output": "A two-stage community workflow: metadata-only discovery uses explicit country-language pairs, source-language lexicons (with explicit runtime source terms for unsupported languages), separate per-seed forum/Facebook Group/Facebook Page queries, per-seed result counts, lane-specific qualification, full typed observation provenance, and a discovery receipt signed with a distinct discovery key; then an evidence-bound promotion command verifies audience, segment, geography, language, activity, entity type and access before producing verified_communities.json plus a review-key-signed, authoritative-current-generation, endpoint-bound, maximum-30-day public-only capture_authorization.json and community_review_current.json receipt. A failed re-review revokes prior authorization, including replayed complete old bundles and alternate output directories. Packet-authored rechecks cannot authorize public API capture. This is an internal allowlist, not platform permission or terms compliance. User-supplied private material stays in a non-API artifact. Paid customer-evidence APIs have standing no-cap spend authorization. Current private exploratory research requires no GDPR or formal ethics dossier, while credential theft/sharing, technical bypass and deceptive private-group entry remain prohibited.",
-      "must_mention": ["forum", "Facebook", "review_candidates.json", "verified_communities.json", "capture_authorization.json", "metadata"],
-      "must_not_mention": ["no demand", "no communities exist", "Facebook posts verified by search", "ask before paid API", "GDPR approval required"],
-      "required_artifacts": ["community_candidates.json", "review_candidates.json", "community_discovery_receipt.json", "verified_communities.json", "capture_authorization.json", "community_review_current.json", "community_review_metrics.json", "report.md"],
+      "must_mention": [
+        "forum",
+        "Facebook",
+        "review_candidates.json",
+        "verified_communities.json",
+        "capture_authorization.json",
+        "metadata"
+      ],
+      "must_not_mention": [
+        "no demand",
+        "no communities exist",
+        "Facebook posts verified by search",
+        "ask before paid API",
+        "GDPR approval required"
+      ],
+      "required_artifacts": [
+        "community_candidates.json",
+        "review_candidates.json",
+        "community_discovery_receipt.json",
+        "verified_communities.json",
+        "capture_authorization.json",
+        "community_review_current.json",
+        "community_review_metrics.json",
+        "report.md"
+      ],
       "files": []
     },
     {
       "id": 6,
       "prompt": "Understand customer input for a market where we already know three competitors and two foreign similar companies. Analyse why and how customers use them and what concrete solution requirements appear in feedback.",
       "expected_output": "Always run a topic-led VOC pass independent of competitor names, then a separate entity-led feedback pass for every verified applicable competitor/similar company. The entity pass covers independent review platforms, Google business/location reviews, company Facebook and Instagram customer comments, Apple App Store and Google Play reviews as separate applicable lanes, and external forums. Company posts, replies and testimonials remain supplier context. Keep entity/lane attempted and retrieved denominators, favorable and unfavorable feedback, target versus adjacent markets, and customer versus supplier roles explicit. Build separate U customer-needs and R solution-use-requirements maps and do not infer buying motives from feature complaints or star averages.",
-      "must_mention": ["topic-led", "entity-led", "customer needs", "solution-use requirements", "supplier"],
-      "must_not_mention": ["skip topic discovery", "ratings prove", "company post is customer voice"],
+      "must_mention": [
+        "topic-led",
+        "entity-led",
+        "customer needs",
+        "solution-use requirements",
+        "supplier"
+      ],
+      "must_not_mention": [
+        "skip topic discovery",
+        "ratings prove",
+        "company post is customer voice"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -59,7 +131,10 @@
       "id": 7,
       "prompt": "Research household moving needs in Switzerland in German and French. A forum post labelled editorial contains firsthand Erfahrungen; Facebook is inaccessible. Apple reviews came from one country-only storefront. We need useful findings without pretending both languages were covered.",
       "expected_output": "Always run topic-led discovery. Preserve full documents and split located speaker episodes. Correct heuristic labels only with source and author evidence; exclude supplier replies. Track every requested locale, including unresolved storefront language; permit scoped findings while exposing the missing coverage. Map contextual independent needs separately from requirements and preserve successful self-packing/nonadoption counterexamples.",
-      "required_artifacts": ["customer-feedback-coverage.json", "customer-voc-synthesis.json"],
+      "required_artifacts": [
+        "customer-feedback-coverage.json",
+        "customer-voc-synthesis.json"
+      ],
       "files": []
     },
     {
@@ -72,6 +147,20 @@
         "observation",
         "demand",
         "cadence"
+      ]
+    },
+    {
+      "id": "parallel-methods-keep-intent-and-provenance",
+      "prompt": "Validate my idea for automated invoice follow-up among Swiss tradespeople. Use customer workflow evidence and, if useful, switching or agency evidence in parallel.",
+      "expected_output": "Record idea_validation intent; start with topic-led customer workflow evidence; create separate packets only for relevant distinct approaches; attribute and deduplicate sources; retain disagreement and missing evidence; use any foreign company only as optional comparison evidence about this user’s idea.",
+      "files": [],
+      "must_mention": [
+        "idea_validation",
+        "separate packets",
+        "deduplicate"
+      ],
+      "must_not_mention": [
+        "copy a foreign company"
       ]
     }
   ]

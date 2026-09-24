@@ -18,6 +18,37 @@ def validate(root: Path = ROOT) -> list[str]:
     catalog = json.loads((root / 'config/skill-catalog.json').read_text())['skills']
     routes = json.loads((root / 'config/workflow-routes.json').read_text())['routes']
     errors = []
+    module_owners = {}
+    full_catalog = json.loads((root / 'config/skill-catalog.json').read_text())
+    for module_name, module in full_catalog.get('modules', {}).items():
+        reference = module.get('reference')
+        if not isinstance(reference, str) or not (root / reference).is_file() or not (root / reference).stat().st_size:
+            errors.append(f'module {module_name}: missing or empty reference {reference!r}')
+        quality_reference = module.get('quality_reference')
+        if not isinstance(quality_reference, str) or not (root / quality_reference).is_file() or not (root / quality_reference).stat().st_size:
+            errors.append(f'module {module_name}: missing or empty quality reference {quality_reference!r}')
+        for skill in module.get('skills', []):
+            if skill not in catalog:
+                errors.append(f'module {module_name}: unknown skill {skill}')
+            if skill in module_owners:
+                errors.append(f'skill {skill}: assigned to multiple modules')
+            module_owners[skill] = module_name
+    specialist_owners = {}
+    for owner, names in full_catalog.get('specialist_owners', {}).items():
+        if not isinstance(names, list):
+            errors.append(f'specialist owner {owner}: skills must be an array')
+            continue
+        for skill in names:
+            if skill not in catalog:
+                errors.append(f'specialist owner {owner}: unknown skill {skill}')
+            if skill in specialist_owners:
+                errors.append(f'skill {skill}: assigned to multiple specialist owners')
+            specialist_owners[skill] = owner
+            if skill in module_owners:
+                errors.append(f'skill {skill}: assigned to both module and specialist owner')
+    for skill in catalog:
+        if (skill in module_owners) == (skill in specialist_owners):
+            errors.append(f'skill {skill}: must have exactly one module or specialist owner')
     for name, metadata in catalog.items():
         try:
             checked_references(metadata, root)

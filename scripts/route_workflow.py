@@ -9,9 +9,9 @@ import re
 import time
 
 try:
-    from scripts.evidence_scout.workspace import manifest_lock, write_json
+    from scripts.evidence_scout.workspace import manifest_lock, write_json, _receipt_current
 except ModuleNotFoundError:  # Direct CLI execution from scripts/.
-    from evidence_scout.workspace import manifest_lock, write_json
+    from evidence_scout.workspace import manifest_lock, write_json, _receipt_current
 from pathlib import Path
 try:
     from scripts import case_workspace as cases
@@ -35,6 +35,19 @@ def load_routes() -> list[dict[str, Any]]:
 
 def load_catalog() -> dict[str, dict[str, Any]]:
     return json.loads(CATALOG_PATH.read_text(encoding="utf-8"))["skills"]
+
+
+def module_contract(skill: str) -> tuple[str, str] | tuple[None, None]:
+    modules = json.loads(CATALOG_PATH.read_text(encoding='utf-8')).get('modules', {})
+    for name, module in modules.items():
+        if skill in module.get('skills', []):
+            return name, module['reference']
+    return None, None
+
+
+def specialist_owner(skill: str) -> str | None:
+    owners = json.loads(CATALOG_PATH.read_text(encoding='utf-8')).get('specialist_owners', {})
+    return next((owner for owner, names in owners.items() if skill in names), None)
 
 
 def checked_references(metadata: dict[str, Any], root: Path) -> list[str]:
@@ -125,10 +138,17 @@ def pain_gate_state(project_slug: str, case_id: str = "") -> tuple[bool, Path | 
     if isinstance(data, dict) and data.get('case_id'):
         passed = passed and gate.get('reviewed_revision') == data.get('assessment_revision')
         try:
+            scope = cases.resolve(project_root, case_id)
+            passed = passed and _receipt_current(scope, gate, case_id=case_id, revision=data.get('assessment_revision'))
+        except (ValueError, OSError):
+            passed = False
+        try:
             cases.sources_current(project_root, data)
         except (ValueError, OSError):
             passed = False
         passed = passed and not missing_strategy_stages(manifest_path, ['problem_validation'])
+    elif isinstance(gate, dict):
+        passed = passed and _receipt_current(manifest_path.parent.parent, gate)
     return passed, manifest_path
 
 
@@ -186,7 +206,8 @@ def _route_request(
     check_skill: str = "",
     override_id: str = "",
     override_stages: list[str] | None = None,
-    entry_mode: str = 'standalone',
+    entry_mode: str | None = None,
+    standalone_brief: str = '',
     subproject: str = '',
 ) -> dict[str, Any]:
     """Return a reproducible route packet from an explicit intent or phrase match."""
@@ -295,34 +316,77 @@ def _route_request(
         "side_effect": metadata.get("side_effect", "unknown"),
         "estimated_cost": metadata.get("cost", "unknown"),
     }
+    module_name, module_reference = module_contract(skill)
+    if module_name:
+        packet['module'] = module_name
+        packet['module_reference'] = module_reference
+        modules = json.loads(CATALOG_PATH.read_text(encoding='utf-8')).get('modules', {})
+        packet['quality_reference'] = modules[module_name].get('quality_reference')
+        # Module guidance has its own packet field; required_references remains skill/mode scoped.
+        checked_references({'required_references': [module_reference]}, CATALOG_PATH.parent.parent)
+    else:
+        packet['specialist_owner'] = specialist_owner(skill)
+    design = skill.startswith('brand-')
+    marketing = skill in {'marketing-strategy-builder', 'social-digital-marketing-planner'}
+    if entry_mode is None:
+        entry_mode = 'business_linked' if marketing and project else 'standalone'
     if entry_mode not in {'standalone', 'business_linked'}:
         raise ValueError('entry_mode must be standalone or business_linked')
-    design = skill.startswith('brand-')
     umbrella = ROOT / 'projects' / project if project else None
-    destination_name = 'website' if 'website' in skill else 'branding'
+    destination_name = 'website' if 'website' in skill else ('marketing' if marketing else 'branding')
     subproject = subprojects.canonical_name(subproject)
     if subproject:
         if subproject not in subprojects.PATHS:
             raise ValueError('unknown subproject')
         if design and subproject not in {'branding', 'website', 'others'}:
             raise ValueError('design work belongs to Branding or Digital Assets')
-        if not design and subproject != 'business':
+        if marketing and subproject not in {'business', 'marketing'}:
+            raise ValueError('marketing work belongs to Business or Marketing')
+        if not design and not marketing and subproject != 'business':
             raise ValueError('this specialist belongs to Business')
         destination_name = subproject
-    if design:
+    if design or marketing:
         packet['entry_mode'] = entry_mode
         packet['subproject'] = destination_name
         if umbrella:
             owner = cases.locate_publication(umbrella)
             if owner:
                 cases.read_project(owner)
-            destination = subprojects.path(umbrella, destination_name) if subprojects.is_umbrella(umbrella) else umbrella / {'website':'web-site', 'branding':'branding', 'others':'digital-assets'}[destination_name]
+            destination = subprojects.path(umbrella, destination_name) if subprojects.is_umbrella(umbrella) else umbrella / {'website':'web-site', 'branding':'branding', 'marketing':'marketing', 'others':'digital-assets'}[destination_name]
             packet['output_root'] = str(destination)
-        if entry_mode == 'standalone':
+            if marketing and subprojects.is_umbrella(umbrella):
+                if not (destination / 'workstream.json').is_file():
+                    packet['marketing_workstream'] = {'status': 'not_initialized', 'valid_for_use': False,
+                                                      'stale_bindings': [], 'path': str(destination / 'workstream.json')}
+                else:
+                    state = subprojects.validate_marketing_workstream(umbrella)
+                    packet['marketing_workstream'] = {k: state[k] for k in
+                        ('path', 'revision', 'status', 'stale_bindings', 'valid_for_use')}
+                    packet['marketing_workstream']['brief'] = state['state']['brief']
+                    packet['marketing_workstream']['artifact_refs'] = state['state']['artifact_refs']
+                    packet['marketing_workstream']['imported_decisions'] = state['state']['imported_decisions']
+                    if not state['valid_for_use']:
+                        packet.update(gate_blocked=True, gate='marketing_workstream_review', first_skill=skill,
+                                      reason='Marketing workstream inputs changed or need review: ' + '; '.join(state['stale_bindings']))
+                        return packet
+
+        if entry_mode == 'standalone' and design:
             if case_id:
                 raise ValueError('standalone design does not consume a business case; use business_linked for a case handoff')
             packet['prerequisites'] = ['Own brief and applicable design/asset approvals; no prior research required']
             packet['input_contract'] = ['requested scope', 'own brief', 'explicitly supplied optional handoffs']
+            return packet
+        if entry_mode == 'standalone' and marketing:
+            if case_id:
+                raise ValueError('standalone marketing does not consume a business case; use business_linked for venture marketing')
+            if project and not standalone_brief.strip():
+                raise ValueError('standalone marketing inside a project requires --standalone-brief; otherwise use business_linked')
+            packet['prerequisites'] = ['Supplied established-business brief/position and requested marketing scope; no Business research workspace required']
+            packet['input_contract'] = ['supplied business brief', 'approved positioning/claims', 'marketing objective', 'optional evidence bindings']
+            packet['supplied_brief'] = standalone_brief.strip() if standalone_brief.strip() else 'provided in user request'
+            packet['requires_pain_gate'] = False
+            packet['required_stages'] = []
+            packet.pop('case_context', None)
             return packet
     if selected.get('mode') == 'appraisal':
         packet['expected_artifacts'] = metadata['artifacts']
@@ -368,7 +432,7 @@ def _route_request(
             packet['output_root'] = str(project_root / 'strategy')
             packet['case_context']['output_root'] = packet['output_root']
             packet['case_context']['requested_sections'] = list(cases.PLAN_SECTIONS)
-        elif design:
+        elif design or marketing:
             packet['case_context']['output_root'] = packet['output_root']
         else:
             packet['output_root'] = str(scope_root)
@@ -449,7 +513,8 @@ def main() -> int:
     parser.add_argument("--continue-workspace", action="store_true")
     parser.add_argument("--project", default="", help="Project slug; enforces the pain-first gate on routes that require it.")
     parser.add_argument("--case", default="", help="Registered research case; execution resolves the selected case.")
-    parser.add_argument('--entry-mode', choices=['standalone', 'business_linked'], default='standalone', help='Brand/website starts independently unless an explicit business handoff is requested.')
+    parser.add_argument('--entry-mode', choices=['standalone', 'business_linked'], default=None, help='Brand/website defaults to standalone; marketing with a project defaults to business-linked. Override only when scope supports it.')
+    parser.add_argument('--standalone-brief', default='', help='Required when starting independent Marketing inside a project that also contains Business work.')
     parser.add_argument('--subproject', choices=[*subprojects.PATHS, 'business-analysis'], default='')
     parser.add_argument("--check-skill", default="", help="Reject dispatch unless this skill matches the selected route; blocked gates exit 2.")
     parser.add_argument("--override-gate", action="store_true", help="Record an explicit user override and dispatch despite a blocked pain-first gate.")
@@ -461,7 +526,7 @@ def main() -> int:
     try:
         packet = route_request(args.request, intent=args.intent or "", active_manifest=manifest,
                                task_scope=args.task_scope, continue_workspace=args.continue_workspace,
-                               project=args.project, case_id=args.case, entry_mode=args.entry_mode, subproject=args.subproject, override_gate=args.override_gate, override_stages=args.override_stage, check_skill=args.check_skill)
+                               project=args.project, case_id=args.case, entry_mode=args.entry_mode, standalone_brief=args.standalone_brief, subproject=args.subproject, override_gate=args.override_gate, override_stages=args.override_stage, check_skill=args.check_skill)
     except ValueError as exc:
         parser.error(str(exc))
     print(json.dumps(packet, indent=2, sort_keys=True))

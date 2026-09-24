@@ -17,11 +17,11 @@ This is an exploration report, not a demand-validation verdict. Separate observe
 
 ## Candidate Problem-Segment Pockets
 
-Rank with the severity × frequency rubric (see the skill workflow): Frequency 0–3 counts independent records across source types; Severity 0–3 counts evidenced consequence up to documented spend plus workaround plus failed solve attempts. Priority = S×F. Engagement metrics and same-author repeats never count; competitor/editorial content is context only.
+Do not combine recurrence and consequence into a numeric priority score. For each bounded finding, report the observed consequence, what alternatives did and did not accomplish, the contexts where the account applies, contrary or successful cases, and what remains unknown. Record frequency only as a description of the reviewed sample and its source limits; it is not a population estimate. A consequential one-off remains visible without being ranked as a repeated market pattern.
 
-| Candidate segment | Trigger and painful job | Current workaround / alternative | Evidence and source links | Counter-evidence / saturation signal | S×F | Confidence | Why investigate next? |
-|---|---|---|---|---|---|---|---|
-|  |  |  |  |  |  | low |  |
+| Finding ID and bounded statement | Customer situation and observed consequence | What current alternatives accomplish or fail | Supporting and contrary evidence | Scope and uncertainty | Why investigate next? |
+|---|---|---|---|---|---|
+| U1 |  |  |  |  |  |
 
 Use `candidate`, not `underserved`, unless the evidence shows a recurring job, a costly workaround or repeated dissatisfaction, and a specific shortfall in current alternatives.
 

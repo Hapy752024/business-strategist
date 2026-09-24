@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import hashlib
 import subprocess
 import sys
 from pathlib import Path
@@ -60,7 +61,7 @@ def render_report_template(topic: str, focus: str, geo: str, language: str) -> s
     return text
 
 
-def write_research_plan(run_dir: Path, args: argparse.Namespace) -> None:
+def write_research_plan(run_dir: Path, args: argparse.Namespace) -> dict[str, str]:
     lines = [
         "# Market Discovery Research Plan",
         "",
@@ -70,6 +71,8 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace) -> None:
         "",
         "## Scope",
         "",
+        f"- Study ID: `{run_dir.name}`",
+        "- Intent: `customer_problem`",
         f"- Market/domain: `{args.topic}`",
         f"- Rough hunch: `{args.focus or 'none supplied'}`",
         f"- Geography/language requested: `{args.geo}/{args.language}`",
@@ -94,6 +97,8 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace) -> None:
         "After synthesis, ask one question: `Which path should we take next: validate Candidate [X], broaden/narrow the market scope, extend a named source gap, or stop?`",
     ]
     (run_dir / "research_plan.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return {"study_id": run_dir.name,
+            "research_design_digest": hashlib.sha256((run_dir / "research_plan.md").read_bytes()).hexdigest()}
 
 
 def collector_command(args: argparse.Namespace, run_dir: Path) -> list[str]:
@@ -160,7 +165,7 @@ def start_discovery(args: argparse.Namespace) -> int:
     report_path = run_dir / "market-discovery-report.md"
     if not report_path.exists():
         report_path.write_text(render_report_template(args.topic, args.focus, args.geo, args.language), encoding="utf-8")
-    write_research_plan(run_dir, args)
+    study_identity = write_research_plan(run_dir, args)
 
     if workspace:
         update_stage(
@@ -183,6 +188,7 @@ def start_discovery(args: argparse.Namespace) -> int:
     summary: dict[str, Any] = {
         "mode": "market_discovery",
         "status": "planned",
+        **study_identity,
         "topic": args.topic,
         "focus": args.focus,
         "geo": args.geo,
@@ -252,30 +258,75 @@ def finalize_discovery(args: argparse.Namespace) -> int:
     if not evidence_summary:
         raise ValueError("Missing evidence/summary.json; run collection and disclose its source coverage before finalizing")
 
+    discovery_summary = read_json(run_dir / "summary.json")
+    active_study_id = run_dir.name
+    active_design_digest = hashlib.sha256((run_dir / "research_plan.md").read_bytes()).hexdigest()
+    if discovery_summary.get("study_id") != active_study_id or discovery_summary.get("research_design_digest") != active_design_digest:
+        raise ValueError("Active discovery study identity is missing or stale; recreate its summary through the discovery initializer")
     pack = Path(getattr(args, "voc_pack", "") or run_dir / "customer-feedback")
-    required = ["evidence.jsonl", "source-review.json", "customer-feedback-coverage.json", "customer-voc-synthesis.json"]
+    required = ["evidence.jsonl", "source-review.json", "customer-feedback-coverage.json", "customer-voc-synthesis.json", "claim-ledger.json"]
     if any(not (pack / name).is_file() for name in required):
         raise ValueError("Reviewed VoC research pack required before finalization: " + ", ".join(required))
     synthesis = read_json(pack / "customer-voc-synthesis.json")
     review = read_json(pack / "source-review.json")
     coverage = read_json(pack / "customer-feedback-coverage.json")
-    if synthesis.get("schema_version") != 2:
-        raise ValueError("New discovery finalization requires VoC quality contract v2; legacy maps remain unassessed")
+    source_plan_path = pack / "customer-feedback-source-plan.json"
+    source_plan = read_json(source_plan_path)
+    v3 = synthesis.get("schema_version") == 3
+    honest_empty = (synthesis.get("schema_version") in {1, 2} and synthesis.get("status") == "insufficient_evidence"
+                    and args.candidate_count == 0 and not synthesis.get("customer_needs")
+                    and not synthesis.get("solution_requirements"))
+    if not v3 and not honest_empty:
+        raise ValueError("New candidate-bearing discovery finalization requires VoC quality contract v3 with study, question, claim and report bindings")
+    claims = json.loads((pack / "claim-ledger.json").read_text(encoding="utf-8"))
+    if not isinstance(claims, list):
+        raise ValueError("claim-ledger.json must contain a JSON array")
+    report_review = synthesis.get("report_review") or {}
+    if v3 and (not source_plan or source_plan.get("study_id") != active_study_id
+               or source_plan.get("research_design_digest") != active_design_digest
+               or source_plan.get("topic") != discovery_summary.get("topic")
+               or source_plan.get("study_intent") != "customer_problem"
+               or synthesis.get("study_id") != active_study_id
+               or synthesis.get("research_design_digest") != active_design_digest
+               or review.get("study_id") != active_study_id):
+        raise ValueError("VoC source plan, source review and synthesis must bind to this active study ID and research design digest")
+    if v3 and report_review.get("report_sha256") != hashlib.sha256(report_path.read_bytes()).hexdigest():
+        raise ValueError("report review is missing or stale for the final report bytes")
     completed = subprocess.run([
         sys.executable, str(ROOT / "scripts/evidence_scout/validate_customer_voc_synthesis.py"),
         "--evidence", str(pack / "evidence.jsonl"), "--source-review", str(pack / "source-review.json"),
         "--coverage", str(pack / "customer-feedback-coverage.json"),
         "--synthesis", str(pack / "customer-voc-synthesis.json"),
+        "--study-plan", str(source_plan_path),
         "--customer-segment", str(review.get("target_segment") or ""),
     ], capture_output=True, text=True, check=False)
     if completed.returncode:
         raise ValueError("VoC research pack failed validation: " + completed.stdout + completed.stderr)
+    claim_validation = subprocess.run([
+        sys.executable, str(ROOT / "scripts/evidence_scout/validate_synthesis.py"),
+        "--evidence", str(pack / "evidence.jsonl"),
+        "--ledger", str(pack / "claim-ledger.json"),
+        "--source-review", str(pack / "source-review.json"),
+        "--customer-segment", str(review.get("target_segment") or ""),
+        *( ["--require-verification"] if v3 else [] ),
+        "--synthesis", str(pack / "customer-voc-synthesis.json"),
+    ], capture_output=True, text=True, check=False)
+    if claim_validation.returncode:
+        raise ValueError("VoC claim ledger failed validation: " + claim_validation.stdout + claim_validation.stderr)
     links = synthesis.get("candidate_support", [])
     needs = {item["id"] for item in synthesis.get("customer_needs", [])}
-    if len(links) != args.candidate_count or any(not row.get("u_ids") or not set(row["u_ids"]) <= needs for row in links):
-        raise ValueError("Each discovery candidate requires candidate_support with reviewed U IDs")
+    claims_by_id = {row.get("claim_id"): row for row in claims if isinstance(row, dict)}
+    if len(links) != args.candidate_count or len({row.get("candidate_id") for row in links}) != len(links):
+        raise ValueError("Each candidate requires one unique stable candidate_id")
+    for row in links:
+        if (not row.get("statement") or not row.get("u_ids") or not set(row["u_ids"]) <= needs
+                or not row.get("question_ids") or not set(row["question_ids"]) <= set(synthesis.get("question_ids", []))
+                or not row.get("claim_ids") or not set(row["claim_ids"]) <= set(claims_by_id)):
+            raise ValueError("Each discovery candidate requires a statement and current verified question/U/claim associations")
+    if v3 and not set(synthesis.get("report_review", {}).get("claim_ids", [])) <= set(claims_by_id):
+        raise ValueError("Report review references unknown claim IDs")
 
-    summary = read_json(run_dir / "summary.json")
+    summary = discovery_summary
     failures = provider_failures(evidence_summary)
     quality_flags = list(evidence_summary.get("quality_flags") or [])
     alerts = list(evidence_summary.get("needs_user_attention") or [])

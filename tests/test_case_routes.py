@@ -2,6 +2,7 @@ import json
 import pytest
 from scripts import case_workspace as c, route_workflow as routing
 from scripts.evidence_scout import workspace
+from problem_assessment_fixtures import prepare as prepare_problem_assessment
 
 
 def setup(tmp_path, monkeypatch):
@@ -11,7 +12,7 @@ def setup(tmp_path, monkeypatch):
     for name in ('customer_segments', 'customer_journey', 'pain_points'):
         target = scope / 'market_research' / name / 'current.md'
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text('Synthetic sourced baseline; unknown demand.')
+        target.write_text('Synthetic sourced baseline https://evidence.example/source 2026-09-23; unknown demand.')
     return p, scope
 
 
@@ -29,8 +30,9 @@ def test_appraisal_without_selection_does_not_allow_commitment(tmp_path, monkeyp
 
 def test_case_pain_pass_and_interpretation_correction(tmp_path, monkeypatch):
     p, scope = setup(tmp_path, monkeypatch)
+    artifacts, _, _ = prepare_problem_assessment(scope, workspace, monkeypatch, case_id='a')
     pain = scope / 'market_research/pain_points/current.md'
-    workspace.update_stage(scope, 'problem_validation', expected_assessment_revision=1, status='passed', gate_result='pass', artifacts=[pain])
+    workspace.update_stage(scope, 'problem_validation', expected_assessment_revision=1, status='passed', gate_result='pass', artifacts=artifacts)
     assert routing.pain_gate_state('topic', 'a')[0]
     original = pain.read_bytes()
     c.correct(p, ['a'], 'Original interpretation was wrong', 'correction')

@@ -10,12 +10,14 @@ Layout: each venture is ``projects/<project-slug>/`` with workstream folders
 from __future__ import annotations
 
 import json
+import subprocess
 import time
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
 import fcntl
+import hashlib
 import sys
 import uuid
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -23,6 +25,7 @@ import case_workspace as cases
 
 
 ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = ROOT
 TEMPLATE_DIR = ROOT / "templates" / "project"
 RESEARCH_DIR = "market_research"
 RESEARCH_MANIFEST_REL = Path(RESEARCH_DIR) / "manifest.json"
@@ -55,6 +58,151 @@ STAGES = (
 # gate; it may only pass with web-searched evidence artifacts filed under
 # market_research/pain_points/. Commitment stages require that gate.
 PAIN_GATE_STAGE = "problem_validation"
+PAIN_REQUIRED_SECTIONS = {
+    "customer_segments": "market_research/customer_segments",
+    "customer_journey": "market_research/customer_journey",
+    "pain_points": "market_research/pain_points",
+}
+
+
+def _problem_validation_receipt(workspace: Path, artifacts: list[Path], *, case_id: str = "", revision: int = 1) -> dict:
+    """Bind a problem-gate decision to reviewed current findings and sources."""
+    from jsonschema import Draft202012Validator
+    selected: dict[str, Path] = {}
+    for artifact in artifacts:
+        path = Path(artifact).absolute()
+        if not path.is_file() or not path.stat().st_size:
+            continue
+        if path.is_symlink() or not path.resolve().is_relative_to(workspace.resolve()):
+            raise ValueError("pain_points/segment/journey artifacts must be workspace-local files without symlinks")
+        try:
+            relative = path.relative_to(workspace.absolute()).as_posix()
+        except ValueError:
+            continue
+        if path == workspace / PAIN_REQUIRED_SECTIONS["pain_points"] / "problem-validation-assessment.json":
+            continue
+        for section, prefix in PAIN_REQUIRED_SECTIONS.items():
+            if relative.startswith(prefix + "/"):
+                if section in selected and selected[section] != path:
+                    raise ValueError(f"problem_validation requires one unambiguous current {section} artifact")
+                selected[section] = path
+    missing = sorted(set(PAIN_REQUIRED_SECTIONS) - set(selected))
+    if missing:
+        raise ValueError("problem_validation requires current artifacts for: " + ", ".join(missing))
+    assessment_path = workspace / PAIN_REQUIRED_SECTIONS["pain_points"] / "problem-validation-assessment.json"
+    if assessment_path not in [Path(p).absolute() for p in artifacts]:
+        raise ValueError("problem_validation requires the reviewed problem-validation-assessment.json artifact")
+    if assessment_path.is_symlink() or not assessment_path.is_file():
+        raise ValueError("problem-validation assessment must be a workspace-local regular file")
+    assessment = json.loads(assessment_path.read_text(encoding="utf-8"))
+    schema = json.loads((REPO_ROOT / "schemas/problem-validation-assessment.schema.json").read_text(encoding="utf-8"))
+    assessment_errors = list(Draft202012Validator(schema, format_checker=Draft202012Validator.FORMAT_CHECKER).iter_errors(assessment))
+    if assessment_errors:
+        raise ValueError("problem-validation assessment is invalid: " + assessment_errors[0].message)
+    if assessment.get("status") != "supported":
+        raise ValueError("insufficient-evidence assessments may close discovery but cannot pass problem_validation")
+    if assessment.get("case_id") != case_id or assessment.get("assessment_revision") != revision:
+        raise ValueError("problem-validation assessment is stale or belongs to another case/revision")
+
+    material: dict[str, str] = {}
+    for section, path in selected.items():
+        body = path.read_text(encoding="utf-8", errors="replace")
+        relative = path.relative_to(workspace.absolute()).as_posix()
+        binding = assessment["section_inputs"].get(section, {})
+        if binding.get("path") != relative or binding.get("sha256") != hashlib.sha256(path.read_bytes()).hexdigest():
+            raise ValueError(f"{section} artifact differs from the reviewed assessment binding")
+        if not body.strip():
+            raise ValueError(f"{section} artifact is empty")
+        material[relative] = binding["sha256"]
+
+    pack_path = (workspace / assessment["voc_pack_path"]).absolute()
+    if not pack_path.resolve().is_relative_to(workspace.resolve()):
+        raise ValueError("reviewed VoC pack must remain inside the workspace without symlinked paths")
+    current = pack_path
+    while current != workspace and current != current.parent:
+        if current.is_symlink():
+            raise ValueError("reviewed VoC pack must remain inside the workspace without symlinked paths")
+        current = current.parent
+    required_pack_files = ("evidence.jsonl", "source-review.json", "customer-feedback-coverage.json",
+                           "customer-voc-synthesis.json", "claim-ledger.json", "customer-feedback-source-plan.json")
+    for name in required_pack_files:
+        path = pack_path / name
+        if not path.is_file() or path.is_symlink():
+            raise ValueError(f"reviewed VoC pack is missing a local regular file: {name}")
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if assessment["voc_pack_hashes"].get(name) != actual:
+            raise ValueError(f"reviewed VoC pack changed since assessment review: {name}")
+        material[path.relative_to(workspace).as_posix()] = actual
+
+    synthesis = json.loads((pack_path / "customer-voc-synthesis.json").read_text(encoding="utf-8"))
+    source_review = json.loads((pack_path / "source-review.json").read_text(encoding="utf-8"))
+    source_plan = json.loads((pack_path / "customer-feedback-source-plan.json").read_text(encoding="utf-8"))
+    needs = {str(item.get("id")): item for item in synthesis.get("customer_needs", []) if isinstance(item, dict)}
+    claims = json.loads((pack_path / "claim-ledger.json").read_text(encoding="utf-8"))
+    claim_ids = {str(item.get("claim_id")) for item in claims if isinstance(item, dict)}
+    if (synthesis.get("schema_version") != 3 or synthesis.get("status") not in {"supported", "scoped"}
+            or synthesis.get("study_id") != assessment.get("study_id")
+            or synthesis.get("research_design_digest") != assessment.get("research_design_digest")
+            or source_plan.get("study_id") != assessment.get("study_id")
+            or source_plan.get("research_design_digest") != assessment.get("research_design_digest")
+            or source_review.get("study_id") != assessment.get("study_id")
+            or source_review.get("target_segment") != assessment.get("target_segment")):
+        raise ValueError("assessment, research plan, source review and v3 synthesis must identify the same supported study and segment")
+    if not set(assessment["finding_ids"]) <= set(needs):
+        raise ValueError("problem assessment references customer findings that are absent from the current synthesis")
+    associated_claims = {str(claim_id) for finding_id in assessment["finding_ids"]
+                         for claim_id in needs[finding_id].get("claim_ids", [])}
+    if not associated_claims or not set(assessment["claim_ids"]) <= associated_claims or not set(assessment["claim_ids"]) <= claim_ids:
+        raise ValueError("problem assessment claim IDs must resolve from its selected customer findings")
+
+    check_voc = subprocess.run([
+        sys.executable, str(REPO_ROOT / "scripts/evidence_scout/validate_customer_voc_synthesis.py"),
+        "--evidence", str(pack_path / "evidence.jsonl"), "--source-review", str(pack_path / "source-review.json"),
+        "--coverage", str(pack_path / "customer-feedback-coverage.json"),
+        "--synthesis", str(pack_path / "customer-voc-synthesis.json"),
+        "--study-plan", str(pack_path / "customer-feedback-source-plan.json"),
+        "--customer-segment", assessment["target_segment"],
+    ], capture_output=True, text=True, check=False)
+    if check_voc.returncode:
+        raise ValueError("problem-validation VoC pack failed validation: " + check_voc.stdout + check_voc.stderr)
+    check_claims = subprocess.run([
+        sys.executable, str(REPO_ROOT / "scripts/evidence_scout/validate_synthesis.py"),
+        "--evidence", str(pack_path / "evidence.jsonl"), "--ledger", str(pack_path / "claim-ledger.json"),
+        "--source-review", str(pack_path / "source-review.json"),
+        "--customer-segment", assessment["target_segment"], "--require-verification",
+        "--synthesis", str(pack_path / "customer-voc-synthesis.json"),
+    ], capture_output=True, text=True, check=False)
+    if check_claims.returncode:
+        raise ValueError("problem-validation claim ledger failed validation: " + check_claims.stdout + check_claims.stderr)
+
+    assessment_relative = assessment_path.relative_to(workspace.absolute()).as_posix()
+    material[assessment_relative] = hashlib.sha256(assessment_path.read_bytes()).hexdigest()
+    return {"contract_version": 2, "status": "valid", "case_id": case_id,
+            "assessment_revision": revision, "scope": {"case_id": case_id or workspace.name,
+            "segment": assessment["target_segment"], "intent": assessment["intent"],
+            "study_id": assessment["study_id"], "geography": assessment["scope"]["geography"],
+            "finding_ids": assessment["finding_ids"], "claim_ids": assessment["claim_ids"],
+            "limits": assessment["scope"]["limits"]},
+            "inputs": material}
+
+
+def _receipt_current(workspace: Path, checkpoint: dict, *, case_id: str = "", revision: int | None = None) -> bool:
+    receipt = checkpoint.get("validation_receipt") if isinstance(checkpoint, dict) else None
+    if not isinstance(receipt, dict) or receipt.get("contract_version") != 2 or receipt.get("status") != "valid":
+        return False
+    if receipt.get("case_id", "") != case_id or (revision is not None and receipt.get("assessment_revision") != revision):
+        return False
+    inputs = receipt.get("inputs")
+    if not isinstance(inputs, dict) or not inputs:
+        return False
+    for relative, digest in inputs.items():
+        path = Path(workspace) / relative
+        try:
+            if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                return False
+        except OSError:
+            return False
+    return True
 PAIN_GATE_DOWNSTREAM = frozenset(
     {
         "business_model_draft",
@@ -285,24 +433,22 @@ def _update_legacy_stage(
             # Explicit --out paths predate topic workspaces and remain supported.
             # Existence is still required for a passed stage.
             relative_artifacts.append(str(artifact.resolve()))
+    validation_receipt = None
     if stage == PAIN_GATE_STAGE and status == "passed" and not override:
-        # Pain-first rule: the pain gate only passes with web-searched pain
-        # evidence filed under market_research/pain_points/.
-        evidence_root = workspace.resolve() / "market_research" / "pain_points"
-        if not any(
-            artifact.is_file() and artifact.stat().st_size > 0
-            and artifact.resolve().is_relative_to(evidence_root)
-            for artifact in artifacts or []
-        ):
-            raise ValueError(
-                "problem_validation may only pass with pain-point evidence artifacts "
-                "under market_research/pain_points/ (or pass override= with a recorded reason)."
-            )
+        manifest = read_manifest(workspace)
+        validation_receipt = _problem_validation_receipt(workspace, artifacts or [],
+            revision=1)
+        assessment_artifact = workspace / PAIN_REQUIRED_SECTIONS["pain_points"] / "problem-validation-assessment.json"
+        if assessment_artifact.exists():
+            relative_assessment = assessment_artifact.relative_to(workspace.absolute()).as_posix()
+            if relative_assessment not in relative_artifacts:
+                relative_artifacts.append(relative_assessment)
     with manifest_lock(workspace):
         manifest = read_manifest(workspace)
         if stage in PAIN_GATE_DOWNSTREAM and status in {"in_progress", "passed"} and not override:
             gate = manifest.get("stages", {}).get(PAIN_GATE_STAGE, {})
-            if gate.get("status") != "passed" or gate.get("gate_result") not in {"pass", "conditional_pass"}:
+            if (gate.get("status") != "passed" or gate.get("gate_result") not in {"pass", "conditional_pass"}
+                    or not _receipt_current(workspace, gate)):
                 raise ValueError(
                     f"Stage '{stage}' requires the pain-first gate: pass '{PAIN_GATE_STAGE}' with "
                     "web-searched evidence under market_research/pain_points/ first "
@@ -332,6 +478,16 @@ def _update_legacy_stage(
                 "next_action": next_action,
             }
         )
+        if stage == PAIN_GATE_STAGE and status != "passed":
+            checkpoint.pop("validation_receipt", None)
+        if stage == PAIN_GATE_STAGE and status == "passed":
+            checkpoint["validation_receipt"] = validation_receipt or {
+                "contract_version": 1, "status": "owner_override", "case_id": "",
+                "assessment_revision": 1,
+                "scope": {"case_id": workspace.name, "segment": "owner override", "limits": override},
+                "inputs": {relative: hashlib.sha256((workspace / relative).read_bytes()).hexdigest()
+                           for relative in relative_artifacts if not Path(relative).is_absolute() and (workspace / relative).is_file()},
+            }
         manifest["updated_at"] = timestamp
         manifest["manifest_revision"] = int(manifest.get("manifest_revision", 0)) + 1
         manifest["current_stage"] = stage
@@ -374,9 +530,6 @@ def update_stage(workspace: Path, stage: str, **kwargs) -> None:
         rels.append(str(a.relative_to(workspace)))
     if status == 'passed' and not rels:
         raise ValueError('Passed stages require artifacts')
-    if stage == PAIN_GATE_STAGE and status == 'passed' and not kwargs.get('override'):
-        if not any(Path(a).is_file() and Path(a).absolute().is_relative_to(workspace / 'market_research/pain_points') for a in artifacts):
-            raise ValueError('Pain gate requires pain-point evidence')
     with cases.project_lock(root):
         project = cases.read_project(root)
         manifest_path = workspace / RESEARCH_MANIFEST_REL
@@ -400,12 +553,20 @@ def update_stage(workspace: Path, stage: str, **kwargs) -> None:
                     raise ValueError('stale research input at stage closure')
         if cid and expected != m['assessment_revision']:
             raise ValueError('stale or missing expected assessment revision')
+        if stage == PAIN_GATE_STAGE and status == 'passed' and not kwargs.get('override'):
+            _problem_validation_receipt(workspace, artifacts, case_id=cid,
+                                        revision=expected or kwargs.get('expected_assessment_revision', 1))
+            assessment_artifact = workspace / PAIN_REQUIRED_SECTIONS["pain_points"] / "problem-validation-assessment.json"
+            relative_assessment = str(assessment_artifact.relative_to(workspace))
+            if relative_assessment not in rels:
+                rels.append(relative_assessment)
         if stage in PAIN_GATE_DOWNSTREAM and status in {'in_progress', 'passed'}:
             if not cid:
                 raise ValueError('Select a case before commitment work')
             cases.binding(root, cid)  # selection cannot be overridden
             pain = m.get('stages', {}).get(PAIN_GATE_STAGE, {})
-            if not kwargs.get('override') and (pain.get('status') != 'passed' or pain.get('reviewed_revision') != m['assessment_revision']):
+            if not kwargs.get('override') and (pain.get('status') != 'passed' or pain.get('reviewed_revision') != m['assessment_revision']
+                                                or not _receipt_current(workspace, pain, case_id=cid, revision=m['assessment_revision'])):
                 raise ValueError('Commitment requires current pain-first gate')
         entry = {'stage': stage, 'status': status, 'gate_result': gate, 'timestamp': now_iso(),
                  'reviewed_revision': m['assessment_revision'],
@@ -413,6 +574,14 @@ def update_stage(workspace: Path, stage: str, **kwargs) -> None:
                  'source_bindings': inputs + [cases.source_binding(root, str(Path(a).absolute().relative_to(root)), locator='whole artifact', applicability=stage + ' within ' + (cid or 'topic')) for a in artifacts if Path(a).is_file() and Path(a).stat().st_size],
                  'provider_failures': kwargs.get('provider_failures') or [], 'open_gaps': kwargs.get('open_gaps') or [],
                  'next_action': kwargs.get('next_action', '')}
+        if stage == PAIN_GATE_STAGE and status == 'passed':
+            entry['validation_receipt'] = (_problem_validation_receipt(
+                workspace, artifacts, case_id=cid, revision=m['assessment_revision']) if not kwargs.get('override') else
+                {'contract_version': 1, 'status': 'owner_override', 'case_id': cid,
+                 'assessment_revision': m['assessment_revision'],
+                 'scope': {'case_id': cid, 'segment': 'owner override', 'limits': kwargs['override']},
+                 'inputs': {str(Path(a).absolute().relative_to(workspace)): hashlib.sha256(Path(a).read_bytes()).hexdigest()
+                            for a in artifacts if Path(a).is_file()}})
         m.setdefault('stages', {})[stage] = entry
         m.update(current_stage=stage, updated_at=now_iso(), gate_result=gate, next_action=entry['next_action'], manifest_revision=m.get('manifest_revision', 0) + 1)
         m['artifacts'] = sorted(set(m.get('artifacts', []) + rels))
@@ -634,7 +803,7 @@ def capture_run_scope(run_dir: Path, scope: Path, source_bindings=()) -> None:
 
 
 def prepare_research_output(output: Path, *, workspace_arg='', case_id='', is_file=False,
-                            input_paths=(), source_bindings_file=''):
+                            input_paths=(), source_bindings_file='', allow_existing=False):
     """Preflight direct builders before writing. V2 outputs are fresh run artifacts."""
     output = Path(output).absolute()
     try:
@@ -675,7 +844,7 @@ def prepare_research_output(output: Path, *, workspace_arg='', case_id='', is_fi
     if relative.parts[0] != 'market_research' or 'runs' not in relative.parts or 'cases' in relative.parts:
         raise ValueError('Case research builders must write immutable research runs')
     directory = output.parent if is_file else output
-    if directory.exists() and any(directory.iterdir()):
+    if directory.exists() and any(directory.iterdir()) and not allow_existing:
         raise ValueError('Research runs are immutable; choose a fresh run directory')
     bindings = research_input_bindings(root, scope, input_paths, source_bindings_file)
     directory.mkdir(parents=True, exist_ok=True)
@@ -741,6 +910,7 @@ def resolve_run_dir(
     legacy_subdir: str = "",
     customer_segment: str = "",
     case_id: str = "",
+    resume: bool = False,
 ) -> tuple[Path, Path | None]:
     try:
         from scripts.subprojects import business, is_umbrella
@@ -766,9 +936,12 @@ def resolve_run_dir(
     if output_root and not workspace_arg and not case_id:
         # A parent producer may collect evidence into its own immutable run.
         output = Path(out_dir).absolute()
-        prepare_research_output(output)
+        prepare_research_output(output, allow_existing=resume)
         return output, None
     if out_dir and not case_id and not existing and not cases.locate(Path(out_dir)):
+        output = Path(out_dir).absolute()
+        if resume:
+            return output, None
         return Path(out_dir), None
     if legacy_output:
         raise ValueError(
@@ -789,12 +962,16 @@ def resolve_run_dir(
             if not output.is_relative_to(workspace / workspace_subdir):
                 raise ValueError('out-dir conflicts with case/output purpose')
             cases.safe(root, str(output.relative_to(root)))
-            if output.exists() and any(output.iterdir()):
+            if output.exists() and any(output.iterdir()) and not resume:
                 raise ValueError('Research runs are immutable; choose a new output directory')
         else:
             output = workspace / workspace_subdir / run_name
         cases.safe(root, str(output.absolute().relative_to(root)))
-        output.mkdir(parents=True, exist_ok=False)
-        capture_run_scope(output, workspace)
+        if resume:
+            if not output.is_dir():
+                raise ValueError('Resume destination does not exist')
+        else:
+            output.mkdir(parents=True, exist_ok=False)
+            capture_run_scope(output, workspace)
         return output, workspace
     return Path(out_dir) if out_dir else workspace / workspace_subdir / run_name, None if out_dir else workspace

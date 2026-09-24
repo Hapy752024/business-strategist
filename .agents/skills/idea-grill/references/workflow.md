@@ -1,8 +1,3 @@
----
-name: idea-grill
-description: Relentlessly interview a founder to clarify a business idea, target customer segment, user pain, buyer, workarounds, hypotheses, risks, and the minimum evidence needed before building or running Evidence Scout.
----
-
 # Idea Grill Workflow
 
 Use this skill when the user has chosen a candidate business idea, customer problem, or segment and wants to validate demand or make the candidate researchable.
@@ -33,6 +28,8 @@ If the user asks to skip grilling outside that path, comply only after extractin
 For a request that compares candidates or asks which opportunity to pursue, also reuse the supplied founder decision context. If a missing objective, desired role, capability/access, affordable downside, time/income horizon, or acquisition constraint could change the ranking or test, ask for the first such gap before substantial prioritisation research. Label it as a hard constraint, preference, assumption, or unresolved input. Do not turn a narrow validation of one chosen customer problem into a founder interview unless that context changes the test.
 
 ## Procedure
+
+Keep the requested outcome explicit: this skill validates or challenges the user’s idea. Comparative companies, domestic or foreign, can illuminate actual alternatives, customer experiences or transferable mechanisms, but do not turn the task into idea importing. Read repo-root `references/opportunity-research-approaches.md`; choose distinct approaches for distinct questions, starting from customer workflow. Separate their evidence packets and deduplicate shared sources before synthesis.
 
 Begin with the customer/need hypothesis in repo-root `references/strategic-positioning.md`, even when the input is an app, feature or technology. State the segment, triggering situation, desired outcome, current alternative and consequence before proposing a product test. If the customer/need is genuinely unknown, offer focused discovery rather than forcing the founder to invent pain. Reuse previous answers; this does not apply to fixed-scope execution for an already selected business.
 

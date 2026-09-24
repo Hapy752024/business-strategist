@@ -17,6 +17,22 @@ from reviewed_voice import review_voice, reviewed_collection_locales, VOICES
 def validate_quality(synthesis: dict, evidence: dict, reviews: dict, coverage: dict) -> list[str]:
     """Version-2 research contract; semantic support still requires source review."""
     errors = []
+    if synthesis.get("schema_version", 1) >= 3:
+        declared = synthesis.get("question_ids", [])
+        if not declared or len(declared) != len(set(declared)):
+            errors.append("v3 synthesis requires unique declared research question IDs")
+        for item in synthesis.get("customer_needs", []) + synthesis.get("solution_requirements", []):
+            if not set(item.get("question_ids", [])) or not set(item.get("question_ids", [])) <= set(declared):
+                errors.append(f"{item.get('id')}: question_ids must link to the declared research design")
+        candidates = synthesis.get("candidate_support", [])
+        candidate_ids = [row.get("candidate_id") for row in candidates]
+        if len(candidate_ids) != len(set(candidate_ids)) or any(not str(x or "").strip() for x in candidate_ids):
+            errors.append("candidate_support requires unique stable candidate IDs")
+        for row in candidates:
+            if not row.get("statement") or not row.get("u_ids") or not set(row.get("u_ids", [])) <= {item.get("id") for item in synthesis.get("customer_needs", [])}:
+                errors.append(f"{row.get('candidate_id')}: candidate statement must link to current U findings")
+            if not row.get("question_ids") or not set(row.get("question_ids", [])) <= set(declared):
+                errors.append(f"{row.get('candidate_id')}: candidate question_ids must be declared")
     if synthesis.get("schema_version", 1) < 2:
         return errors
     all_items = synthesis.get("customer_needs", []) + synthesis.get("solution_requirements", [])
@@ -98,6 +114,7 @@ def main() -> int:
     parser.add_argument("--evidence", required=True)
     parser.add_argument("--synthesis", required=True)
     parser.add_argument("--coverage", required=True)
+    parser.add_argument("--study-plan", help="Current customer-feedback-source-plan.json; required for v3 study binding.")
     parser.add_argument("--source-review", required=True)
     parser.add_argument("--customer-segment", required=True)
     args = parser.parse_args()
@@ -112,6 +129,23 @@ def main() -> int:
             item = json.loads(line); evidence[str(item.get("evidence_id"))] = item
     errors = [error.message for error in Draft202012Validator(schema).iter_errors(synthesis)]
     review = json.loads(Path(args.source_review).read_text(encoding="utf-8"))
+    if synthesis.get("schema_version") == 3:
+        if not args.study_plan:
+            errors.append("v3 synthesis requires its current --study-plan binding")
+        else:
+            try:
+                study_plan = json.loads(Path(args.study_plan).read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                errors.append(f"v3 study plan is unreadable: {exc}")
+                study_plan = {}
+            if study_plan.get("study_id") != synthesis.get("study_id"):
+                errors.append("v3 synthesis study_id differs from the current study plan")
+            if study_plan.get("research_design_digest") != synthesis.get("research_design_digest"):
+                errors.append("v3 synthesis research_design_digest differs from the current study plan")
+            if review.get("study_id") != synthesis.get("study_id"):
+                errors.append("v3 source review study_id differs from the synthesis")
+            if study_plan.get("topic") != synthesis.get("topic"):
+                errors.append("v3 synthesis topic differs from the current study plan")
     if review.get("evidence_sha256") != hashlib.sha256(evidence_path.read_bytes()).hexdigest():
         errors.append("source review is stale: evidence_sha256 mismatch")
     if review.get("target_segment") != args.customer_segment:

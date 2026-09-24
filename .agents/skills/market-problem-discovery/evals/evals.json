@@ -81,6 +81,21 @@
       "prompt": "Synthetic packet: People said lack of transport prevented appointments. A free transport option became available; observed invitees still declined, saying the appointment had little value. Reassess the opportunity explanation.",
       "expected_output": "Revise or reject transport as the sufficient demand barrier for this group. Investigate other explanations without asserting hidden demand or erasing evidence of access difficulty.",
       "files": []
+    },
+    {
+      "id": "pain-topic-does-not-force-product-idea",
+      "prompt": "Explain the recurring pain points German physiotherapy practices have around patient follow-up. I have no product idea and want to understand the segment.",
+      "expected_output": "Investigate the customer segment’s workflows, problems, current workarounds, positive experiences and evidence gaps. It may conclude with an evidence-backed pain-point picture without inventing a product or proposing an imported company idea.",
+      "files": [],
+      "must_mention": [
+        "customer segment",
+        "workaround",
+        "evidence gaps"
+      ],
+      "must_not_mention": [
+        "copy a US startup",
+        "build this product"
+      ]
     }
   ]
 }

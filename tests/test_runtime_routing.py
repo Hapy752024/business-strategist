@@ -4,7 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from scripts import enforce_skill_route as hook, route_workflow as router, case_workspace as cases
+from scripts import enforce_skill_route as hook, route_workflow as router, case_workspace as cases, validate_skill_routes
+from scripts.evidence_scout import workspace as research_workspace
+from problem_assessment_fixtures import prepare as prepare_problem_assessment
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -22,6 +24,21 @@ def test_valid_dispatch_keeps_normal_permissions():
     assert 'permissionDecision' not in output
 
 
+def test_dispatch_persists_selected_workspace_for_repo_root_compaction(tmp_path, monkeypatch):
+    monkeypatch.setattr(hook, 'ROOT', tmp_path)
+    monkeypatch.setattr(router, 'ROOT', tmp_path)
+    project = tmp_path / 'projects' / 'selected'
+    from scripts import subprojects
+    subprojects.initialize(project, 'Selected project')
+    payload = event('selected')
+    result = hook.check_dispatch(payload)
+    assert result['hookSpecificOutput']['updatedInput']['args'] == 'The page brief'
+    state = json.loads((tmp_path / '.claude/plans/resume/s1.json').read_text())
+    assert state['active_selection']['project'] == 'selected'
+    assert state['active_selection']['module'] == 'website'
+    assert state['active_selection']['request'] == 'build a landing page'
+
+
 @pytest.mark.parametrize('field,value', [('intent', 'competitor-discovery'), ('task_scope', ''),
                                         ('standalone', 'true'), ('override_gate', 'false')])
 def test_invalid_routes_block(field, value):
@@ -35,18 +52,16 @@ def test_invalid_routes_block(field, value):
 
 def test_gate_rechecked_on_each_call_and_override_is_replay_safe(tmp_path, monkeypatch):
     monkeypatch.setattr(router, 'ROOT', tmp_path)
+    monkeypatch.setattr(hook, 'ROOT', tmp_path)
     root = tmp_path / 'projects/venture'
     cases.initialize(root, 'Venture')
     scope = cases.add_case(root, 'a', 'A')
     cases.select(root, 'a', 'Test', 'select-fixture', 'Explicit fixture selection')
     path = scope / 'market_research/manifest.json'
     data = cases.case_manifest(root, 'a')
-    evidence = scope / 'market_research/pain_points/current.md'
-    evidence.parent.mkdir(parents=True)
-    evidence.write_text('Synthetic evidence')
-    data['stages'] = {'problem_validation': {'status': 'passed', 'gate_result': 'pass', 'reviewed_revision': 1,
-        'artifacts': [{'path': 'market_research/pain_points/current.md'}]}}
-    path.write_text(json.dumps(data))
+    evidence, _, _ = prepare_problem_assessment(scope, research_workspace, monkeypatch, case_id='a')
+    research_workspace.update_stage(scope, 'problem_validation', expected_assessment_revision=1,
+        status='passed', gate_result='pass', artifacts=evidence)
     payload = event('venture', False)
     packet = json.loads(payload['tool_input']['args'])
     packet['route'].update(request='Create a social media plan', intent='social-marketing')
@@ -90,6 +105,26 @@ def test_direct_slash_command_is_checked():
         hook.check_dispatch(payload)
 
 
+def test_checked_route_packet_requires_selected_module_guidance():
+    research = router.route_request('Understand the customer problem', intent='market-problem-discovery', task_scope='strategy')
+    assert research['module'] == 'research'
+    assert research['module_reference'] == 'references/modules/research.md'
+    assert research['quality_reference'] == 'references/modules/quality/research.md'
+    assert research['module_reference'] not in research['required_references']
+    marketing = router.route_request('Build a social marketing plan', intent='social-marketing', task_scope='strategy')
+    assert marketing['module'] == 'marketing'
+    assert marketing['module_reference'] == 'references/modules/marketing.md'
+    assert marketing['quality_reference'] == 'references/modules/quality/marketing.md'
+    assert marketing['module_reference'] not in marketing['required_references']
+    venture = router.route_request('Plan the business', intent='startup-business-builder')
+    assert venture['specialist_owner'] == 'venture_strategy'
+    assert 'module' not in venture
+
+
+def test_every_skill_has_one_checked_module_or_specialist_owner():
+    assert validate_skill_routes.validate(ROOT) == []
+
+
 def test_hook_malformed_input_is_denied_not_a_nonblocking_error():
     for raw in ['{invalid', '[]', json.dumps({'tool_name': 'Skill', 'tool_input': {'skill': 'idea-grill', 'args': 'plain task'}})]:
         result = subprocess.run(['python3', str(ROOT / 'scripts/enforce_skill_route.py')], input=raw,
@@ -100,6 +135,20 @@ def test_hook_malformed_input_is_denied_not_a_nonblocking_error():
 def test_unrelated_tools_and_foreign_skills_are_not_hijacked():
     assert hook.check_dispatch({'tool_name': 'Read'}) == {}
     assert hook.check_dispatch({'tool_name': 'Skill', 'tool_input': {'skill': 'foreign:tool'}}) == {}
+
+
+def test_plain_text_args_get_an_actionable_envelope_hint():
+    hook_path = ROOT / 'scripts/enforce_skill_route.py'
+    event = {"hook_event_name": "PreToolUse", "tool_name": "Skill",
+             "tool_input": {"skill": "idea-grill", "args": "validate my dog grooming idea"}}
+    out = subprocess.run(["python3", str(hook_path)], input=json.dumps(event), text=True, capture_output=True, check=True)
+    decision = json.loads(out.stdout)["hookSpecificOutput"]
+    assert decision["permissionDecision"] == "deny"
+    reason = decision["permissionDecisionReason"]
+    assert "JSON route envelope" in reason
+    assert '"intent": "idea-grill"' in reason
+    assert "references/runtime-routing.md" in reason
+    assert "JSONDecodeError" not in reason
 
 
 def test_configured_hook_commands_block_invalid_dispatch_from_nested_cwd(tmp_path):

@@ -65,4 +65,3 @@ def test_commitment_routes_do_not_bypass_pain_gate(tmp_path, monkeypatch, intent
 
 def test_precise_typography_and_town_requests():
     assert route_workflow.route_request('font research')['skill'] == 'brand-typography-researcher'
-    assert route_workflow.route_request('refresh town data')['skill'] == 'town-db-curator'

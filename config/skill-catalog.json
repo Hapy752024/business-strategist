@@ -1,5 +1,75 @@
 {
   "schema_version": "1.0",
+  "modules": {
+    "research": {
+      "reference": "references/modules/research.md",
+      "quality_reference": "references/modules/quality/research.md",
+      "skills": [
+        "market-problem-discovery",
+        "idea-grill",
+        "evidence-scout",
+        "competitor-scout",
+        "competitive-landscape-builder",
+        "competitor-marketing-analyzer",
+        "competitor-monitoring",
+        "service-customer-perspective-challenger",
+        "business-archetype-playbook-researcher",
+        "growth-case-analyzer",
+        "interview-bridge"
+      ]
+    },
+    "branding": {
+      "reference": "references/modules/branding.md",
+      "quality_reference": "references/modules/quality/branding.md",
+      "skills": [
+        "brand-designer",
+        "brand-discovery-interviewer",
+        "brand-workspace-manager",
+        "brand-guideline-researcher",
+        "brand-typography-researcher",
+        "brand-strategy-director",
+        "brand-asset-producer",
+        "brand-ui-kit-producer",
+        "brand-motion-designer",
+        "brand-ui-component-producer",
+        "brand-frontend-app-designer",
+        "brand-quality-reviewer",
+        "brand-exporter",
+        "brand-guidelines-writer"
+      ]
+    },
+    "marketing": {
+      "reference": "references/modules/marketing.md",
+      "quality_reference": "references/modules/quality/marketing.md",
+      "skills": [
+        "marketing-strategy-builder",
+        "social-digital-marketing-planner",
+        "social-media-idea-validator"
+      ]
+    },
+    "website": {
+      "reference": "references/modules/website.md",
+      "quality_reference": "references/modules/quality/website.md",
+      "skills": [
+        "brand-website-designer-builder"
+      ]
+    }
+  },
+  "specialist_owners": {
+    "venture_strategy": [
+      "business-strategist",
+      "opportunity-risk-designer",
+      "startup-business-builder",
+      "archetype-gtm-strategist",
+      "company-operating-system",
+      "saas-fintech-pilot-designer",
+      "startup-challenge-panel",
+      "strategy-draft-tournament"
+    ],
+    "agent_infrastructure": [
+      "setup-multiharness-project"
+    ]
+  },
   "skills": {
     "business-strategist": {
       "intent": [
@@ -33,7 +103,8 @@
       "cost": "medium",
       "required_references": [
         "references/customer-voice.md",
-        "references/voc-research-method.md"
+        "references/voc-research-method.md",
+        "references/opportunity-research-approaches.md"
       ]
     },
     "idea-grill": {
@@ -48,7 +119,11 @@
         "idea hypothesis brief"
       ],
       "side_effect": "research",
-      "cost": "low"
+      "cost": "low",
+      "required_references": [
+        "references/opportunity-research-approaches.md",
+        "references/strategic-positioning.md"
+      ]
     },
     "evidence-scout": {
       "intent": [
@@ -186,6 +261,29 @@
             "current concept",
             "source/applicability bindings",
             "requested sections"
+          ],
+          "output_owner": "opportunity-risk-designer"
+        },
+        "smoke_test": {
+          "prerequisites": [
+            "named riskiest assumption",
+            "segment and pain in customer language"
+          ],
+          "required_references": [
+            "references/smoke-test.md",
+            "references/interview-recruitment.md"
+          ],
+          "artifacts": [
+            "smoke-test-plan.md",
+            "message-variants.json",
+            "budget-approval.json",
+            "responders.json"
+          ],
+          "inputs": [
+            "hypothesis",
+            "offer",
+            "segment",
+            "evidence run"
           ],
           "output_owner": "opportunity-risk-designer"
         }
@@ -467,7 +565,29 @@
       "required_references": [
         "references/subprojects.md",
         ".agents/skills/brand-website-designer-builder/references/launch-contract.md"
-      ]
+      ],
+      "modes": {
+        "validation_page": {
+          "prerequisites": [
+            "smoke-test-plan.md with conversion action and disclosure"
+          ],
+          "required_references": [
+            ".agents/skills/brand-website-designer-builder/references/validation-page.md",
+            "references/smoke-test.md"
+          ],
+          "artifacts": [
+            "static validation page",
+            "variant mapping",
+            "event names"
+          ],
+          "inputs": [
+            "smoke-test-plan.md",
+            "message-variants.json",
+            "brand tokens (optional)"
+          ],
+          "output_owner": "brand-website-designer-builder"
+        }
+      }
     },
     "setup-multiharness-project": {
       "intent": [
@@ -718,22 +838,6 @@
         "problem_validation",
         "opportunity_risk"
       ]
-    },
-    "town-db-curator": {
-      "intent": [
-        "curate Italy town data with dated sources"
-      ],
-      "excludes": [
-        "venture validation"
-      ],
-      "prerequisites": [
-        "selected internal town database"
-      ],
-      "artifacts": [
-        "verified sourced updates and regenerated exports"
-      ],
-      "side_effect": "local-write",
-      "cost": "medium"
     }
   }
 }

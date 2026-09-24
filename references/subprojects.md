@@ -13,6 +13,7 @@ projects/<slug>/
     strategy/                   # single selected business plan and GTM
     history/                    # Business decisions and earlier versions
   branding/                     # brief, brand manifest, current assets
+  marketing/                    # independent marketing strategy and campaign work
   digital-assets/
     website/                    # brief, website manifest, source and QA
     others/                     # other requested digital deliverables
@@ -21,11 +22,13 @@ projects/<slug>/
 
 Create only the requested subproject's contents. `digital-assets/` is a grouping folder, without its own stage machine or gate. Marketing campaigns/content and company operations remain optional Business workstreams. Do not create empty departments or duplicate strategy documents.
 
-Use `python3 scripts/subprojects.py --workspace projects/<slug> --start business-analysis|branding|website|others --title "<title>" [--brief "<scope>"]`. Research initialization through `init_project.py` starts Business and returns its root. Project initialization through `project_workspace.py create` creates only umbrella navigation. Existing legacy and version-2 projects retain their paths; these commands never silently migrate existing research.
+Use `python3 scripts/subprojects.py --workspace projects/<slug> --start business-analysis|branding|marketing|website|others --title "<title>" [--brief "<scope>"]`. Research initialization through `init_project.py` starts Business and returns its root. Project initialization through `project_workspace.py create` creates only umbrella navigation. Existing legacy and version-2 projects retain their paths; these commands never silently migrate existing research.
 
 ## Independent entry and optional sequence
 
 Any destination can begin with its own user brief. Branding needs no Business research. Website needs neither Business nor Branding completion. Other digital assets need only their requested scope and applicable asset approvals. A sequence is available when requested: Business → Branding → Website/other assets, or any useful subset. Completion never starts the next subproject automatically.
+
+Marketing is independently startable when the user supplies an established business brief or position. It can produce a focused message, campaign, channel or marketing strategy without creating a Business research workspace. Venture-linked marketing explicitly consumes a current selected Business decision and remains subject to its evidence and strategy-stage gates. The entry-mode flag cannot turn blocked venture work into standalone marketing.
 
 Route Brand/Website work with `--entry-mode standalone` (the default), even inside an existing business project. `--subproject others` directs applicable asset/component specialists to other digital deliverables. `--project` identifies the destination; it does not imply a business handoff. An explicit `--entry-mode business_linked` consumes the selected Business plan and retains its evidence/selection checks. An explicit case selection is required for Business execution/GTM; researching alternatives never selects a winner.
 
@@ -39,4 +42,18 @@ Root navigation links the authoritative subprojects; it does not copy their stag
 
 The existing CLI publication adapter stages local output changes, checks destination ownership and conflicting revisions, and records final paths rather than temporary staging paths. It leaves external-service authorization and asset/release approvals in their existing workflows. These checks govern supported commands, not arbitrary filesystem access. Paid generation and deployment still require their existing explicit authorization.
 
-The user-facing folder and start command are `business-analysis`. The internal `business` track/registry key and `--start business` alias remain compatible. Existing umbrella manifests registered to `business/` continue to resolve there until an explicit migration; no second analysis folder is created. See [the existing-project migration plan](../docs/agent-improvements/existing-project-migration-plan.md).
+The user-facing folder and start command are `business-analysis`. The internal `business` track/registry key and `--start business` alias remain compatible. Existing umbrella manifests registered to `business/` continue to resolve there until an explicit migration; no second analysis folder is created. See [the existing-project migration plan](../docs/archive/agent-improvements/existing-project-migration-plan.md).
+
+## Handoff contract
+
+Each handoff is an explicit import with owner, path, hash and applicability. Consumers reject stale hashes and recheck applicability against the current task.
+
+| Handoff | Artifact | Producer | Consumer | Staleness check |
+|---|---|---|---|---|
+| Business → Brand | `branding/business-to-brand-*.json` (`business-to-brand.schema.json`) | startup-business-builder | brand-designer | source digests and applicability review |
+| Business → Marketing | `strategy-plan.json` positioning + `customer-voc-synthesis.json` customer language | GTM / evidence-scout | marketing skills | imported-decision hash and applicability |
+| Brand → Marketing | `branding/voice/voice.json`, asset manifest | brand strategy / exporter | marketing skills | imported purposes `brand_voice`/`brand_assets` |
+| Brand → Website | tokens, brand refs, favicon package | brand exporter | website builder | website manifest brand-ref hashes |
+| Marketing → Website | `marketing/keywords/keyword-map.json` | marketing strategist | website builder | older than 90 days becomes owner action |
+| Website → Marketing | validation page URL, events, variant mapping | website builder | paid planner / smoke-test designer | imported purpose `validation_page` |
+| Experiments → Business | `experiments/*/results.json`, responder tracker | risk designer / interview-bridge | appraisal / startup builder | case source-binding digest |

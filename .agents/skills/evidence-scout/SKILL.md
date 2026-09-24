@@ -5,10 +5,10 @@ description: Use when customer/problem validation needs topic-led customer voice
 
 # Evidence Scout
 
+This skill tests the user’s stated idea or explains a customer segment’s pain, depending on the requested outcome. Similar companies at home or abroad are optional comparison evidence; importing one is not the default objective. Keep complementary research approaches in separate packets when they answer different questions, and deduplicate sources before synthesis.
 ## Success Criteria
 - **Research quality:** every consequential finding has reviewed source-linked experiences, explicit scope and contrary cases; every requested locale/source has an honest coverage disposition. API success, record counts and tool-call quotas are not quality measures.
 - **Qualitative:** users do not redirect mid-collection; provider failures are surfaced before evidence interpretation; evidence, interpretation, counter-evidence, and missing evidence are separated in every output.
-
 ## Workflow
 
 1. For substantive query design, apply repo-root `references/research-query-calibration.md` (shared repository dependency). Read `references/workflow.md`, `references/provider-policy.md`, and repo-root `references/voc-research-method.md` for substantive customer-needs work.

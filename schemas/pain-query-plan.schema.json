@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pain-query-plan.schema.json",
+  "title": "Executable research query plan (customer, operator and competitor discovery)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "revision",
+    "queries"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "revision_notes": {
+      "type": "string"
+    },
+    "previous_plan_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "review": {
+      "type": "object",
+      "description": "Analyst review notes; not authenticated approval or evidence quality."
+    },
+    "research_design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "questions"],
+      "properties": {
+        "decision": {"type": "string", "pattern": "\\S"},
+        "questions": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "text"], "properties": {"id": {"type": "string", "pattern": "\\S"}, "text": {"type": "string", "pattern": "\\S"}}}},
+        "known_facts": {"type": "array", "items": {"type": "string"}},
+        "hypotheses": {"type": "array", "items": {"type": "string"}},
+        "alternative_explanations": {"type": "array", "items": {"type": "string"}},
+        "distinguishing_observations": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "queries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "query_id",
+          "candidate_id",
+          "query",
+          "provider",
+          "locale",
+          "intent",
+          "source_family",
+          "seed_origin"
+        ],
+        "properties": {
+          "query_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "candidate_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "query": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "provider": {
+            "enum": [
+              "reddit",
+              "brave_search",
+              "serper_search",
+              "firecrawl",
+              "hn",
+              "github",
+              "google_autocomplete",
+              "youtube",
+              "x",
+              "xai_x_search",
+              "scrapecreators"
+            ]
+          },
+          "locale": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}:[a-z]{2,3}(-[a-z0-9]{2,8})*$"
+          },
+          "intent": {
+            "enum": [
+              "open_discovery",
+              "pain",
+              "workaround",
+              "successful_alternative",
+              "nonadoption",
+              "switching_exit",
+              "community_discovery",
+              "facebook_discovery",
+              "operator_lesson",
+              "operator_failure",
+              "competitor_discovery"
+            ]
+          },
+          "source_family": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "seed_origin": {
+            "enum": [
+              "generated",
+              "supplied",
+              "translated",
+              "source_derived"
+            ]
+          },
+          "seed_locators": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S"
+            },
+            "minItems": 1
+          },
+          "cell_id": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "lane_scope": {
+            "enum": [
+              "competitive_market",
+              "similar_company",
+              "capability_reference"
+            ]
+          },
+          "scope_value": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "question_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "\\S"}}
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "seed_origin": {
+                  "const": "source_derived"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "seed_locators"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"required": ["research_design"]},
+      "then": {"properties": {"queries": {"items": {"required": ["question_ids"]}}}}
+    }
+  ]
+}

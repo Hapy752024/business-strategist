@@ -1,8 +1,3 @@
----
-name: evidence-scout
-description: Search script-accessible web, forum, Google Trends, YouTube, Reddit, X, and paid social fallback sources for real user pain, demand signals, counter-evidence, and reachable early adopter communities for a business idea.
----
-
 # Evidence Scout Workflow
 
 Use this skill after `idea-grill` has produced a clear topic, customer segment, and hypothesis, or after the user has selected one candidate from a completed `market-problem-discovery` report. It validates a chosen candidate; it does not decide which market problem to pursue.
@@ -15,7 +10,7 @@ If ambiguity materially changes provider choice, query wording, geography, langu
 
 ## Procedure
 
-1. Confirm the topic, customer segment, geography/language, hypothesis, and likely pain/workaround terms.
+1. Confirm whether the user wants idea validation or customer-problem understanding, along with topic, customer segment, geography/language, hypothesis when applicable, and likely pain/workaround terms. Preserve this intent through planning and synthesis. Relevant domestic or foreign companies can inform customer alternatives and experiences; they do not change the task into importing a company idea.
 2. Verify the documented scripts exist, run capability lookup for the research need, and validate API access before collection.
 3. Choose provider set from capability lookup: default first, social or paid enrichment only when justified or approved.
 4. Translate solution-led language into user pain, workaround, comparison, and search-intent terms. When pain terms are inferred, calibrate them before the full run (see Pain-query calibration below).
@@ -167,7 +162,7 @@ classified as customer statements.
 ## Customer-journey contract
 
 For substantive VOC work, run the topic-led pass even when incumbent names are
-known. If verified competitors, substitutes or similar companies exist, also
+known. Build `customer-feedback-source-plan.json` with the explicit `customer_problem` or `idea_validation` intent. Select `customer_workflow` and add only complementary approaches that answer distinct questions; their assignments live in isolated `work-packets/<approach>/` directories. Independent contributors use only their assigned packet; the coordinator deduplicates source overlap and preserves disagreement. Comparative companies, including foreign companies, stay optional evidence for the user’s question. If verified competitors, substitutes or similar companies exist, also
 run `scripts/evidence_scout/plan_customer_feedback.py` and complete the
 entity-by-locale source matrix described in repo-root
 `references/customer-voice.md`. Topic-led and entity-led records keep distinct
@@ -407,3 +402,7 @@ Before finalizing, check:
 - Google Trends, likes, views, and comments are treated as weak signals unless paired with pain and workaround/spend.
 - Evidence, interpretation, counter-evidence, and missing evidence are separated.
 - The recommended next step reduces the riskiest unresolved assumption.
+
+## Parallel collection with subagents
+
+When topic-led and entity-led frames or locales are independent, dispatch one `evidence-researcher` per packet using `references/modules/source-worker-packet.md`. Give each an exclusive output directory under the run and disjoint query IDs. Verify sources, deduplicate incidents, and own the synthesis. Worker agreement is not independent evidence; workers never edit the main evidence ledger, reviews, synthesis or manifests.

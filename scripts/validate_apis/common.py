@@ -142,12 +142,17 @@ def sanitize_headers(headers: dict[str, str]) -> dict[str, str]:
 class RequestBudget:
     """Per-run limits for calls through this module; no persistent response cache."""
 
-    def __init__(self, max_requests: int, *, reuse_gets: bool = True):
+    def __init__(self, max_requests: int, *, reuse_gets: bool = True, initial_requests: int = 0, on_attempt=None, allowances: dict[str, int] | None = None, on_allowance=None):
         if type(max_requests) is not int or max_requests < 1:
             raise ValueError("max_requests must be a positive integer")
         self.max_requests = max_requests
         self.reuse_gets = reuse_gets
-        self.requests = 0
+        if type(initial_requests) is not int or initial_requests < 0 or initial_requests > max_requests:
+            raise ValueError("initial_requests must be between zero and max_requests")
+        self.requests = initial_requests
+        self.on_attempt = on_attempt
+        self.allowances = dict(allowances or {})
+        self.on_allowance = on_allowance
         self.cache_hits = 0
         self.blocked_requests = 0
         self.cache: dict[str, Any] = {}
@@ -155,23 +160,41 @@ class RequestBudget:
     def summary(self) -> dict[str, Any]:
         return {"max_requests": self.max_requests, "requests": self.requests,
                 "cache_hits": self.cache_hits, "blocked_requests": self.blocked_requests,
+                "allowances": dict(self.allowances),
                 "scope": "shared HTTP helper calls only; excludes SDKs, subprocesses and redirects"}
+
+    def reserve_allowance(self, name: str, maximum: int) -> bool:
+        """Persist a bounded non-HTTP enrichment attempt before dispatch."""
+        used = self.allowances.get(name, 0)
+        if used >= maximum:
+            return False
+        self.allowances[name] = used + 1
+        if self.on_allowance:
+            self.on_allowance(dict(self.allowances))
+        return True
 
 
 _REQUEST_BUDGET: ContextVar[RequestBudget | None] = ContextVar("request_budget", default=None)
 
 
 @contextmanager
-def request_budget(max_requests: int, *, reuse_gets: bool = True):
+def request_budget(max_requests: int, *, reuse_gets: bool = True, initial_requests: int = 0, on_attempt=None, allowances: dict[str, int] | None = None, on_allowance=None):
     if _REQUEST_BUDGET.get() is not None:
         raise ValueError("Nested request budgets could bypass the outer limit")
-    budget = RequestBudget(max_requests, reuse_gets=reuse_gets)
+    budget = RequestBudget(max_requests, reuse_gets=reuse_gets, initial_requests=initial_requests,
+                           on_attempt=on_attempt, allowances=allowances, on_allowance=on_allowance)
     token = _REQUEST_BUDGET.set(budget)
     try:
         yield budget
     finally:
         budget.cache.clear()
         _REQUEST_BUDGET.reset(token)
+
+
+def reserve_enrichment_allowance(name: str, maximum: int) -> bool:
+    """Reserve an enrichment attempt in the active run budget, if present."""
+    budget = _REQUEST_BUDGET.get()
+    return True if budget is None else budget.reserve_allowance(name, maximum)
 
 
 def http_request(
@@ -215,6 +238,8 @@ def http_request(
             return {"ok": False, "status_code": None, "headers": {}, "body": None,
                     "error": "HTTP request budget exhausted", "error_type": "request_budget_exhausted"}
         budget.requests += 1
+        if budget.on_attempt:
+            budget.on_attempt(budget.requests)
     req = urllib.request.Request(url, data=body, headers=request_headers, method=method.upper())
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:

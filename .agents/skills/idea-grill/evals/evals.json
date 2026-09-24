@@ -5,8 +5,19 @@
       "id": 1,
       "prompt": "I have an idea for an AI app that helps people manage their finances better.",
       "expected_output": "A series of focused questions narrowing: who exactly (segment), what specific financial job is painful, how they currently solve it, what they've tried, what a better outcome looks like, who pays, and what the riskiest assumption is. Must push back on the vagueness of 'people' and 'manage finances better.'",
-      "must_mention": ["segment", "hypothesis", "assumption", "workaround", "alternatives", "riskiest"],
-      "must_not_mention": ["build an MVP", "start coding", "hire engineers"],
+      "must_mention": [
+        "segment",
+        "hypothesis",
+        "assumption",
+        "workaround",
+        "alternatives",
+        "riskiest"
+      ],
+      "must_not_mention": [
+        "build an MVP",
+        "start coding",
+        "hire engineers"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -14,8 +25,18 @@
       "id": 2,
       "prompt": "We want to build an Uber for dog walking. Our target is everyone who owns a dog.",
       "expected_output": "A pushback on 'everyone who owns a dog' as too broad. Must narrow to a specific painful job (e.g., last-minute weekday walks for office workers), identify who experiences the pain most acutely, and what they do today. Must challenge marketplace assumptions and the Uber analogy.",
-      "must_mention": ["segment", "narrow", "painful", "hypothesis", "not everyone", "specific"],
-      "must_not_mention": ["TAM is huge", "total addressable market"],
+      "must_mention": [
+        "segment",
+        "narrow",
+        "painful",
+        "hypothesis",
+        "not everyone",
+        "specific"
+      ],
+      "must_not_mention": [
+        "TAM is huge",
+        "total addressable market"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -23,8 +44,18 @@
       "id": 3,
       "prompt": "Our competitor research shows nobody is doing exactly what we do. Is that a good sign?",
       "expected_output": "Challenges the inference that no exact competitor proves opportunity or absent demand. Probes indirect competitors, substitutes, manual workarounds and doing nothing, asking what the segment currently uses.",
-      "must_mention": ["substitutes", "workaround", "indirect", "do nothing", "alternatives"],
-      "must_not_mention": ["blue ocean", "first mover advantage", "no competition is great"],
+      "must_mention": [
+        "substitutes",
+        "workaround",
+        "indirect",
+        "do nothing",
+        "alternatives"
+      ],
+      "must_not_mention": [
+        "blue ocean",
+        "first mover advantage",
+        "no competition is great"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -32,8 +63,19 @@
       "id": 4,
       "prompt": "We interviewed 20 potential users and they all said they would pay for our solution. Time to build?",
       "expected_output": "A pushback that stated intent ≠ actual behavior. Must probe whether interviewees were friends/family, whether they currently pay for any alternative, whether they've tried to solve the problem before, and what concrete action (not words) shows urgency. Must recommend a fake-door or pre-sale test before building.",
-      "must_mention": ["stated", "actual behavior", "test", "pre-sale", "action", "pay"],
-      "must_not_mention": ["build now", "start coding", "hire developers immediately"],
+      "must_mention": [
+        "stated",
+        "actual behavior",
+        "test",
+        "pre-sale",
+        "action",
+        "pay"
+      ],
+      "must_not_mention": [
+        "build now",
+        "start coding",
+        "hire developers immediately"
+      ],
       "required_artifacts": [],
       "files": []
     },
@@ -41,10 +83,32 @@
       "id": 5,
       "prompt": "Choose between a specialist marketplace and a subscription tool. I want a small team, have six months of runway, and refuse paid acquisition.",
       "expected_output": "Reuses the stated founder constraints and asks only the first missing decision-changing question before recommending a comparison or evidence run. It does not treat the constraints as market evidence.",
-      "must_mention": ["constraint", "segment", "hypothesis"],
-      "must_not_mention": ["the market proves", "paid ads are required"],
+      "must_mention": [
+        "constraint",
+        "segment",
+        "hypothesis"
+      ],
+      "must_not_mention": [
+        "the market proves",
+        "paid ads are required"
+      ],
       "required_artifacts": [],
       "files": []
+    },
+    {
+      "id": "foreign-comparable-does-not-replace-user-idea",
+      "prompt": "I want to validate my German-language appointment reminder idea. A US startup sells a similar product. Should we just copy it?",
+      "expected_output": "Keep the user’s appointment-reminder idea as the validation subject. Treat the US product as optional evidence about customers, alternatives or mechanisms. First investigate the target segment’s actual problem, workaround, switching barriers and local context; do not recommend copying or importing the product.",
+      "files": [],
+      "must_mention": [
+        "validate",
+        "customer problem",
+        "optional comparison"
+      ],
+      "must_not_mention": [
+        "copy the US startup",
+        "import the idea"
+      ]
     }
   ]
 }

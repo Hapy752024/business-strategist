@@ -40,6 +40,9 @@ def test_independent_subprojects_start_without_upstream(first, tmp_path, monkeyp
         assert not (root / 'business-analysis').exists()
     for name in subprojects.PATHS:
         subprojects.start(root, name)
+    marketing_state = json.loads((root / 'marketing/workstream.json').read_text())
+    assert marketing_state['owner'] == 'marketing' and marketing_state['revision'] == 1
+    assert marketing_state['brief']['sha256']
     assert c.read_project(root / 'business-analysis')['project_id'] == 'topic'
     monkeypatch.setattr(routing, 'ROOT', tmp_path)
     packet = routing.route_request('Build website', intent='website-build', project='topic')
@@ -50,6 +53,63 @@ def test_independent_subprojects_start_without_upstream(first, tmp_path, monkeyp
     monkeypatch.setattr(w, 'ROOT', tmp_path)
     found = w.find_existing_workspaces()
     assert len(found) == 1 and found[0]['path'] == str(root / 'business-analysis')
+
+
+def test_marketing_initializer_writes_registered_custom_destination(tmp_path):
+    root = tmp_path / 'projects/custom-path'
+    subprojects.initialize(root, 'Custom path')
+    state = c.read_project(root)
+    state['subprojects']['marketing']['path'] = 'custom/marketing'
+    c.publish(root, {}, expected_revision=state['manifest_revision'], project=state,
+              decision_id='register-custom-marketing', reason='Use registered Marketing destination')
+    target = subprojects.start(root, 'marketing', brief='Established local business')
+    assert target == root / 'custom/marketing'
+    assert (target / 'workstream.json').is_file()
+    assert not (root / 'marketing/workstream.json').exists()
+
+
+def test_marketing_workstream_publishes_bound_outputs_and_blocks_changed_import(tmp_path, monkeypatch):
+    root = tmp_path / 'projects/marketing-lifecycle'
+    monkeypatch.setattr(routing, 'ROOT', tmp_path)
+    subprojects.initialize(root, 'Marketing lifecycle')
+    subprojects.start(root, 'marketing', brief='Standalone business brief')
+    source = root / 'business-analysis/position.md'
+    source.parent.mkdir(parents=True, exist_ok=True)
+    source.write_text('Approved position')
+    import hashlib
+    binding = {'owner': 'business', 'revision': 1, 'path': 'business-analysis/position.md',
+               'sha256': hashlib.sha256(source.read_bytes()).hexdigest(), 'purpose': 'positioning',
+               'applicability': 'same target buyer', 'approved_for': 'social campaign for owner-operated clinics',
+               'review_status': 'approved', 'limits': 'synthetic fixture'}
+    project_state = c.read_project(root)
+    subprojects.publish_marketing_workstream(root, {'message.md': 'Hypothesis-led message'},
+        expected_manifest_revision=project_state['manifest_revision'], decision_id='publish-marketing',
+        reason='Publish scoped marketing output', imported_decisions=[binding])
+    valid = subprojects.validate_marketing_workstream(root)
+    assert valid['valid_for_use'] and valid['revision'] == 2
+    (root / 'marketing/message.md').write_text('Edited draft')
+    project_state = c.read_project(root)
+    subprojects.publish_marketing_workstream(root, {'message.md': 'Reviewed revised message'},
+        expected_manifest_revision=project_state['manifest_revision'], decision_id='revise-marketing',
+        reason='Publish revised message after review')
+    assert subprojects.validate_marketing_workstream(root)['valid_for_use'] is True
+    route = routing.route_request('Write campaign copy', intent='social-marketing', task_scope='execution',
+        project='marketing-lifecycle', entry_mode='standalone', standalone_brief='Established business')
+    assert route['marketing_workstream']['valid_for_use'] is True
+    assert route['marketing_workstream']['imported_decisions'][0]['applicability'] == 'same target buyer'
+    source.write_text('Changed position')
+    stale = subprojects.validate_marketing_workstream(root)
+    assert stale['valid_for_use'] is False
+    assert any('imported decision' in issue for issue in stale['stale_bindings'])
+    route = routing.route_request('Write campaign copy', intent='social-marketing', task_scope='execution',
+        project='marketing-lifecycle', entry_mode='standalone', standalone_brief='Established business')
+    assert route['gate_blocked'] is True and route['gate'] == 'marketing_workstream_review'
+    binding['sha256'] = hashlib.sha256(source.read_bytes()).hexdigest()
+    project_state = c.read_project(root)
+    subprojects.refresh_marketing_bindings(root, imported_decisions=[binding],
+        expected_manifest_revision=project_state['manifest_revision'], decision_id='review-changed-position',
+        reason='Reviewed the updated position for the same target buyer and retained its stated limits.')
+    assert subprojects.validate_marketing_workstream(root)['valid_for_use'] is True
 
 
 @pytest.mark.parametrize('mode', ['outside', 'v2', 'umbrella', 'legacy'])
@@ -190,8 +250,8 @@ def test_numeric_correction_requires_fresh_bound_prose_and_updates_root_comparis
     assert c.read_project(root)['selection'] is None
 
 
-def test_freeze_rejects_cross_case_and_publishes_valid_baseline(tmp_path):
-    root = setup(tmp_path); selected_plan(root)
+def test_freeze_rejects_cross_case_and_publishes_valid_baseline(tmp_path, monkeypatch):
+    root = setup(tmp_path); selected_plan(root, monkeypatch)
     command = [sys.executable, 'scripts/strategy_review.py', 'freeze', '--plan', str(root / 'strategy/strategy-plan.json')]
     before = snapshot(root)
     result = cli(*command, '--output', str(root / 'cases/b/baseline.json'))
@@ -259,14 +319,14 @@ def test_external_context_still_respects_handoff_destination_pending(tmp_path):
     assert snapshot(root) == before
 
 
-def test_nested_business_to_brand_handoff_is_optional_and_bound(tmp_path):
+def test_nested_business_to_brand_handoff_is_optional_and_bound(tmp_path, monkeypatch):
     root = tmp_path / 'topic'; business = subprojects.start(root, 'business')
     for cid in ['a', 'b']:
         scope = c.add_case(business, cid, cid)
         for section in ['customer_segments', 'customer_journey', 'pain_points']:
             p = scope / 'market_research' / section / 'evidence.md'
             p.parent.mkdir(parents=True, exist_ok=True); p.write_text('Synthetic conditional evidence')
-    selected_plan(business)
+    selected_plan(business, monkeypatch)
     plan = business / 'strategy/strategy-plan.json'
     handoff = root / 'branding/handoff.json'
     command = [sys.executable, 'scripts/brand/build_business_to_brand_handoff.py', str(plan), str(handoff), '--strategy-plan', str(plan)]
@@ -358,10 +418,10 @@ def test_staged_asset_records_reference_final_existing_files(tmp_path):
     assert result['assets'][0]['path'] == recorded
 
 
-def test_cross_project_handoff_does_not_publish_invalid_snapshot(tmp_path):
+def test_cross_project_handoff_does_not_publish_invalid_snapshot(tmp_path, monkeypatch):
     from scripts.brand.build_business_to_brand_handoff import build_snapshot
-    source = setup(tmp_path / 'source'); selected_plan(source)
-    destination = setup(tmp_path / 'destination'); selected_plan(destination)
+    source = setup(tmp_path / 'source'); selected_plan(source, monkeypatch)
+    destination = setup(tmp_path / 'destination'); selected_plan(destination, monkeypatch)
     handoff = tmp_path / 'external-handoff.json'
     handoff.write_text(c.encoded(build_snapshot(source / 'strategy/strategy-plan.json', source / 'strategy/strategy-plan.json')))
     before = snapshot(destination)
@@ -381,9 +441,9 @@ def test_motion_selector_cannot_escape_workspace(tmp_path, name):
     assert snapshot(root) == before
 
 
-def test_existing_business_linked_writer_cannot_fall_back_to_standalone(tmp_path):
+def test_existing_business_linked_writer_cannot_fall_back_to_standalone(tmp_path, monkeypatch):
     root = setup(tmp_path)
-    selected_plan(root)
+    selected_plan(root, monkeypatch)
     website = root / 'web-site'
     result = cli(sys.executable, 'scripts/brand/init_website.py', str(website), '--website-id', 'site', '--entry-mode', 'business_linked')
     assert result.returncode == 0, result.stderr
@@ -443,3 +503,16 @@ def test_business_analysis_name_respects_registered_layout(registered, tmp_path,
             c.publish(root, {forbidden: 'Invalid ownership'}, expected_revision=c.read_project(root)['manifest_revision'],
                       decision_id='forbidden-write', reason='Cannot write analysis through umbrella')
         assert snapshot(root) == before
+
+
+def test_handoff_contract_table_and_purpose_enum():
+    import json
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    text = (root / 'references/subprojects.md').read_text()
+    assert '## Handoff contract' in text
+    for pair in ['Business → Marketing', 'Brand → Marketing', 'Brand → Website', 'Website → Marketing', 'Business → Brand']:
+        assert pair in text
+    schema = json.loads((root / 'schemas/marketing-workstream.schema.json').read_text())
+    purpose = schema['properties']['imported_decisions']['items']['properties']['purpose']
+    assert set(purpose['enum']) >= {'positioning', 'brand_voice', 'keyword_map', 'validation_page'}

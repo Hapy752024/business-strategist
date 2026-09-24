@@ -11,6 +11,14 @@ from scripts.brand.build_business_to_brand_handoff import build_snapshot
 from scripts.brand.validate_business_to_brand_handoff import validate as validate_handoff
 from test_case_economics import inputs
 from test_strategy_review import plan, position
+from problem_assessment_fixtures import prepare as prepare_problem_assessment
+
+
+def test_case_readme_template_has_evidence_scorecard():
+    text = (Path(__file__).resolve().parents[1] / 'templates/project/case-README.md').read_text()
+    assert '## Evidence scorecard' in text
+    for col in ['Dimension', 'Assumption', 'Evidence strength', 'Status']:
+        assert col in text
 
 
 def setup(tmp_path):
@@ -63,24 +71,33 @@ def test_old_run_cannot_restore_corrected_gate(tmp_path):
     assert evidence.read_text() == 'Old review'
 
 
-def selected_plan(root):
+def selected_plan(root, monkeypatch):
     c.publish_assessment(root, 'a', appraisal(root), 'appraise-a', 'Conditional assessment')
     c.select(root, 'a', 'One service', 'select-a', 'Explicit user choice')
     scope = c.resolve(root, 'a')
     cm = c.case_manifest(root, 'a')
     for stage in routing.load_catalog()['startup-business-builder']['strategy_stage_prerequisites']:
-        file = scope / 'market_research/pain_points' / (stage + '.md')
-        file.write_text('Explicit synthetic review for ' + stage)
-        w.update_stage(scope, stage, status='passed', gate_result='pass', artifacts=[file], expected_assessment_revision=cm['assessment_revision'])
+        if stage == 'problem_validation':
+            with monkeypatch.context() as scoped:
+                files, _, _ = prepare_problem_assessment(scope, w, scoped, case_id='a',
+                                                         revision=cm['assessment_revision'])
+                w.update_stage(scope, stage, status='passed', gate_result='pass', artifacts=files,
+                               expected_assessment_revision=cm['assessment_revision'])
+        else:
+            file = scope / 'market_research/pain_points' / (stage + '.md')
+            file.write_text('Explicit synthetic review for ' + stage)
+            files = [file]
+            w.update_stage(scope, stage, status='passed', gate_result='pass', artifacts=files,
+                           expected_assessment_revision=cm['assessment_revision'])
     data = plan(); data['publication_base_digest'] = None; data['positioning'] = position(); data['execution_binding'] = c.binding(root, 'a')
     data['business_plan_sections'] = {name: {'status': 'provisional', 'text': 'Synthetic conditional plan; open evidence gaps.'} for name in c.PLAN_SECTIONS}
     c.publish_business_plan(root, 'a', data, 'plan-a', 'Assemble one selected plan')
     return data
 
 
-def test_selected_plan_handoff_switch_back_and_shared_interpretation(tmp_path):
+def test_selected_plan_handoff_switch_back_and_shared_interpretation(tmp_path, monkeypatch):
     root = setup(tmp_path)
-    data = selected_plan(root)
+    data = selected_plan(root, monkeypatch)
     path = root / 'strategy/strategy-plan.json'
     snapshot = build_snapshot(path, path)
     handoff = root / 'branding/handoff.json'; handoff.parent.mkdir(); handoff.write_text(c.encoded(snapshot))
@@ -123,7 +140,7 @@ def test_case_output_scope_and_parallel_draft_conflicts(tmp_path):
         assert sorted(pool.map(publish, [1, 2])) == ['conflict', 'published']
 
 
-def test_cosmetic_drafts_and_root_plan_drafts_reject_overlapping_writes(tmp_path):
+def test_cosmetic_drafts_and_root_plan_drafts_reject_overlapping_writes(tmp_path, monkeypatch):
     root = setup(tmp_path)
     c.publish_assessment(root, 'a', appraisal(root), 'initial', 'Assess')
     first = appraisal(root); first['material_change'] = False
@@ -136,7 +153,7 @@ def test_cosmetic_drafts_and_root_plan_drafts_reject_overlapping_writes(tmp_path
     assert c.case_manifest(root, 'a')['assessment_revision'] == 2
     # Selected-plan publication has its own document digest, independent of case revision.
     other = setup(tmp_path / 'other')
-    data = selected_plan(other)
+    data = selected_plan(other, monkeypatch)
     with pytest.raises(ValueError, match='publication conflict'):
         c.publish_business_plan(other, 'a', data, 'stale-plan', 'Second stale root plan draft')
 
@@ -153,9 +170,9 @@ def test_retained_economics_cannot_drop_its_evidence_binding(tmp_path):
         c.publish_assessment(root, 'a', revised, 'drop-source', 'Change research coverage')
 
 
-def test_old_plan_source_correction_does_not_invalidate_new_selected_case(tmp_path):
+def test_old_plan_source_correction_does_not_invalidate_new_selected_case(tmp_path, monkeypatch):
     root = setup(tmp_path)
-    data = selected_plan(root)
+    data = selected_plan(root, monkeypatch)
     source = root / 'market_research/plan-only.md'; source.parent.mkdir(exist_ok=True); source.write_text('Synthetic source')
     data['publication_base_digest'] = c.digest((root / 'strategy/strategy-plan.json').read_bytes())
     data['business_plan_sections']['business'] = {'status':'supported','text':'Conditional case A interpretation',
@@ -168,10 +185,10 @@ def test_old_plan_source_correction_does_not_invalidate_new_selected_case(tmp_pa
     assert c.case_manifest(root,'a')['assessment_revision'] == 3
 
 
-def test_extended_strategy_publication_preserves_contract_and_source_freshness(tmp_path):
+def test_extended_strategy_publication_preserves_contract_and_source_freshness(tmp_path, monkeypatch):
     from test_strategy_review import detailed_position
     root = setup(tmp_path)
-    data = selected_plan(root)
+    data = selected_plan(root, monkeypatch)
     path = root / 'strategy/strategy-plan.json'
     data['positioning'] = detailed_position()
     data['publication_base_digest'] = c.digest(path.read_bytes())

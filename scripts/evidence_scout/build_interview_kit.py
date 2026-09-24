@@ -284,7 +284,24 @@ def write_guide(out_dir: Path, items: list[dict[str, Any]], topic: str, segment:
     (out_dir / "interview-guide.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def write_tracker(out_dir: Path, items: list[dict[str, Any]], limits: str) -> None:
+def responder_intake_table(path: Path | None) -> str:
+    if not path:
+        return ""
+    rows = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(rows, list):
+        raise SystemExit("--responders must be a JSON list")
+    lines = ["", "## Responder intake", "",
+             "Responders are volunteers, not customers. Screen segment fit and a recent incident before counting an interview.",
+             "", "| responder_id | variant | source | segment_fit | recent_incident | booked | attended | usable_incident |",
+             "|---|---|---|---|---|---|---|---|"]
+    for row in rows:
+        if not isinstance(row, dict):
+            raise SystemExit("--responders rows must be JSON objects")
+        lines.append(f"| {row.get('id','?')} | {row.get('variant','?')} | {row.get('source','?')} | unresolved | unresolved |  |  |  |")
+    return "\n".join(lines) + "\n"
+
+
+def write_tracker(out_dir: Path, items: list[dict[str, Any]], limits: str, responders: Path | None = None) -> None:
     lines = [
         "# Interview Tracker",
         "",
@@ -308,7 +325,7 @@ def write_tracker(out_dir: Path, items: list[dict[str, Any]], limits: str) -> No
     )
     for index, record in enumerate(items, start=1):
         lines.append(f"| {item_label(index)} | 0 | 0 | open |")
-    (out_dir / "interview-tracker.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (out_dir / "interview-tracker.md").write_text("\n".join(lines) + responder_intake_table(responders) + "\n", encoding="utf-8")
 
 
 from workspace import prepare_research_output, cases
@@ -322,6 +339,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--topic", default="", help="Override topic label (otherwise read from summary.json).")
     parser.add_argument("--segment", default="", help="Override segment label (otherwise read from summary.json).")
     parser.add_argument("--source-review", help="Review JSON path (default: <run>/source-review.json), bound to evidence SHA256 and target segment.")
+    parser.add_argument("--responders", type=Path, default=None,
+                        help="responders.json from a smoke-test kit; rows are added to the tracker as unresolved.")
+    parser.add_argument("--allow-empty-evidence", action="store_true",
+                        help="Build a hypothesis-only kit when no accepted evidence exists (responder intake still applies).")
     return parser.parse_args()
 
 
@@ -338,7 +359,7 @@ def main() -> int:
     except (OSError, ValueError) as error:
         print(f"error: invalid evidence: {error}", file=sys.stderr)
         return 1
-    if not records:
+    if not records and not args.allow_empty_evidence:
         print(f"error: no evidence records found at {evidence_path}", file=sys.stderr)
         return 1
 
@@ -363,12 +384,15 @@ def main() -> int:
         return 1
     review_path = Path(args.source_review).expanduser().absolute() if args.source_review else run_dir / "source-review.json"
     try:
-        accepted, review_counts = apply_source_review(records, evidence_path, review_path, segment)
+        if records:
+            accepted, review_counts = apply_source_review(records, evidence_path, review_path, segment)
+        else:
+            accepted, review_counts = [], {"accepted": 0, "rejected": 0, "unresolved": 0, "unreviewed": 0}
     except (OSError, ValueError) as error:
         print(f"error: source review required and must be valid: {error}", file=sys.stderr)
         return 1
     items = select_interview_items(accepted, args.limit)
-    if not items:
+    if not items and not args.allow_empty_evidence:
         print(
             "error: no accepted firsthand customer records to trace into interviews; "
             + review_limits(review_counts, 0), file=sys.stderr,
@@ -384,7 +408,7 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     write_screener(out_dir, accepted, topic, segment, limits)
     write_guide(out_dir, items, topic, segment, limits)
-    write_tracker(out_dir, items, limits)
+    write_tracker(out_dir, items, limits, args.responders)
     selected_ids = {record["evidence_id"] for record in items}
     selection = {
         "requested_limit": args.limit, "selected_count": len(items),

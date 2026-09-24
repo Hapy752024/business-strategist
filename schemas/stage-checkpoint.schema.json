@@ -152,6 +152,18 @@
         },
         "additionalProperties": false
       }
+    },
+    "validation_receipt": {
+      "type": "object",
+      "required": ["contract_version", "status", "case_id", "assessment_revision", "scope", "inputs"],
+      "properties": {
+        "contract_version": {"const": 1},
+        "status": {"enum": ["valid", "owner_override"]},
+        "case_id": {"type": "string"},
+        "assessment_revision": {"type": "integer", "minimum": 1},
+        "scope": {"type": "object", "required": ["case_id", "segment", "limits"], "properties": {"case_id": {"type": "string"}, "segment": {"type": "string"}, "limits": {"type": "string"}}},
+        "inputs": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+      }
     }
   }
 }

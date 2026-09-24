@@ -5,6 +5,8 @@ description: Discover sourced customer problems, workarounds, segments, and cand
 
 # Market Problem Discovery
 
+The user’s requested outcome governs the study. For a topic or segment pain-point question, explain customer experiences and uncertainty without inventing a product or business. For a supplied idea, route to idea validation and challenge that idea; relevant similar companies are optional evidence, not a prompt to import one. Use the complementary methods in `references/opportunity-research-approaches.md` only when they contribute distinct evidence.
+
 ## Success Criteria
 - **Research quality:** source-linked customer experiences and outcome/context distinctions survive synthesis; positive/contrary cases and missing markets remain visible. Candidate counts, headings and tool-call quotas do not establish research quality.
 - **Qualitative:** every candidate includes segment, trigger, workaround, source-backed observation, counter-evidence, and named uncertainty; evidence and interpretation are not blended; user controls the next path.

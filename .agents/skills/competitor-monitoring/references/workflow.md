@@ -1,8 +1,3 @@
----
-name: competitor-monitoring
-description: Set up or run recurring competitor monitoring for pricing pages, homepage messaging, changelogs, docs, careers pages, SERPs, ads, web traffic trends, local/physical-location presence, and app-store changes. Use this skill whenever the user asks to monitor, watch, track, alert on, schedule, or diff competitor changes over time, especially with Apify, Similarweb-style traffic actors, Google Maps actors, or Sonar.
----
-
 # Competitor Monitoring Workflow
 
 Use this skill for recurring change detection. Do not use Evidence Scout provider aliases for monitoring; Evidence Scout is for validation evidence, while this skill is for competitor watchlists, scheduled runs, diffs, and alerts.
@@ -36,6 +31,8 @@ Before spending credits or setting schedules, identify:
 4. Normalize rows with stable keys, timestamps, source URLs, provider run IDs, and input hashes.
 5. Diff current output against the prior snapshot.
 6. Write a concise report that separates observed changes from interpretation.
+
+For a dated before/after supplier change that might affect a customer workflow, use `scripts/monitoring/change_hypothesis.py --input <event.json> --out-dir <run-dir>`. The input must include captured snapshot text and matching SHA-256 digests for both observations, their dates, comparable fields, customer segment, workflow and a testable impact hypothesis. Pricing/packaging comparisons require the same currency, billing period, unit, region and customer scope. The output is a research trigger: supplier changes and hiring do not establish affected customers, switching or demand. Add independently sourced supporting and contrary customer episodes with their source role; supplier claims remain separately labeled. A baseline without a later comparable snapshot is not an event. This command creates a one-off local report and does not schedule monitoring.
 
 ## Provider Choice
 

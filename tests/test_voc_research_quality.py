@@ -14,7 +14,7 @@ from reviewed_voice import review_voice, reviewed_view, reviewed_collection_loca
 from build_experience_ledger import build
 from build_interview_kit import select_interview_items
 from validate_customer_voc_synthesis import validate_quality
-from validate_synthesis import validate as validate_claims
+from validate_synthesis import validate as validate_claims, validate_finding_claim_links
 
 
 def review(record, **extra):
@@ -215,3 +215,32 @@ def test_reviewed_forum_capture_to_experience_coverage_and_synthesis(tmp_path, m
     (pack / "customer-voc-synthesis.json").write_text(json.dumps(s))
     result = validate_pack(pack)
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_finding_link_requires_current_supported_passage():
+    source = record(evidence_id="e1", text="We spend two hours reconciling these invoices each week.")
+    finding_text = "Some firms spend time reconciling invoices."
+    claim_text = "A customer described weekly manual reconciliation."
+    review_row = {"finding_id": "U1", "finding_sha256": hashlib.sha256(finding_text.encode()).hexdigest(),
+                  "support_assessment": "supported", "supporting_passages": ["e1::We spend two hours reconciling these invoices each week."],
+                  "rationale": "The source directly describes the task and cadence."}
+    claim = {"claim_id": "c1", "claim": claim_text, "finding_ids": ["U1"], "supporting_evidence": ["e1"],
+             "verification": {"support_assessment": "supported", "finding_reviews": [review_row]}}
+    synthesis = {"status": "supported", "customer_needs": [{"id": "U1", "outcome": finding_text, "claim_ids": ["c1"]}],
+                 "solution_requirements": []}
+    assert validate_finding_claim_links(synthesis, [claim], [source]) == []
+    synthesis["customer_needs"][0]["outcome"] = "Every firm pays for an invoicing tool."
+    assert any("stale for finding text" in error for error in validate_finding_claim_links(synthesis, [claim], [source]))
+
+
+def test_unsupported_claim_cannot_support_a_positive_customer_finding():
+    source = record(evidence_id="e1", text="We spend two hours reconciling these invoices each week.")
+    finding_text = "Customers pay for a replacement."
+    claim = {"claim_id": "c1", "claim": "No payment evidence is available.", "finding_ids": ["U1"],
+             "supporting_evidence": ["e1"], "verification": {"support_assessment": "unsupported",
+             "finding_reviews": [{"finding_id": "U1", "finding_sha256": hashlib.sha256(finding_text.encode()).hexdigest(),
+                                  "support_assessment": "unsupported", "supporting_passages": [], "rationale": "No payment observation."}]}}
+    synthesis = {"status": "supported", "customer_needs": [{"id": "U1", "outcome": finding_text, "claim_ids": ["c1"]}],
+                 "solution_requirements": []}
+    errors = validate_finding_claim_links(synthesis, [claim], [source])
+    assert any("does not support this published finding" in error for error in errors)

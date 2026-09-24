@@ -42,6 +42,7 @@ from common import (  # noqa: E402
     http_get,
     http_post,
     request_budget,
+    reserve_enrichment_allowance,
     is_credit_exhaustion,
     now_iso,
     redact_sensitive,
@@ -66,7 +67,9 @@ def slugify(value: str) -> str:
 
 def write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(data, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+    temporary.replace(path)
 
 
 def read_json(path: Path, fallback: Any) -> Any:
@@ -86,9 +89,58 @@ QUERY_EXPANSION = read_json(REGISTRY_DIR / "query_expansion.json", {})
 
 def append_jsonl(path: Path, records: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as handle:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    with temporary.open("w", encoding="utf-8") as handle:
         for record in records:
             handle.write(json.dumps(record, sort_keys=True, ensure_ascii=False) + "\n")
+    temporary.replace(path)
+
+
+def load_jsonl(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    result = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            row = json.loads(line)
+            if isinstance(row, dict):
+                result.append(row)
+    return result
+
+
+def merge_provider_records(previous: list[dict[str, Any]], current: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Idempotently merge a retried provider batch without dropping memberships."""
+    merged: dict[str, dict[str, Any]] = {}
+    for row in [*previous, *current]:
+        stable = str(row.get("evidence_id") or "")
+        if not stable:
+            material = "\0".join(str(row.get(key) or "") for key in
+                                  ("source", "source_record_id", "canonical_url", "source_url", "text"))
+            stable = "fallback-" + hashlib.sha256(material.encode("utf-8")).hexdigest()
+        old = merged.get(stable)
+        if old is None:
+            merged[stable] = dict(row)
+            continue
+        combined = {**old, **row}
+        for field in ("discovery_memberships", "query_memberships"):
+            values = []
+            seen = set()
+            for item in [*old.get(field, []), *row.get(field, [])]:
+                key = json.dumps(item, sort_keys=True, ensure_ascii=False)
+                if key not in seen:
+                    seen.add(key)
+                    values.append(item)
+            if values or field in old or field in row:
+                combined[field] = values
+        merged[stable] = combined
+    return list(merged.values())
+
+
+def checkpoint_settings(args: argparse.Namespace, queries: list[str]) -> str:
+    values = {key: value for key, value in vars(args).items()
+              if key not in {"resume", "out_dir", "workspace", "query_plan_data", "legacy_output"}}
+    payload = {"settings": values, "queries": queries, "case": getattr(args, "case", "")}
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False, default=str).encode()).hexdigest()
 
 
 def csv_terms(value: str) -> list[str]:
@@ -422,6 +474,12 @@ def balanced_queries(queries: list[str]) -> list[str]:
 
 QUERY_PLAN_PROVIDERS = {"reddit", "brave_search", "serper_search", "firecrawl", "hn", "github",
                         "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators"}
+RESUME_TERMINAL_PROVIDER_STATUSES = {"ok", "unsupported", "capture_gate_blocked", "not_applicable"}
+
+
+def provider_checkpoint_complete(summary: dict[str, Any]) -> bool:
+    """Only successful or deterministic terminal outcomes suppress a retry."""
+    return str(summary.get("status") or "") in RESUME_TERMINAL_PROVIDER_STATUSES
 
 
 def load_query_plan(args: argparse.Namespace) -> dict[str, Any]:
@@ -447,6 +505,15 @@ def load_query_plan(args: argparse.Namespace) -> dict[str, Any]:
         if row["query_id"] in ids or pair in pairs:
             raise ValueError("Query IDs and provider/query pairs must be unique; share baseline results explicitly")
         ids.add(row["query_id"]); pairs.add(pair)
+    research_design = plan.get("research_design")
+    if research_design is not None:
+        question_ids = {item["id"] for item in research_design["questions"]}
+        for row in plan["queries"]:
+            if not row.get("question_ids"):
+                raise ValueError(f"Query {row['query_id']} must identify the research question(s) it serves")
+            unknown = set(row["question_ids"]) - question_ids
+            if unknown:
+                raise ValueError(f"Query {row['query_id']} references undeclared question IDs: {', '.join(sorted(unknown))}")
     if set(selected_providers(args.providers)) != {row["provider"] for row in plan["queries"]}:
         raise ValueError("--providers must exactly match the provider set in --query-plan")
     for provider in selected_providers(args.providers):
@@ -491,7 +558,7 @@ def unattempted_queries(ledger: list[dict[str, Any]], reason: str) -> None:
 
 def record_query_discovery(record: dict[str, Any], row: dict[str, Any]) -> None:
     """Retain query attribution even when another query already found this URL."""
-    membership = {key: row[key] for key in ("query_id", "candidate_id", "query", "provider", "intent", "source_family", "seed_origin", "cell_id") if key in row}
+    membership = {key: row[key] for key in ("query_id", "candidate_id", "query", "provider", "intent", "source_family", "seed_origin", "cell_id", "question_ids") if key in row}
     membership.update({"sampling_frame": "topic_led_voc", "collection_locale": row["locale"]})
     memberships = record.setdefault("discovery_memberships", [])
     # Replace only the unbound default membership emitted by normalize_record.
@@ -1554,7 +1621,7 @@ def collect_scheduled_provider(args: argparse.Namespace, queries: list[str], run
     records: list[dict[str, Any]] = []
     by_id: dict[str, dict[str, Any]] = {}
     raw: dict[str, Any] = {"query_captures": []}
-    transcript_remaining = max(0, getattr(args, "youtube_transcript_max", 5))
+    transcript_remaining = max(0, getattr(args, "youtube_transcript_remaining", getattr(args, "youtube_transcript_max", 5)))
     transcript_totals: dict[str, Any] = {"attempted": 0, "fetched": 0, "statuses": {}}
     provider_details: dict[str, Any] = {}
     for row in ledger:
@@ -1563,6 +1630,7 @@ def collect_scheduled_provider(args: argparse.Namespace, queries: list[str], run
         local_args = argparse.Namespace(**vars(args))
         local_args.limit = row["per_query_result_limit"]
         local_args.youtube_transcript_max = transcript_remaining
+        local_args.youtube_transcript_budget_max = max(0, getattr(args, "youtube_transcript_max", 5))
         capture_dir = run_dir / "raw" / f"{provider}-queries" / hashlib.sha256(row["query_id"].encode()).hexdigest()[:16]
         found, summary = globals()[f"_collect_{provider}_query"](local_args, [row["query"]], capture_dir)
         provider_details.update({key: summary[key] for key in ("required_env", "top_up_url") if key in summary})
@@ -1593,7 +1661,16 @@ def collect_scheduled_provider(args: argparse.Namespace, queries: list[str], run
         row["capture_path"] = str(capture_path)
         if provider == "xai_x_search":
             row["execution_boundary"] = "Seed sent in model prompt; underlying X queries are not observable. Cited leads require direct review."
-        for record in found[:row["per_query_result_limit"]]:
+        # Transcript enrichment has its own explicit allowance. The search
+        # record cap must not silently discard a successfully fetched transcript.
+        retained = [record for record in found if record.get("source") == "youtube_transcript"]
+        retained.extend(record for record in found if record.get("source") != "youtube_transcript")
+        regular = 0
+        for record in retained:
+            if record.get("source") != "youtube_transcript":
+                if regular >= row["per_query_result_limit"]:
+                    continue
+                regular += 1
             row["result_urls"].append(record["source_url"])
             identity = record["evidence_id"]
             if identity not in by_id:
@@ -2329,10 +2406,21 @@ def _collect_youtube_query(args: argparse.Namespace, queries: list[str], run_dir
                     )
                     if len(records) >= args.limit:
                         break
-            if getattr(args, "youtube_transcripts", False) and transcripts_attempted < transcript_max:
+            if getattr(args, "youtube_transcripts", False) and transcripts_attempted < transcript_max and reserve_enrichment_allowance("youtube_transcript", getattr(args, "youtube_transcript_budget_max", transcript_max)):
                 transcripts_attempted += 1
                 transcript_status, transcript_text = fetch_youtube_transcript(video_id, [args.language, "en"])
-                raw["transcripts"].append({"video_id": video_id, "status": transcript_status, "chars": len(transcript_text)})
+                transcript_capture = {
+                    "video_id": video_id,
+                    "status": transcript_status,
+                    "requested_languages": [args.language, "en"],
+                    "retrieved_at": now_iso(),
+                    "text": transcript_text if transcript_status == "ok" else "",
+                    "text_sha256": hashlib.sha256(transcript_text.encode("utf-8")).hexdigest() if transcript_text else None,
+                }
+                raw["transcripts"].append(transcript_capture)
+                # Keep the full creator-voice source as a durable raw artifact
+                # before later results or provider aggregation can truncate it.
+                write_json(run_dir / "raw" / "youtube-transcripts" / f"{video_id}.json", transcript_capture)
                 if transcript_status == "ok" and transcript_text:
                     transcripts_fetched += 1
                     full_text = f"Transcript of video \"{snippet.get('title', '')}\": {transcript_text}"
@@ -2771,10 +2859,22 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
     # items_key None means a single-call endpoint parsed with list_candidates.
     specs: list[tuple[str, str, dict[str, Any], str | None, str | None, int, str, Any]] = []
     search_rows: dict[str, dict[str, Any]] = {}
+    lane_allowances: dict[str, dict[str, int]] = {}
     for row in ledger:
         if not row["scheduled"]:
             continue
         row["endpoint_ledger"] = []
+        # Allocate the per-query record allowance across platforms before
+        # retrieval. Rotate the two-lane remainder by query ID so a small cap
+        # does not systematically privilege the same provider order.
+        lane_names = ["tiktok", "instagram", "threads"]
+        allocation = row["per_query_result_limit"]
+        base, remainder = divmod(allocation, len(lane_names))
+        rotation = int(hashlib.sha256(row["query_id"].encode()).hexdigest()[:8], 16) % len(lane_names)
+        lane_allowances[row["query_id"]] = {name: base for name in lane_names}
+        for offset in range(remainder):
+            lane_allowances[row["query_id"]][lane_names[(rotation + offset) % len(lane_names)]] += 1
+        row["platform_allocation"] = lane_allowances[row["query_id"]]
         for source, endpoint, extra in [
             ("tiktok", "https://api.scrapecreators.com/v1/tiktok/search/keyword", {"date_posted": "month", "sort_by": "relevance", "trim": "true"}),
             ("instagram", "https://api.scrapecreators.com/v2/instagram/reels/search", {"date_posted": "last-month", "page": 1}),
@@ -2806,9 +2906,18 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
     comment_candidates: list[tuple[str, str, str, str]] = []
     comment_request_ledger: list[dict[str, Any]] = []
     credits_exhausted = False
+    lane_retained: dict[tuple[str, str], int] = {}
     for source, endpoint, params, items_key, cursor_key, cap, context, parser in specs:
         row = search_rows.get(context)
         social_query = row["query"] if row else args.topic
+        if row is not None and source in {"tiktok", "instagram", "threads"}:
+            lane_cap = lane_allowances[row["query_id"]][source]
+            already = lane_retained.get((row["query_id"], source), 0)
+            cap = min(cap, max(0, lane_cap - already))
+            if cap == 0:
+                endpoint_statuses[context] = "excluded_by_allocation"
+                row["endpoint_ledger"].append({"endpoint": endpoint, "status": "excluded_by_allocation", "attempted": False})
+                continue
         if credits_exhausted:
             endpoint_statuses[context] = "skipped:insufficient_credits"
             continue
@@ -2837,6 +2946,9 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                 endpoint_statuses[context] = status
                 continue
         before = len(records)
+        valid_text_count = 0
+        duplicate_count = 0
+        allocation_excluded = 0
         for item in items:
             if not isinstance(item, dict):
                 continue
@@ -2844,11 +2956,17 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
             identity = f"{source}:{raw_id or url or text[:80]}"
             if not text:
                 continue
+            valid_text_count += 1
             if row is not None and identity in search_records:
                 record_query_discovery(search_records[identity], row)
                 row["result_urls"].append(url)
+                duplicate_count += 1
                 continue
-            if identity in seen or (row is not None and row["new_record_count"] >= row["per_query_result_limit"]):
+            if identity in seen:
+                duplicate_count += 1
+                continue
+            if row is not None and source in {"tiktok", "instagram", "threads"} and lane_retained.get((row["query_id"], source), 0) >= lane_allowances[row["query_id"]][source]:
+                allocation_excluded += 1
                 continue
             seen.add(identity)
             relevance, relevance_notes, relevance_score = assess_relevance(text, args, social_query, url, context)
@@ -2890,13 +3008,17 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                 record_query_discovery(records[-1], row)
                 row["new_record_count"] += 1
                 row["result_urls"].append(url)
+                if source in {"tiktok", "instagram", "threads"}:
+                    lane_retained[(row["query_id"], source)] = lane_retained.get((row["query_id"], source), 0) + 1
             if url and source in {"facebook", "instagram"}:
                 supplier_identity = facebook_context.get("author_label", "") if source == "facebook" and context.startswith(("ScrapeCreators fb-page", "ScrapeCreators fb-entity:")) else context.split(":", 2)[2] if instagram_entity else ""
                 comment_candidates.append((source, url, context, supplier_identity))
         produced = len(records) - before
-        if items and produced == 0:
-            status = f"{status};items_without_text"
-        endpoint_statuses[context] = f"{status};records={produced}"
+        if items and valid_text_count == 0:
+            status = f"{status};missing_text"
+        elif items and produced == 0 and duplicate_count:
+            status = f"{status};duplicates_only"
+        endpoint_statuses[context] = f"{status};records={produced};duplicates={duplicate_count};excluded_by_allocation={allocation_excluded}"
 
     if args.social_comments and not credits_exhausted:
         comment_endpoints = {
@@ -3014,7 +3136,7 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
             row["status"] = ("partial" if "ok" in outcomes else failures[0]) if failures else "ok"
             if len(outcomes) < 3:
                 row["status"] = "partial" if not credits_exhausted else "insufficient_credits"
-        row["enrichment_boundary"] = "Keyword allocation covers posts across three endpoints; optional comments have a separate comments_max cap."
+        row["enrichment_boundary"] = "Keyword record allowance is allocated across TikTok, Instagram and Threads before retrieval; optional comments have a separate comments_max cap."
     if ledger and status == "ok" and query_collection_status(ledger) != "ok":
         status = query_collection_status(ledger)
     raw["query_ledger"] = ledger
@@ -4558,6 +4680,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--language", default="AUTO", help="Language code for providers that support language filtering. Use AUTO to infer from topic/segment.")
     parser.add_argument("--case", default="", help="Registered case ID within --workspace.")
     parser.add_argument("--out-dir", default="", help="Optional output directory.")
+    parser.add_argument("--resume", action="store_true", help="Resume an existing run at --out-dir with the identical query plan and capture settings.")
     parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
     parser.add_argument("--legacy-output", action="store_true", help="Removed: the projects/research/evidence-scout layout is gone (now projects/_archive, read-only). Use --out-dir for an explicit path.")
     args = parser.parse_args()
@@ -4566,6 +4689,8 @@ def parse_args() -> argparse.Namespace:
             parser.error("validation requires --customer-segment; use --research-mode discovery before selecting a target hypothesis")
     if args.max_http_requests < 1:
         parser.error("--max-http-requests must be positive")
+    if args.resume and not args.out_dir:
+        parser.error("--resume requires the existing run path in --out-dir")
     if args.query_limit < 1 or args.limit < 1:
         parser.error("--query-limit and --limit must be positive")
     if not 1 <= args.results_per_query <= 10:
@@ -4628,9 +4753,26 @@ def main() -> int:
         workspace_subdir="market_research/pain_points/runs",
         legacy_subdir="runs",
         customer_segment=args.customer_segment,
+        resume=args.resume,
     )
+    if args.resume and (not run_dir.is_dir() or not (run_dir / "run-checkpoint.json").is_file()):
+        raise ValueError("--resume requires an existing collector run with run-checkpoint.json")
     run_dir.mkdir(parents=True, exist_ok=True)
-    write_json(run_dir / "query_plan.json", snapshot)
+    checkpoint_path = run_dir / "run-checkpoint.json"
+    settings_digest = checkpoint_settings(args, queries)
+    checkpoint = read_json(checkpoint_path, {}) if args.resume else {
+        "schema_version": 1, "providers_completed": {}, "http_requests_consumed": 0,
+        "allowances_consumed": {}, "query_plan_digest": hashlib.sha256(json.dumps(snapshot, sort_keys=True, ensure_ascii=False).encode()).hexdigest(),
+        "settings_digest": settings_digest,
+    }
+    if args.resume:
+        old_plan = checkpoint.get("query_plan_digest")
+        current_plan = hashlib.sha256(json.dumps(snapshot, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        if old_plan != current_plan or checkpoint.get("settings_digest") != settings_digest:
+            raise ValueError("resume plan/settings differ; start a linked follow-up run")
+    else:
+        write_json(run_dir / "query_plan.json", snapshot)
+        write_json(checkpoint_path, checkpoint)
     if workspace:
         update_stage(
             workspace,
@@ -4639,16 +4781,20 @@ def main() -> int:
             gate_result="not_run",
             next_action="Complete provider collection and inspect source quality.",
         )
-    create_run_manifest(
-        run_dir,
-        subject=args.topic,
-        run_type="evidence_collection",
-        stage="evidence_collection",
-        sources=selected_providers(args.providers),
-        next_action="Complete provider collection and inspect source quality.",
-    )
+    if not args.resume:
+        create_run_manifest(
+            run_dir,
+            subject=args.topic,
+            run_type="evidence_collection",
+            stage="evidence_collection",
+            sources=selected_providers(args.providers),
+            next_action="Complete provider collection and inspect source quality.",
+        )
 
     requested_providers = selected_providers(args.providers)
+    args.youtube_transcript_remaining = max(
+        0, args.youtube_transcript_max - checkpoint.get("allowances_consumed", {}).get("youtube_transcript", 0)
+    )
     write_research_plan(run_dir, args, queries, requested_providers)
     provider_funcs = {
         "reddit": collect_reddit,
@@ -4678,8 +4824,35 @@ def main() -> int:
     }
     records: list[dict[str, Any]] = []
     provider_summaries: dict[str, Any] = {}
-    with request_budget(args.max_http_requests, reuse_gets=not args.fresh_http) as budget:
+    checkpoint_dir = run_dir / "provider-checkpoints"
+    prior_provider_records: dict[str, list[dict[str, Any]]] = {}
+    if args.resume:
         for provider in requested_providers:
+            saved = checkpoint.get("providers_completed", {}).get(provider)
+            prior = load_jsonl(checkpoint_dir / f"{provider}.jsonl")
+            prior_provider_records[provider] = prior
+            records.extend(prior)
+            if isinstance(saved, dict) and provider_checkpoint_complete(saved):
+                provider_summaries[provider] = saved
+
+    def save_checkpoint(**updates):
+        checkpoint.update(updates)
+        write_json(checkpoint_path, checkpoint)
+
+    def record_http_attempt(requests_used):
+        save_checkpoint(http_requests_consumed=requests_used)
+
+    def record_allowances(allowances):
+        save_checkpoint(allowances_consumed=allowances)
+
+    with request_budget(args.max_http_requests, reuse_gets=not args.fresh_http,
+                        initial_requests=checkpoint.get("http_requests_consumed", 0),
+                        on_attempt=record_http_attempt, allowances=checkpoint.get("allowances_consumed", {}),
+                        on_allowance=record_allowances) as budget:
+        for provider in requested_providers:
+            saved = checkpoint.get("providers_completed", {}).get(provider)
+            if isinstance(saved, dict) and provider_checkpoint_complete(saved):
+                continue
             if args.sampling_frame == "entity_led_feedback" and provider not in {"firecrawl", "itunes_reviews", "trustpilot_reviews", "google_places_reviews", "scrapecreators", "sonar"}:
                 provider_summaries[provider] = {"status": "capture_gate_blocked", "record_count": 0, "reason": "Generic entity capture requires firecrawl and an exact reviewed URL; broad search remains topic-led discovery."}
                 continue
@@ -4695,6 +4868,14 @@ def main() -> int:
                     provider_summaries[provider]["query_ledger"] = ledger
                 continue
             blocked_before = budget.blocked_requests
+            attempt_started_at = now_iso()
+            attempts = checkpoint.setdefault("provider_attempts", {}).setdefault(provider, [])
+            interrupted_attempts = sum(item.get("status") == "in_progress" for item in attempts)
+            attempt = {"attempt": len(attempts) + 1, "started_at": attempt_started_at,
+                       "status": "in_progress", "new_record_count": 0,
+                       "retained_record_count": len(prior_provider_records.get(provider, []))}
+            attempts.append(attempt)
+            save_checkpoint(provider_attempts=checkpoint["provider_attempts"])
             provider_records, provider_summary = func(args, queries, run_dir)
             # Store the route actually used for this retrieval, rather than adding
             # a hypothetical backend after collection. Language fields express the
@@ -4709,8 +4890,10 @@ def main() -> int:
                 for membership in record.get("discovery_memberships", []):
                     membership.setdefault("collection_locale", record["collection_locale"])
             accepted, rejected = accepted_records(provider_records)
+            accepted = merge_provider_records(prior_provider_records.get(provider, []), accepted)
             relevant_provider_records = [record for record in accepted if record.get("relevance") != "irrelevant"]
             irrelevant_provider_records = [record for record in accepted if record.get("relevance") == "irrelevant"]
+            records = [record for record in records if record.get("retrieval_backend") != provider]
             records.extend(accepted)
             provider_summary["record_count"] = len(relevant_provider_records)
             provider_summary["irrelevant_count"] = len(irrelevant_provider_records)
@@ -4721,6 +4904,19 @@ def main() -> int:
             if budget.blocked_requests > blocked_before:
                 provider_summary["status"] = "request_budget_exhausted"
             provider_summaries[provider] = provider_summary
+            # A provider's normalized records and status become durable before
+            # the next provider starts. On resume these records are loaded once.
+            write_jsonl_path = checkpoint_dir / f"{provider}.jsonl"
+            append_jsonl(write_jsonl_path, accepted)
+            attempt.update({"finished_at": now_iso(), "status": provider_summary.get("status", "unknown"),
+                            "new_record_count": len(provider_records), "retained_record_count": len(accepted)})
+            if interrupted_attempts:
+                provider_summary['interrupted_attempts_retried'] = interrupted_attempts
+            provider_summary["attempts"] = attempts
+            checkpoint.setdefault("providers_completed", {})[provider] = provider_summary
+            save_checkpoint(http_requests_consumed=budget.requests,
+                            allowances_consumed=dict(budget.allowances),
+                            providers_completed=checkpoint["providers_completed"])
 
     relevant_records = [record for record in records if record.get("relevance") != "irrelevant"]
     irrelevant_records = [record for record in records if record.get("relevance") == "irrelevant"]
@@ -4750,6 +4946,7 @@ def main() -> int:
         "providers": provider_summaries,
         "needs_user_attention": alerts,
         "request_budget": budget.summary(),
+        "run_checkpoint": str(checkpoint_path),
         "remaining_tasks": remaining,
         "collection_complete": not remaining,
         "quality_flags": quality_flags,

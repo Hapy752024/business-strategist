@@ -75,3 +75,19 @@ def test_expired_cache_and_nested_budget_cannot_bypass_limit():
 def test_invalid_budget(value):
     with pytest.raises(ValueError):
         common.RequestBudget(value)
+
+
+def test_restored_budget_and_enrichment_reservations_are_persisted_before_dispatch():
+    saved = []
+    with patch.object(common.urllib.request, 'urlopen', side_effect=lambda *a, **k: Response()) as network:
+        with common.request_budget(3, initial_requests=2, allowances={'transcript': 1},
+                                   on_attempt=lambda n: saved.append(('http', n)),
+                                   on_allowance=lambda value: saved.append(('allowance', value.copy()))) as budget:
+            assert not common.reserve_enrichment_allowance('transcript', 1)
+            assert common.reserve_enrichment_allowance('transcript', 3)
+            assert common.http_get('https://example.test/allowed')['ok']
+            assert not common.http_get('https://example.test/blocked')['ok']
+            assert saved[0] == ('allowance', {'transcript': 2})
+            assert saved[1] == ('http', 3)
+            assert network.call_count == 1
+            assert budget.summary()['requests'] == 3

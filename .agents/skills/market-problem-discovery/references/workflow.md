@@ -1,8 +1,3 @@
----
-name: market-problem-discovery
-description: Research a rough market before a founder has chosen a customer problem or segment, then present evidence-grounded candidate pockets and let the founder choose what to validate.
----
-
 # Market Problem Discovery Workflow
 
 ## Purpose and Boundary
@@ -27,8 +22,8 @@ When the request also asks which opportunity the founder should pursue, apply re
 
 ## Procedure
 
-1. Restate the market/domain, any rough hunch, and the source scope. Treat the hunch as a search seed, not a claim.
-2. Brainstorm local job/trigger vocabulary, alternative explanations and source locations; review candidate queries using repo-root `references/research-query-calibration.md`. Preview `--query-plan` with explicit locale/providers and result allocations before broad collection. Then initialize a discovery run with the reviewed plan. Use the repository-root command:
+1. Restate the user’s requested outcome, market/domain, any rough hunch, and source scope. Treat the hunch as a search seed, not a claim. A pain-point study may finish with customer findings, counter-evidence and unknowns; it need not produce an idea. If the user supplied a specific idea to validate, use idea-grill. Similar companies at home or abroad are optional comparables, not an idea-import objective.
+2. Brainstorm local job/trigger vocabulary, alternative explanations and source locations; review candidate queries using repo-root `references/research-query-calibration.md`. Select complementary approaches from repo-root `references/opportunity-research-approaches.md` only where they investigate a different explanation or evidence frame. Preview `--query-plan` with explicit locale/providers and result allocations before broad collection. Then initialize a discovery run with the reviewed plan. Use the repository-root command:
 
    ```bash
    python3 scripts/evidence_scout/discover_market_problems.py --topic "<market or domain>" --focus "<optional hunch>" --geo <AUTO|country> --language <language> --topic-keywords "<short local phrase>" --query-plan "<reviewed plan.json>" --providers "<plan providers>" --limit <allocated total> --results-per-query <depth> --collect
@@ -56,7 +51,15 @@ When the request also asks which opportunity the founder should pursue, apply re
    - missing sources or weak coverage;
    - the cheapest next investigation.
 
-8. Close the artifact after synthesis:
+8. Build the VOC source plan using the active discovery identity from `<run>/summary.json`; the design digest is the SHA-256 of `<run>/research_plan.md`. Select only the relevant complementary approaches; the customer-workflow approach is the default. Store the source plan and isolated approach packets under `<run>/customer-feedback/`:
+
+   ```bash
+   python3 scripts/evidence_scout/plan_customer_feedback.py --topic "<topic>" --customer-segment "<segment>" --intent customer_problem --study-id "<study_id>" --research-design-digest "<research_design_digest>" --approach customer_workflow --approach switching_and_changes --out-dir "<run>/customer-feedback"
+   ```
+
+   Add `alternatives_and_cases` or `ecosystem_and_implementation` only when relevant to the research question. Keep each packet’s sources, coverage and open questions separate; the coordinator deduplicates overlapping source observations and reconciles disagreement. A selected country comparison remains evidence about the user’s question, not a recommendation to copy the company.
+
+   Close the artifact after synthesis:
 
    ```bash
    python3 scripts/evidence_scout/discover_market_problems.py --finalize --run-dir "<run path>" --candidate-count <0-7>
