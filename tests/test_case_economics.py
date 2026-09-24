@@ -47,6 +47,34 @@ def test_rejects_pass_through_double_count_and_nonfinite():
             calculate(d)
 
 
+def cash_inputs():
+    d = inputs()
+    d.update(horizon_months=6, opening_cash=5000, startup_cash_cost=2000, receipt_lag_months=0,
+             service_payment_lag_months=0, acquisition_payment_lag_months=0,
+             sales_per_month=[20, 40, 60, 60, 60, 60], lead_to_customer=None,
+             viability_targets={'profitable_by_month': 4, 'max_cash_need': 6000, 'owner_income_per_month': 2500})
+    return d
+
+
+def test_viability_verdict_from_cash_schedule():
+    v = calculate(cash_inputs())['results']['viability']
+    assert v['status'] in {'pass', 'fail'}
+    assert isinstance(v['first_profitable_month'], (int, type(None)))
+    assert v['reasons'] and all(isinstance(r, str) for r in v['reasons'])
+
+
+def test_viability_unresolved_without_targets_or_cash():
+    assert calculate(inputs())['results']['viability']['status'] == 'unresolved'
+    d = cash_inputs(); d.pop('viability_targets')
+    assert calculate(d)['results']['viability']['status'] == 'unresolved'
+
+
+def test_viability_targets_are_validated():
+    d = cash_inputs(); d['viability_targets'] = {'profitable_by_month': 0}
+    with pytest.raises(ValueError, match='viability_targets'):
+        calculate(d)
+
+
 def test_unknown_startup_cash_and_deferred_service_costs():
     d = inputs()
     d.update(model='recurring', unit='served customer-month', horizon_months=1, opening_cash=0, startup_cash_cost=None,

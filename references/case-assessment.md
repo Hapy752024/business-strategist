@@ -11,6 +11,7 @@ New projects use `init_project.py --project <name> [--case <id>]`. Register anot
 Route with `route_workflow.py --project <slug> --case <id> --intent case-appraisal --task-scope strategy --check-skill opportunity-risk-designer`. The existing checked envelope carries `case`. A registered case needs initial sourced segment, journey and pain research; those findings may be weak or unresolved. Appraisal needs no passed pain gate. It does not authorize commitments, outreach, payment collection or paid recruitment. Do not invoke full GTM/pilot/startup workflows to bypass their prerequisites.
 
 ## Research content
+- Scorecard: maintain the Evidence scorecard in the case README with the opinion/behavior/money ladder; the viability row quotes the helper's verdict placeholder.
 
 For each relevant dimension explain evidence, inference, assumptions, counter-evidence and what remains unknown:
 
@@ -51,6 +52,9 @@ Economics may include `scenarios` with `downside` and optional `upside` input ov
 Stage publication in case mode requires the run's captured context (`run_dir`) or explicit `expected_assessment_revision`, checked under the project lock. After a correction, re-review the affected evidence; never copy old passes. Business-to-brand context must itself carry the selected `execution_binding`; use the current root structured plan and publish snapshots under root `branding/`. Consumers reject old or mismatched bindings even after switching back to the same case.
 
 ## Numerical prose and derived-input corrections
+## Viability verdict
+
+`economics_inputs.viability_targets` records the founder's test: `profitable_by_month` (default proposal 24–36 months, confirmed by the founder), `max_cash_need`, and `owner_income_per_month`. The helper returns `results.viability` with status pass/fail/unresolved and reasons. Quote it with `{{economics.results.viability.status}}` and `{{economics.results.viability.first_profitable_month}}`; never hand-write the verdict. Unresolved means the schedule or targets are missing, not that the business is unviable.
 
 When prose makes model-derived claims, supply the author-reviewed `economics_input_digest` from the calculator and use placeholders such as `{{economics.results.contribution_per_unit}}`, `{{economics.results.required_sales}}`, `{{economics.inputs.capacity_per_month}}`, or `{{economics.results.cash.months.0.contribution}}`. Apply this to comparison summaries as well as case documents. Business-plan sections carry their own `economics_input_digest` for model claims. Literal model values, including multi-line values, stale digests and invalid references fail publication. Historical/source-attributed observations remain ordinary evidence prose; numerical checks do not prove unrestricted natural-language consistency. After a correction, reassess conclusions as well as refreshing the digest.
 

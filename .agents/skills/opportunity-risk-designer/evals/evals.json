@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "Based on our evidence collection (moderate pain signals on Reddit about PKV switching, weak Trends, no willingness-to-pay evidence yet), design the next round of low-cost tests for our digital insurance advice startup.",
-      "expected_output": "A risk register ranked by importance × uncertainty, with test cards for the top 2-3 risks. Must recommend testing willingness to pay before building anything (e.g., fake-door test, pre-sale landing page, paid consultation pilot). Must define explicit pass/pivot/repeat thresholds for each test.",
+      "expected_output": "A risk register ranked by importance \u00d7 uncertainty, with test cards for the top 2-3 risks. Must recommend testing willingness to pay before building anything (e.g., fake-door test, pre-sale landing page, paid consultation pilot). Must define explicit pass/pivot/repeat thresholds for each test.",
       "must_mention": [
         "risk",
         "test",
@@ -45,7 +45,7 @@
     {
       "id": 3,
       "prompt": "Our first 10 design partner conversations all went well and 3 said they'd pay. What should we test next?",
-      "expected_output": "A pushback that design partner enthusiasm ≠ market demand. Must recommend a structured test: put a price in front of the 3 who said they'd pay, measure actual conversion, interview the 7 who didn't offer to pay, and define a minimum paying-customer threshold before scaling. Must warn against premature optimism from small-N positive signals.",
+      "expected_output": "A pushback that design partner enthusiasm \u2260 market demand. Must recommend a structured test: put a price in front of the 3 who said they'd pay, measure actual conversion, interview the 7 who didn't offer to pay, and define a minimum paying-customer threshold before scaling. Must warn against premature optimism from small-N positive signals.",
       "must_mention": [
         "conversion",
         "actual",
@@ -84,6 +84,24 @@
       "id": "need-model-complaints-not-demand",
       "prompt": "Synthetic packet: 200 complaints contain no recent episode, consequential loss or willingness-to-switch behavior. Founder asks for risk prioritization and says scale is obviously justified.",
       "expected_output": "Do not promote complaint volume into validated demand. Rank urgency/customer-choice uncertainty, request better episode evidence and design a bounded test before scale; no forced opportunity winner.",
+      "files": []
+    },
+    {
+      "id": "smoke-1",
+      "prompt": "Evidence shows expats in Germany complain about switching private health insurance. What should I test next? I have no customer list.",
+      "expected_output": "Recommends a message/offer smoke test with one conversion action, variants by pain frame, pre-set thresholds, disclosure, pending budget approval, and interviews from responders.",
+      "must_mention": [
+        "smoke test",
+        "threshold",
+        "responders",
+        "interview",
+        "budget"
+      ],
+      "must_not_mention": [
+        "build the product",
+        "survey your friends"
+      ],
+      "required_artifacts": [],
       "files": []
     }
   ]

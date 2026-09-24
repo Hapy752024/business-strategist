@@ -25,3 +25,5 @@ In full mode produce opportunity areas, risk register, assumption map, test card
 
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
+
+For the checked `smoke-test-design` route, read repo-root `references/smoke-test.md` and generate the kit with `python3 scripts/evidence_scout/build_smoke_test_kit.py`. Use this as the default next test when the riskiest assumption is demand or message and the founder has no customer panel; interviews recruit from responders. Ad spend needs the recorded approval.

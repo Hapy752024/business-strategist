@@ -8,11 +8,52 @@ import math
 from decimal import Decimal
 from pathlib import Path
 
-INPUT_KEYS = set('model unit currency period revenue_basis acquisition_basis revenue_per_unit service_per_unit partner_per_unit refund_per_unit acquisition_per_new_customer fixed_per_month owner_cash_per_month capacity_per_month provenance lead_to_customer acquisition_in_service_cost horizon_months opening_cash startup_cash_cost receipt_lag_months service_payment_lag_months acquisition_payment_lag_months sales_per_month new_customers_per_month opening_customers monthly_retention new_customer_billing owner_cash_in_service_cost imputed_owner_labor_per_month scenario_limit_reason sensitivity_limit_reason scenarios sensitivities'.split())
+INPUT_KEYS = set('model unit currency period revenue_basis acquisition_basis revenue_per_unit service_per_unit partner_per_unit refund_per_unit acquisition_per_new_customer fixed_per_month owner_cash_per_month capacity_per_month provenance lead_to_customer acquisition_in_service_cost horizon_months opening_cash startup_cash_cost receipt_lag_months service_payment_lag_months acquisition_payment_lag_months sales_per_month new_customers_per_month opening_customers monthly_retention new_customer_billing owner_cash_in_service_cost imputed_owner_labor_per_month scenario_limit_reason sensitivity_limit_reason scenarios sensitivities viability_targets'.split())
 
 
 def input_digest(inputs):
     return hashlib.sha256(json.dumps(inputs, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()
+
+
+def _viability(inputs, result, vals):
+    out = {'status': 'unresolved', 'first_profitable_month': None, 'min_closing_cash': None,
+           'profit_target_met': None, 'cash_target_met': None, 'owner_income_met': None, 'reasons': []}
+    targets = inputs.get('viability_targets')
+    if targets is None:
+        out['reasons'].append('viability_targets not supplied')
+        return out
+    allowed = {'profitable_by_month', 'max_cash_need', 'owner_income_per_month'}
+    if not isinstance(targets, dict) or set(targets) - allowed or not targets:
+        raise ValueError('viability_targets accepts profitable_by_month, max_cash_need, owner_income_per_month')
+    pbm = targets.get('profitable_by_month')
+    if pbm is not None and (type(pbm) is not int or pbm < 1):
+        raise ValueError('viability_targets.profitable_by_month must be a positive integer')
+    for key in ('max_cash_need', 'owner_income_per_month'):
+        value = targets.get(key)
+        if value is not None and (isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0):
+            raise ValueError(f'viability_targets.{key} must be a finite nonnegative number or null')
+    months = result.get('cash', {}).get('months') if result.get('cash', {}).get('status') == 'conditional' else None
+    if not months:
+        out['reasons'].append('no conditional cash schedule; supply horizon, opening cash and monthly volumes')
+        return out
+    fixed = vals['fixed_per_month']; owner = vals['owner_cash_per_month']
+    profitable = [m['month'] for m in months if m['contribution'] - float(fixed) - float(owner) > 0]
+    out['first_profitable_month'] = profitable[0] if profitable else None
+    out['min_closing_cash'] = min(m['closing_cash'] for m in months)
+    checks = []
+    if pbm is not None:
+        out['profit_target_met'] = out['first_profitable_month'] is not None and out['first_profitable_month'] <= pbm
+        checks.append(out['profit_target_met']); out['reasons'].append(f"first profitable month {out['first_profitable_month']} vs target {pbm}")
+    if targets.get('max_cash_need') is not None:
+        need = float(inputs.get('opening_cash', 0)) - out['min_closing_cash']
+        out['cash_target_met'] = need <= targets['max_cash_need']
+        checks.append(out['cash_target_met']); out['reasons'].append(f"peak cash need {round(need, 2)} vs max {targets['max_cash_need']}")
+    if targets.get('owner_income_per_month') is not None:
+        out['owner_income_met'] = float(owner) >= targets['owner_income_per_month']
+        checks.append(out['owner_income_met']); out['reasons'].append(f"modelled owner cash {owner} vs target {targets['owner_income_per_month']}")
+    out['status'] = 'pass' if checks and all(checks) else ('fail' if checks else 'unresolved')
+    out['reasons'].append('conditional on the supplied schedule; arithmetic is not demand evidence')
+    return out
 
 
 def number(inputs, name, missing, *, maximum=None):
@@ -75,11 +116,14 @@ def _calculate_base(inputs):
     assumptions = [k for k in vals if statuses.get(k, {}).get('status', 'assumption') == 'assumption']
     result = {'status': 'unresolved' if missing else 'conditional', 'unresolved_inputs': missing,
               'assumption_inputs': assumptions, 'contribution_per_unit': None, 'required_sales': None,
-              'capacity_meets_target': None, 'cash': {'status': 'unresolved'}, 'payback_month': None}
+              'capacity_meets_target': None, 'cash': {'status': 'unresolved'}, 'payback_month': None,
+              'viability': {'status': 'unresolved', 'first_profitable_month': None, 'min_closing_cash': None,
+                            'profit_target_met': None, 'cash_target_met': None, 'owner_income_met': None, 'reasons': []}}
     result['labor_accounting'] = {'owner_cash_basis': 'additional cash, excluding amounts already in service cost',
         'service_allocation_status': 'declared' if 'owner_cash_in_service_cost' in inputs else 'unresolved',
         'imputed_labor_status': 'declared noncash' if labor is not None else 'unresolved'}
     if missing:
+        result['viability'] = _viability(inputs, result, vals)
         return {'schema_version': '1.0', 'inputs': inputs, 'input_digest': input_digest(inputs), 'results': result}
     unit_margin = vals['revenue_per_unit'] - vals['service_per_unit'] - vals['partner_per_unit'] - vals['refund_per_unit']
     net = unit_margin - vals['acquisition_per_new_customer'] if inputs['model'] == 'transactional' else unit_margin
@@ -163,6 +207,7 @@ def _calculate_base(inputs):
             if inputs['model'] == 'recurring':
                 result['capacity_meets_target'] = all(r['within_capacity'] for r in rows)
             result['payback_reason'] = 'No lifetime or mature-cohort payback inferred from a conditional schedule.'
+    result['viability'] = _viability(inputs, result, vals)
     return {'schema_version': '1.0', 'inputs': inputs, 'input_digest': input_digest(inputs), 'results': result}
 
 

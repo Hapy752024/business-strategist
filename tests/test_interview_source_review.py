@@ -220,3 +220,18 @@ def test_adjacent_customer_only_cannot_create_target_interview_kit(tmp_path):
     assert result.returncode == 1
     assert "no accepted firsthand customer" in result.stderr
     assert not (tmp_path / "interview").exists()
+
+
+def test_responders_are_added_to_tracker_as_unresolved(tmp_path):
+    import json, subprocess, sys
+    run = tmp_path / 'run'; run.mkdir()
+    (run / 'summary.json').write_text(json.dumps({'topic': 't', 'customer_segment': 's'}))
+    (run / 'evidence.jsonl').write_text('')
+    responders = tmp_path / 'responders.json'
+    responders.write_text(json.dumps([{'id': 'R1', 'variant': 'V2', 'source': 'meta-ads', 'responded_at': '2026-09-24',
+                                       'contact_ref': 'form-17', 'screener_answers': {}}]))
+    out = subprocess.run([sys.executable, 'scripts/evidence_scout/build_interview_kit.py', '--run-dir', str(run),
+                          '--responders', str(responders), '--allow-empty-evidence'], text=True, capture_output=True)
+    assert out.returncode == 0, out.stderr
+    tracker = (run / 'interview' / 'interview-tracker.md').read_text()
+    assert '## Responder intake' in tracker and '| R1 | V2 | meta-ads | unresolved | unresolved |' in tracker
