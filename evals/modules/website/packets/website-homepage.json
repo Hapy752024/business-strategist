@@ -1,0 +1,23 @@
+{
+  "task_id": "website-homepage",
+  "synthetic_only": true,
+  "generation_input": {
+    "brief": {
+      "audience": "Owner-operated local dental clinics",
+      "task": "Request a demo",
+      "claims_allowed": [
+        "Appointment administration workflow"
+      ],
+      "claims_forbidden": [
+        "Guaranteed time savings",
+        "Customer logos/testimonials not supplied"
+      ]
+    },
+    "requested_output": "A invents customer proof; B labels the value proposition as a hypothesis.",
+    "page_context": "Demo request page for the supplied audience and task."
+  },
+  "limits": [
+    "Synthetic design fixture; no user research or outcome evidence.",
+    "Reviewer key is separate from generation input."
+  ]
+}

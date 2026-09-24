@@ -1,0 +1,48 @@
+{
+  "packet_id": "dev-independence",
+  "synthetic_only": true,
+  "task_id": "dev-independence",
+  "split": "development",
+  "connected_group": "synthetic-identity-1",
+  "case_prompt": "independence unknown across quoted and paraphrased accounts",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "A forum post quotes an unnamed “client”; another account repeats the same sentence without attribution.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "independence unknown across quoted and paraphrased accounts",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "unresolved quoted account",
+        "original_text": "A forum post quotes an unnamed client who canceled after an export failed.",
+        "observed_date": "2026-03-01",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S2",
+        "source_role": "unresolved repeated account",
+        "original_text": "A second account repeats the sentence without identifying the speaker.",
+        "observed_date": "2026-03-02",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/dev-independence.json",
+  "paired_examples_path": "packets/paired-examples/dev-independence.json"
+}

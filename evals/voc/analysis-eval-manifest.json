@@ -1,0 +1,133 @@
+{
+  "schema_version": "1.0",
+  "status": "design_only_packets_and_scores_pending",
+  "purpose": "Development scaffold for comparative customer-evidence analysis; not a result or gold-label set.",
+  "split_policy": "Keep connected study, source and incident groups in one split. Reclassify connected held-out material as development if used during tuning.",
+  "criteria_version": "1",
+  "critical_failures": [
+    "fabricated or meaning-altered quotation",
+    "supplier voice presented as customer proof",
+    "unsupported payment or prevalence claim",
+    "wrong-study attribution"
+  ],
+  "dimensions": [
+    "source_fidelity",
+    "consequential_episode_coverage",
+    "explanatory_usefulness",
+    "theme_boundaries",
+    "counterexample_handling",
+    "uncertainty",
+    "decision_usefulness"
+  ],
+  "adoption_rule": "Unfrozen pending baseline and packet review. No analytical improvement claim is allowed from this scaffold.",
+  "tasks": [
+    {
+      "id": "dev-discovery",
+      "split": "development",
+      "group": "synthetic-discovery-1",
+      "case": "broad discovery with weakly specified customer problem",
+      "packet": "packets/dev-discovery.json",
+      "review_key": "packets/review-key/dev-discovery.json",
+      "paired_examples": "packets/paired-examples/dev-discovery.json"
+    },
+    {
+      "id": "dev-entity-feedback",
+      "split": "development",
+      "group": "synthetic-entity-1",
+      "case": "entity-led review feedback with supplier replies present",
+      "packet": "packets/dev-entity-feedback.json",
+      "review_key": "packets/review-key/dev-entity-feedback.json",
+      "paired_examples": "packets/paired-examples/dev-entity-feedback.json"
+    },
+    {
+      "id": "dev-multilingual",
+      "split": "development",
+      "group": "synthetic-episodes-1",
+      "case": "multilingual episodes with translation and chronology",
+      "packet": "packets/dev-multilingual.json",
+      "review_key": "packets/review-key/dev-multilingual.json",
+      "paired_examples": "packets/paired-examples/dev-multilingual.json"
+    },
+    {
+      "id": "dev-resolved",
+      "split": "development",
+      "group": "synthetic-incident-1",
+      "case": "complaint later resolved; preserve update and outcome",
+      "packet": "packets/dev-resolved.json",
+      "review_key": "packets/review-key/dev-resolved.json",
+      "paired_examples": "packets/paired-examples/dev-resolved.json"
+    },
+    {
+      "id": "dev-conflict",
+      "split": "development",
+      "group": "synthetic-conflict-1",
+      "case": "conflicting customer accounts with different contexts",
+      "packet": "packets/dev-conflict.json",
+      "review_key": "packets/review-key/dev-conflict.json",
+      "paired_examples": "packets/paired-examples/dev-conflict.json"
+    },
+    {
+      "id": "dev-supplier",
+      "split": "development",
+      "group": "synthetic-supplier-1",
+      "case": "supplier-authored claim mixed with customer discussion",
+      "packet": "packets/dev-supplier.json",
+      "review_key": "packets/review-key/dev-supplier.json",
+      "paired_examples": "packets/paired-examples/dev-supplier.json"
+    },
+    {
+      "id": "dev-independence",
+      "split": "development",
+      "group": "synthetic-identity-1",
+      "case": "independence unknown across quoted and paraphrased accounts",
+      "packet": "packets/dev-independence.json",
+      "review_key": "packets/review-key/dev-independence.json",
+      "paired_examples": "packets/paired-examples/dev-independence.json"
+    },
+    {
+      "id": "dev-insufficient",
+      "split": "development",
+      "group": "synthetic-coverage-1",
+      "case": "retrieval coverage too weak to support a finding",
+      "packet": "packets/dev-insufficient.json",
+      "review_key": "packets/review-key/dev-insufficient.json",
+      "paired_examples": "packets/paired-examples/dev-insufficient.json"
+    },
+    {
+      "id": "holdout-discovery",
+      "split": "held_out",
+      "group": "holdout-synthetic-discovery-1",
+      "case": "discovery task with competing explanations",
+      "packet": "packets/holdout-discovery.json",
+      "review_key": "packets/review-key/holdout-discovery.json",
+      "paired_examples": "packets/paired-examples/holdout-discovery.json"
+    },
+    {
+      "id": "holdout-entity",
+      "split": "held_out",
+      "group": "holdout-synthetic-entity-1",
+      "case": "entity feedback with counterevidence and supplier contamination",
+      "packet": "packets/holdout-entity.json",
+      "review_key": "packets/review-key/holdout-entity.json",
+      "paired_examples": "packets/paired-examples/holdout-entity.json"
+    },
+    {
+      "id": "holdout-resolution",
+      "split": "held_out",
+      "group": "holdout-synthetic-incident-1",
+      "case": "multilingual resolved episode with exact source spans",
+      "packet": "packets/holdout-resolution.json",
+      "review_key": "packets/review-key/holdout-resolution.json",
+      "paired_examples": "packets/paired-examples/holdout-resolution.json"
+    },
+    {
+      "id": "holdout-limits",
+      "split": "held_out",
+      "group": "holdout-synthetic-coverage-1",
+      "case": "unknown independence and material evidence gaps",
+      "packet": "packets/holdout-limits.json",
+      "review_key": "packets/review-key/holdout-limits.json",
+      "paired_examples": "packets/paired-examples/holdout-limits.json"
+    }
+  ]
+}

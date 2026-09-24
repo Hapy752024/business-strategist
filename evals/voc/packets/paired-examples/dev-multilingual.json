@@ -1,0 +1,22 @@
+{
+  "task_id": "dev-multilingual",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "weak illustrative output",
+      "text": "These comments prove customers broadly need a new SaaS product and would pay to switch.",
+      "evidence_ids": [
+        "S1"
+      ]
+    },
+    "B": {
+      "label": "bounded illustrative output",
+      "text": "Preserve original Spanish, linked translation and date; one episode cannot establish segment prevalence.",
+      "evidence_ids": [
+        "S1",
+        "T1"
+      ]
+    }
+  },
+  "provenance": "Illustrative outputs for reviewer calibration only; not produced by old or revised agents and not performance evidence."
+}

@@ -1,0 +1,48 @@
+{
+  "packet_id": "dev-resolved",
+  "synthetic_only": true,
+  "task_id": "dev-resolved",
+  "split": "development",
+  "connected_group": "synthetic-incident-1",
+  "case_prompt": "complaint later resolved; preserve update and outcome",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "A buyer reports a billing error in January; in March they say support corrected it and refund arrived.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "complaint later resolved; preserve update and outcome",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "customer",
+        "original_text": "The January invoice included a duplicate charge.",
+        "observed_date": "2026-01-18",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S2",
+        "source_role": "same customer later update",
+        "original_text": "Support corrected the invoice and the refund arrived in March.",
+        "observed_date": "2026-03-08",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/dev-resolved.json",
+  "paired_examples_path": "packets/paired-examples/dev-resolved.json"
+}

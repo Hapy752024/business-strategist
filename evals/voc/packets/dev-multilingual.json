@@ -1,0 +1,48 @@
+{
+  "packet_id": "dev-multilingual",
+  "synthetic_only": true,
+  "task_id": "dev-multilingual",
+  "split": "development",
+  "connected_group": "synthetic-episodes-1",
+  "case_prompt": "multilingual episodes with translation and chronology",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "Customer post in Spanish on 2 May describes repeated manual re-entry; a translation says “every week.”",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "multilingual episodes with translation and chronology",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "customer",
+        "original_text": "Cada lunes vuelvo a meter los datos a mano.",
+        "observed_date": "2026-05-02",
+        "source_language": "es",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "T1",
+        "source_role": "translation",
+        "original_text": "Every Monday I enter the data manually again.",
+        "observed_date": "2026-05-02",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": "1"
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/dev-multilingual.json",
+  "paired_examples_path": "packets/paired-examples/dev-multilingual.json"
+}

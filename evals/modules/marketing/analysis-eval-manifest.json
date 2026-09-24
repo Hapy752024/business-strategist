@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "status": "design_only_packets_and_scores_pending",
+  "module": "marketing",
+  "purpose": "Synthetic module-output comparison scaffold; not a result or gold-label set.",
+  "split_policy": "Keep paired fixtures in the same split; do not tune on held-out tasks.",
+  "split_counts": {
+    "development": 1,
+    "held_out": 1
+  },
+  "criteria_version": "1",
+  "critical_failures": [
+    "unsupported customer or performance claim",
+    "unapproved spend or launch"
+  ],
+  "dimensions": [
+    "evidence_fit",
+    "segment_specificity",
+    "message_clarity",
+    "channel_feasibility",
+    "measurement_quality"
+  ],
+  "adoption_rule": "Unfrozen pending baseline, packet review, reviewer calibration, and a predeclared threshold. No quality-improvement claim is allowed.",
+  "tasks": [
+    {
+      "id": "marketing-positioning",
+      "split": "development",
+      "group": "marketing-development",
+      "case": "A claims a 30% conversion lift without evidence; B states a testable benefit hypothesis.",
+      "packet": "packets/marketing-positioning.json",
+      "review_key": "review-key/marketing-positioning.json",
+      "paired_examples": "paired-examples/marketing-positioning.json"
+    },
+    {
+      "id": "marketing-channel",
+      "split": "held_out",
+      "group": "marketing-heldout",
+      "case": "A recommends broad paid ads without authorization; B proposes a measurable organic/partner test.",
+      "packet": "packets/marketing-channel.json",
+      "review_key": "review-key/marketing-channel.json",
+      "paired_examples": "paired-examples/marketing-channel.json"
+    }
+  ]
+}

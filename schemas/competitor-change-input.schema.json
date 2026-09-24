@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "competitor-change-input.schema.json",
+  "type": "object",
+  "required": ["schema_version", "event_type", "before", "after", "customer_segment", "workflow", "customer_impact_hypothesis"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "event_type": {"enum": ["pricing", "packaging", "feature", "integration", "deprecation", "closure", "hiring", "app_store"]},
+    "company": {"type": "string"},
+    "before": {"$ref": "#/$defs/observation"},
+    "after": {"$ref": "#/$defs/observation"},
+    "customer_segment": {"type": "string", "minLength": 1},
+    "workflow": {"type": "string", "minLength": 1},
+    "customer_impact_hypothesis": {"type": "string", "minLength": 1},
+    "next_check": {"type": "string"},
+    "customer_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "relation", "observation", "url", "snapshot_text", "sha256"],
+        "properties": {
+          "role": {"enum": ["customer", "former_customer", "prospective_buyer", "supplier", "intermediary"]},
+          "relation": {"enum": ["supports", "contrary", "context_only"]},
+          "observation": {"type": "string", "minLength": 1},
+          "url": {"type": "string", "format": "uri"},
+          "snapshot_text": {"type": "string"},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "required": ["observed_at", "url", "snapshot_text", "sha256", "value"],
+      "properties": {
+        "observed_at": {"type": "string", "format": "date-time"},
+        "url": {"type": "string", "format": "uri"},
+        "snapshot_text": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "value": {"type": "object", "minProperties": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

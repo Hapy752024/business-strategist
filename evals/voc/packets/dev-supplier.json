@@ -1,0 +1,48 @@
+{
+  "packet_id": "dev-supplier",
+  "synthetic_only": true,
+  "task_id": "dev-supplier",
+  "split": "development",
+  "connected_group": "synthetic-supplier-1",
+  "case_prompt": "supplier-authored claim mixed with customer discussion",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "Vendor page claims “cut admin time in half”; an independent user says they still reconcile two systems manually.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "supplier-authored claim mixed with customer discussion",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "V1",
+        "source_role": "supplier",
+        "original_text": "Teams save 50% of admin time.",
+        "observed_date": "2026-04-01",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S1",
+        "source_role": "customer",
+        "original_text": "I still reconcile the two systems by hand each Friday.",
+        "observed_date": "2026-04-17",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/dev-supplier.json",
+  "paired_examples_path": "packets/paired-examples/dev-supplier.json"
+}

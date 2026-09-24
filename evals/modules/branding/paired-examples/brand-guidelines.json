@@ -1,0 +1,15 @@
+{
+  "task_id": "brand-guidelines",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "illustrative output",
+      "artifact": "Concept A replaces the audience and positions the clinic as a luxury cosmetic practice."
+    },
+    "B": {
+      "label": "illustrative output",
+      "artifact": "Concept B keeps the straightforward administration position and uses a simple wordmark."
+    }
+  },
+  "provenance": "Synthetic evaluator fixture, not output from an agent run and not comparative performance evidence."
+}

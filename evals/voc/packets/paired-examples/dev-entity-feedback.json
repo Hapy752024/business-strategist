@@ -1,0 +1,22 @@
+{
+  "task_id": "dev-entity-feedback",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "weak illustrative output",
+      "text": "These comments prove customers broadly need a new SaaS product and would pay to switch.",
+      "evidence_ids": [
+        "S1"
+      ]
+    },
+    "B": {
+      "label": "bounded illustrative output",
+      "text": "Attribute the fix to supplier; check release date/version and seek later customer confirmation.",
+      "evidence_ids": [
+        "S1",
+        "V1"
+      ]
+    }
+  },
+  "provenance": "Illustrative outputs for reviewer calibration only; not produced by old or revised agents and not performance evidence."
+}

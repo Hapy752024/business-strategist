@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "status": "design_only_packets_and_scores_pending",
+  "module": "website",
+  "purpose": "Synthetic module-output comparison scaffold; not a result or gold-label set.",
+  "split_policy": "Keep paired fixtures in the same split; do not tune on held-out tasks.",
+  "split_counts": {
+    "development": 1,
+    "held_out": 1
+  },
+  "criteria_version": "1",
+  "critical_failures": [
+    "fabricated testimonial or result",
+    "broken primary conversion path"
+  ],
+  "dimensions": [
+    "brief_fidelity",
+    "user_task_clarity",
+    "content_evidence",
+    "accessibility",
+    "implementation_quality"
+  ],
+  "adoption_rule": "Unfrozen pending baseline, packet review, reviewer calibration, and a predeclared threshold. No quality-improvement claim is allowed.",
+  "tasks": [
+    {
+      "id": "website-homepage",
+      "split": "development",
+      "group": "website-development",
+      "case": "A invents customer proof; B labels the value proposition as a hypothesis.",
+      "packet": "packets/website-homepage.json",
+      "review_key": "review-key/website-homepage.json",
+      "paired_examples": "paired-examples/website-homepage.json"
+    },
+    {
+      "id": "website-form",
+      "split": "held_out",
+      "group": "website-heldout",
+      "case": "A form has no labels or error recovery; B supports keyboard use and clear errors.",
+      "packet": "packets/website-form.json",
+      "review_key": "review-key/website-form.json",
+      "paired_examples": "paired-examples/website-form.json"
+    }
+  ]
+}

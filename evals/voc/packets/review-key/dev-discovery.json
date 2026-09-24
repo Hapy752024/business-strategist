@@ -1,0 +1,12 @@
+{
+  "task_id": "dev-discovery",
+  "synthetic_only": true,
+  "acceptable_interpretation": "Different roles and volumes may explain the accounts; do not infer prevalence or willingness to pay.",
+  "critical_checks": [
+    "No fabricated or changed quotations",
+    "No supplier voice presented as customer proof",
+    "No unsupported prevalence or payment claim",
+    "Keep counterevidence and uncertainty"
+  ],
+  "reviewer_note": "Review guidance only; never provide to the generating agent."
+}

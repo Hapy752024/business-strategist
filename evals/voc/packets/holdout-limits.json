@@ -1,0 +1,48 @@
+{
+  "packet_id": "holdout-limits",
+  "synthetic_only": true,
+  "task_id": "holdout-limits",
+  "split": "held_out",
+  "connected_group": "holdout-synthetic-coverage-1",
+  "case_prompt": "unknown independence and material evidence gaps",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "Two independent buyers report pain, but neither describes a purchase; one is outside the target segment.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "unknown independence and material evidence gaps",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "target buyer",
+        "original_text": "We lose time preparing the monthly report.",
+        "observed_date": "2026-05-01",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S2",
+        "source_role": "buyer outside target",
+        "original_text": "We do this too, but our process is very different.",
+        "observed_date": "2026-05-03",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/holdout-limits.json",
+  "paired_examples_path": "packets/paired-examples/holdout-limits.json"
+}

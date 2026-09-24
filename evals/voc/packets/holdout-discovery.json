@@ -1,0 +1,48 @@
+{
+  "packet_id": "holdout-discovery",
+  "synthetic_only": true,
+  "task_id": "holdout-discovery",
+  "split": "held_out",
+  "connected_group": "holdout-synthetic-discovery-1",
+  "case_prompt": "discovery task with competing explanations",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "Owners mention late invoicing; accountants mention missing records; both discuss month-end delays.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "discovery task with competing explanations",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "small business owner",
+        "original_text": "I invoice late because I am waiting for receipts at month end.",
+        "observed_date": "2026-04-02",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S2",
+        "source_role": "accountant",
+        "original_text": "Clients send records after close, so reconciliation slips.",
+        "observed_date": "2026-04-07",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/holdout-discovery.json",
+  "paired_examples_path": "packets/paired-examples/holdout-discovery.json"
+}

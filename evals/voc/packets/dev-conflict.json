@@ -1,0 +1,48 @@
+{
+  "packet_id": "dev-conflict",
+  "synthetic_only": true,
+  "task_id": "dev-conflict",
+  "split": "development",
+  "connected_group": "synthetic-conflict-1",
+  "case_prompt": "conflicting customer accounts with different contexts",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "A one-person shop says setup is easy; a 40-person operator says migration took six weeks.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "conflicting customer accounts with different contexts",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "customer; one-person shop",
+        "original_text": "Setup took less than an hour.",
+        "observed_date": "2026-04-03",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S2",
+        "source_role": "customer; 40-person operator",
+        "original_text": "Moving six years of records took our team six weeks.",
+        "observed_date": "2026-04-09",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/dev-conflict.json",
+  "paired_examples_path": "packets/paired-examples/dev-conflict.json"
+}

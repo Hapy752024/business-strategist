@@ -1,0 +1,12 @@
+{
+  "task_id": "dev-resolved",
+  "synthetic_only": true,
+  "acceptable_interpretation": "Track one episode with a January complaint and March resolution; do not describe it as currently unresolved.",
+  "critical_checks": [
+    "No fabricated or changed quotations",
+    "No supplier voice presented as customer proof",
+    "No unsupported prevalence or payment claim",
+    "Keep counterevidence and uncertainty"
+  ],
+  "reviewer_note": "Review guidance only; never provide to the generating agent."
+}

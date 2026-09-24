@@ -1,0 +1,48 @@
+{
+  "packet_id": "dev-insufficient",
+  "synthetic_only": true,
+  "task_id": "dev-insufficient",
+  "split": "development",
+  "connected_group": "synthetic-coverage-1",
+  "case_prompt": "retrieval coverage too weak to support a finding",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "Search returned two old posts, no target-country results, and no direct customer episode.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "retrieval coverage too weak to support a finding",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "customer; old public post",
+        "original_text": "I had to redo the report.",
+        "observed_date": "2022-02-14",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S2",
+        "source_role": "search result; geography unresolved",
+        "original_text": "A snippet mentions reporting delays; destination country is unclear.",
+        "observed_date": "2021-11-02",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/dev-insufficient.json",
+  "paired_examples_path": "packets/paired-examples/dev-insufficient.json"
+}

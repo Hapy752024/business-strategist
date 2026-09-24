@@ -1,0 +1,12 @@
+{
+  "task_id": "dev-entity-feedback",
+  "synthetic_only": true,
+  "acceptable_interpretation": "Attribute the fix to supplier; check release date/version and seek later customer confirmation.",
+  "critical_checks": [
+    "No fabricated or changed quotations",
+    "No supplier voice presented as customer proof",
+    "No unsupported prevalence or payment claim",
+    "Keep counterevidence and uncertainty"
+  ],
+  "reviewer_note": "Review guidance only; never provide to the generating agent."
+}

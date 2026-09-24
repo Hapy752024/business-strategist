@@ -1,0 +1,15 @@
+{
+  "task_id": "marketing-channel",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "illustrative output",
+      "artifact": "Cut admin time in half. Trusted by 500 clinics. Start now."
+    },
+    "B": {
+      "label": "illustrative output",
+      "artifact": "Explore a clearer appointment workflow. See whether it fits your clinic."
+    }
+  },
+  "provenance": "Synthetic evaluator fixture, not output from an agent run and not comparative performance evidence."
+}

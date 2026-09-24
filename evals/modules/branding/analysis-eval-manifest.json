@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "status": "design_only_packets_and_scores_pending",
+  "module": "branding",
+  "purpose": "Synthetic module-output comparison scaffold; not a result or gold-label set.",
+  "split_policy": "Keep paired fixtures in the same split; do not tune on held-out tasks.",
+  "split_counts": {
+    "development": 1,
+    "held_out": 1
+  },
+  "criteria_version": "1",
+  "critical_failures": [
+    "unapproved strategic change",
+    "inaccessible color or type recommendation"
+  ],
+  "dimensions": [
+    "brief_fidelity",
+    "distinctiveness",
+    "system_coherence",
+    "accessibility",
+    "handoff_clarity"
+  ],
+  "adoption_rule": "Unfrozen pending baseline, packet review, reviewer calibration, and a predeclared threshold. No quality-improvement claim is allowed.",
+  "tasks": [
+    {
+      "id": "brand-direction",
+      "split": "development",
+      "group": "branding-development",
+      "case": "A concept changes the supplied audience and price position; B preserves them but has weaker visual novelty.",
+      "packet": "packets/brand-direction.json",
+      "review_key": "review-key/brand-direction.json",
+      "paired_examples": "paired-examples/brand-direction.json"
+    },
+    {
+      "id": "brand-guidelines",
+      "split": "held_out",
+      "group": "branding-heldout",
+      "case": "A palette has low contrast in body text; B preserves hierarchy and provides tested tokens.",
+      "packet": "packets/brand-guidelines.json",
+      "review_key": "review-key/brand-guidelines.json",
+      "paired_examples": "paired-examples/brand-guidelines.json"
+    }
+  ]
+}

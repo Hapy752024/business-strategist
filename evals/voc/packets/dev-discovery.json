@@ -1,0 +1,39 @@
+{
+  "packet_id": "dev-discovery",
+  "synthetic_only": true,
+  "task_id": "dev-discovery",
+  "split": "development",
+  "connected_group": "synthetic-discovery-1",
+  "case_prompt": "broad discovery with weakly specified customer problem",
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "broad discovery with weakly specified customer problem",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze the supplied episodes. Separate observation from interpretation. Preserve source roles, uncertainty, counterevidence and limits. Do not invent market prevalence or willingness to pay.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "customer",
+        "original_text": "Clinic administrator: “I spend about 25 minutes every Monday sending appointment reminders.”",
+        "source_language": "en",
+        "translation_of": null,
+        "observed_date": "2026-05-04",
+        "synthetic": true
+      },
+      {
+        "id": "S2",
+        "source_role": "customer",
+        "original_text": "Clinic director: “At our current volume, reminders fit into the front desk routine.”",
+        "source_language": "en",
+        "translation_of": null,
+        "observed_date": "2026-05-05",
+        "synthetic": true
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/dev-discovery.json",
+  "paired_examples_path": "packets/paired-examples/dev-discovery.json"
+}

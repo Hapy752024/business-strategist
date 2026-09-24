@@ -1,0 +1,29 @@
+{
+  "schema_version": 2,
+  "panel_version": "v1",
+  "subject": {
+    "name": "Cedar",
+    "domains": [
+      "cedar.example"
+    ]
+  },
+  "prompts": [
+    {
+      "id": "discover",
+      "version": 1,
+      "type": "unbranded_discovery",
+      "text": "Which garden service can I use?",
+      "source": "synthetic fixture, not demand evidence"
+    }
+  ],
+  "targets": [
+    {
+      "engine": "example",
+      "model": "model-v1",
+      "search_config": "search:on",
+      "surface": "api",
+      "locale": "en-GB",
+      "repetitions": 1
+    }
+  ]
+}

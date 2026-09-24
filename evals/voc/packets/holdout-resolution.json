@@ -1,0 +1,66 @@
+{
+  "packet_id": "holdout-resolution",
+  "synthetic_only": true,
+  "task_id": "holdout-resolution",
+  "split": "held_out",
+  "connected_group": "holdout-synthetic-incident-1",
+  "case_prompt": "multilingual resolved episode with exact source spans",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "German customer describes duplicate data entry in original text; later edit says a new connector removed most of it.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "multilingual resolved episode with exact source spans",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "customer",
+        "original_text": "Ich trage dieselben Daten jede Woche zweimal ein.",
+        "observed_date": "2026-02-11",
+        "source_language": "de",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "T1",
+        "source_role": "translation",
+        "original_text": "I enter the same data twice every week.",
+        "observed_date": "2026-02-11",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": "1"
+      },
+      {
+        "id": "S2",
+        "source_role": "same customer later update",
+        "original_text": "Mit der neuen Schnittstelle ist es weniger geworden, aber noch nicht ganz weg.",
+        "observed_date": "2026-04-04",
+        "source_language": "de",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "T2",
+        "source_role": "translation",
+        "original_text": "With the new connector it happens less, but has not disappeared.",
+        "observed_date": "2026-04-04",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": "2"
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/holdout-resolution.json",
+  "paired_examples_path": "packets/paired-examples/holdout-resolution.json"
+}

@@ -1,0 +1,10 @@
+{
+  "task_id": "brand-direction",
+  "synthetic_only": true,
+  "acceptable_interpretation": "Judge against the supplied brief, factual limits, primary user task and applicable module rubric. Do not treat polished language or visual novelty as evidence of demand.",
+  "critical_checks": [
+    "unapproved strategic change",
+    "inaccessible color or type recommendation"
+  ],
+  "reviewer_note": "Keep this key out of the generation prompt."
+}

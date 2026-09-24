@@ -1,0 +1,22 @@
+{
+  "task_id": "holdout-limits",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "weak illustrative output",
+      "text": "These comments prove customers broadly need a new SaaS product and would pay to switch.",
+      "evidence_ids": [
+        "S1"
+      ]
+    },
+    "B": {
+      "label": "bounded illustrative output",
+      "text": "Two episodes include one out-of-segment buyer; neither establishes purchase or prevalence.",
+      "evidence_ids": [
+        "S1",
+        "S2"
+      ]
+    }
+  },
+  "provenance": "Illustrative outputs for reviewer calibration only; not produced by old or revised agents and not performance evidence."
+}

@@ -1,0 +1,22 @@
+{
+  "task_id": "dev-discovery",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "weak illustrative output",
+      "text": "These comments prove customers broadly need a new SaaS product and would pay to switch.",
+      "evidence_ids": [
+        "S1"
+      ]
+    },
+    "B": {
+      "label": "bounded illustrative output",
+      "text": "Different roles and volumes may explain the accounts; do not infer prevalence or willingness to pay.",
+      "evidence_ids": [
+        "S1",
+        "S2"
+      ]
+    }
+  },
+  "provenance": "Illustrative outputs for reviewer calibration only; not produced by old or revised agents and not performance evidence."
+}

@@ -1,0 +1,15 @@
+{
+  "task_id": "website-homepage",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "illustrative output",
+      "artifact": "<form><input placeholder=\"Email\"><button>Get 30% more appointments</button></form>"
+    },
+    "B": {
+      "label": "illustrative output",
+      "artifact": "<form><label for=\"email\">Work email</label><input id=\"email\" type=\"email\" required><button>Request a demo</button><p>We will contact you about the appointment workflow.</p></form>"
+    }
+  },
+  "provenance": "Synthetic evaluator fixture, not output from an agent run and not comparative performance evidence."
+}

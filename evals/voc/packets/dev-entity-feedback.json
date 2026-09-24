@@ -1,0 +1,48 @@
+{
+  "packet_id": "dev-entity-feedback",
+  "synthetic_only": true,
+  "task_id": "dev-entity-feedback",
+  "split": "development",
+  "connected_group": "synthetic-entity-1",
+  "case_prompt": "entity-led review feedback with supplier replies present",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "Customer: “The export breaks our monthly report.” Supplier reply: “Fixed in version 4.2.”",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "review_key_path": "packets/review-key/dev-entity-feedback.json",
+  "paired_examples_path": "packets/paired-examples/dev-entity-feedback.json",
+  "generation_input": {
+    "question": "entity-led review feedback with supplier replies present",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "customer",
+        "original_text": "The export breaks our monthly report.",
+        "observed_date": "2026-04-12",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "V1",
+        "source_role": "supplier",
+        "original_text": "Fixed in version 4.2.",
+        "observed_date": "2026-04-13",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  }
+}

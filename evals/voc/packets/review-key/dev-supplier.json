@@ -1,0 +1,12 @@
+{
+  "task_id": "dev-supplier",
+  "synthetic_only": true,
+  "acceptable_interpretation": "Supplier time-savings claim is unverified; the customer reports one weekly manual reconciliation.",
+  "critical_checks": [
+    "No fabricated or changed quotations",
+    "No supplier voice presented as customer proof",
+    "No unsupported prevalence or payment claim",
+    "Keep counterevidence and uncertainty"
+  ],
+  "reviewer_note": "Review guidance only; never provide to the generating agent."
+}

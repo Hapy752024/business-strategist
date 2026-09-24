@@ -1,0 +1,21 @@
+{
+  "task_id": "brand-direction",
+  "synthetic_only": true,
+  "generation_input": {
+    "brief": {
+      "audience": "Owner-operated local dental clinics",
+      "position": "Straightforward appointment administration",
+      "tone": "Calm, precise, human",
+      "constraints": [
+        "Do not imply clinical outcomes",
+        "Body text contrast at least WCAG AA"
+      ]
+    },
+    "requested_output": "A concept changes the supplied audience and price position; B preserves them but has weaker visual novelty.",
+    "existing_identity": "No approved logo or visual identity supplied."
+  },
+  "limits": [
+    "Synthetic design fixture; no user research or outcome evidence.",
+    "Reviewer key is separate from generation input."
+  ]
+}

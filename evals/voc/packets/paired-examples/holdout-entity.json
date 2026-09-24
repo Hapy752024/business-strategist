@@ -1,0 +1,25 @@
+{
+  "task_id": "holdout-entity",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "weak illustrative output",
+      "text": "These comments prove customers broadly need a new SaaS product and would pay to switch.",
+      "evidence_ids": [
+        "S1"
+      ]
+    },
+    "B": {
+      "label": "bounded illustrative output",
+      "text": "Three bounded complaints and one counterexample; supplier beta is intent, not a confirmed fix.",
+      "evidence_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "V1"
+      ]
+    }
+  },
+  "provenance": "Illustrative outputs for reviewer calibration only; not produced by old or revised agents and not performance evidence."
+}

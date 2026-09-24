@@ -1,0 +1,75 @@
+{
+  "packet_id": "holdout-entity",
+  "synthetic_only": true,
+  "task_id": "holdout-entity",
+  "split": "held_out",
+  "connected_group": "holdout-synthetic-entity-1",
+  "case_prompt": "entity feedback with counterevidence and supplier contamination",
+  "evidence_items": [
+    {
+      "id": "S1",
+      "role": "customer",
+      "span": "Three dated customers complain about a required integration; vendor announces beta; one customer praises workaround.",
+      "source_label": "Synthetic fixture, not an external source",
+      "date": "2026-01-01"
+    }
+  ],
+  "limits": [
+    "Synthetic input only, never customer evidence.",
+    "Review keys and example outputs are separate and must not be supplied to the generator."
+  ],
+  "generation_input": {
+    "question": "entity feedback with counterevidence and supplier contamination",
+    "customer_scope": "Synthetic task scope only",
+    "instructions": "Analyze these episodes. Separate observation and interpretation; retain source role, chronology, counterevidence, alternatives and limits. Do not invent prevalence, payment or switching.",
+    "evidence_items": [
+      {
+        "id": "S1",
+        "source_role": "customer",
+        "original_text": "The accounting connector has been missing for six months.",
+        "observed_date": "2026-02-02",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S2",
+        "source_role": "customer",
+        "original_text": "I export and reformat the report each Friday.",
+        "observed_date": "2026-02-13",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S3",
+        "source_role": "customer",
+        "original_text": "We cannot close books without manually checking the integration.",
+        "observed_date": "2026-03-01",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "S4",
+        "source_role": "customer counterexample",
+        "original_text": "Our bookkeeper uses the existing CSV and it works fine.",
+        "observed_date": "2026-03-11",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      },
+      {
+        "id": "V1",
+        "source_role": "supplier",
+        "original_text": "Connector beta opens next month.",
+        "observed_date": "2026-03-18",
+        "source_language": "en",
+        "synthetic": true,
+        "translation_of": null
+      }
+    ]
+  },
+  "review_key_path": "packets/review-key/holdout-entity.json",
+  "paired_examples_path": "packets/paired-examples/holdout-entity.json"
+}

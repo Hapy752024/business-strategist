@@ -1,0 +1,22 @@
+{
+  "task_id": "holdout-discovery",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "weak illustrative output",
+      "text": "These comments prove customers broadly need a new SaaS product and would pay to switch.",
+      "evidence_ids": [
+        "S1"
+      ]
+    },
+    "B": {
+      "label": "bounded illustrative output",
+      "text": "Month-end delays may share a workflow but have distinct causes; retain both interpretations.",
+      "evidence_ids": [
+        "S1",
+        "S2"
+      ]
+    }
+  },
+  "provenance": "Illustrative outputs for reviewer calibration only; not produced by old or revised agents and not performance evidence."
+}

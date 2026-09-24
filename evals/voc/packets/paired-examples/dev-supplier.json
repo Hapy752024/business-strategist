@@ -1,0 +1,22 @@
+{
+  "task_id": "dev-supplier",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "weak illustrative output",
+      "text": "These comments prove customers broadly need a new SaaS product and would pay to switch.",
+      "evidence_ids": [
+        "S1"
+      ]
+    },
+    "B": {
+      "label": "bounded illustrative output",
+      "text": "Supplier time-savings claim is unverified; the customer reports one weekly manual reconciliation.",
+      "evidence_ids": [
+        "V1",
+        "S1"
+      ]
+    }
+  },
+  "provenance": "Illustrative outputs for reviewer calibration only; not produced by old or revised agents and not performance evidence."
+}

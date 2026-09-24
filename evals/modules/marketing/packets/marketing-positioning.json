@@ -1,0 +1,18 @@
+{
+  "task_id": "marketing-positioning",
+  "synthetic_only": true,
+  "generation_input": {
+    "brief": {
+      "audience": "Owner-operated local dental clinics",
+      "objective": "Test whether reminder workload is a problem worth investigating",
+      "proof": "Synthetic packet only; no validated customer claim",
+      "spend_authorized": false
+    },
+    "requested_output": "A claims a 30% conversion lift without evidence; B states a testable benefit hypothesis.",
+    "existing_position": "Straightforward appointment administration; no validated pain or performance evidence."
+  },
+  "limits": [
+    "Synthetic design fixture; no user research or outcome evidence.",
+    "Reviewer key is separate from generation input."
+  ]
+}

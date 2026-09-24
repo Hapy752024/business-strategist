@@ -1,0 +1,12 @@
+{
+  "task_id": "dev-independence",
+  "synthetic_only": true,
+  "acceptable_interpretation": "The quoted client and repeated account may be one source; independent count remains unknown.",
+  "critical_checks": [
+    "No fabricated or changed quotations",
+    "No supplier voice presented as customer proof",
+    "No unsupported prevalence or payment claim",
+    "Keep counterevidence and uncertainty"
+  ],
+  "reviewer_note": "Review guidance only; never provide to the generating agent."
+}

@@ -1,0 +1,24 @@
+{
+  "task_id": "holdout-resolution",
+  "synthetic_only": true,
+  "outputs": {
+    "A": {
+      "label": "weak illustrative output",
+      "text": "These comments prove customers broadly need a new SaaS product and would pay to switch.",
+      "evidence_ids": [
+        "S1"
+      ]
+    },
+    "B": {
+      "label": "bounded illustrative output",
+      "text": "Keep original German and translation distinct; represent later partial improvement.",
+      "evidence_ids": [
+        "S1",
+        "T1",
+        "S2",
+        "T2"
+      ]
+    }
+  },
+  "provenance": "Illustrative outputs for reviewer calibration only; not produced by old or revised agents and not performance evidence."
+}

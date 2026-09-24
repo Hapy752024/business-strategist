@@ -1,0 +1,21 @@
+{
+  "task_id": "brand-guidelines",
+  "synthetic_only": true,
+  "generation_input": {
+    "brief": {
+      "audience": "Owner-operated local dental clinics",
+      "position": "Straightforward appointment administration",
+      "tone": "Calm, precise, human",
+      "constraints": [
+        "Do not imply clinical outcomes",
+        "Body text contrast at least WCAG AA"
+      ]
+    },
+    "requested_output": "A palette has low contrast in body text; B preserves hierarchy and provides tested tokens.",
+    "existing_identity": "No approved logo or visual identity supplied."
+  },
+  "limits": [
+    "Synthetic design fixture; no user research or outcome evidence.",
+    "Reviewer key is separate from generation input."
+  ]
+}
