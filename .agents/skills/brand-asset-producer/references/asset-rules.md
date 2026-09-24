@@ -73,3 +73,5 @@ For every exported file, record:
 - Notes or tool warnings.
 
 Before delivery, verify each manifest entry points to an existing file.
+
+After AI-assisted generation, rebuild or edit the mark in a vector editor and record the edit pass in the asset manifest; the unedited generation is never the master.

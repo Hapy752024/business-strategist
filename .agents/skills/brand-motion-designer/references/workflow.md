@@ -1,8 +1,4 @@
-# Imported workflow
-
-## Procedure
-
-# Brand Motion Designer
+# Brand Motion Designer Workflow
 
 ## Success Criteria
 - Quantitative: >=90% trigger on motion/transition requests; <=3 iteration rounds per pillar; zero invalid token files at Stop.
@@ -25,9 +21,6 @@
 - Dispatch fresh subagents per `references/subagent-dispatch.md` whenever work parallelizes.
 
 
-## Output
-
-Follow the output contract described by this skill and preserve provenance.
 
 ## Quality Checklist
 

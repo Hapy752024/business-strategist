@@ -1,20 +1,5 @@
-# Imported workflow
+# Brand Workspace Manager Workflow
 
-## Procedure
-
-# Brand Workspace Manager
-
-## Success Criteria
-
-Quantitative:
-- Triggers on >=90% of user requests that match the skill's trigger conditions in the description.
-- Completes the workflow in a bounded number of tool calls (target <=15 for production skills, <=25 for research-heavy skills).
-- Produces zero failed API/script calls per run.
-
-Qualitative:
-- User does not need to redirect mid-workflow.
-- Output is structurally consistent across repeated runs.
-- A new user can accomplish the task on the first try without guidance.
 
 Use at the start of every brand project and before regenerating stage assets.
 
@@ -44,10 +29,6 @@ python3 scripts/workspace_cli.py promote projects/my-brand/branding --artifact-i
 
 `promote` is a dry run without `--confirm`. A different existing destination fails closed. Use `--replace-conflict --replacement-approver "<identity>"` only after separate explicit replacement approval; do not infer it from approval of the candidate. Record source artifact IDs for derivatives and supersede prior approvals explicitly.
 
-
-## Output
-
-Follow the output contract described by this skill and preserve provenance.
 
 ## Quality Checklist
 

@@ -49,3 +49,5 @@
 - File manifest.
 - Known gaps.
 - Next review checklist.
+
+Verbal identity chapter: personality, tone sliders and channel flex, value proposition, message pillars with proof, tagline, vocabulary, and do/don't examples.

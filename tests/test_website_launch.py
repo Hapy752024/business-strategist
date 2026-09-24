@@ -132,3 +132,11 @@ def test_optional_analytics_requires_explicit_disposition():
     assert launch.errors(d, commit=SHA, url=URL, deployment_id=d['deployment_id'])
     d = ready(); d['checks']['analytics'] = {'status': 'not_requested', 'evidence': ''}
     assert launch.errors(d, commit=SHA, url=URL, deployment_id=d['deployment_id'])
+
+
+def test_validation_page_route_is_lightweight_and_reads_smoke_reference():
+    from scripts import route_workflow
+    packet = route_workflow.route_request('build a smoke test landing page', intent='validation-page',
+                                         task_scope='execution', check_skill='brand-website-designer-builder')
+    assert packet['mode'] == 'validation_page'
+    assert 'references/smoke-test.md' in packet['required_references']

@@ -1,20 +1,5 @@
-# Imported workflow
+# Brand Exporter Workflow
 
-## Procedure
-
-# Brand Exporter
-
-## Success Criteria
-
-Quantitative:
-- Triggers on >=90% of user requests that match the skill's trigger conditions in the description.
-- Completes the workflow in a bounded number of tool calls (target <=15 for production skills, <=25 for research-heavy skills).
-- Produces zero failed API/script calls per run.
-
-Qualitative:
-- User does not need to redirect mid-workflow.
-- Output is structurally consistent across repeated runs.
-- A new user can accomplish the task on the first try without guidance.
 
 Run only after all requested stages are approved and HIGH review issues are resolved.
 Before export, ask the user to confirm finalization if approval is not explicit.
@@ -34,10 +19,6 @@ Create:
 Use `references/export-format.md` for file contents.
 Use `scripts/create-brand-agent-skill.py` to scaffold final files.
 
-
-## Output
-
-Follow the output contract described by this skill and preserve provenance.
 
 ## Quality Checklist
 

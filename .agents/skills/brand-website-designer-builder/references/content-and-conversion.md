@@ -10,3 +10,5 @@ Design and write the page so it radiates confidence: make a clear promise, use d
 - Tie strong language to an identified customer outcome, approved differentiator, or visible proof. “The clearest path to …” can express positioning; “the #1 …” or “guaranteed …” requires evidence and approval.
 - When evidence is unresolved, use confident but non-factual framing (“a more considered way to …”, “built for …”) instead of inventing rankings, guarantees, market leadership, or performance claims.
 - Balance assertive copy with concrete details, testimonials/certifications where available, and a low-friction CTA. Confidence should feel earned through specificity and composition, not inflated adjectives.
+
+When `marketing/keywords/keyword-map.json` exists, derive page inventory and headings from its clusters; otherwise record the missing map as an owner action rather than inventing keywords.

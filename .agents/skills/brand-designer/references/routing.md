@@ -17,3 +17,5 @@ The orchestrator dispatches to these child skills by name, in pipeline order:
 - Frontend apps/flows: use `brand-frontend-app-designer`.
 - Quality review: use `brand-quality-reviewer`.
 - Final exports/guidelines: use `brand-exporter` and `brand-guidelines-writer`.
+
+Verbal identity (voice, messaging, tagline): use brand-strategy-director per `brand-strategy-director/references/verbal-identity.md`. Naming and preliminary legal checks: use brand-strategy-director per `brand-strategy-director/references/naming-and-checks.md`. Mark imagery style, motion, UI tokens, components and app screens as opt-in by default.

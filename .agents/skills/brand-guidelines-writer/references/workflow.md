@@ -1,20 +1,5 @@
-# Imported workflow
+# Brand Guidelines Writer Workflow
 
-## Procedure
-
-# Brand Guidelines Writer
-
-## Success Criteria
-
-Quantitative:
-- Triggers on >=90% of user requests that match the skill's trigger conditions in the description.
-- Completes the workflow in a bounded number of tool calls (target <=15 for production skills, <=25 for research-heavy skills).
-- Produces zero failed API/script calls per run.
-
-Qualitative:
-- User does not need to redirect mid-workflow.
-- Output is structurally consistent across repeated runs.
-- A new user can accomplish the task on the first try without guidance.
 
 Assemble the final source of truth.
 
@@ -41,10 +26,6 @@ Include:
 
 Use `references/guideline-template.md` for the document outline.
 
-
-## Output
-
-Follow the output contract described by this skill and preserve provenance.
 
 ## Quality Checklist
 

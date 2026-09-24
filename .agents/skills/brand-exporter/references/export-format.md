@@ -83,3 +83,5 @@ Use stable, lowercase kebab-case names:
 - Component tokens: `component.button.primary`.
 
 Avoid ambiguous names like `--blue` or `--nice-gray`.
+
+Verbal identity package: `voice/voice.json` and `voice/voice.md` for marketing and website copy.

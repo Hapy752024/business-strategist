@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
 from scripts.case_outputs import run_staged, cases
 
 
-STAGES = ("discovery", "research", "strategy", "logo", "colors", "typography", "imagery-style", "motion-concept", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export")
+STAGES = ("discovery", "naming", "research", "strategy", "voice", "logo", "colors", "typography", "imagery-style", "motion-concept", "imagery", "tokens", "motion", "components", "ui", "website", "marketing", "qa", "guidelines", "export")
 
 
 def load(path: Path) -> dict:

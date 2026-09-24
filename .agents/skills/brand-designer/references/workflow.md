@@ -1,12 +1,4 @@
-# Imported workflow
-
-## Procedure
-
-# Brand Designer
-## Success Criteria
-- Quantitative: >=90% trigger on brand identity / corporate design / design-system work; <=25 tool calls per run; zero failed child-skill dispatches.
-- Qualitative: no mid-workflow redirects; discovery stays one question at a time; a new user completes a brand identity project on the first try.
-
+# Brand Designer Workflow
 Rules:
 - On start, run `scripts/check-brand-tooling.py` if available; otherwise read `references/startup-check.md`.
 - Use `brand-workspace-manager` to create/manage the project folder.
@@ -24,7 +16,7 @@ Rules:
 - Dispatch a fresh subagent per pipeline stage whenever stages can run in parallel (e.g. motion pillars + component taxonomy scoping), and one critic subagent for the finalization gate review. Never parallelize subagents that touch the same brand-project folder.
 
 Routing: see `references/routing.md` for the child-skill dispatch table.
-Pipeline order: typography -> imagery-style (`brand-asset-producer`, art-direction mode) -> motion-concept (`brand-motion-designer`, concept mode) -> imagery (`brand-asset-producer`) -> tokens (`brand-ui-kit-producer`) -> motion tokens/impls (`brand-motion-designer`) -> components (`brand-ui-component-producer`) -> screens (`brand-frontend-app-designer`).
+Pipeline order: discovery -> naming (if needed) -> strategy -> voice -> logo -> colors -> typography -> guidelines -> export; imagery-style (`brand-asset-producer`, art-direction mode) -> motion-concept (`brand-motion-designer`, concept mode) -> imagery (`brand-asset-producer`) -> tokens (`brand-ui-kit-producer`) -> motion tokens/impls (`brand-motion-designer`) -> components (`brand-ui-component-producer`) -> screens (`brand-frontend-app-designer`).
 
 Gates:
 - `imagery-style` must be approved before any imagery asset production: medium (photo/illustration/hybrid), treatment (grading, overlays), subject mix, crop ratios, licensing, and 2-3 style frames. Template: `brand-asset-producer/references/imagery-art-direction.md`.
@@ -38,10 +30,9 @@ Canonical package workflow:
 Refs: `references/orchestration.md`, `references/guided-user-journey.md`, `references/design-guideline-anatomy.md`, `references/tooling-decision.md`, `references/startup-check.md`.
 
 
-## Output
-
-Follow the output contract described by this skill and preserve provenance.
 
 ## Quality Checklist
 
 Run the skill's existing checks and do not claim completion with unresolved blockers.
+
+Default scope (lean brand sprint): discovery → naming (if needed) → strategy → voice → logo system (primary, secondary, mark, monochrome, favicon) → color → typography → short guidelines → export/brand kit. Imagery style, motion, UI tokens, component libraries and app screens are opt-in stages requested by the founder or triggered by a website/product build; do not propose them by default before product-market fit.

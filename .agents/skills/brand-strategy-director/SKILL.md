@@ -18,3 +18,5 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 ## Quality Checklist
 
 Run the relevant validators before delivery; never promote unapproved artifacts.
+
+For the voice stage, read [verbal identity](references/verbal-identity.md).

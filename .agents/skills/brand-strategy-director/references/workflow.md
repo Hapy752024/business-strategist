@@ -1,20 +1,5 @@
-# Imported workflow
+# Brand Strategy Director Workflow
 
-## Procedure
-
-# Brand Strategy Director
-
-## Success Criteria
-
-Quantitative:
-- Triggers on >=90% of user requests that match the skill's trigger conditions in the description.
-- Completes the workflow in a bounded number of tool calls (target <=15 for production skills, <=25 for research-heavy skills).
-- Produces zero failed API/script calls per run.
-
-Qualitative:
-- User does not need to redirect mid-workflow.
-- Output is structurally consistent across repeated runs.
-- A new user can accomplish the task on the first try without guidance.
 
 Do not create final assets until a territory is approved.
 
@@ -38,10 +23,6 @@ End by instructing the user to choose a number, combine options, or reject all 3
 
 Use `references/territory-template.md` when writing the options.
 
-
-## Output
-
-Follow the output contract described by this skill and preserve provenance.
 
 ## Quality Checklist
 

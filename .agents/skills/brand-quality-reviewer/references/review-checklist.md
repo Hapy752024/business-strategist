@@ -85,3 +85,8 @@ When subagents are available, launch a critic with only:
 - Review checklist.
 
 Do not include the creator's reasoning or expected answer.
+
+HIGH checks:
+- Trademark similarity search recorded in naming/checks.md for name, tagline and mark, with date and classes.
+- Human vector-edit pass on the approved mark recorded (who, what changed, date); AI raster alone is not an approved master.
+- Mark legible at 16px favicon size and in monochrome positive and reversed.

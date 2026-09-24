@@ -1,8 +1,4 @@
-# Imported workflow
-
-## Procedure
-
-# Brand UI Component Producer
+# Brand Ui Component Producer Workflow
 
 ## Success Criteria
 - Quantitative: >=90% trigger on branded component requests; 100% of shipped components have passing tests; zero unbranded components at Stop.
@@ -22,9 +18,6 @@
 - Dispatch fresh subagents per `references/subagent-dispatch.md` whenever component work parallelizes.
 
 
-## Output
-
-Follow the output contract described by this skill and preserve provenance.
 
 ## Quality Checklist
 
