@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "numeric-claim.schema.json",
+  "title": "Source-attributed numeric claim",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "document",
+    "status",
+    "value",
+    "metric",
+    "period",
+    "currency",
+    "unit",
+    "scope"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "document": {
+      "enum": [
+        "README.md",
+        "case_insights.md",
+        "feasibility.md",
+        "business-case.md",
+        "comparison.summary",
+        "comparison.principal_uncertainty",
+        "comparison.next_action"
+      ]
+    },
+    "status": {
+      "enum": [
+        "verified",
+        "unverified"
+      ]
+    },
+    "value": {
+      "type": "string",
+      "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+    },
+    "metric": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "period": {
+      "type": "string",
+      "minLength": 1
+    },
+    "currency": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Z]{3}$"
+    },
+    "unit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_binding": {
+      "type": "object",
+      "required": [
+        "path",
+        "digest",
+        "locator",
+        "applicability"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "locator": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "applicability": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "status": {
+          "const": "verified"
+        }
+      },
+      "required": [
+        "source_binding"
+      ],
+      "not": {
+        "required": [
+          "reason"
+        ]
+      }
+    },
+    {
+      "properties": {
+        "status": {
+          "const": "unverified"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "not": {
+        "required": [
+          "source_binding"
+        ]
+      }
+    }
+  ]
+}

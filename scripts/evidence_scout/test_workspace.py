@@ -61,7 +61,8 @@ class WorkspaceTests(unittest.TestCase):
             self.assertIn("Acquisition and relationship feasibility", readme)
             self.assertIn("pain-first", readme)
             self.assertIn("Founder decision context", thesis)
-            update_stage(
+            with self.assertRaisesRegex(ValueError, "verifiable run_dir"):
+                update_stage(
                 workspace,
                 "evidence_collection",
                 status="passed",
@@ -69,13 +70,12 @@ class WorkspaceTests(unittest.TestCase):
                 artifacts=[workspace / "README.md"],
                 open_gaps=["payment evidence missing"],
                 next_action="Run interviews",
-            )
+                )
             manifest = json.loads((workspace / "market_research" / "manifest.json").read_text(encoding="utf-8"))
-            self.assertEqual(manifest["current_stage"], "evidence_collection")
-            self.assertEqual(manifest["stages"]["evidence_collection"]["gate_result"], "conditional_pass")
-            self.assertIn("README.md", manifest["artifacts"])
+            self.assertNotEqual(manifest["current_stage"], "evidence_collection")
+            self.assertEqual(manifest["stages"]["evidence_collection"]["status"], "pending")
             self.assertIn("market_discovery", manifest["stages"])
-            self.assertEqual(manifest["manifest_revision"], 2)
+            self.assertEqual(manifest["manifest_revision"], 1)
 
     def test_passed_stage_rejects_missing_artifacts_but_preserves_explicit_output(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -87,10 +87,11 @@ class WorkspaceTests(unittest.TestCase):
                 )
             external = Path(temporary).parent / "outside.md"
             external.write_text("external", encoding="utf-8")
-            update_stage(
-                workspace, "evidence_collection", status="passed", gate_result="pass",
-                artifacts=[external],
-            )
+            with self.assertRaisesRegex(ValueError, "verifiable run_dir"):
+                update_stage(
+                    workspace, "evidence_collection", status="passed", gate_result="pass",
+                    artifacts=[external],
+                )
 
     def test_explicit_output_preserves_compatibility(self) -> None:
         run_dir, workspace = resolve_run_dir(

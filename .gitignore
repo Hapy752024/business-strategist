@@ -37,6 +37,7 @@ Thumbs.db
 *~
 
 # Generated research outputs
+projects/
 research/
 research.sqlite
 
@@ -69,3 +70,6 @@ eval-workspaces/
 
 # Opt-in model eval outputs
 evals/live-results/
+
+# Documentations
+docs/

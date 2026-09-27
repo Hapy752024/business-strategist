@@ -427,9 +427,13 @@ def fields_present(data: Any, max_depth: int = 2) -> list[str]:
 
 def cli_arg(name: str, default: str) -> str:
     prefix = f"--{name}="
-    for arg in sys.argv[1:]:
+    for index, arg in enumerate(sys.argv[1:], start=1):
         if arg.startswith(prefix):
             return arg[len(prefix) :]
+        if arg == f"--{name}":
+            if index + 1 >= len(sys.argv) or sys.argv[index + 1].startswith("--"):
+                raise ValueError(f"--{name} requires a value")
+            return sys.argv[index + 1]
     return default
 
 

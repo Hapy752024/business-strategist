@@ -20,7 +20,9 @@ def score(case: dict, answer: str) -> dict:
     lower = answer.lower()
     missing = [term for term in case.get('must_mention', []) if term.lower() not in lower]
     hit = [term for term in case.get('must_not_mention', []) if term.lower() in lower]
-    return {'case_id': case.get('id'), 'passed': not missing and not hit,
+    scorable = bool(case.get('must_mention') or case.get('must_not_mention'))
+    status = 'failed' if not answer.strip() else ('unscored' if not scorable else ('failed' if missing or hit else 'passed'))
+    return {'case_id': case.get('id'), 'status': status, 'passed': status == 'passed',
             'missing_terms': missing, 'forbidden_terms_hit': hit}
 
 
@@ -32,7 +34,9 @@ def run_case(skill: str, case: dict) -> str:
     if out.returncode != 0:
         raise RuntimeError(out.stderr[-2000:])
     payload = json.loads(out.stdout)
-    return payload.get('result', '') if isinstance(payload, dict) else str(payload)
+    if not isinstance(payload, dict) or payload.get('is_error') or not isinstance(payload.get('result'), str):
+        raise RuntimeError('live runner returned an error or invalid result envelope')
+    return payload['result']
 
 
 def main() -> int:
@@ -57,7 +61,7 @@ def main() -> int:
         result = score(case, answer) | {'answer': answer}
         (args.out / f"{args.skill}-{case.get('id')}.json").write_text(json.dumps(result, indent=2) + '\n')
         failures += not result['passed']
-        print(f"{'PASS' if result['passed'] else 'FAIL'} {args.skill} #{case.get('id')} missing={result['missing_terms']} forbidden={result['forbidden_terms_hit']}")
+        print(f"{result['status'].upper()} {args.skill} #{case.get('id')} missing={result['missing_terms']} forbidden={result['forbidden_terms_hit']}")
     return 1 if failures else 0
 
 

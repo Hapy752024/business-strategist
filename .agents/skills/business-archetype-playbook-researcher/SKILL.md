@@ -5,6 +5,8 @@ description: Research sourced founder and operator playbooks for a specific busi
 
 # Business Archetype Playbook Researcher
 
+For a registered Business case, pass applicable operator lessons, transfer limits and answered founder questions to the case-insights owner under repo-root `references/case-insights.md`; retain the sourced playbook separately.
+
 ## Success Criteria
 - **Quantitative:** triggers on >=90% of playbook/operator-research queries; completes in <=15 tool calls; collects from >=3 distinct source types; zero operator anecdotes presented as customer-demand evidence.
 - **Qualitative:** source URLs, dates, and context are preserved; failure cases and selection bias are disclosed; operator patterns are separated from customer evidence.

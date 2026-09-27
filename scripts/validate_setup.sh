@@ -187,10 +187,12 @@ check "eval structure is valid" python3 scripts/run_evals.py
 # ── Schemas ───────────────────────────────────────────────
 echo ""
 echo "--- Schemas ---"
-for schema in evidence-record ads-record competitor entity-landscape stage-checkpoint research-manifest project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record strategy-plan content-brief; do
+for schema in evidence-record ads-record competitor entity-landscape stage-checkpoint research-manifest case-insights project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record numeric-claim strategy-plan content-brief; do
     check "schemas/$schema.schema.json exists" test -f "schemas/$schema.schema.json"
     check "schemas/$schema.schema.json is valid JSON" python3 -c "import json; json.load(open('schemas/$schema.schema.json'))" 2>/dev/null
 done
+check "case insights template exists" test -f templates/project/case_insights.md
+check "case insights contract exists" test -f references/case-insights.md
 check "skill catalog is valid JSON" python3 -c "import json; json.load(open('config/skill-catalog.json'))" 2>/dev/null
 check "workflow routes are valid JSON" python3 -c "import json; json.load(open('config/workflow-routes.json'))" 2>/dev/null
 check "website route smoke test passes" python3 -c "import subprocess,sys; out=subprocess.check_output(['python3','scripts/route_workflow.py','Build a distinctive Next.js landing page'], text=True); sys.exit(0 if 'brand-website-designer-builder' in out else 1)"

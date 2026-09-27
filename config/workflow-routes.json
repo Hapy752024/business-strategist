@@ -478,6 +478,13 @@
       "requires_pain_gate": true
     },
     {
+      "id": "case-insights",
+      "match": ["consolidate case insights", "update case insights", "case insights document", "answer in case insights"],
+      "skill": "opportunity-risk-designer",
+      "mode": "insights",
+      "forbidden": []
+    },
+    {
       "id": "case-appraisal",
       "match": [
         "assess case feasibility",

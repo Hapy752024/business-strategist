@@ -6,18 +6,34 @@ import json
 import time
 from pathlib import Path
 
+try:
+    from .workspace import prepare_research_output, cases
+except ImportError:
+    from workspace import prepare_research_output, cases
+
 PAIN_FRAMES = ['cost of the current workaround', 'time or effort lost', 'risk or fear of getting it wrong',
                'missed outcome or opportunity', 'trust in existing providers']
 
 
-def build(*, run_dir: Path, hypothesis_id: str, offer: str, segment: str, variants: int, out_dir: Path) -> Path:
+def build(*, run_dir: Path, hypothesis_id: str, offer: str, segment: str, variants: int, out_dir: Path, source_bindings: str = '') -> Path:
     if not 1 <= variants <= len(PAIN_FRAMES):
         raise ValueError(f'variants must be between 1 and {len(PAIN_FRAMES)}')
     if not hypothesis_id.strip() or not offer.strip() or not segment.strip():
         raise ValueError('hypothesis_id, offer, and segment must be nonempty')
-    summary = json.loads((run_dir / 'summary.json').read_text()) if (run_dir / 'summary.json').exists() else {}
+    run_dir, out_dir = run_dir.absolute(), out_dir.absolute()
+    if not run_dir.is_dir() or not (run_dir / 'summary.json').is_file():
+        raise ValueError('run-dir must contain an existing summary.json')
+    summary = json.loads((run_dir / 'summary.json').read_text())
+    if not isinstance(summary, dict):
+        raise ValueError('summary.json must be an object')
+    if out_dir.exists():
+        raise ValueError('choose a fresh output directory')
     topic = summary.get('topic', 'unknown topic')
-    out_dir.mkdir(parents=True, exist_ok=False)
+    if cases.locate(run_dir) != cases.locate(out_dir):
+        raise ValueError('run and output must share the same project authority')
+    prepare_research_output(out_dir,
+                            input_paths=[run_dir / 'summary.json'], source_bindings_file=source_bindings)
+    out_dir.mkdir(parents=True, exist_ok=True)
     msgs = [{'id': f'V{i+1}', 'pain_frame': PAIN_FRAMES[i],
              'headline': f'[{PAIN_FRAMES[i]}] headline for {segment}', 'promise': offer,
              'cta': 'Book a 20-minute call', 'evidence_ref': None} for i in range(variants)]
@@ -67,9 +83,10 @@ def main() -> int:
     ap.add_argument('--segment', required=True)
     ap.add_argument('--variants', type=int, default=3)
     ap.add_argument('--out-dir', required=True, type=Path)
+    ap.add_argument('--source-bindings', default='', help='Explicit shared-input applicability bindings')
     a = ap.parse_args()
     print(build(run_dir=a.run_dir, hypothesis_id=a.hypothesis_id, offer=a.offer, segment=a.segment,
-                variants=a.variants, out_dir=a.out_dir))
+                variants=a.variants, out_dir=a.out_dir, source_bindings=a.source_bindings))
     return 0
 
 

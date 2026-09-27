@@ -5,6 +5,9 @@ description: Build a zero-to-one startup plan covering segment, discovery, MVP, 
 
 # Startup Business Builder
 
+For a selected registered Business case, read current `case_insights.md` as orientation and verify its underlying source bindings before using a conclusion. Pass material plan findings and corrections to the case-insights owner under repo-root `references/case-insights.md`; the selected strategy plan retains its own gates.
+Use the nine existing `business_plan_sections` and v2 citation/review flow in repo-root `references/case-assessment.md`. Prepare and review the exact rendered selected plan with original sources, model inputs, contrary evidence and founder constraints. Do not reuse a plan after new case questions or deep dives make selected insights stale; update affected case analysis first.
+
 ## Success Criteria
 - **Quantitative:** triggers on >=90% of startup planning queries; completes in <=20 tool calls; produces both Business Model and Value Proposition Canvases; zero steps that skip customer discovery.
 - **Qualitative:** canvases are evidence-tagged where possible; segment, painful job, and alternatives are named; failure-avoidance checks are explicit.

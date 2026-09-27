@@ -37,21 +37,22 @@ def _viability(inputs, result, vals):
         out['reasons'].append('no conditional cash schedule; supply horizon, opening cash and monthly volumes')
         return out
     fixed = vals['fixed_per_month']; owner = vals['owner_cash_per_month']
-    profitable = [m['month'] for m in months if m['contribution'] - float(fixed) - float(owner) > 0]
+    profitable = [m['month'] for m in months if m['contribution'] - float(fixed) - float(owner) - float(inputs.get('imputed_owner_labor_per_month') or 0) > 0]
     out['first_profitable_month'] = profitable[0] if profitable else None
     out['min_closing_cash'] = min(m['closing_cash'] for m in months)
     checks = []
     if pbm is not None:
-        out['profit_target_met'] = out['first_profitable_month'] is not None and out['first_profitable_month'] <= pbm
+        first = out['first_profitable_month']
+        out['profit_target_met'] = first <= pbm if first is not None else (False if len(months) >= pbm else None)
         checks.append(out['profit_target_met']); out['reasons'].append(f"first profitable month {out['first_profitable_month']} vs target {pbm}")
     if targets.get('max_cash_need') is not None:
-        need = float(inputs.get('opening_cash', 0)) - out['min_closing_cash']
+        need = max(0, float(inputs.get('startup_cash_cost', 0)), float(inputs.get('opening_cash', 0)) - out['min_closing_cash'])
         out['cash_target_met'] = need <= targets['max_cash_need']
         checks.append(out['cash_target_met']); out['reasons'].append(f"peak cash need {round(need, 2)} vs max {targets['max_cash_need']}")
     if targets.get('owner_income_per_month') is not None:
-        out['owner_income_met'] = float(owner) >= targets['owner_income_per_month']
+        out['owner_income_met'] = float(owner) >= targets['owner_income_per_month'] and result['cash']['sufficient_within_horizon']
         checks.append(out['owner_income_met']); out['reasons'].append(f"modelled owner cash {owner} vs target {targets['owner_income_per_month']}")
-    out['status'] = 'pass' if checks and all(checks) else ('fail' if checks else 'unresolved')
+    out['status'] = 'fail' if False in checks else ('pass' if checks and all(v is True for v in checks) else 'unresolved')
     out['reasons'].append('conditional on the supplied schedule; arithmetic is not demand evidence')
     return out
 

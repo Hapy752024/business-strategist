@@ -12,13 +12,24 @@ from scripts.brand.validate_business_to_brand_handoff import validate as validat
 from test_case_economics import inputs
 from test_strategy_review import plan, position
 from problem_assessment_fixtures import prepare as prepare_problem_assessment
+from appraisal_gate_fixture import install as isolate_research_gate
 
 
-def test_case_readme_template_has_evidence_scorecard():
-    text = (Path(__file__).resolve().parents[1] / 'templates/project/case-README.md').read_text()
-    assert '## Evidence scorecard' in text
-    for col in ['Dimension', 'Assumption', 'Evidence strength', 'Status']:
-        assert col in text
+@pytest.fixture(autouse=True)
+def _isolated_research_gate(monkeypatch):
+    isolate_research_gate(monkeypatch)
+    # Legacy transaction/handoff fixtures have no published insights. The
+    # selected-plan freshness boundary has its own real-state regression.
+    from scripts import validate_case_insights as insights
+    monkeypatch.setattr(insights, 'current_status', lambda *_: {'status': 'current'})
+
+
+def test_case_insights_template_covers_client_decisions():
+    text = (Path(__file__).resolve().parents[1] / 'templates/project/case_insights.md').read_text()
+    for heading in ['Executive assessment', 'Customer and problem', 'Market and demand',
+                    'Alternatives and competitive position', 'Risks, conflicting evidence and open questions']:
+        assert '## ' + heading in text
+    assert 'Evidence scorecard' not in text
 
 
 def setup(tmp_path):
@@ -35,10 +46,40 @@ def setup(tmp_path):
 
 def appraisal(root, cid='a'):
     return {'manifest_revision': c.case_manifest(root, cid)['manifest_revision'], 'assessment_revision': c.case_manifest(root, cid)['assessment_revision'],
-            'documents': {n: '# Conditional assessment\n\nUnknown demand.' for n in ['README.md', 'feasibility.md', 'business-case.md']},
+            'documents': {n: '# Conditional assessment\n\nUnknown demand.' for n in ['feasibility.md', 'business-case.md']},
             'source_bindings': [c.source_binding(root, f'cases/{cid}/market_research/pain_points/evidence.md', locator='first line', applicability=cid)],
             'comparison': {'summary': 'Conditional ' + cid + ' assessment; investigate before commitment.', 'principal_uncertainty': 'Unproven demand', 'next_action': 'Seek customer evidence'},
             'economics_inputs': inputs()}
+
+
+def test_v2_appraisal_covers_nine_sections_and_rechecks_separate_review(tmp_path):
+    root = setup(tmp_path)
+    draft = appraisal(root)
+    draft['publication_contract_version'] = 2
+    draft['publication_status'] = 'final'
+    draft['publication_claims'] = []
+    draft['business_plan_sections'] = {key: {'status': 'provisional',
+        'text': 'Conditional decision analysis for this section; direct customer support remains unverified.'}
+        for key in c.PLAN_SECTIONS}
+    prepared = c.prepare_assessment(root, 'a', draft)
+    path = root / 'cases/a/market_research/appraisal/reviews/separate.json'
+    path.parent.mkdir(parents=True)
+    path.write_text(c.encoded({'author': 'author-task', 'reviewer': 'reviewer-task',
+        'review_task_id': 'review-a', 'bundle_digest': prepared['bundle_digest'],
+        'reviewed_sources': prepared['reviewed_sources'], 'outcome': 'pass', 'material_findings': []}))
+    draft['independent_review'] = c.source_binding(root, str(path.relative_to(root)),
+                                                   locator='whole review', applicability='case a final appraisal')
+    changed = json.loads(json.dumps(draft))
+    changed['business_plan_sections']['business']['text'] += ' Changed recommendation.'
+    with pytest.raises(ValueError, match='exact rendered publication'):
+        c.publish_assessment(root, 'a', changed, 'stale-final', 'Changed after review')
+    c.publish_assessment(root, 'a', draft, 'reviewed-final', 'Publish reviewed conditional appraisal')
+    body = (root / 'cases/a/business-case.md').read_text()
+    assert body.count('\n## ') == 9
+    assert c.case_manifest(root, 'a')['appraisal_publication_status'] == 'final'
+    assert c.appraisal_status(root, 'a')['status'] == 'current'
+    path.write_text(path.read_text().replace('reviewer-task', 'edited-reviewer'))
+    assert c.appraisal_status(root, 'a')['status'] == 'update_pending'
 
 
 def test_appraisal_inputs_cannot_silently_change_or_publish_stale_drafts(tmp_path):
@@ -95,6 +136,33 @@ def selected_plan(root, monkeypatch):
     return data
 
 
+def test_v2_selected_plan_requires_fresh_separate_review(tmp_path, monkeypatch):
+    root = setup(tmp_path)
+    draft = selected_plan(root, monkeypatch)
+    draft['publication_base_digest'] = c.digest((root / 'strategy/strategy-plan.json').read_bytes())
+    draft['publication_contract_version'] = 2
+    draft['publication_status'] = 'final'
+    draft['publication_claims'] = []
+    prepared = c.prepare_business_plan(root, 'a', draft)
+    path = root / 'strategy/reviews/a/separate.json'
+    path.parent.mkdir(parents=True)
+    path.write_text(c.encoded({'author': 'plan-author', 'reviewer': 'separate-reviewer',
+        'review_task_id': 'review-plan-a', 'bundle_digest': prepared['bundle_digest'],
+        'reviewed_sources': prepared['reviewed_sources'], 'outcome': 'pass', 'material_findings': []}))
+    draft['independent_review'] = c.source_binding(root, str(path.relative_to(root)),
+                                                   locator='whole review', applicability='case a selected plan')
+    changed = json.loads(json.dumps(draft))
+    changed['business_plan_sections']['business']['text'] += ' Changed conclusion.'
+    with pytest.raises(ValueError, match='exact rendered publication'):
+        c.publish_business_plan(root, 'a', changed, 'stale-plan-v2', 'Changed after review')
+    c.publish_business_plan(root, 'a', draft, 'reviewed-plan-v2', 'Publish exact reviewed plan')
+    assert '# Business plan' in (root / 'strategy/business-plan.md').read_text()
+    c.check_plan(root, c.load(root / 'strategy/strategy-plan.json'))
+    path.write_text(path.read_text().replace('separate-reviewer', 'edited-reviewer'))
+    with pytest.raises(ValueError, match='review changed'):
+        c.check_plan(root, c.load(root / 'strategy/strategy-plan.json'))
+
+
 def test_selected_plan_handoff_switch_back_and_shared_interpretation(tmp_path, monkeypatch):
     root = setup(tmp_path)
     data = selected_plan(root, monkeypatch)
@@ -132,7 +200,7 @@ def test_case_output_scope_and_parallel_draft_conflicts(tmp_path):
     rev = c.read_project(root)['manifest_revision']
     def publish(n):
         try:
-            c.publish(root, {'cases/a/README.md': str(n)}, expected_revision=rev, decision_id='parallel-' + str(n), reason='Owner draft')
+            c.publish(root, {'cases/a/case_insights.md': str(n)}, expected_revision=rev, decision_id='parallel-' + str(n), reason='Owner draft')
             return 'published'
         except ValueError:
             return 'conflict'
@@ -145,8 +213,8 @@ def test_cosmetic_drafts_and_root_plan_drafts_reject_overlapping_writes(tmp_path
     c.publish_assessment(root, 'a', appraisal(root), 'initial', 'Assess')
     first = appraisal(root); first['material_change'] = False
     second = json.loads(json.dumps(first))
-    first['documents']['README.md'] = '# First spelling fix'
-    second['documents']['README.md'] = '# Other stale spelling fix'
+    first['documents']['feasibility.md'] = '# First spelling fix'
+    second['documents']['feasibility.md'] = '# Other stale spelling fix'
     c.publish_assessment(root, 'a', first, 'first-spelling', 'Cosmetic edit')
     with pytest.raises(ValueError, match='publication revision conflict'):
         c.publish_assessment(root, 'a', second, 'stale-spelling', 'Parallel cosmetic edit')

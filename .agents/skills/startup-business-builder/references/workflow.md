@@ -245,3 +245,14 @@ Before finalizing, check:
 If needed, ask:
 
 `Who is the first specific customer segment you want to serve, and what painful problem do they already try to solve today?`
+
+
+## Before commitment
+
+For a strategy plan with `verdict: commit`, populate `decision_review` as specified
+in repo-root `references/case-assessment.md` and validate with
+`python3 scripts/strategy_review.py validate --help` for the CLI contract.
+Include causally distinct pre-mortems, KPI-linked stop rules with windows and
+owners, and behavioral precommitments. Record unknown base rates explicitly.
+Selecting a provisional positioning hypothesis alone does not mean committing
+to the venture. These rules schedule no monitoring or external actions.

@@ -128,7 +128,7 @@ def test_first_cutover_is_journaled_and_preserves_legacy_source(tmp_path):
     assert result["baseline_digest"] == hashlib.sha256(json.dumps(before, sort_keys=True).encode()).hexdigest()
     assert cases.read_project(project)["controller_kind"] == "umbrella"
     assert not (project / "market_research").exists()
-    assert (project / "business-analysis/cases/individualized-content/README.md").is_file()
+    assert (project / "business-analysis/cases/individualized-content/case_insights.md").is_file()
 
 
 def test_first_cutover_rollback_restores_legacy_tree(tmp_path):

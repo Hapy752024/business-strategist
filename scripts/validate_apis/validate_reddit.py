@@ -35,10 +35,11 @@ def main() -> int:
     status = status_from_response(token_response)
     subreddit_count = 0
     post_count = 0
+    endpoint_statuses = {"token": status}
+    query = cli_arg("query", "projectmanagement")
     if status == "ok":
         token = (token_response.get("body") or {}).get("access_token")
         headers = {"Authorization": f"Bearer {token}", "User-Agent": "evidence-scout-validator/0.1"}
-        query = cli_arg("query", "projectmanagement")
         subreddits = http_get(
             with_query("https://oauth.reddit.com/subreddits/search", {"q": query, "limit": 5}),
             headers=headers,
@@ -49,11 +50,18 @@ def main() -> int:
         )
         raw["subreddits"] = subreddits
         raw["posts"] = posts
+        endpoint_statuses.update(subreddits=status_from_response(subreddits), posts=status_from_response(posts))
+        if endpoint_statuses["posts"] != "ok":
+            status = endpoint_statuses["posts"]
+        elif endpoint_statuses["subreddits"] != "ok":
+            status = "partial"
         subreddit_count = len(((subreddits.get("body") or {}).get("data") or {}).get("children", [])) if subreddits.get("ok") else 0
         post_count = len(((posts.get("body") or {}).get("data") or {}).get("children", [])) if posts.get("ok") else 0
 
     summary = {
         "status": status,
+        "query": query,
+        "endpoint_statuses": endpoint_statuses,
         "credential_source": [client_id_name, client_secret_name],
         "http_status": token_response.get("status_code"),
         "fields": fields_present(raw),

@@ -117,13 +117,12 @@ class MarketDiscoveryTests(unittest.TestCase):
             (pack / "customer-voc-synthesis.json").write_text(json.dumps({"schema_version": 2, "status": "insufficient_evidence", "topic_led_evidence_ids": [], "entity_led_evidence_ids": [], "customer_needs": [], "solution_requirements": [], "codebook": {"version": 1, "codes": []}, "next_investigations": [{"question": "Where are recent customer accounts?", "method": "local source discovery", "reason": "No reviewed voice", "decision_change": "Whether candidate formation is possible"}]}))
             (pack / "claim-ledger.json").write_text("[]\n", encoding="utf-8")
             finalize_args.candidate_count = 0
-            self.assertEqual(discovery.finalize_discovery(finalize_args), 0)
+            with self.assertRaisesRegex(ValueError, "(research|collection|missing|receipt|validation)"):
+                discovery.finalize_discovery(finalize_args)
             summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
             manifest = json.loads((workspace / "market_research" / "manifest.json").read_text(encoding="utf-8"))
-            self.assertEqual(summary["status"], "complete")
-            self.assertEqual(summary["gate_result"], "conditional_pass")
-            self.assertEqual(manifest["current_stage"], "market_discovery")
-            self.assertEqual(manifest["stages"]["market_discovery"]["status"], "passed")
+            self.assertNotEqual(summary.get("status"), "complete")
+            self.assertNotEqual(manifest["stages"]["market_discovery"]["status"], "passed")
 
 
 if __name__ == "__main__":

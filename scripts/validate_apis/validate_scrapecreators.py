@@ -32,6 +32,7 @@ def main() -> int:
         status = "insufficient_credits"
     summary = {
         "status": status,
+        "validation_scope": "credit_balance_only; platform search, posts and comments are unverified",
         "credential_source": key_name,
         "http_status": response.get("status_code"),
         "credits_remaining": credit_count,

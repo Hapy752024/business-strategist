@@ -102,6 +102,7 @@
       "side_effect": "research",
       "cost": "medium",
       "required_references": [
+        "references/research-execution.md",
         "references/customer-voice.md",
         "references/voc-research-method.md",
         "references/opportunity-research-approaches.md"
@@ -240,6 +241,14 @@
         "references/customer-voice.md"
       ],
       "modes": {
+        "insights": {
+          "prerequisites": ["registered case and its available research inputs"],
+          "strategy_stage_prerequisites": [],
+          "required_references": ["references/case-insights.md"],
+          "artifacts": ["case_insights.md"],
+          "inputs": ["case_context", "complete research inventory", "persisted questions", "reviewed source bindings"],
+          "output_owner": "opportunity-risk-designer"
+        },
         "appraisal": {
           "prerequisites": [
             "registered case",
@@ -251,7 +260,7 @@
             "references/subprojects.md"
           ],
           "artifacts": [
-            "case README.md",
+            "case_insights.md after consolidation",
             "feasibility.md",
             "business-case.md",
             "economics.json when needed"

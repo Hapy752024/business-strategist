@@ -81,6 +81,16 @@ def validate_plan(plan: dict[str, Any]) -> list[str]:
             errors.append("cohort KPIs require a named cohort")
     if "positioning" in plan and not any(error.startswith(("positioning:", "positioning.")) for error in errors):
         errors.extend(validate_positioning(plan["positioning"], experiment_ids=identifiers, kpi_names=names))
+    decision = plan.get("decision_review")
+    if decision is not None and not any(error.startswith("decision_review") for error in errors):
+        categories = [row["trigger_category"].strip().casefold() for row in decision["premortem"]]
+        if len(set(categories)) != len(categories):
+            errors.append("decision_review.premortem: use distinct trigger categories; causal independence still requires review")
+        for rule in decision["stop_rules"]:
+            if rule["kpi"] not in names:
+                errors.append("decision_review.stop_rules: unknown KPI " + rule["kpi"])
+            if not math.isfinite(rule["threshold"]):
+                errors.append("decision_review.stop_rules: threshold must be finite")
     return sorted(errors)
 
 

@@ -20,7 +20,7 @@
     "signal_quality": {"type": "object", "properties": {"directness": {"type": "string"}, "specificity": {"type": "string"}, "authenticity": {"type": "string"}, "recency": {"type": "string"}, "relevance": {"type": "string"}}},
     "source": {
       "type": "string",
-      "enum": ["reddit", "youtube", "youtube_comment", "youtube_transcript", "google_trends", "google_autocomplete", "google_places_review", "trustpilot_review", "forum", "web_search", "x", "xai_x_search", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "itunes_reviews", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "hn", "github", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu"]
+      "enum": ["reddit", "reddit_comment", "youtube", "youtube_comment", "youtube_transcript", "google_trends", "google_autocomplete", "google_places_review", "trustpilot_review", "forum", "web_search", "x", "xai_x_search", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "itunes_reviews", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "hn", "github", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu"]
     },
     "source_url": { "type": "string", "format": "uri" },
     "retrieved_at": { "type": "string", "format": "date-time" },
@@ -46,7 +46,7 @@
     "retrieval_backend": {"type": "string"},
     "query_language": {"type": "string"},
     "source_language": {"type": "string"},
-    "source_entity_type": {"enum": ["facebook_page", "facebook_group", "instagram_profile", "facebook_comment", "instagram_comment", "facebook_supplier_comment", "instagram_supplier_comment"]},
+    "source_entity_type": {"enum": ["facebook_page", "facebook_group", "instagram_profile", "facebook_comment", "instagram_comment", "tiktok_comment", "facebook_supplier_comment", "instagram_supplier_comment"]},
     "author_relationship": {"enum": ["page_owner_or_unknown", "page_or_supplier_author", "group_participant_unverified", "commenter_unverified"]},
     "output_language": {"type": "string"},
     "engagement": {

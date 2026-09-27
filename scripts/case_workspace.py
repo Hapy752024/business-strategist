@@ -23,7 +23,31 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = 2
 PROJECT = 'project-manifest.json'
 PENDING = 'history/pending.json'
-ASSESSMENT_FILES = {'README.md', 'feasibility.md', 'business-case.md', 'economics.json'}
+ASSESSMENT_FILES = {'README.md', 'case_insights.md', 'feasibility.md', 'business-case.md', 'economics.json', 'numeric-claims.json'}
+
+
+def initial_insights(title):
+    """Honest reader-facing empty state; publication remains an unreviewed draft."""
+    date = now()[:10]
+    return (f'# {title}\nLast updated: {date}\n\n'
+            '## Executive assessment\nThis case has not yet been assessed.\n\n'
+            '## Customer and problem\nThe target customer and pain are not established.\n\n'
+            '## Market and demand\nMarket size and demand are not established.\n\n'
+            '## Alternatives and competitive position\nAlternatives have not been assessed.\n\n'
+            '## Business potential and feasibility\nCommercial and delivery feasibility have not been assessed.\n\n'
+            '## Risks, conflicting evidence and open questions\nThe main uncertainties depend on initial research.\n\n'
+            '## Recommended next decisions\nInvestigate the target customer, journey and pain.\n\n'
+            '## Sources\nNo research sources have been reviewed for this case.\n')
+
+
+def pending_insights(text):
+    notice = '**Assessment update pending:** New information has not yet been integrated into this case assessment.\n\n'
+    if notice in text:
+        return text
+    lines = text.split('\n', 1)
+    if len(lines) != 2:
+        return notice + text
+    return lines[0] + '\n\n' + notice + lines[1].lstrip('\n')
 
 
 def now():
@@ -233,7 +257,13 @@ def overview(m, root=None, updated_paths=()):
         review = 'review_required' in cm.get('open_blockers', []) or comparison.get('assessment_revision') != cm.get('assessment_revision')
         clean = lambda text: str(text).replace('|', '\\|').replace('\n', ' ')
         summary = 'Review required — ' + comparison.get('summary', 'reassess this case') if review and comparison else comparison.get('summary', 'Not assessed')
-        lines.append(f"| {clean(entry['title'])} {'(retired)' if entry.get('retired') else ''} | {clean(summary)} | {clean(comparison.get('principal_uncertainty', 'Unresolved'))} | {clean('Refresh assessment' if review and comparison else comparison.get('next_action', 'Investigate'))} | [{name}]({entry['path']}/README.md); feasibility: {links[0]}; business case: {links[1]} |")
+        insight_path = entry['path'] + '/case_insights.md'
+        legacy_path = entry['path'] + '/README.md'
+        has_insights = insight_path in updated_paths and updated_paths[insight_path] is not None or (root is not None and safe(root, insight_path).is_file() and not (isinstance(updated_paths, dict) and insight_path in updated_paths and updated_paths[insight_path] is None))
+        main = f'[Case insights]({insight_path})' if has_insights else f'[Legacy assessment]({legacy_path})' if root is not None and safe(root, legacy_path).is_file() else 'Not assessed'
+        if cm.get('insights', {}).get('state') == 'update_pending':
+            summary = 'Update pending — ' + summary
+        lines.append(f"| {clean(entry['title'])} {'(retired)' if entry.get('retired') else ''} | {clean(summary)} | {clean(comparison.get('principal_uncertainty', 'Unresolved'))} | {clean('Refresh assessment' if review and comparison else comparison.get('next_action', 'Investigate'))} | {main}; feasibility: {links[0]}; business case: {links[1]} |")
     lines += ['', '[Decision history](history/evolution.md)', '']
     if selected:
         lines += ['Business plan: `strategy/business-plan.md` when assembled and reviewed.', '']
@@ -384,8 +414,9 @@ def add_case(root, case_id, title, *, open_blockers=(), next_action='Research se
     research = {'schema_version': '1.0', 'manifest_revision': 1, 'case_id': case_id,
                 'assessment_revision': 1, 'source_bindings': [], 'topic': title, 'topic_slug': case_id,
                 'created_at': now(), 'updated_at': now(), 'current_stage': 'intake', 'stages': {},
-                'events': [], 'open_blockers': list(open_blockers), 'artifacts': [], 'next_action': next_action}
-    publish(root, {f'{relative}/README.md': f'# {title}\n\nCurrent assessment: not researched.\n',
+                'events': [], 'open_blockers': list(open_blockers), 'artifacts': [], 'next_action': next_action,
+                'insights': {'contract_version': 1, 'path': 'case_insights.md', 'state': 'draft'}}
+    publish(root, {f'{relative}/case_insights.md': initial_insights(title),
                    f'{relative}/market_research/manifest.json': encoded(research)},
             expected_revision=m['manifest_revision'], decision_id='register-' + case_id,
             reason='Register investigated case: ' + title, affected=[case_id], project=updated)
@@ -403,12 +434,15 @@ def rename_case(root, case_id, title, decision_id, reason):
         m['cases'][case_id]['title'] = title
         cm = case_manifest(root, case_id)
         cm.update(topic=title, manifest_revision=cm['manifest_revision'] + 1, updated_at=now())
+        if cm.get('insights', {}).get('state') == 'current':
+            cm['insights']['state'] = 'update_pending'
         outputs = {f'cases/{case_id}/market_research/manifest.json': encoded(cm)}
-        for filename in ('README.md', 'feasibility.md', 'business-case.md'):
+        for filename in ('case_insights.md', 'README.md', 'feasibility.md', 'business-case.md'):
             path = scope / filename
             if path.exists():
                 first, separator, rest = path.read_text().partition('\n')
-                outputs[f'cases/{case_id}/{filename}'] = first.replace(previous, title) + separator + rest
+                rewritten = first.replace(previous, title) + separator + rest
+                outputs[f'cases/{case_id}/{filename}'] = pending_insights(rewritten) if filename == 'case_insights.md' and cm.get('insights', {}).get('state') == 'update_pending' else rewritten
         return publish_locked(root, outputs, expected_revision=m['manifest_revision'], decision_id=decision_id,
                               reason=reason, affected=[case_id], project=m)
 
@@ -439,8 +473,9 @@ def migrate(root, mapping, decision_id, reason, *, fault=None):
                   'updated_at': now(), 'current_stage': 'intake', 'stages': {}, 'events': [], 'artifacts': [],
                   'open_blockers': ['Legacy findings require case-specific review; no inherited passes.'],
                   'next_action': 'Review source applicability and write local segment, journey and pain assessments.'}
+            cm['insights'] = {'contract_version': 1, 'path': 'case_insights.md', 'state': 'draft'}
             outputs[relative + '/market_research/manifest.json'] = encoded(cm)
-            outputs[relative + '/README.md'] = '# ' + item['title'] + '\n\nReview required. Legacy findings have not been revalidated for this case.\n\n' + '\n'.join(f"- [Legacy source](../../{b['path']}) — {b['applicability']}" for b in bindings) + '\n'
+            outputs[relative + '/case_insights.md'] = initial_insights(item['title'])
         return publish_locked(root, outputs, expected_revision=m['manifest_revision'], project=updated,
             decision_id=decision_id, reason=reason, affected=list(mapping), fault=fault, allow_legacy=True)
 
@@ -479,10 +514,23 @@ def sources_current(root, manifest):
             bindings.extend(stage.get('source_bindings', []))
     for section in manifest.get('business_plan_sections', {}).values():
         bindings.extend(section.get('source_bindings', []))
+    bindings.extend(insights_bindings(root, manifest))
     for b in bindings:
         p = safe(root, b['path'])
         if not p.is_file() or digest(p.read_bytes()) != b['digest']:
             raise ValueError('stale source binding: ' + b['path'])
+
+
+def insights_bindings(root, manifest):
+    state = manifest.get('insights') or {}
+    review_path = state.get('review_path')
+    if not review_path:
+        return []
+    path = safe(root, review_path)
+    if not path.is_file() or digest(path.read_bytes()) != state.get('review_digest'):
+        raise ValueError('current insights review binding is stale')
+    packet = load(path)
+    return packet.get('source_bindings', [])
 
 
 def binding(root, case_id):
@@ -518,6 +566,18 @@ def check_plan(root, plan):
     check_binding(root, plan.get('execution_binding', {}))
     sources_current(root, plan)
     try:
+        from scripts.validate_case_insights import current_status
+    except ModuleNotFoundError:
+        from validate_case_insights import current_status
+    case_id = plan.get('execution_binding', {}).get('case_id')
+    insight_state = case_manifest(root, case_id).get('insights', {}).get('state') if case_id else None
+    if case_id and (plan.get('publication_contract_version') == 2 or insight_state not in {None, 'draft'}) and current_status(root, case_id).get('status') != 'current':
+        raise ValueError('business plan review required: selected-case insights are missing or stale')
+    if case_id and case_manifest(root, case_id).get('appraisal_contract_version') == 2:
+        appraisal = appraisal_status(root, case_id)
+        if appraisal['status'] != 'current':
+            raise ValueError('business plan review required: ' + appraisal['reason'])
+    try:
         from scripts.route_workflow import missing_strategy_stages
     except ModuleNotFoundError:
         from route_workflow import missing_strategy_stages
@@ -535,6 +595,27 @@ def check_plan(root, plan):
     missing = [stage for stage in missing if stage not in allowed]
     if missing:
             raise ValueError('business plan prerequisites not current: ' + ', '.join(missing))
+    saved = safe(root, 'strategy/strategy-plan.json')
+    if (plan.get('publication_contract_version') == 2 and saved.is_file()
+            and plan == load(saved)):
+        if plan.get('publication_status') != 'final':
+            raise ValueError('business plan review required: current plan is a progress publication')
+        rendered = safe(root, 'strategy/business-plan.md')
+        if not rendered.is_file():
+            raise ValueError('business plan review required: rendered plan is missing')
+        try:
+            from scripts.publication_claims import bundle_digest, check_separate_review
+        except ModuleNotFoundError:
+            from publication_claims import bundle_digest, check_separate_review
+        bound = list(plan.get('source_bindings', []))
+        for section in plan.get('business_plan_sections', {}).values():
+            for item in section.get('source_bindings', []):
+                if item not in bound:
+                    bound.append(item)
+        review_hash = bundle_digest({'strategy/business-plan.md': rendered.read_text()}, bound)
+        check_separate_review(root, plan['execution_binding']['case_id'], plan.get('independent_review'),
+                              review_hash, bound,
+                              f"strategy/reviews/{plan['execution_binding']['case_id']}/")
 
 
 def publish_assessment(root, case_id, packet, decision_id, reason):
@@ -543,28 +624,318 @@ def publish_assessment(root, case_id, packet, decision_id, reason):
         return _publish_assessment(root, case_id, packet, decision_id, reason)
 
 
-def _publish_assessment(root, case_id, packet, decision_id, reason):
+def appraisal_status(root, case_id):
+    """Check an existing final v2 appraisal's exact output and review inputs."""
+    cm = case_manifest(root, case_id)
+    if cm.get('appraisal_contract_version') != 2:
+        return {'status': 'legacy', 'reason': 'legacy appraisal has no v2 review bundle'}
+    if cm.get('appraisal_publication_status') != 'final':
+        return {'status': 'progress', 'reason': 'case appraisal remains a progress publication'}
+    try:
+        from scripts.publication_claims import bundle_digest, check_separate_review
+    except ModuleNotFoundError:
+        from publication_claims import bundle_digest, check_separate_review
+    try:
+        contents = {}
+        for binding in cm['source_bindings']:
+            if binding != source_binding(root, binding['path'], locator=binding['locator'],
+                                         applicability=binding['applicability']):
+                raise ValueError('appraisal source changed after review')
+        for rel in cm['appraisal_reviewed_outputs']:
+            contents[rel] = (encoded(cm['comparison']) if rel == f'cases/{case_id}/comparison.json'
+                             else safe(root, rel).read_text())
+        review_hash = bundle_digest(contents, cm['source_bindings'])
+        check_separate_review(root, case_id, cm['appraisal_review'], review_hash, cm['source_bindings'],
+                              f'cases/{case_id}/market_research/appraisal/reviews/')
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        return {'status': 'update_pending', 'reason': str(exc)}
+    return {'status': 'current', 'bundle_digest': review_hash}
+
+
+def prepare_assessment(root, case_id, packet):
+    """Render the exact reviewable appraisal bundle without publishing it."""
+    root = Path(root).absolute()
+    with project_lock(root):
+        return _publish_assessment(root, case_id, packet, 'preview', 'Prepare appraisal review', preview=True)
+
+
+def record_question(root, case_id, question, decision_id, reason):
+    """Persist a founder's research question in existing coaching state."""
+    root = Path(root).absolute()
+    with project_lock(root):
+        project = read_project(root)
+        cm = case_manifest(root, case_id)
+        if not isinstance(question, dict) or set(question) - {'id', 'question', 'status', 'answer_binding'}:
+            raise ValueError('question needs id, text, status and optional answer binding')
+        qid = question.get('id')
+        if not isinstance(qid, str) or not re.fullmatch(r'[a-z][a-z0-9-]*', qid):
+            raise ValueError('invalid research question identifier')
+        if not isinstance(question.get('question'), str) or not question['question'].strip() or question.get('status') not in {'open', 'partial', 'answered'}:
+            raise ValueError('research question needs text and valid status')
+        binding = question.get('answer_binding')
+        if question['status'] in {'answered', 'partial'}:
+            if not isinstance(binding, dict) or binding != source_binding(root, binding['path'], locator=binding['locator'], applicability=binding['applicability']):
+                raise ValueError('answered research question needs a current source binding')
+            if not binding['path'].startswith((f'cases/{case_id}/', 'market_research/')):
+                raise ValueError('answer source must be case-local or shared research')
+            if not binding['path'].startswith(f'cases/{case_id}/') and not re.search(r'\bcase(?:[_ -]?id)?[:= -]+' + re.escape(case_id) + r'\b', binding['applicability'], re.I):
+                raise ValueError('shared answer needs case applicability')
+        elif binding is not None:
+            raise ValueError('open question cannot claim a completed answer')
+        cm = copy.deepcopy(cm)
+        coaching = cm.setdefault('coaching', {'known_answers': [], 'unresolved_inputs': [], 'pending_question': ''})
+        questions = [q for q in coaching.get('research_questions', []) if q['id'] != qid]
+        questions.append(question)
+        coaching['research_questions'] = sorted(questions, key=lambda q: q['id'])
+        coaching['updated_at'] = now()
+        cm['manifest_revision'] += 1
+        cm['updated_at'] = now()
+        outputs = {}
+        if cm.get('insights', {}).get('state') == 'current':
+            cm['insights']['state'] = 'update_pending'
+            path = resolve(root, case_id) / 'case_insights.md'
+            outputs[f'cases/{case_id}/case_insights.md'] = pending_insights(path.read_text())
+        outputs[f'cases/{case_id}/market_research/manifest.json'] = encoded(cm)
+        return publish_locked(root, outputs, expected_revision=project['manifest_revision'],
+                              decision_id=decision_id, reason=reason, affected=[case_id])
+
+
+def register_research_assignment(root, case_id, assignment, decision_id, reason):
+    """Freeze the requested case scope in the existing case manifest."""
+    root = Path(root).absolute()
+    with project_lock(root):
+        project = read_project(root)
+        cm = case_manifest(root, case_id)
+        required = {'schema_version', 'decision', 'customer_segment', 'locales',
+                    'parent_run', 'capture_runs', 'source_plan_path'}
+        version = assignment.get('schema_version') if isinstance(assignment, dict) else None
+        v2_extra = {'studies', 'capture_owners', 'coverage_cells', 'overlap_reviews'}
+        if (not isinstance(assignment, dict) or version not in {1, 2}
+                or set(assignment) != (required if version == 1 else required | v2_extra)):
+            raise ValueError('research assignment has invalid fields or version')
+        if any(not isinstance(assignment.get(key), str) or len(assignment[key].strip()) < minimum
+               for key, minimum in (('decision', 12), ('customer_segment', 3))):
+            raise ValueError('research assignment needs a decision and customer segment')
+        locales = assignment['locales']
+        if (not isinstance(locales, list) or not locales or len(locales) != len(set(locales))
+                or any(not isinstance(item, str) or not re.fullmatch(r'[A-Z]{2}:[a-z]{2}(?:-[a-z]{4})?', item) for item in locales)):
+            raise ValueError('research assignment needs unique COUNTRY:language locales')
+        parent = assignment['parent_run']
+        captures = assignment['capture_runs']
+        prefix = f'cases/{case_id}/market_research/pain_points/runs/'
+        if (not isinstance(parent, str) or not parent.startswith(prefix)
+                or not isinstance(captures, list) or len(captures) != len(set(captures))
+                or any(not isinstance(item, str) or not item.startswith(prefix)
+                       or (version == 1 and item == parent) for item in captures)
+                or assignment['source_plan_path'] != parent + '/customer-feedback/customer-feedback-source-plan.json'):
+            raise ValueError('research assignment runs and source plan must be case-local')
+        for rel in [parent, *captures]:
+            path = safe(root, rel)
+            if not path.is_dir() or path.is_symlink():
+                raise ValueError(f'research assignment run is missing: {rel}')
+        if not safe(root, assignment['source_plan_path']).is_file():
+            raise ValueError('research assignment source plan is missing')
+        if version == 2:
+            studies = assignment['studies']
+            owners = assignment['capture_owners']
+            cells = assignment['coverage_cells']
+            overlap_reviews = assignment['overlap_reviews']
+            if (not isinstance(studies, list) or not studies or not isinstance(owners, list)
+                    or not isinstance(cells, list) or not cells or not isinstance(overlap_reviews, list)):
+                raise ValueError('v2 assignment needs studies, capture owners and coverage cells')
+            seen_studies = set()
+            for study in studies:
+                if not isinstance(study, dict) or set(study) != {'run_dir', 'source_plan_path', 'source_plan_sha256', 'relation', 'applicability'}:
+                    raise ValueError('v2 study binding is malformed')
+                rel = study['run_dir']
+                path = study['source_plan_path']
+                if (rel in seen_studies or not isinstance(rel, str) or not rel.startswith(prefix)
+                        or path != rel + '/customer-feedback/customer-feedback-source-plan.json'
+                        or study['relation'] not in {'target', 'adjacent', 'context'}
+                        or not isinstance(study['applicability'], str) or len(study['applicability'].strip()) < 20
+                        or not safe(root, rel).is_dir() or safe(root, path).is_symlink()
+                        or not safe(root, path).is_file() or digest(safe(root, path).read_bytes()) != study['source_plan_sha256']):
+                    raise ValueError('v2 study is missing, changed or outside the case')
+                seen_studies.add(rel)
+            if parent not in seen_studies:
+                raise ValueError('v2 assignment must include its delivery anchor study')
+            owned = {}
+            for owner in owners:
+                if (not isinstance(owner, dict) or set(owner) != {'capture_run', 'study_run'}
+                        or owner['capture_run'] in owned or owner['study_run'] not in seen_studies):
+                    raise ValueError('v2 capture owner is invalid or duplicated')
+                owned[owner['capture_run']] = owner['study_run']
+            if set(owned) != set(captures):
+                raise ValueError('v2 capture owners must cover every declared capture exactly once')
+            for cell in cells:
+                if (not isinstance(cell, dict) or set(cell) != {'question', 'locale', 'frame', 'study_run', 'cell_id'}
+                        or cell['locale'] not in locales or cell['frame'] not in {'topic_led_voc', 'entity_led_feedback'}
+                        or cell['study_run'] not in seen_studies or not isinstance(cell['question'], str)
+                        or len(cell['question'].strip()) < 12):
+                    raise ValueError('v2 assignment coverage cell is malformed')
+        cm = copy.deepcopy(cm)
+        cm['research_assignment'] = assignment
+        cm['manifest_revision'] += 1
+        cm['updated_at'] = now()
+        cm.setdefault('events', []).append({'ts': now(), 'event': 'research_assignment', 'decision_id': decision_id})
+        return publish_locked(root, {f'cases/{case_id}/market_research/manifest.json': encoded(cm)},
+                              expected_revision=project['manifest_revision'], decision_id=decision_id,
+                              reason=reason, affected=[case_id])
+
+
+def check_legacy_insights_conversion(root, case_id, manifest):
+    """Do not delete a legacy narrative while current consumers still use it."""
+    legacy_rel = f'cases/{case_id}/README.md'
+    if not safe(root, legacy_rel).is_file():
+        return
+    consumers = []
+
+    def check(bindings, owner):
+        if any(binding.get('path') == legacy_rel for binding in bindings):
+            consumers.append(owner)
+
+    for owner_id, entry in read_project(root)['cases'].items():
+        if entry.get('retired') and owner_id != case_id:
+            continue
+        cm = manifest if owner_id == case_id else case_manifest(root, owner_id)
+        check(cm.get('source_bindings', []), f'case {owner_id} source_bindings')
+        for stage_name, stage in cm.get('stages', {}).items():
+            owner = f'case {owner_id} stage {stage_name}'
+            check(stage.get('source_bindings', []), owner)
+            if owner_id == case_id and any(
+                    (item.get('path') if isinstance(item, dict) else item) == 'README.md'
+                    for item in stage.get('artifacts', [])):
+                consumers.append(owner + ' artifacts')
+        for question in cm.get('coaching', {}).get('research_questions', []):
+            check([question.get('answer_binding') or {}], f'case {owner_id} question {question["id"]}')
+        check(insights_bindings(root, cm), f'case {owner_id} insights')
+    plan_path = safe(root, 'strategy/strategy-plan.json')
+    if plan_path.is_file():
+        plan = load(plan_path)
+        check(plan.get('source_bindings', []), 'selected plan source_bindings')
+        for section, item in plan.get('business_plan_sections', {}).items():
+            check(item.get('source_bindings', []), f'selected plan section {section}')
+    if consumers:
+        raise ValueError('legacy README still has current consumers; refresh their original-source references before conversion: '
+                         + '; '.join(sorted(set(consumers))))
+
+
+def publish_insights(root, case_id, packet, decision_id, reason):
+    """Publish one reviewed synthesis using the existing case transaction."""
+    root = Path(root).absolute()
+    with project_lock(root):
+        try:
+            from scripts import validate_case_insights as insights
+            from scripts.verify_numeric_claims import checked_claims
+        except ModuleNotFoundError:
+            import validate_case_insights as insights
+            from verify_numeric_claims import checked_claims
+        project = read_project(root)
+        cm = case_manifest(root, case_id)
+        text, _, _ = insights.validate_packet(root, case_id, packet, manifest=cm)
+        scope = resolve(root, case_id)
+        review_path = f'cases/{case_id}/market_research/case_insights/reviews/{decision_id}.json'
+        if safe(root, review_path).exists():
+            raise ValueError('insights review identifier already published')
+        review_bytes = encoded(packet).encode()
+        claims = packet.get('numeric_claims', [])
+        _, numeric = checked_claims(root, {'case_insights.md': packet['document']}, claims, packet['source_bindings'])
+        prior_path = scope / 'numeric-claims.json'
+        retained = []
+        if prior_path.is_file():
+            for claim in load(prior_path).get('claims', []):
+                if claim.get('document') in {'README.md', 'case_insights.md'}:
+                    continue
+                authored = {k: v for k, v in claim.items() if k not in {'check_status', 'source_sha256'}}
+                marker = '{{source_numeric.' + authored['id'] + '}}'
+                binding = [authored['source_binding']] if authored['status'] == 'verified' else []
+                checked_claims(root, {authored['document']: marker}, [authored], binding)
+                retained.append(claim)
+        all_claims = retained + numeric['claims']
+        if len({row['id'] for row in all_claims}) != len(all_claims):
+            raise ValueError('numeric claim identifier collides with retained annex claim')
+        receipt = {'schema_version': '1.0', 'claims': all_claims,
+                   'verified_count': sum(c['check_status'] == 'verified' for c in all_claims),
+                   'unverified_count': sum(c['check_status'] == 'unverified' for c in all_claims)}
+        cm = copy.deepcopy(cm)
+        cm['manifest_revision'] += 1
+        cm['updated_at'] = now()
+        if packet.get('comparison') and not cm.get('comparison'):
+            cm['comparison'] = {**packet['comparison'], 'assessment_revision': cm['assessment_revision']}
+        legacy_rel = f'cases/{case_id}/README.md'
+        legacy = scope / 'README.md'
+        if legacy.is_file() and any(b['path'] == legacy_rel for b in packet['source_bindings']):
+            raise ValueError('old README cannot remain a current insights source after conversion')
+        if legacy.is_file():
+            # Consumer checks ran during validation. Retire only the obsolete
+            # output registration; evidence bindings and stage passes stay intact.
+            cm['artifacts'] = [path for path in cm.get('artifacts', []) if path != 'README.md']
+            cm.get('document_bindings', {}).pop('README.md', None)
+        post_rows = insights.inventory(root, case_id, manifest=cm,
+                                       source_bindings=packet['source_bindings'], include_previous=False)
+        if legacy.is_file():
+            post_rows = [row for row in post_rows if row['path'] != legacy_rel]
+        post_hash = insights.inventory_digest(root, case_id, manifest=cm, rows=post_rows)
+        cm['insights'] = {'contract_version': packet.get('publication_contract_version', 1), 'path': 'case_insights.md', 'state': 'current',
+                          'document_digest': digest(text.encode()), 'inventory_digest': post_hash,
+                          'review_path': review_path, 'review_digest': digest(review_bytes),
+                          'assessment_revision': cm['assessment_revision'], 'published_at': now(),
+                          'scope_status': packet.get('scope_status', 'complete'),
+                          'pending_summary': packet.get('pending_summary')}
+        cm.setdefault('events', []).append({'ts': now(), 'event': 'case_insights', 'decision_id': decision_id})
+        outputs = {f'cases/{case_id}/case_insights.md': text,
+                   review_path: review_bytes,
+                   f'cases/{case_id}/numeric-claims.json': encoded(receipt),
+                   f'cases/{case_id}/market_research/manifest.json': encoded(cm)}
+        if legacy.is_file():
+            outputs[legacy_rel] = None
+        return publish_locked(root, outputs, expected_revision=project['manifest_revision'],
+                              decision_id=decision_id, reason=reason, affected=[case_id])
+
+
+def _publish_assessment(root, case_id, packet, decision_id, reason, *, preview=False):
     """Final publisher for opportunity-risk-designer's bounded appraisal mode."""
     scope = resolve(root, case_id)
     m = read_project(root)
     cm = case_manifest(root, case_id)
-    if set(packet) - {'assessment_revision', 'manifest_revision', 'documents', 'source_bindings', 'economics_inputs', 'material_change', 'economics_input_digest', 'comparison'}:
+    if set(packet) - {'assessment_revision', 'manifest_revision', 'documents', 'source_bindings', 'economics_inputs', 'material_change', 'economics_input_digest', 'comparison', 'numeric_claims', 'publication_contract_version', 'publication_claims', 'business_plan_sections', 'publication_status', 'independent_review'}:
         raise ValueError('unknown appraisal fields; author inputs, never calculated results')
     if packet.get('manifest_revision') != cm['manifest_revision']:
         raise ValueError('case publication revision conflict')
     if packet.get('assessment_revision') != cm['assessment_revision']:
         raise ValueError('assessment revision conflict')
-    for section in ('customer_segments', 'customer_journey', 'pain_points'):
-        candidates = list((scope / 'market_research' / section).rglob('*'))
-        if not any(p.is_file() and p.stat().st_size for p in candidates):
-            raise ValueError('initial research required: ' + section)
-        for p in candidates:
-            safe(root, str(p.relative_to(root)))
+    try:
+        from scripts.evidence_scout.validate_research_completion import initial_case_evidence
+    except ModuleNotFoundError:
+        from evidence_scout.validate_research_completion import initial_case_evidence
+    evidence = initial_case_evidence(root, case_id, packet.get('source_bindings', []))
+    if evidence['status'] != 'eligible':
+        raise ValueError('reviewed initial case evidence required: ' + ', '.join(evidence['missing']))
     docs = packet.get('documents', {})
-    if not docs or any(name not in ASSESSMENT_FILES - {'economics.json'} for name in docs):
+    allowed_docs = {'feasibility.md', 'business-case.md'} | ({'README.md'} if not cm.get('insights') else set())
+    if not docs or any(name not in allowed_docs for name in docs):
         raise ValueError('appraisal may only publish designated case narratives')
     if any(not isinstance(body, str) or not body.strip() for body in docs.values()):
         raise ValueError('empty assessment document')
+    version = packet.get('publication_contract_version', 1)
+    if version not in {1, 2}:
+        raise ValueError('unsupported appraisal publication contract')
+    if version == 2:
+        sections = packet.get('business_plan_sections')
+        if not isinstance(sections, dict) or set(sections) != set(PLAN_SECTIONS):
+            raise ValueError('v2 appraisal needs every business plan decision section')
+        lines = ['# Conditional business case', '']
+        for key in PLAN_SECTIONS:
+            row = sections[key]
+            if (not isinstance(row, dict) or row.get('status') not in {'supported', 'provisional', 'missing', 'not_applicable'}
+                    or not isinstance(row.get('text'), str) or len(row['text'].strip()) < 25):
+                raise ValueError('decision-useful section status and explanation required: ' + key)
+            if row['status'] in {'missing', 'not_applicable'} and not row.get('next_action'):
+                raise ValueError('missing or inapplicable section needs decision consequence and next action: ' + key)
+            lines += ['## ' + key.replace('_', ' ').title(), '', 'Status: ' + row['status'], '', row['text'], '']
+            if row.get('next_action'):
+                lines += ['Decision consequence and next action: ' + row['next_action'], '']
+        docs = {**docs, 'business-case.md': '\n'.join(lines)}
     bindings = packet.get('source_bindings')
     if not isinstance(bindings, list) or not bindings:
         raise ValueError('explicit source-use bindings required')
@@ -573,6 +944,12 @@ def _publish_assessment(root, case_id, packet, decision_id, reason):
             raise ValueError('current outputs cannot be their own evidence inputs')
         if b != source_binding(root, b['path'], locator=b['locator'], applicability=b['applicability']):
             raise ValueError('stale source-use binding')
+    if not any(row['claim_ledger'] in {b['path'] for b in bindings} for row in evidence['eligible_runs']):
+        raise ValueError('appraisal must bind an eligible reviewed claim ledger')
+    numeric_claims = packet.get('numeric_claims', [])
+    prior_numeric = scope / 'numeric-claims.json'
+    if not packet.get('material_change', True) and prior_numeric.exists() and load(prior_numeric).get('claims') and 'numeric_claims' not in packet:
+        raise ValueError('cosmetic appraisal must retain current numeric claims explicitly')
     if not packet.get('material_change', True):
         if bindings != cm.get('source_bindings'):
             raise ValueError('source applicability changes require a material revision')
@@ -582,7 +959,15 @@ def _publish_assessment(root, case_id, packet, decision_id, reason):
     updated = invalidate(cm, reason) if packet.get('material_change', True) else copy.deepcopy(cm)
     if not packet.get('material_change', True):
         updated.update(manifest_revision=cm.get('manifest_revision', 0) + 1, updated_at=now())
+    if version == 1 or packet.get('publication_status', 'progress') == 'progress':
+        for key in ('appraisal_review', 'appraisal_reviewed_outputs'):
+            updated.pop(key, None)
+    if version == 1:
+        updated.pop('appraisal_contract_version', None)
+        updated.pop('appraisal_publication_status', None)
     updated['source_bindings'] = bindings
+    if packet.get('material_change', True) and updated.get('insights', {}).get('state') == 'current':
+        updated['insights']['state'] = 'update_pending'
     if 'comparison' not in packet:
         raise ValueError('appraisal requires a current comparison summary')
     if 'comparison' in packet:
@@ -590,7 +975,21 @@ def _publish_assessment(root, case_id, packet, decision_id, reason):
         if not isinstance(comparison, dict) or set(comparison) != {'summary', 'principal_uncertainty', 'next_action'} or any(not isinstance(v, str) or not v.strip() for v in comparison.values()):
             raise ValueError('comparison requires summary, principal_uncertainty and next_action')
         updated['comparison'] = {**comparison, 'assessment_revision': updated['assessment_revision']}
+    try:
+        from scripts.verify_numeric_claims import checked_claims, render_markers
+    except ModuleNotFoundError:
+        from verify_numeric_claims import checked_claims, render_markers
+    numeric_texts = {**docs, **{'comparison.' + key: value for key, value in comparison.items()}}
+    if version == 2:
+        try:
+            from scripts.publication_claims import check_numeric_citations
+        except ModuleNotFoundError:
+            from publication_claims import check_numeric_citations
+        check_numeric_citations(numeric_texts, numeric_claims, packet.get('publication_claims', []))
+    _, numeric_report = checked_claims(root, numeric_texts, numeric_claims, bindings)
     outputs = {f'cases/{case_id}/{name}': body for name, body in docs.items()}
+    if 'numeric_claims' in packet or prior_numeric.exists():
+        outputs[f'cases/{case_id}/numeric-claims.json'] = encoded(numeric_report)
     record = None
     if 'economics_inputs' in packet:
         try:
@@ -631,10 +1030,57 @@ def _publish_assessment(root, case_id, packet, decision_id, reason):
             outputs[f'cases/{case_id}/{name}'] += '\n\nEconomics input digest: `' + record['input_digest'] + '`\n\nCalculated contribution per unit: ' + str(record['results']['contribution_per_unit']) + '. Required monthly sales: ' + str(record['results']['required_sales']) + '. Capacity meets target: ' + str(record['results']['capacity_meets_target']) + '. Unknowns remain unresolved; see economics.json.\n'
         elif name not in docs and packet.get('material_change', True) and (scope / name).exists():
             outputs[f'cases/{case_id}/{name}'] = '# Review required\n\nAssessment changed; refresh this document. Earlier findings are archived in project history.\n'
+    for name in docs:
+        outputs[f'cases/{case_id}/{name}'] = render_markers(outputs[f'cases/{case_id}/{name}'], numeric_report)
+    for key in ('summary', 'principal_uncertainty', 'next_action'):
+        updated['comparison'][key] = render_markers(updated['comparison'][key], numeric_report)
+    if version == 2:
+        try:
+            from scripts.publication_claims import render as render_claims
+        except ModuleNotFoundError:
+            from publication_claims import render as render_claims
+        rendered = render_claims(root, {**{name: outputs[f'cases/{case_id}/{name}'] for name in docs},
+                                        **{'comparison.' + key: updated['comparison'][key]
+                                           for key in ('summary', 'principal_uncertainty', 'next_action')}},
+                                 packet.get('publication_claims', []), bindings)
+        for name in docs:
+            outputs[f'cases/{case_id}/{name}'] = rendered[name]
+        for key in ('summary', 'principal_uncertainty', 'next_action'):
+            updated['comparison'][key] = rendered['comparison.' + key]
+        updated['appraisal_contract_version'] = 2
+        updated['appraisal_publication_status'] = packet.get('publication_status', 'progress')
+    if updated.get('insights', {}).get('state') == 'update_pending' and (scope / 'case_insights.md').is_file():
+        outputs[f'cases/{case_id}/case_insights.md'] = pending_insights((scope / 'case_insights.md').read_text())
     updated.setdefault('events', []).append({'ts': now(), 'event': 'appraisal', 'decision_id': decision_id})
     outputs[f'cases/{case_id}/market_research/manifest.json'] = encoded(updated)
     if packet.get('material_change', True) and (m.get('selection') or {}).get('case_id') == case_id:
         outputs.update(mark_plan_review(root, 'Selected-case assessment changed.'))
+    if version == 2:
+        try:
+            from scripts.publication_claims import bundle_digest, check_separate_review
+        except ModuleNotFoundError:
+            from publication_claims import bundle_digest, check_separate_review
+        reviewed_outputs = {key: value for key, value in outputs.items()
+                            if key.startswith(f'cases/{case_id}/') and not key.endswith('market_research/manifest.json')
+                            and key != f'cases/{case_id}/case_insights.md'}
+        economics_rel = f'cases/{case_id}/economics.json'
+        if economics_rel not in reviewed_outputs and (scope / 'economics.json').is_file():
+            reviewed_outputs[economics_rel] = (scope / 'economics.json').read_text()
+        reviewed_outputs[f'cases/{case_id}/comparison.json'] = encoded(updated['comparison'])
+        review_hash = bundle_digest(reviewed_outputs, bindings)
+        if preview:
+            return {'bundle_digest': review_hash, 'outputs': reviewed_outputs,
+                    'reviewed_sources': sorted(b['path'] + '#' + b['digest'] for b in bindings)}
+        if packet.get('publication_status', 'progress') == 'final':
+            check_separate_review(root, case_id, packet.get('independent_review'), review_hash, bindings,
+                                  f'cases/{case_id}/market_research/appraisal/reviews/')
+            updated['appraisal_review'] = packet['independent_review']
+            updated['appraisal_reviewed_outputs'] = sorted(reviewed_outputs)
+            outputs[f'cases/{case_id}/market_research/manifest.json'] = encoded(updated)
+        elif packet.get('publication_status', 'progress') != 'progress':
+            raise ValueError('appraisal publication status must be progress or final')
+    elif preview:
+        raise ValueError('legacy appraisal has no final-quality review bundle')
     return publish_locked(root, outputs, expected_revision=m['manifest_revision'], decision_id=decision_id, reason=reason, affected=[case_id])
 
 
@@ -648,7 +1094,13 @@ def publish_business_plan(root, case_id, plan, decision_id, reason):
         return _publish_business_plan(root, case_id, plan, decision_id, reason)
 
 
-def _publish_business_plan(root, case_id, plan, decision_id, reason):
+def prepare_business_plan(root, case_id, plan):
+    root = Path(root).absolute()
+    with project_lock(root):
+        return _publish_business_plan(root, case_id, plan, 'preview', 'Prepare plan review', preview=True)
+
+
+def _publish_business_plan(root, case_id, plan, decision_id, reason, *, preview=False):
     """Assemble one root plan from the existing structured strategy authority."""
     try:
         from scripts.strategy_review import validate_plan
@@ -678,6 +1130,22 @@ def _publish_business_plan(root, case_id, plan, decision_id, reason):
         from scripts.economics_text import render
     except ModuleNotFoundError:
         from economics_text import render
+    version = plan.get('publication_contract_version', 1)
+    if version not in {1, 2}:
+        raise ValueError('unsupported business plan publication contract')
+    all_bindings = list(plan.get('source_bindings', []))
+    for section in sections.values():
+        for item in section.get('source_bindings', []):
+            if item not in all_bindings:
+                all_bindings.append(item)
+    if version == 2:
+        try:
+            from scripts.publication_claims import render as render_claims, bundle_digest, check_separate_review
+        except ModuleNotFoundError:
+            from publication_claims import render as render_claims, bundle_digest, check_separate_review
+        if any(ref.get('document') not in {'section.' + key for key in PLAN_SECTIONS}
+               for ref in plan.get('publication_claims', [])):
+            raise ValueError('plan citation targets must be business plan sections')
     for key in PLAN_SECTIONS:
         section = sections[key]
         status = section.get('status')
@@ -688,7 +1156,11 @@ def _publish_business_plan(root, case_id, plan, decision_id, reason):
         for b in section.get('source_bindings', []):
             if b != source_binding(root, b['path'], locator=b['locator'], applicability=b['applicability']):
                 raise ValueError('stale plan source: ' + key)
-        lines += ['## ' + key.replace('_', ' ').title(), '', 'Status: ' + status, '', render(section['text'], economics, section.get('economics_input_digest')), '']
+        section_text = render(section['text'], economics, section.get('economics_input_digest'))
+        if version == 2:
+            relevant = [ref for ref in plan.get('publication_claims', []) if ref.get('document') == 'section.' + key]
+            section_text = render_claims(root, {'section.' + key: section_text}, relevant, all_bindings)['section.' + key]
+        lines += ['## ' + key.replace('_', ' ').title(), '', 'Status: ' + status, '', section_text, '']
     econ_path = resolve(root, case_id) / 'economics.json'
     if econ_path.exists():
         try:
@@ -699,7 +1171,20 @@ def _publish_business_plan(root, case_id, plan, decision_id, reason):
         validate(economics)
         lines += ['## Calculated economics', '', 'Input digest: `' + economics['input_digest'] + '`', '',
                   '```json', encoded(economics['results']), '```', '']
-    return publish_locked(root, {'strategy/business-plan.md': '\n'.join(lines), 'strategy/strategy-plan.json': encoded(plan)},
+    rendered_plan = '\n'.join(lines)
+    if version == 2:
+        review_hash = bundle_digest({'strategy/business-plan.md': rendered_plan}, all_bindings)
+        if preview:
+            return {'bundle_digest': review_hash, 'document': rendered_plan,
+                    'reviewed_sources': sorted(b['path'] + '#' + b['digest'] for b in all_bindings)}
+        if plan.get('publication_status', 'progress') == 'final':
+            check_separate_review(root, case_id, plan.get('independent_review'), review_hash, all_bindings,
+                                  f'strategy/reviews/{case_id}/')
+        elif plan.get('publication_status', 'progress') != 'progress':
+            raise ValueError('plan publication status must be progress or final')
+    elif preview:
+        raise ValueError('legacy plan has no final-quality review bundle')
+    return publish_locked(root, {'strategy/business-plan.md': rendered_plan, 'strategy/strategy-plan.json': encoded(plan)},
                    expected_revision=m['manifest_revision'], decision_id=decision_id, reason=reason, affected=[case_id])
 
 
@@ -749,18 +1234,35 @@ def correct(root, case_ids, reason, decision_id, *, source_path=None):
             bs = list(cm.get('source_bindings', []))
             for stage in cm.get('stages', {}).values():
                 bs.extend(stage.get('source_bindings', []))
+            bs.extend(insights_bindings(root, cm))
             if any(b['path'] == source_path for b in bs):
                 targets.add(case_id)
     outputs = {}
     for case_id in sorted(targets):
         resolve(root, case_id)
         cm = invalidate(case_manifest(root, case_id), reason)
+        if cm.get('insights', {}).get('state') == 'current':
+            cm['insights']['state'] = 'update_pending'
         cm.setdefault('events', []).append({'ts': now(), 'event': 'correction', 'decision_id': decision_id})
         outputs[f'cases/{case_id}/market_research/manifest.json'] = encoded(cm)
+        withdrawn = set()
         for name in ('README.md', 'feasibility.md', 'business-case.md'):
             path = resolve(root, case_id) / name
             if path.exists():
                 outputs[f'cases/{case_id}/{name}'] = '# Review required\n\n' + reason + '\n\nPrevious findings are archived in project history.\n'
+                withdrawn.add(name)
+        numeric_path = resolve(root, case_id) / 'numeric-claims.json'
+        if withdrawn and numeric_path.is_file():
+            prior_numeric = load(numeric_path)
+            retained = [claim for claim in prior_numeric.get('claims', []) if claim.get('document') not in withdrawn]
+            if len(retained) != len(prior_numeric.get('claims', [])):
+                outputs[f'cases/{case_id}/numeric-claims.json'] = encoded({
+                    **prior_numeric, 'claims': retained,
+                    'verified_count': sum(claim['check_status'] == 'verified' for claim in retained),
+                    'unverified_count': sum(claim['check_status'] == 'unverified' for claim in retained)})
+        insight_path = resolve(root, case_id) / 'case_insights.md'
+        if insight_path.is_file() and cm.get('insights', {}).get('state') == 'update_pending':
+            outputs[f'cases/{case_id}/case_insights.md'] = pending_insights(insight_path.read_text())
     selection = m.get('selection')
     if selection and selection['case_id'] in targets:
         outputs.update(mark_plan_review(root, reason))
@@ -770,7 +1272,7 @@ def correct(root, case_ids, reason, decision_id, *, source_path=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'add', 'rename', 'select', 'clear', 'correct', 'recover', 'show', 'appraise', 'plan'])
+    parser.add_argument('action', choices=['init', 'add', 'rename', 'select', 'clear', 'correct', 'recover', 'show', 'appraise', 'plan', 'insights', 'record-question', 'register-research', 'prepare-appraisal', 'prepare-plan'])
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--case', default='')
     parser.add_argument('--title', default='')
@@ -779,6 +1281,7 @@ def main(argv=None):
     parser.add_argument('--reason', default='')
     parser.add_argument('--source', default=None)
     parser.add_argument('--input', type=Path, help='Authored appraisal or structured strategy JSON; results are calculated.')
+    parser.add_argument('--out', type=Path, help='Fresh directory for exact rendered review bundle.')
     args = parser.parse_args(argv)
     try:
         if args.action not in {'recover', 'show'} and (args.workspace / PROJECT).exists() and load(args.workspace / PROJECT).get('controller_kind') == 'umbrella':
@@ -795,11 +1298,43 @@ def main(argv=None):
             correct(args.workspace, [args.case] if args.case else [], args.reason, args.decision_id, source_path=args.source)
         elif args.action == 'recover':
             print(recover(args.workspace))
+        elif args.action == 'record-question':
+            if args.input is None:
+                raise ValueError('--input required')
+            record_question(args.workspace, args.case, load(args.input), args.decision_id, args.reason)
+        elif args.action == 'register-research':
+            if args.input is None:
+                raise ValueError('--input required')
+            register_research_assignment(args.workspace, args.case, load(args.input), args.decision_id, args.reason)
+        elif args.action == 'insights':
+            if args.input is None:
+                raise ValueError('--input required')
+            publish_insights(args.workspace, args.case, load(args.input), args.decision_id, args.reason)
         elif args.action in {'appraise', 'plan'}:
             if args.input is None:
                 raise ValueError('--input required')
             function = publish_assessment if args.action == 'appraise' else publish_business_plan
             function(args.workspace, args.case, load(args.input), args.decision_id, args.reason)
+        elif args.action in {'prepare-appraisal', 'prepare-plan'}:
+            if args.input is None or args.out is None:
+                raise ValueError('--input and --out required')
+            out = args.out.absolute()
+            if out.exists():
+                raise ValueError('review output directory must be fresh')
+            function = prepare_assessment if args.action == 'prepare-appraisal' else prepare_business_plan
+            bundle = function(args.workspace, args.case, load(args.input))
+            out.mkdir(parents=True)
+            if 'outputs' in bundle:
+                for path, body in bundle['outputs'].items():
+                    target = out / path
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_bytes(body if isinstance(body, bytes) else body.encode())
+                bundle = {key: value for key, value in bundle.items() if key != 'outputs'}
+            else:
+                (out / 'business-plan.md').write_text(bundle.pop('document'))
+            (out / 'review-bundle.json').write_text(encoded(bundle))
+            print(encoded({'status': 'prepared', 'output': str(out), **bundle}))
+            return 0
         print(encoded(read_project(args.workspace)))
         return 0
     except (ValueError, KeyError, OSError) as exc:

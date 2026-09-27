@@ -94,6 +94,25 @@
       "type": "integer",
       "minimum": 1
     },
+    "research_assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "decision", "customer_segment", "locales", "parent_run", "capture_runs", "source_plan_path"],
+      "properties": {
+        "schema_version": {"enum": [1, 2]},
+        "decision": {"type": "string", "minLength": 12},
+        "customer_segment": {"type": "string", "minLength": 3},
+        "locales": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z]{2}:[a-z]{2}$"}},
+        "parent_run": {"type": "string", "minLength": 1},
+        "capture_runs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "source_plan_path": {"type": "string", "minLength": 1},
+        "studies": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["run_dir", "source_plan_path", "source_plan_sha256", "relation", "applicability"], "properties": {"run_dir": {"type": "string", "minLength": 1}, "source_plan_path": {"type": "string", "minLength": 1}, "source_plan_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "relation": {"enum": ["target", "adjacent", "context"]}, "applicability": {"type": "string", "minLength": 20}}}},
+        "capture_owners": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["capture_run", "study_run"], "properties": {"capture_run": {"type": "string", "minLength": 1}, "study_run": {"type": "string", "minLength": 1}}}},
+        "coverage_cells": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["question", "locale", "frame", "study_run", "cell_id"], "properties": {"question": {"type": "string", "minLength": 12}, "locale": {"type": "string", "pattern": "^[A-Z]{2}:[a-z]{2}$"}, "frame": {"enum": ["topic_led_voc", "entity_led_feedback"]}, "study_run": {"type": "string", "minLength": 1}, "cell_id": {"type": "string", "minLength": 1}}}},
+        "overlap_reviews": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["source_url", "study_runs", "disposition", "reviewer", "reason"], "properties": {"source_url": {"type": "string", "pattern": "^https?://"}, "study_runs": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "disposition": {"enum": ["same_incident", "distinct_interpretations"]}, "reviewer": {"type": "string", "minLength": 3}, "reason": {"type": "string", "minLength": 20}}}}
+      },
+      "allOf": [{"if": {"properties": {"schema_version": {"const": 2}}}, "then": {"required": ["studies", "capture_owners", "coverage_cells", "overlap_reviews"]}}, {"if": {"properties": {"schema_version": {"const": 1}}}, "then": {"not": {"anyOf": [{"required": ["studies"]}, {"required": ["capture_owners"]}, {"required": ["coverage_cells"]}, {"required": ["overlap_reviews"]}]}}}]
+    },
     "coaching": {
       "type": "object",
       "additionalProperties": false,
@@ -151,7 +170,42 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "research_questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "question", "status"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+              "question": {"type": "string", "minLength": 1},
+              "status": {"enum": ["open", "partial", "answered"]},
+              "answer_binding": {"type": "object", "required": ["path", "digest", "locator", "applicability"],
+                "additionalProperties": false,
+                "properties": {"path": {"type": "string", "minLength": 1}, "digest": {"type": "string", "minLength": 1},
+                  "locator": {"type": "string", "minLength": 1}, "applicability": {"type": "string", "minLength": 1}}}
+            }
+          }
         }
+      }
+    },
+    "insights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "path", "state"],
+      "properties": {
+        "contract_version": {"enum": [1, 2]},
+        "path": {"const": "case_insights.md"},
+        "state": {"enum": ["draft", "current", "update_pending"]},
+        "document_digest": {"type": "string"},
+        "inventory_digest": {"type": "string"},
+        "review_path": {"type": "string"},
+        "review_digest": {"type": "string"},
+        "assessment_revision": {"type": "integer", "minimum": 1},
+        "published_at": {"type": "string", "format": "date-time"},
+        "scope_status": {"enum": ["progress", "complete"]},
+        "pending_summary": {"type": ["string", "null"]}
       }
     },
     "case_id": {
@@ -161,6 +215,10 @@
       "type": "integer",
       "minimum": 1
     },
+    "appraisal_contract_version": {"const": 2},
+    "appraisal_publication_status": {"enum": ["progress", "final"]},
+    "appraisal_review": {"type": "object"},
+    "appraisal_reviewed_outputs": {"type": "array", "items": {"type": "string"}},
     "source_bindings": {
       "type": "array",
       "items": {

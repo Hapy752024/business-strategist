@@ -33,19 +33,19 @@ def test_selection_generation_and_corrections(tmp_path):
 @pytest.mark.parametrize('point', ['pending', 'replace', 'commit'])
 def test_interrupted_publication_recovery(tmp_path, point):
     p = topic(tmp_path)
-    before = (p / 'cases/a/README.md').read_bytes()
+    before = (p / 'cases/a/case_insights.md').read_bytes()
     rev = c.read_project(p)['manifest_revision']
     def stop(where):
         if where == point:
             raise RuntimeError('simulated crash')
     with pytest.raises(RuntimeError):
-        c.publish(p, {'cases/a/README.md': '# Replacement\n'}, expected_revision=rev,
+        c.publish(p, {'cases/a/case_insights.md': '# Replacement\n'}, expected_revision=rev,
                   decision_id='update-a', reason='A changed', affected=['a'], fault=stop)
     with pytest.raises(ValueError, match='pending'):
         c.read_project(p)
     c.recover(p)
     assert not (p / 'history/pending.json').exists()
-    assert (p / 'cases/a/README.md').read_bytes() == (b'# Replacement\n' if point == 'commit' else before)
+    assert (p / 'cases/a/case_insights.md').read_bytes() == (b'# Replacement\n' if point == 'commit' else before)
     c.recover(p)  # idempotent
 
 
@@ -54,7 +54,7 @@ def test_conflict_and_escape_make_no_current_changes(tmp_path):
     rev = c.read_project(p)['manifest_revision']
     c.correct(p, ['b'], 'changed', 'b-change')
     with pytest.raises(ValueError, match='conflict'):
-        c.publish(p, {'cases/a/README.md': 'old'}, expected_revision=rev, decision_id='old', reason='old')
+        c.publish(p, {'cases/a/case_insights.md': 'old'}, expected_revision=rev, decision_id='old', reason='old')
     with pytest.raises(ValueError):
         c.publish(p, {'../escape': 'bad'}, expected_revision=c.read_project(p)['manifest_revision'], decision_id='escape', reason='bad')
     assert not (tmp_path / 'escape').exists()
@@ -66,12 +66,12 @@ def test_recovery_preserves_outside_edits(tmp_path):
         if where == 'replace':
             raise RuntimeError('crash')
     with pytest.raises(RuntimeError):
-        c.publish(p, {'cases/a/README.md': 'new'}, expected_revision=c.read_project(p)['manifest_revision'],
+        c.publish(p, {'cases/a/case_insights.md': 'new'}, expected_revision=c.read_project(p)['manifest_revision'],
                   decision_id='update', reason='update', fault=stop)
-    (p / 'cases/a/README.md').write_text('outside change')
+    (p / 'cases/a/case_insights.md').write_text('outside change')
     with pytest.raises(ValueError, match='outside'):
         c.recover(p)
-    assert (p / 'cases/a/README.md').read_text() == 'outside change'
+    assert (p / 'cases/a/case_insights.md').read_text() == 'outside change'
 
 
 def test_rename_and_clear_are_not_new_execution_choices(tmp_path):

@@ -404,7 +404,9 @@ def main() -> int:
     if cases.locate(run_dir):
         import uuid
         out_dir = run_dir / ("interview-" + uuid.uuid4().hex)
-    prepare_research_output(out_dir, input_paths=[evidence_path, review_path, summary_path], source_bindings_file=args.source_bindings)
+    responder_intake_table(args.responders)  # Validate before creating any output.
+    inputs = [p for p in (evidence_path, review_path, summary_path, args.responders) if p is not None and p.is_file()]
+    prepare_research_output(out_dir, input_paths=inputs, source_bindings_file=args.source_bindings)
     out_dir.mkdir(parents=True, exist_ok=True)
     write_screener(out_dir, accepted, topic, segment, limits)
     write_guide(out_dir, items, topic, segment, limits)

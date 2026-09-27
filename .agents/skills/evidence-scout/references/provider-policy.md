@@ -190,6 +190,11 @@ Recurring panels multiply cost (prompts x engines x repetitions x cadence): reco
 Prefer sources in this order:
 
 1. Reddit for complaints, workarounds, repeated questions, and communities.
+   For entity-led feedback, the collector accepts only an exact reviewed Reddit
+   discussion URL from the source plan. It fetches that discussion through the
+   native API and may use the configured ScrapeCreators exact-URL route as a
+   fallback. It never substitutes broad Reddit search for entity feedback; the
+   returned discussion identity must match the reviewed locator.
 2. SerpAPI Google Trends for search-demand proxy (weak evidence).
 3. YouTube official API for videos and comments.
 4. Firecrawl and Brave Search for forums, niche communities, and source discovery.

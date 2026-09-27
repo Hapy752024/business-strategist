@@ -622,12 +622,158 @@
     "review_required": {
       "type": "string"
     },
+    "publication_contract_version": {"const": 2},
+    "publication_status": {"enum": ["progress", "final"]},
+    "publication_claims": {"type": "array", "items": {"type": "object"}},
+    "independent_review": {"type": "object"},
     "publication_base_digest": {
       "type": [
         "string",
         "null"
       ],
       "pattern": "^[a-f0-9]{64}$"
+    },
+    "decision_review": {
+      "type": "object",
+      "required": [
+        "premortem",
+        "stop_rules",
+        "precommitments"
+      ],
+      "properties": {
+        "premortem": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": [
+              "trigger_category",
+              "trigger",
+              "transmission",
+              "failed_defense",
+              "leading_indicator",
+              "probability_basis"
+            ],
+            "properties": {
+              "trigger_category": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "trigger": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "transmission": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "failed_defense": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "leading_indicator": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "probability_basis": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "stop_rules": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "kpi",
+              "operator",
+              "threshold",
+              "window",
+              "action",
+              "owner"
+            ],
+            "properties": {
+              "kpi": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "operator": {
+                "enum": [
+                  "below",
+                  "above"
+                ]
+              },
+              "threshold": {
+                "type": "number"
+              },
+              "window": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "owner": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "precommitments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "bias",
+              "disconfirmation_trigger",
+              "action",
+              "verification"
+            ],
+            "properties": {
+              "bias": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "disconfirmation_trigger": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "verification": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "$defs": {
@@ -674,5 +820,24 @@
       },
       "uniqueItems": true
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "commit"
+          }
+        },
+        "required": [
+          "verdict"
+        ]
+      },
+      "then": {
+        "required": [
+          "decision_review"
+        ]
+      }
+    }
+  ]
 }

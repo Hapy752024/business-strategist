@@ -101,7 +101,8 @@
               "facebook_discovery",
               "operator_lesson",
               "operator_failure",
-              "competitor_discovery"
+              "competitor_discovery",
+              "entity_locator_discovery"
             ]
           },
           "source_family": {

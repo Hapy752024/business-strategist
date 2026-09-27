@@ -8,7 +8,7 @@ projects/<slug>/
   project-manifest.json          # layout 3, controller_kind: umbrella
   business-analysis/                     # existing case controller, layout 2
     README.md                   # current case comparison
-    cases/<case-id>/             # current findings, feasibility, economics
+    cases/<case-id>/             # case_insights.md; supporting feasibility, economics and research
     market_research/            # shared research; case-specific research in cases/
     strategy/                   # single selected business plan and GTM
     history/                    # Business decisions and earlier versions

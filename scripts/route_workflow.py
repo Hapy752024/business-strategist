@@ -388,7 +388,7 @@ def _route_request(
             packet['required_stages'] = []
             packet.pop('case_context', None)
             return packet
-    if selected.get('mode') == 'appraisal':
+    if selected.get('mode') in {'appraisal', 'insights'}:
         packet['expected_artifacts'] = metadata['artifacts']
     project_root = subprojects.business(umbrella) if project else None
     modern = bool(project_root and (project_root / cases.PROJECT).is_file() and cases.load(project_root / cases.PROJECT).get('layout_version') == 2)
@@ -397,9 +397,9 @@ def _route_request(
         packet.update(gate_blocked=True, gate='migration_required', first_skill=skill,
                       reason=reason + '; new execution requires explicit case-layout migration')
         return packet
-    if selected.get('mode') == 'appraisal' and project and not modern:
-        raise ValueError('case-appraisal requires a versioned project and registered case; migrate explicitly')
-    if selected.get('mode') == 'appraisal' and not project:
+    if selected.get('mode') in {'appraisal', 'insights'} and project and not modern:
+        raise ValueError('case work requires a versioned project and registered case; migrate explicitly')
+    if selected.get('mode') in {'appraisal', 'insights'} and not project:
         packet.update(gate_blocked=True, gate='case_scope_required', first_skill=skill)
     if case_id and not modern:
         raise ValueError('case mode requires explicit migration')
@@ -415,17 +415,24 @@ def _route_request(
             execution = None
         scope_root = cases.resolve(project_root, case_id)
         cm = cases.case_manifest(project_root, case_id) if case_id else {}
-        if selected.get('mode') == 'appraisal':
+        if selected.get('mode') in {'appraisal', 'insights'}:
             if not case_id:
-                raise ValueError('case-appraisal requires a registered case')
-            missing_baseline = [name for name in PAIN_GATE_CONCEPTS if not any(p.is_file() and p.stat().st_size for p in (scope_root / 'market_research' / name).rglob('*'))]
-            if missing_baseline:
-                packet.update(gate_blocked=True, gate='initial_research', first_skill='evidence-scout', missing_initial_research=missing_baseline)
+                raise ValueError('case work requires a registered case')
+        if selected.get('mode') == 'appraisal':
+            try:
+                from scripts.evidence_scout.validate_research_completion import initial_case_evidence
+            except ModuleNotFoundError:
+                from evidence_scout.validate_research_completion import initial_case_evidence
+            evidence = initial_case_evidence(project_root, case_id, cm.get('source_bindings', []))
+            if evidence['status'] != 'eligible':
+                packet.update(gate_blocked=True, gate='initial_research', first_skill='evidence-scout',
+                              missing_initial_research=evidence['missing'], checked_research_runs=evidence.get('checked_runs', []))
         packet['case_context'] = {'project_root': str(project_root), 'case_id': case_id, 'layout_version': 2,
                                   'output_root': str(scope_root), 'assessment_revision': cm.get('assessment_revision'),
                                   'manifest_revision': cm.get('manifest_revision'),
                                   'selection_generation': project_state['selection_generation'], 'execution_binding': execution,
-                                  'current_concept': str(scope_root / 'README.md'), 'source_bindings': cm.get('source_bindings', []),
+                                  'current_concept': str(scope_root / ('case_insights.md' if (scope_root / 'case_insights.md').is_file() else 'README.md')),
+                                  'source_bindings': cm.get('source_bindings', []),
                                   'open_blockers': cm.get('open_blockers', []), 'input_contract': metadata.get('inputs', []),
                                   'output_owner': metadata.get('output_owner', skill)}
         if skill == 'startup-business-builder':
@@ -436,7 +443,13 @@ def _route_request(
             packet['case_context']['output_root'] = packet['output_root']
         else:
             packet['output_root'] = str(scope_root)
-        packet['case_context']['input_documents'] = {name: str(scope_root / name) for name in ('README.md', 'feasibility.md', 'business-case.md', 'economics.json') if (scope_root / name).is_file()}
+        packet['case_context']['input_documents'] = {name: str(scope_root / name) for name in ('case_insights.md', 'README.md', 'feasibility.md', 'business-case.md', 'economics.json') if (scope_root / name).is_file()}
+        if case_id:
+            try:
+                from scripts.validate_case_insights import current_status
+            except ModuleNotFoundError:
+                from validate_case_insights import current_status
+            packet['case_context']['insights_status'] = current_status(project_root, case_id)
         if skill == 'startup-business-builder':
             packet['required_references'] = list(dict.fromkeys(packet['required_references'] + checked_references({'required_references': ['references/case-assessment.md']}, CATALOG_PATH.parent.parent)))
     required_stages = metadata.get("strategy_stage_prerequisites", []) if scope == "strategy" else []

@@ -5,6 +5,8 @@ description: Turn reviewed customer experiences and unresolved questions into a 
 
 # Interview Bridge
 
+For a registered Business case, pass reviewed interview learnings and still-open customer questions to the case-insights owner under repo-root `references/case-insights.md`. The interview tracker remains the detailed source.
+
 ## Success Criteria
 - **Research quality:** every probe traces to reviewed evidence or a named hypothesis; material counterexamples and distinct contexts survive selection; no solution pitches or fixed-count validation rules.
 - **Qualitative:** screener recruits people who experienced the problem recently, not idea fans; guide asks about past behavior; tracker separates confirmation from refutation.

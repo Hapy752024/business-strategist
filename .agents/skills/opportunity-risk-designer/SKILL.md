@@ -11,7 +11,8 @@ description: Convert customer, workaround, demand, and competitor evidence into 
 
 ## Workflow
 
-For the checked `case-appraisal` route, read repo-root `references/case-assessment.md` and use its bounded appraisal/publication mode. It replaces the full risk workflow for that invocation: initial research is required, but a passed pain gate and execution selection are not. Do not invoke full strategy/pilot workflows or advance commitment stages. Own the assembled case narratives; use the calculation helper for economic results.
+For the checked `case-appraisal` route, read repo-root `references/case-assessment.md` and use its bounded appraisal/publication mode. Require a reviewed run and bound ledger; cover all nine decision sections, direct reviewed-source links, conditional economics and missing inputs. Prepare the exact bundle and obtain separate review before final v2 publication. Progress may publish while research continues. A passed pain gate or selection is not required; do not advance commitment stages.
+For the checked `case-insights` route, read repo-root `references/case-insights.md` and consolidate the registered case's reviewed findings, deep dives and answered questions into `case_insights.md`. Use the full inventory, numeric and freshness checks, then record a semantic contradiction review before publishing. This mode does not run the full risk workflow or change stage gates.
 
 1. Read `references/workflow.md` completely.
 2. Load the active topic manifest and evidence artifacts.

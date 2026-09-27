@@ -196,6 +196,18 @@ def test_partial_provider_retry_merges_prior_capture_and_query_memberships():
     assert c.merge_provider_records(merged, []) == merged
 
 
+def test_same_source_across_providers_keeps_one_record_and_both_query_memberships():
+    source = {"evidence_id": "ev-shared", "source_url": "https://example.org/post",
+              "retrieval_backend": "brave_search", "discovery_memberships": [
+                  {"provider": "brave_search", "query_id": "brave-1"}]}
+    second = {**source, "retrieval_backend": "firecrawl", "discovery_memberships": [
+        {"provider": "firecrawl", "query_id": "firecrawl-1"}]}
+    merged = c.merge_provider_records([], [source, second])
+    assert len(merged) == 1
+    assert {(row['provider'], row['query_id']) for row in merged[0]['discovery_memberships']} == {
+        ('brave_search', 'brave-1'), ('firecrawl', 'firecrawl-1')}
+
+
 @pytest.mark.parametrize('language,seed,expected', [('de', 'Nachhilfe', 'erste Kunden'), ('fr', 'cours particuliers', 'premiers clients'), ('ja', '家庭教師', '最初の顧客')])
 def test_operator_plan_uses_local_situations(language, seed, expected):
     a = args('hn', language=language, geo='DE', topic_keywords=seed, archetype='English business label',

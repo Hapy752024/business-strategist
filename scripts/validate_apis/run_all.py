@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import json
 import subprocess
 import sys
@@ -36,10 +37,29 @@ SCRIPTS = [
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Validate selected source providers")
+    parser.add_argument("--provider", action="append", choices=[name.removeprefix("validate_").removesuffix(".py") for name in SCRIPTS])
+    parser.add_argument("--query", default="")
+    parser.add_argument("--country", default="")
+    parser.add_argument("--language", default="")
+    parser.add_argument("--app-id", default="")
+    args = parser.parse_args()
     results = []
     for script in SCRIPTS:
+        name = script.removeprefix("validate_").removesuffix(".py")
+        if args.provider and name not in args.provider:
+            continue
         path = Path(__file__).resolve().parent / script
-        proc = subprocess.run([sys.executable, str(path), *sys.argv[1:]], cwd=ROOT, text=True, capture_output=True)
+        supported = {"query": {"dataforseo_google_trends", "google_autocomplete", "github", "firecrawl",
+                                "brave_search", "x", "reddit", "serpapi_google_trends", "hn", "youtube"},
+                     "country": {"google_autocomplete", "itunes_reviews"},
+                     "language": {"google_autocomplete"}, "app-id": {"itunes_reviews"}}
+        forwarded = []
+        for flag in ("query", "country", "language", "app-id"):
+            value = getattr(args, flag.replace("-", "_"))
+            if value and name in supported[flag]:
+                forwarded.extend(("--" + flag, value))
+        proc = subprocess.run([sys.executable, str(path), *forwarded], cwd=ROOT, text=True, capture_output=True)
         try:
             parsed = json.loads(proc.stdout)
         except json.JSONDecodeError:
@@ -49,7 +69,7 @@ def main() -> int:
             parsed["stderr"] = proc.stderr[-2000:]
         results.append(parsed)
 
-    out = ROOT / "projects" / "_infra" / "api-validation" / "all.summary.json"
+    out = ROOT / "projects" / "_infra" / "api-validation" / ("selected.summary.json" if args.provider else "all.summary.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=2, sort_keys=True), encoding="utf-8")
     print(json.dumps(results, indent=2, sort_keys=True))

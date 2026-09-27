@@ -6,6 +6,7 @@ observations remain ordinary cited prose; model claims use {{economics.…}} tok
 import re
 
 TOKEN = re.compile(r'\{\{economics\.([a-zA-Z0-9_.]+)\}\}')
+SOURCE_NUMERIC = re.compile(r'\{\{source_numeric\.[a-z][a-z0-9_-]*\}\}')
 FINANCIAL = re.compile(r'\b(contribution|break.?even|required (?:monthly )?sales|capacity (?:target|limit)|(?:our|venture|model|calculated|projected|expected) (?:revenue|cost|cash|sales|profit)|monthly (?:revenue|cost|cash|profit))\b', re.I)
 
 
@@ -16,11 +17,13 @@ def render(text, record, authored_digest=None):
         return text
     # Explicit model claims cannot carry literal amounts from an older draft.
     for block in re.split(r'\n\s*\n|(?<=[.!?])\s+', text):
-        plain = re.sub(r'\[[^\]]*\]\([^)]*\)', 'CITED', TOKEN.sub('BOUND', block))
+        plain = re.sub(r'\[[^\]]*\]\([^)]*\)', 'CITED', TOKEN.sub('BOUND', SOURCE_NUMERIC.sub('CITED', block)))
         plain = re.sub(r'^\s*\d+[.)]\s*', '', plain, flags=re.M)
         if FINANCIAL.search(plain) and re.search(r'\d', plain):
             raise ValueError('model-derived numerical claims require economics placeholders')
-    if (TOKEN.search(text) or FINANCIAL.search(text)) and authored_digest != record['input_digest']:
+    financial_without_source = any(FINANCIAL.search(block) and not SOURCE_NUMERIC.search(block)
+                                   for block in re.split(r'\n\s*\n|(?<=[.!?])\s+', text))
+    if (TOKEN.search(text) or financial_without_source) and authored_digest != record['input_digest']:
         raise ValueError('stale or missing authored economics input digest')
 
     def value(match):

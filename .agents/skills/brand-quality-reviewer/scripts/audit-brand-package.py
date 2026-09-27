@@ -17,10 +17,6 @@ REQUIRED_PATHS = [
     "logos/export",
     "colors",
     "typography",
-    "tokens",
-    "ui",
-    "imagery",
-    "marketing",
     "qa",
 ]
 
@@ -45,7 +41,27 @@ class RefParser(HTMLParser):
 
 
 def check_required(project: Path) -> list[str]:
-    return [path for path in REQUIRED_PATHS if not (project / path).exists()]
+    required = list(REQUIRED_PATHS)
+    manifest = project / "brand-manifest.json"
+    if manifest.exists():
+        try:
+            data = json.loads(manifest.read_text())
+            stages = data["stages"]
+            requested = data.get("requested_deliverables", [])
+            if not isinstance(requested, list) or any(not isinstance(item, str) for item in requested):
+                raise ValueError("requested_deliverables must be strings")
+            if not isinstance(stages, dict):
+                raise ValueError("stages must be an object")
+        except (ValueError, KeyError, TypeError) as exc:
+            return [f"brand-manifest.json: invalid stage scope: {exc}"]
+        optional = {"tokens": ["tokens"], "ui": ["ui"], "imagery": ["imagery"],
+                    "marketing": ["marketing"], "motion": ["motion/motion-guidelines.md", "motion/motion-tokens.css", "motion/motion-tokens.ts"],
+                    "components": ["components/README.md"]}
+        for stage, paths in optional.items():
+            if (stage in requested or any(item.startswith(stage + "/") for item in requested)
+                    or stages.get(stage, "not_started") not in ("not_started", "skipped")):
+                required.extend(paths)
+    return [path for path in required if not (project / path).exists()]
 
 
 def check_manifests(project: Path) -> list[str]:

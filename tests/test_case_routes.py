@@ -19,13 +19,27 @@ def setup(tmp_path, monkeypatch):
 def test_appraisal_without_selection_does_not_allow_commitment(tmp_path, monkeypatch):
     p, scope = setup(tmp_path, monkeypatch)
     packet = routing.route_request('Assess this case', intent='case-appraisal', project='topic', case_id='a', task_scope='strategy', check_skill='opportunity-risk-designer')
-    assert not packet.get('gate_blocked')
+    assert packet['gate_blocked'] and packet['gate'] == 'initial_research'
+    assert packet['missing_initial_research'] == ['reviewed_case_evidence']
     assert packet['case_context']['execution_binding'] is None
     assert packet['mode'] == 'appraisal'
     with pytest.raises(ValueError, match='selected'):
         routing.route_request('Launch it', intent='gtm-strategy', project='topic', case_id='a', override_gate=True)
     with pytest.raises(ValueError, match='selected'):
         workspace.update_stage(scope, 'business_model_draft', expected_assessment_revision=1, status='in_progress', gate_result='not_run', override='explicit pain override')
+
+
+def test_case_insights_route_accepts_early_registered_case(tmp_path, monkeypatch):
+    monkeypatch.setattr(routing, 'ROOT', tmp_path)
+    root = tmp_path / 'projects/topic'
+    c.initialize(root, 'Topic')
+    c.add_case(root, 'a', 'A')
+    packet = routing.route_request('Consolidate case insights', intent='case-insights', project='topic',
+                                   case_id='a', task_scope='focused', check_skill='opportunity-risk-designer')
+    assert packet['mode'] == 'insights' and not packet.get('gate_blocked')
+    assert packet['case_context']['insights_status']['status'] == 'draft'
+    assert packet['case_context']['current_concept'].endswith('case_insights.md')
+    assert 'references/case-insights.md' in packet['required_references']
 
 
 def test_case_pain_pass_and_interpretation_correction(tmp_path, monkeypatch):

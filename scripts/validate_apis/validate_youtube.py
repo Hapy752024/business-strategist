@@ -38,8 +38,10 @@ def main() -> int:
     status = status_from_response(search_response)
     comment_status = "not_run"
     comment_count = 0
+    video_count = 0
     if status == "ok":
         items = (search_response.get("body") or {}).get("items", [])
+        video_count = len(items)
         video_id = None
         if items:
             video_id = items[0].get("id", {}).get("videoId")
@@ -59,6 +61,10 @@ def main() -> int:
             comment_status = status_from_response(comments_response)
             if comment_status == "ok":
                 comment_count = len((comments_response.get("body") or {}).get("items", []))
+            else:
+                status = "partial"
+        else:
+            comment_status = "not_applicable_no_videos"
 
     summary = {
         "status": status,
@@ -66,7 +72,7 @@ def main() -> int:
         "query": query,
         "http_status": search_response.get("status_code"),
         "fields": fields_present(search_response.get("body")),
-        "video_count": len((search_response.get("body") or {}).get("items", [])) if status == "ok" else 0,
+        "video_count": video_count,
         "comment_fetch_status": comment_status,
         "comment_count": comment_count,
         "transcript_status": transcript_probe()[0],

@@ -13,6 +13,14 @@ from scripts.evidence_scout import workspace as w
 from scripts.evidence_scout.test_landscape_artifacts import LandscapeArtifactTests
 from test_case_end_to_end import setup, appraisal, selected_plan
 from test_case_economics import inputs
+from appraisal_gate_fixture import install as isolate_research_gate
+
+
+@pytest.fixture(autouse=True)
+def _isolated_research_gate(monkeypatch):
+    isolate_research_gate(monkeypatch)
+    from scripts import validate_case_insights as insights
+    monkeypatch.setattr(insights, 'current_status', lambda *_: {'status': 'current'})
 
 REPO = Path(__file__).resolve().parents[1]
 BRAND = '.agents/skills/brand-workspace-manager/scripts/workspace_cli.py'
@@ -349,7 +357,7 @@ def test_nested_business_to_brand_handoff_is_optional_and_bound(tmp_path, monkey
 @pytest.mark.parametrize('replace_number', range(1, 6))
 def test_recovery_at_each_replacement_and_interrupted_rollback(tmp_path, monkeypatch, replace_number):
     root = setup(tmp_path)
-    paths = ['cases/a/README.md', 'cases/b/README.md']
+    paths = ['cases/a/case_insights.md', 'cases/b/case_insights.md']
     before = {p:(root / p).read_bytes() for p in paths}
     revision = c.read_project(root)['manifest_revision']
     calls = 0
@@ -462,7 +470,7 @@ def test_nested_research_resume_uses_latest_manifest_without_duplicate_entry(tmp
         workspace_subdir='market_research/market_discovery/runs')
     assert scope == business
     artifact = run / 'report.md'; artifact.write_text('Synthetic discovery findings')
-    w.update_stage(scope, 'market_discovery', status='passed', gate_result='pass', artifacts=[artifact],
+    w.update_stage(scope, 'market_discovery', status='in_progress', gate_result='not_run', artifacts=[artifact],
                    run_dir=run, next_action='Choose a candidate for investigation')
     found = w.find_existing_workspaces()
     assert len(found) == 1 and found[0]['slug'] == 'topic'
@@ -489,7 +497,7 @@ def test_business_analysis_name_respects_registered_layout(registered, tmp_path,
     result = cli(sys.executable, 'scripts/case_workspace.py', 'add', '--workspace', str(root),
                  '--case', 'english', '--title', 'English-speaking customers')
     assert result.returncode == 0, result.stderr
-    assert (business / 'cases/english/README.md').is_file()
+    assert (business / 'cases/english/case_insights.md').is_file()
     assert registered + '/history/evolution.md' in (root / 'README.md').read_text()
     from jsonschema import Draft202012Validator
     schema = json.loads((REPO / 'schemas/project-manifest.schema.json').read_text())

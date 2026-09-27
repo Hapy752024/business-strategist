@@ -296,7 +296,7 @@ def rollback(slug: str, *, repo_root: Path = ROOT) -> None:
             raise ValueError("migration rollback refused: unexpected external file detected")
         allowed_generated = {"business-analysis/README.md", "business-analysis/project-manifest.json", "business-analysis/project.lock"}
         for case_id, _title in spec["cases"]:
-            allowed_generated.update({f"business-analysis/cases/{case_id}/README.md", f"business-analysis/cases/{case_id}/market_research/manifest.json"})
+            allowed_generated.update({f"business-analysis/cases/{case_id}/case_insights.md", f"business-analysis/cases/{case_id}/market_research/manifest.json"})
         allowed_dirs = tuple(
             f"{root}history/{kind}/{prefix}"
             for root in ("", "business-analysis/")

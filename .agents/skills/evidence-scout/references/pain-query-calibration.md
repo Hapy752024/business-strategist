@@ -212,3 +212,21 @@ into the broader topic-led pass; do not regenerate solely from the original brie
 Run the separate entity-led pass when verified alternatives exist. Reconcile
 both with the source plan via `finalize_customer_feedback.py`; a provider selection
 or successful capture cannot complete semantic feedback analysis.
+
+Choose the next search from reviewed yield, not provider volume. Compare distinct
+reviewed episodes and independent origins by customer role, locale, journey
+moment, source family and outcome. Keep unknown independence visible. Search
+snippets and creator/supplier material do not satisfy a customer-episode gap.
+For each unresolved material question, state what observation would distinguish
+the plausible explanations, then add a small linked refinement using customer
+wording or an applicable source locator.
+
+For partial manual review, the result row must name the exact population, selected
+and sampled-out IDs, exclusion reasons, strata, review method, reviewed items,
+rejection audit and limitations. Counts alone cannot establish a sample. Claims
+may use only reviewed accepted items; sampled-out material cannot support
+prevalence. Stop expanding a cell only when its decision-relevant questions have
+reviewed support or explicit limits, applicable source families have honest
+outcomes, and recent inspected sources add no new distinction. This is a bounded
+conclusion for the declared scope, never proof of market saturation or absence of
+pain.

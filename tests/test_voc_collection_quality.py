@@ -88,11 +88,91 @@ def test_firecrawl_full_content_and_actual_query_ledger(tmp_path, monkeypatch):
     assert len([r for r in summary["query_ledger"] if not r["attempted"]]) == 2
 
 
+def test_reddit_discussion_retains_nested_customer_reply_and_incomplete_expansion(tmp_path, monkeypatch):
+    monkeypatch.setattr(c, "reddit_token", lambda: ("fixture-token", {"ok": True, "status_code": 200}))
+    post = {"kind": "t3", "data": {"id": "p1", "permalink": "/r/test/comments/p1/discussion/",
+            "title": "PKV GKV Erfahrungen", "selftext": "How do people decide?", "subreddit": "test",
+            "author": "op", "num_comments": 3, "created_utc": 1780000000}}
+    child = {"kind": "t1", "data": {"id": "late", "body": "I switched after a claim was denied.",
+             "author": "buyer", "parent_id": "t1_first", "created_utc": 1780000000}}
+    parent = {"kind": "t1", "data": {"id": "first", "body": "My insurer answered quickly.",
+              "author": "other", "replies": {"data": {"children": [child]}}}}
+    def get(url, **_kwargs):
+        body = [{"data": {"children": [post]}}, {"data": {"children": [parent, {"kind": "more", "data": {"children": ["x"]}}]}}] if "/comments/p1" in url else {"data": {"children": [post]}}
+        return {"ok": True, "status_code": 200, "body": body}
+    monkeypatch.setattr(c, "http_get", get)
+    rows, summary = c.collect_reddit(args(limit=5, days=10000), ["PKV GKV Erfahrungen"], tmp_path)
+    reply = next(row for row in rows if row.get("raw_id") == "late")
+    assert reply["text"] == "I switched after a claim was denied."
+    assert reply["sampling_metadata"]["parent_comment_id"] == "t1_first"
+    assert reply["discovery_memberships"][0]["query_id"] == summary["query_ledger"][0]["query_id"]
+    assert next(row for row in rows if row.get("raw_id") == "p1")["published_at"].startswith("2026-")
+    assert "lc=" not in reply["source_url"] and reply["source_url"].endswith("/late")
+    assert summary["comment_request_ledger"][0]["more_unexpanded"] is True
+
+
+def test_youtube_retains_later_thread_and_reply_with_comment_locators(tmp_path, monkeypatch):
+    calls = []
+    def get(url, **_kwargs):
+        calls.append(url)
+        if "/search?" in url:
+            body = {"items": [{"id": {"videoId": "v1"}, "snippet": {"title": "Insurance choices", "description": "PKV GKV", "channelTitle": "creator", "publishedAt": "2026-08-01T00:00:00Z"}}]}
+        elif "/commentThreads?" in url:
+            page_two = "pageToken=second" in url
+            body = {"items": [{"id": "t2" if page_two else "t1", "snippet": {
+                "topLevelComment": {"id": "later" if page_two else "first", "snippet": {
+                    "textOriginal": "I struggled with the switch." if page_two else "Everything worked for us.",
+                    "authorDisplayName": "customer", "publishedAt": "2026-09-01T00:00:00Z"}},
+                "totalReplyCount": 0 if page_two else 1}}]}
+            if not page_two: body["nextPageToken"] = "second"
+        else:
+            body = {"items": [{"id": "reply", "snippet": {"textOriginal": "My claim was rejected.",
+                       "authorDisplayName": "another customer", "publishedAt": "2026-09-02T00:00:00Z"}}]}
+        return {"ok": True, "status_code": 200, "body": body}
+    monkeypatch.setattr(c, "http_get", get)
+    monkeypatch.setattr(c, "get_secret", lambda *names: (names[0], "fixture-key"))
+    rows, summary = c._collect_youtube_query(args(limit=2, geo="DE", language="de"), ["PKV GKV"], tmp_path)
+    assert {"later", "reply"} <= {row.get("raw_id") for row in rows}
+    assert next(row for row in rows if row.get("raw_id") == "reply")["sampling_metadata"]["parent_comment_id"] == "first"
+    assert next(row for row in rows if row.get("raw_id") == "later")["source_url"].endswith("&lc=later")
+    assert next(row for row in rows if row.get("raw_id") == "v1")["published_at"] == "2026-08-01T00:00:00Z"
+    assert any("pageToken=second" in url for url in calls)
+    assert summary["status"] == "ok"
+
+
 def test_classification_suggestions_distinct_from_supplier_identity():
     fields = dict(source="web_search", source_url="https://local.test/thread", query="q", customer_segment="families", hypothesis="H1", text="Meine Erfahrungen mit dem Makler")
     assert c.normalize_record(**fields)["classification_basis"] == "heuristic"
     supplier = c.normalize_record(**fields, source_role_override="competitor_context", author_voice_status="supplier_context")
     assert supplier["classification_basis"] == "explicit_supplier_identity"
+
+
+def test_public_comment_records_survive_schema_validation():
+    reddit = c.normalize_record(source="reddit_comment", source_url="https://www.reddit.com/r/test/comments/p1/topic/c1",
+        query="PKV GKV", customer_segment="families", hypothesis="H1", text="I switched after a claim was rejected.",
+        author_context="u/customer", raw_id="c1", published_at="2026-09-01T00:00:00Z")
+    tiktok = c.normalize_record(source="tiktok", source_url="https://www.tiktok.com/@author/video/123?comment_id=c2",
+        query="PKV GKV", customer_segment="families", hypothesis="H1", text="Our family chose GKV.",
+        author_context="commenter", raw_id="c2", source_entity_type="tiktok_comment")
+    accepted, rejected = c.accepted_records([reddit, tiktok])
+    assert len(accepted) == 2 and rejected == []
+    assert accepted[0]["source"] == "reddit_comment"
+    assert accepted[1]["source_entity_type"] == "tiktok_comment"
+
+
+def test_reddit_comment_sample_balances_queries_and_deduplicates_crossposts():
+    assert c.reddit_opening_signature("PKV-Wechsel vor Kindern? " + "a" * 310) == c.reddit_opening_signature("PKV Wechsel vor Kindern " + "a" * 310 + " edited ending")
+    targets = [
+        ("a1", "https://reddit.test/a1", {"query_id": "q1"}, "same-opening", 5),
+        ("a2", "https://reddit.test/a2", {"query_id": "q1"}, "same-opening", 4),
+        ("a3", "https://reddit.test/a3", {"query_id": "q1"}, "other-q1", 3),
+        ("b1", "https://reddit.test/b1", {"query_id": "q2"}, "other-q2", 5),
+        ("c0", "https://reddit.test/c0", {"query_id": "q3"}, "weak-q3", -1),
+        ("c1", "https://reddit.test/c1", {"query_id": "q3"}, "other-q3", 4),
+    ]
+    selected = c.select_reddit_discussions(targets, 3)
+    assert [row[0] for row in selected] == ["a1", "b1", "c1"]
+    assert c.select_reddit_discussions(targets, 0) == []
 
 
 def test_source_url_path_case_cannot_change_reviewed_target(tmp_path):

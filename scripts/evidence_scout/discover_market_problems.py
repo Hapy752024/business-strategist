@@ -326,6 +326,14 @@ def finalize_discovery(args: argparse.Namespace) -> int:
     if v3 and not set(synthesis.get("report_review", {}).get("claim_ids", [])) <= set(claims_by_id):
         raise ValueError("Report review references unknown claim IDs")
 
+    workspace_value = discovery_summary.get("workspace") or ""
+    workspace = Path(workspace_value) if workspace_value else None
+    if workspace and (workspace / RESEARCH_MANIFEST_REL).exists():
+        from evidence_scout.validate_research_completion import validate_research
+        completion = validate_research(workspace, run_dir)
+        if completion["status"] != "complete":
+            raise ValueError("research completion validation failed: " + "; ".join(completion["missing_requirements"]))
+
     summary = discovery_summary
     failures = provider_failures(evidence_summary)
     quality_flags = list(evidence_summary.get("quality_flags") or [])
@@ -359,8 +367,6 @@ def finalize_discovery(args: argparse.Namespace) -> int:
     )
     write_json(run_dir / "summary.json", summary)
 
-    workspace_value = summary.get("workspace") or ""
-    workspace = Path(workspace_value) if workspace_value else None
     if workspace and (workspace / RESEARCH_MANIFEST_REL).exists():
         artifacts = [run_dir / "research_plan.md", report_path, run_dir / "summary.json"]
         for relative in ("evidence/report.md", "evidence/evidence.jsonl", "evidence/summary.json"):

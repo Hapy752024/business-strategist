@@ -56,6 +56,90 @@ def test_completion_validator_rejects_bad_topic_counts_and_missing_locator_attem
     assert any("No completion result for locator" in gap["reason"] for gap in output["coverage_gaps"])
 
 
+def test_low_yield_case_cell_requires_executed_query_bound_resolution():
+    p = {"execution_contract_version": 3, "locales": ["FR:fr"], "entity_count": 0,
+         "analysis_contract": {"entity_led_feedback": "not_applicable"}, "source_matrix": [],
+         "topic_matrix": [{"cell_id": "fr-payer", "locale": "FR:fr", "job": "pay an actual bill",
+                           "role": "direct payer", "source_family": "forum", "query_intent": "pain"}]}
+    cell = {"cell_id": "fr-payer", "attempted": True, "query_ids": ["q1"],
+            "retrieved_count": 0, "reviewed_count": 0, "accepted_count": 0,
+            "accepted_evidence_ids": []}
+    results = {"topic_led_voc": {"cells": [cell]}, "source_results": []}
+    output, errors = finalizer.validate(p, results)
+    assert not errors
+    assert any(gap["status"] == "resolution_required" for gap in output["coverage_gaps"])
+    cell["search_resolution"] = {"status": "refine", "reason": "All original hits were supplier pages outside the payer job.",
+                                 "query_ids": ["q1"], "next_observation": "Find a first-person payer with an actual dated bill."}
+    output, errors = finalizer.validate(p, results)
+    assert not errors
+    assert any(gap["status"] == "refinement_required" for gap in output["coverage_gaps"])
+    cell["search_resolution"]["query_ids"] = ["unexecuted"]
+    _output, errors = finalizer.validate(p, results)
+    assert any("executed cell queries" in error for error in errors)
+    cell["search_resolution"].update(status="primary_research_needed", query_ids=["q1"])
+    output, errors = finalizer.validate(p, results)
+    assert not errors
+    assert any(gap["status"] == "primary_research_needed" for gap in output["coverage_gaps"])
+
+
+def test_v4_mixed_cell_requires_each_query_review():
+    p = {"execution_contract_version": 4, "locales": ["FR:fr"], "entity_count": 0,
+         "analysis_contract": {"entity_led_feedback": "not_applicable"}, "source_matrix": [],
+         "topic_matrix": [{"cell_id": "fr", "locale": "FR:fr"}]}
+    q1 = {"query_id": "q1", "status": "reviewed", "record_ids": ["e1"],
+          "reviewed_ids": ["e1"], "provider_outcomes": {"reddit": "ok"},
+          "reason": "Original payer episode fits this query and was reviewed.",
+          "next_observation": "Check the next real bill to assess repeat behavior.", "reviewer": "Analyst"}
+    q2 = {"query_id": "q2", "status": "refine", "record_ids": [], "reviewed_ids": [],
+          "provider_outcomes": {"reddit": "empty"},
+          "reason": "The exact query returned no source in this locale.",
+          "next_observation": "Run a narrower biller and rejection phrase query.", "reviewer": "Analyst"}
+    cell = {"cell_id": "fr", "attempted": True, "query_ids": ["q1", "q2"],
+            "retrieved_count": 1, "reviewed_count": 1, "accepted_count": 1,
+            "accepted_evidence_ids": ["e1"], "query_reviews": [q1]}
+    results = {"topic_led_voc": {"cells": [cell]}, "source_results": []}
+    _output, errors = finalizer.validate(p, results)
+    assert any("every executed query needs exactly one review" in error for error in errors)
+    cell["query_reviews"].append(q2)
+    output, errors = finalizer.validate(p, results)
+    assert not errors
+    assert any(gap["query_id"] == "q2" and gap["status"] == "refinement_required"
+               for gap in output["coverage_gaps"])
+    q2["status"] = "primary_research_needed"
+    output, errors = finalizer.validate(p, results)
+    assert not errors
+    assert any(gap["query_id"] == "q2" and gap["status"] == "primary_research_needed"
+               for gap in output["coverage_gaps"])
+
+
+def test_v4_not_applicable_lane_needs_source_bound_review():
+    p = {"execution_contract_version": 4, "locales": ["FR:fr"], "entity_count": 1,
+         "topic_matrix": [{"cell_id": "fr", "locale": "FR:fr"}],
+         "source_matrix": [{"entity_id": "x", "locale": "FR:fr", "source_lane": "app_store_reviews",
+                           "applicable": False, "not_applicable_reason": "No mobile app exists."}]}
+    cell = {"cell_id": "fr", "attempted": True, "query_ids": ["q1"], "retrieved_count": 0,
+            "reviewed_count": 0, "accepted_count": 0, "accepted_evidence_ids": [],
+            "query_reviews": [{"query_id": "q1", "status": "reviewed", "record_ids": [],
+                               "reviewed_ids": [], "provider_outcomes": {"reddit": "empty"},
+                               "reason": "The retained query returned no relevant payer account.",
+                               "next_observation": "Interview target payers about a recent real bill.",
+                               "reviewer": "Analyst"}]}
+    results = {"topic_led_voc": {"cells": [cell]}, "source_results": []}
+    _output, errors = finalizer.validate(p, results)
+    assert any("source-bound applicability review" in error for error in errors)
+    p["source_matrix"][0]["applicability_review"] = {
+        "reviewer": "Reviewer", "reviewed_at": "2026-09-27", "entity_id": "x", "locale": "FR:fr",
+        "source_lane": "app_store_reviews", "query_id": "q1", "source_url": "https://example.test/x",
+        "capture_path": "cases/x/raw/app-search.md", "capture_sha256": "a" * 64,
+        "source_span": "No matching app listing", "observed_fact": "No matching app listing was found for the entity.",
+        "reason": "The verified entity has no mobile app on this platform."}
+    _output, errors = finalizer.validate(p, results)
+    assert not errors
+    p["source_matrix"][0]["locators"] = ["https://apps.example.test/x"]
+    _output, errors = finalizer.validate(p, results)
+    assert any("verified locator contradicts" in error for error in errors)
+
+
 def test_unattempted_locator_and_lane_failure_preserve_other_scoped_findings():
     p = plan(); row = p["source_matrix"][0]
     row["locators"].append("unreviewed-local-platform")

@@ -5,6 +5,8 @@ description: Challenge a consumer service through customer reactions, objections
 
 # Service Customer Perspective Challenger
 
+For a registered Business case, pass material buyer-context findings and unresolved objections to the case-insights owner under repo-root `references/case-insights.md`; retain source attribution in your normal artifact.
+
 ## Success Criteria
 - **Quantitative:** triggers on >=90% of customer-perspective queries; completes review in <=15 tool calls; addresses >=3 buying contexts; zero demographic stereotypes used as evidence.
 - **Qualitative:** simulated customer voice is labeled as hypothesis, not research evidence; regional context is applied when geography is specified; each challenge is tied to evidence or a named assumption.

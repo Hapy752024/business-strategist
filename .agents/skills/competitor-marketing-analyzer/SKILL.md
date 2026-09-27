@@ -5,6 +5,8 @@ description: Analyze a known competitor's services, pricing, positioning, proof,
 
 # Competitor Marketing Analyzer
 
+For a registered Business case, pass material verified supplier claims and their limits to the case-insights owner under repo-root `references/case-insights.md`. Keep supplier statements distinct from customer experience.
+
 ## Success Criteria
 - **Quantitative:** triggers on >=90% of competitor marketing queries; completes in <=15 tool calls; extracts from >=3 competitor URLs per run; zero fabricated pricing/positioning claims.
 - **Qualitative:** positioning, CTAs, pricing signals, and proof points are separated; source URLs are cited for every claim; gaps in data are named.

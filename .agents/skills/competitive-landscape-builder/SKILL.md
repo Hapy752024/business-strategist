@@ -5,6 +5,8 @@ description: Build a three-lane competitive landscape of market competitors, cro
 
 # Competitive Landscape Builder
 
+When contributing to a registered Business case, pass material competitor findings, limits and disagreements to the case-insights owner under repo-root `references/case-insights.md`. Keep detailed landscape audits in their normal artifacts.
+
 Coordinate the existing `competitor-scout` and `competitor-marketing-analyzer` workers. Do not treat all similar-looking entities as competitors.
 
 ## Workflow

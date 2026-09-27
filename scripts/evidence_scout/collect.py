@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import base64
 import hashlib
+import html
 import json
 import os
 import re
@@ -17,6 +18,7 @@ import shutil
 import subprocess
 import sys
 import time
+import unicodedata
 import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -492,8 +494,11 @@ def load_query_plan(args: argparse.Namespace) -> dict[str, Any]:
     errors = list(Draft202012Validator(schema).iter_errors(plan))
     if errors:
         raise ValueError(f"Invalid --query-plan: {errors[0].message}")
-    if args.sampling_frame != "topic_led_voc":
-        raise ValueError("--query-plan is topic-led discovery; entity capture requires its reviewed source plan")
+    if args.sampling_frame != "topic_led_voc" and not (
+            args.sampling_frame == "entity_led_feedback"
+            and getattr(args, "subject_entity_id", "")
+            and all(row.get("intent") == "entity_locator_discovery" for row in plan["queries"])):
+        raise ValueError("--query-plan on an entity capture requires exact entity-locator discovery queries")
     if args.geo.upper() == "AUTO" or args.language.upper() == "AUTO":
         raise ValueError("--query-plan requires explicit --geo and --language")
     locale = runtime_locale(args)
@@ -562,7 +567,7 @@ def record_query_discovery(record: dict[str, Any], row: dict[str, Any]) -> None:
     membership.update({"sampling_frame": "topic_led_voc", "collection_locale": row["locale"]})
     memberships = record.setdefault("discovery_memberships", [])
     # Replace only the unbound default membership emitted by normalize_record.
-    memberships[:] = [m for m in memberships if m != {"sampling_frame": "topic_led_voc", "query": row["query"]}]
+    memberships[:] = [m for m in memberships if m.get("query_id") or m.get("query") != row["query"]]
     if membership not in memberships:
         memberships.append(membership)
     evidence_id = record.get("evidence_id")
@@ -812,7 +817,7 @@ SOURCE_INTENT_DOMAINS = read_json(REGISTRY_DIR / "source_intents.json", {})
 
 def infer_comment_intent(source: str, text: str, evidence_type: str) -> str:
     lower = text.lower()
-    if source not in {"reddit", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook"}:
+    if source not in {"reddit", "reddit_comment", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook"}:
         if source not in {"bilibili", "bilibili_comment", "xiaohongshu", "v2ex", "weibo", "zhihu", "douban", "tieba"}:
             return "not_social_comment"
     if evidence_type == "irrelevant":
@@ -834,7 +839,7 @@ def infer_source_intent(source: str, source_url: str, text: str, evidence_type: 
     editorial_markers = ["guide", "blog", "article", "explained", "best ", "top ", "vergleich", "comparison", "ratgeber", "erfahrungen"]
     china_social_sources = {"bilibili", "bilibili_comment", "xiaohongshu", "weibo", "douban"}
     china_forum_sources = {"v2ex", "zhihu", "tieba"}
-    if source in {"reddit", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook"}:
+    if source in {"reddit", "reddit_comment", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook"}:
         if evidence_type in {"pain", "workaround", "counter_evidence", "spend", "competitor_gap", "decision_uncertainty"}:
             return "user_pain"
         return "social_comment"
@@ -901,7 +906,7 @@ def source_role(source: str, source_intent: str) -> str:
         return "discovery_only"
     if source in {"itunes_reviews", "app_review", "google_places_review", "trustpilot_review"}:
         return "customer_review"
-    if source in {"reddit", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook", "hn", "github", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu", "bilibili_comment"}:
+    if source in {"reddit", "reddit_comment", "youtube_comment", "x", "tiktok", "instagram", "threads", "facebook", "hn", "github", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu", "bilibili_comment"}:
         return "community_context"
     if source_intent == "competitor_content":
         return "competitor_context"
@@ -1351,10 +1356,144 @@ def reddit_token() -> tuple[str | None, dict[str, Any]]:
     return token, response
 
 
+def collect_reviewed_reddit_target(args: argparse.Namespace, run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Fetch only the exact, reviewed Reddit discussion for entity feedback."""
+    binding, reason = generic_entity_binding(args)
+    if not binding:
+        return [], {"status": "capture_gate_blocked", "reason": reason, "record_count": 0}
+    locator = binding["collection_locator"]
+    parsed = urllib.parse.urlparse(locator)
+    match = re.search(r"/comments/([a-z0-9]+)/", parsed.path, re.I)
+    if not match or parsed.hostname not in {"reddit.com", "www.reddit.com", "old.reddit.com"}:
+        return [], {"status": "capture_gate_blocked", "reason": "reviewed Reddit locator must identify one Reddit discussion", "record_count": 0}
+    post_id = match.group(1)
+    token, token_raw = reddit_token()
+    raw: dict[str, Any] = {"token": token_raw, "binding": binding, "primary": None, "fallback": None}
+    headers = {"Authorization": f"Bearer {token}", "User-Agent": "evidence-scout/0.1"} if token else {}
+    response = None
+    if token:
+        response = http_get(with_query(f"https://oauth.reddit.com/comments/{post_id}",
+            {"limit": min(100, max(1, getattr(args, "reddit_comments_per_post", 100))),
+             "depth": 4, "sort": "confidence", "raw_json": 1}), headers=headers)
+        raw["primary"] = response
+    else:
+        response = {"ok": False, "status": "missing_credentials"}
+    thread = None
+    comments: list[dict[str, Any]] = []
+    has_more = False
+    if response.get("ok") and isinstance(response.get("body"), list) and len(response["body"]) > 1:
+        listing = response["body"]
+        thread = ((listing[0].get("data") or {}).get("children") or [{}])[0].get("data")
+        def walk(children):
+            nonlocal has_more
+            for child in children:
+                if child.get("kind") == "more":
+                    has_more = True
+                elif child.get("kind") == "t1":
+                    data = child.get("data") or {}
+                    comments.append(data)
+                    replies = data.get("replies")
+                    if isinstance(replies, dict):
+                        walk((replies.get("data") or {}).get("children") or [])
+        walk(((listing[1].get("data") or {}).get("children") or []))
+    # A paid comment endpoint is an exact-URL fallback, never a search substitute.
+    if not isinstance(thread, dict):
+        _, sc_key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
+        if sc_key:
+            fallback = http_get(with_query("https://api.scrapecreators.com/v1/reddit/post/comments",
+                {"url": locator, "trim": "true"}), headers={"x-api-key": sc_key})
+            raw["fallback"] = fallback
+            if fallback.get("ok") and isinstance(fallback.get("body"), dict):
+                body = fallback["body"]
+                returned = str(body.get("url") or body.get("permalink") or locator)
+                fallback_id = re.search(r"/comments/([a-z0-9]+)/", urllib.parse.urlparse(returned).path, re.I)
+                if fallback_id and fallback_id.group(1).casefold() == post_id.casefold():
+                    thread = body.get("post") or body.get("submission") or body
+                    comments = body.get("comments") or []
+                    has_more = bool(body.get("more"))
+    write_json(run_dir / "raw" / "reddit-entity-target.json", redact_sensitive(raw))
+    if not isinstance(thread, dict):
+        status = "missing_credentials" if not token and not raw.get("fallback") else status_from_response(response or {})
+        return [], {"status": status, "record_count": 0, "reviewed_binding": binding,
+                    "capture_ledger": [{"url": locator, "attempted": True, "status": status}]}
+    returned_url = str(thread.get("permalink") or thread.get("url") or locator)
+    if returned_url.startswith("/"):
+        returned_url = "https://www.reddit.com" + returned_url
+    returned_id = re.search(r"/comments/([a-z0-9]+)/", urllib.parse.urlparse(returned_url).path, re.I)
+    if not returned_id or returned_id.group(1).casefold() != post_id.casefold():
+        return [], {"status": "capture_gate_blocked", "reason": "provider returned a different Reddit discussion", "record_count": 0}
+    limit = max(1, getattr(args, "reddit_comments_per_post", 100))
+    query = "reviewed-source:" + locator
+    records = []
+    post_text = str(thread.get("selftext") or thread.get("title") or "").strip()
+    if post_text:
+        record = normalize_record(source="reddit", source_url=locator, query=query,
+            customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=post_text,
+            author_context=f"r/{thread.get('subreddit', '')} u/{thread.get('author', 'unknown')}",
+            raw_id=post_id, engagement={"upvotes": thread.get("ups"), "comments": thread.get("num_comments")},
+            published_at=(datetime.fromtimestamp(float(thread["created_utc"]), timezone.utc).isoformat() if thread.get("created_utc") else None),
+            sampling_frame="entity_led_feedback", subject_entity_id=binding["subject_entity_id"],
+            collection_source_lane=binding["collection_source_lane"], collection_locator=locator)
+        record["sampling_metadata"].update({"subset_limitations": "Exact reviewed discussion; comment expansion is bounded and may omit collapsed/deleted replies."})
+        records.append(record)
+    seen = set()
+    for item in comments[:limit]:
+        if not isinstance(item, dict):
+            continue
+        comment_id = str(item.get("id") or item.get("name") or "")
+        body = str(item.get("body") or "").strip()
+        if not comment_id or comment_id in seen or body in {"", "[deleted]", "[removed]"}:
+            continue
+        seen.add(comment_id)
+        permalink = str(item.get("permalink") or "")
+        source_url = "https://www.reddit.com" + permalink if permalink.startswith("/") else permalink or locator.rstrip("/") + "/" + comment_id
+        record = normalize_record(source="reddit_comment", source_url=source_url, query=query,
+            customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=body,
+            author_context=f"u/{item.get('author', 'unknown')}; parent={item.get('parent_id', '')}", raw_id=comment_id,
+            published_at=(datetime.fromtimestamp(float(item["created_utc"]), timezone.utc).isoformat() if item.get("created_utc") else None),
+            sampling_frame="entity_led_feedback", subject_entity_id=binding["subject_entity_id"],
+            collection_source_lane=binding["collection_source_lane"], collection_locator=locator)
+        record["parent_source_id"] = str(item.get("parent_id") or "")
+        record["sampling_metadata"].update({"subset_limitations": "Exact reviewed discussion; replies are limited to the configured comment sample."})
+        records.append(record)
+    return records, {"status": "partial" if has_more or len(comments) > limit else "ok",
+        "record_count": len(records), "reviewed_binding": binding,
+        "capture_ledger": [{"url": locator, "attempted": True, "status": "ok",
+                            "comments_seen": len(comments), "comments_retained": max(0, len(records) - bool(post_text)),
+                            "more_comments": has_more or len(comments) > limit}]}
+
+
+def select_reddit_discussions(targets: list[tuple[str, str, dict[str, Any], str, int]], limit: int) -> list[tuple[str, str, dict[str, Any], str, int]]:
+    """Balance comment reads across planned queries before deepening a query."""
+    if limit <= 0:
+        return []
+    buckets: dict[str, list[tuple[str, str, dict[str, Any], str, int]]] = {}
+    for target in targets:
+        buckets.setdefault(str(target[2].get("query_id") or target[2].get("query")), []).append(target)
+    for bucket in buckets.values():
+        bucket.sort(key=lambda target: target[4], reverse=True)
+    selected, signatures = [], set()
+    while any(buckets.values()) and len(selected) < limit:
+        for bucket in buckets.values():
+            if not bucket or len(selected) >= limit:
+                continue
+            target = bucket.pop(0)
+            if target[3] in signatures:
+                continue
+            selected.append(target)
+            signatures.add(target[3])
+    return selected
+
+
+def reddit_opening_signature(text: str) -> str:
+    opening = re.sub(r"[\W_]+", "", unicodedata.normalize("NFKC", html.unescape(text)).casefold())[:300]
+    return hashlib.sha256(opening.encode()).hexdigest()
+
+
 def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     ledger = provider_query_schedule(args, queries, "reddit")
     token, token_raw = reddit_token()
-    raw: dict[str, Any] = {"token": token_raw, "searches": []}
+    raw: dict[str, Any] = {"token": token_raw, "searches": [], "conversations": []}
     if not token:
         status = status_from_response(token_raw) if token_raw.get("status_code") or token_raw.get("error_type") else "missing_credentials"
         unattempted_queries(ledger, status)
@@ -1365,6 +1504,7 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
     cutoff = time.time() - (args.days * 86400)
     records: list[dict[str, Any]] = []
     by_id: dict[str, dict[str, Any]] = {}
+    comment_targets: list[tuple[str, str, dict[str, Any], str, int]] = []
 
     for row in ledger:
         if not row["scheduled"]:
@@ -1426,10 +1566,16 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
                     relevance=relevance,
                     relevance_notes=relevance_notes,
                     relevance_score=relevance_score,
+                    published_at=(datetime.fromtimestamp(float(data["created_utc"]), timezone.utc).isoformat()
+                                  if data.get("created_utc") else None),
                 )
             )
             by_id[post_id] = records[-1]
             record_query_discovery(records[-1], row)
+            if data.get("num_comments", 0) and relevance != "irrelevant":
+                signature = reddit_opening_signature(text)
+                priority = relevance_score if relevance == "relevant" else -1
+                comment_targets.append((post_id, source_url, row, signature, priority))
             records[-1]["sampling_metadata"].update({"sort_requested": "relevance", "per_query_result_limit": per_query_limit,
                 "time_window": {"lookback_days": args.days, "applied_by": "collector"},
                 "subset_limitations": "Search-ranked posts; comments not fetched, no provider locale filter, missing dates remain unresolved."})
@@ -1437,12 +1583,93 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
             if len(records) >= args.limit:
                 break
 
+    comment_ledger = []
+    seen_comments: set[str] = set()
+    selected_targets = select_reddit_discussions(comment_targets, max(0, getattr(args, "reddit_comment_posts", 6)))
+    selected_ids = {target[0] for target in selected_targets}
+    for post_id, post_url, query_row, _signature, _priority in selected_targets:
+        query = query_row["query"]
+        response = http_get(with_query(f"https://oauth.reddit.com/comments/{post_id}",
+                                       {"limit": min(100, max(1, getattr(args, "reddit_comments_per_post", 100))),
+                                        "depth": 4, "sort": "confidence", "raw_json": 1}), headers=headers)
+        raw["conversations"].append({"post_id": post_id, "url": post_url, "backend": "reddit", "response": response})
+        backend = "reddit"
+        body = response.get("body")
+        comments = []
+        has_more = False
+        if response.get("ok") and isinstance(body, list) and len(body) > 1:
+            def walk(children):
+                nonlocal has_more
+                for child in children:
+                    if child.get("kind") == "more":
+                        has_more = True
+                    elif child.get("kind") == "t1":
+                        data = child.get("data") or {}
+                        comments.append(data)
+                        replies = data.get("replies")
+                        if isinstance(replies, dict):
+                            walk((replies.get("data") or {}).get("children") or [])
+            walk(((body[1].get("data") or {}).get("children") or []))
+        else:
+            # Known public post URLs can be recovered through the already
+            # configured paid endpoint. A failed primary read stays recorded.
+            _, sc_key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
+            if sc_key:
+                fallback = http_get(with_query("https://api.scrapecreators.com/v1/reddit/post/comments",
+                                               {"url": post_url, "trim": "true"}), headers={"x-api-key": sc_key})
+                raw["conversations"].append({"post_id": post_id, "url": post_url, "backend": "scrapecreators", "response": fallback})
+                if fallback.get("ok") and isinstance(fallback.get("body"), dict):
+                    body = fallback["body"]
+                    comments = body.get("comments") or []
+                    has_more = bool(body.get("more"))
+                    backend = "scrapecreators"
+                    response = fallback
+        before = len(records)
+        for data in comments[:max(1, getattr(args, "reddit_comments_per_post", 100))]:
+            comment_id = str(data.get("id") or data.get("name") or "")
+            text = str(data.get("body") or "").strip()
+            if not comment_id or comment_id in seen_comments or text in {"", "[deleted]", "[removed]"}:
+                continue
+            seen_comments.add(comment_id)
+            url = str(data.get("url") or data.get("permalink") or "")
+            if url.startswith("/"):
+                url = "https://www.reddit.com" + url
+            if not url.startswith("http"):
+                url = post_url.rstrip("/") + "/" + comment_id
+            author = str(data.get("author") or "unknown")
+            relevance, notes, score = assess_relevance(text, args, query, url, f"u/{author}")
+            published = data.get("created_at_iso")
+            if not published and data.get("created_utc"):
+                published = datetime.fromtimestamp(float(data["created_utc"]), timezone.utc).isoformat()
+            record = normalize_record(source="reddit_comment", source_url=url, query=query,
+                customer_segment=args.customer_segment, hypothesis=args.hypothesis_id,
+                text=text, author_context=f"r/ thread {post_id}; u/{author}", engagement={"upvotes": data.get("ups")},
+                raw_id=comment_id, relevance=relevance, relevance_notes=notes, relevance_score=score,
+                evidence_type="irrelevant" if relevance == "irrelevant" else None,
+                strength="irrelevant" if relevance == "irrelevant" else None,
+                published_at=published)
+            record["sampling_metadata"].update({"parent_post_id": post_id, "parent_comment_id": data.get("parent_id"),
+                "conversation_backend": backend, "thread_url": post_url, "author_geography": "unknown"})
+            record_query_discovery(record, query_row)
+            records.append(record)
+        comment_ledger.append({"post_id": post_id, "url": post_url, "backend": backend,
+                               "status": status_from_response(response), "retrieved_count": len(records) - before,
+                               "more_unexpanded": has_more})
+    for post_id, post_url, _query, _signature, _priority in comment_targets:
+        if post_id in selected_ids:
+            continue
+        comment_ledger.append({"post_id": post_id, "url": post_url, "status": "not_selected_by_discussion_limit",
+                               "retrieved_count": 0, "more_unexpanded": True})
     outcomes = [item["response"] for item in raw["searches"]]
     succeeded = sum(1 for response in outcomes if response.get("ok"))
     failed = [response for response in outcomes if not response.get("ok")]
     status = query_collection_status(ledger)
+    if status == "ok" and any(row["status"] not in {"ok", "not_selected_by_discussion_limit"} for row in comment_ledger):
+        status = "partial"
     write_json(run_dir / "raw" / "reddit.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "query_ledger": ledger, "request_count": len(outcomes), "successful_requests": succeeded, "failed_requests": len(failed), "fields": fields_present(raw)}
+    return records, {"status": status, "record_count": len(records), "query_ledger": ledger,
+                     "comment_request_ledger": comment_ledger, "request_count": len(outcomes) + len(raw["conversations"]),
+                     "successful_requests": succeeded, "failed_requests": len(failed), "fields": fields_present(raw)}
 
 
 def collect_web_queries(args: argparse.Namespace, queries: list[str], run_dir: Path, provider: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -1608,6 +1835,12 @@ def collect_serpapi_google_trends(args: argparse.Namespace, queries: list[str], 
 
 
 def collect_brave_search(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    if getattr(args, "sampling_frame", "topic_led_voc") == "entity_led_feedback" and not (
+            getattr(args, "query_plan_data", {})
+            and all(row.get("intent") == "entity_locator_discovery"
+                    for row in args.query_plan_data.get("queries", []))):
+        return [], {"status": "capture_gate_blocked", "reason": "Entity search needs exact locator-discovery query plan",
+                    "record_count": 0}
     return collect_web_queries(args, queries, run_dir, "brave_search")
 
 
@@ -2144,7 +2377,10 @@ def collect_google_places_reviews(args: argparse.Namespace, queries: list[str], 
 
 
 def collect_serper_search(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    if getattr(args, "sampling_frame", "topic_led_voc") == "entity_led_feedback":
+    locator_plan = getattr(args, "query_plan_data", {})
+    locator_only = (bool(locator_plan) and all(row.get("intent") == "entity_locator_discovery"
+                   for row in locator_plan.get("queries", [])))
+    if getattr(args, "sampling_frame", "topic_led_voc") == "entity_led_feedback" and not locator_only:
         return [], {"status": "capture_gate_blocked", "reason": "Search is discovery only; use firecrawl with an exact reviewed --entity-source-url", "record_count": 0}
     return collect_web_queries(args, queries, run_dir, "serper_search")
 
@@ -2318,18 +2554,26 @@ def fetch_youtube_transcript(video_id: str, languages: list[str]) -> tuple[str, 
 
 
 def _collect_youtube_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    ledger = provider_query_schedule(args, queries, "youtube")
     key_name, api_key = get_secret("YOUTUBE_API_KEY", "GOOGLE_API_KEY")
-    raw: dict[str, Any] = {"credential_source": key_name, "searches": [], "comments": [], "transcripts": []}
+    raw: dict[str, Any] = {"credential_source": key_name, "searches": [], "comments": [], "replies": [], "transcripts": []}
     if not api_key:
+        unattempted_queries(ledger, "missing_credentials")
         write_json(run_dir / "raw" / "youtube.json", raw)
-        return [], {"status": "missing_credentials", "required_env": ["YOUTUBE_API_KEY"]}
+        return [], {"status": "missing_credentials", "required_env": ["YOUTUBE_API_KEY"], "query_ledger": ledger}
 
     records: list[dict[str, Any]] = []
     seen_videos: set[str] = set()
+    seen_comments: set[str] = set()
+    comment_ledger: list[dict[str, Any]] = []
     transcripts_attempted = 0
     transcripts_fetched = 0
     transcript_max = max(0, getattr(args, "youtube_transcript_max", 5))
-    for query in queries:
+    for row in ledger:
+        if not row["scheduled"]:
+            continue
+        query = row["query"]
+        before_query = len(records)
         search_response = http_get(
             with_query(
                 "https://www.googleapis.com/youtube/v3/search",
@@ -2337,7 +2581,11 @@ def _collect_youtube_query(args: argparse.Namespace, queries: list[str], run_dir
             )
         )
         raw["searches"].append({"query": query, "response": search_response})
+        row.update({"attempted": status_from_response(search_response) != "request_budget_exhausted",
+                    "status": status_from_response(search_response)})
         items = (search_response.get("body") or {}).get("items", []) if search_response.get("ok") else []
+        row["returned_count"] = len(items)
+        row["inspected_count"] = len(items)
         for item in items:
             video_id = (item.get("id") or {}).get("videoId")
             if not video_id or video_id in seen_videos:
@@ -2345,6 +2593,7 @@ def _collect_youtube_query(args: argparse.Namespace, queries: list[str], run_dir
             seen_videos.add(video_id)
             snippet = item.get("snippet") or {}
             url = f"https://www.youtube.com/watch?v={video_id}"
+            row["result_urls"].append(url)
             text = "\n\n".join(part for part in [snippet.get("title", ""), snippet.get("description", "")] if part).strip()
             if text:
                 relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, snippet.get("channelTitle", ""))
@@ -2364,48 +2613,86 @@ def _collect_youtube_query(args: argparse.Namespace, queries: list[str], run_dir
                         relevance=relevance,
                         relevance_notes=relevance_notes,
                         relevance_score=relevance_score,
+                        published_at=snippet.get("publishedAt"),
                     )
                 )
-            comments_response = http_get(
-                with_query(
-                    "https://www.googleapis.com/youtube/v3/commentThreads",
-                    {
-                        "part": "snippet",
-                        "videoId": video_id,
-                        "maxResults": min(5, max(args.limit, 1)),
-                        "textFormat": "plainText",
-                        "key": api_key,
-                    },
-                )
-            )
-            raw["comments"].append({"video_id": video_id, "response": comments_response})
-            if comments_response.get("ok"):
-                for comment in (comments_response.get("body") or {}).get("items", []):
-                    top = (((comment.get("snippet") or {}).get("topLevelComment") or {}).get("snippet") or {})
-                    comment_text = top.get("textDisplay") or top.get("textOriginal") or ""
-                    if not comment_text:
-                        continue
-                    relevance, relevance_notes, relevance_score = assess_relevance(comment_text, args, query, url, top.get("authorDisplayName", ""))
-                    records.append(
-                        normalize_record(
-                            source="youtube_comment",
-                            source_url=url,
-                            query=query,
-                            customer_segment=args.customer_segment,
-                            hypothesis=args.hypothesis_id,
-                            text=comment_text,
-                            author_context=top.get("authorDisplayName", ""),
-                            engagement={"likes": top.get("likeCount")},
-                            raw_id=comment.get("id", ""),
+            if len(seen_videos) <= max(0, getattr(args, "youtube_comment_videos", 2)):
+                page_token = ""
+                reply_threads = 0
+                for page_index in range(max(1, getattr(args, "youtube_comment_pages", 2))):
+                    params = {"part": "snippet", "videoId": video_id, "maxResults": 100,
+                              "textFormat": "plainText", "key": api_key}
+                    if page_token:
+                        params["pageToken"] = page_token
+                    comments_response = http_get(with_query("https://www.googleapis.com/youtube/v3/commentThreads", params))
+                    raw["comments"].append({"video_id": video_id, "page": page_index + 1, "response": comments_response})
+                    if not comments_response.get("ok"):
+                        comment_ledger.append({"video_id": video_id, "page": page_index + 1,
+                                               "status": status_from_response(comments_response)})
+                        break
+                    body = comments_response.get("body") or {}
+                    threads = body.get("items") or []
+
+                    def retain_comment(comment_id, comment_snippet, parent_id=""):
+                        if not comment_id or comment_id in seen_comments:
+                            return
+                        comment_text = comment_snippet.get("textOriginal") or comment_snippet.get("textDisplay") or ""
+                        if not comment_text:
+                            return
+                        seen_comments.add(comment_id)
+                        comment_url = url + "&lc=" + comment_id
+                        author = comment_snippet.get("authorDisplayName", "")
+                        relevance, notes, score = assess_relevance(comment_text, args, query, comment_url, author)
+                        record = normalize_record(source="youtube_comment", source_url=comment_url,
+                            query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id,
+                            text=comment_text, author_context=author,
+                            engagement={"likes": comment_snippet.get("likeCount")}, raw_id=comment_id,
                             evidence_type="irrelevant" if relevance == "irrelevant" else None,
                             strength="irrelevant" if relevance == "irrelevant" else None,
-                            relevance=relevance,
-                            relevance_notes=relevance_notes,
-                            relevance_score=relevance_score,
-                        )
-                    )
-                    if len(records) >= args.limit:
+                            relevance=relevance, relevance_notes=notes, relevance_score=score,
+                            published_at=comment_snippet.get("publishedAt"))
+                        record["sampling_metadata"].update({"video_id": video_id, "parent_comment_id": parent_id,
+                                                              "comment_role": "reply" if parent_id else "top_level"})
+                        records.append(record)
+
+                    for thread in threads:
+                        top_comment = (thread.get("snippet") or {}).get("topLevelComment") or {}
+                        parent_id = top_comment.get("id") or thread.get("id") or ""
+                        retain_comment(parent_id, top_comment.get("snippet") or {})
+                        if (thread.get("snippet") or {}).get("totalReplyCount", 0) and reply_threads < max(0, getattr(args, "youtube_reply_threads", 3)):
+                            reply_threads += 1
+                            reply_token = ""
+                            for reply_page in range(2):
+                                reply_params = {"part": "snippet", "parentId": parent_id, "maxResults": 100, "key": api_key}
+                                if reply_token:
+                                    reply_params["pageToken"] = reply_token
+                                response = http_get(with_query("https://www.googleapis.com/youtube/v3/comments", reply_params))
+                                raw["replies"].append({"video_id": video_id, "parent_id": parent_id,
+                                                       "page": reply_page + 1, "response": response})
+                                if not response.get("ok"):
+                                    comment_ledger.append({"video_id": video_id, "parent_id": parent_id,
+                                                           "status": status_from_response(response)})
+                                    break
+                                reply_body = response.get("body") or {}
+                                for reply in reply_body.get("items") or []:
+                                    retain_comment(reply.get("id"), reply.get("snippet") or {}, parent_id)
+                                reply_token = reply_body.get("nextPageToken") or ""
+                                if not reply_token:
+                                    break
+                            if reply_token:
+                                comment_ledger.append({"video_id": video_id, "parent_id": parent_id,
+                                                       "status": "partial:replies_unexpanded"})
+                    next_token = body.get("nextPageToken") or ""
+                    comment_ledger.append({"video_id": video_id, "page": page_index + 1,
+                                           "status": "ok", "thread_count": len(threads),
+                                           "next_page_present": bool(next_token)})
+                    if not next_token or next_token == page_token:
                         break
+                    page_token = next_token
+                if page_token and comment_ledger[-1].get("next_page_present"):
+                    comment_ledger.append({"video_id": video_id, "status": "partial:threads_unexpanded"})
+            else:
+                comment_ledger.append({"video_id": video_id, "status": "not_selected_by_discussion_limit"})
             if getattr(args, "youtube_transcripts", False) and transcripts_attempted < transcript_max and reserve_enrichment_allowance("youtube_transcript", getattr(args, "youtube_transcript_budget_max", transcript_max)):
                 transcripts_attempted += 1
                 transcript_status, transcript_text = fetch_youtube_transcript(video_id, [args.language, "en"])
@@ -2444,14 +2731,16 @@ def _collect_youtube_query(args: argparse.Namespace, queries: list[str], run_dir
                             confidence_notes="Creator-voice transcript via youtube_transcript_api (free, no API quota). A transcript is the creator's narrative, not independent customer voice; mine it for quoted user stories, mentioned workarounds, and linked products, never as demand proof.",
                         )
                     )
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
-
+        row["new_record_count"] = len(records) - before_query
     status = "ok" if records else status_from_response((raw["searches"][0] or {}).get("response", {})) if raw["searches"] else "failed"
+    if status == "ok" and query_collection_status(ledger) != "ok":
+        status = query_collection_status(ledger)
+    if status == "ok" and any(row["status"] not in {"ok", "not_selected_by_discussion_limit"} for row in comment_ledger):
+        status = "partial"
     write_json(run_dir / "raw" / "youtube.json", redact_sensitive(raw))
-    summary: dict[str, Any] = {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+    summary: dict[str, Any] = {"status": status, "record_count": len(records),
+                               "comment_request_ledger": comment_ledger, "query_ledger": ledger,
+                               "fields": fields_present(raw)}
     if getattr(args, "youtube_transcripts", False):
         transcript_statuses: dict[str, int] = {}
         for entry in raw["transcripts"]:
@@ -2680,7 +2969,9 @@ def stringify_social_comment(item: dict[str, Any]) -> tuple[str, str, dict[str, 
         text = text.get("text") or ""
     url = item.get("url") or item.get("link") or ""
     engagement = {"views": None, "likes": item.get("likes") or item.get("like_count"), "comments": None}
-    raw_id = str(item.get("id") or item.get("comment_id") or url or str(text)[:80])
+    raw_id = str(item.get("id") or item.get("cid") or item.get("comment_id") or url or
+                 hashlib.sha256(json.dumps([text, item.get("user"), item.get("created_at"), item.get("create_time")],
+                                           sort_keys=True, default=str).encode()).hexdigest()[:20])
     return str(text), url, engagement, raw_id
 
 
@@ -2860,6 +3151,9 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
     specs: list[tuple[str, str, dict[str, Any], str | None, str | None, int, str, Any]] = []
     search_rows: dict[str, dict[str, Any]] = {}
     lane_allowances: dict[str, dict[str, int]] = {}
+    topic_platforms = [name.strip() for name in getattr(args, "social_topic_platforms", "tiktok,instagram,threads").split(",") if name.strip()]
+    if not topic_platforms or len(set(topic_platforms)) != len(topic_platforms) or set(topic_platforms) - {"tiktok", "instagram", "threads"}:
+        raise ValueError("--social-topic-platforms must select distinct TikTok, Instagram or Threads lanes")
     for row in ledger:
         if not row["scheduled"]:
             continue
@@ -2867,7 +3161,7 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
         # Allocate the per-query record allowance across platforms before
         # retrieval. Rotate the two-lane remainder by query ID so a small cap
         # does not systematically privilege the same provider order.
-        lane_names = ["tiktok", "instagram", "threads"]
+        lane_names = topic_platforms
         allocation = row["per_query_result_limit"]
         base, remainder = divmod(allocation, len(lane_names))
         rotation = int(hashlib.sha256(row["query_id"].encode()).hexdigest()[:8], 16) % len(lane_names)
@@ -2876,10 +3170,12 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
             lane_allowances[row["query_id"]][lane_names[(rotation + offset) % len(lane_names)]] += 1
         row["platform_allocation"] = lane_allowances[row["query_id"]]
         for source, endpoint, extra in [
-            ("tiktok", "https://api.scrapecreators.com/v1/tiktok/search/keyword", {"date_posted": "month", "sort_by": "relevance", "trim": "true"}),
+            ("tiktok", "https://api.scrapecreators.com/v1/tiktok/search/keyword", {"date_posted": "this-month", "sort_by": "relevance", "trim": "true"}),
             ("instagram", "https://api.scrapecreators.com/v2/instagram/reels/search", {"date_posted": "last-month", "page": 1}),
             ("threads", "https://api.scrapecreators.com/v1/threads/search", {"trim": "true"}),
         ]:
+            if source not in topic_platforms:
+                continue
             context = f"ScrapeCreators {source}-search:{row['query_id']}"
             search_rows[context] = row
             specs.append((source, endpoint, {"query": row["query"], **extra}, None, None,
@@ -2938,6 +3234,21 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                     credits_exhausted = True
                 continue
             items = list_candidates(response.get("body"))[:cap]
+            if source == "instagram" and endpoint.endswith("/reels/search"):
+                page = 1
+                next_page = (response.get("body") or {}).get("next_page")
+                while next_page and len(items) < cap and page < 3:
+                    page += 1
+                    response = http_get(with_query(endpoint, {**params, "page": next_page}), headers={"x-api-key": api_key})
+                    raw["calls"].append({"source": source, "endpoint": endpoint,
+                                         "params": {**params, "page": next_page}, "response": response})
+                    if not response.get("ok"):
+                        break
+                    items.extend(list_candidates(response.get("body"))[:cap - len(items)])
+                    fresh = (response.get("body") or {}).get("next_page")
+                    if not fresh or fresh == next_page:
+                        break
+                    next_page = fresh
             status = "ok" if items else "empty"
         else:
             items, status = scrapecreators_paginate(endpoint, params, api_key, items_key, cursor_key, cap, raw["calls"], source)
@@ -3010,7 +3321,7 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                 row["result_urls"].append(url)
                 if source in {"tiktok", "instagram", "threads"}:
                     lane_retained[(row["query_id"], source)] = lane_retained.get((row["query_id"], source), 0) + 1
-            if url and source in {"facebook", "instagram"}:
+            if url and source in {"facebook", "instagram", "tiktok"}:
                 supplier_identity = facebook_context.get("author_label", "") if source == "facebook" and context.startswith(("ScrapeCreators fb-page", "ScrapeCreators fb-entity:")) else context.split(":", 2)[2] if instagram_entity else ""
                 comment_candidates.append((source, url, context, supplier_identity))
         produced = len(records) - before
@@ -3024,6 +3335,7 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
         comment_endpoints = {
             "facebook": "https://api.scrapecreators.com/v1/facebook/post/comments",
             "instagram": "https://api.scrapecreators.com/v2/instagram/post/comments",
+            "tiktok": "https://api.scrapecreators.com/v1/tiktok/video/comments",
         }
         buckets: dict[tuple[str, str], list[tuple[str, str, str, str]]] = {}
         for candidate in comment_candidates:
@@ -3057,7 +3369,28 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                     break
                 continue
             before = len(records)
-            comment_items = list_candidates(response.get("body"))[:10]
+            comment_items = list_candidates(response.get("body"))
+            body = response.get("body") if isinstance(response.get("body"), dict) else {}
+            continuation = body.get("cursor") or body.get("next_cursor") or body.get("nextCursor")
+            visited_cursors = set()
+            page_count = 1
+            while (continuation and len(comment_items) < max(1, getattr(args, "social_comments_per_post", 50))
+                   and page_count < max(1, getattr(args, "social_comment_pages", 2))):
+                marker = str(continuation)
+                if marker in visited_cursors:
+                    break
+                visited_cursors.add(marker)
+                next_params = {**params, "cursor": continuation}
+                next_response = http_get(with_query(endpoint, next_params), headers={"x-api-key": api_key})
+                raw["calls"].append({"source": f"{source}_comment", "endpoint": endpoint,
+                                     "params": next_params, "response": next_response})
+                page_count += 1
+                if not next_response.get("ok"):
+                    break
+                next_body = next_response.get("body") if isinstance(next_response.get("body"), dict) else {}
+                comment_items.extend(list_candidates(next_body))
+                continuation = next_body.get("cursor") or next_body.get("next_cursor") or next_body.get("nextCursor")
+            comment_items = comment_items[:max(1, getattr(args, "social_comments_per_post", 50))]
             for item in comment_items:
                 if not isinstance(item, dict):
                     continue
@@ -3108,11 +3441,9 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
                         if parent_row["query_id"] in parent_ids:
                             record_query_discovery(record, parent_row)
             produced_comments = len(records) - before
-            body = response.get("body") if isinstance(response.get("body"), dict) else {}
-            continuation = body.get("cursor") or body.get("next_cursor") or body.get("nextCursor")
             comment_status = "partial:pagination_cursor" if continuation else "ok" if produced_comments else "empty"
             endpoint_statuses[ledger_key] = f"{comment_status};records={produced_comments}"
-            comment_request_ledger.append({"source": source, "target_url": url, "context": context, "attempted": True, "status": comment_status, "http_status": response.get("status_code"), "record_count": produced_comments, "continuation_cursor_present": bool(continuation)})
+            comment_request_ledger.append({"source": source, "target_url": url, "context": context, "attempted": True, "status": comment_status, "http_status": response.get("status_code"), "record_count": produced_comments, "continuation_cursor_present": bool(continuation), "pages_attempted": page_count})
 
     first_response = (raw["calls"][0] or {}).get("response", {}) if raw["calls"] else {}
     requested_facebook = bool(args.fb_groups.strip() or args.fb_pages.strip() or facebook_entity_pairs)
@@ -3134,9 +3465,9 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
         else:
             failures = [value for value in outcomes if value != "ok"]
             row["status"] = ("partial" if "ok" in outcomes else failures[0]) if failures else "ok"
-            if len(outcomes) < 3:
+            if len(outcomes) < len(topic_platforms):
                 row["status"] = "partial" if not credits_exhausted else "insufficient_credits"
-        row["enrichment_boundary"] = "Keyword record allowance is allocated across TikTok, Instagram and Threads before retrieval; optional comments have a separate comments_max cap."
+        row["enrichment_boundary"] = "Keyword record allowance is allocated across selected topic platforms before retrieval; optional comments have a separate comments_max cap."
     if ledger and status == "ok" and query_collection_status(ledger) != "ok":
         status = query_collection_status(ledger)
     raw["query_ledger"] = ledger
@@ -4651,8 +4982,24 @@ def parse_args() -> argparse.Namespace:
         "--comments-max",
         type=int,
         default=5,
-        help="Maximum collected posts to enrich with comments when --social-comments is set.",
+        help="Maximum collected social posts to enrich with comments when --social-comments is set.",
     )
+    parser.add_argument("--reddit-comment-posts", type=int, default=6,
+                        help="Relevant Reddit discussions to hydrate per run; zero explicitly skips comments.")
+    parser.add_argument("--reddit-comments-per-post", type=int, default=100,
+                        help="Maximum retained Reddit comments per selected discussion; unresolved more nodes stay visible.")
+    parser.add_argument("--youtube-comment-videos", type=int, default=2,
+                        help="Selected videos per run whose comment threads are hydrated.")
+    parser.add_argument("--youtube-comment-pages", type=int, default=2,
+                        help="Maximum top-level comment pages per selected video.")
+    parser.add_argument("--youtube-reply-threads", type=int, default=3,
+                        help="Maximum parent comments per video whose replies are expanded.")
+    parser.add_argument("--social-comment-pages", type=int, default=2,
+                        help="Maximum comment pages per selected TikTok, Instagram or Facebook post.")
+    parser.add_argument("--social-comments-per-post", type=int, default=50,
+                        help="Maximum comments retained from each selected public social post.")
+    parser.add_argument("--social-topic-platforms", default="tiktok,instagram,threads",
+                        help="Comma-separated applicable topic search lanes; avoids dividing a small query sample across irrelevant platforms.")
     parser.add_argument(
         "--youtube-transcripts",
         action="store_true",
@@ -4853,10 +5200,15 @@ def main() -> int:
             saved = checkpoint.get("providers_completed", {}).get(provider)
             if isinstance(saved, dict) and provider_checkpoint_complete(saved):
                 continue
-            if args.sampling_frame == "entity_led_feedback" and provider not in {"firecrawl", "itunes_reviews", "trustpilot_reviews", "google_places_reviews", "scrapecreators", "sonar"}:
+            locator_search = (provider in {"serper_search", "brave_search"} and bool(args.query_plan_data)
+                              and all(row.get("intent") == "entity_locator_discovery"
+                                      for row in args.query_plan_data.get("queries", [])))
+            if args.sampling_frame == "entity_led_feedback" and not locator_search and provider not in {"firecrawl", "itunes_reviews", "trustpilot_reviews", "google_places_reviews", "scrapecreators", "sonar", "reddit"}:
                 provider_summaries[provider] = {"status": "capture_gate_blocked", "record_count": 0, "reason": "Generic entity capture requires firecrawl and an exact reviewed URL; broad search remains topic-led discovery."}
                 continue
-            func = provider_funcs.get(provider)
+            func = ((lambda a, _q, d: collect_reviewed_reddit_target(a, d))
+                    if args.sampling_frame == "entity_led_feedback" and provider == "reddit"
+                    else provider_funcs.get(provider))
             if not func:
                 provider_summaries[provider] = {"status": "unsupported", "record_count": 0}
                 continue
@@ -4918,6 +5270,10 @@ def main() -> int:
                             allowances_consumed=dict(budget.allowances),
                             providers_completed=checkpoint["providers_completed"])
 
+    # The same source can arrive through several providers. Keep one evidence
+    # record with every discovery membership so the query ledger and research
+    # completion check agree on the captured population.
+    records = merge_provider_records([], records)
     relevant_records = [record for record in records if record.get("relevance") != "irrelevant"]
     irrelevant_records = [record for record in records if record.get("relevance") == "irrelevant"]
     routing = load_provider_routing()
@@ -4966,35 +5322,47 @@ def main() -> int:
     write_assumptions(run_dir, args, queries)
     write_user_review_plan(run_dir, args, relevant_records, quality_flags)
     if workspace:
+        from evidence_scout.validate_research_completion import validate_collection
+        collection_check = validate_collection(workspace, run_dir)
         failures = [
             {"provider": provider, "failure_class": str(result.get("status", "failed")), "confidence_impact": "high"}
             for provider, result in provider_summaries.items()
             if result.get("status") not in {"ok", "not_run"}
         ]
-        gate_result = "fail" if budget_exhausted or not relevant_records else ("conditional_pass" if failures or quality_flags else "pass")
+        gate_result = ("fail" if collection_check["status"] == "invalid" else
+                       "conditional_pass" if collection_check["status"] == "partial" or collection_check["open_gaps"] else "pass")
+        stage_status = ("failed" if collection_check["status"] == "invalid" else
+                        "in_progress" if collection_check["status"] == "partial" else "passed")
         update_stage(
             workspace,
             "evidence_collection", run_dir=run_dir,
-            status="blocked" if budget_exhausted else ("failed" if gate_result == "fail" else "passed"),
-            gate_result=gate_result,
-            artifacts=[run_dir / "report.md", run_dir / "summary.json", run_dir / "evidence.jsonl", run_dir / "assumptions.md"],
+            status=stage_status,
+            gate_result="not_run" if stage_status == "in_progress" else gate_result,
+            # A verified empty capture is still a valid collection result. The
+            # stage writer requires published artifacts to be nonempty, while
+            # validate_collection separately binds the empty evidence file.
+            artifacts=[run_dir / "report.md", run_dir / "summary.json", run_dir / "assumptions.md",
+                       *([run_dir / "evidence.jsonl"] if (run_dir / "evidence.jsonl").stat().st_size else [])],
             provider_failures=failures,
-            open_gaps=quality_flags,
-            next_action="Resolve remaining_tasks in summary.json before continuing collection." if budget_exhausted else "Review evidence and interview users before synthesis." if gate_result != "pass" else "Proceed to competitor discovery or opportunity-risk design.",
+            open_gaps=[*quality_flags, *collection_check["missing_requirements"], *collection_check["open_gaps"]],
+            next_action=("Resume unfinished source capture; see completion check." if stage_status == "in_progress"
+                         else "Review customer episodes, source coverage and counter-evidence before synthesis."),
         )
     update_run_manifest(
         run_dir,
         stage="evidence_collection",
-        stage_status="blocked" if budget_exhausted else ("failed" if not relevant_records else "passed"),
-        gate_result="fail" if budget_exhausted or not relevant_records else ("conditional_pass" if (provider_summaries and any(s.get("status") not in {"ok", "not_run"} for s in provider_summaries.values())) or quality_flags else "pass"),
+        stage_status=stage_status if workspace else "blocked" if budget_exhausted else "failed" if not relevant_records else "passed",
+        gate_result=("not_run" if stage_status == "in_progress" else gate_result) if workspace else "fail" if budget_exhausted or not relevant_records else "conditional_pass" if quality_flags else "pass",
         artifacts=[run_dir / "report.md", run_dir / "summary.json", run_dir / "evidence.jsonl"],
         open_gaps=quality_flags,
-        next_action="Resolve remaining_tasks in summary.json before continuing collection." if budget_exhausted else "Review evidence and interview users before synthesis." if not relevant_records or quality_flags else "Proceed to competitor discovery or opportunity-risk design.",
+        next_action="Run the completion check, resolve unfinished capture, then review customer evidence.",
         event="evidence_collection_budget_exhausted" if budget_exhausted else "evidence_collection_completed",
         record_count=len(relevant_records),
         source_count=len([s for s in provider_summaries.values() if s.get("status") == "ok"]),
     )
     print(json.dumps(summary, indent=2, sort_keys=True))
+    if workspace:
+        return {"complete": 0, "partial": 1, "invalid": 2}[collection_check["status"]]
     return 2 if budget_exhausted else (0 if relevant_records else 1)
 
 

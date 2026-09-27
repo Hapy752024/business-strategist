@@ -409,6 +409,7 @@ def _update_legacy_stage(
     open_gaps: list[str] | None = None,
     next_action: str = "",
     override: str = "",
+    run_dir: Path | None = None,
 ) -> None:
     if stage not in STAGES:
         raise ValueError(f"Unsupported stage: {stage}")
@@ -434,6 +435,19 @@ def _update_legacy_stage(
             # Existence is still required for a passed stage.
             relative_artifacts.append(str(artifact.resolve()))
     validation_receipt = None
+    if stage in {"evidence_collection", "market_discovery"} and status == "passed":
+        from evidence_scout.validate_research_completion import collection_receipt, validate_research
+        if run_dir is None:
+            raise ValueError(f"{stage} pass requires its verifiable run_dir")
+        if stage == "evidence_collection":
+            validation_receipt = collection_receipt(workspace, run_dir)
+        else:
+            check = validate_research(workspace, run_dir)
+            if check["status"] != "complete":
+                raise ValueError("market_discovery research is not complete: " + "; ".join(check["missing_requirements"]))
+            validation_receipt = {"contract_version": 1, "kind": "market_discovery", "status": "valid",
+                                  "run_dir": str(Path(run_dir).absolute().relative_to(workspace.absolute())),
+                                  "inputs": check["inputs"]}
     if stage == PAIN_GATE_STAGE and status == "passed" and not override:
         manifest = read_manifest(workspace)
         validation_receipt = _problem_validation_receipt(workspace, artifacts or [],
@@ -488,6 +502,10 @@ def _update_legacy_stage(
                 "inputs": {relative: hashlib.sha256((workspace / relative).read_bytes()).hexdigest()
                            for relative in relative_artifacts if not Path(relative).is_absolute() and (workspace / relative).is_file()},
             }
+        elif validation_receipt is not None:
+            checkpoint["validation_receipt"] = validation_receipt
+        elif stage in {"evidence_collection", "market_discovery"}:
+            checkpoint.pop("validation_receipt", None)
         manifest["updated_at"] = timestamp
         manifest["manifest_revision"] = int(manifest.get("manifest_revision", 0)) + 1
         manifest["current_stage"] = stage
@@ -504,7 +522,6 @@ def update_stage(workspace: Path, stage: str, **kwargs) -> None:
     workspace = Path(workspace).absolute()
     root = cases.locate(workspace)
     if not root:
-        kwargs.pop('run_dir', None)
         kwargs.pop('expected_assessment_revision', None)
         return _update_legacy_stage(workspace, stage, **kwargs)
     if stage not in STAGES:
@@ -553,6 +570,22 @@ def update_stage(workspace: Path, stage: str, **kwargs) -> None:
                     raise ValueError('stale research input at stage closure')
         if cid and expected != m['assessment_revision']:
             raise ValueError('stale or missing expected assessment revision')
+        research_receipt = None
+        if stage in {'evidence_collection', 'market_discovery'} and status == 'passed':
+            from evidence_scout.validate_research_completion import collection_receipt, validate_research
+            if not kwargs.get('run_dir'):
+                raise ValueError(stage + ' pass requires a verifiable run_dir')
+            if stage == 'evidence_collection':
+                research_receipt = collection_receipt(workspace, kwargs['run_dir'])
+            else:
+                check = validate_research(workspace, kwargs['run_dir'])
+                if check['status'] != 'complete':
+                    raise ValueError('market_discovery research is not complete: ' + '; '.join(check['missing_requirements']))
+                research_receipt = {'contract_version': 1, 'kind': 'market_discovery', 'status': 'valid',
+                                    'run_dir': str(Path(kwargs['run_dir']).absolute().relative_to(workspace)),
+                                    'inputs': check['inputs']}
+            research_receipt['case_id'] = cid
+            research_receipt['assessment_revision'] = m['assessment_revision']
         if stage == PAIN_GATE_STAGE and status == 'passed' and not kwargs.get('override'):
             _problem_validation_receipt(workspace, artifacts, case_id=cid,
                                         revision=expected or kwargs.get('expected_assessment_revision', 1))
@@ -582,12 +615,21 @@ def update_stage(workspace: Path, stage: str, **kwargs) -> None:
                  'scope': {'case_id': cid, 'segment': 'owner override', 'limits': kwargs['override']},
                  'inputs': {str(Path(a).absolute().relative_to(workspace)): hashlib.sha256(Path(a).read_bytes()).hexdigest()
                             for a in artifacts if Path(a).is_file()}})
+        elif research_receipt is not None:
+            entry['validation_receipt'] = research_receipt
         m.setdefault('stages', {})[stage] = entry
         m.update(current_stage=stage, updated_at=now_iso(), gate_result=gate, next_action=entry['next_action'], manifest_revision=m.get('manifest_revision', 0) + 1)
         m['artifacts'] = sorted(set(m.get('artifacts', []) + rels))
+        outputs = {}
+        if cid and rels and m.get('insights', {}).get('state') == 'current':
+            m['insights']['state'] = 'update_pending'
+            insight_path = workspace / 'case_insights.md'
+            if insight_path.is_file():
+                outputs[str(insight_path.relative_to(root))] = cases.pending_insights(insight_path.read_text())
         decision = 'stage-' + uuid.uuid4().hex
         m.setdefault('events', []).append({'ts': now_iso(), 'event': 'stage:' + stage, 'decision_id': decision, 'override': kwargs.get('override', '')})
-        cases.publish_locked(root, {str(manifest_path.relative_to(root)): cases.encoded(m)}, expected_revision=project['manifest_revision'],
+        outputs[str(manifest_path.relative_to(root))] = cases.encoded(m)
+        cases.publish_locked(root, outputs, expected_revision=project['manifest_revision'],
                              decision_id=decision, reason=f'{cid or "topic"}: {stage} {status}', affected=[cid] if cid else [])
 
 
@@ -744,6 +786,47 @@ def resume_from_last_gate(run_dir: Path) -> dict[str, Any]:
     gate = run_manifest.get("gate_result", "not_run")
     stage = run_manifest.get("current_stage", "unknown")
     status = run_manifest.get("stage_status", "unknown")
+
+    if stage in {"evidence_collection", "market_discovery"} and gate in {"pass", "conditional_pass"}:
+        from evidence_scout.validate_research_completion import receipt_current
+        workspace = next((parent for parent in (Path(run_dir), *Path(run_dir).parents)
+                          if (parent / RESEARCH_MANIFEST_REL).is_file()), None)
+        if workspace is None:
+            return {"can_resume": True, "reason": "Run pass has no checked research workspace",
+                    "current_stage": stage, "next_action": "Locate and verify the research stage before proceeding"}
+        manifest = read_manifest(workspace)
+        checkpoint = manifest.get("stages", {}).get(stage, {})
+        receipt = checkpoint.get("validation_receipt")
+        if (checkpoint.get("status") != "passed" or not receipt_current(workspace, receipt, stage)
+                or ("assessment_revision" in receipt and receipt["assessment_revision"] != manifest.get("assessment_revision"))):
+            return {"can_resume": True, "reason": "Run pass has no current shared-stage validation receipt",
+                    "current_stage": stage, "next_action": "Run the completion check and repair missing or stale research"}
+
+    # Resume from authoritative current artifacts rather than a stale prose
+    # next_action. This reports work; it does not perform semantic review.
+    if stage == "evidence_collection":
+        from evidence_scout.validate_research_completion import validate_collection, validate_research
+        workspace = next((parent for parent in (Path(run_dir), *Path(run_dir).parents)
+                          if (parent / RESEARCH_MANIFEST_REL).is_file()), None)
+        if workspace is not None:
+            capture = Path(run_dir) / "evidence" if (Path(run_dir) / "evidence" / "query_plan.json").is_file() else Path(run_dir)
+            collection = validate_collection(workspace, capture)
+            if collection.get("status") == "complete":
+                research = validate_research(workspace, Path(run_dir))
+                actions = research.get("next_actions", [])
+                if actions:
+                    return {"can_resume": True, "reason": "Resume work derived from current research artifacts",
+                            "current_stage": stage, "next_action": actions[0],
+                            "next_actions": actions, "research_status": research.get("status"),
+                            "open_gaps": research.get("open_gaps", []),
+                            "artifacts": run_manifest.get("artifacts", [])}
+            else:
+                actions = collection.get("next_actions", [])
+                if actions:
+                    return {"can_resume": True, "reason": "Resume collection from current capture artifacts",
+                            "current_stage": stage, "next_action": actions[0],
+                            "next_actions": actions, "open_gaps": collection.get("open_gaps", []),
+                            "artifacts": run_manifest.get("artifacts", [])}
 
     if gate == "pass":
         return {
