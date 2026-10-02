@@ -21,6 +21,7 @@ def validate(manifest: dict, manifest_dir: Path | None = None) -> list[str]:
     for task in tasks:
         groups.setdefault(task.get('group', ''), set()).add(task.get('split', ''))
         packet = task.get('packet')
+        packet_kind = 'synthetic'
         if packet:
             base = Path(manifest_dir) if manifest_dir else MANIFEST.parent
             packet_path = (base / packet).resolve()
@@ -29,8 +30,15 @@ def validate(manifest: dict, manifest_dir: Path | None = None) -> list[str]:
             else:
                 try:
                     fixture = json.loads(packet_path.read_text(encoding='utf-8'))
-                    if fixture.get('synthetic_only') is not True or fixture.get('task_id') != task.get('id'):
+                    packet_kind = fixture.get('packet_kind', task.get('packet_kind', 'synthetic'))
+                    if fixture.get('task_id') != task.get('id'):
                         errors.append(f"{task.get('id')}: packet identity/synthetic marker invalid")
+                    if packet_kind not in {'synthetic', 'reviewed_source'}:
+                        errors.append(f"{task.get('id')}: unsupported packet_kind")
+                    if packet_kind == 'synthetic' and fixture.get('synthetic_only') is not True:
+                        errors.append(f"{task.get('id')}: synthetic packets require synthetic_only=true")
+                    if packet_kind == 'reviewed_source' and not (fixture.get('source_locators') and fixture.get('source_sha256')):
+                        errors.append(f"{task.get('id')}: reviewed_source packets require locators and source digest")
                     if not isinstance(fixture.get('generation_input'), dict) or not fixture['generation_input']:
                         errors.append(f"{task.get('id')}: generation input missing")
                 except (OSError, json.JSONDecodeError):
@@ -49,7 +57,7 @@ def validate(manifest: dict, manifest_dir: Path | None = None) -> list[str]:
                             errors.append(f"{task.get('id')}: {field} identity/synthetic marker invalid")
                     except (OSError, json.JSONDecodeError):
                         errors.append(f"{task.get('id')}: {field} is not valid JSON")
-            elif packet:
+            elif packet and packet_kind == 'synthetic':
                 errors.append(f"{task.get('id')}: {field} reference missing")
     if any(len(splits) > 1 for splits in groups.values()): errors.append('connected group crosses splits')
     expected = manifest.get('split_counts', {'development': 8, 'held_out': 4})

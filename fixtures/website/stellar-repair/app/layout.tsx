@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./contrast.css";
+import "./request-form.css";
 
 export const metadata: Metadata = {
   title: "Stellar Repair — Calm, precise home repair",

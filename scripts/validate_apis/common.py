@@ -40,30 +40,31 @@ def now_iso() -> str:
 
 
 def load_local_secrets() -> dict[str, str]:
-    """Load simple KEY=VALUE lines from ~/.secrets without overriding env vars."""
-    secrets_path = Path.home() / ".secrets"
+    """Load simple KEY=VALUE lines from the project or home secrets file."""
+    secrets_paths = [ROOT / ".secrets", Path.home() / ".secrets"]
     loaded: dict[str, str] = {}
-    if not secrets_path.exists() or not secrets_path.is_file():
-        return loaded
-    try:
-        for raw_line in secrets_path.read_text(encoding="utf-8").splitlines():
-            line = raw_line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if line.startswith("export "):
-                line = line[len("export ") :].strip()
-            if "=" not in line:
-                continue
-            key, value = line.split("=", 1)
-            key = key.strip()
-            value = value.strip().strip("'").strip('"')
-            if key and value and key not in os.environ:
-                loaded[key] = value
-                os.environ[key] = value
-    except PermissionError:
-        loaded["_error"] = f"Permission denied reading {secrets_path}"
-    except OSError as exc:
-        loaded["_error"] = f"Could not read {secrets_path}: {exc}"
+    for secrets_path in dict.fromkeys(secrets_paths):
+        if not secrets_path.exists() or not secrets_path.is_file():
+            continue
+        try:
+            for raw_line in secrets_path.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if line.startswith("export "):
+                    line = line[len("export ") :].strip()
+                if "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip("'").strip('"')
+                if key and value and key not in os.environ:
+                    loaded[key] = value
+                    os.environ[key] = value
+        except PermissionError:
+            loaded["_error"] = f"Permission denied reading {secrets_path}"
+        except OSError as exc:
+            loaded["_error"] = f"Could not read {secrets_path}: {exc}"
     return loaded
 
 
@@ -402,6 +403,7 @@ def missing_credentials(provider: str, required: list[str], instructions: list[s
         "required_env": required,
         "instructions": instructions,
         "secrets_file_supported": str(Path.home() / ".secrets"),
+        "secrets_files_supported": [str(ROOT / ".secrets"), str(Path.home() / ".secrets")],
     }
     raw = {"error": "missing credentials", "required_env": required}
     return finish(provider, summary, raw)

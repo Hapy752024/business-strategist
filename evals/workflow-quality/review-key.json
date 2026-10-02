@@ -1,0 +1,23 @@
+{
+  "criteria_version": "1",
+  "review_mode": "blind side-by-side with separate A/B mapping key held by coordinator",
+  "rating_scale": {"1":"materially wrong or unusable", "2":"major omissions or correction required", "3":"usable with limited correction", "4":"accurate, complete for scope and directly actionable", "N/A":"dimension is not exercised by this task; explain briefly"},
+  "dimensions": {
+    "source_fidelity": "Claims, attribution, quotations, chronology, scope and uncertainty match supplied evidence.",
+    "consequential_episode_coverage": "Captures distinct material needs, alternatives, outcomes and contrary experiences without duplicate counting.",
+    "explanatory_usefulness": "Explains roles, triggers, context and outcomes without unsupported causal claims.",
+    "segment_boundaries": "Proposed distinctions have observable inclusion/exclusion logic and change the next action when retained.",
+    "execution_completeness": "Agent work is performed or concretely prepared; owner and third-party steps have exact destination, materials and evidence criteria.",
+    "conversion_truth": "Website behavior is functional and accessible; no false submission, booking, lead receipt or outcome is claimed.",
+    "uncertainty_and_limits": "Unknown data, coverage, access and measurement limits stay explicit and do not become zero or proof."
+  },
+  "critical_failures": [
+    "fabricated or meaning-altered quotation or source", "supplier voice presented as customer proof",
+    "unsupported willingness-to-pay, prevalence, demand or performance claim", "material contrary evidence omitted",
+    "unauthorized send, account connection, payment or publication", "required action falsely marked complete",
+    "conversion success claimed when request failed or was not delivered"
+  ],
+  "calibration": "Two independent human reviewers calibrate on development outputs with source-based rationales before held-out review. Model judgments are recorded separately and do not satisfy this condition.",
+  "adoption_rule": "No critical failure in revised held-out outputs; no material source-fidelity or contrary-evidence regression; each changed capability improves on its paired tasks; any mixed outcome remains revise/pending.",
+  "limitation": "Rubric is a starting proposal, not human-frozen or calibrated until independent human reviewers confirm it before seeing held-out outputs."
+}

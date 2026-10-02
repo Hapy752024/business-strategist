@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "marketing-execution.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scope", "revision", "actions"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "brief_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "actions": {"type": "array", "items": {"$ref": "#/$defs/action"}},
+    "updated_at": {"type": "string"}
+  },
+  "$defs": {
+    "action": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "objective", "actor", "dependencies", "prepared_materials", "next_step", "completion_criterion", "commitment_state", "execution_status", "required_for_scope"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "objective": {"type": "string", "minLength": 1},
+        "evidence": {"type": "array", "items": {"type": "string"}}, "actor": {"enum": ["agent", "owner", "third_party"]},
+        "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "prepared_materials": {"type": "array", "items": {"type": "object", "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}, "additionalProperties": false}},
+        "next_step": {"type": "string"}, "completion_criterion": {"type": "string", "minLength": 1},
+        "verification": {"type": ["string", "null"]}, "result": {"type": ["string", "null"]}, "outcome_review": {"type": ["string", "null"]},
+        "commitment_state": {"enum": ["proposed", "accepted", "deferred", "completed"]},
+        "execution_status": {"enum": ["planned", "prepared", "awaiting_owner", "awaiting_third_party", "submitted", "verified", "failed"]},
+        "required_for_scope": {"type": "boolean"}, "group_id": {"type": "string"}, "destination": {"type": "string"},
+        "eligibility_checked_at": {"type": "string"}, "audience_fit": {"type": "string"}, "user_step": {"type": "string"},
+        "fee": {"type": ["string", "null"]}, "authorization_basis": {"type": "string"}, "follow_up": {"type": "string"}, "observed_at": {"type": "string"}
+      }
+    }
+  }
+}

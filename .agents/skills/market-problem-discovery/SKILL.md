@@ -21,7 +21,8 @@ For substantive query design and refinement, apply repo-root `references/researc
 2. Infer discovery mode when explicit; otherwise ask the one routing question before collecting.
 3. Create a durable discovery run, validate source routes, and collect public evidence before proposing candidates.
 4. Write source-linked outcome shortfalls, competing explanations and next tests in the existing report; distinguish candidate underserved needs, adequate service and insufficient evidence.
-5. Let the user choose the next path; do not automatically convert a discovery candidate into a startup thesis.
+5. For a selected candidate with explicit venture-scale or VC-financing relevance, optionally assess topic funding activity under repo-root `references/vc-investment-signals.md`; do not treat it as customer evidence or use it to rank customer pain.
+6. Let the user choose the next path; do not automatically convert a discovery candidate into a startup thesis.
 
 ## Output
 

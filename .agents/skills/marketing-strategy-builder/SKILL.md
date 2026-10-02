@@ -20,3 +20,4 @@ For chosen-idea or strategic continuation work, apply repo-root `references/rese
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
 
 For keyword research and the keyword-to-page map read [keyword research](references/keyword-research.md).
+For selected multi-step work, read repo-root `references/marketing-execution.md`; prepare the agent work, exact owner/platform handoffs and observable completion checks.

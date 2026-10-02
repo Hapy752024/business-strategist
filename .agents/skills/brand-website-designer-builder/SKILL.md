@@ -25,3 +25,4 @@ Return manifest, source/asset provenance, QA evidence, open gaps, release state 
 Run build and real-browser responsive, accessibility, performance, state and visual gates plus independent quality review. Structural checks do not prove site quality or compliance. Production recording requires the complete release-bound launch assessment.
 
 - Validation page for a smoke test: apply [validation page](references/validation-page.md) and repo-root `references/smoke-test.md`; use a static single-CTA page with disclosure and no analytics without owner activation.
+- When selected marketing work requires an owner action or third-party platform, use repo-root `references/marketing-execution.md` and keep local QA separate from externally verified outcomes.

@@ -62,6 +62,16 @@ def test_manifest_remains_explicitly_design_only():
     assert manifest["status"] == "design_only_packets_and_scores_pending"
 
 
+def test_reviewed_source_packet_does_not_need_fictional_paired_examples(tmp_path):
+    (tmp_path / "packet.json").write_text(json.dumps({"task_id":"source-1", "packet_kind":"reviewed_source",
+        "source_locators":["https://source.example/thread#post-2"], "source_sha256":"a" * 64,
+        "generation_input":{"question":"What happened?", "passage":"I tried this."}}))
+    manifest = {"status":"design_only_packets_and_scores_pending", "split_counts":{"development":1,"held_out":0},
+        "tasks":[{"id":"source-1", "group":"source-1", "split":"development", "packet":"packet.json"}],
+        "dimensions":["fidelity"], "critical_failures":["fabrication"]}
+    assert validate(manifest, tmp_path) == []
+
+
 def test_saved_rating_requires_hash_bound_outputs_traces_and_blind_review(tmp_path):
     task_id = 'one-task'
     def save(path, value):

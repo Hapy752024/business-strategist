@@ -10,6 +10,39 @@ test("renders deterministic control and server-side preview treatment", async ({
   await expect(page.locator('[data-experiment="primary_cta_label"]')).toHaveText("Get a clear repair plan");
 });
 
+test("primary CTA completes the local demo form and server validates without echoing input", async ({ page }) => {
+  await page.goto("/");
+  await page.locator('[data-experiment="primary_cta_label"]').click();
+  await expect(page.getByRole("heading", { name: "Tell us what needs attention." })).toBeVisible();
+  await page.getByLabel("What needs repair?").fill("A loose kitchen cabinet door");
+  await page.getByLabel("Email for a reply").fill("fixture@example.test");
+  await page.getByRole("button", { name: "Send demo request" }).click();
+  await expect(page.getByRole("status")).toContainText("No service request was sent or saved.");
+
+  const invalid = await page.request.post("/api/demo-request", { multipart: { repair: "short", email: "bad" } });
+  expect(invalid.status()).toBe(400);
+  const body = await invalid.json();
+  expect(JSON.stringify(body)).not.toContain("bad");
+});
+
+test("keeps form available through pending state, failure, and retry", async ({ page }) => {
+  await page.goto("/");
+  await page.getByLabel("What needs repair?").fill("A loose kitchen cabinet door");
+  await page.getByLabel("Email for a reply").fill("fixture@example.test");
+  let calls = 0;
+  await page.route("**/api/demo-request", async (route) => {
+    calls += 1;
+    if (calls === 1) { await new Promise((resolve) => setTimeout(resolve, 100)); await route.abort("failed"); }
+    else await route.continue();
+  });
+  await page.getByRole("button", { name: "Send demo request" }).click();
+  await expect(page.getByRole("button", { name: "Sending…" })).toBeDisabled();
+  await expect(page.getByRole("status")).toContainText("please retry");
+  await expect(page.getByLabel("What needs repair?")).toHaveValue("A loose kitchen cabinet door");
+  await page.getByRole("button", { name: "Send demo request" }).click();
+  await expect(page.getByRole("status")).toContainText("No service request was sent or saved.");
+});
+
 test("has no serious accessibility violations and exposes keyboard focus", async ({ page }) => {
   await page.goto("/");
   const results = await new AxeBuilder({ page }).analyze();

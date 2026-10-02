@@ -1,0 +1,6 @@
+.request form{max-width:38rem;display:grid;gap:.75rem;margin-top:1.5rem}
+.request form input,.request form textarea{width:100%;padding:.7rem;border:1px solid #bec6bd;border-radius:.2rem;font:inherit}
+.request form textarea{min-height:7rem;resize:vertical}
+.request form button:disabled{opacity:.7;cursor:wait}
+.request form input:focus-visible,.request form textarea:focus-visible{outline:3px solid #eabf6f;outline-offset:3px}
+.request form [role=status]{min-height:1.5em}

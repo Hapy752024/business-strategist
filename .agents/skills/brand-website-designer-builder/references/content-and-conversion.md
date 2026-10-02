@@ -11,4 +11,4 @@ Design and write the page so it radiates confidence: make a clear promise, use d
 - When evidence is unresolved, use confident but non-factual framing (“a more considered way to …”, “built for …”) instead of inventing rankings, guarantees, market leadership, or performance claims.
 - Balance assertive copy with concrete details, testimonials/certifications where available, and a low-friction CTA. Confidence should feel earned through specificity and composition, not inflated adjectives.
 
-When `marketing/keywords/keyword-map.json` exists, derive page inventory and headings from its clusters; otherwise record the missing map as an owner action rather than inventing keywords.
+When `marketing/keywords/keyword-map.json` exists, derive page inventory and headings from its clusters. If absent, create a provisional map from the brief, supplied evidence and current search observations; identify confidence and gaps. Ask the owner only for missing business facts, private access or decisions that materially change the page. Use the selected workstream's execution plan for exact owner steps.

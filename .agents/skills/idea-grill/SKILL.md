@@ -21,7 +21,8 @@ Use this skill to validate or challenge the founder’s idea by testing its cust
 3. Ask one focused question at a time only for the remaining minimum inputs.
 4. Write or update project-workspace intake artifacts under `market_research/` (segments, journey, pains) and `strategy/intake/`.
 5. Separate evidence, assumptions, counter-hypotheses, and unknowns.
-6. Stop before collection when the segment or painful job is not researchable.
+6. If the founder targets venture scale, needs VC financing, or asks whether investors are active in the category, assess investor-topic activity separately under repo-root `references/vc-investment-signals.md`. Keep it distinct from pain validation and market demand.
+7. Stop before customer-evidence collection when the segment or painful job is not researchable.
 
 ## Output
 

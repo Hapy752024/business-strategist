@@ -1,6 +1,7 @@
 import { ExperimentCta } from "./experiment-cta";
 import { FlagValues } from "flags/react";
 import { resolveCtaVariant } from "../lib/flags";
+import { RequestForm } from "./request-form";
 
 const proof = ["Clear fixed-price scope", "Named specialist before arrival", "Photo-backed completion record"];
 
@@ -18,7 +19,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ v
       </section>
       <section id="proof" className="proof" aria-labelledby="proof-title"><p className="eyebrow">WHAT MAKES THE DIFFERENCE</p><h2 id="proof-title">Confidence comes from specificity.</h2><ul>{proof.map((item) => <li key={item}>{item}</li>)}</ul></section>
       <section id="process" className="process" aria-labelledby="process-title"><p className="eyebrow">A CALMER PROCESS</p><h2 id="process-title">Three deliberate steps.</h2><ol><li><strong>Describe the repair</strong><span>Share a photo and the outcome you want.</span></li><li><strong>Confirm the scope</strong><span>Receive a clear plan before we arrive.</span></li><li><strong>Keep the record</strong><span>See what was completed and how to care for it.</span></li></ol></section>
-      <section id="request" className="request" aria-labelledby="request-title"><p className="eyebrow">START WITH A CLEARER PLAN</p><h2 id="request-title">Tell us what needs attention.</h2><p>No account, payment, or submission is required in this fixture.</p><button type="button" aria-describedby="request-note">Request a visit</button><small id="request-note">Demo interaction only — no data is sent.</small></section>
+      <section id="request" className="request" aria-labelledby="request-title"><p className="eyebrow">START WITH A CLEARER PLAN</p><h2 id="request-title">Tell us what needs attention.</h2><p>No account, payment, or actual service request is created in this fixture.</p><RequestForm /><small id="request-note">Demo interaction only — your entries are not saved or sent.</small></section>
       <footer><span>© Stellar Repair</span><a href="#request">Accessibility</a></footer>
     </main>
   );

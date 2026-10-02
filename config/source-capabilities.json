@@ -8,6 +8,41 @@
   ],
   "capabilities": [
     {
+      "id": "vc_investment_activity",
+      "family": "capital_market_signals",
+      "label": "Parsers VC topic funding activity",
+      "description": "Compare funding-round and investor-joining signals by startup industry tag, geography, and equal-length time windows to identify where venture capital appears active or accelerating.",
+      "use_when": [
+        "venture capital fit",
+        "VC investment by sector",
+        "hot startup topics",
+        "funding activity",
+        "investor attention",
+        "venture-scale idea assessment"
+      ],
+      "avoid_when": [
+        "customer pain evidence",
+        "willingness to pay",
+        "market size",
+        "proof a founder can raise",
+        "non-venture business where VC fit is immaterial"
+      ],
+      "evidence_strength": "capital_market_signal_requires_primary_source_check",
+      "collector_provider": "scripts/market_research/scan_vc_topics.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "parsersvc"
+      ],
+      "requires_env": [
+        "PARSERSVC_API_KEY"
+      ],
+      "approval_required": false,
+      "authorization_policy": "Bound each run with --max-credits; do not infer willingness to incur paid overage from the presence of credentials.",
+      "status_check": "python3 scripts/validate_apis/validate_parsersvc.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/market_research/scan_vc_topics.py --topic '<Parsers VC industry tag>' --country '<country>' --window-days 365 --signals-per-query 20 --max-credits 40 --out '<case>/market_research/investor_activity/parsersvc-topic-scan.json'",
+      "caveat": "Funding is investor behavior, not evidence of customer need or business success. Provider tags and captures may be incomplete; verify material rounds and investor participation against company or fund announcements and filings."
+    },
+    {
       "id": "community_discovery",
       "family": "customer_pain",
       "label": "Systematic local forum and Facebook discovery",

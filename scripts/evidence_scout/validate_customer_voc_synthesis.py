@@ -17,6 +17,18 @@ from reviewed_voice import review_voice, reviewed_collection_locales, VOICES
 def validate_quality(synthesis: dict, evidence: dict, reviews: dict, coverage: dict) -> list[str]:
     """Version-2 research contract; semantic support still requires source review."""
     errors = []
+    accepted_firsthand = set()
+    for evidence_id, review in reviews.items():
+        record = evidence.get(evidence_id)
+        segment = review.get("reviewed_segment") if isinstance(review, dict) else None
+        if record and segment and review.get("status") == "accepted" and review.get("firsthand") is True and review.get("voice") in VOICES and not review_voice(record, review, segment):
+            accepted_firsthand.add(evidence_id)
+    for comparison in synthesis.get("segment_comparisons", []):
+        if not set(comparison.get("episode_ids", [])) <= accepted_firsthand:
+            errors.append(f"{comparison.get('id')}: episode_ids must reference accepted firsthand reviewed evidence")
+        for evidence_id in comparison.get("contrary_evidence_ids", []):
+            if evidence_id not in accepted_firsthand:
+                errors.append(f"{comparison.get('id')}: contrary evidence {evidence_id} is not accepted firsthand reviewed evidence")
     if synthesis.get("schema_version", 1) >= 3:
         declared = synthesis.get("question_ids", [])
         if not declared or len(declared) != len(set(declared)):

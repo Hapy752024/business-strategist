@@ -1,0 +1,2 @@
+property,source,period_start,period_end,timezone,page,metric,unit,value,denominator
+stellar-demo,synthetic_fixture,2026-01-08,2026-01-14,UTC,/,demo_requests,count,4,120

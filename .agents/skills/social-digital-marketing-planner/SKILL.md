@@ -18,3 +18,4 @@ compatibility: Requires the business-strategist repository and its shared refere
 Return only the requested answer, calendar, creative or campaign plan. Full strategy outputs apply only in strategy scope; paid scaling still requires conversion and retained-value evidence.
 
 For channel choice, budget sizing, structure and stop rules read [paid campaign planning](references/paid-campaign-planning.md) first.
+For selected multi-step execution, read repo-root `references/marketing-execution.md`; prepare owner and third-party steps with exact destinations, ready materials and verification criteria.

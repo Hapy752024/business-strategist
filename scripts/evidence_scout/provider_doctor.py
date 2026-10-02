@@ -47,6 +47,7 @@ def latest_validation_statuses() -> dict[str, dict[str, Any]]:
 
 
 VALIDATION_PROVIDER_ALIASES = {
+    "parsersvc": "parsersvc",
     "reddit_api": "reddit",
     "scrapecreators_reddit": "scrapecreators",
     "serpapi_google_trends": "serpapi_google_trends",
@@ -228,6 +229,9 @@ def _agent_reach_channel(channel: str) -> BackendStatus:
 
 def provider_groups() -> dict[str, list[BackendStatus]]:
     return {
+        "capital_market_signals": [
+            _env_backend("parsersvc", ["PARSERSVC_API_KEY"], risk="metered_api_credits"),
+        ],
         "reddit": [
             _env_backend("reddit_api", ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"]),
             _agent_reach_channel("reddit"),
@@ -342,7 +346,7 @@ def summarize(groups: dict[str, list[BackendStatus]]) -> dict[str, Any]:
         candidates = [apply_live_validation(candidate, latest) for candidate in candidates]
         active = next((candidate for candidate in candidates if candidate.usable), None)
         statuses = [asdict(candidate) for candidate in candidates]
-        optional_family = family in {"local_extraction", "china_public_native"}
+        optional_family = family in {"local_extraction", "china_public_native", "capital_market_signals"}
         family_summary = {
             "status": "ok" if active else "optional_unavailable" if optional_family else "unavailable",
             "active_backend": active.name if active else None,

@@ -3,6 +3,7 @@ import argparse
 import importlib.util
 import json
 from pathlib import Path
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("voc_collection", ROOT / "scripts/evidence_scout/collect.py")
@@ -173,6 +174,60 @@ def test_reddit_comment_sample_balances_queries_and_deduplicates_crossposts():
     selected = c.select_reddit_discussions(targets, 3)
     assert [row[0] for row in selected] == ["a1", "b1", "c1"]
     assert c.select_reddit_discussions(targets, 0) == []
+
+
+def test_triage_retains_inventory_stockouts_and_general_insurance_claims_but_rejects_finance_noise():
+    inventory = c.assess_relevance("We ran out of stock again and had to refund three orders.",
+        args(topic="inventory stockouts", problem_keywords="ran out of stock refunds"), "inventory stockouts")
+    insurance = c.assess_relevance("My insurer declined my claim after the flood and I paid for repairs myself.",
+        args(topic="insurance claims", problem_keywords="claim denied repairs", language="en"), "insurance claims")
+    finance = c.assess_relevance("Market rundown: Nvidia earnings beat estimates; ticker rises after results.",
+        args(topic="inventory stockouts", problem_keywords="stockouts inventory"), "inventory stockouts")
+    assert inventory[0] in {"weak", "relevant"}
+    assert insurance[0] in {"weak", "relevant"}
+    assert finance[0] == "irrelevant"
+
+
+def test_reddit_discussion_reserves_one_slot_for_rejected_opening_when_budget_allows():
+    targets = [("good1", "u1", {"query_id":"q1"}, "g1", 3),
+               ("bad", "u2", {"query_id":"q2"}, "b1", -2),
+               ("good2", "u3", {"query_id":"q2"}, "g2", 2)]
+    selected = c.select_reddit_discussions(targets, 2)
+    assert len(selected) == 2
+    assert {row[0] for row in selected} == {"good1", "bad"}
+
+
+def test_reddit_collector_records_rejected_opening_exploration_and_recovers_reply(tmp_path, monkeypatch):
+    now = time.time()
+    rows = [{"query_id":"q1", "query":"insurance claims claim rejected", "locale":"DE:de", "scheduled":True,
+             "per_query_result_limit":5, "result_urls":[], "record_ids":[], "new_record_count":0}]
+    monkeypatch.setattr(c, "provider_query_schedule", lambda *_: rows)
+    monkeypatch.setattr(c, "reddit_token", lambda: ("token", {"ok":True, "status_code":200}))
+    vague = {"kind":"t3", "data":{"id":"vague", "permalink":"/r/test/comments/vague/any-advice/",
+             "title":"Any advice?", "selftext":"", "subreddit":"test", "author":"op", "num_comments":1, "created_utc":now}}
+    relevant = {"kind":"t3", "data":{"id":"relevant", "permalink":"/r/test/comments/relevant/claim/",
+             "title":"Insurance claim denied after a flood", "selftext":"I paid for repairs myself.",
+             "subreddit":"test", "author":"op2", "num_comments":1, "created_utc":now}}
+    requests = []
+    def get(url, **_kwargs):
+        requests.append(url)
+        if "/comments/" in url:
+            post_id = url.split("/comments/")[1].split("?")[0]
+            text = "My insurer denied the claim too, and I had to borrow for repairs." if post_id == "vague" else "We got paid after sending repair photos."
+            comment = {"kind":"t1", "data":{"id":"reply-" + post_id, "body":text, "author":"buyer", "parent_id":"t3_" + post_id, "created_utc":now}}
+            return {"ok":True, "status_code":200, "body":[{}, {"data":{"children":[comment]}}]}
+        return {"ok":True, "status_code":200, "body":{"data":{"children":[vague, relevant]}}}
+    monkeypatch.setattr(c, "http_get", get)
+    run_args = args(topic="insurance claims", problem_keywords="claim denied policy", language="en",
+                    limit=10, days=5000, reddit_comment_posts=2, reddit_comments_per_post=10)
+    records, summary = c.collect_reddit(run_args, ["insurance claims claim rejected"], tmp_path)
+    ledger = summary["comment_request_ledger"]
+    assert {row["sampling_reason"] for row in ledger} == {"rejected_opening_exploration", "query_balanced_relevance"}
+    assert all(row["query_id"] == "q1" and row["status"] == "ok" for row in ledger)
+    recovered = next(row for row in records if row.get("raw_id") == "reply-vague")
+    assert recovered["sampling_metadata"]["parent_post_id"] == "vague"
+    assert recovered.get("firsthand") is not True
+    assert len([url for url in requests if "/comments/" in url]) == 2
 
 
 def test_source_url_path_case_cannot_change_reviewed_target(tmp_path):

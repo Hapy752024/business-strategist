@@ -107,6 +107,21 @@ def test_needs_quality_requires_context_and_blocks_supplier_countervoice():
     assert any("trigger" in e for e in validate_quality(s, {"t1": r}, {"t1": review(r)}, {}))
 
 
+def test_segment_comparison_links_only_accepted_firsthand_episodes_and_contrary_cases():
+    r = record(); s = synthesis()
+    comparison = {"id":"self-packers-vs-full-service", "segment_a":"self-packing households",
+        "segment_b":"full-service households", "inclusion_exclusion":"Separate based on whether packing is retained by the household.",
+        "episode_ids":["t1"], "role_trigger_alternative_consequence":"household role; move trigger; self-pack vs full service; control/access consequences unknown",
+        "contrary_evidence_ids":["t1"], "unknowns":"Repeatability and decision relevance remain unknown.",
+        "split_merge_rationale":"Keep provisional only if packing choice changes offer or proof.",
+        "action_difference":"Test split packing quotes against one all-inclusive quote."}
+    s["segment_comparisons"] = [comparison]
+    assert not validate_quality(s, {"t1":r}, {"t1":review(r)}, {"coverage_status":"partial"})
+    comparison["episode_ids"] = ["unreviewed"]
+    errors = validate_quality(s, {"t1":r}, {"t1":review(r)}, {"coverage_status":"partial"})
+    assert any("accepted firsthand reviewed evidence" in error for error in errors)
+
+
 def write_pack(path, *, empty=False):
     path.mkdir(parents=True, exist_ok=True)
     r = record(); s = synthesis()

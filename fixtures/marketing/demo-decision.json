@@ -1,0 +1,29 @@
+{
+  "action_id": "stellar-demo-conversion",
+  "expected_effect": "Make a service request path usable end to end",
+  "applied_change": "Replace inert CTA with validated local demo form",
+  "changed_at": "2026-01-07",
+  "baseline_sha256": "8dc5b21ee2fd9dca6b128de9f4cbbe348443621c23d3d339a64b4f4d66f59723",
+  "followup_sha256": "40c20696756492b013437fab13f1a5e5d40cc9860da8b9c54238639ec6ef2083",
+  "comparison": {
+    "results": [
+      {
+        "key": ["stellar-demo", "synthetic_fixture", "UTC", null, "/", null, "demo_requests", "count"],
+        "status": "observed_change",
+        "before_period": ["2026-01-01", "2026-01-07"],
+        "after_period": ["2026-01-08", "2026-01-14"],
+        "before": 3.0,
+        "after": 4.0,
+        "difference": 1.0,
+        "before_denominator": 100.0,
+        "after_denominator": 120.0,
+        "causal_attribution": "not_established"
+      }
+    ],
+    "interpretation_boundary": "Observed changes are descriptive; confounders and attribution require separate review."
+  },
+  "confounders": ["synthetic fixture data"],
+  "limitations": ["No customer visit, lead, or production analytics"],
+  "next_decision": "collect_more_data",
+  "causal_claim": "not_established"
+}

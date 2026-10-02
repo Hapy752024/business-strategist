@@ -686,6 +686,8 @@ def assess_relevance(text: str, args: argparse.Namespace, query: str, url: str =
             "berufsun",
             "private health insurance",
             "health insurance",
+            "insurer",
+            "insurance claim",
             "disability insurance",
             "insurance broker",
             "private insurance",
@@ -748,9 +750,8 @@ def assess_relevance(text: str, args: argparse.Namespace, query: str, url: str =
                 return "irrelevant", "Short insurance comment lacks concrete PKV/GKV/BU decision or workaround intent.", score
     if any(marker in lower for marker in ["game title", "developer:", "platforms:", "metacritic", "opencritic", "review thread"]):
         score -= 4
-    if any(marker in lower for marker in ["market rundown", "stock", "nvidia", "ticker", "earnings"]) and not any(
-        marker in lower for marker in ["insurance", "versicherung", "pkv", "gkv", "broker"]
-    ):
+    finance_topic = any(marker in topic_context for marker in ["finance", "financial market", "equity", "stock market", "investing", "aktien", "börse"])
+    if finance_topic and any(marker in lower for marker in ["market rundown", "ticker", "earnings"]):
         score -= 2
     if score <= 0:
         return "irrelevant", "No material overlap with topic/problem/workaround terms.", score
@@ -1464,18 +1465,33 @@ def collect_reviewed_reddit_target(args: argparse.Namespace, run_dir: Path) -> t
 
 
 def select_reddit_discussions(targets: list[tuple[str, str, dict[str, Any], str, int]], limit: int) -> list[tuple[str, str, dict[str, Any], str, int]]:
-    """Balance comment reads across planned queries before deepening a query."""
+    """Balance comment reads; reserve one slot for an ambiguous/rejected opening when possible."""
     if limit <= 0:
         return []
+    total_limit = limit
+    exploratory = [target for target in targets if target[4] == -2]
+    ordinary = [target for target in targets if target[4] != -2]
+    relevant_ordinary = [row for row in ordinary if row[4] >= 0]
+    reserve_exploration = bool(exploratory and ordinary and (limit > 1 or not relevant_ordinary))
+    if reserve_exploration:
+        exploratory_choice = sorted(exploratory, key=lambda row: (str(row[2].get("query_id") or row[2].get("query")), -row[4]))[0]
+        ordinary = [row for row in ordinary if row[0] != exploratory_choice[0]]
+        limit -= 1
+    elif exploratory and not ordinary:
+        # Preserve one rejection-frame sample even when every opening was rejected.
+        exploratory_choice = sorted(exploratory, key=lambda row: (str(row[2].get("query_id") or row[2].get("query")), -row[4]))[0]
+    else:
+        exploratory_choice = None
+    targets = ordinary
     buckets: dict[str, list[tuple[str, str, dict[str, Any], str, int]]] = {}
     for target in targets:
         buckets.setdefault(str(target[2].get("query_id") or target[2].get("query")), []).append(target)
     for bucket in buckets.values():
         bucket.sort(key=lambda target: target[4], reverse=True)
-    selected, signatures = [], set()
-    while any(buckets.values()) and len(selected) < limit:
+    selected, signatures = ([exploratory_choice] if exploratory_choice else []), ({exploratory_choice[3]} if exploratory_choice else set())
+    while any(buckets.values()) and len(selected) < total_limit:
         for bucket in buckets.values():
-            if not bucket or len(selected) >= limit:
+            if not bucket or len(selected) >= total_limit:
                 continue
             target = bucket.pop(0)
             if target[3] in signatures:
@@ -1572,9 +1588,9 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
             )
             by_id[post_id] = records[-1]
             record_query_discovery(records[-1], row)
-            if data.get("num_comments", 0) and relevance != "irrelevant":
+            if data.get("num_comments", 0):
                 signature = reddit_opening_signature(text)
-                priority = relevance_score if relevance == "relevant" else -1
+                priority = relevance_score if relevance != "irrelevant" else -2
                 comment_targets.append((post_id, source_url, row, signature, priority))
             records[-1]["sampling_metadata"].update({"sort_requested": "relevance", "per_query_result_limit": per_query_limit,
                 "time_window": {"lookback_days": args.days, "applied_by": "collector"},
@@ -1588,6 +1604,7 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
     selected_targets = select_reddit_discussions(comment_targets, max(0, getattr(args, "reddit_comment_posts", 6)))
     selected_ids = {target[0] for target in selected_targets}
     for post_id, post_url, query_row, _signature, _priority in selected_targets:
+        sampling_reason = "rejected_opening_exploration" if _priority == -2 else "query_balanced_relevance"
         query = query_row["query"]
         response = http_get(with_query(f"https://oauth.reddit.com/comments/{post_id}",
                                        {"limit": min(100, max(1, getattr(args, "reddit_comments_per_post", 100))),
@@ -1653,12 +1670,15 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
             record_query_discovery(record, query_row)
             records.append(record)
         comment_ledger.append({"post_id": post_id, "url": post_url, "backend": backend,
+                               "query_id": query_row.get("query_id"), "sampling_reason": sampling_reason,
                                "status": status_from_response(response), "retrieved_count": len(records) - before,
                                "more_unexpanded": has_more})
     for post_id, post_url, _query, _signature, _priority in comment_targets:
         if post_id in selected_ids:
             continue
-        comment_ledger.append({"post_id": post_id, "url": post_url, "status": "not_selected_by_discussion_limit",
+        _reason = "rejected_opening_not_selected" if _priority == -2 else "not_selected_by_discussion_limit"
+        comment_ledger.append({"post_id": post_id, "url": post_url, "sampling_reason": _reason,
+                               "query_id": _query.get("query_id"), "status": "not_selected_by_discussion_limit",
                                "retrieved_count": 0, "more_unexpanded": True})
     outcomes = [item["response"] for item in raw["searches"]]
     succeeded = sum(1 for response in outcomes if response.get("ok"))
