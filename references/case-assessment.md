@@ -121,3 +121,7 @@ under that case's `market_research/.../runs/`; the exporter binds the source dig
 Link the resulting charts from the business case through the normal publication
 helper. CSVs preserve supplied monthly amounts and sensitivity points. Charts are
 conditional arithmetic, not forecasts. Missing sensitivities remain an explicit gap.
+
+## Per-case business plan extension
+
+V2 appraisal now generates a provisional `business-plan.md` and structured case plan alongside the supporting appraisal, including readable financial tables. Full per-case publication uses startup-business-builder's explicit `case-business-plan` mode and [case-business-plan.md](case-business-plan.md); it requires reviewed research/current insights but no execution selection. Source/numeric claims can target `section.<key>` for case plans. Selected plans bind the current canonical case plan when present; legacy outputs remain readable. Keep document completeness, evidence maturity and execution eligibility distinct.

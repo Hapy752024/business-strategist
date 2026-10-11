@@ -622,10 +622,24 @@
     "review_required": {
       "type": "string"
     },
-    "publication_contract_version": {"const": 2},
-    "publication_status": {"enum": ["progress", "final"]},
-    "publication_claims": {"type": "array", "items": {"type": "object"}},
-    "independent_review": {"type": "object"},
+    "publication_contract_version": {
+      "const": 2
+    },
+    "publication_status": {
+      "enum": [
+        "progress",
+        "final"
+      ]
+    },
+    "publication_claims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "independent_review": {
+      "type": "object"
+    },
     "publication_base_digest": {
       "type": [
         "string",
@@ -771,6 +785,34 @@
             },
             "additionalProperties": false
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "case_plan_binding": {
+      "type": "object",
+      "required": [
+        "path",
+        "digest",
+        "locator",
+        "applicability"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "applicability": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "additionalProperties": false

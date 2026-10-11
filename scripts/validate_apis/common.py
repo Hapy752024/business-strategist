@@ -32,7 +32,7 @@ def project_root() -> Path:
 
 
 ROOT = project_root()
-OUTPUT_DIR = ROOT / "projects" / "_infra" / "api-validation"
+OUTPUT_DIR = Path(os.environ.get("EVIDENCE_SCOUT_VALIDATION_DIR", Path(os.environ.get('EVIDENCE_SCOUT_INFRA_DIR', ROOT / '.research-infra')) / 'api-validation'))
 
 
 def now_iso() -> str:
@@ -101,7 +101,7 @@ def redact_sensitive(value: Any) -> Any:
         redacted: dict[str, Any] = {}
         for key, child in value.items():
             lower = key.lower()
-            if lower in {"access_token", "refresh_token", "id_token", "client_secret", "api_key", "token", "secret"}:
+            if lower in {"access_token", "refresh_token", "id_token", "client_secret", "api_key", "key", "registrationkey", "token", "secret"}:
                 redacted[key] = "***"
             elif "authorization" in lower or "cookie" in lower:
                 redacted[key] = "***"
@@ -113,8 +113,11 @@ def redact_sensitive(value: Any) -> Any:
     if isinstance(value, list):
         return [redact_sensitive(child) for child in value]
     if isinstance(value, str):
+        for name, secret_value in os.environ.items():
+            if len(secret_value) > 4 and any(part in name.upper() for part in ('API_KEY', 'CLIENT_SECRET', 'ACCESS_TOKEN', 'AUTH_TOKEN')):
+                value = value.replace(secret_value, '***')
         value = re.sub(
-            r"(?i)([?&](?:access_token|refresh_token|id_token|token|signature|x-signature|api_key|key|client_secret)=)[^&\s\"']+",
+            r"(?i)([?&](?:access_token|refresh_token|id_token|token|signature|x-signature|api_key|key|registrationkey|client_secret)=)[^&\s\"']+",
             r"\1***",
             value,
         )
@@ -206,6 +209,8 @@ def http_request(
     data: Any | None = None,
     basic_auth: tuple[str, str] | None = None,
     timeout: int = 30,
+    max_bytes: int | None = None,
+    max_text_chars: int = 20000,
 ) -> dict[str, Any]:
     request_headers = {"User-Agent": USER_AGENT}
     if headers:
@@ -244,17 +249,20 @@ def http_request(
     req = urllib.request.Request(url, data=body, headers=request_headers, method=method.upper())
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:
-            raw_body = response.read()
+            raw_body = response.read() if max_bytes is None else response.read(max_bytes + 1)
+            if max_bytes is not None and len(raw_body) > max_bytes:
+                return {"ok": False, "status_code": response.status, "body": None,
+                        "headers": {}, "error": "Response exceeds configured byte limit", "error_type": "response_too_large"}
             text = raw_body.decode("utf-8", errors="replace")
             parsed: Any
             try:
                 parsed = json.loads(text)
             except json.JSONDecodeError:
-                parsed = {"text": text[:20000]}
+                parsed = {"text": text[:max_text_chars], "text_truncated": len(text) > max_text_chars}
             result = {
                 "ok": True,
                 "status_code": response.status,
-                "final_url": getattr(response, "geturl", lambda: url)(),
+                "final_url": redact_sensitive(getattr(response, "geturl", lambda: url)()),
                 "body_size_bytes": len(raw_body),
                 "headers": sanitize_headers(dict(response.headers.items())),
                 "body": parsed,
@@ -276,15 +284,15 @@ def http_request(
         try:
             parsed = json.loads(text)
         except json.JSONDecodeError:
-            parsed = {"text": text[:20000]}
+            parsed = {"text": text[:max_text_chars], "text_truncated": len(text) > max_text_chars}
         return {
             "ok": False,
             "status_code": exc.code,
-            "final_url": getattr(exc, "geturl", lambda: url)(),
+            "final_url": redact_sensitive(getattr(exc, "geturl", lambda: url)()),
             "body_size_bytes": len(text.encode("utf-8")),
             "headers": sanitize_headers(dict(exc.headers.items())),
             "body": parsed,
-            "error": str(exc),
+            "error": redact_sensitive(str(exc)),
         }
     except Exception as exc:  # Network and TLS failures need to be captured as validation output.
         return {
@@ -294,7 +302,7 @@ def http_request(
             "body_size_bytes": 0,
             "headers": {},
             "body": None,
-            "error": f"{type(exc).__name__}: {exc}",
+            "error": redact_sensitive(f"{type(exc).__name__}: {exc}"),
         }
 
 
@@ -392,6 +400,7 @@ def finish(provider: str, summary: dict[str, Any], raw: Any) -> int:
         **summary,
     }
     write_json(OUTPUT_DIR / f"{provider}.json", redact_sensitive(raw))
+    summary = redact_sensitive(summary)
     write_json(OUTPUT_DIR / f"{provider}.summary.json", summary)
     print(json.dumps(summary, indent=2, sort_keys=True))
     return 0 if summary.get("status") == "ok" else 1

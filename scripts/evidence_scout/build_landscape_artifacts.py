@@ -98,11 +98,21 @@ def inspiration_record(row: dict[str, Any]) -> dict[str, Any]:
 
 def render_inspiration(rows: list[dict[str, Any]], title: str) -> tuple[str, list[dict[str, Any]]]:
     records = [inspiration_record(row) for row in rows]
-    lines = [f"# {title}", "", "These are inspiration inputs, not evidence of competitive pressure or demand.", "", "| Entity | Roles | Observed pattern | Adaptation | Transfer risk | Do not copy | Cheapest test | Status |", "|---|---|---|---|---|---|---|---|"]
+    lines = [f"# {title}", "", "These are comparison inputs. Reviewed commercial observations may support scoped precedent; target-market demand and competitive pressure need separate evidence.", "", "| Entity | Roles | Observed pattern | Adaptation | Transfer risk | Do not copy | Cheapest test | Status |", "|---|---|---|---|---|---|---|---|"]
     for record in records:
         lines.append("| " + " | ".join(compact(record[key]) for key in ["entity", "roles", "observed_pattern", "adaptation_required", "transfer_risk", "do_not_copy", "cheapest_test", "synthesis_status"]) + " |")
     if not records:
         lines.extend(["", "No verified entity is available for this inspiration lane."])
+    for row in rows:
+        precedent = row.get('commercial_precedent')
+        if precedent:
+            lines.extend(['', '## Commercial precedent: ' + str(row.get('name', '')), '',
+                          'Evidence level: ' + precedent['evidence_level'], '',
+                          'Transfer conditions: ' + json.dumps(precedent['transfer_conditions'], ensure_ascii=False), '',
+                          'Local demand: ' + precedent['local_demand_status'], ''])
+            for observation in precedent['observations']:
+                lines.append('- ' + observation['kind'] + ' (' + observation.get('status', 'pending') + '): ' +
+                             observation.get('rationale', 'Unreviewed') + ' Sources: ' + json.dumps(observation.get('source_bindings', []), ensure_ascii=False))
     return "\n".join(lines) + "\n", records
 
 

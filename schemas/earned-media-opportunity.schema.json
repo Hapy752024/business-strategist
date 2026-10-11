@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "official_domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "destination_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_passage": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audience_fit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "locale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reader_benefit": {
+      "type": "string",
+      "minLength": 1
+    },
+    "route_class": {
+      "enum": [
+        "business_profile",
+        "reviewed_listing",
+        "editorial",
+        "paid_partnership"
+      ]
+    },
+    "eligibility": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "contact_route": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fee": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "renewal_terms": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "account_requirements": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "reciprocal_requirement": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "link_inclusion": {
+      "enum": [
+        "confirmed",
+        "absent",
+        "unknown"
+      ]
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "qualification": {
+      "enum": [
+        "candidate",
+        "qualified",
+        "rejected",
+        "unresolved"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provenance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "source_url",
+    "official_domain",
+    "destination_url",
+    "source_passage",
+    "audience_fit",
+    "locale",
+    "reader_benefit",
+    "route_class",
+    "eligibility",
+    "contact_route",
+    "fee",
+    "renewal_terms",
+    "account_requirements",
+    "reciprocal_requirement",
+    "link_inclusion",
+    "checked_at",
+    "qualification",
+    "reason",
+    "provenance"
+  ]
+}

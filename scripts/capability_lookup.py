@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -13,14 +14,14 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "config" / "source-capabilities.json"
-INFRA_DIR = ROOT / "projects" / "_infra"
+INFRA_DIR = Path(os.environ.get("EVIDENCE_SCOUT_INFRA_DIR", ROOT / ".research-infra"))
 LEGACY_INFRA_DIR = ROOT / "projects" / "research" / "evidence-scout"
 
 
 def _infra_read(*parts: str) -> Path:
     """Prefer projects/_infra; fall back to the legacy evidence-scout location."""
     new = INFRA_DIR.joinpath(*parts)
-    return new if new.exists() else LEGACY_INFRA_DIR.joinpath(*parts)
+    return new if os.environ.get("EVIDENCE_SCOUT_INFRA_DIR") or new.exists() else LEGACY_INFRA_DIR.joinpath(*parts)
 
 
 VALIDATION_DIR = _infra_read("api-validation")
@@ -80,10 +81,10 @@ def words(value: str) -> set[str]:
 
 def searchable_text(item: dict[str, Any]) -> str:
     parts: list[str] = []
-    for key in ("id", "family", "label", "description", "collector_provider", "evidence_strength", "caveat"):
+    for key in ("id", "family", "label", "description", "collector_provider", "evidence_strength"):
         if item.get(key):
             parts.append(str(item[key]))
-    for key in ("use_when", "avoid_when", "provider_aliases", "validation_providers", "fallbacks", "requires_env", "requires_cli"):
+    for key in ("use_when", "provider_aliases", "validation_providers", "fallbacks", "requires_env", "requires_cli"):
         value = item.get(key) or []
         if isinstance(value, list):
             parts.extend(str(part) for part in value)
@@ -104,6 +105,15 @@ def score(item: dict[str, Any], query: str) -> int:
         phrase_text = str(phrase).lower()
         if phrase_text and phrase_text in query_lower:
             result += 3
+    # Exclusions never create relevance; a matching exclusion demotes the source.
+    for phrase in item.get("avoid_when", []) or []:
+        if str(phrase).lower() in query_lower:
+            result -= 6
+    geographies = item.get("geographies", [])
+    mentioned = {country for country in ("swiss", "switzerland", "us", "usa", "united states", "eu", "europe")
+                 if re.search(r"\b" + re.escape(country) + r"\b", query_lower)}
+    if geographies and mentioned:
+        result += 4 if mentioned.intersection(geographies) else -4
     return result
 
 

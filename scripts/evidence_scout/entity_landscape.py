@@ -144,3 +144,26 @@ def normalize_social_presence(*, platform: str, url: str, status: str, retrieved
 
 if __name__ == "__main__":
     print("entity_landscape helpers: import classify_entity or normalize_social_presence")
+
+
+def commercial_precedent(observations: list[dict], transfer_conditions: dict) -> dict:
+    """Rank only reviewed commercial observations; funding remains a separate signal."""
+    allowed = {'existence', 'purchase', 'retention', 'economics', 'funding', 'closure', 'failed_expansion'}
+    accepted = []
+    for row in observations:
+        if row.get('kind') not in allowed:
+            raise ValueError('Unknown commercial precedent observation kind')
+        if row.get('status') == 'accepted':
+            if not row.get('source_bindings') or not row.get('scope') or not row.get('rationale'):
+                raise ValueError('Accepted precedent observation requires sources, scope and rationale')
+            for binding in row['source_bindings']:
+                if not isinstance(binding, dict) or not all(binding.get(key) for key in ('path', 'digest', 'locator', 'applicability')):
+                    raise ValueError('Precedent source bindings require path, digest, locator and applicability')
+            accepted.append(row)
+    kinds = {row['kind'] for row in accepted}
+    levels = [('economics', 'economics_observed'), ('retention', 'repeat_value_observed'),
+              ('purchase', 'purchase_observed'), ('existence', 'existence_only')]
+    strength = next((label for kind, label in levels if kind in kinds), 'unresolved')
+    return {'evidence_level': strength, 'observations': observations, 'transfer_conditions': transfer_conditions,
+            'counterexamples': [row for row in accepted if row['kind'] in {'closure', 'failed_expansion'}],
+            'local_demand_status': 'requires_target_market_evidence'}

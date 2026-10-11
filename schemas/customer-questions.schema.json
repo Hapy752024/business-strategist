@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "questions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "customer",
+              "supplier",
+              "hypothesis"
+            ]
+          },
+          "passage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "review": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "segment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "segment_relation": {
+            "enum": [
+              "target",
+              "adjacent",
+              "unresolved"
+            ]
+          },
+          "buyer_context": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cluster_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "buyer_stage": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "current_answer": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "linked_brief_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "visibility": {
+            "enum": [
+              "public",
+              "private"
+            ]
+          },
+          "access_context": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sanitized_extract": {
+            "const": true
+          },
+          "outcome": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "passage",
+          "source_date",
+          "segment",
+          "segment_relation",
+          "buyer_context",
+          "cluster_id",
+          "buyer_stage",
+          "current_answer",
+          "linked_brief_ids",
+          "visibility"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "customer",
+                    "supplier"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "source"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "customer"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "review"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

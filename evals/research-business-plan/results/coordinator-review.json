@@ -1,0 +1,95 @@
+{
+  "review_type": "coordinator source-based review; unblinded and uncalibrated",
+  "scale": "1 material failure; 2 major correction; 3 usable with gaps; 4 strong for supplied scope",
+  "reviewed_on": "2026-10-11",
+  "cases": [
+    {
+      "case": "local-service",
+      "baseline_scores": {
+        "source_fidelity": 4,
+        "relevant_coverage": 3,
+        "segment_differentiation": 3,
+        "counterevidence": 4,
+        "numeric_context": 4,
+        "international_applicability": 3,
+        "vc_interpretation": 4,
+        "actionable_tests": 4,
+        "plan_usefulness": 3
+      },
+      "candidate_scores": {
+        "source_fidelity": 4,
+        "relevant_coverage": 4,
+        "segment_differentiation": 3,
+        "counterevidence": 4,
+        "numeric_context": 4,
+        "international_applicability": 4,
+        "vc_interpretation": 4,
+        "actionable_tests": 4,
+        "plan_usefulness": 4
+      },
+      "critical_failures_observed": [],
+      "rationale": "Both preserve unknown finances, foreign existence/closure limits and censored VC counts. Candidate explicitly enumerates transfer conditions and founder constraints; both propose concrete unpaid discovery tests."
+    },
+    {
+      "case": "b2b-saas",
+      "baseline_scores": {
+        "source_fidelity": 4,
+        "relevant_coverage": 3,
+        "segment_differentiation": 3,
+        "counterevidence": 4,
+        "numeric_context": 3,
+        "international_applicability": 3,
+        "vc_interpretation": null,
+        "actionable_tests": 3,
+        "plan_usefulness": 3
+      },
+      "candidate_scores": {
+        "source_fidelity": 4,
+        "relevant_coverage": 4,
+        "segment_differentiation": 3,
+        "counterevidence": 4,
+        "numeric_context": 4,
+        "international_applicability": 4,
+        "vc_interpretation": null,
+        "actionable_tests": 3,
+        "plan_usefulness": 4
+      },
+      "critical_failures_observed": [],
+      "rationale": "Both correctly calculate CHF1000 revenue, CHF800 contribution, CHF700 burn and 14.3-month runway. Candidate adds the zero-customer downside (6.7 months), monthly exhaustion context and contribution sensitivity. Both leave local payment and founder capacity unresolved."
+    },
+    {
+      "case": "consumer-japan",
+      "baseline_scores": {
+        "source_fidelity": 4,
+        "relevant_coverage": 3,
+        "segment_differentiation": 3,
+        "counterevidence": 4,
+        "numeric_context": 4,
+        "international_applicability": 3,
+        "vc_interpretation": 4,
+        "actionable_tests": 3,
+        "plan_usefulness": 3
+      },
+      "candidate_scores": {
+        "source_fidelity": 4,
+        "relevant_coverage": 4,
+        "segment_differentiation": 3,
+        "counterevidence": 4,
+        "numeric_context": 4,
+        "international_applicability": 4,
+        "vc_interpretation": 4,
+        "actionable_tests": 3,
+        "plan_usefulness": 4
+      },
+      "critical_failures_observed": [],
+      "rationale": "Both distinguish title-only metadata, signups, failed expansion, undisclosed funding and unknown investor identity. Candidate explicitly separates topic-led and entity-led customer research, maps foreign transfer conditions and avoids mandatory canvases."
+    }
+  ],
+  "limitations": [
+    "Three synthetic tasks, one run per arm; no statistical inference.",
+    "The same coordinator saw the candidate before reviewing the pairs; not an independent blind review.",
+    "Generation used isolated read-only Codex workspaces; exact model version and billing were not emitted by the runtime.",
+    "No human calibration or new customer research. All outputs remain provisional planning examples.",
+    "Numeric/statistical ratings are coordinator judgments, not measured downstream business performance."
+  ]
+}

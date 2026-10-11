@@ -61,6 +61,23 @@ def parse_runtime_output(stdout: str) -> tuple[str, str, dict | None, str | None
             json.dumps(events, ensure_ascii=False, indent=2), usage, model)
 
 
+def frozen_baseline(path: str, manifest: dict, base: Path) -> bytes | None:
+    frozen = manifest['baseline_snapshot']
+    root = (base / frozen['directory']).resolve()
+    if not root.is_relative_to(base.resolve()):
+        raise ValueError('baseline snapshot directory escapes manifest directory')
+    expected = frozen['sha256'].get(path)
+    if expected is None:
+        return None
+    candidate = root / path
+    if not candidate.resolve().is_relative_to(root) or candidate.is_symlink() or not candidate.is_file():
+        raise ValueError('baseline snapshot file missing or unsafe: ' + path)
+    raw = candidate.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != expected:
+        raise ValueError('baseline snapshot digest differs: ' + path)
+    return raw
+
+
 def validate_manifest(manifest: dict, base: Path) -> list[str]:
     errors = []
     tasks = manifest.get("tasks", [])
@@ -86,6 +103,14 @@ def validate_manifest(manifest: dict, base: Path) -> list[str]:
             target = candidate.resolve()
             if not target.is_relative_to(snapshot_root) or not candidate.is_file() or candidate.is_symlink():
                 errors.append(f"{task.get('id')}: current snapshot file missing or unsafe: {relative}")
+                continue
+            if manifest.get('baseline_snapshot'):
+                try:
+                    raw = frozen_baseline(relative, manifest, base)
+                    if raw is None and relative not in task.get('baseline_optional_snapshot_paths', []):
+                        errors.append(f"{task.get('id')}: baseline snapshot file missing: {relative}")
+                except (ValueError, KeyError, TypeError, OSError) as exc:
+                    errors.append(str(exc))
                 continue
             baseline = subprocess.run(["git", "show", f"{manifest.get('baseline_revision', '')}:{relative}"],
                                       cwd=snapshot_root, capture_output=True, check=False)
@@ -140,7 +165,9 @@ def run(manifest: dict, manifest_path: Path, command: list[str], out: Path, arm:
             snapshot_root_dir = trial_dir / "snapshot"
             skill_hashes, absent_snapshot_paths = {}, []
             for relative in task.get("snapshot_paths", []):
-                content = snapshot_file(relative, arm, snapshot_root, manifest.get("baseline_revision", ""))
+                content = (frozen_baseline(relative, manifest, manifest_path.parent)
+                           if arm == 'baseline' and manifest.get('baseline_snapshot')
+                           else snapshot_file(relative, arm, snapshot_root, manifest.get("baseline_revision", "")))
                 if content is None:
                     absent_snapshot_paths.append(relative)
                     continue

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -27,7 +28,7 @@ from common import get_secret, http_get, now_iso, write_json, with_query  # noqa
 from readiness import load_latest
 
 
-INFRA_DIR = ROOT / "projects" / "_infra"
+INFRA_DIR = Path(os.environ.get("EVIDENCE_SCOUT_INFRA_DIR", ROOT / ".research-infra"))
 LEGACY_INFRA_DIR = ROOT / "projects" / "research" / "evidence-scout"
 OUTPUT_DIR = INFRA_DIR / "provider-doctor"
 
@@ -35,7 +36,7 @@ OUTPUT_DIR = INFRA_DIR / "provider-doctor"
 def _infra_read(*parts: str) -> Path:
     """Prefer projects/_infra; fall back to the legacy evidence-scout location."""
     new = INFRA_DIR.joinpath(*parts)
-    return new if new.exists() else LEGACY_INFRA_DIR.joinpath(*parts)
+    return new if os.environ.get("EVIDENCE_SCOUT_INFRA_DIR") or new.exists() else LEGACY_INFRA_DIR.joinpath(*parts)
 
 
 VALIDATION_SUMMARY = _infra_read("api-validation", "all.summary.json")
@@ -48,6 +49,23 @@ def latest_validation_statuses() -> dict[str, dict[str, Any]]:
 
 VALIDATION_PROVIDER_ALIASES = {
     "parsersvc": "parsersvc",
+    "eurostat": "eurostat",
+    "swiss_stats": "swiss_stats",
+    "opendata_swiss": "opendata_swiss",
+    "census": "census",
+    "bls": "bls",
+    "openalex": "openalex",
+    "crossref": "crossref",
+    "ecb": "ecb",
+    "fred": "fred",
+    "bis": "bis",
+    "world_bank": "world_bank",
+    "companies_house": "companies_house",
+    "france_register": "france_register",
+    "switzerland_register": "switzerland_register",
+    "sec_register": "sec_register",
+    "openalex_fulltext": "openalex_fulltext",
+
     "reddit_api": "reddit",
     "scrapecreators_reddit": "scrapecreators",
     "serpapi_google_trends": "serpapi_google_trends",
@@ -229,6 +247,9 @@ def _agent_reach_channel(channel: str) -> BackendStatus:
 
 def provider_groups() -> dict[str, list[BackendStatus]]:
     return {
+        "official_statistics": [_env_backend(name, keys) for name, keys in [("eurostat", []), ("swiss_stats", []), ("opendata_swiss", []), ("census", ["CENSUS_API_KEY"]), ("bls", ["BLS_API_KEY"]), ("ecb", []), ("fred", ["FRED_API_KEY"]), ("bis", []), ("world_bank", [])]],
+        "company_registers": [_env_backend("companies_house", ["COMPANIES_HOUSE_API_KEY"]), _env_backend("france_register", []), _env_backend("switzerland_register", []), _env_backend("sec_register", [])],
+        "studies": [_env_backend("openalex", ["OPENALEX_API_KEY"]), _env_backend("crossref", []), _env_backend("openalex_fulltext", ["OPENALEX_API_KEY"])],
         "capital_market_signals": [
             _env_backend("parsersvc", ["PARSERSVC_API_KEY"], risk="metered_api_credits"),
         ],
@@ -324,7 +345,7 @@ def summarize(groups: dict[str, list[BackendStatus]]) -> dict[str, Any]:
     latest = latest_validation_statuses()
     summary: dict[str, Any] = {
         "generated_at": now_iso(),
-        "live_validation_source": str(VALIDATION_SUMMARY.relative_to(ROOT)) if latest else None,
+        "live_validation_source": str(VALIDATION_SUMMARY) if latest else None,
         "source_families": {},
         "needs_user_attention": [],
     }
@@ -346,7 +367,7 @@ def summarize(groups: dict[str, list[BackendStatus]]) -> dict[str, Any]:
         candidates = [apply_live_validation(candidate, latest) for candidate in candidates]
         active = next((candidate for candidate in candidates if candidate.usable), None)
         statuses = [asdict(candidate) for candidate in candidates]
-        optional_family = family in {"local_extraction", "china_public_native", "capital_market_signals"}
+        optional_family = family in {"local_extraction", "china_public_native", "capital_market_signals", "official_statistics", "studies", "company_registers"}
         family_summary = {
             "status": "ok" if active else "optional_unavailable" if optional_family else "unavailable",
             "active_backend": active.name if active else None,

@@ -3,8 +3,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from jsonschema import Draft202012Validator
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 try:
     from scripts import case_workspace as cases
 except ModuleNotFoundError:
@@ -84,6 +86,31 @@ def start(root, name, title='', brief=''):
     return target
 
 
+def marketing_artifact_errors(relative, raw, destination, staged=None):
+    """Shared publication/resume validation for evidence-bearing Marketing artifacts."""
+    from scripts.marketing.keyword_map import validate as validate_map, validate_resource
+    from scripts.marketing.earned_media import validate as validate_opportunities
+    from scripts.marketing.customer_questions import validate as validate_questions, validate_brief
+    from scripts.marketing.creative_evidence import validate as validate_creative
+    if not relative.endswith(('keyword-map.json', 'content-brief.json', 'opportunities.json', 'opportunity.json', 'customer-questions.json', 'creative-evidence.json')):
+        return []
+    try:
+        doc = json.loads(raw)
+        if relative.endswith('customer-questions.json'):
+            return validate_questions(doc, destination, staged)
+        if relative.endswith('creative-evidence.json'):
+            return validate_creative(doc, destination, staged)
+        if relative.endswith(('opportunities.json', 'opportunity.json')):
+            return validate_opportunities(doc, destination, staged)
+        if relative.endswith('keyword-map.json'):
+            return validate_map(doc, destination, staged)
+        if not isinstance(doc, dict):
+            return ['content brief must be an object']
+        return (validate_resource(doc['public_resource'], destination, staged) if 'public_resource' in doc else []) + validate_brief(doc, destination, staged)
+    except (ValueError, TypeError, KeyError, OSError) as exc:
+        return [str(exc)]
+
+
 def validate_marketing_workstream(root):
     """Read the registered Marketing workspace and report every stale binding."""
     root = Path(root).absolute()
@@ -114,11 +141,21 @@ def validate_marketing_workstream(root):
                 from scripts.marketing.execution import scope_complete as execution_scope_complete, validate as validate_execution
             except ModuleNotFoundError:
                 from marketing.execution import scope_complete as execution_scope_complete, validate as validate_execution
-            execution = json.loads((destination / item['path']).read_text(encoding='utf-8'))
+            try:
+                execution = json.loads((destination / item['path']).read_text(encoding='utf-8'))
+            except (OSError, ValueError):
+                stale.append('marketing execution: missing or malformed execution-plan.json')
+                continue
             errors = validate_execution(execution, destination)
             stale.extend('marketing execution: ' + error for error in errors)
             if state['status'] == 'complete' and not errors and not execution_scope_complete(execution, destination):
                 stale.append('marketing execution: required actions are not all verified complete')
+        try:
+            from scripts.marketing.link_observations import resolve_bytes
+            issues = marketing_artifact_errors(item['path'], resolve_bytes(destination, item['path']), destination)
+            stale.extend('marketing artifact ' + item['path'] + ': ' + e for e in issues)
+        except (OSError, ValueError) as exc:
+            stale.append('marketing artifact ' + item['path'] + ': ' + str(exc))
     for item in state['imported_decisions']:
         verify(root, item['path'], item['sha256'], 'imported decision ' + item['owner'])
         if item.get('review_status') != 'approved':
@@ -135,6 +172,7 @@ def publish_marketing_workstream(root, artifact_files, *, expected_manifest_revi
                                  decision_id, reason, status='active', imported_decisions=None):
     """Publish Marketing artifacts and their hash-bound workstream revision together."""
     root = Path(root).absolute()
+    artifact_files = dict(artifact_files)
     current = validate_marketing_workstream(root)
     destination = path(root, 'marketing')
     replacement_paths = set(artifact_files)
@@ -143,6 +181,11 @@ def publish_marketing_workstream(root, artifact_files, *, expected_manifest_revi
             return issue.removeprefix('artifact: missing or changed ') in replacement_paths
         if issue == 'marketing execution: required actions are not all verified complete':
             return 'execution-plan.json' in replacement_paths
+        if issue.startswith('marketing execution: ') and ': observation:' in issue:
+            return bool(replacement_paths)
+        if issue.startswith('marketing artifact '):
+            # Every prospective artifact is validated again before commit.
+            return bool(replacement_paths)
         marker = ': prepared material missing, changed or out of scope: '
         if issue.startswith('marketing execution: ') and marker in issue and 'execution-plan.json' in replacement_paths:
             material = issue.split(marker, 1)[1]
@@ -160,21 +203,34 @@ def publish_marketing_workstream(root, artifact_files, *, expected_manifest_revi
     refs = {item['path']: item['sha256'] for item in state['artifact_refs']}
     outputs = {}
     execution_path = destination / 'execution-plan.json'
-    if 'execution-plan.json' in artifact_files and execution_path.is_file():
+    from scripts.marketing.link_observations import bound_bytes
+    if execution_path.is_file():
         try:
-            old_execution = json.loads(execution_path.read_text(encoding='utf-8'))
-            new_execution = json.loads(artifact_files['execution-plan.json']) if isinstance(artifact_files['execution-plan.json'], str) else json.loads(artifact_files['execution-plan.json'].decode('utf-8'))
+            old_execution = json.loads(execution_path.read_bytes())
             old_actions = {row.get('id'): row for row in old_execution.get('actions', [])}
+            for old in old_actions.values():
+                binding = old.get('observation')
+                if binding:
+                    # A staged restoration is legal only if it matches the historical digest.
+                    try:
+                        observation = json.loads(bound_bytes(binding, destination, artifact_files))
+                        bound_bytes(observation['capture'], destination, artifact_files)
+                    except (ValueError, OSError, KeyError) as exc:
+                        raise ValueError('placement evidence is immutable; restore original bytes or use a new observation/capture path') from exc
+        except (UnicodeDecodeError, json.JSONDecodeError, AttributeError):
+            old_actions = {}
+    else:
+        old_actions = {}
+    if 'execution-plan.json' in artifact_files:
+        try:
+            new_execution = json.loads(artifact_files['execution-plan.json'])
             for action in new_execution.get('actions', []):
                 old = old_actions.get(action.get('id'), {})
-                old_materials = {item.get('path'): item.get('sha256') for item in old.get('prepared_materials', [])}
-                new_materials = {item.get('path'): item.get('sha256') for item in action.get('prepared_materials', [])}
-                if old_materials != new_materials and old:
-                    action['verification'] = None
-                    action['result'] = None
-                    action['outcome_review'] = None
-                    action['execution_status'] = 'prepared'
-                    if action.get('commitment_state') == 'completed': action['commitment_state'] = 'accepted'
+                try:
+                    from scripts.marketing.execution import invalidate_changed_action
+                except ModuleNotFoundError:
+                    from marketing.execution import invalidate_changed_action
+                invalidate_changed_action(old, action)
             artifact_files['execution-plan.json'] = json.dumps(new_execution, ensure_ascii=False, indent=2) + '\n'
         except (UnicodeDecodeError, json.JSONDecodeError, AttributeError):
             pass  # The normal schema validation below reports malformed replacement input.
@@ -183,32 +239,41 @@ def publish_marketing_workstream(root, artifact_files, *, expected_manifest_revi
         if target.name == 'workstream.json' or relative == 'brief.md':
             raise ValueError('publish Marketing outputs cannot replace the workstream or brief directly')
         raw = content.encode('utf-8') if isinstance(content, str) else content
+        issues = marketing_artifact_errors(relative, raw, destination, artifact_files)
+        if issues:
+            raise ValueError('invalid Marketing artifact: ' + '; '.join(issues))
         if relative == 'execution-plan.json':
             try:
                 from scripts.marketing.execution import validate as validate_execution
             except ModuleNotFoundError:
                 from marketing.execution import validate as validate_execution
             execution = json.loads(raw.decode('utf-8'))
-            errors = validate_execution(execution)
-            for action in execution.get('actions', []):
-                for material in action.get('prepared_materials', []):
-                    if material['path'] in artifact_files:
-                        candidate = artifact_files[material['path']]
-                        material_bytes = candidate.encode('utf-8') if isinstance(candidate, str) else candidate
-                        valid = hashlib.sha256(material_bytes).hexdigest() == material['sha256']
-                    else:
-                        try:
-                            material_path = cases.safe(destination, material['path'])
-                            valid = material_path.is_file() and not material_path.is_symlink() and hashlib.sha256(material_path.read_bytes()).hexdigest() == material['sha256']
-                        except (ValueError, OSError):
-                            valid = False
-                    if not valid: errors.append(f"{action.get('id')}: prepared material missing, changed or out of scope: {material['path']}")
+            errors = validate_execution(execution, destination, artifact_files)
             if errors:
                 raise ValueError('invalid Marketing execution plan: ' + '; '.join(errors))
         outputs[(destination / relative).relative_to(root).as_posix()] = raw
         refs[relative] = hashlib.sha256(raw).hexdigest()
     state['artifact_refs'] = [{'path': key, 'sha256': value} for key, value in sorted(refs.items())]
     state['revision'] += 1
+    # Revalidate all prospective artifacts, including source-only updates/restoration.
+    from scripts.marketing.link_observations import resolve_bytes
+    for relative in refs:
+        issues = marketing_artifact_errors(relative, resolve_bytes(destination, relative, artifact_files), destination, artifact_files)
+        if issues:
+            raise ValueError('invalid Marketing artifact: ' + '; '.join(issues))
+    # Revalidate bound actions even when only a capture/material is replaced.
+    candidate = artifact_files.get('execution-plan.json')
+    if candidate is None and execution_path.is_file():
+        candidate = execution_path.read_bytes()
+    if candidate is not None:
+        try:
+            from scripts.marketing.execution import validate as validate_execution
+        except ModuleNotFoundError:
+            from marketing.execution import validate as validate_execution
+        prospective_execution = json.loads(candidate)
+        issues = validate_execution(prospective_execution, destination, artifact_files)
+        if issues:
+            raise ValueError('invalid Marketing execution plan: ' + '; '.join(issues))
     if status == 'complete':
         candidate = artifact_files.get('execution-plan.json')
         if candidate is None and execution_path.is_file():
@@ -219,7 +284,7 @@ def publish_marketing_workstream(root, artifact_files, *, expected_manifest_revi
             except ModuleNotFoundError:
                 from marketing.execution import scope_complete as execution_scope_complete
             completed_plan = json.loads(candidate) if isinstance(candidate, str) else json.loads(candidate.decode('utf-8'))
-            if not execution_scope_complete(completed_plan):
+            if not execution_scope_complete(completed_plan, destination, artifact_files):
                 raise ValueError('Marketing scope cannot be complete while required actions are unverified')
     schema = json.loads((Path(__file__).resolve().parents[1] / 'schemas/marketing-workstream.schema.json').read_text())
     schema_errors = list(Draft202012Validator(schema).iter_errors(state))

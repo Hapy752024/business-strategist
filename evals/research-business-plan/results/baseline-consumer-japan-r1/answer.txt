@@ -1,0 +1,84 @@
+I’ll read the supplied snapshot guidance and prepare a provisional plan, keeping the evidence types and gaps distinct.
+
+**Provisional assessment: continue discovery; viability remains unresolved.** A Swiss household administration subscription is a plausible service hypothesis, but the supplied evidence does not establish local demand, willingness to pay, repeat value or workable economics.
+
+This is a desk assessment based only on the task passage and supplied snapshot references. Evidence labels below describe what those materials contain, not independently verified findings.
+
+### Evidence assessment
+
+| Evidence lane | Supplied observation | Permitted interpretation | Important limit |
+|---|---|---|---|
+| Study metadata | OpenAlex returned a title concerning household administrative burden. | A potentially relevant research lead. | Without an abstract or full text, no findings, methods, geography or effect sizes can be attributed to the study. |
+| Commercial precedent: J | Japanese company J has many signups. | Reported initial interest in that company’s offer. | Signup count, denominator, acquisition costs, purchases and retention are unavailable. Signups do not establish paid demand or subscription success. |
+| Commercial precedent: K | Company K failed expansion into Europe. | Contrary evidence to assuming easy geographic transfer. | Causes, countries, service configuration and economics are unknown. It does not prove that a Swiss service would fail. |
+| Funding signal | Feed record: startup subject, round object, type `investor.joined_round`; amount undisclosed. | A reported participation-type event associated with a round. | The startup subject is not an identified investor. Investor identity and amount remain unavailable; the record cannot establish capital totals, funding trends or investor fit. |
+| Swiss customer evidence | None supplied. | Local demand is unresolved. | No observed household behavior, spending, purchases, renewal or cancellation evidence. |
+
+J and K belong provisionally in the **cross-market analog** lane. Their relevance requires checking service and customer similarity. Neither establishes a verified Swiss market competitor. No capability references are supplied.
+
+### Research sections
+
+1. **Customer choice and burden:** Identify concrete recurring tasks, their triggers, user and payer, consequences of delay, current workarounds and reasons to do nothing. Distinguish reported frustration from observed behavior.
+2. **Commercial demand:** Examine current spending and actual purchases separately from stated interest. Test the specific offer with Swiss households.
+3. **Alternatives and transferability:** Research Swiss alternatives and verify J’s and K’s services, purchase outcomes, retention and expansion circumstances.
+4. **Repeat value and reach:** Determine task frequency, time to value, renewal reasons and cancellation triggers. Measure recruitment and sales funnels with denominators and founder effort; daily app use need not indicate value for occasional tasks.
+5. **Delivery feasibility:** Establish permissions, document handling, review effort, error exposure, support, capacity and founder dependence.
+6. **Academic context:** Obtain the study’s abstract or full text before using its conclusions.
+7. **Financing:** Preserve the incomplete feed record separately. Investigate VC further only if institutional funding becomes relevant; one event cannot support a sector trend.
+
+### Provisional business plan
+
+All nine sections are **provisional**, with critical evidence missing.
+
+| Section | Proposed direction | Missing evidence and next action |
+|---|---|---|
+| **1. Business** | Assist Swiss households with recurring administrative tasks through a bounded subscription service. | Specify the task scope and test whether households value ongoing assistance. |
+| **2. Customer and market** | Initial segment hypothesis: households experiencing repeated administrative delays and willing to delegate. User and payer may differ. | Research concrete household segments and buying decisions. Market size remains unknown. |
+| **3. Competitive choice** | Positioning hypothesis: dependable follow-through, reduced effort and clear accountability. Alternatives include self-service, family help, existing advisers and doing nothing. | Verify local alternatives, switching friction and trust requirements. No moat is established. |
+| **4. Product and revenue** | Start with a manually delivered MVP: task intake, agreed checklist, reminders and completion tracking, with human review. Test subscription against per-task payment. | Price, included workload, exclusions and willingness to pay are unknown. Avoid promising unlimited assistance. |
+| **5. Acquisition and sales** | Recruit discovery participants through accessible community channels; evaluate partnership channels separately. Track learning recruitment separately from sales. | No channel access or conversion is demonstrated. First-ten-paying-customer activity is a future test, not an achieved outcome. |
+| **6. Delivery and team** | Use a founder-led service initially to observe actual work and exceptions. Record handling time, rework and support for each task. | Founder skills, availability, partners, permissions and capacity are unknown. Automate only tasks whose reliability can be assessed. |
+| **7. Finances** | Model a household subscription in CHF, including service labor, acquisition, refunds, fixed costs and owner compensation without double counting. | Price, retention, costs, opening cash and billing timing remain unknown. No margin, break-even, runway or lifetime-value forecast is justified. |
+| **8. Milestones and risks** | Move from discovery to a bounded paid pilot, then evaluate renewal across relevant task cycles before expanding. | Main risks are weak repeat value, refusal to delegate, excessive service effort and unreliable execution. Set measurable gates before testing. |
+| **9. Funding, legal and IP** | Consider a small founder-funded experiment only within a confirmed budget. Review privacy, authorization, liability and task-specific requirements before handling sensitive work. | Budget and legal requirements are unassessed. The VC record supplies neither a named investor lead nor evidence of fundraising fit. No defensibility claim is supported. |
+
+### Business Model Canvas — hypotheses
+
+| Element | Provisional content |
+|---|---|
+| Customer segments | Swiss households with recurring administrative difficulties; segment not validated |
+| Value proposition | Less household effort and more dependable task completion |
+| Channels | Community recruitment and possible referral partners; effectiveness unknown |
+| Relationships | Assisted onboarding, explicit permissions and progress updates |
+| Revenue | Subscription hypothesis; per-task pricing as a comparator |
+| Key activities | Intake, coordination, reminders, review and support |
+| Key resources | Operator time, secure document handling and task procedures |
+| Key partners | Potential specialist and referral partners; none established |
+| Costs | Delivery labor, rework, support, tooling, acquisition and overhead; amounts unknown |
+
+### Value Proposition Canvas — hypotheses
+
+- **Customer jobs:** Complete recurring obligations, organize documents and coordinate household administration.
+- **Pains:** Forgotten deadlines, repeated effort, uncertainty and fragmented information. These are hypotheses awaiting local evidence.
+- **Desired gains:** Saved time, confidence and visibility into completion.
+- **Offer:** Bounded task assistance, reminders and progress tracking.
+- **Pain relief:** Reduce coordination effort and missed steps, subject to demonstrated reliability.
+- **Gain creation:** A clearer process and dependable follow-through; benefits must be measured.
+
+### Proposed validation schedule and gates
+
+| Timing | Intended work | Decision use |
+|---|---|---|
+| **7 days** | Define task scope, founder constraints and discovery questions. | Make the offer testable. |
+| **30 days** | Investigate Swiss household behavior, spending and alternatives; pursue missing study and analog evidence. | Narrow or revise the segment and promise. |
+| **60 days** | If discovery supports proceeding, prepare a bounded paid pilot with agreed permissions and price. | Test purchases, delivery effort and customer benefit. |
+| **90 days** | Assess completed tasks, repeat demand, cancellations and costs. Extend observation when task cycles require it. | Decide whether to revise, stop or continue testing. |
+
+Before a pilot, define numeric thresholds, measurement windows, owner and action for purchase conversion, completion reliability, service effort, renewal and contribution. No evidence-based thresholds can be derived from the supplied materials.
+
+Two consequential failure paths deserve explicit tests:
+
+- **Interest fails to become payment or renewal:** households acknowledge the burden but prefer existing workarounds or occasional help. Measure purchases and repeat payments; revise the subscription model if recurrence is weak.
+- **Delivery consumes the subscription revenue:** exceptions, document collection and rework increase labor. Measure total effort and contribution; narrow the scope or stop expansion if sustainable delivery cannot be demonstrated.
+
+**Limits:** No customer research, outreach, purchases, pilot, economic calculation, independent review or publication was performed. The snapshot’s additional workflow dependencies and publication machinery were not supplied. This deliverable is a provisional planning document, not a validated business, execution commitment or completed publication.

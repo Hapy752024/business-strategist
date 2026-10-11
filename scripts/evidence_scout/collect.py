@@ -1303,7 +1303,7 @@ def normalize_local_extraction_records(
 
 
 def selected_providers(value: str) -> list[str]:
-    defaults = ["reddit", "serpapi_google_trends", "youtube", "serper_search", "firecrawl", "brave_search", "hn", "github", "google_autocomplete"]
+    defaults = ["reddit", "serpapi_google_trends", "youtube", "serper_search", "firecrawl", "brave_search", "google_autocomplete"]
     social = ["x", "scrapecreators"]
     entity_reviews = ["trustpilot_reviews", "google_places_reviews", "itunes_reviews", "sonar"]
     local_web = ["crawl4ai"]

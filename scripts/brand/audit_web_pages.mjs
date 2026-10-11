@@ -3,6 +3,9 @@
 import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
 
 const [project, baseArg, inventoryPath] = process.argv.slice(2);
 if (!project || !baseArg || !inventoryPath) {
@@ -10,6 +13,11 @@ if (!project || !baseArg || !inventoryPath) {
   process.exit(2);
 }
 const errors = [], pages = [];
+const preservation = [];
+let seoLimits = [], inventoryDigest, siteIdentity;
+let auditComplete = false;
+const completedRoutes = [];
+const digest = raw => createHash('sha256').update(raw).digest('hex');
 let browser;
 const safeUrlLabel = raw => {
   try {
@@ -23,6 +31,10 @@ try {
   const base = new URL(baseArg);
   if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.search || base.hash || base.pathname !== '/') throw Error('base must be a credential-free HTTP(S) origin');
   const inventory = JSON.parse(readFileSync(inventoryPath, 'utf8'));
+  inventoryDigest = digest(readFileSync(inventoryPath));
+  const intendedOrigins = new Set(inventory.filter(r => r.expectedCanonical).map(r => new URL(r.expectedCanonical).origin));
+  if (intendedOrigins.size > 1) throw Error('expected canonicals require one intended site origin');
+  siteIdentity = [...intendedOrigins][0] || base.origin;
   if (!Array.isArray(inventory) || !inventory.length) throw Error('nonempty route inventory required');
   const seen = new Set();
   const consentRejectRows = inventory.filter(row => row?.consentReject !== undefined);
@@ -33,9 +45,27 @@ try {
     const routeUrl = row && typeof row.path === 'string' ? new URL(row.path, base) : null;
     if (!routeUrl || !row.path.startsWith('/') || row.path.startsWith('//') || routeUrl.origin !== base.origin || routeUrl.search || routeUrl.hash || seen.has(routeUrl.pathname)) throw Error('routes require unique same-origin paths without query strings or fragments');
     if (typeof row.conversion !== 'boolean') throw Error('each route requires explicit conversion boolean');
+    for (const field of ['expectedIndexable', 'expectedCrawlable', 'sitemapExpected', 'entry']) {
+      if (row[field] !== undefined && typeof row[field] !== 'boolean') throw Error(`${field} requires explicit boolean`);
+    }
+    if (row.sitemapExpected !== undefined && !row.expectedCanonical) throw Error('sitemap policy requires expectedCanonical');
     const redirectUrl = row.redirect && typeof row.redirect.to === 'string' ? new URL(row.redirect.to, base) : null;
     if (row.redirect && (!Number.isInteger(row.redirect.status) || ![301,302,303,307,308].includes(row.redirect.status) || !redirectUrl || redirectUrl.origin !== base.origin || redirectUrl.search || redirectUrl.hash)) throw Error('redirect needs expected status and same-origin destination without query strings or fragments');
     if (row.conversion && (!row.cta || !row.stickyCta)) throw Error('conversion routes require cta and stickyCta selectors');
+    if (row.redirect && row.preserve?.length) throw Error('redirect routes cannot declare preservation checks');
+    if (row.preserve !== undefined) {
+      if (!Array.isArray(row.preserve)) throw Error('preserve must be an array');
+      const ids = new Set();
+      for (const item of row.preserve) {
+        if (!item || Object.keys(item).some(k => !['id','purpose','selector','count','textIncludes','contains','behaviorTest'].includes(k)) ||
+            !['id','purpose','selector'].every(k => typeof item[k] === 'string' && item[k].trim()) || ids.has(item.id) ||
+            (item.count !== undefined && (!Number.isInteger(item.count) || item.count < 1 || item.count > 100))) throw Error('invalid preservation declaration');
+        ids.add(item.id);
+        if (item.textIncludes !== undefined && (!Array.isArray(item.textIncludes) || item.textIncludes.some(s => typeof s !== 'string' || !s.trim() || s.length > 1000))) throw Error('invalid preservation text expectations');
+        if (item.contains !== undefined && (!Array.isArray(item.contains) || item.contains.some(s => !s || Object.keys(s).some(k => !['selector','count'].includes(k)) || typeof s.selector !== 'string' || !s.selector.trim() || !Number.isInteger(s.count) || s.count < 1 || s.count > 100))) throw Error('invalid preservation structure expectations');
+        if (item.behaviorTest !== undefined && (typeof item.behaviorTest !== 'string' || !item.behaviorTest.trim())) throw Error('behaviorTest must name a separate project test');
+      }
+    }
     seen.add(routeUrl.pathname);
   }
   const require = createRequire(resolve(project, 'package.json'));
@@ -59,6 +89,7 @@ try {
       const response = await context.request.get(new URL(row.path, base).href, {maxRedirects: 0});
       const location = response.headers().location;
       if (response.status() !== row.redirect.status || !location || new URL(location, new URL(row.path, base)).href !== new URL(row.redirect.to, base).href) errors.push(`${row.path}: redirect status/destination mismatch`);
+      completedRoutes.push(row.path);
       continue;
     }
     for (const width of [320, 375, 390, 768, 1440]) {
@@ -66,11 +97,41 @@ try {
       const response = await page.goto(new URL(row.path, base).href, {waitUntil: 'load'});
       if (!response || response.status() !== 200) errors.push(`${row.path}: expected 200`);
       await page.locator('body').waitFor();
+      for (const item of row.preserve || []) {
+        const locator = page.locator(item.selector);
+        const count = await locator.count();
+        let visible = 0;
+        const defects = [];
+        const expectedCount = item.count ?? 1;
+        if (count !== expectedCount) defects.push('element count differs');
+        for (let i = 0; i < Math.min(count, 100); i++) {
+          const element = locator.nth(i);
+          if (await element.isVisible()) visible++;
+          const text = await element.innerText();
+          for (const expected of item.textIncludes || []) {
+            if (!text.includes(expected)) defects.push('expected text absent');
+          }
+          for (const child of item.contains || []) {
+            const children = element.locator(child.selector);
+            if (await children.count() !== child.count) defects.push('structure count differs');
+            for (let j = 0; j < Math.min(await children.count(), 100); j++) {
+              if (!await children.nth(j).isVisible()) defects.push('required structure hidden');
+            }
+          }
+        }
+        if (visible !== expectedCount) defects.push('visible element count differs');
+        const issues = [...new Set(defects)];
+        preservation.push({path: row.path, id: item.id, width, status: issues.length ? 'fail' : 'pass', count, visible_count: visible,
+          issues, behavior: item.behaviorTest ? 'pending_separate_test' : 'not_requested', behavior_test: item.behaviorTest || null});
+        for (const defect of issues) errors.push(`${row.path}@${width}: preservation ${item.id}: ${defect}`);
+      }
       const observed = await page.evaluate(() => ({
         title: document.title.trim(),
         description: document.querySelector('meta[name="description"]')?.content?.trim(),
         og: document.querySelector('meta[property="og:image"]')?.content,
         canonical: document.querySelector('link[rel="canonical"]')?.href,
+        robots: [...document.querySelectorAll('meta[name="robots"],meta[name="googlebot"]')].map(m => m.content),
+        alternates: Object.fromEntries([...document.querySelectorAll('link[rel="alternate"][hreflang]')].map(l => [l.hreflang, l.href])),
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         missingAlt: [...document.images].filter(i => !i.hasAttribute('alt')).length,
         brokenImages: [...document.images].filter(i => i.complete && !i.naturalWidth).length,
@@ -82,7 +143,8 @@ try {
       if (!observed.canonical && row.indexable !== false) errors.push(`${row.path}: missing canonical`);
       if (observed.overflow) errors.push(`${row.path}@${width}: overflow`);
       if (observed.missingAlt || observed.brokenImages) errors.push(`${row.path}@${width}: missing alt or broken image`);
-      if (width === 1440) pages.push({path: row.path, ...observed, links: undefined});
+      if (width === 1440) pages.push({path: row.path, ...observed, raw_html: response ? await response.text() : '',
+        final_url: page.url(), http_status: response?.status(), x_robots_tag: response?.headers()['x-robots-tag'] || ''});
       for (const href of observed.links) {
         const u = new URL(href);
         if (u.origin !== base.origin || !['http:', 'https:'].includes(u.protocol)) continue;
@@ -114,6 +176,7 @@ try {
       }
     }
   }
+  for (const p of pages) completedRoutes.push(p.path);
   for (const field of ['title', 'description']) {
     const values = new Map();
     for (const p of pages) {
@@ -147,16 +210,43 @@ try {
   const robots = await context.request.get(new URL('/robots.txt', base).href);
   if (robots.status() !== 200 || !/user-agent:/i.test(await robots.text())) errors.push('robots.txt missing or malformed');
   const sitemap = await context.request.get(new URL('/sitemap.xml', base).href);
-  if (sitemap.status() !== 200 || !/<(?:urlset|sitemapindex)\b/.test(await sitemap.text())) errors.push('sitemap.xml missing or malformed');
+  const sitemapBody = await sitemap.text();
+  if (sitemap.status() !== 200 || !/<(?:urlset|sitemapindex)\b/.test(sitemapBody)) errors.push('sitemap.xml missing or malformed');
+  const sitemapDocs = [{body: sitemapBody, children_checked: false}];
+  // Sitemap-index children are fetched only when explicitly declared, within this origin.
+  for (const path of inventory[0]?.sitemapFiles || []) {
+    const url = new URL(path, base);
+    if (!path.startsWith('/') || path.startsWith('//') || url.origin !== base.origin || url.search || url.hash) throw Error('sitemapFiles require explicit same-origin paths');
+    const result = await context.request.get(url.href, {maxRedirects: 0, timeout: 10000});
+    if (result.status() !== 200) errors.push(`declared sitemap unavailable: ${path}`);
+    else sitemapDocs.push({body: await result.text(), url: new URL(path, siteIdentity).href, children_checked: false});
+  }
+  const checker = fileURLToPath(new URL('./seo_checks.py', import.meta.url));
+  const seo = spawnSync('python3', [checker], {input: JSON.stringify({inventory, pages, base: base.href, robots: await robots.text(), sitemaps: sitemapDocs}), encoding: 'utf8', maxBuffer: 20_000_000});
+  if (seo.status !== 0) throw Error('SEO observation checker failed');
+  const seoReport = JSON.parse(seo.stdout);
+  errors.push(...seoReport.errors);
+  seoLimits = seoReport.limits;
   const missing = await context.request.get(new URL('/__audit_missing_' + Date.now(), base).href);
   if (missing.status() !== 404) errors.push('unknown route does not return 404');
   errors.push(...resourceErrors);
+  auditComplete = true;
 } catch (error) {
   errors.push(error.message);
 } finally {
   if (browser) await browser.close();
 }
-console.log(JSON.stringify({status: errors.length ? 'fail' : 'pass', pages, errors: [...new Set(errors)],
+for (const p of pages) {
+  delete p.raw_html;
+  p.links = p.links.map(safeUrlLabel);
+  p.final_url = safeUrlLabel(p.final_url);
+}
+console.log(JSON.stringify({schema_version: 1, checker_version: 'seo-audit-v3', checked_at: new Date().toISOString(),
+  coverage: {complete: auditComplete, routes: completedRoutes.sort()},
+  site_identity: siteIdentity, inventory_sha256: inventoryDigest, config_sha256: inventoryDigest,
+  source_revision: process.argv[5] || null, seo_limits: seoLimits,
+  preservation,
+  status: errors.length ? 'fail' : 'pass', pages, errors: [...new Set(errors)],
   manual_checks: ['inventory completeness', 'metadata/alt meaning', 'favicon provenance', '404 design', 'sitemap URL coverage', 'robots policy', 'CTA obstruction/keyboard', 'consent network transitions', 'form states', 'legal/contact truth', 'performance via Lighthouse and field data'],
   boundary: 'observed automated checks only; no launch assessment promotion'}, null, 2));
 process.exitCode = errors.length ? 1 : 0;

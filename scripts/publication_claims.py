@@ -36,7 +36,7 @@ def check_numeric_citations(texts: dict[str, str], numeric_claims: list, referen
         token = '{{source_numeric.' + claim['id'] + '}}'
         at = body.find(token)
         matches = [ref for ref in references if ref.get('numeric_claim_id') == claim['id']
-                   and ref.get('document') == doc and 'capture_binding' in ref]
+                   and ref.get('document') == doc and ('capture_binding' in ref or 'fact_binding' in ref)]
         if at < 0 or len(matches) != 1:
             raise ValueError(claim['id'] + ': verified numeric claim needs one nearby bound source capture')
         ref = matches[0]
@@ -78,7 +78,8 @@ def render(root: Path, texts: dict[str, str], references: list, bindings: list) 
         voc_fields = {'id', 'document', 'claim_id', 'evidence_id', 'ledger_binding', 'source_kind', 'limitation'}
         capture_fields = {'id', 'document', 'capture_binding', 'capture_index', 'supporting_passage',
                           'source_kind', 'limitation'}
-        if not isinstance(ref, dict) or set(ref) not in (voc_fields, capture_fields,
+        fact_fields = {'id', 'document', 'fact_binding', 'source_kind', 'limitation', 'supporting_passage', 'claim_scope'}
+        if not isinstance(ref, dict) or set(ref) not in (fact_fields, fact_fields | {'numeric_claim_id'}, voc_fields, capture_fields,
                                                         capture_fields | {'numeric_claim_id'}):
             raise ValueError('publication claim needs exact reviewed-source fields')
         ident = ref['id']
@@ -89,6 +90,9 @@ def render(root: Path, texts: dict[str, str], references: list, bindings: list) 
         marker = '{{evidence_claim.' + ident + '}}'
         if document not in output or sum(body.count(marker) for body in output.values()) != 1 or marker not in output[document]:
             raise ValueError(ident + ': marker must appear once in its declared document')
+        if 'fact_binding' in ref:
+            output[document] = output[document].replace(marker, _render_fact(root, ident, ref, bindings))
+            continue
         if set(ref) in (capture_fields, capture_fields | {'numeric_claim_id'}):
             replacement = _render_capture(root, ident, ref, bindings)
             output[document] = output[document].replace(marker, replacement)
@@ -179,3 +183,37 @@ def _render_capture(root: Path, ident: str, ref: dict, bindings: list) -> str:
             raise ValueError(ident + ': secondary account needs a visible limitation')
         text += ' (secondary account: ' + limitation.strip() + ')'
     return text
+
+
+def _render_fact(root, ident, ref, bindings):
+    from scripts.market_research.research_facts import check_fact
+    binding = ref['fact_binding']
+    if binding not in bindings or binding != cases.source_binding(root, binding['path'], locator=binding['locator'], applicability=binding['applicability']):
+        raise ValueError(ident + ': current reviewed fact binding required')
+    path = cases.safe(root, binding['path'])
+    rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()] if path.suffix == '.jsonl' else cases.load(path)
+    fact = next((row for row in rows if row.get('evidence_id') == binding['locator']), None)
+    if not fact:
+        raise ValueError(ident + ': fact locator does not resolve')
+    check_fact(fact, path.parent, accepted=True)
+    capture_path = str((path.parent / fact['capture_path']).relative_to(root))
+    if not any(b['path'] == capture_path and b == cases.source_binding(root, b['path'], locator=b['locator'], applicability=b['applicability']) for b in bindings):
+        raise ValueError(ident + ': original fact capture must also be bound')
+    if ref['claim_scope'] not in {'metadata', 'finding'} or (fact['fact_kind'] == 'study_metadata' and ref['claim_scope'] != 'metadata'):
+        raise ValueError(ident + ': study metadata cannot support a substantive finding')
+    passage = ref['supporting_passage']
+    if not isinstance(passage, str) or len(passage.strip()) < 12 or passage not in fact['text']:
+        raise ValueError(ident + ': fact supporting passage does not resolve')
+    if ref['source_kind'] not in {'original', 'secondary', 'private'}:
+        raise ValueError(ident + ': invalid source kind')
+    if ref['source_kind'] == 'private':
+        return '[Reviewed private fact: ' + ident + ']'
+    url = fact['source_url']
+    if not re.fullmatch(r'https?://[^\s)]+', url):
+        raise ValueError(ident + ': unusable fact URL')
+    result = '[Source: ' + fact['retrieved_at'][:10] + '](' + url + ')'
+    if ref['source_kind'] == 'secondary':
+        if len(ref['limitation'].strip()) < 15:
+            raise ValueError(ident + ': secondary fact requires a visible limitation')
+        result += ' (secondary: ' + ref['limitation'].strip() + ')'
+    return result

@@ -1,0 +1,695 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "case-business-plan.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "assessment_revision",
+    "manifest_revision",
+    "publication_base_digest",
+    "insights_digest",
+    "economics_input_digest",
+    "evidence_maturity",
+    "publication_status",
+    "business_plan_sections",
+    "source_bindings",
+    "numeric_claims",
+    "publication_claims"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assessment_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "manifest_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "publication_base_digest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "insights_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "economics_input_digest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence_maturity": {
+      "enum": [
+        "desk_research",
+        "offer_tested",
+        "pilot_informed"
+      ]
+    },
+    "publication_status": {
+      "enum": [
+        "progress",
+        "final"
+      ]
+    },
+    "business_plan_sections": {
+      "type": "object",
+      "required": [
+        "business",
+        "customer_market",
+        "competitive_choice",
+        "product_revenue",
+        "acquisition_sales",
+        "delivery_team",
+        "finances",
+        "milestones_risks",
+        "funding_legal_ip"
+      ],
+      "properties": {
+        "business": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "customer_market": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "competitive_choice": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "product_revenue": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "acquisition_sales": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "delivery_team": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "finances": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "milestones_risks": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "funding_legal_ip": {
+          "type": "object",
+          "required": [
+            "status",
+            "text"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "supported",
+                "provisional",
+                "missing",
+                "not_applicable"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 25
+            },
+            "source_bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "digest",
+                  "locator",
+                  "applicability"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "digest": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "locator": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "applicability": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "economics_input_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "next_action": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "source_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "digest",
+          "locator",
+          "applicability"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "type": "string",
+            "minLength": 1
+          },
+          "locator": {
+            "type": "string",
+            "minLength": 1
+          },
+          "applicability": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "numeric_claims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "publication_claims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "independent_review": {
+      "type": "object",
+      "required": [
+        "path",
+        "digest",
+        "locator",
+        "applicability"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "applicability": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

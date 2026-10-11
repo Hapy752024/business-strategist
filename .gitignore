@@ -74,3 +74,6 @@ evals/live-results/
 
 # Documentations
 docs/
+
+# Local provider checks, outside case workspaces
+.research-infra/

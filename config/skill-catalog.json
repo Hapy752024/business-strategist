@@ -44,7 +44,8 @@
       "skills": [
         "marketing-strategy-builder",
         "social-digital-marketing-planner",
-        "social-media-idea-validator"
+        "social-media-idea-validator",
+        "earned-media-builder"
       ]
     },
     "website": {
@@ -242,11 +243,22 @@
       ],
       "modes": {
         "insights": {
-          "prerequisites": ["registered case and its available research inputs"],
+          "prerequisites": [
+            "registered case and its available research inputs"
+          ],
           "strategy_stage_prerequisites": [],
-          "required_references": ["references/case-insights.md"],
-          "artifacts": ["case_insights.md"],
-          "inputs": ["case_context", "complete research inventory", "persisted questions", "reviewed source bindings"],
+          "required_references": [
+            "references/case-insights.md"
+          ],
+          "artifacts": [
+            "case_insights.md"
+          ],
+          "inputs": [
+            "case_context",
+            "complete research inventory",
+            "persisted questions",
+            "reviewed source bindings"
+          ],
           "output_owner": "opportunity-risk-designer"
         },
         "appraisal": {
@@ -595,6 +607,26 @@
             "brand tokens (optional)"
           ],
           "output_owner": "brand-website-designer-builder"
+        },
+        "technical_audit": {
+          "prerequisites": [
+            "existing site, explicit route inventory and intended public origin"
+          ],
+          "inputs": [
+            "existing site, explicit route inventory and intended public origin"
+          ],
+          "artifacts": [
+            "dated technical SEO observations",
+            "scoped fix queue and QA limits"
+          ],
+          "output_owner": "brand-website-designer-builder",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-website-designer-builder/references/maintenance.md",
+            ".agents/skills/brand-website-designer-builder/references/testing.md"
+          ],
+          "side_effect": "workspace",
+          "cost": "medium"
         }
       }
     },
@@ -633,7 +665,29 @@
       ],
       "required_references": [
         "references/subprojects.md"
-      ]
+      ],
+      "modes": {
+        "case_plan": {
+          "prerequisites": [
+            "Registered case with eligible reviewed initial research and current case insights"
+          ],
+          "strategy_stage_prerequisites": [],
+          "artifacts": [
+            "cases/<id>/business-plan.md",
+            "cases/<id>/business-plan.json"
+          ],
+          "required_references": [
+            "references/case-assessment.md",
+            "references/case-business-plan.md"
+          ],
+          "inputs": [
+            "Current insights, reviewed claim ledger, case sources and economics"
+          ],
+          "output_owner": "startup-business-builder",
+          "side_effect": "local-publication",
+          "cost": "medium"
+        }
+      }
     },
     "marketing-strategy-builder": {
       "intent": [
@@ -655,7 +709,28 @@
         "problem_validation",
         "opportunity_risk",
         "operator_playbook"
-      ]
+      ],
+      "modes": {
+        "page_planning": {
+          "prerequisites": [
+            "requested scope and established-business brief or selected Business handoff"
+          ],
+          "inputs": [
+            "requested scope and established-business brief or selected Business handoff"
+          ],
+          "artifacts": [
+            "validated keyword/page map",
+            "selected content decisions"
+          ],
+          "output_owner": "marketing-strategy-builder",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/marketing-strategy-builder/references/keyword-research.md"
+          ],
+          "side_effect": "workspace",
+          "cost": "medium"
+        }
+      }
     },
     "archetype-gtm-strategist": {
       "intent": [
@@ -847,6 +922,93 @@
         "problem_validation",
         "opportunity_risk"
       ]
+    },
+    "earned-media-builder": {
+      "intent": [
+        "discover earned-media/backlink opportunities",
+        "prepare researched publisher packets",
+        "verify public link placements"
+      ],
+      "excludes": [
+        "technical website implementation",
+        "automatic outreach sending"
+      ],
+      "prerequisites": [],
+      "artifacts": [
+        "requested earned-media deliverable"
+      ],
+      "side_effect": "workspace",
+      "cost": "medium",
+      "required_references": [
+        "references/subprojects.md",
+        ".agents/skills/earned-media-builder/references/workflow.md",
+        ".agents/skills/earned-media-builder/references/qualification.md",
+        "references/marketing-execution.md"
+      ],
+      "modes": {
+        "discovery": {
+          "prerequisites": [
+            "audience, market, useful destination or explicit asset gap, selected objective"
+          ],
+          "inputs": [
+            "audience, market, useful destination or explicit asset gap, selected objective"
+          ],
+          "artifacts": [
+            "qualified/rejected opportunities and coverage gaps"
+          ],
+          "output_owner": "earned-media-builder",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/earned-media-builder/references/workflow.md",
+            ".agents/skills/earned-media-builder/references/qualification.md",
+            "references/marketing-execution.md"
+          ],
+          "side_effect": "workspace",
+          "cost": "medium"
+        },
+        "preparation": {
+          "prerequisites": [
+            "qualified opportunity, reviewed facts and actual destination rules"
+          ],
+          "inputs": [
+            "qualified opportunity, reviewed facts and actual destination rules"
+          ],
+          "artifacts": [
+            "exact listing/pitch packet",
+            "version-2 execution plan"
+          ],
+          "output_owner": "earned-media-builder",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/earned-media-builder/references/workflow.md",
+            ".agents/skills/earned-media-builder/references/qualification.md",
+            "references/marketing-execution.md"
+          ],
+          "side_effect": "workspace",
+          "cost": "medium"
+        },
+        "verification": {
+          "prerequisites": [
+            "known source URL, expected target URL and evidence destination"
+          ],
+          "inputs": [
+            "known source URL, expected target URL and evidence destination"
+          ],
+          "artifacts": [
+            "capture-backed link observations",
+            "execution-state update"
+          ],
+          "output_owner": "earned-media-builder",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/earned-media-builder/references/workflow.md",
+            ".agents/skills/earned-media-builder/references/qualification.md",
+            "references/marketing-execution.md"
+          ],
+          "side_effect": "workspace",
+          "cost": "medium"
+        }
+      }
     }
   }
 }

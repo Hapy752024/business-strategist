@@ -53,3 +53,7 @@ Include the marketing analyzer's visibility, sales, service and retention assess
 - [ ] Branding remains an optional handoff and never a research prerequisite.
 
 For independent market, analog and capability lanes, use one `competitor-researcher` per lane with exclusive output directories and source packets. The coordinator owns classification, deduplication and positioning decisions.
+
+## Commercial precedents
+
+Apply repo-root `references/research-data-and-precedents.md` for reviewed purchase, repeat-use, economics, funding, closure and failed-expansion observations. Preserve `commercial_precedent` on shortlisted entities; the existing landscape builder retains and renders this structure. Funding and existence alone do not prove commercial success or local demand. Use explicit native-language queries where needed.

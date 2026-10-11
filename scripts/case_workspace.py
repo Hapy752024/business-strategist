@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import re
+import sys
 import tempfile
 import time
 import uuid
@@ -20,10 +21,11 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 VERSION = 2
 PROJECT = 'project-manifest.json'
 PENDING = 'history/pending.json'
-ASSESSMENT_FILES = {'README.md', 'case_insights.md', 'feasibility.md', 'business-case.md', 'economics.json', 'numeric-claims.json'}
+ASSESSMENT_FILES = {'README.md', 'case_insights.md', 'feasibility.md', 'business-case.md', 'business-plan.md', 'business-plan.json', 'economics.json', 'numeric-claims.json'}
 
 
 def initial_insights(title):
@@ -246,9 +248,14 @@ def overview(m, root=None, updated_paths=()):
              '| Case | Current assessment | Main uncertainty | Next action | Documents |', '|---|---|---|---|---|']
     for name, entry in m['cases'].items():
         links = []
-        for filename in ('feasibility.md', 'business-case.md'):
+        for filename in ('feasibility.md', 'business-plan.md'):
             path = entry['path'] + '/' + filename
             exists = path in updated_paths or (root is not None and safe(root, path).is_file())
+            if filename == 'business-plan.md' and not exists:
+                legacy = entry['path'] + '/business-case.md'
+                if legacy in updated_paths or (root is not None and safe(root, legacy).is_file()):
+                    links.append(f'[Legacy business case]({legacy})')
+                    continue
             links.append(f'[Read]({path})' if exists else 'Not assessed')
         manifest_path = entry['path'] + '/market_research/manifest.json'
         payload = updated_paths.get(manifest_path) if isinstance(updated_paths, dict) else None
@@ -263,7 +270,7 @@ def overview(m, root=None, updated_paths=()):
         main = f'[Case insights]({insight_path})' if has_insights else f'[Legacy assessment]({legacy_path})' if root is not None and safe(root, legacy_path).is_file() else 'Not assessed'
         if cm.get('insights', {}).get('state') == 'update_pending':
             summary = 'Update pending — ' + summary
-        lines.append(f"| {clean(entry['title'])} {'(retired)' if entry.get('retired') else ''} | {clean(summary)} | {clean(comparison.get('principal_uncertainty', 'Unresolved'))} | {clean('Refresh assessment' if review and comparison else comparison.get('next_action', 'Investigate'))} | {main}; feasibility: {links[0]}; business case: {links[1]} |")
+        lines.append(f"| {clean(entry['title'])} {'(retired)' if entry.get('retired') else ''} | {clean(summary)} | {clean(comparison.get('principal_uncertainty', 'Unresolved'))} | {clean('Refresh assessment' if review and comparison else comparison.get('next_action', 'Investigate'))} | {main}; feasibility: {links[0]}; business plan: {links[1]} |")
     lines += ['', '[Decision history](history/evolution.md)', '']
     if selected:
         lines += ['Business plan: `strategy/business-plan.md` when assembled and reviewed.', '']
@@ -565,6 +572,12 @@ def check_plan(root, plan):
         raise ValueError('business plan review required: ' + plan['review_required'])
     check_binding(root, plan.get('execution_binding', {}))
     sources_current(root, plan)
+    if plan.get('case_plan_binding'):
+        b = plan['case_plan_binding']
+        if b != source_binding(root, b['path'], locator=b['locator'], applicability=b['applicability']):
+            raise ValueError('selected case plan binding changed')
+        from scripts.case_business_plan import current as current_case_plan
+        current_case_plan(root, plan['execution_binding']['case_id'], require_final=plan.get('publication_status') == 'final')
     try:
         from scripts.validate_case_insights import current_status
     except ModuleNotFoundError:
@@ -1049,6 +1062,20 @@ def _publish_assessment(root, case_id, packet, decision_id, reason, *, preview=F
             updated['comparison'][key] = rendered['comparison.' + key]
         updated['appraisal_contract_version'] = 2
         updated['appraisal_publication_status'] = packet.get('publication_status', 'progress')
+        from scripts.business_plan_render import financial_tables
+        plan_body = outputs[f'cases/{case_id}/business-case.md'].replace('# Conditional business case', '# Business plan: ' + case_id, 1)
+        plan_body = 'Evidence maturity: desk_research. Refresh against current case insights before execution.\n\n' + plan_body
+        plan_body += '\n' + financial_tables(record)
+        outputs[f'cases/{case_id}/business-plan.md'] = plan_body
+        plan_record = {'schema_version': '1.0', 'case_id': case_id, 'state': 'appraisal_draft',
+                       'assessment_revision': updated['assessment_revision'], 'evidence_maturity': 'desk_research',
+                       'publication_status': 'progress', 'business_plan_sections': sections, 'source_bindings': bindings,
+                       'insights_digest': None, 'economics_input_digest': record['input_digest'] if record else None,
+                       'document_digest': digest(plan_body.encode())}
+        outputs[f'cases/{case_id}/business-plan.json'] = encoded(plan_record)
+        updated['case_business_plan'] = {'state': 'appraisal_draft', 'assessment_revision': updated['assessment_revision']}
+        updated['case_plan_contract_version'] = 1
+
     if updated.get('insights', {}).get('state') == 'update_pending' and (scope / 'case_insights.md').is_file():
         outputs[f'cases/{case_id}/case_insights.md'] = pending_insights((scope / 'case_insights.md').read_text())
     updated.setdefault('events', []).append({'ts': now(), 'event': 'appraisal', 'decision_id': decision_id})
@@ -1119,6 +1146,13 @@ def _publish_business_plan(root, case_id, plan, decision_id, reason, *, preview=
         raise ValueError('; '.join(errors))
     check_plan(root, plan)
     sections = plan.get('business_plan_sections', {})
+    canonical = resolve(root, case_id) / 'business-plan.json'
+    if canonical.is_file():
+        from scripts.case_business_plan import current as current_case_plan
+        case_plan = current_case_plan(root, case_id, require_final=plan.get('publication_status') == 'final' or plan.get('verdict') == 'commit')
+        expected_case_plan = source_binding(root, str(canonical.relative_to(root)), locator='/business_plan_sections', applicability='Selected case business plan')
+        if plan.get('case_plan_binding') != expected_case_plan or sections != case_plan['business_plan_sections']:
+            raise ValueError('selected plan must derive from the current case business plan')
     if set(sections) != set(PLAN_SECTIONS):
         raise ValueError('business plan needs explicit coverage for every section')
     lines = ['# Business plan', '', 'Selected case: ' + case_id, '',
@@ -1169,8 +1203,8 @@ def _publish_business_plan(root, case_id, plan, decision_id, reason, *, preview=
             from case_economics import validate
         economics = load(econ_path)
         validate(economics)
-        lines += ['## Calculated economics', '', 'Input digest: `' + economics['input_digest'] + '`', '',
-                  '```json', encoded(economics['results']), '```', '']
+        from scripts.business_plan_render import financial_tables
+        lines += [financial_tables(economics)]
     rendered_plan = '\n'.join(lines)
     if version == 2:
         review_hash = bundle_digest({'strategy/business-plan.md': rendered_plan}, all_bindings)
@@ -1191,6 +1225,8 @@ def _publish_business_plan(root, case_id, plan, decision_id, reason, *, preview=
 def invalidate(manifest, reason):
     m = copy.deepcopy(manifest)
     m['assessment_revision'] += 1
+    if m.get('case_business_plan'):
+        m['case_business_plan']['state'] = 'update_pending'
     m['manifest_revision'] = m.get('manifest_revision', 0) + 1
     m['updated_at'] = now()
     for stage in m.get('stages', {}).values():
@@ -1272,7 +1308,7 @@ def correct(root, case_ids, reason, decision_id, *, source_path=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'add', 'rename', 'select', 'clear', 'correct', 'recover', 'show', 'appraise', 'plan', 'insights', 'record-question', 'register-research', 'prepare-appraisal', 'prepare-plan'])
+    parser.add_argument('action', choices=['init', 'add', 'rename', 'select', 'clear', 'correct', 'recover', 'show', 'appraise', 'plan', 'insights', 'record-question', 'register-research', 'prepare-appraisal', 'prepare-plan', 'case-plan', 'prepare-case-plan'])
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--case', default='')
     parser.add_argument('--title', default='')
@@ -1310,18 +1346,25 @@ def main(argv=None):
             if args.input is None:
                 raise ValueError('--input required')
             publish_insights(args.workspace, args.case, load(args.input), args.decision_id, args.reason)
-        elif args.action in {'appraise', 'plan'}:
+        elif args.action in {'appraise', 'plan', 'case-plan'}:
             if args.input is None:
                 raise ValueError('--input required')
-            function = publish_assessment if args.action == 'appraise' else publish_business_plan
+            if args.action == 'case-plan':
+                from scripts.case_business_plan import publish as function
+            else:
+                function = publish_assessment if args.action == 'appraise' else publish_business_plan
             function(args.workspace, args.case, load(args.input), args.decision_id, args.reason)
-        elif args.action in {'prepare-appraisal', 'prepare-plan'}:
+        elif args.action in {'prepare-appraisal', 'prepare-plan', 'prepare-case-plan'}:
             if args.input is None or args.out is None:
                 raise ValueError('--input and --out required')
             out = args.out.absolute()
             if out.exists():
                 raise ValueError('review output directory must be fresh')
-            function = prepare_assessment if args.action == 'prepare-appraisal' else prepare_business_plan
+            if args.action == 'prepare-case-plan':
+                from scripts.case_business_plan import publish
+                function = lambda root, cid, data: publish(root, cid, data, 'preview', 'Prepare case plan', preview=True)
+            else:
+                function = prepare_assessment if args.action == 'prepare-appraisal' else prepare_business_plan
             bundle = function(args.workspace, args.case, load(args.input))
             out.mkdir(parents=True)
             if 'outputs' in bundle:

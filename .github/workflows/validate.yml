@@ -43,6 +43,12 @@ jobs:
         working-directory: fixtures/website/stellar-repair
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install audit test dependencies
+        working-directory: .
+        run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -56,4 +62,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npx playwright install --with-deps chromium
+      - name: Test browser SEO auditor
+        working-directory: .
+        run: python3 -m pytest -q tests/test_website_browser_audit.py tests/test_seo_audit_diff.py
       - run: npm run test:e2e

@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-11",
+  "arm": "current",
+  "split": "development",
+  "trials": 5,
+  "failed_trials": 5,
+  "configured_model": "configured-claude-provider",
+  "served_model": null,
+  "output_tokens": 0,
+  "failure": "Expired OAuth session could not refresh before inference",
+  "quality_result": "pending",
+  "baseline_result": "not_run",
+  "held_out_result": "not_run",
+  "operator_result": "not_run"
+}

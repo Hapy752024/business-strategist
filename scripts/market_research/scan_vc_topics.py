@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import hashlib
 import math
 import re
 import sys
@@ -21,7 +22,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts" / "validate_apis"))
-from common import get_secret, http_get, with_query  # noqa: E402
+from common import get_secret, http_get, with_query, redact_sensitive  # noqa: E402
 
 
 API_BASE = "https://vcapi.parsers.vc/v2"
@@ -46,6 +47,7 @@ def _remaining(response: dict[str, Any]) -> int | None:
     body = response.get("body")
     if not isinstance(body, dict):
         return None
+    body = {str(key)[:1].lower() + str(key)[1:]: value for key, value in body.items()}
     for path in (("credits", "remaining"), ("rateLimit", "remaining"), ("usage", "remaining")):
         value: Any = body
         for part in path:
@@ -69,18 +71,27 @@ def _credit_charge(response: dict[str, Any], record_count: int = 0) -> int:
     try:
         return int(headers["x-credits-charged"])
     except (KeyError, TypeError, ValueError):
-        return math.ceil(record_count * 0.25 * (1 + 0.25 * len(EXPANDS)))
+        return max(1, math.ceil(record_count * 0.25 * (1 + 0.25 * len(EXPANDS))))
+
+
+def normalize_signal(value):
+    """The live API uses PascalCase; retain the internal camelCase contract."""
+    if isinstance(value, dict):
+        return {key[:1].lower() + key[1:]: normalize_signal(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [normalize_signal(item) for item in value]
+    return value
 
 
 def _records(body: Any, *keys: str) -> list[dict[str, Any]]:
     if isinstance(body, list):
-        return [row for row in body if isinstance(row, dict)]
+        return [normalize_signal(row) if 'signals' in keys else row for row in body if isinstance(row, dict)]
     if isinstance(body, dict):
         for key in keys:
             for candidate in (key, key[:1].upper() + key[1:]):
                 value = body.get(candidate)
                 if isinstance(value, list):
-                    return [row for row in value if isinstance(row, dict)]
+                    return [normalize_signal(row) if 'signals' in keys else row for row in value if isinstance(row, dict)]
     return []
 
 
@@ -118,8 +129,9 @@ def _windows(as_of: date, days: int) -> dict[str, tuple[date, date]]:
     }
 
 
-def _query_signals(key: str, topic: str, country: str | None, period: tuple[date, date], signal_type: str, limit: int) -> dict[str, Any]:
+def _query_signals(key: str, topic: str, country: str | None, period: tuple[date, date], signal_type: str, limit: int, cursor: str | None = None) -> dict[str, Any]:
     params = {
+        "cursor": cursor,
         "types": signal_type,
         "industry": topic,
         "country": country,
@@ -144,138 +156,175 @@ def _query_signals(key: str, topic: str, country: str | None, period: tuple[date
         "returned": len(rows),
         "capped": more or len(rows) >= limit,
         "next_cursor_available": bool(body.get("nextCursor")) if isinstance(body, dict) else False,
+        "next_cursor": body.get("nextCursor") if isinstance(body, dict) else None,
+        "response": redact_sensitive(response),
         "credits_charged": _credit_charge(response, len(rows)),
         "signals": rows,
         "request": {"endpoint": f"{API_BASE}/signals", "parameters": params},
     }
 
 
+def unique_rounds(signals):
+    """Corrections and syndicated copies of the same provider round collapse."""
+    rounds = {}
+    unresolved = []
+    for row in signals:
+        identity = (row.get('object') or {}).get('id')
+        if not identity:
+            unresolved.append(row)
+            continue
+        old = rounds.get(identity)
+        if not old or str(row.get('detectedAt', '')) >= str(old.get('detectedAt', '')):
+            rounds[identity] = row
+    return list(rounds.values()), unresolved
+
+
+def investor_identity(row):
+    """Only explicitly identified investor entities qualify as investor names."""
+    for value in (row.get('investor'), row.get('subject'), row.get('object')):
+        if isinstance(value, dict) and str(value.get('type', '')).lower() in {'investor', 'fund', 'vc', 'venture_capital'}:
+            return value
+    return None
+
+
+def summarize(topic, queries):
+    periods = {}
+    for period in ('current', 'previous'):
+        rounds_query = queries.get(topic + '|' + period + '|round.recorded', {})
+        investor_query = queries.get(topic + '|' + period + '|investor.joined_round', {})
+        signals = [normalize_signal(row) for page in rounds_query.get('pages', []) for row in page['signals']]
+        rounds, unresolved = unique_rounds(signals)
+        amounts = [row['amount'] for row in rounds if type(row.get('amount')) in (int, float) and math.isfinite(row['amount']) and row['amount'] >= 0]
+        investors = [normalize_signal(row) for page in investor_query.get('pages', []) for row in page['signals']]
+        pairs = {((row.get('object') or {}).get('id'), (investor_identity(row) or {}).get('id')) for row in investors}
+        stages = {}
+        for row in rounds:
+            label = row.get('series') or row.get('label') or 'unknown'
+            stages[label] = stages.get(label, 0) + 1
+        periods[period] = {'round_signal_count': len(rounds), 'unresolved_round_identity_count': len(unresolved),
+            'investor_join_signal_count': len({row.get('id') for row in investors if row.get('id')}),
+            'unique_investor_round_pairs': len({pair for pair in pairs if all(pair)}),
+            'unresolved_investor_identity_count': sum(investor_identity(row) is None for row in investors),
+            'unique_companies': len({(row.get('subject') or {}).get('id') for row in rounds if (row.get('subject') or {}).get('id')}),
+            'disclosed_amount_sum_usd_sample': sum(amounts) if amounts else None,
+            'amount_disclosure_count': len(amounts), 'round_query_capped': not rounds_query.get('complete', False),
+            'investor_query_capped': not investor_query.get('complete', False), 'stage_counts': stages,
+            'largest_round_share_of_disclosed_sample': max(amounts) / sum(amounts) if amounts and sum(amounts) else None,
+            'rounds': rounds, 'queries': [rounds_query, investor_query]}
+    current, previous = periods['current'], periods['previous']
+    censored = any(p['round_query_capped'] or p['investor_query_capped'] or p['unresolved_round_identity_count'] for p in periods.values())
+    a, b = current['round_signal_count'], previous['round_signal_count']
+    growth = (a - b) / b if b and not censored else None
+    hint = ('inconclusive_due_to_sample_cap' if censored else 'emerging_activity_from_zero_baseline' if not b and a
+            else 'rising_activity_heuristic' if growth is not None and growth >= .25 and a >= 3
+            else 'cooling_activity_heuristic' if growth is not None and growth <= -.25 and b >= 3
+            else 'activity_observed_no_clear_acceleration' if a or b else 'no_activity_observed_in_sample')
+    return {'industry_tag': topic, 'current_rounds': a, 'previous_rounds': b,
+            'round_count_change_fraction': growth, 'current_investor_join_signals': current['investor_join_signal_count'],
+            'previous_investor_join_signals': previous['investor_join_signal_count'],
+            'current_disclosed_amount_sum_usd_sample': current['disclosed_amount_sum_usd_sample'],
+            'previous_disclosed_amount_sum_usd_sample': previous['disclosed_amount_sum_usd_sample'],
+            'activity_hint': hint, 'sample_capped': censored, 'periods': periods}
+
+
 def scan(args: argparse.Namespace) -> dict[str, Any]:
-    _name, key = get_secret("PARSERSVC_API_KEY")
+    _name, key = get_secret('PARSERSVC_API_KEY')
     if not key:
-        raise RuntimeError("Missing PARSERSVC_API_KEY. Set it in the environment, project .secrets, or ~/.secrets.")
-
+        raise RuntimeError('Missing PARSERSVC_API_KEY. Set it in the environment or ~/.secrets.')
     usage = http_get(USAGE_URL, headers=_headers(key), timeout=20)
-    if not usage.get("ok"):
-        body = usage.get("body")
-        detail = body.get("error") if isinstance(body, dict) else usage.get("error")
-        raise RuntimeError(f"Could not read Parsers VC credit balance ({usage.get('status_code')}): {detail or usage.get('error')}")
-    remaining = _remaining(usage)
-    if remaining is None:
-        raise RuntimeError("Parsers VC did not report remaining credits; refusing to make metered topic queries without a balance.")
-    if remaining < 1:
-        raise RuntimeError("No Parsers VC credits remain; no topic queries were made.")
-
-    categories_url = with_query(f"{API_BASE}/categories/industry", {"entity": "startups", "top": 100})
-    categories_response = http_get(categories_url, headers=_headers(key), timeout=30)
-    if not categories_response.get("ok"):
-        body = categories_response.get("body")
-        detail = body.get("error") if isinstance(body, dict) else categories_response.get("error")
-        raise RuntimeError(f"Could not load industry tags ({categories_response.get('status_code')}): {detail or categories_response.get('error')}")
-    available = _records(categories_response.get("body"), "categories", "items", "results", "data")
+    remaining = _remaining(usage) if usage.get('ok') else None
+    if remaining is None or remaining < 1:
+        raise RuntimeError('Could not establish a positive Parsers VC credit balance; no metered queries made.')
+    pricing = http_get(API_BASE + '/pricing', headers=_headers(key), timeout=20)
+    if not pricing.get('ok'):
+        raise RuntimeError('Cannot check current VC pricing; no metered queries made.')
+    rates = pricing.get('body', {}).get('endpoints', [])
+    rate = next((row for row in rates if str(row.get('endpoint', '')).lower() in {'get v2/signals', 'get /v2/signals'}), None)
+    if not rate:
+        raise RuntimeError('Current pricing does not declare the signals rate; no metered query made.')
+    base_rate, per_record_rate = float(rate['base_credits']), float(rate['credits_per_record'])
+    if not math.isfinite(base_rate) or not math.isfinite(per_record_rate) or base_rate < 0 or per_record_rate < 0:
+        raise RuntimeError('Invalid signal pricing; no metered query made.')
+    categories = http_get(with_query(API_BASE + '/categories/industry', {'entity': 'startups', 'top': 100}), headers=_headers(key), timeout=30)
+    if not categories.get('ok'):
+        raise RuntimeError('Could not load provider industry tags.')
+    available = _records(categories.get('body'), 'categories', 'items', 'results', 'data', 'values')
     if not available:
-        raise RuntimeError("Parsers VC returned no industry-tag catalogue; refusing to guess topic filters.")
-    category_charge = 1
-    if args.topic:
-        topics = _match_topics(args.topic, available)
-        discovery = "user-specified topics matched to provider industry tags"
-    else:
-        topics = []
-        for row in available:
-            label = _topic_label(row)
-            if label and label not in topics:
-                topics.append(label)
-            if len(topics) >= args.max_topics:
-                break
-        discovery = "top startup industry tags by provider catalogue count"
-
-    if not topics:
-        raise RuntimeError("No topics selected after resolving the Parsers VC industry catalogue.")
-    # Two event types x two equal-length periods. The estimate includes the
-    # API's documented 0.25 per signal and 25% per expand, rounded per call.
-    estimated = category_charge + len(topics) * 4 * math.ceil(args.signals_per_query * 0.25 * (1 + 0.25 * len(EXPANDS)))
-    if estimated > args.max_credits:
-        raise RuntimeError(f"Estimated spend {estimated} credits exceeds --max-credits {args.max_credits}; reduce topics or per-query limit.")
-    if estimated > remaining:
-        raise RuntimeError(f"Estimated spend {estimated} credits exceeds the reported remaining balance ({remaining}); no signal queries were made.")
-
-    today = datetime.now(timezone.utc).date()
-    windows = _windows(today, args.window_days)
-    topics_out = []
-    credits = category_charge
+        raise RuntimeError('Empty industry catalogue; refusing to guess filters.')
+    topics = _match_topics(args.topic, available) if args.topic else list(dict.fromkeys(_topic_label(row) for row in available if _topic_label(row)))[:args.max_topics]
+    resume = getattr(args, 'resume', None)
+    state = json.loads(resume.read_text()) if resume else {}
+    as_of = date.fromisoformat(getattr(args, 'as_of', None) or state.get('as_of_date_utc') or datetime.now(timezone.utc).date().isoformat())
+    windows = {name: {'from': bounds[0].isoformat(), 'through': bounds[1].isoformat()} for name, bounds in _windows(as_of, args.window_days).items()}
+    scope = {'country': args.country, 'industry_tags': topics, 'window_days': args.window_days,
+             'windows': windows, 'signals_per_query': args.signals_per_query}
+    signature = hashlib.sha256(json.dumps(scope, sort_keys=True).encode()).hexdigest()
+    if state and state.get('query_signature') != signature:
+        raise ValueError('Resume scope changed; topic, geography, periods and page size must match.')
+    queries = state.get('queries', {})
+    category_headers = {k.lower(): v for k, v in categories.get('headers', {}).items()}
+    spent = int(category_headers.get('x-credits-charged', 1))
+    balance = remaining - spent
+    max_pages = getattr(args, 'max_pages', 1)
+    checkpoint = getattr(args, 'checkpoint', None)
+    stop_reason = None
     for topic in topics:
-        periods: dict[str, dict[str, Any]] = {}
-        for period_name, period in windows.items():
-            calls = []
+        for period, bounds in windows.items():
             for signal_type in SIGNAL_TYPES:
-                result = _query_signals(key, topic, args.country, period, signal_type, args.signals_per_query)
-                credits += result["credits_charged"]
-                calls.append(result)
-                if credits > args.max_credits:
-                    raise RuntimeError("Actual reported credits exceeded --max-credits; stopped before remaining queries.")
-            rounds = next((item for item in calls if item["type"] == "round.recorded"), {})
-            investor_events = next((item for item in calls if item["type"] == "investor.joined_round"), {})
-            amounts = [row.get("amount") for row in rounds.get("signals", []) if isinstance(row.get("amount"), (int, float))]
-            periods[period_name] = {
-                "round_signal_count": rounds.get("returned", 0),
-                "investor_join_signal_count": investor_events.get("returned", 0),
-                "disclosed_amount_sum_usd_sample": sum(amounts) if amounts else None,
-                "round_query_capped": rounds.get("capped", False),
-                "investor_query_capped": investor_events.get("capped", False),
-                "queries": calls,
-            }
-        current = periods["current"]
-        previous = periods["previous"]
-        current_count = current["round_signal_count"]
-        previous_count = previous["round_signal_count"]
-        censored = any(period[f"{kind}_query_capped"] for period in periods.values() for kind in ("round", "investor"))
-        growth = None if previous_count == 0 else round((current_count - previous_count) / previous_count, 3)
-        if censored:
-            signal = "inconclusive_due_to_sample_cap"
-        elif previous_count == 0 and current_count >= 2:
-            signal = "emerging_activity_from_zero_baseline"
-        elif previous_count > 0 and current_count >= 3 and growth is not None and growth >= 0.25:
-            signal = "rising_activity_heuristic"
-        elif previous_count >= 3 and growth is not None and growth <= -0.25:
-            signal = "cooling_activity_heuristic"
-        elif current_count or previous_count:
-            signal = "activity_observed_no_clear_acceleration"
-        else:
-            signal = "no_activity_observed_in_sample"
-        topics_out.append({
-            "industry_tag": topic,
-            "current_rounds": current_count,
-            "previous_rounds": previous_count,
-            "round_count_change_fraction": growth,
-            "current_investor_join_signals": current["investor_join_signal_count"],
-            "previous_investor_join_signals": previous["investor_join_signal_count"],
-            "current_disclosed_amount_sum_usd_sample": current["disclosed_amount_sum_usd_sample"],
-            "previous_disclosed_amount_sum_usd_sample": previous["disclosed_amount_sum_usd_sample"],
-            "activity_hint": signal,
-            "sample_capped": censored,
-            "periods": periods,
-        })
-    topics_out.sort(key=lambda row: (row["current_rounds"], row["current_investor_join_signals"]), reverse=True)
-    return {
-        "schema_version": "1.0",
-        "provider": "Parsers VC",
-        "collected_at": datetime.now(timezone.utc).isoformat(),
-        "as_of_date_utc": today.isoformat(),
-        "query_scope": {"country": args.country, "industry_tags": topics, "discovery": discovery},
-        "window_days": args.window_days,
-        "windows": {name: {"from": bounds[0].isoformat(), "through": bounds[1].isoformat()} for name, bounds in windows.items()},
-        "credits": {"remaining_before_queries": remaining, "estimated_maximum": estimated, "reported_or_estimated_spent": credits, "max_credits": args.max_credits},
-        "ranking_method": "Descending current round-recorded signal count, then investor-joined-round signal count. Activity hints use explicit 25%/minimum-count heuristics; they are not a validated definition of a hot market.",
-        "topics": topics_out,
-        "evidence_limits": [
-            "Provider coverage and industry tagging may be incomplete or inconsistent; this scan only covers the returned topic tags and queried periods.",
-            "A capped signal query is a lower bound; activity hints are suppressed when any topic-period query hits its sample cap.",
-            "Amounts are disclosed amounts in sampled round-recorded signals only; undisclosed or missing amounts are excluded.",
-            "VC attention/funding is a capital-market signal, not customer pain, willingness to pay, market size, or evidence that this founder can raise.",
-            "Verify material rounds and investor participation against company/investor announcements or filings before making claims.",
-        ],
-        "provider_docs": DOCS_URL,
-    }
+                ident = topic + '|' + period + '|' + signal_type
+                query = queries.setdefault(ident, {'pages': [], 'complete': False})
+                if query['complete']:
+                    continue
+                while len(query['pages']) < max_pages:
+                    reserve = max(1, math.ceil(base_rate + args.signals_per_query * per_record_rate * (1 + .25 * len(EXPANDS))))
+                    if spent + reserve > args.max_credits or reserve > balance:
+                        stop_reason = 'credit_budget_or_balance'
+                        break
+                    cursor = query['pages'][-1].get('next_cursor') if query['pages'] else None
+                    try:
+                        page = _query_signals(key, topic, args.country,
+                            (date.fromisoformat(bounds['from']), date.fromisoformat(bounds['through'])), signal_type, args.signals_per_query, cursor)
+                    except RuntimeError as exc:
+                        stop_reason = str(redact_sensitive(str(exc)))
+                        break
+                    # A missing charge header is not sufficient to certify the cost.
+                    charge_headers = {k.lower(): v for k, v in page['response'].get('headers', {}).items()}
+                    charged = int(charge_headers['x-credits-charged']) if 'x-credits-charged' in charge_headers else reserve
+                    spent += charged
+                    balance -= charged
+                    query['pages'].append(page)
+                    query['complete'] = not page['capped']
+                    state = {'query_signature': signature, 'as_of_date_utc': as_of.isoformat(), 'queries': queries, 'scope': scope}
+                    if checkpoint:
+                        checkpoint.parent.mkdir(parents=True, exist_ok=True)
+                        temporary = checkpoint.with_suffix(checkpoint.suffix + '.tmp')
+                        temporary.write_text(json.dumps(redact_sensitive(state), indent=2))
+                        temporary.replace(checkpoint)
+                    if query['complete']:
+                        break
+                    if not page['next_cursor'] or page['next_cursor'] == cursor:
+                        query['coverage_gap'] = 'Capped page has no advancing cursor'
+                        break
+                    if spent > args.max_credits or balance < 0:
+                        stop_reason = 'actual_charge_exceeded_reservation'
+                        break
+                if stop_reason:
+                    break
+            if stop_reason:
+                break
+        if stop_reason:
+            break
+    return {'schema_version': '2.0', 'provider': 'Parsers VC', 'collected_at': datetime.now(timezone.utc).isoformat(),
+            'as_of_date_utc': as_of.isoformat(), 'query_scope': scope, 'query_signature': signature, 'queries': queries,
+            'window_days': args.window_days, 'windows': windows, 'topics': [summarize(topic, queries) for topic in topics],
+            'credits': {'remaining_before_queries': remaining, 'reported_or_reserved_spent': spent, 'max_credits': args.max_credits},
+            'pricing_capture': redact_sensitive(pricing), 'stop_reason': stop_reason,
+            'evidence_limits': ['Provider coverage is incomplete; capped counts are lower bounds and change is suppressed.',
+                'Amounts include disclosed sampled rounds only; overlapping tags must not be summed.',
+                'Event dates define the windows; detection dates preserve reporting lag.',
+                'The scan deduplicates returned round records; later correction events outside the queried feeds are not audited.',
+                'Funding does not establish customer demand, profitability or fundraising fit.',
+                'Verify material rounds from company/fund announcements or filings.'], 'provider_docs': DOCS_URL}
 
 
 def main() -> int:
@@ -286,6 +335,10 @@ def main() -> int:
     parser.add_argument("--window-days", type=int, default=365, help="Length of each adjacent period (30-1095 days).")
     parser.add_argument("--signals-per-query", type=int, default=20, help="Maximum returned signals per topic, period and signal type (1-200).")
     parser.add_argument("--max-credits", type=int, default=400, help="Hard estimated/observed Parsers VC credit ceiling for this run.")
+    parser.add_argument("--max-pages", type=int, default=1, help="Maximum pages per topic/window/type; capped results stay lower bounds.")
+    parser.add_argument("--as-of", help="Explicit market date, YYYY-MM-DD")
+    parser.add_argument("--resume", type=Path, help="Resume a matching saved checkpoint")
+    parser.add_argument("--checkpoint", type=Path, help="Persist each completed page atomically")
     parser.add_argument("--out", type=Path, help="Optional JSON output path; defaults to stdout.")
     args = parser.parse_args()
     if not 1 <= args.max_topics <= 50:
@@ -294,6 +347,8 @@ def main() -> int:
         parser.error("--window-days must be between 30 and 1095")
     if not 1 <= args.signals_per_query <= 200:
         parser.error("--signals-per-query must be between 1 and 200")
+    if not 1 <= args.max_pages <= 100:
+        parser.error("--max-pages must be 1..100")
     if args.max_credits < 1:
         parser.error("--max-credits must be positive")
     try:

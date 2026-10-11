@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "selection_basis",
+    "examples"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "selection_basis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "url",
+          "creator",
+          "platform",
+          "format",
+          "language",
+          "market",
+          "published_at",
+          "observed_at",
+          "distribution",
+          "metrics",
+          "source",
+          "hook",
+          "pattern"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "creator": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "platform": {
+            "type": "string",
+            "minLength": 1
+          },
+          "format": {
+            "type": "string",
+            "minLength": 1
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "market": {
+            "type": "string",
+            "minLength": 1
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "distribution": {
+            "enum": [
+              "organic",
+              "paid",
+              "unknown"
+            ]
+          },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "views"
+            ],
+            "properties": {
+              "views": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "value",
+                  "availability",
+                  "definition"
+                ],
+                "properties": {
+                  "value": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  "availability": {
+                    "enum": [
+                      "available",
+                      "unknown",
+                      "unavailable",
+                      "suppressed"
+                    ]
+                  },
+                  "definition": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "saves": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "value",
+                  "availability",
+                  "definition"
+                ],
+                "properties": {
+                  "value": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  "availability": {
+                    "enum": [
+                      "available",
+                      "unknown",
+                      "unavailable",
+                      "suppressed"
+                    ]
+                  },
+                  "definition": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "shares": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "value",
+                  "availability",
+                  "definition"
+                ],
+                "properties": {
+                  "value": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  "availability": {
+                    "enum": [
+                      "available",
+                      "unknown",
+                      "unavailable",
+                      "suppressed"
+                    ]
+                  },
+                  "definition": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "comments": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "value",
+                  "availability",
+                  "definition"
+                ],
+                "properties": {
+                  "value": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  "availability": {
+                    "enum": [
+                      "available",
+                      "unknown",
+                      "unavailable",
+                      "suppressed"
+                    ]
+                  },
+                  "definition": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "hook": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pattern": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "hypothesis",
+          "example_ids",
+          "counterexample_ids",
+          "held_constant",
+          "outcome_metric",
+          "limitations"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hypothesis": {
+            "type": "string",
+            "minLength": 1
+          },
+          "example_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "counterexample_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "held_constant": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "outcome_metric": {
+            "type": "string",
+            "minLength": 1
+          },
+          "limitations": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

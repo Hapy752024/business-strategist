@@ -1,0 +1,59 @@
+I’ll read the supplied snapshot guidance and build a provisional plan, keeping the synthetic evidence and hypothetical cash calculation explicit.
+
+I’m applying the snapshot’s startup-business-builder guidance for the nine sections and provisional evidence labels. The overseas analog offers a reported repeat-payment precedent; Swiss willingness to pay and the analog’s profitability remain unproven.
+
+**Provisional business plan — Swiss repair-shop scheduling SaaS**
+
+Evidence is limited to the supplied synthetic inputs: interviewees report duplicate scheduling; there are no paying users; an overseas analog reportedly has repeat paying users, but audited profitability is unavailable. All proposals below are hypotheses.
+
+**1. Business (`business`) — provisional**  
+Automate repair-shop scheduling to reduce duplicate bookings. Continue discovery and a narrow prototype; commercial commitment is premature. The pivotal uncertainty is whether scheduling errors cause enough measurable loss for Swiss shops to pay. Founder resources and objectives are unknown.
+
+**2. Customer and market (`customer_market`) — provisional**  
+Proposed initial segment: independent Swiss repair shops with several people scheduling shared technicians or workspaces. Staff would use the tool; the owner or manager would likely buy and pay—both require verification. Map booking, changes, resource allocation and cancellations. Interview complaints establish reported pain, not frequency, financial impact or willingness to pay. Market size and attainable demand remain unknown; **10 customers is a calculation assumption**, not a market estimate.
+
+**3. Competitive choice (`competitive_choice`) — provisional**  
+Investigate existing workshop software, shared calendars, spreadsheets and keeping the current process. No local competitor names, prices or counts are established. The overseas analog belongs in the **similar-company lane**: reported repeat payment supports a bounded commercial precedent, not verified profitability or Swiss demand. Research independent customers, cancellations, closures and failed expansion.
+
+Transfer depends on comparable customer jobs and buyer/payer roles, scheduling habits, purchasing power and pricing, regulation, distribution, service and labor costs, trust, and founder resources. Each needs Swiss evidence. The proposed reason to switch is fewer scheduling conflicts with little migration effort; test it against existing alternatives.
+
+**4. Product and revenue (`product_revenue`) — provisional**  
+Propose an MVP with one shared schedule, technician/workspace availability, conflict detection and manual overrides. Initially exclude invoicing, inventory and autonomous rescheduling. Start with a supervised prototype to establish reliability. Hypothetical pricing is **CHF100 per shop per month**; willingness to pay and billing terms are untested.
+
+**5. Acquisition and sales (`acquisition_sales`) — provisional**  
+Proposed access routes are direct outreach and repair-industry associations; availability and permission remain unverified. Separate unpaid learning interviews from sales conversations. Record shops contacted → responses → qualified demonstrations → paid customers → renewals, alongside founder hours and sales-cycle length. The model assumes no acquisition spend; it does not establish costless acquisition. Pursue ten customers only after early payment and repeat-value evidence.
+
+**6. Delivery and team (`delivery_team`) — provisional**  
+The founder would initially own discovery, onboarding and support; engineering capacity is unknown. Compare building the scheduling core with using an existing calendar component, based on conflict handling and integration needs. Test simultaneous bookings, changes, cancellations and recovery from errors. Measure setup time, support hours and failures before adding customers; hire only when demonstrated workload and cash justify it.
+
+**7. Finances (`finances`) — hypothetical arithmetic, not a forecast**
+
+Assume ten customers pay monthly from the outset, customer count stays constant, receipts and costs occur in the same month, and there are no additional startup costs or cash flows.
+
+| Monthly measure | Calculation | CHF |
+|---|---|---:|
+| Revenue | 100 × 10 | 1,000 |
+| Direct costs | 20 × 10 | 200 |
+| Contribution | 1,000 − 200 | 800 |
+| Fixed costs | Given assumption | 1,500 |
+| Cash loss / burn | 1,500 − 800 | 700 |
+| Opening cash | Given assumption | 10,000 |
+
+Contribution is **CHF80 per customer**, an **80% contribution margin**. Runway is **10,000 ÷ 700 ≈ 14.3 months**: CHF200 remains after 14 full months, with cash exhausted during month 15. Operating break-even requires **19 customers** at these unchanged assumptions.
+
+A hypothetical zero-customer downside burns CHF1,500 monthly, giving about **6.7 months** of runway. At unchanged pricing and costs, each additional customer improves monthly contribution by CHF80. Churn, payment delays, acquisition expense, taxes, startup expenditure and founder compensation are unresolved; unpaid founder labor is also unvalued. These omissions can materially shorten runway.
+
+**8. Milestones and risks (`milestones_risks`) — proposed research decisions**  
+The founder is the proposed owner; research costs and available hours remain unknown. Dates below run from a future agreed start and are not commitments.
+
+- **By day 7:** document recent duplicate-booking incidents and current workarounds. If no concrete recurring incidents emerge, revise the segment or problem.
+- **By day 30:** test scheduling tasks with a prototype and present the CHF100 offer. Require observed workflow improvement and a completed payment before claiming paid validation; interest alone is insufficient.
+- **By day 60:** for any authorized pilot, measure conflicts, usage, support effort and renewal over one billing cycle. Failed renewal or costly manual intervention triggers investigation before expansion.
+- **By day 90:** pursue the first ten customers only if payment, repeat value, delivery reliability and affordable acquisition are demonstrated. Otherwise narrow, redesign or stop.
+
+Main failure paths are adequate existing alternatives, migration friction, unreliable conflict handling and support costs exceeding the assumed CHF20. Test these before widening the product.
+
+**9. Funding, legal and IP (`funding_legal_ip`) — provisional**  
+Treat CHF10,000 as hypothetical available cash, not secured funding. A small bootstrap approach is the working option; VC research is unnecessary unless venture-scale financing becomes an objective. Before handling live customer data, verify Swiss data-protection obligations, hosting and vendor arrangements, access controls, contracts, liability and software/IP ownership. No legal compliance assessment has been performed.
+
+**Limits:** This is a synthetic planning document based only on the supplied input and snapshot guidance. No interviews, competitor verification, outreach, payments, pilots, legal checks or formal plan publication were performed. Nine-section completeness does not establish viability or execution readiness.

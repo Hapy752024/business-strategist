@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "selection_basis": "Synthetic strong/weak examples; not customer or platform evidence",
+  "examples": [
+    {
+      "id": "E1",
+      "url": "https://example.com/creative/1",
+      "creator": "creator-a",
+      "platform": "instagram",
+      "format": "short",
+      "language": "en",
+      "market": "GB",
+      "published_at": "2026-10-01T00:00:00Z",
+      "observed_at": "2026-10-08T00:00:00Z",
+      "distribution": "organic",
+      "metrics": {
+        "views": {
+          "value": 1000,
+          "availability": "available",
+          "definition": "platform-reported views"
+        },
+        "shares": {
+          "value": 20,
+          "availability": "available",
+          "definition": "platform-reported shares"
+        }
+      },
+      "hook": "Synthetic opening",
+      "pattern": "problem then demo",
+      "source": {
+        "path": "sources/1.json",
+        "sha256": "fe175de8fb32ff8006f163e39c731e275a932c48bf2b919529334dfea9af73fa"
+      }
+    },
+    {
+      "id": "E2",
+      "url": "https://example.com/creative/2",
+      "creator": "creator-b",
+      "platform": "instagram",
+      "format": "short",
+      "language": "en",
+      "market": "GB",
+      "published_at": "2026-10-01T00:00:00Z",
+      "observed_at": "2026-10-08T00:00:00Z",
+      "distribution": "organic",
+      "metrics": {
+        "views": {
+          "value": 1000,
+          "availability": "available",
+          "definition": "platform-reported views"
+        },
+        "shares": {
+          "value": 5,
+          "availability": "available",
+          "definition": "platform-reported shares"
+        }
+      },
+      "hook": "Synthetic opening",
+      "pattern": "problem then demo",
+      "source": {
+        "path": "sources/2.json",
+        "sha256": "ed9664a2cd188eb96dc071a5a63541f4f82fe57b6655788a5b1b8044bdb226ab"
+      }
+    },
+    {
+      "id": "E3",
+      "url": "https://example.com/creative/3",
+      "creator": "creator-c",
+      "platform": "instagram",
+      "format": "short",
+      "language": "en",
+      "market": "GB",
+      "published_at": "2026-10-01T00:00:00Z",
+      "observed_at": "2026-10-08T00:00:00Z",
+      "distribution": "paid",
+      "metrics": {
+        "views": {
+          "value": 1000,
+          "availability": "available",
+          "definition": "platform-reported views"
+        },
+        "shares": {
+          "value": 90,
+          "availability": "available",
+          "definition": "platform-reported shares"
+        }
+      },
+      "hook": "Synthetic opening",
+      "pattern": "problem then demo",
+      "source": {
+        "path": "sources/3.json",
+        "sha256": "bbd19469f326a384a849b4ef16a06fb7bf0e6af3f517b9542fcc8cfcc54134eb"
+      }
+    },
+    {
+      "id": "E4",
+      "url": "https://example.com/creative/4",
+      "creator": null,
+      "platform": "instagram",
+      "format": "short",
+      "language": "en",
+      "market": "GB",
+      "published_at": "2026-10-01T00:00:00Z",
+      "observed_at": "2026-10-08T00:00:00Z",
+      "distribution": "unknown",
+      "metrics": {
+        "views": {
+          "value": 1000,
+          "availability": "available",
+          "definition": "platform-reported views"
+        },
+        "shares": {
+          "value": null,
+          "availability": "unknown",
+          "definition": "platform-reported shares"
+        }
+      },
+      "hook": "Synthetic opening",
+      "pattern": "problem then demo",
+      "source": {
+        "path": "sources/4.json",
+        "sha256": "4cebb33365a19767dc3f1037dd50c4d233da69244d6b7d8bcf518bb254f63241"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "id": "T1",
+      "hypothesis": "A clearer problem opening may help qualified attention",
+      "example_ids": [
+        "E1"
+      ],
+      "counterexample_ids": [
+        "E2"
+      ],
+      "held_constant": [
+        "audience",
+        "offer"
+      ],
+      "outcome_metric": "qualified visits",
+      "limitations": "Prepared test only; nothing published"
+    }
+  ]
+}

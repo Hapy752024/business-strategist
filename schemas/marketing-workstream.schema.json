@@ -110,7 +110,8 @@
               "brand_assets",
               "keyword_map",
               "validation_page",
-              "experiment_results"
+              "experiment_results",
+              "public_resource"
             ]
           },
           "applicability": {

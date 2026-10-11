@@ -28,3 +28,5 @@ This skill tests the user’s stated idea or explains a customer segment’s pai
 
 Return artifact paths, provider status, evidence and counter-evidence, confidence, gaps, and next test. Never treat attention as willingness to pay.
 For segment sentiment/pain research, use discovery → provisional target hypothesis → narrowed validation; pass short `--segment-keywords` and semantically review target/adjacent/unresolved source membership. For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
+
+For substantive Business research, read repo-root `references/research-data-and-precedents.md`. Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals. Metadata is discovery until original findings are reviewed.

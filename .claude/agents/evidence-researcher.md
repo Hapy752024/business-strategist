@@ -14,3 +14,5 @@ Execute exactly one source-worker packet from `references/modules/source-worker-
 - Do not synthesize, rank or decide. Retrieval failure is not evidence of absent demand.
 
 Return under 400 words: output directory, providers attempted/failed, record counts by source role, five consequential source locators with dates, counter-evidence, duplicate incidents and open questions.
+
+For corrections, use the coordinator-provided failed-unit return and exclusive output paths from `references/modules/source-worker-packet.md`. Preserve other workers' accepted outputs; report changed inputs and attempts. Return source/check evidence; do not promote stages.

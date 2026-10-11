@@ -1,0 +1,54 @@
+I’ll read the supplied snapshot guidance and build a provisional plan, clearly separating the synthetic evidence from the hypothetical calculations.
+
+**Provisional business plan — Swiss repair-shop scheduling SaaS**
+
+All nine sections are **provisional**. The supplied synthetic interviews indicate duplicate scheduling; there are **no paying users**. The decision is to continue bounded validation, with launch and scaling dependent on payment, retention and operating evidence.
+
+1. **Business (`business`)**  
+   Offer scheduling software that reduces conflicting bookings and duplicate entry. Hypothesis: fewer scheduling errors save enough staff time to justify a subscription. Neither the benefit nor willingness to pay is established.
+
+2. **Customer and market (`customer_market`)**  
+   Initially test independent Swiss repair shops with multiple staff managing appointments. Proposed user: scheduler; buyer/payer: shop owner. Shop type, problem frequency, current spending and reachable market size remain unknown.  
+   **Value Proposition Canvas:** job—coordinate appointments; pain—duplicate scheduling; desired gain—reliable bookings with less rework. Proposed response—a shared calendar with conflict checks. These benefits require observation and testing.
+
+3. **Competitive choice (`competitive_choice`)**  
+   Investigate alternatives: paper calendars, spreadsheets, shared calendars, existing shop software and doing nothing. No Swiss competitor has been verified. The overseas analog belongs in the **cross-market analog** lane: reported repeat paying users suggest repeat commercial use there, but audited profitability is unavailable.  
+   **Transfer conditions:** comparable buyer and workflow, problem severity, pricing tolerance, language requirements, integrations, switching costs, acquisition access and support economics. Until checked, overseas outcomes do not establish Swiss demand or profitability. No moat is established.
+
+4. **Product and revenue (`product_revenue`)**  
+   Proposed MVP: one shared schedule, conflict detection, appointment edits and a manual override. Test the scheduling workflow before adding integrations or broader shop management. CHF100 per shop per month is a hypothetical price, not validated pricing.
+
+5. **Acquisition and sales (`acquisition_sales`)**  
+   Proposed first-ten-customer route: recruit relevant shops for discovery, demonstrate the narrow workflow, then seek paid trials after confirming practical usefulness. Track contacted shops, responses, qualified trials, payments and founder hours. Zero acquisition spend in the arithmetic does not establish free acquisition or eliminate founder effort.
+
+6. **Delivery and team (`delivery_team`)**  
+   Assume founder-led development, onboarding and support; actual skills and capacity are unknown.  
+   **Business Model Canvas:** partners—potential integration providers; activities—build, onboard, support; resources—software and founder time; proposition—fewer scheduling conflicts; relationships—assisted onboarding; channels—direct recruitment; segment—selected Swiss repair shops; costs—service, support and fixed operations; revenue—subscriptions. All are proposed configuration choices.
+
+7. **Finances (`finances`)**  
+   **Hypothetical monthly arithmetic, not a forecast:**
+
+   | Item | Calculation | Result |
+   |---|---|---:|
+   | Revenue | CHF100 × 10 customers | CHF1,000 |
+   | Direct costs | CHF20 × 10 | CHF200 |
+   | Contribution before fixed costs | CHF1,000 − CHF200 | CHF800 |
+   | Monthly cash change | CHF800 − CHF1,500 fixed costs | **−CHF700** |
+   | Runway | CHF10,000 opening cash ÷ CHF700 burn | **14.3 months** |
+
+   Contribution is CHF80 per customer, or 80% of revenue. Under unchanged costs, covering fixed costs requires **19 customers**. This calculation assumes ten paying customers throughout, timely monthly receipts/payments, no startup cash outlay and no additional expenses. Taxes, owner compensation, churn, billing delays and acquisition effort are unquantified. Actual revenue remains unestablished because there are no paying users.
+
+8. **Milestones and risks (`milestones_risks`)**  
+   Proposed research decisions:
+   
+   - **Days 1–7:** observe scheduling and measure duplicate bookings, rework and consequences. Narrow or revise the segment if the problem is infrequent or inexpensive.
+   - **By day 30:** test a prototype against existing workarounds. Continue only if users demonstrate fewer conflicts without unacceptable extra work.
+   - **By day 60:** test real payment at the proposed price. Positive comments alone do not pass this gate.
+   - **By day 90:** examine renewal, usage, support burden and acquisition effort. Scale only after repeat payment and credible economics.
+
+   Before each test, define its sample, success threshold, measurement window and responsible owner. Main failure paths are low-value pain, resistance to switching, and support/integration costs exceeding contribution. These thresholds and failure probabilities are not yet established.
+
+9. **Funding, legal and IP (`funding_legal_ip`)**  
+   Treat CHF10,000 as hypothetical opening cash, not confirmed funding. A bounded bootstrap approach is provisional; VC research is unnecessary without a venture-scale funding objective. Before handling customer data or contracting, investigate applicable Swiss privacy obligations, security, contractual responsibilities, software ownership and third-party licences. Legal readiness and defensibility are unresolved.
+
+**Limits:** This plan uses only the supplied synthetic facts and snapshot guidance. Arithmetic was calculated; no external research, outreach, payment collection, publication or legal verification was performed. Snapshot-referenced research ledgers, publishing helpers and independent-review materials were unavailable, so this is a provisional response—not a formally validated or published plan.

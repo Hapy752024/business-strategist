@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "bicycle-guide",
+  "source_url": "https://association.example/resources",
+  "official_domain": "association.example",
+  "destination_url": "https://workshop.example/repair-guide",
+  "source_passage": "Our association welcomes useful repair guides for independent bicycle mechanics. Free editorial consideration; no renewal and no reciprocal link required.",
+  "audience_fit": "Independent bicycle mechanics use this resource page",
+  "locale": "GB:en",
+  "reader_benefit": "Evidence-supported repair checklist",
+  "route_class": "editorial",
+  "eligibility": "Relevant repair resources",
+  "contact_route": "https://association.example/contact",
+  "fee": "none",
+  "renewal_terms": "none",
+  "account_requirements": "none",
+  "reciprocal_requirement": "none",
+  "link_inclusion": "unknown",
+  "checked_at": "2026-10-11",
+  "qualification": "qualified",
+  "reason": "Useful guide matches stated editorial criteria",
+  "provenance": [
+    {
+      "path": "publisher.txt",
+      "sha256": "0f5c9563652c4cb50cf8653e87e88225f5dc7e08f337bd0e61d517c4ebcc8614"
+    }
+  ]
+}

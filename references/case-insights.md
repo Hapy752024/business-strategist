@@ -193,3 +193,7 @@ Source links are relative to `case_insights.md`. A shared source under the
 Business root can be cited as `../../market_research/<source>.md`. Parent
 segments are allowed while the target stays within that Business workspace;
 missing files, filesystem escapes and symlink traversal are rejected.
+
+## Enriched research and downstream case plans
+
+Apply [research-data-and-precedents.md](research-data-and-precedents.md) for decision-led statistics/studies, international commercial precedents and investor signals. Preserve the separate VOC/review contracts. After consolidating material findings, refresh the current case business plan using [case-business-plan.md](case-business-plan.md). A provisional appraisal plan or stale plan does not establish full case delivery.

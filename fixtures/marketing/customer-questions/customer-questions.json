@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "questions": [
+    {
+      "id": "Q1",
+      "kind": "customer",
+      "passage": "How long does setup take?",
+      "source_date": "2026-10-01T00:00:00Z",
+      "source": {
+        "path": "sources/question.json",
+        "sha256": "594d02b1372e84aebfeafb3ceb1f13832fc0775689fa6468b5c42266ad53cc5b"
+      },
+      "review": {
+        "path": "sources/review.json",
+        "sha256": "aade335594e2d7fa0dccac2f3acffd7e75836d1035e5930024bc9c103de7b7ee"
+      },
+      "segment": "agency owners",
+      "segment_relation": "target",
+      "buyer_context": "Synthetic prospect",
+      "cluster_id": null,
+      "buyer_stage": "evaluation",
+      "current_answer": null,
+      "linked_brief_ids": [
+        "CB-001"
+      ],
+      "visibility": "public"
+    }
+  ]
+}

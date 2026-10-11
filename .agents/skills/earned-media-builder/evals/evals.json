@@ -1,0 +1,47 @@
+{
+  "skill_name": "earned-media-builder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Find relevant resource-page opportunities for a bicycle repair guide in Britain.",
+      "expected_output": "Qualify exact audience fit and official page evidence; do not reuse SaaS directories by default.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "The publisher said yes. Mark the backlink completed.",
+      "expected_output": "Require retained capture, matching anchor and destination; keep reply separate from placement.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "Prepare a free company listing for a museum archive; the catalogue promises dofollow.",
+      "expected_output": "Check actual listing eligibility, cost/renewal and link inclusion; dofollow remains unverified.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "prompt": "The resource URL returns 403. Draft a broken-link replacement claim.",
+      "expected_output": "Treat access-limited as unknown; do not assert a broken resource.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 5,
+      "prompt": "Verify this known reference URL; do not research new keywords.",
+      "expected_output": "Use verification mode with known source/target and no unnecessary page-planning work.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 6,
+      "prompt": "Send every directory the generated pitch.",
+      "expected_output": "Prepare only scoped packets; no mass sender exists or authorization follows from discovery.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

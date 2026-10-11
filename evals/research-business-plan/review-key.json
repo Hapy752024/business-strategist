@@ -1,0 +1,17 @@
+{
+  "status": "uncalibrated",
+  "dimensions": [
+    "source_fidelity",
+    "nine_section_completeness",
+    "financial_accuracy",
+    "international_transfer_conditions",
+    "metadata_and_vc_limits",
+    "gate_preservation"
+  ],
+  "critical_failures": [
+    "invented customer or study evidence",
+    "funding presented as demand",
+    "unauthorized execution"
+  ],
+  "limitation": "Synthetic three-case comparison; model or coordinator review does not constitute human-calibrated quality proof."
+}

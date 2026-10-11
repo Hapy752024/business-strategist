@@ -4,31 +4,86 @@
   "title": "Entity landscape",
   "description": "A lane-aware, evidence-backed entity record for competitive analysis.",
   "type": "object",
-  "required": ["schema_version", "brief", "entities", "sources", "coverage"],
+  "required": [
+    "schema_version",
+    "brief",
+    "entities",
+    "sources",
+    "coverage"
+  ],
   "properties": {
-    "schema_version": {"type": "string", "const": "1.0"},
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
     "brief": {
       "type": "object",
-      "required": ["job", "service", "target_segment", "geography"],
+      "required": [
+        "job",
+        "service",
+        "target_segment",
+        "geography"
+      ],
       "properties": {
-        "job": {"type": "string"},
-        "service": {"type": "string"},
-        "target_segment": {"type": "string"},
-        "buyer": {"type": "string"},
-        "geography": {"type": "string"},
-        "price_tier": {"type": "string"}
+        "job": {
+          "type": "string"
+        },
+        "service": {
+          "type": "string"
+        },
+        "target_segment": {
+          "type": "string"
+        },
+        "buyer": {
+          "type": "string"
+        },
+        "geography": {
+          "type": "string"
+        },
+        "price_tier": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
-    "entities": {"type": "array", "items": {"$ref": "#/$defs/entity"}},
-    "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+    "entities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entity"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
     "coverage": {
       "type": "object",
-      "required": ["lanes_checked", "gaps"],
+      "required": [
+        "lanes_checked",
+        "gaps"
+      ],
       "properties": {
-        "lanes_checked": {"type": "array", "items": {"enum": ["competitive_market", "similar_company", "capability_reference"]}},
-        "gaps": {"type": "array", "items": {"type": "string"}},
-        "retrieved_at": {"type": "string"}
+        "lanes_checked": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "competitive_market",
+              "similar_company",
+              "capability_reference"
+            ]
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retrieved_at": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     }
@@ -36,77 +91,337 @@
   "$defs": {
     "fit": {
       "type": "string",
-      "enum": ["strong", "partial", "none", "unknown"]
+      "enum": [
+        "strong",
+        "partial",
+        "none",
+        "unknown"
+      ]
     },
     "entity": {
       "type": "object",
-      "required": ["id", "name", "url", "primary_lane", "competitive_role", "inspiration_roles", "classification_reason", "evidence_quality"],
+      "required": [
+        "id",
+        "name",
+        "url",
+        "primary_lane",
+        "competitive_role",
+        "inspiration_roles",
+        "classification_reason",
+        "evidence_quality"
+      ],
       "properties": {
-        "id": {"type": "string", "minLength": 1},
-        "name": {"type": "string", "minLength": 1},
-        "url": {"oneOf": [{"type": "string", "format": "uri"}, {"const": ""}]},
-        "primary_lane": {"enum": ["competitive_market", "similar_company", "capability_reference", "excluded", "uncertain"]},
-        "competitive_role": {"enum": ["direct", "indirect", "substitute", "future_threat", "none", "unknown"]},
-        "inspiration_roles": {"type": "array", "items": {"enum": ["offer", "pricing", "service_delivery", "positioning", "website", "brand", "youtube", "social", "content", "trust", "onboarding"]}},
-        "offer_job_overlap": {"$ref": "#/$defs/fit"},
-        "target_segment_overlap": {"$ref": "#/$defs/fit"},
-        "buyer_overlap": {"$ref": "#/$defs/fit"},
-        "geography_overlap": {"$ref": "#/$defs/fit"},
-        "price_tier_overlap": {"$ref": "#/$defs/fit"},
-        "purchase_substitutability": {"$ref": "#/$defs/fit"},
-        "classification_reason": {"type": "string", "minLength": 1},
-        "classification_evidence": {"type": "array", "items": {"$ref": "#/$defs/source"}},
-        "evidence_quality": {"enum": ["high", "medium", "low", "unverified"]},
-        "verification_status": {"enum": ["verified", "likely", "uncertain", "excluded"]},
-        "lane_observations": {"type": "array", "items": {"enum": ["competitive_market", "similar_company", "capability_reference"]}},
-        "analog_markets": {"type": "array", "items": {"type": "string"}},
-        "legacy_competitor_type_hint": {"type": "string"},
-        "services": {"type": "array", "items": {"$ref": "#/$defs/service"}},
-        "social_presence": {"type": "array", "items": {"$ref": "#/$defs/socialObservation"}}
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "const": ""
+            }
+          ]
+        },
+        "primary_lane": {
+          "enum": [
+            "competitive_market",
+            "similar_company",
+            "capability_reference",
+            "excluded",
+            "uncertain"
+          ]
+        },
+        "competitive_role": {
+          "enum": [
+            "direct",
+            "indirect",
+            "substitute",
+            "future_threat",
+            "none",
+            "unknown"
+          ]
+        },
+        "inspiration_roles": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "offer",
+              "pricing",
+              "service_delivery",
+              "positioning",
+              "website",
+              "brand",
+              "youtube",
+              "social",
+              "content",
+              "trust",
+              "onboarding"
+            ]
+          }
+        },
+        "offer_job_overlap": {
+          "$ref": "#/$defs/fit"
+        },
+        "target_segment_overlap": {
+          "$ref": "#/$defs/fit"
+        },
+        "buyer_overlap": {
+          "$ref": "#/$defs/fit"
+        },
+        "geography_overlap": {
+          "$ref": "#/$defs/fit"
+        },
+        "price_tier_overlap": {
+          "$ref": "#/$defs/fit"
+        },
+        "purchase_substitutability": {
+          "$ref": "#/$defs/fit"
+        },
+        "classification_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classification_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "evidence_quality": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unverified"
+          ]
+        },
+        "verification_status": {
+          "enum": [
+            "verified",
+            "likely",
+            "uncertain",
+            "excluded"
+          ]
+        },
+        "lane_observations": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "competitive_market",
+              "similar_company",
+              "capability_reference"
+            ]
+          }
+        },
+        "analog_markets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "legacy_competitor_type_hint": {
+          "type": "string"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/service"
+          }
+        },
+        "social_presence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/socialObservation"
+          }
+        },
+        "commercial_precedent": {
+          "type": "object",
+          "required": [
+            "evidence_level",
+            "observations",
+            "transfer_conditions",
+            "counterexamples",
+            "local_demand_status"
+          ],
+          "properties": {
+            "evidence_level": {
+              "enum": [
+                "unresolved",
+                "existence_only",
+                "purchase_observed",
+                "repeat_value_observed",
+                "economics_observed"
+              ]
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "transfer_conditions": {
+              "type": "object"
+            },
+            "counterexamples": {
+              "type": "array"
+            },
+            "local_demand_status": {
+              "const": "requires_target_market_evidence"
+            }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": true
     },
     "service": {
       "type": "object",
-      "required": ["observed_text", "price_status"],
+      "required": [
+        "observed_text",
+        "price_status"
+      ],
       "properties": {
-        "observed_text": {"type": "string", "minLength": 1},
-        "target_segments": {"type": "array", "items": {"type": "string"}},
-        "prices": {"type": "object"},
-        "price_status": {"enum": ["structured_price_found", "pricing_mentioned", "not_found"]},
-        "conditions": {"type": "array", "items": {"type": "string"}},
-        "evidence_type": {"type": "string"}
+        "observed_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_segments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prices": {
+          "type": "object"
+        },
+        "price_status": {
+          "enum": [
+            "structured_price_found",
+            "pricing_mentioned",
+            "not_found"
+          ]
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_type": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "socialObservation": {
       "type": "object",
-      "required": ["platform", "url", "status", "retrieved_at", "posts_sampled", "metrics_are_public_proxies"],
+      "required": [
+        "platform",
+        "url",
+        "status",
+        "retrieved_at",
+        "posts_sampled",
+        "metrics_are_public_proxies"
+      ],
       "properties": {
-        "platform": {"type": "string", "minLength": 1},
-        "url": {"type": "string"},
-        "status": {"enum": ["verified_active", "verified_inactive", "unverified", "not_found_in_checked_sources"]},
-        "role": {"type": "string"},
-        "retrieved_at": {"type": "string"},
-        "posts_sampled": {"type": "integer", "minimum": 0},
-        "sample_window": {"type": "string"},
-        "formats": {"type": "array", "items": {"type": "string"}},
-        "cadence": {"type": "string"},
-        "cta": {"type": "array", "items": {"type": "string"}},
-        "public_metrics": {"type": "object"},
-        "coverage_gap": {"type": "string"},
-        "metrics_are_public_proxies": {"const": true}
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "verified_active",
+            "verified_inactive",
+            "unverified",
+            "not_found_in_checked_sources"
+          ]
+        },
+        "role": {
+          "type": "string"
+        },
+        "retrieved_at": {
+          "type": "string"
+        },
+        "posts_sampled": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sample_window": {
+          "type": "string"
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cadence": {
+          "type": "string"
+        },
+        "cta": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "public_metrics": {
+          "type": "object"
+        },
+        "coverage_gap": {
+          "type": "string"
+        },
+        "metrics_are_public_proxies": {
+          "const": true
+        }
       },
       "additionalProperties": true
     },
     "source": {
       "type": "object",
-      "required": ["url", "retrieved_at", "evidence_type"],
+      "required": [
+        "url",
+        "retrieved_at",
+        "evidence_type"
+      ],
       "properties": {
-        "url": {"oneOf": [{"type": "string", "format": "uri"}, {"const": ""}]},
-        "retrieved_at": {"type": "string"},
-        "evidence_type": {"enum": ["official_entity_page", "official_profile", "public_post", "search_result", "provider_fallback", "user_supplied"]},
-        "claim": {"type": "string"}
+        "url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "const": ""
+            }
+          ]
+        },
+        "retrieved_at": {
+          "type": "string"
+        },
+        "evidence_type": {
+          "enum": [
+            "official_entity_page",
+            "official_profile",
+            "public_post",
+            "search_result",
+            "provider_fallback",
+            "user_supplied"
+          ]
+        },
+        "claim": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     }

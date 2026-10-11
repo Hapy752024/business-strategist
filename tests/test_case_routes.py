@@ -42,6 +42,15 @@ def test_case_insights_route_accepts_early_registered_case(tmp_path, monkeypatch
     assert 'references/case-insights.md' in packet['required_references']
 
 
+def test_case_plan_routes_before_selection_and_keeps_research_gate(tmp_path, monkeypatch):
+    p, scope = setup(tmp_path, monkeypatch)
+    packet = routing.route_request('Prepare a provisional case business plan', intent='case-business-plan',
+                                   project='topic', case_id='a', task_scope='strategy', check_skill='startup-business-builder')
+    assert packet['mode'] == 'case_plan'
+    assert packet['case_context']['execution_binding'] is None
+    assert packet['gate_blocked'] and packet['gate'] == 'case_insights_current'
+
+
 def test_case_pain_pass_and_interpretation_correction(tmp_path, monkeypatch):
     p, scope = setup(tmp_path, monkeypatch)
     artifacts, _, _ = prepare_problem_assessment(scope, workspace, monkeypatch, case_id='a')

@@ -1,0 +1,12 @@
+{
+  "status": "accepted",
+  "evidence_id": "ev-synthetic-q1",
+  "reviewed_segment": "agency owners",
+  "source_url": "https://example.com/customer/1",
+  "segment_relation": "target",
+  "relevance_rationale": "Synthetic buyer asking about setup",
+  "voice": "prospective_user",
+  "author_relationship": "firsthand_prospective_user",
+  "firsthand": true,
+  "decision_context": "Considering setup before Monday"
+}

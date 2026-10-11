@@ -27,3 +27,5 @@ For substantive query design and refinement, apply repo-root `references/researc
 ## Output
 
 Return the report path, source coverage, 3–7 candidate problem-segment pockets or a clear no-opportunity finding, the strongest counter-evidence, and one user decision question.
+
+For substantive Business research, read repo-root `references/research-data-and-precedents.md`. Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals. Metadata is discovery until original findings are reviewed.

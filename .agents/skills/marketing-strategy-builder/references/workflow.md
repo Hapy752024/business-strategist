@@ -242,3 +242,5 @@ If needed, ask:
 `Who is the specific buyer you want this marketing strategy to convert first?`
 
 For a selected visibility intervention, use repo-root `references/search-visibility-decisions.md` for the evidence-to-change queue and outcome review. If recordings are needed, apply `references/ai-answer-recordings.md`; the processor is offline, and listening/live collection are not implemented capabilities. Do not run a mandatory multi-engine program.
+
+For question-led content, use `references/customer-question-tracking.md`. Reviewed target-customer question IDs may bind to format briefs; supplier/hypothesis rows stay separate and unknown answers/outcomes stay unknown.

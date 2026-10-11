@@ -27,7 +27,7 @@ def normalize(path: Path, mapping: dict[str, str], metadata: dict) -> dict:
     observations = []
     for index, row in enumerate(rows):
         item = {key: row.get(column) for key, column in mapping.items()}
-        item.update({k: metadata.get(k) for k in ("property", "source", "period_start", "period_end", "timezone") if not item.get(k)})
+        item.update({k: metadata.get(k) for k in ("property", "source", "period_start", "period_end", "timezone", "metric", "unit") if not item.get(k)})
         if not all(item.get(k) for k in ("property", "source", "period_start", "period_end", "timezone", "metric", "unit")):
             raise ValueError(f"row {index + 1}: required context is missing")
         exported_at = item.get("exported_at") or metadata.get("exported_at")

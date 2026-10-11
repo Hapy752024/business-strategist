@@ -19,5 +19,5 @@ Focused/execution: the requested answer or deliverable, with material assumption
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
 
-For keyword research and the keyword-to-page map read [keyword research](references/keyword-research.md).
+For keyword research, the `seo-page-planning` route and public-resource briefs read [keyword research](references/keyword-research.md). Use earned-media-builder for selected external opportunity work.
 For selected multi-step work, read repo-root `references/marketing-execution.md`; prepare the agent work, exact owner/platform handoffs and observable completion checks.

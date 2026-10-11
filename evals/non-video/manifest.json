@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "status": "frozen_inputs_quality_pending",
+  "baseline_snapshot": {
+    "directory": "baseline",
+    "sha256": {
+      "references/modules/source-worker-packet.md": "eb7f2ab124207bf56928185cbf9a302f7948a1869c36ee221805519b1438c60c",
+      "references/opportunity-research-approaches.md": "3388f03cca7ef3097951af9584f16c92a96df5edc15fa57505d9137845dedc23",
+      ".claude/agents/evidence-researcher.md": "fde23edfb1fd2000a62b553bd4497d1e6438a88d985645546188dbf4fd9f2adb",
+      "scripts/brand/audit_web_pages.mjs": "86480e950135649a2bcc1db3f27bdb0acdc1266699663521e4fffe8066a3ed9f",
+      "scripts/brand/compare_seo_audits.py": "469b2e0ce150e060cb1df44ad2e680514df380c0c61bf6659d1e706f41ef85d8",
+      ".agents/skills/brand-website-designer-builder/references/testing.md": "cc012eff024c12675ca4d2f6de1ae6a6e08fbb4be147214b9f0e24e5effc80c5",
+      ".agents/skills/brand-website-designer-builder/references/content-and-conversion.md": "5943ec589fb25329dba9926f4c0b0bc15df06826d4ce644fea13c9c67a8a1ae1",
+      ".agents/skills/brand-website-designer-builder/references/maintenance.md": "bd3595c89fcdacf6a9b2c27ffaf39d2e9eec2bcb11aabd3a2c0018d2a79ae2df",
+      "schemas/content-brief.schema.json": "976549967deb1d7503ee1626fb276e1840ebbcc505c8c25bd1a8c27772bf2ac4",
+      "scripts/subprojects.py": "0494a1e9eab0817cfb5fd3690ad255e56528bcf425ff41cedda6c64716802c79",
+      "references/marketing-execution.md": "b8f0ae346844090b4e43cccc8af088cac495c702015dd3659732d8c052024720",
+      ".agents/skills/marketing-strategy-builder/references/workflow.md": "341a0201c192db964df4189ce33638f390609440d0ab468c6fb40279693cab09",
+      ".agents/skills/social-digital-marketing-planner/references/workflow.md": "ca42d00af4595eceb404f825cb907d710199dcfc6af7ec8b5aae89781b1722f3",
+      "scripts/run_analysis_evals.py": "037d19b4ce9116ceae17b1032881151fe3c2492095a86f2485a4401accff57d7"
+    }
+  },
+  "source_dataset": "source.json",
+  "source_dataset_sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+  "review_key": "review-key.json",
+  "split_counts": {
+    "development": 5,
+    "held_out": 1
+  },
+  "tasks": [
+    {
+      "id": "repair",
+      "kind": "synthetic",
+      "split": "development",
+      "group": "repair",
+      "prompt": "Three independent accepted units a/b/c and rejected d (attempt 1 of 3). Return d alone; describe receipt validation and retry exhaustion. Do not rewrite siblings.",
+      "snapshot_paths": [
+        "references/modules/source-worker-packet.md"
+      ],
+      "baseline_optional_snapshot_paths": []
+    },
+    {
+      "id": "dependency",
+      "kind": "synthetic",
+      "split": "development",
+      "group": "dependency",
+      "prompt": "Accepted b consumed a output; c is independent. On resume a output bytes changed. Explain what is stale and how to recover without resetting attempt counts.",
+      "snapshot_paths": [
+        "references/modules/source-worker-packet.md"
+      ],
+      "baseline_optional_snapshot_paths": []
+    },
+    {
+      "id": "page",
+      "kind": "synthetic",
+      "split": "development",
+      "group": "page",
+      "prompt": "An edit kept metadata but removed the original calculator. Specify preservation declarations and distinct local behavior tests; no production actions.",
+      "snapshot_paths": [
+        ".agents/skills/brand-website-designer-builder/references/testing.md"
+      ],
+      "baseline_optional_snapshot_paths": []
+    },
+    {
+      "id": "question",
+      "kind": "synthetic",
+      "split": "development",
+      "group": "question",
+      "prompt": "Only supplier posts say prospects ask about ROI. A reviewed target customer independently asks about setup time. Prepare content inputs separating proof from context; answers and outcomes unknown.",
+      "snapshot_paths": [
+        "references/customer-question-tracking.md"
+      ],
+      "baseline_optional_snapshot_paths": [
+        "references/customer-question-tracking.md"
+      ]
+    },
+    {
+      "id": "creative",
+      "kind": "synthetic",
+      "split": "development",
+      "group": "creative",
+      "prompt": "Example A organic with 1000 views/20 shares after seven days; B paid 1000/90 after one day; unknown creator C with unknown distribution. Compare without causal/demand claims and prepare one test.",
+      "snapshot_paths": [
+        "references/comparative-creative-analysis.md"
+      ],
+      "baseline_optional_snapshot_paths": [
+        "references/comparative-creative-analysis.md"
+      ]
+    },
+    {
+      "id": "resume",
+      "kind": "synthetic",
+      "split": "held_out",
+      "group": "resume",
+      "prompt": "Fresh session: rejected work is pending with attempts=3, limit=3; an old accepted sibling has unchanged inputs. What work can run and what must be retained?",
+      "snapshot_paths": [
+        "references/modules/source-worker-packet.md"
+      ],
+      "baseline_optional_snapshot_paths": []
+    }
+  ],
+  "limitations": [
+    "Small synthetic set; not customer evidence.",
+    "Actual pre-change working tree captured; optional newly introduced documents absent baseline.",
+    "Model/output review and second-operator usability pending; do not claim measured improvement."
+  ]
+}

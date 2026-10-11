@@ -1,0 +1,60 @@
+I’ll read the supplied snapshot guidance and prepare a provisional plan, keeping the evidence types and missing information distinct.
+
+**Provisional assessment: investigate further; business viability is unresolved.** A subscription helping Swiss households manage recurring administration is a plausible concept, but the supplied evidence establishes neither Swiss demand nor willingness to pay, retention, or viable delivery costs.
+
+This is a synthetic planning draft based only on the supplied passages and snapshot references. It is not a reviewed or published case plan, and it does not authorize launch or spending.
+
+### Evidence assessment
+
+| Evidence stream | What is supplied | Permitted interpretation | Important limit |
+|---|---|---|---|
+| Study metadata | OpenAlex returned a title about household administrative burden | A relevant research lead exists | No abstract, methods, or full text was inspected. It establishes no finding about burden, prevalence, or Switzerland. |
+| International comparison: J | Japanese company J has many signups | Reported signup interest in a foreign comparison company | Purchases, retention, repeat value, revenue, and economics are undisclosed. This is not a demonstrated subscription success. |
+| Adverse comparison: K | Company K failed expansion into Europe | Counterevidence to assuming easy geographic transfer | Causes and applicability to Switzerland are unknown. It does not prove this proposal will fail. |
+| Funding signal | Type `investor.joined_round`; startup is subject, round is object; amount undisclosed | A feed reports a participation-type event associated with a startup and round | The startup must not be relabeled as the investor. Investor identity is unavailable; amount is unknown, not zero. No capital trend or investor fit can be inferred. |
+| Local customer evidence | None supplied | Swiss demand remains untested | No local complaints, observed workflows, purchases, renewal, or current spend are established. |
+
+J and K belong provisionally in the **international similar-company lane**, subject to confirming service and customer overlap. Neither establishes a Swiss competitor count. No named Swiss market competitors or capability references are supplied.
+
+### Research sections
+
+These are proposed investigations, not completed research.
+
+| Section | Decision-changing question | Evidence needed |
+|---|---|---|
+| Swiss customer need | Which households have frequent, consequential tasks they want help completing? | Separate samples of topic-led household experiences and independent feedback on existing services; observed task journeys, workarounds, consequences, frequency, and current spend. |
+| Studies and market context | What burden is measured, for whom, and with what methods? | Retrieve the identified study, inspect methods and findings, and assess local applicability. Obtain Swiss denominators with matching population definitions before estimating market size. |
+| Local alternatives and choice | Why would households switch or pay? | Verify services, prices, scope, trust requirements, and customer experiences of relevant Swiss alternatives. Compare self-management, household help, and doing nothing. |
+| International precedents | Do analogous services produce purchases and retained value? | Verify J’s offer and signup definition; seek independent purchase, renewal, cancellation, and operating evidence. Investigate K’s expansion failure without assigning an unsupported cause. |
+| Transferability | Which foreign mechanisms could work in Switzerland? | Compare customer job, buyer/payer, language, pricing, regulation, distribution, trust, service costs, and founder resources. |
+| Funding | Is outside capital useful or necessary? | Verify the feed event and seek an original announcement identifying participants and amount, if disclosed. Assess financing fit separately from customer demand. |
+| Operating and economic feasibility | Can the service deliver reliably at a price households pay? | Measure task effort, support, rework, permission requirements, acquisition effort, actual receipts, costs, and retention over relevant task cycles. |
+
+### Provisional business plan
+
+All nine sections below have **provisional** status; their material evidence gaps remain visible.
+
+| Plan section | Proposed decision and operating hypothesis | Missing evidence / next action |
+|---|---|---|
+| **1. Business** | Offer recurring administrative assistance that helps households track and complete a bounded set of tasks. Continue discovery before committing to a subscription business. | Founder objectives, resources, and availability are unknown. The pivotal question is whether recurring paid value exceeds delivery cost. |
+| **2. Customer market** | User, buyer, and payer may be an adult household member; these roles require confirmation. Compare candidate segments such as time-constrained households and people facing repeated administrative transitions. Map trigger → current workaround → assistance → completion → next recurring need. | No segment is validated. Market size and attainable initial market are unknown; calculate them only from scoped local evidence and reachable customers. |
+| **3. Competitive choice** | Test whether clear scope, reliable completion, and trusted handling of information justify switching from existing workarounds. Use J as a limited foreign interest signal and K as transfer-risk counterevidence. | Verify local competitors and substitutes. No defensibility or superior customer outcome is established. |
+| **4. Product and revenue** | Start with a manual, narrow service: task inventory, reminders, document checklists, and customer-approved completion assistance. A recurring fee is a hypothesis to compare with task-based payment. | Price, inclusions, task limits, and refund terms require testing. Avoid promising specialist advice or representation before capability and permissions are verified. |
+| **5. Acquisition and sales** | Separate unpaid learning recruitment from selling. A proposed first-ten-customer route is targeted local recruitment, followed by an explicit paid offer to eligible households. Record approached, eligible, offered, paid, activated, and renewed counts. | No channel access or conversion rate is known. Measure acquisition effort and cancellation reasons; assess repeat value across actual administrative cycles. |
+| **6. Delivery and team** | Founder-led manual delivery initially: intake, consent, task triage, assignment, review, customer approval, completion confirmation, and secure record handling. Buy basic tools before building custom automation. | Measure service time, rework, support, capacity, and founder dependence. Assign owners and verify suppliers, permissions, and quality controls before a pilot. |
+| **7. Finances** | Model monthly recurring receipts and costs per active household. Include service labor, tools, partners, refunds, acquisition, fixed costs, startup cash, payment timing, and capacity. Separate owner cash compensation from unpaid opportunity cost. | All numerical inputs are unknown. Price, contribution, break-even, runway, retention, and lifetime value cannot be calculated responsibly. Base/downside scenarios and sensitivities remain unresolved. |
+| **8. Milestones and risks** | Use staged learning followed by a bounded paid pilot only when prerequisites are met. Main failure paths include weak recurring need, unwillingness to pay, trust barriers, excessive manual cost, and unreliable completion. | Predeclare measurement windows, numeric thresholds, responsible owners, and stop/pivot actions before testing. Do not invent thresholds from the supplied evidence. |
+| **9. Funding, legal and IP** | Investigate a low-fixed-cost start; bootstrapping feasibility is unknown. Treat the VC event solely as an unverified capital signal. | Establish funding need and permitted service scope. Verify applicable Swiss privacy, consumer-contract, liability, authorization, and data-handling requirements. No investor identity, fundraising prospect, or IP advantage is established. |
+
+### Proposed 7/30/60/90-day sequence
+
+These are planning horizons, not commitments or completed milestones.
+
+- **By day 7:** Confirm founder constraints, candidate segments, task scope, research questions, and consent requirements.
+- **By day 30:** Review local customer and alternative evidence; inspect the study if accessible; investigate J and K. Select a segment only if findings support it.
+- **By day 60:** If prerequisites are satisfied, test a bounded paid offer and measure completion quality, actual receipts, labor, support, and acquisition effort.
+- **By day 90:** Assess repeat value over the task cycles observed. Continue, revise the offer or payment model, or stop according to predeclared criteria. Longer-cycle retention may still be unknown.
+
+**Important limits:** No external research, outreach, payments, pilot, calculations, publication, or independent review was performed. The snapshot requires reviewed research and source bindings for formal case-plan publication; those artifacts were not supplied. A complete provisional document therefore does not establish publication eligibility, execution readiness, or business viability.
+
+Source framework: [research and precedents](snapshot/references/research-data-and-precedents.md), [VC signals](snapshot/references/vc-investment-signals.md), [assessment](snapshot/references/case-assessment.md), and [nine-section case plan](snapshot/references/case-business-plan.md).

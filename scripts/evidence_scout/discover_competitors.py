@@ -118,13 +118,14 @@ COMPETITOR_TERMS = {
     "es": ["proveedores", "alternativas", "comparativa", "opiniones precios", "servicio asesoría", "plantilla hoja de cálculo", "hacerlo uno mismo"],
     "it": ["fornitori", "alternative", "confronto", "recensioni prezzi", "servizio consulenza", "modello foglio di calcolo", "fai da te"],
 }
-REFERENCE_TERMS = {"en": "company case study", "de": "Unternehmen Fallstudie",
+COMPETITOR_TERMS["ja"] = ["サービス", "比較", "口コミ 料金", "代替", "失敗 撤退"]
+REFERENCE_TERMS = {"ja": "企業 事例", "en": "company case study", "de": "Unternehmen Fallstudie",
                    "fr": "entreprise étude de cas", "es": "empresa caso práctico", "it": "azienda caso studio"}
 
 
 def query_plan(topic: str, segment: str, known: str, analog_markets: list[str] | None = None,
                reference_capabilities: list[str] | None = None, language: str = "en",
-               topic_keywords: str = "", segment_keywords: str = "") -> dict[str, list[dict[str, str]]]:
+               topic_keywords: str = "", segment_keywords: str = "", analog_locales: list[str] | None = None) -> dict[str, list[dict[str, str]]]:
     """Source-language seeds; no implicit English expansion for unsupported languages."""
     lang = language.split("-")[0].lower()
     seed = topic_keywords or topic
@@ -134,12 +135,23 @@ def query_plan(topic: str, segment: str, known: str, analog_markets: list[str] |
     competitive = [f"{scoped} {term}".strip() for term in terms]
     for name in known_competitor_terms(known):
         competitive.extend(f"{name} {term}".strip() for term in terms[:4])
-    return {
+    plan = {
         "competitive_market": [{"query": query, "scope_value": segment or seed} for query in dict.fromkeys(competitive)],
         "similar_company": [{"query": f"{seed} {market} {term}".strip(), "scope_value": market}
                             for market in analog_markets or [] for term in terms[:3]],
         "capability_reference": [{"query": f"{capability} {REFERENCE_TERMS.get(lang, '')}".strip(), "scope_value": capability} for capability in reference_capabilities or []],
     }
+    for packet in analog_locales or []:
+        if '=' not in packet or ':' not in packet.split('=', 1)[0]:
+            raise ValueError('--analog-locale requires CC:language=local topic keywords')
+        locale, keywords = packet.split('=', 1)
+        geo, local_language = locale.split(':', 1)
+        if len(geo) != 2 or not keywords.strip() or not local_language.strip():
+            raise ValueError('Analog locale requires country, language and reviewed native-language keywords')
+        for term in COMPETITOR_TERMS.get(local_language, ['']):
+            plan['similar_company'].append({'query': (keywords + ' ' + term).strip(), 'scope_value': geo.upper(),
+                                            'locale': geo.upper() + ':' + local_language.lower()})
+    return plan
 
 
 def execution_plan(args):
@@ -157,7 +169,7 @@ def execution_plan(args):
             lane = row.get("lane_scope")
             if lane not in query_sets or not row.get("scope_value", "").strip():
                 raise ValueError("Competitor queries require lane_scope and nonempty scope_value")
-            if row["locale"] != f"{args.geo.upper()}:{args.language.lower()}":
+            if row["locale"] != f"{args.geo.upper()}:{args.language.lower()}" and lane != "similar_company":
                 raise ValueError("Query locale must match --geo and --language; run locales separately")
             if row["provider"] not in {"brave_search", "firecrawl"}:
                 raise ValueError("Competitor discovery supports brave_search and firecrawl query plans")
@@ -168,10 +180,10 @@ def execution_plan(args):
             query_sets[lane].append(dict(row))
     else:
         query_sets = query_plan(args.topic, args.customer_segment, args.known_competitors,
-            args.analog_market, args.reference_capability, args.language, args.topic_keywords, args.segment_keywords)
+            args.analog_market, args.reference_capability, args.language, args.topic_keywords, args.segment_keywords, getattr(args, "analog_locale", []))
         for lane, rows in query_sets.items():
             query_sets[lane] = [{**row, "query_id": f"{lane}-{index}-{provider}", "candidate_id": f"{lane}-{index}",
-                "provider": provider, "locale": f"{args.geo.upper()}:{args.language.lower()}", "lane_scope": lane,
+                "provider": provider, "locale": row.get("locale", f"{args.geo.upper()}:{args.language.lower()}"), "lane_scope": lane,
                 "seed_origin": "generated", "intent": "competitor_discovery", "source_family": "supplier_discovery"}
                 for index, row in enumerate(rows) for provider in ("brave_search", "firecrawl")]
         plan = {"schema_version": 1, "revision": "competitor-initial", "queries": [row for rows in query_sets.values() for row in rows]}
@@ -532,13 +544,14 @@ def search_candidates(queries, limit, raw, geo, language, lane_scope, provider):
         if not row["scheduled"]:
             continue
         query, allowance = row["query"], row["per_query_result_limit"]
+        query_geo, query_language = row.get("locale", geo + ":" + language).split(":", 1)
         if provider == "brave_search":
             response = http_get(with_query("https://api.search.brave.com/res/v1/web/search",
-                {"q": query, "count": allowance, "country": geo, "search_lang": language}),
+                {"q": query, "count": allowance, "country": query_geo, "search_lang": query_language}),
                 headers={"X-Subscription-Token": api_key, "Accept": "application/json"})
         else:
             response = http_post("https://api.firecrawl.dev/v1/search", headers={"Authorization": f"Bearer {api_key}"},
-                data={"query": query, "limit": allowance, "country": geo, "location": geo})
+                data={"query": query, "limit": allowance, "country": query_geo, "location": query_geo})
         raw.setdefault(provider, []).append({"query_id": row["query_id"], "query": query, "lane_scope": lane_scope,
                                             "scope_value": row.get("scope_value", ""), "response": response})
         status = status_from_response(response)
@@ -712,6 +725,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reference-limit", type=int, default=3, help="Lane C candidate cap per provider.")
     parser.add_argument("--geo", default="US")
     parser.add_argument("--language", default="en")
+    parser.add_argument("--analog-locale", action="append", default=[], help="CC:language=reviewed local topic keywords; repeat for international markets")
     parser.add_argument("--analog-market", action="append", default=[], help="Additional market/segment scope for Lane B analog discovery. Repeatable.")
     parser.add_argument("--reference-capability", action="append", default=[], help="Narrow Lane C capability to study, such as website or YouTube. Repeatable.")
     parser.add_argument("--fixture-results-json", default="", help="Offline replay fixture keyed by lane; bypasses provider calls for deterministic tests.")

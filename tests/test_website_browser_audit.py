@@ -11,8 +11,10 @@ ROOT = Path(__file__).resolve().parents[1]
 PROJECT = ROOT / 'fixtures/website/stellar-repair'
 
 
-@pytest.mark.parametrize('broken,redirect', [(False, None), (True, None), (False, '/'), (True, '/wrong')])
-def test_browser_audit(tmp_path, broken, redirect):
+@pytest.mark.parametrize('broken,redirect,seo_defect', [(False, None, None), (True, None, None),
+    (False, '/', None), (True, '/wrong', None), (True, None, 'canonical'),
+    (True, None, 'noindex'), (True, None, 'sitemap'), (True, None, 'preservation')])
+def test_browser_audit(tmp_path, broken, redirect, seo_defect):
     if not (PROJECT / 'node_modules/playwright/package.json').exists():
         pytest.skip('optional site Playwright dependency not installed')
     class Handler(BaseHTTPRequestHandler):
@@ -24,13 +26,15 @@ def test_browser_audit(tmp_path, broken, redirect):
                 content = b'User-agent: *\nAllow: /'
                 mime = 'text/plain'
             elif self.path == '/sitemap.xml':
-                content = b'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>'
+                content = (b'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>' if seo_defect == 'sitemap'
+                    else b'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://example.com/</loc></url></urlset>')
                 mime = 'application/xml'
             elif self.path == '/og.svg':
                 content = b'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"></svg>'
                 mime = 'image/svg+xml'
             elif self.path == '/':
-                content = ('<html><head><title>Test garden</title>' + ('' if broken and not redirect else '<meta name="description" content="A useful garden">') + '<meta property="og:image" content="https://example.com/og.svg"><link rel="canonical" href="https://example.com/"></head><body><a id="cta" href="/">Start</a><div style="height:2000px"></div><a id="sticky" href="/" style="position:fixed;bottom:0">Start</a></body></html>').encode()
+                canonical = 'https://example.com/wrong' if seo_defect == 'canonical' else 'https://example.com/'
+                content = ('<html><head><title>Test garden</title>' + ('' if broken and not redirect and not seo_defect else '<meta name="description" content="A useful garden">') + '<meta property="og:image" content="https://example.com/og.svg"><link rel="canonical" href="'+canonical+'">'+('<meta name="robots" content="noindex">' if seo_defect == 'noindex' else '')+'</head><body>' + ('' if seo_defect == 'preservation' else '<section id="useful"><h2>Repair estimate</h2><input aria-label="Repair count"></section>') + '<a id="cta" href="/">Start</a><div style="height:2000px"></div><a id="sticky" href="/" style="position:fixed;bottom:0">Start</a></body></html>').encode()
             else:
                 status, content = 404, b'<h1>Not found</h1><a href="/">Home</a>'
             self.send_response(status); self.send_header('Content-Type',mime); self.end_headers(); self.wfile.write(content)
@@ -39,7 +43,9 @@ def test_browser_audit(tmp_path, broken, redirect):
     server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
     routes = tmp_path / 'routes.json'
-    inventory = [{'path':'/','conversion':True,'cta':'#cta','stickyCta':'#sticky'}]
+    inventory = [{'path':'/','conversion':True,'cta':'#cta','stickyCta':'#sticky',
+        'expectedCanonical':'https://example.com/', 'expectedIndexable':True,
+        'expectedCrawlable':True, 'sitemapExpected':True, 'entry':True, 'preserve':[{'id':'estimate','purpose':'Retain useful estimator', 'selector':'#useful','textIncludes':['Repair estimate'],'contains':[{'selector':'input','count':1}], 'behaviorTest':'local estimator test'}]}]
     if redirect: inventory.append({'path':'/old', 'conversion':False, 'redirect':{'status':301, 'to':'/'}})
     routes.write_text(json.dumps(inventory))
     try:
@@ -49,9 +55,27 @@ def test_browser_audit(tmp_path, broken, redirect):
             pytest.skip('optional Chromium browser not installed')
         assert result.returncode == int(broken), report
         assert bool(report['errors']) == broken
+        assert report['coverage'] == {'complete': True, 'routes': sorted(row['path'] for row in inventory)}
+        if seo_defect:
+            assert any({'canonical':'canonical differs', 'noindex':'indexing directive',
+                        'sitemap':'missing from sitemap', 'preservation':'preservation estimate'}[seo_defect] in e for e in report['errors'])
+        assert len(report['preservation']) == 5
+        assert all(row['behavior'] == 'pending_separate_test' for row in report['preservation'])
+        assert all(row['status'] == ('fail' if seo_defect == 'preservation' else 'pass') for row in report['preservation'])
         assert 'no launch assessment promotion' in report['boundary']
     finally:
         server.shutdown(); server.server_close(); thread.join()
+
+
+def test_aborted_audit_records_incomplete_coverage(tmp_path):
+    routes = tmp_path/'routes.json'
+    routes.write_text(json.dumps([{'path':'/', 'conversion':False}]))
+    result = subprocess.run(['node', str(ROOT/'scripts/brand/audit_web_pages.mjs'),
+        str(tmp_path/'no-playwright'), 'https://example.test', str(routes), 'fixture-revision'],
+        capture_output=True, text=True, timeout=15)
+    report = json.loads(result.stdout)
+    assert result.returncode == 1
+    assert report['coverage'] == {'complete': False, 'routes': []}
 
 
 def test_browser_audit_never_fetches_uninventoried_or_query_links(tmp_path):
@@ -105,3 +129,13 @@ def test_browser_audit_never_fetches_uninventoried_or_query_links(tmp_path):
         assert '/unlisted' not in requested
     finally:
         server.shutdown(); server.server_close(); thread.join()
+
+
+def test_redirect_preservation_is_rejected_before_browser_launch(tmp_path):
+    routes=tmp_path/'routes.json'
+    routes.write_text(json.dumps([{'path':'/old','conversion':False,'redirect':{'status':301,'to':'/'},
+        'preserve':[{'id':'value','purpose':'Retain value','selector':'#value'}]}]))
+    result=subprocess.run(['node',str(ROOT/'scripts/brand/audit_web_pages.mjs'),str(tmp_path/'no-project'),'https://example.test',str(routes)],capture_output=True,text=True,timeout=15)
+    report=json.loads(result.stdout)
+    assert result.returncode == 1 and not report['coverage']['complete']
+    assert any('redirect routes cannot declare' in e for e in report['errors'])

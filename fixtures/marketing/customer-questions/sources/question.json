@@ -1,0 +1,10 @@
+{
+  "evidence_id": "ev-synthetic-q1",
+  "source_url": "https://example.com/customer/1",
+  "published_at": "2026-10-01T00:00:00Z",
+  "text": "How long does setup take? I need this ready before Monday.",
+  "source_role": "customer_statement",
+  "author_voice_status": "prospective_user",
+  "capture_unit": "experience",
+  "content_completeness": "attributed_episode"
+}

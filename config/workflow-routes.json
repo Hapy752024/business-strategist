@@ -479,7 +479,12 @@
     },
     {
       "id": "case-insights",
-      "match": ["consolidate case insights", "update case insights", "case insights document", "answer in case insights"],
+      "match": [
+        "consolidate case insights",
+        "update case insights",
+        "case insights document",
+        "answer in case insights"
+      ],
       "skill": "opportunity-risk-designer",
       "mode": "insights",
       "forbidden": []
@@ -527,6 +532,76 @@
         "competitor-marketing-analyzer"
       ],
       "mode": "validation_page"
+    },
+    {
+      "id": "case-business-plan",
+      "match": [
+        "business plan per case",
+        "provisional case business plan"
+      ],
+      "skill": "startup-business-builder",
+      "mode": "case_plan",
+      "forbidden": [],
+      "requires_pain_gate": false
+    },
+    {
+      "id": "seo-page-planning",
+      "skill": "marketing-strategy-builder",
+      "mode": "page_planning",
+      "match": [
+        "SEO keywords",
+        "keyword research",
+        "keyword to page map",
+        "SEO page planning"
+      ],
+      "requires_pain_gate": true
+    },
+    {
+      "id": "seo-technical-audit",
+      "skill": "brand-website-designer-builder",
+      "mode": "technical_audit",
+      "match": [
+        "technical SEO audit",
+        "SEO regression audit",
+        "audit website SEO"
+      ],
+      "requires_pain_gate": true
+    },
+    {
+      "id": "earned-media-discovery",
+      "skill": "earned-media-builder",
+      "mode": "discovery",
+      "match": [
+        "backlink acquisition",
+        "backlink opportunities",
+        "earned media opportunities",
+        "discover backlinks"
+      ],
+      "requires_pain_gate": true
+    },
+    {
+      "id": "earned-media-preparation",
+      "skill": "earned-media-builder",
+      "mode": "preparation",
+      "match": [
+        "prepare backlink pitches",
+        "draft publisher pitches",
+        "prepare directory submission",
+        "prepare earned media packet"
+      ],
+      "requires_pain_gate": true
+    },
+    {
+      "id": "earned-media-verification",
+      "skill": "earned-media-builder",
+      "mode": "verification",
+      "match": [
+        "verify backlinks",
+        "verify backlink placement",
+        "check published backlinks",
+        "verify earned media placement"
+      ],
+      "requires_pain_gate": true
     }
   ],
   "ambiguity_policy": "ask one question only when the top two routes would materially change work; otherwise choose the most specific explicit intent"

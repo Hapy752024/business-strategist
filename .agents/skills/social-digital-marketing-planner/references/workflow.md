@@ -265,3 +265,5 @@ If needed, ask:
 For a selected visibility intervention, use repo-root `references/search-visibility-decisions.md` for the evidence-to-change queue and outcome review. If recordings are needed, apply `references/ai-answer-recordings.md`; the processor is offline, and listening/live collection are not implemented capabilities. Do not run a mandatory multi-engine program.
 
 Every planned asset is one content brief validated against `schemas/content-brief.schema.json` and stored under `marketing/briefs/<brief_id>.json` with a Markdown twin from `templates/project/content-brief.md`. A calendar is a list of brief IDs with publish windows. Do not deliver post ideas without a brief.
+
+For captured creative comparison, use `references/comparative-creative-analysis.md`. Retain source selection, availability and comparable cohorts; pair examples/counterexamples with a bounded test. Engagement is not demand.

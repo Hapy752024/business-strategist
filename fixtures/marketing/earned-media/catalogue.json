@@ -1,0 +1,1 @@
+{"directories": [{"id": "one", "url": "https://tools.example/", "free": "Yes", "linkType": "dofollow"}, {"id": "bad", "url": "file:///etc/passwd"}, {"id": "duplicate", "url": "https://tools.example/"}]}

@@ -1,6 +1,6 @@
 # API Access Matrix
 
-This file tracks the intended evidence sources, direct script access paths, and fallback choices. Runtime truth comes from `research/evidence-scout/api-validation/*.summary.json`.
+This file tracks the intended evidence sources, direct script access paths, and fallback choices. Current access receipts default to `.research-infra/api-validation/*.summary.json`; `EVIDENCE_SCOUT_VALIDATION_DIR` can select an isolated directory. Historical snapshots below are dated context, not current readiness authority.
 
 | Evidence Source | Primary Script | Required Env | API / Provider URL | Fallback | Current Status |
 |---|---|---|---|---|---|
@@ -107,3 +107,31 @@ python3 scripts/validate_apis/run_all.py
 ```
 
 Do not paste Bright Data URLs with embedded credentials into prompts or committed files. Rotate pasted credentials, then put the new URL in `~/.secrets`.
+
+## Research-source extension — 2026-10-11
+
+The source catalog and `references/research-data-and-precedents.md` now cover Eurostat, Swiss StatsExplorer, opendata.swiss, Census, BLS, OpenAlex and Crossref. `references/institutional-and-university-sources.md` documents institutional data, public registers and original research documents.
+
+| Credential name in `~/.secrets` | Signup / source | Verification |
+|---|---|---|
+| `CENSUS_API_KEY` | https://api.census.gov/data/key_signup.html | Authenticated narrow ACS query passed |
+| `BLS_API_KEY` | https://data.bls.gov/registrationEngine/ | Registered narrow series query passed |
+| `OPENALEX_API_KEY` | https://openalex.org/settings/api | Metadata and bounded original-document access passed |
+| `PARSERSVC_API_KEY` | https://parsers.vc/api/ | Authenticated pricing and bounded signal scan passed |
+| `FRED_API_KEY` | https://fred.stlouisfed.org/docs/api/api_key.html | Bounded observations passed |
+| `COMPANIES_HOUSE_API_KEY` | https://developer.company-information.service.gov.uk/get-started | Bounded profile query passed |
+| `CROSSREF_MAILTO` | Real contact email; no API key or signup | Public metadata query passed |
+| `SEC_USER_AGENT` | Organization and real contact email; no API key | Dataset-specific readiness check required |
+
+Eurostat, Swiss StatsExplorer, opendata.swiss, ECB, BIS and World Bank use public keyless routes. API success establishes access only; all extracted facts require source/context review before business-plan publication. Exact temporary readiness receipt locations are recorded in the implementation plan's completion addendum.
+
+### SEO and earned media helpers
+
+| Capability | Access | Actual boundary |
+| --- | --- | --- |
+| Search Console performance | Local CSV/JSON exports via marketing/observations.py | Explicit aggregate field mapping; no account connection |
+| Search Console Links | Local source-page/target export via earned_media.py import-links | Sampled, potentially historical candidates; no Links-report API |
+| SubmitMyStartup | Optional public JSON catalogue via earned_media.py catalogue | Candidate discovery; independently review official destination rules |
+| Live placement | verify_links.py bounded public HTTP GET | Retained anchors/attributes; no JS browser fallback, submission or ranking proof |
+
+No credentials are needed for local imports. Paid backlink indexes and live OAuth collection are deferred. Provider usability is checked per invocation; catalog registration is not live readiness. External contracts reviewed 2026-10-11: https://developers.google.com/webmaster-tools/v1/api_reference_index and https://submitmystartup.com/api/v1/directories.json.

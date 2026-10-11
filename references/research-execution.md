@@ -34,3 +34,7 @@ Use this for a substantive customer/problem study or case rerun. A focused factu
    Before final delivery, use `--check assignment` and `--check delivery` on the registered parent run. Prepare the exact final publication bundle and have a separate reviewer inspect original passages, roles, countries, numbers, counterevidence and omissions. A completed desk-research scope with `primary_research_needed` is an insufficient-evidence outcome, not a passed problem gate.
 
 The completion checker is read-only. Stage and insights publication remain the authoritative writes. Its deterministic checks verify provenance and coverage declarations; an analyst still has to judge the meaning of passages. Never infer market prevalence, demand or willingness to pay from comment counts, duplicate posts or a successful API call.
+
+## Enriched research and downstream case plans
+
+Apply [research-data-and-precedents.md](research-data-and-precedents.md) for decision-led statistics/studies, international commercial precedents and investor signals. Preserve the separate VOC/review contracts. After consolidating material findings, refresh the current case business plan using [case-business-plan.md](case-business-plan.md). A provisional appraisal plan or stale plan does not establish full case delivery.

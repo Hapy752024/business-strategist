@@ -43,3 +43,19 @@ Use `scripts/marketing/observations.py` for supplied local aggregate CSV/JSON ex
   "outcome_review": null
 }
 ```
+
+## Version 2 placement evidence
+
+New earned-media actions use `schema_version: 2`, `action_kind` and `intended_result`. Kinds distinguish generic work, prepare_packet, submit_listing, send_pitch and verify_placement. A verified placement requires source_url, target_url and an `observation: {path, sha256}` binding. The observation contains a capture binding, actual anchors/rel attributes, method, URLs, redirects and checked_at. Both paths are relative to the Marketing root. `scripts/marketing/link_observations.py` re-parses the retained HTML/DOM and checks the exact source/target and digests; a positive reply or authored verification string cannot complete this action. Publication validates staged bytes before commit and persisted bytes on resume. A rootless structural check cannot certify placement completion.
+
+Version-1 plans remain readable and render legacy verification explicitly. They are not automatically converted to verified backlinks. Preparation and submission can finish separately from a required public placement. Optional proposed opportunities do not block the selected scope.
+
+External-delivery authorization in v2 binds recipient, destination, action kind, intended result, materials and authorization basis with `authorization_digest`. Generate it with `authorization_digest(action)` only when actual authorization is established; a digest is a consistency record, not proof the user gave consent. Changing those fields invalidates the prepared delivery. Changing expected placement source/target invalidates its observation; rewriting unrelated pitch materials preserves historical placement evidence. No sender is implemented.
+
+For page planning use `scripts/marketing/keyword_map.py` and the optional `public_resource` section of content briefs. Preserve source bindings, original-versus-compiled contribution, public-use suitability and maintenance responsibility. The publisher validates keyword maps and `content-brief.json` resource evidence within the same transaction. Imported resources use the `public_resource` purpose and explicit applicability review.
+
+Known placements use `verify_links.py`; capture directories are immutable and may be nested using `--evidence-root`. Public fetching validates and pins DNS addresses and every redirect, with bounded responses. Untrusted browser fallback is disabled. Failure/access blocks stay unknown; a 200 response without the expected anchor is absent, and a provider snapshot is a separate observation.
+
+Opportunity artifacts use `opportunity.json` or `opportunities.json` (optionally nested under earned-media). Publication and resume revalidate their source bindings alongside maps and resource briefs, including source-only updates. Restore missing or corrupted placement evidence by staging the original digest-matching bytes; alternate contents still require a new observation/capture path. Template descendants are inert and cannot establish a placement. Sensitive source/target URLs are rejected before any observation is created.
+
+For question-led content and creative comparison, apply [question tracking](customer-question-tracking.md) and [creative analysis](comparative-creative-analysis.md). Publish optional `customer-questions.json` and `creative-evidence.json` with bound captures through Marketing; source-only changes/resume revalidate use. These artifacts neither establish demand nor authorize posting.

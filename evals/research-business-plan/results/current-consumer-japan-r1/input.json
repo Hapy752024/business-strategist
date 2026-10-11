@@ -1,0 +1,4 @@
+{
+  "kind": "synthetic",
+  "request": "Assess a Swiss consumer subscription assisting households with recurring administrative tasks and prepare its provisional business plan. Synthetic comparison evidence: Japanese company J has many signups but no retention or purchases disclosed, and company K failed expansion into Europe. OpenAlex returned a study title about household administrative burden but no abstract or full text. VC feed has an undisclosed round amount, startup as subject, round as object, type investor.joined_round; investor identity is unavailable. Keep study metadata, commercial precedent, funding and local customer evidence distinct, and define research and plan sections without fabricating missing evidence."
+}

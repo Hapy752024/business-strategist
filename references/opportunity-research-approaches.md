@@ -9,7 +9,7 @@ Use this guidance for substantive work when the user wants to pressure-test a sp
 
 Reuse the router's existing market-discovery versus idea-validation choice. Ask one scope question only when intent genuinely changes the work and cannot be inferred. Narrow factual lookups remain narrow.
 
-Similar companies in the same or other countries are optional comparison sources. Examine them when they help explain the user's question: what customer situation they address, how customers handle it, alternatives, switching behavior, change events, and relevant counterexamples. Preserve company location, customer-market evidence, target-segment fit and time period as separate facts. A foreign offer, revenue assertion, marketplace listing or founder story is not proof of the same problem or demand in the user's segment. Cross-country adaptation is in scope only when requested.
+For substantive chosen-idea validation, include a targeted international-precedent pass or record why it is inapplicable. Pure customer-problem studies and narrow factual questions use comparisons only where relevant. Comparable companies can support scoped commercial evidence when actual purchases, sustained value or economics are reviewed. Preserve the customer market, period, business model and local transfer conditions. Read [research-data-and-precedents.md](research-data-and-precedents.md); do not redirect the founder into copying a foreign business.
 
 ## Choose distinct evidence approaches
 
@@ -46,3 +46,5 @@ For idea validation, map the user's assumptions to supporting evidence, contrary
 Use comparable companies as examples and evidence only with source role, customer-market evidence, context and applicability limits. Do not infer profit from portfolio membership, customer demand from pricing, traction from hiring, revenue from traffic, or willingness to switch from a complaint.
 
 Only add commercial feasibility, founder playbooks, pricing/pilots, positioning or recommended business models when the user asks or they materially resolve the idea being validated. Respect the existing Business gate and outreach/recruitment controls.
+
+For split source work, apply the bounded correction and previous-ledger checks in [source-worker-packet](modules/source-worker-packet.md). Keep accepted siblings; re-review dependent outputs when consumed input bytes change.

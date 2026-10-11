@@ -42,5 +42,17 @@
     "wertpapier-forum.de",
     "elo-forum.org",
     "gutefrage.net"
+  ],
+  "official_statistics": [
+    "ec.europa.eu/eurostat",
+    "bfs.admin.ch",
+    "stats.swiss",
+    "api.census.gov",
+    "bls.gov",
+    "opendata.swiss"
+  ],
+  "scholarly_discovery": [
+    "api.openalex.org",
+    "api.crossref.org"
   ]
 }

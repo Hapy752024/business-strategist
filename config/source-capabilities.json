@@ -3,8 +3,8 @@
   "purpose": "Compact agent-facing catalog of business-strategist research data sources, routing rules, quality limits, and validation hooks.",
   "default_lookup": "python3 scripts/capability_lookup.py --question '<research need>' --compact",
   "runtime_truth": [
-    "projects/_infra/api-validation/all.summary.json",
-    "projects/_infra/provider-doctor/doctor.summary.json"
+    ".research-infra/api-validation/*.summary.json",
+    ".research-infra/provider-doctor/doctor.summary.json"
   ],
   "capabilities": [
     {
@@ -1002,6 +1002,946 @@
       "example": "pending pilot; apply competitor-monitoring watchlist/snapshot conventions to own-brand rows",
       "caveat": "Listening coverage is API-gated (Meta/LinkedIn/TikTok limited). Samples are not market-wide share.",
       "implementation_status": "pending_pilot"
+    },
+    {
+      "id": "eurostat",
+      "family": "official_statistics",
+      "label": "Eurostat",
+      "description": "Official population, business counts, household spending, employment and time-use statistics with explicit denominators.",
+      "use_when": [
+        "representative market sizing",
+        "official statistics",
+        "population",
+        "business counts",
+        "household spending",
+        "employment"
+      ],
+      "avoid_when": [
+        "unprompted customer voice",
+        "proof of demand for this entrant"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/fetch_eurostat.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "eurostat"
+      ],
+      "requires_env": [],
+      "geographies": [
+        "eu",
+        "europe"
+      ],
+      "approval_required": false,
+      "status_check": "python3 scripts/validate_apis/validate_eurostat.py",
+      "caveat": "Definitions, population, year, units and applicability require review. Metadata alone does not establish a study finding.",
+      "example": "python3 scripts/market_research/fetch_eurostat.py --out <fresh-run-directory>"
+    },
+    {
+      "id": "swiss_stats",
+      "family": "official_statistics",
+      "label": "Swiss Stats",
+      "description": "Official population, business counts, household spending, employment and time-use statistics with explicit denominators.",
+      "use_when": [
+        "representative market sizing",
+        "official statistics",
+        "population",
+        "business counts",
+        "household spending",
+        "employment"
+      ],
+      "avoid_when": [
+        "unprompted customer voice",
+        "proof of demand for this entrant"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/fetch_swiss_stats.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "swiss_stats"
+      ],
+      "requires_env": [],
+      "geographies": [
+        "swiss",
+        "switzerland"
+      ],
+      "approval_required": false,
+      "status_check": "python3 scripts/validate_apis/validate_swiss_stats.py",
+      "caveat": "Definitions, population, year, units and applicability require review. Metadata alone does not establish a study finding.",
+      "example": "python3 scripts/market_research/fetch_swiss_stats.py --out <fresh-run-directory>"
+    },
+    {
+      "id": "opendata_swiss",
+      "family": "official_statistics",
+      "label": "Opendata Swiss",
+      "description": "Official population, business counts, household spending, employment and time-use statistics with explicit denominators.",
+      "use_when": [
+        "representative market sizing",
+        "official statistics",
+        "population",
+        "business counts",
+        "household spending",
+        "employment"
+      ],
+      "avoid_when": [
+        "unprompted customer voice",
+        "proof of demand for this entrant"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/search_opendata_swiss.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "opendata_swiss"
+      ],
+      "requires_env": [],
+      "geographies": [
+        "swiss",
+        "switzerland"
+      ],
+      "approval_required": false,
+      "status_check": "python3 scripts/validate_apis/validate_opendata_swiss.py",
+      "caveat": "Definitions, population, year, units and applicability require review. Metadata alone does not establish a study finding.",
+      "example": "python3 scripts/market_research/search_opendata_swiss.py --out <fresh-run-directory>"
+    },
+    {
+      "id": "census",
+      "family": "official_statistics",
+      "label": "Census",
+      "description": "Official population, business counts, household spending, employment and time-use statistics with explicit denominators.",
+      "use_when": [
+        "representative market sizing",
+        "official statistics",
+        "population",
+        "business counts",
+        "household spending",
+        "employment"
+      ],
+      "avoid_when": [
+        "unprompted customer voice",
+        "proof of demand for this entrant"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/fetch_census.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "census"
+      ],
+      "requires_env": [
+        "CENSUS_API_KEY"
+      ],
+      "geographies": [
+        "us",
+        "usa",
+        "united states"
+      ],
+      "approval_required": false,
+      "status_check": "python3 scripts/validate_apis/validate_census.py",
+      "caveat": "Definitions, population, year, units and applicability require review. Metadata alone does not establish a study finding.",
+      "example": "python3 scripts/market_research/fetch_census.py --out <fresh-run-directory>"
+    },
+    {
+      "id": "bls",
+      "family": "official_statistics",
+      "label": "Bls",
+      "description": "Official population, business counts, household spending, employment and time-use statistics with explicit denominators.",
+      "use_when": [
+        "representative market sizing",
+        "official statistics",
+        "population",
+        "business counts",
+        "household spending",
+        "employment"
+      ],
+      "avoid_when": [
+        "unprompted customer voice",
+        "proof of demand for this entrant"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/fetch_bls.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "bls"
+      ],
+      "requires_env": [
+        "BLS_API_KEY"
+      ],
+      "geographies": [
+        "us",
+        "usa",
+        "united states"
+      ],
+      "approval_required": false,
+      "status_check": "python3 scripts/validate_apis/validate_bls.py",
+      "caveat": "Definitions, population, year, units and applicability require review. Metadata alone does not establish a study finding.",
+      "example": "python3 scripts/market_research/fetch_bls.py --out <fresh-run-directory>"
+    },
+    {
+      "id": "openalex",
+      "family": "studies",
+      "label": "Openalex",
+      "description": "Discover relevant scholarly studies and review original findings.",
+      "use_when": [
+        "research papers",
+        "studies",
+        "scholarly research"
+      ],
+      "avoid_when": [
+        "unprompted customer voice",
+        "proof of demand for this entrant"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/search_openalex.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "openalex"
+      ],
+      "requires_env": [
+        "OPENALEX_API_KEY"
+      ],
+      "geographies": [],
+      "approval_required": false,
+      "status_check": "python3 scripts/validate_apis/validate_openalex.py",
+      "caveat": "Definitions, population, year, units and applicability require review. Metadata alone does not establish a study finding.",
+      "example": "python3 scripts/market_research/search_openalex.py --out <fresh-run-directory>",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --openalex-work <W-ID> --publisher <publisher> --out <fresh-directory>"
+    },
+    {
+      "id": "crossref",
+      "family": "studies",
+      "label": "Crossref",
+      "description": "Discover relevant scholarly studies and review original findings.",
+      "use_when": [
+        "research papers",
+        "studies",
+        "scholarly research"
+      ],
+      "avoid_when": [
+        "unprompted customer voice",
+        "proof of demand for this entrant"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/search_crossref.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "crossref"
+      ],
+      "requires_env": [],
+      "geographies": [],
+      "approval_required": false,
+      "status_check": "python3 scripts/validate_apis/validate_crossref.py",
+      "caveat": "Definitions, population, year, units and applicability require review. Metadata alone does not establish a study finding.",
+      "example": "python3 scripts/market_research/search_crossref.py --out <fresh-run-directory>"
+    },
+    {
+      "id": "ecb",
+      "family": "official_statistics",
+      "label": "ECB data and metadata",
+      "description": "ECB data and metadata for scoped market research and source-grounded business context.",
+      "use_when": [
+        "ECB",
+        "European Central Bank",
+        "euro area lending",
+        "bank deposits",
+        "interest rates"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/institutional_sources.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "ecb"
+      ],
+      "requires_env": [],
+      "geographies": [
+        "eu",
+        "euro area"
+      ],
+      "approval_required": false,
+      "access_mode": "direct_api",
+      "source_url": "https://data.ecb.europa.eu/help/api/data-examples",
+      "status_check": "python3 scripts/validate_apis/validate_institutional_sources.py --provider ecb --out <isolated-validation-directory>",
+      "example": "python3 scripts/market_research/institutional_sources.py --provider ecb --help",
+      "caveat": "Pending source review; match definitions, dates, units and geography. Macroeconomic context does not establish customer demand.",
+      "metadata_command": "python3 scripts/market_research/institutional_sources.py --provider ecb --discover --help"
+    },
+    {
+      "id": "fred",
+      "family": "official_statistics",
+      "label": "Federal Reserve FRED",
+      "description": "Federal Reserve FRED for scoped market research and source-grounded business context.",
+      "use_when": [
+        "Federal Reserve",
+        "FRED",
+        "US credit conditions",
+        "US economic indicators"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/institutional_sources.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "fred"
+      ],
+      "requires_env": [
+        "FRED_API_KEY"
+      ],
+      "geographies": [
+        "us",
+        "united states"
+      ],
+      "approval_required": false,
+      "access_mode": "direct_api",
+      "source_url": "https://fred.stlouisfed.org/docs/api/fred/",
+      "status_check": "python3 scripts/validate_apis/validate_institutional_sources.py --provider fred --out <isolated-validation-directory>",
+      "example": "python3 scripts/market_research/institutional_sources.py --provider fred --help",
+      "caveat": "Pending source review; match definitions, dates, units and geography. Macroeconomic context does not establish customer demand.",
+      "metadata_command": "python3 scripts/market_research/institutional_sources.py --provider fred --discover --help"
+    },
+    {
+      "id": "bis",
+      "family": "official_statistics",
+      "label": "BIS international financial statistics",
+      "description": "BIS international financial statistics for scoped market research and source-grounded business context.",
+      "use_when": [
+        "BIS",
+        "Bank for International Settlements",
+        "international banking",
+        "credit",
+        "debt service"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/institutional_sources.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "bis"
+      ],
+      "requires_env": [],
+      "geographies": [],
+      "approval_required": false,
+      "access_mode": "direct_api",
+      "source_url": "https://stats.bis.org/api-doc/v2/",
+      "status_check": "python3 scripts/validate_apis/validate_institutional_sources.py --provider bis --out <isolated-validation-directory>",
+      "example": "python3 scripts/market_research/institutional_sources.py --provider bis --help",
+      "caveat": "Pending source review; match definitions, dates, units and geography. Macroeconomic context does not establish customer demand.",
+      "metadata_command": "python3 scripts/market_research/institutional_sources.py --provider bis --discover --help"
+    },
+    {
+      "id": "world_bank",
+      "family": "official_statistics",
+      "label": "World Bank indicators",
+      "description": "World Bank indicators for scoped market research and source-grounded business context.",
+      "use_when": [
+        "World Bank",
+        "cross-country market context",
+        "country population",
+        "economic development"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/institutional_sources.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "world_bank"
+      ],
+      "requires_env": [],
+      "geographies": [],
+      "approval_required": false,
+      "access_mode": "direct_api",
+      "source_url": "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392",
+      "status_check": "python3 scripts/validate_apis/validate_institutional_sources.py --provider world_bank --out <isolated-validation-directory>",
+      "example": "python3 scripts/market_research/institutional_sources.py --provider world_bank --help",
+      "caveat": "Pending source review; match definitions, dates, units and geography. Macroeconomic context does not establish customer demand.",
+      "metadata_command": "python3 scripts/market_research/institutional_sources.py --provider world_bank --discover --help"
+    },
+    {
+      "id": "companies_house",
+      "family": "company_registers",
+      "label": "UK Companies House",
+      "description": "UK Companies House for scoped market research and source-grounded business context.",
+      "use_when": [
+        "Companies House",
+        "UK company register",
+        "legal company status",
+        "company incorporation"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/institutional_sources.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "companies_house"
+      ],
+      "requires_env": [
+        "COMPANIES_HOUSE_API_KEY"
+      ],
+      "geographies": [
+        "uk",
+        "united kingdom"
+      ],
+      "approval_required": false,
+      "access_mode": "direct_api",
+      "source_url": "https://developer.company-information.service.gov.uk/get-started",
+      "status_check": "python3 scripts/validate_apis/validate_institutional_sources.py --provider companies_house --out <isolated-validation-directory>",
+      "example": "python3 scripts/market_research/institutional_sources.py --provider companies_house --help",
+      "caveat": "Registration and legal status do not establish trading activity, commercial success or a reachable customer market. Coverage differs by jurisdiction and legal form."
+    },
+    {
+      "id": "eba_public_data",
+      "family": "regulatory_data",
+      "label": "European Banking Authority public data",
+      "description": "European Banking Authority public data for scoped market research and source-grounded business context.",
+      "use_when": [
+        "EBA",
+        "European Banking Authority",
+        "bank risk dashboard",
+        "banking sector"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [
+        "eu"
+      ],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://www.eba.europa.eu/risk-and-data-analysis/data/data-analytics-tools",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://www.eba.europa.eu/risk-and-data-analysis/data/data-analytics-tools; capture original documents and record access gaps.",
+      "caveat": "Pending source review; match definitions, dates, units and geography. Macroeconomic context does not establish customer demand. The EU-wide transparency exercise stopped updating from June 2025; use current risk dashboard/report data for current context.",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --help"
+    },
+    {
+      "id": "eiopa_public_data",
+      "family": "regulatory_data",
+      "label": "EIOPA insurance and pensions data",
+      "description": "EIOPA insurance and pensions data for scoped market research and source-grounded business context.",
+      "use_when": [
+        "EIOPA",
+        "European insurance regulator",
+        "Solvency II",
+        "insurance statistics",
+        "pension statistics"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [
+        "eu",
+        "eea"
+      ],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://www.eiopa.europa.eu/tools-and-data/insurance-statistics_en",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://www.eiopa.europa.eu/tools-and-data/insurance-statistics_en; capture original documents and record access gaps.",
+      "caveat": "Pending source review; match definitions, dates, units and geography. Macroeconomic context does not establish customer demand.",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --help"
+    },
+    {
+      "id": "esma_public_registers",
+      "family": "regulatory_data",
+      "label": "ESMA public registers",
+      "description": "ESMA public registers for scoped market research and source-grounded business context.",
+      "use_when": [
+        "ESMA",
+        "authorised financial entities",
+        "European funds",
+        "securities registers"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [
+        "eu"
+      ],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://registers.esma.europa.eu/publication/helpApp",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://registers.esma.europa.eu/publication/helpApp; capture original documents and record access gaps.",
+      "caveat": "Pending source review; match definitions, dates, units and geography. Macroeconomic context does not establish customer demand.",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --help"
+    },
+    {
+      "id": "bris_register",
+      "family": "company_registers",
+      "label": "EU and EEA BRIS company search",
+      "description": "EU and EEA BRIS company search for scoped market research and source-grounded business context.",
+      "use_when": [
+        "BRIS",
+        "European business register",
+        "EU company verification"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [
+        "eu",
+        "eea"
+      ],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://e-justice.europa.eu/topics/registers-business-insolvency-land/business-registers-search-company-eu_en",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://e-justice.europa.eu/topics/registers-business-insolvency-land/business-registers-search-company-eu_en; capture original documents and record access gaps.",
+      "caveat": "Registration and legal status do not establish trading activity, commercial success or a reachable customer market. Coverage differs by jurisdiction and legal form.",
+      "extraction_command": "python3 scripts/market_research/registry_sources.py --provider register_export --help"
+    },
+    {
+      "id": "sirene_register",
+      "family": "company_registers",
+      "label": "France INSEE Sirene",
+      "description": "France INSEE Sirene for scoped market research and source-grounded business context.",
+      "use_when": [
+        "Sirene",
+        "French businesses",
+        "French establishments",
+        "business population France"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/registry_sources.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "france_register"
+      ],
+      "requires_env": [],
+      "geographies": [
+        "fr",
+        "france"
+      ],
+      "approval_required": false,
+      "access_mode": "direct_api",
+      "source_url": "https://www.insee.fr/fr/information/3591226",
+      "status_check": "Refresh the bounded direct-query probe and inspect its current readiness receipt; access is separate from research review.",
+      "example": "python3 scripts/market_research/registry_sources.py --provider france --help",
+      "caveat": "Registration and legal status do not establish trading activity, commercial success or a reachable customer market. Coverage differs by jurisdiction and legal form."
+    },
+    {
+      "id": "german_register",
+      "family": "company_registers",
+      "label": "German Handelsregister",
+      "description": "German Handelsregister for scoped market research and source-grounded business context.",
+      "use_when": [
+        "Handelsregister",
+        "German company register",
+        "German company status"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [
+        "de",
+        "germany"
+      ],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://www.handelsregister.de/",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://www.handelsregister.de/; capture original documents and record access gaps.",
+      "caveat": "Registration and legal status do not establish trading activity, commercial success or a reachable customer market. Coverage differs by jurisdiction and legal form.",
+      "extraction_command": "python3 scripts/market_research/registry_sources.py --provider register_export --help"
+    },
+    {
+      "id": "zefix_register",
+      "family": "company_registers",
+      "label": "Swiss Zefix",
+      "description": "Swiss Zefix for scoped market research and source-grounded business context.",
+      "use_when": [
+        "Zefix",
+        "Swiss commercial register",
+        "Swiss company status"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/registry_sources.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "switzerland_register"
+      ],
+      "requires_env": [],
+      "geographies": [
+        "ch",
+        "switzerland"
+      ],
+      "approval_required": false,
+      "access_mode": "direct_api",
+      "source_url": "https://opendata.swiss/fr/dataset/zefix-zentraler-firmenindex",
+      "status_check": "Refresh the bounded direct-query probe and inspect its current readiness receipt; access is separate from research review.",
+      "example": "python3 scripts/market_research/registry_sources.py --provider switzerland --help",
+      "caveat": "Registration and legal status do not establish trading activity, commercial success or a reachable customer market. Coverage differs by jurisdiction and legal form."
+    },
+    {
+      "id": "us_state_registers",
+      "family": "company_registers",
+      "label": "US state business registers",
+      "description": "US state business registers for scoped market research and source-grounded business context.",
+      "use_when": [
+        "US business register",
+        "Secretary of State",
+        "US private company registration"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [
+        "us",
+        "united states"
+      ],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://www.sba.gov/counseling/launch-your-business/",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://www.sba.gov/counseling/launch-your-business/; capture original documents and record access gaps.",
+      "caveat": "Registration and legal status do not establish trading activity, commercial success or a reachable customer market. Coverage differs by jurisdiction and legal form.",
+      "extraction_command": "python3 scripts/market_research/registry_sources.py --provider register_export --help"
+    },
+    {
+      "id": "sec_edgar_public",
+      "family": "company_registers",
+      "label": "SEC EDGAR public filings",
+      "description": "SEC EDGAR public filings for scoped market research and source-grounded business context.",
+      "use_when": [
+        "SEC EDGAR",
+        "US public company filings",
+        "US company accounts"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/market_research/registry_sources.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "sec_register"
+      ],
+      "requires_env": [
+        "SEC_USER_AGENT"
+      ],
+      "geographies": [
+        "us",
+        "united states"
+      ],
+      "approval_required": false,
+      "access_mode": "direct_api",
+      "source_url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "python3 scripts/market_research/registry_sources.py --provider sec --help",
+      "caveat": "Registration and legal status do not establish trading activity, commercial success or a reachable customer market. Coverage differs by jurisdiction and legal form."
+    },
+    {
+      "id": "fed_board_surveys",
+      "family": "official_statistics",
+      "label": "Federal Reserve Board public surveys",
+      "description": "Federal Reserve Board public surveys for scoped market research and source-grounded business context.",
+      "use_when": [
+        "Survey of Consumer Finances",
+        "household wealth",
+        "household debt",
+        "Federal Reserve surveys"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [
+        "us",
+        "united states"
+      ],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://www.federalreserve.gov/econres/scfindex.htm",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://www.federalreserve.gov/econres/scfindex.htm; capture original documents and record access gaps.",
+      "caveat": "Pending source review; match definitions, dates, units and geography. Macroeconomic context does not establish customer demand.",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --help"
+    },
+    {
+      "id": "repec_research",
+      "family": "studies",
+      "label": "RePEc and EconPapers",
+      "description": "RePEc and EconPapers for scoped market research and source-grounded business context.",
+      "use_when": [
+        "RePEc",
+        "EconPapers",
+        "university economics working papers",
+        "business research"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://econpapers.repec.org/",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://econpapers.repec.org/; capture original documents and record access gaps.",
+      "caveat": "Discover original studies and obtain accessible full text separately. Review methods and sampling; repository coverage and download permissions vary. Metadata alone is not a finding.",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --help"
+    },
+    {
+      "id": "econstor_research",
+      "family": "studies",
+      "label": "EconStor open economics research",
+      "description": "EconStor open economics research for scoped market research and source-grounded business context.",
+      "use_when": [
+        "EconStor",
+        "open economics research",
+        "university business studies"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://www.econstor.eu/",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://www.econstor.eu/; capture original documents and record access gaps.",
+      "caveat": "Discover original studies and obtain accessible full text separately. Review methods and sampling; repository coverage and download permissions vary. Metadata alone is not a finding.",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --help"
+    },
+    {
+      "id": "core_repositories",
+      "family": "studies",
+      "label": "CORE open-access university repositories",
+      "description": "CORE open-access university repositories for scoped market research and source-grounded business context.",
+      "use_when": [
+        "CORE",
+        "university repositories",
+        "open access full text"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://core.ac.uk/services/api",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://core.ac.uk/services/api; capture original documents and record access gaps.",
+      "caveat": "Discover original studies and obtain accessible full text separately. Review methods and sampling; repository coverage and download permissions vary. Metadata alone is not a finding.",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --help"
+    },
+    {
+      "id": "gesis_research_data",
+      "family": "studies",
+      "label": "GESIS social-science studies and datasets",
+      "description": "GESIS social-science studies and datasets for scoped market research and source-grounded business context.",
+      "use_when": [
+        "GESIS",
+        "consumer behavior datasets",
+        "social science surveys"
+      ],
+      "avoid_when": [
+        "proof of customer demand",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "source_review_required",
+      "collector_provider": "scripts/serper_fetch.py",
+      "provider_aliases": [],
+      "validation_providers": [],
+      "requires_env": [],
+      "geographies": [],
+      "approval_required": false,
+      "access_mode": "public_search_documents_or_downloads",
+      "source_url": "https://search.gesis.org/",
+      "status_check": "Verify the requested public document or dataset through existing retrieval; no dedicated API probe.",
+      "example": "Search official source https://search.gesis.org/; capture original documents and record access gaps.",
+      "caveat": "Discover original studies and obtain accessible full text separately. Review methods and sampling; repository coverage and download permissions vary. Metadata alone is not a finding.",
+      "extraction_command": "python3 scripts/market_research/fetch_research_document.py --help"
+    },
+    {
+      "id": "openalex_fulltext",
+      "family": "studies",
+      "label": "OpenAlex original full text",
+      "description": "Download and extract available original TEI full text for explicit OpenAlex work IDs.",
+      "use_when": [
+        "original research full text",
+        "study methods",
+        "university research findings"
+      ],
+      "avoid_when": [
+        "metadata-only discovery",
+        "unprompted customer voice"
+      ],
+      "evidence_strength": "original_document_review_required",
+      "collector_provider": "scripts/market_research/fetch_research_document.py",
+      "validation_providers": [
+        "openalex_fulltext"
+      ],
+      "requires_env": [
+        "OPENALEX_API_KEY"
+      ],
+      "approval_required": false,
+      "access_mode": "metered_single_document_api",
+      "example": "python3 scripts/market_research/fetch_research_document.py --openalex-work <W-ID> --publisher <publisher> --out <fresh-directory>",
+      "caveat": "Content availability is per work. Extraction does not certify findings; original document, methods and population require review. Scanned PDFs may need OCR."
+    },
+    {
+      "id": "seo_performance_export",
+      "family": "seo_earned_media",
+      "label": "Search Console performance export",
+      "description": "Search Console performance export",
+      "use_when": [
+        "search console performance",
+        "organic query data"
+      ],
+      "avoid_when": [
+        "customer demand proof"
+      ],
+      "evidence_strength": "dated_observation_requires_review",
+      "collector_provider": "seo_performance_export",
+      "requires_env": [],
+      "validation_providers": [],
+      "status_check": "python3 -m pytest -q tests/test_marketing_source_adapters.py tests/test_verify_links.py",
+      "example": "python3 scripts/marketing/observations.py --input <export.csv> --mapping <mapping.json> --metadata <context.json> --out <observations.json>",
+      "caveat": "Local aggregate exports only. Explicit mappings/property/windows required; no OAuth/API connection.",
+      "implementation_status": "implemented_cli; live readiness requires separate check"
+    },
+    {
+      "id": "backlink_links_export",
+      "family": "seo_earned_media",
+      "label": "Search Console Links export",
+      "description": "Search Console Links export",
+      "use_when": [
+        "backlink export",
+        "search console links"
+      ],
+      "avoid_when": [
+        "customer demand proof"
+      ],
+      "evidence_strength": "dated_observation_requires_review",
+      "collector_provider": "backlink_links_export",
+      "requires_env": [],
+      "validation_providers": [],
+      "status_check": "python3 -m pytest -q tests/test_marketing_source_adapters.py tests/test_verify_links.py",
+      "example": "python3 scripts/marketing/earned_media.py import-links <links.csv> --source-column <column> --target-column <column> --property <url> --exported-at <date> --out <candidates.json>",
+      "caveat": "Sampled/historical candidate data. Domain-only exports cannot establish live source pages. Search Console API has no Links-report endpoint.",
+      "implementation_status": "implemented_cli; live readiness requires separate check"
+    },
+    {
+      "id": "submission_catalogue",
+      "family": "seo_earned_media",
+      "label": "Submission opportunity catalogue",
+      "description": "Submission opportunity catalogue",
+      "use_when": [
+        "submission destinations",
+        "backlink directories"
+      ],
+      "avoid_when": [
+        "customer demand proof"
+      ],
+      "evidence_strength": "dated_observation_requires_review",
+      "collector_provider": "submission_catalogue",
+      "requires_env": [],
+      "validation_providers": [],
+      "status_check": "python3 -m pytest -q tests/test_marketing_source_adapters.py tests/test_verify_links.py",
+      "example": "python3 scripts/marketing/earned_media.py catalogue --out <new-directory>",
+      "caveat": "Read-only SubmitMyStartup catalogue, optional. Candidate labels do not verify destination eligibility, cost or link attributes.",
+      "implementation_status": "implemented_cli; live readiness requires separate check"
+    },
+    {
+      "id": "live_link_inspection",
+      "family": "seo_earned_media",
+      "label": "Capture-backed public link inspection",
+      "description": "Capture-backed public link inspection",
+      "use_when": [
+        "verify backlinks",
+        "public placement inspection"
+      ],
+      "avoid_when": [
+        "customer demand proof"
+      ],
+      "evidence_strength": "dated_observation_requires_review",
+      "collector_provider": "live_link_inspection",
+      "requires_env": [],
+      "validation_providers": [],
+      "status_check": "python3 -m pytest -q tests/test_marketing_source_adapters.py tests/test_verify_links.py",
+      "example": "python3 scripts/marketing/verify_links.py --source <url> --target <url> --id <id> --out <new-directory>",
+      "caveat": "Bounded HTTP only; no JavaScript fallback for untrusted pages. Capture proves a dated observation, not indexing or ranking uplift.",
+      "implementation_status": "implemented_cli; live readiness requires separate check"
     }
   ]
 }

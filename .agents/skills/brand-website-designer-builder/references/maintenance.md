@@ -11,3 +11,7 @@ Before production recording refresh full launch assessment; changed content/conf
 Handoff owner/cadence for links/404s, indexing/sitemaps, field CWV, consent/vendor changes, advisories and content freshness. Use actual authorized Search Console/analytics evidence; separate observations from unknowns. Scheduling, connecting services, paid checks, sending reports and marketing publication need their own authorization.
 
 For scoped visibility improvements, consume observations using repo-root `references/search-visibility-decisions.md`. On resume, apply `references/owner-actions.md` to the website manifest and preserve unrelated next steps and launch blockers. Test on an isolated copy of an existing site; destructive failure fixtures belong in disposable directories. A new site is not a prerequisite.
+
+For the `seo-technical-audit` route return dated observations and a scoped fix queue; no scaffold or website restart is required. Use declared expectations and the audit comparison helper described in testing.md. Preserve pre-existing defects separately from new regressions and report undeclared coverage. Page/content decisions consume the current Marketing keyword map; external opportunity work hands off to earned-media-builder.
+
+Retain declared page-value components and run separate behavior tests during maintenance. Before/after `seo-audit-v3` reports require matching complete preservation coverage; missing coverage stays unmeasured.

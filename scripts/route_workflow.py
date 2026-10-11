@@ -218,8 +218,8 @@ def _route_request(
     text = re.sub(r"[-–—]", " ", request.casefold())
     # A conservative fallback, not a language parser. The caller should supply
     # intent/scope for complex phrasing, quotations and multi-step requests.
-    action = r"(?:build|create|develop|design|write|draft|find|discover|analy[sz]e|make|plan|prepare)"
-    clauses = re.split(r"(?<!next)\.|[;!?\n]|\bbut\b|(?:,\s*(?:then\s+)?|\band(?:\s+then)?\b|\bthen\b)\s*(?=(?:also\s+)?" + action + r"\b)", text)
+    action = r"(?:build|create|develop|design|write|draft|find|discover|analy[sz]e|make|plan|prepare|run|verify|research|check)"
+    clauses = re.split(r"(?<!next)\.|[;!?\n]|\bbut\b|(?:,\s*(?:then\s+)?|\band(?:\s+then)?\b|\bthen\b)\s*(?=(?:also\s+)?(?:(?:do not|don't|don’t|never)\s+)?" + action + r"\b)", text)
     clauses = [re.split(r"\bwithout\b", clause, maxsplit=1)[0] for clause in clauses]
     actionable = [clause for clause in clauses if not re.search(
         r"\b(do not|don't|don’t|never|not asking|no need to)\b|"
@@ -234,6 +234,9 @@ def _route_request(
         raise ValueError(f"Unknown task scope: {task_scope}")
     requested_intent = intent.strip().casefold()
     routes = load_routes()
+    # Preserve the established general-Marketing alias after adding page planning.
+    if requested_intent == 'marketing-strategy-builder':
+        requested_intent = 'marketing-strategy'
     # Explicit specialist names are aliases only when they identify one route.
     # Multi-mode specialists (e.g. website build/experiment) need the route ID.
     if requested_intent and not any(route["id"].casefold() == requested_intent for route in routes):
@@ -299,7 +302,7 @@ def _route_request(
                            else "strategy" if metadata.get("strategy_stage_prerequisites")
                            else "focused")
     artifacts = selected.get("artifacts", metadata.get("artifacts", []))
-    if skill in {"marketing-strategy-builder", "social-digital-marketing-planner", "archetype-gtm-strategist"} and scope != "strategy":
+    if skill in {"marketing-strategy-builder", "social-digital-marketing-planner", "archetype-gtm-strategist"} and scope != "strategy" and selected.get("mode", "default") == "default":
         artifacts = ["requested deliverable only; preserve existing strategy" if scope == "execution" else "focused answer and material evidence limits"]
     packet = {
         "route_id": selected["id"],
@@ -327,7 +330,7 @@ def _route_request(
     else:
         packet['specialist_owner'] = specialist_owner(skill)
     design = skill.startswith('brand-')
-    marketing = skill in {'marketing-strategy-builder', 'social-digital-marketing-planner'}
+    marketing = skill in {'marketing-strategy-builder', 'social-digital-marketing-planner', 'earned-media-builder'}
     if entry_mode is None:
         entry_mode = 'business_linked' if marketing and project else 'standalone'
     if entry_mode not in {'standalone', 'business_linked'}:
@@ -388,7 +391,7 @@ def _route_request(
             packet['required_stages'] = []
             packet.pop('case_context', None)
             return packet
-    if selected.get('mode') in {'appraisal', 'insights'}:
+    if selected.get('mode') in {'appraisal', 'insights', 'case_plan'}:
         packet['expected_artifacts'] = metadata['artifacts']
     project_root = subprojects.business(umbrella) if project else None
     modern = bool(project_root and (project_root / cases.PROJECT).is_file() and cases.load(project_root / cases.PROJECT).get('layout_version') == 2)
@@ -397,9 +400,9 @@ def _route_request(
         packet.update(gate_blocked=True, gate='migration_required', first_skill=skill,
                       reason=reason + '; new execution requires explicit case-layout migration')
         return packet
-    if selected.get('mode') in {'appraisal', 'insights'} and project and not modern:
+    if selected.get('mode') in {'appraisal', 'insights', 'case_plan'} and project and not modern:
         raise ValueError('case work requires a versioned project and registered case; migrate explicitly')
-    if selected.get('mode') in {'appraisal', 'insights'} and not project:
+    if selected.get('mode') in {'appraisal', 'insights', 'case_plan'} and not project:
         packet.update(gate_blocked=True, gate='case_scope_required', first_skill=skill)
     if case_id and not modern:
         raise ValueError('case mode requires explicit migration')
@@ -415,10 +418,10 @@ def _route_request(
             execution = None
         scope_root = cases.resolve(project_root, case_id)
         cm = cases.case_manifest(project_root, case_id) if case_id else {}
-        if selected.get('mode') in {'appraisal', 'insights'}:
+        if selected.get('mode') in {'appraisal', 'insights', 'case_plan'}:
             if not case_id:
                 raise ValueError('case work requires a registered case')
-        if selected.get('mode') == 'appraisal':
+        if selected.get('mode') in {'appraisal', 'case_plan'}:
             try:
                 from scripts.evidence_scout.validate_research_completion import initial_case_evidence
             except ModuleNotFoundError:
@@ -435,7 +438,7 @@ def _route_request(
                                   'source_bindings': cm.get('source_bindings', []),
                                   'open_blockers': cm.get('open_blockers', []), 'input_contract': metadata.get('inputs', []),
                                   'output_owner': metadata.get('output_owner', skill)}
-        if skill == 'startup-business-builder':
+        if skill == 'startup-business-builder' and selected.get('mode') != 'case_plan':
             packet['output_root'] = str(project_root / 'strategy')
             packet['case_context']['output_root'] = packet['output_root']
             packet['case_context']['requested_sections'] = list(cases.PLAN_SECTIONS)
@@ -443,13 +446,15 @@ def _route_request(
             packet['case_context']['output_root'] = packet['output_root']
         else:
             packet['output_root'] = str(scope_root)
-        packet['case_context']['input_documents'] = {name: str(scope_root / name) for name in ('case_insights.md', 'README.md', 'feasibility.md', 'business-case.md', 'economics.json') if (scope_root / name).is_file()}
+        packet['case_context']['input_documents'] = {name: str(scope_root / name) for name in ('case_insights.md', 'README.md', 'feasibility.md', 'business-case.md', 'business-plan.md', 'business-plan.json', 'economics.json') if (scope_root / name).is_file()}
         if case_id:
             try:
                 from scripts.validate_case_insights import current_status
             except ModuleNotFoundError:
                 from validate_case_insights import current_status
             packet['case_context']['insights_status'] = current_status(project_root, case_id)
+        if selected.get('mode') == 'case_plan' and packet['case_context']['insights_status'].get('status') != 'current':
+            packet.update(gate_blocked=True, gate='case_insights_current', first_skill='opportunity-risk-designer')
         if skill == 'startup-business-builder':
             packet['required_references'] = list(dict.fromkeys(packet['required_references'] + checked_references({'required_references': ['references/case-assessment.md']}, CATALOG_PATH.parent.parent)))
     required_stages = metadata.get("strategy_stage_prerequisites", []) if scope == "strategy" else []

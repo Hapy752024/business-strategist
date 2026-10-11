@@ -20,7 +20,8 @@ CURRENCY = re.compile(r'^[A-Z]{3}$')
 NUMBER = re.compile(r'^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$')
 CONTEXT = ('metric', 'period', 'currency', 'unit', 'scope')
 DOCUMENTS = {'README.md', 'case_insights.md', 'feasibility.md', 'business-case.md',
-             'comparison.summary', 'comparison.principal_uncertainty', 'comparison.next_action'}
+             'comparison.summary', 'comparison.principal_uncertainty', 'comparison.next_action', 'business-plan.md',
+             *{'section.' + key for key in cases.PLAN_SECTIONS}}
 BASE_FIELDS = {'id', 'document', 'status', 'value', *CONTEXT}
 
 

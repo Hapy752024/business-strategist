@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -31,6 +32,22 @@ SCRIPTS = [
     "validate_apify.py",
     "validate_brightdata.py",
     "validate_parsersvc.py",
+    "validate_eurostat.py",
+    "validate_swiss_stats.py",
+    "validate_opendata_swiss.py",
+    "validate_census.py",
+    "validate_bls.py",
+    "validate_openalex.py",
+    "validate_crossref.py",
+    "validate_ecb.py",
+    "validate_fred.py",
+    "validate_bis.py",
+    "validate_world_bank.py",
+    "validate_companies_house.py",
+    "validate_france_register.py",
+    "validate_switzerland_register.py",
+    "validate_sec_register.py",
+
     "validate_crawl4ai.py",
     "validate_markitdown.py",
     "validate_scrapling.py",
@@ -44,7 +61,10 @@ def main() -> int:
     parser.add_argument("--country", default="")
     parser.add_argument("--language", default="")
     parser.add_argument("--app-id", default="")
+    parser.add_argument("--out", type=Path, help="Isolated validation output directory")
     args = parser.parse_args()
+    if args.out:
+        os.environ["EVIDENCE_SCOUT_VALIDATION_DIR"] = str(args.out.absolute())
     results = []
     for script in SCRIPTS:
         name = script.removeprefix("validate_").removesuffix(".py")
@@ -70,7 +90,7 @@ def main() -> int:
             parsed["stderr"] = proc.stderr[-2000:]
         results.append(parsed)
 
-    out = ROOT / "projects" / "_infra" / "api-validation" / ("selected.summary.json" if args.provider else "all.summary.json")
+    out = Path(os.environ.get("EVIDENCE_SCOUT_VALIDATION_DIR", ROOT / "projects" / "_infra" / "api-validation")) / ("selected.summary.json" if args.provider else "all.summary.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=2, sort_keys=True), encoding="utf-8")
     print(json.dumps(results, indent=2, sort_keys=True))

@@ -1,0 +1,30 @@
+{
+  "brief_id": "CB-001",
+  "platform": "blog",
+  "format": "article",
+  "pillar": "setup",
+  "audience_segment": "agency owners",
+  "hook": "Setup explained",
+  "key_message": "State verified setup requirements",
+  "proof": "Synthetic fixture only",
+  "cta": "Read setup steps",
+  "conversion_bridge": "answer a setup question",
+  "kpi": {
+    "name": "qualified question resolution",
+    "target": 1,
+    "window_days": 7
+  },
+  "owner": "Marketing",
+  "evidence_refs": [],
+  "brand_voice_ref": null,
+  "status": "planned",
+  "customer_questions": {
+    "artifact": {
+      "path": "customer-questions.json",
+      "sha256": "31a6fe99ea6eaf4fde53abca70d2dc757ff7303fb33030f288b93f7c64cedee5"
+    },
+    "question_ids": [
+      "Q1"
+    ]
+  }
+}

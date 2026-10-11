@@ -12,7 +12,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
-from entity_landscape import classify_entity, normalize_evidence_quality, normalize_social_presence, stable_entity_id
+from entity_landscape import classify_entity, normalize_evidence_quality, normalize_social_presence, stable_entity_id, commercial_precedent
 from workspace import update_stage, prepare_research_output
 
 
@@ -200,6 +200,10 @@ def main() -> int:
                 "retrieved_at": analysis.get("retrieved_at", ""),
             },
         }
+        precedent = item.get('commercial_precedent')
+        if precedent:
+            row['commercial_precedent'] = commercial_precedent(
+                precedent.get('observations', []), precedent.get('transfer_conditions', {}))
         entities.append(row)
         for source in item.get("sources", []):
             if isinstance(source, dict) and source.get("url"):

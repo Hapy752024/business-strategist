@@ -1,0 +1,13 @@
+{
+  "rubric": [
+    "accepted siblings retained",
+    "dependency invalidation bounded",
+    "retry exhaustion enforced",
+    "presence distinguished from behavior",
+    "supplier context excluded from customer proof",
+    "incompatible creative cohorts separated",
+    "no causal/demand result invented"
+  ],
+  "review_method": "Inspect complete outputs and traces; no keyword score.",
+  "human_review_status": "pending"
+}

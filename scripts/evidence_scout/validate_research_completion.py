@@ -1263,6 +1263,13 @@ def validate_delivery(workspace: Path, run_dir: Path) -> dict:
                            actions=["Review and incorporate this run in case_insights.md"], inputs=research["inputs"])
     except (OSError, ValueError, KeyError) as exc:
         return _result("delivery", "invalid", missing=[str(exc)], inputs=research["inputs"])
+    if case_manifest(root, case_id).get('case_plan_contract_version') == 1:
+        try:
+            from scripts.case_business_plan import current as current_case_plan
+            current_case_plan(root, case_id, require_final=True)
+        except (OSError, ValueError, KeyError) as exc:
+            return _result('delivery', 'partial', missing=['case business plan is not final and current: ' + str(exc)],
+                           actions=['Publish and independently review the current per-case business plan'], inputs=research['inputs'])
     return _result("delivery", "complete", gaps=research["open_gaps"], inputs=research["inputs"],
                    execution_status=research["execution_status"], coverage_status=research["coverage_status"],
                    claim_status=research["claim_status"])

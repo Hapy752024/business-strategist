@@ -28,7 +28,17 @@
         "business-case.md",
         "comparison.summary",
         "comparison.principal_uncertainty",
-        "comparison.next_action"
+        "comparison.next_action",
+        "business-plan.md",
+        "section.business",
+        "section.customer_market",
+        "section.competitive_choice",
+        "section.product_revenue",
+        "section.acquisition_sales",
+        "section.delivery_team",
+        "section.finances",
+        "section.milestones_risks",
+        "section.funding_legal_ip"
       ]
     },
     "status": {

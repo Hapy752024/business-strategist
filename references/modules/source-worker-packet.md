@@ -12,3 +12,9 @@ Each worker receives one packet containing:
 - **Required handoff:** retrieval attempts and failures, exact source locators/spans, source/customer/supplier role, deduplication notes, counterevidence, unresolved questions, and coverage limits.
 
 The coordinator verifies sources, independence, dates, scope and claim links, then owns the shared synthesis. A failed or unavailable retrieval is a coverage gap, not evidence that customers lack the problem.
+
+## Bounded corrections and resume
+
+When worker work is split, keep a coordinator-owned run-local ledger using `schemas/source-work-packet.schema.json`. Bind exact input/output bytes and known check-result artifacts; checks contain evidence, never executable commands. Use exclusive output paths and dependencies naming consumed outputs. See `fixtures/research/work-packets/ledger.json` for a synthetic four-unit example.
+
+Run `python3 scripts/evidence_scout/work_packets.py <ledger.json> --base <run-root> --previous <prior-ledger.json>` before resume. A valid incomplete ledger exits 1 and lists eligible units. Return only the rejected unit with the failed requirement, bound evidence, allowed outputs and next action. Preserve unaffected accepted units and attempt history; compare with the previous ledger. Changed bindings invalidate acceptance and consumers. Retry exhaustion requires revising the plan, not weakening checks. The coordinator reviews stale work before resetting it to pending. No helper dispatch, stage promotion or semantic-review certification is implied. Record recurring failures in the shared workflow log.

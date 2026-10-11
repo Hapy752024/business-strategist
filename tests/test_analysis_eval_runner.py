@@ -81,3 +81,21 @@ def test_blinded_pair_outputs_and_coordinator_key_are_separate(tmp_path):
     assert not (review / "blind-key.json").exists()
     assert (coordinator / "blind-key.json").is_file()
     assert {path.read_text() for path in (review / "outputs").iterdir()} == {"pre-change answer", "post-change answer"}
+
+
+def test_non_video_baseline_is_working_tree_snapshot_and_digest_checked(tmp_path):
+    import hashlib
+    manifest_path=ROOT/'evals/non-video/manifest.json'
+    manifest=json.loads(manifest_path.read_text())
+    assert module.validate_manifest(manifest,manifest_path.parent) == []
+    path='references/modules/source-worker-packet.md'
+    raw=module.frozen_baseline(path,manifest,manifest_path.parent)
+    assert hashlib.sha256(raw).hexdigest() == manifest['baseline_snapshot']['sha256'][path]
+    frozen=tmp_path/'baseline';frozen.mkdir();(frozen/'file').write_text('original')
+    fixture={'baseline_snapshot':{'directory':'baseline','sha256':{'file':module.digest(frozen/'file')}}}
+    assert module.frozen_baseline('file',fixture,tmp_path) == b'original'
+    (frozen/'file').write_text('changed')
+    import pytest
+    with pytest.raises(ValueError,match='digest differs'):module.frozen_baseline('file',fixture,tmp_path)
+    fixture['baseline_snapshot']['directory']='../escape'
+    with pytest.raises(ValueError,match='escapes'):module.frozen_baseline('file',fixture,tmp_path)

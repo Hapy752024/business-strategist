@@ -6,8 +6,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 
 def stable_id(record: dict[str, Any]) -> str:
@@ -34,6 +37,8 @@ def independent_groups(records: list[dict[str, Any]]) -> list[str]:
     groups: list[set[str]] = []
     for record in records:
         key = record.get("independence_key")
+        if record.get("fact_kind") and record.get("review_status") == "accepted":
+            key = "fact-source:" + str(record.get("source_record_id"))
         tokens = {f"author:{key}"} if key and not str(key).startswith("unknown:") else set()
         for field in ("duplicate_cluster_id", "content_sha256"):
             if record.get(field):
@@ -50,6 +55,8 @@ def independent_groups(records: list[dict[str, Any]]) -> list[str]:
 
 def build(evidence: list[dict[str, Any]], claims: list[dict[str, Any]]) -> list[dict[str, Any]]:
     by_id = {record["evidence_id"]: record for record in evidence}
+    if len(by_id) != len(evidence):
+        raise ValueError('Evidence IDs must be unique across customer evidence and research facts')
     ledger = []
     for claim in claims:
         row = dict(claim)
@@ -59,6 +66,13 @@ def build(evidence: list[dict[str, Any]], claims: list[dict[str, Any]]) -> list[
         if unknown:
             claim_id = str(row.get("claim_id", "<missing claim_id>"))
             raise ValueError(f"{claim_id}: unknown evidence IDs: {', '.join(unknown)}")
+        for item in support + counter:
+            fact = by_id[item]
+            if fact.get('fact_kind'):
+                if fact.get('review_status') != 'accepted':
+                    raise ValueError('Claim requires reviewed research facts: ' + item)
+                if fact['fact_kind'] == 'study_metadata' and row.get('claim_scope_type', row.get('claim_type')) != 'observation':
+                    raise ValueError('Study metadata cannot support a substantive research claim')
         independence = independent_groups([by_id[item] for item in support])
         clusters = sorted({str(by_id[item].get("duplicate_cluster_id")) for item in support + counter if by_id[item].get("duplicate_cluster_id")})
         row["supporting_evidence"] = support
@@ -73,6 +87,7 @@ def build(evidence: list[dict[str, Any]], claims: list[dict[str, Any]]) -> list[
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--evidence", type=Path, required=True)
+    parser.add_argument("--facts", type=Path, help="Additional reviewed typed facts; captures are checked before ledger use")
     parser.add_argument("--claims", type=Path, required=True, help="JSON array of claim definitions")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -80,7 +95,11 @@ def main() -> int:
     if not isinstance(claims, list):
         parser.error("--claims must contain a JSON array")
     try:
-        ledger = build(read_jsonl(args.evidence), claims)
+        evidence = read_jsonl(args.evidence)
+        if args.facts:
+            from scripts.market_research.research_facts import check_fact
+            evidence.extend(check_fact(row, args.facts.parent, accepted=True) for row in read_jsonl(args.facts))
+        ledger = build(evidence, claims)
     except (KeyError, ValueError) as exc:
         parser.error(str(exc))
     args.output.parent.mkdir(parents=True, exist_ok=True)

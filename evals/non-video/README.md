@@ -1,0 +1,3 @@
+# Non-video workflow evaluation
+
+Validate with `python3 scripts/run_analysis_evals.py --manifest evals/non-video/manifest.json --validate-only`. Baseline contains exact pre-change working-tree files and digests, including uncommitted prerequisites. Existing frozen workflow-quality tasks are untouched. New files absent baseline are explicit optional paths. Five development tasks and a separate fresh-session held-out task use synthetic inputs. Run both arms with the existing runner and an explicitly chosen sandboxed model command; review outputs/traces before rating. No live-quality or operator-usability claim is established by manifest validation.

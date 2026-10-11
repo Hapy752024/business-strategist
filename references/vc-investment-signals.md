@@ -82,3 +82,9 @@ Include:
   success, customer demand, and fundraising fit.
 - Remaining data-coverage gaps and the next evidence that could change the
   financing assessment.
+
+## Resumable overview and case implications
+
+The scanner supports `--max-pages`, `--as-of`, `--checkpoint` and `--resume`. Resume only an identical topic/geography/window/page-size scope. Credit stops preserve lower-bound results; no percentage change or acceleration is reported from capped/incomparable samples. Round IDs collapse repeated announcements; missing identities remain gaps. Source amounts remain disclosed samples, never overall market totals.
+
+Render `overview.md` with `scripts/market_research/build_investor_activity.py --scan <scan.json> --out <fresh-directory>`. Optional `--reviews <reviews.json>` accepts separately reviewed primary captures for material rounds; each declares round_id, accepted status, source_role (company_announcement/fund_announcement/filing), source_url/source_date, capture_path/sha256, supporting_passage, reviewer and rationale. Capture paths are relative to the reviews file. An unreviewed overview labels primary verification pending. Link relevant funded companies to independent customer/outcome research, include adverse outcomes and unfunded successes, and integrate scoped financing/competition implications into insights and case plans. Shared topic scans need explicit case source bindings.

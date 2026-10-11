@@ -39,3 +39,15 @@ python3 <agent-repository>/scripts/brand/check_lighthouse.py qa/lighthouse.json
 The Python checker enforces default per-run LCP/CLS/TBT/performance/SEO budgets and fails on missing values. Capture three runs per representative route, review median and regression deltas as defined in seo-performance.md. It does not prove report origin, field INP, every-page coverage or legal/SEO completeness. If project budgets differ, encode/review those in project CI; do not call the default checker a pass on missing metrics.
 
 Project CI: locked install, lint, typecheck, unit/state tests, production build, Playwright/axe, route audit, Lighthouse budget checks. Retain reports on failure and propagate nonzero statuses (never hide failures behind a final successful command or `|| true`). Secrets stay in environment; no production analytics by default in CI. Record tested commit, URL/config, route scope and manual outcomes in the launch assessment. Missing browser/Chrome/Lighthouse tooling means pending testing, not pass.
+
+## Declared SEO regression scope
+
+The browser auditor accepts optional row fields `expectedCanonical` (absolute intended production URL), `expectedIndexable` (HTTP/DOM noindex policy), `expectedCrawlable` (standard robots access), `sitemapExpected`, `entry` and `alternates` (language-to-URL map). The first row may declare `sitemapFiles` as same-origin paths for sitemap-index children. Only these files are fetched. Missing/extended robots syntax and unmeasured sitemap children remain explicit limitations. Sitemap XML rejects declarations and oversized input. Canonical/indexability expectations distinguish preview access from public production URLs.
+
+Run `node scripts/brand/audit_web_pages.mjs <site> <base-origin> <inventory.json> <tested-source-revision>`; outputs retain site/config/inventory identity, date and source revision. Unknown revision or incompatible scopes cannot produce an eligible comparison. `python3 scripts/brand/compare_seo_audits.py <before.json> <after.json>` reports new/existing/resolved technical issues, not ranking gains. Tests must actually run Chromium; optional skips remain pending. Query tokens and raw page HTML are excluded from the final browser report.
+
+## Preserve useful page components
+
+Optional route `preserve` declarations name `id`, `purpose`, `selector`, expected `count` (default 1), optional `textIncludes`, and `contains` child selector/count pairs. `behaviorTest` names a separate local project test. The auditor checks presence/visibility across existing widths; behavior remains pending. Run separate local Playwright tests for calculation, validation, pending/failure/retry and truthful success using fixtures or approved mocks. Passing metadata or presence never proves interactive value.
+
+Example: `"preserve":[{"id":"estimate","purpose":"Retain useful estimate","selector":"#estimate","contains":[{"selector":"input","count":1}],"behaviorTest":"estimate recalculates"}]`.

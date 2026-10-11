@@ -1,0 +1,23 @@
+{
+  "url": "https://example.com/creative/2",
+  "creator": "creator-b",
+  "platform": "instagram",
+  "format": "short",
+  "language": "en",
+  "market": "GB",
+  "published_at": "2026-10-01T00:00:00Z",
+  "observed_at": "2026-10-08T00:00:00Z",
+  "distribution": "organic",
+  "metrics": {
+    "views": {
+      "value": 1000,
+      "availability": "available",
+      "definition": "platform-reported views"
+    },
+    "shares": {
+      "value": 5,
+      "availability": "available",
+      "definition": "platform-reported shares"
+    }
+  }
+}
