@@ -1,0 +1,28 @@
+{
+  "synthetic": true,
+  "sources": [
+    {
+      "id": "C1",
+      "frame": "customer interview",
+      "segment": "small businesses",
+      "excerpt": "I like the idea, but I have never paid for this and usually use a spreadsheet."
+    },
+    {
+      "id": "C2",
+      "frame": "customer interview",
+      "segment": "regulated enterprise",
+      "excerpt": "We bought an existing compliance service after a recent audit. Switching vendors requires security approval."
+    },
+    {
+      "id": "S1",
+      "frame": "supplier testimonial",
+      "excerpt": "Hundreds love our product. This claim is copied verbatim by an affiliate blog."
+    }
+  ],
+  "coverage": {
+    "interviews_reviewed": 2,
+    "target_segment_not_selected": true,
+    "pricing_test": "not performed",
+    "journey_research": "incomplete"
+  }
+}

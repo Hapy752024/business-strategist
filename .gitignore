@@ -77,3 +77,6 @@ docs/
 
 # Local provider checks, outside case workspaces
 .research-infra/
+
+# Private local evaluation evidence and raw runtime output
+evals/local-runs/

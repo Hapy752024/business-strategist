@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "criteria": [
+    {
+      "id": "evidence-fidelity",
+      "description": "Uses supplied source IDs and keeps observations distinct from conclusions."
+    },
+    {
+      "id": "demand-truth",
+      "description": "Does not equate interest, supplier claims or duplication with purchases/demand."
+    },
+    {
+      "id": "decision-and-gaps",
+      "description": "Gives a bounded decision and a targeted next test; preserves segment and coverage gaps."
+    }
+  ],
+  "calibration": "An independent human must grade development outputs before held-out promotion; seed cases are diagnostic, not statistical evidence."
+}

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Local agent evaluation result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project",
+    "run_id",
+    "created_at",
+    "revision",
+    "evidence_kind",
+    "verdict",
+    "cases",
+    "requested_model",
+    "observed_model",
+    "usage",
+    "cost_usd",
+    "telemetry",
+    "bindings"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "project": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "revision": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence_kind": {
+      "enum": [
+        "deterministic",
+        "live_trial"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "UNVERIFIED",
+        "INFRASTRUCTURE_ERROR"
+      ]
+    },
+    "cases": {
+      "type": "array"
+    },
+    "requested_model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observed_model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "usage": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "cost_usd": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "telemetry": {
+      "type": "object"
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    }
+  },
+  "additionalProperties": true
+}

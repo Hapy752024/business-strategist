@@ -107,3 +107,7 @@ Use `evals/workflow-improvements.md` as the single shared log for observed agent
 ## Research data and per-case business plans
 
 Apply `references/research-data-and-precedents.md` for substantive Business research: official statistics/studies, separate customer-voice frames, international commercial precedents and relevant VC activity serve different claims. Source collection never establishes review or demand. V2 appraisal generates a provisional case plan; startup-business-builder publishes each researched case's full plan through the explicit `case-business-plan` route and `references/case-business-plan.md`. Provisional plans do not select execution or waive the pain-first gate.
+
+## Local agent evaluation
+
+Use `python3 scripts/evaluate.py check` after workflow/skill changes; `--full` delegates to the existing complete checks. Read `evals/LOCAL-EVALUATION.md` for explicit native trials, independent review and optional summary export. Before claiming model-quality improvement, retain matched baseline/current outputs and independent grades; fixture passes and prepared trials do not qualify. Record material regressions in the existing workflow improvement log. Each repository evaluates independently; central observability is optional.

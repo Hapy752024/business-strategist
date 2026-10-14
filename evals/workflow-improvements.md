@@ -134,3 +134,12 @@ Single shared record for failures, problems and improvement candidates across th
 - Cause: confirmed facts versus hypothesis.
 - Next action: bounded improvement; dependency or resume condition if blocked/deferred.
 - Resolution/history: dated change, command/result or evaluation receipt, remaining limits. Preserve past incidents.
+
+### WF-013 — Repository-local evaluation ownership
+
+- Priority/status: P2/resolved for local entrypoint and result-contract implementation; live quality remains WF-011.
+- First/last observed: 2026-10-13. Owner: Agent evaluation maintainer.
+- Observation/impact: local evaluation tools existed without one independently runnable check/trial/review/report path; central broker runs were not full domain quality evaluation.
+- Change: scripts/evaluate.py delegates existing checks, records local immutable results and bounded selected-skill native trials, supports blind independent review, and exports summaries only by explicit request. No central runtime dependency.
+- Verification/evidence: evals/test_local_evaluation.py (32 tests), real Bubblewrap network/key/home exclusion probes, and evals/local-implementation-report.md. Native pilot hit expired OAuth before inference; no quality improvement or baseline acceptance is claimed.
+- WF-011 recurrence 2026-10-13: bounded native pilot returned “OAuth session expired and could not be refreshed”; append-only classification records INFRASTRUCTURE_ERROR. Existing authentication blocker remains open. After reauthentication, obtain observed native responses and independent grades; do not rotate credentials or silently substitute a paid provider.

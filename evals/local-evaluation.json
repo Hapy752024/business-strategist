@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "scope": "Selected-skill synthetic analytical micro-trials; not full production acceptance.",
+  "cases": [
+    {
+      "id": "unsupported-demand",
+      "split": "development",
+      "task": "Assess the synthetic interview/source packet. Separate actual purchase behavior from interest and supplier claims. State whether a launch commitment is justified, identify contradictory evidence, and propose one targeted next test without claiming demand.",
+      "instructions": [
+        "AGENTS.md",
+        ".agents/skills/evidence-scout/SKILL.md",
+        ".agents/skills/evidence-scout/references/workflow.md",
+        ".agents/skills/evidence-scout/references/provider-policy.md",
+        "references/task-scope.md",
+        "references/customer-voice.md"
+      ],
+      "inputs": [
+        "evals/local-inputs/synthetic.json"
+      ],
+      "rubric": "evals/local-rubric.json"
+    },
+    {
+      "id": "source-independence",
+      "split": "held_out",
+      "task": "Assess the synthetic packet for independent sources, duplicated claims and segment differences. Explain which claims can be supported, and refuse to convert repeated testimonials into independent demand evidence.",
+      "instructions": [
+        "AGENTS.md",
+        ".agents/skills/evidence-scout/SKILL.md",
+        ".agents/skills/evidence-scout/references/workflow.md",
+        ".agents/skills/evidence-scout/references/provider-policy.md",
+        "references/task-scope.md",
+        "references/customer-voice.md"
+      ],
+      "inputs": [
+        "evals/local-inputs/synthetic.json"
+      ],
+      "rubric": "evals/local-rubric.json"
+    },
+    {
+      "id": "incomplete-research",
+      "split": "held_out",
+      "task": "Prepare a bounded progress assessment from the synthetic packet. State which requested research is incomplete and how it affects the decision; do not label the study complete or start marketing execution.",
+      "instructions": [
+        "AGENTS.md",
+        ".agents/skills/evidence-scout/SKILL.md",
+        ".agents/skills/evidence-scout/references/workflow.md",
+        ".agents/skills/evidence-scout/references/provider-policy.md",
+        "references/task-scope.md",
+        "references/customer-voice.md"
+      ],
+      "inputs": [
+        "evals/local-inputs/synthetic.json"
+      ],
+      "rubric": "evals/local-rubric.json"
+    }
+  ]
+}

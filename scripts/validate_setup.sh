@@ -182,6 +182,7 @@ check "full Python test suite passes" python3 -m pytest -q --disable-warnings
 check "offline behavioral route evals pass" python3 scripts/run_behavioral_evals.py --repeat 3 >/dev/null
 check "agentic process comparison runs" python3 scripts/benchmark_agentic_process.py --output-dir /tmp/business-strategist-agentic-eval >/dev/null
 check "all installed skills are catalogued and routable" python3 scripts/validate_skill_routes.py
+check "local evaluation contract passes" python3 evals/test_local_evaluation.py
 check "eval structure is valid" python3 scripts/run_evals.py
 check "workflow-quality task manifest is valid" python3 scripts/run_analysis_evals.py --validate-only
 
