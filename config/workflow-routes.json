@@ -602,6 +602,30 @@
         "verify earned media placement"
       ],
       "requires_pain_gate": true
+    },
+    {
+      "id": "stripe-best-practices",
+      "match": [],
+      "skill": "stripe-best-practices",
+      "forbidden": []
+    },
+    {
+      "id": "security-review",
+      "match": [],
+      "skill": "security-review",
+      "forbidden": []
+    },
+    {
+      "id": "webapp-testing",
+      "match": [],
+      "skill": "webapp-testing",
+      "forbidden": []
+    },
+    {
+      "id": "pre-release-regression",
+      "match": [],
+      "skill": "pre-release-regression",
+      "forbidden": []
     }
   ],
   "ambiguity_policy": "ask one question only when the top two routes would materially change work; otherwise choose the most specific explicit intent"

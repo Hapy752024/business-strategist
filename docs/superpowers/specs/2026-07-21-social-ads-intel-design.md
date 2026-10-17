@@ -155,7 +155,7 @@ Pass/fail evidence for implementation completion: `validate_setup.sh` output, `r
 
 ## 10. Determinism and agentic best-practices conformance
 
-Checked against `~/coding/general/agentic_best_practices`:
+Checked against `~/work/general/agentic_best_practices`:
 
 - **Least autonomous shape:** collectors are deterministic scripts — no agent loops, no model-in-the-loop retrieval. Model judgment appears only downstream in skill workflows (synthesis, report reading). Bounded retries (3), caps on pages/posts/ads, then escalate via status, never loop.
 - **Deterministic gates as repo scripts + CI:** routing and schema checks live in `run_evals.py` / `validate_setup.sh` / CI, not in harness-only features.

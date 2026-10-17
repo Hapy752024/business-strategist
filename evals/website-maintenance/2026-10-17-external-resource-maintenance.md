@@ -1,0 +1,17 @@
+# External website resources: implementation decision
+
+Research checked 2026-10-17. Scope: reusable website skill maintenance; no project website audited, edited or deployed, and no monitor activated.
+
+Decision: discover outbound links from the complete built/rendered page inventory each run. Use a small curated registry only for critical-resource meaning and expiring exceptions. Run transport checks manually/pre-release and optionally on an authorized schedule, with a separate editorial freshness review. These are engineering recommendations inferred from the failure modes below, not claims of a universal industry cadence.
+
+Authoritative findings:
+
+- HTTP defines different method and redirect semantics; Retry-After supports either a delay or an HTTP date. HEAD cannot verify response body meaning. The implementation instructions therefore require bounded GET confirmation, explicit redirect review, and delayed host-aware retries. [IETF RFC 9110, June 2022; accessed 2026-10-17](https://www.rfc-editor.org/rfc/rfc9110.html).
+- Lychee documents concurrency/retry controls and warns that retries after 429 can amplify rate limiting. Its documentation offers accepting 429 as an escape hatch; our policy deliberately retains 429 as unverified, because accepting it would hide missing checks. [Lychee rate limits, undated; accessed 2026-10-17](https://lychee.cli.rs/troubleshooting/rate-limits/).
+- Lychee exposes timeout, redirect, request-method and JSON-output options. This supports reusing a pinned checker rather than building a second networking stack. Explicit options avoid relying on potentially differing defaults between documentation/version releases. [Lychee configuration, undated; accessed 2026-10-17](https://lychee.cli.rs/guides/config/), [CLI, undated; accessed 2026-10-17](https://lychee.cli.rs/guides/cli/).
+- A missing-content/error page can return 200 (soft 404); status alone cannot establish resource validity. This supports a distinct content/meaning review. [Google Search Central crawling errors, undated; accessed 2026-10-17](https://developers.google.com/search/docs/crawling-indexing/troubleshoot-crawling-errors).
+- Scheduled GitHub Actions runs can be delayed or dropped under load; account changes can also stop schedules. A monitor therefore needs last-success and missed-run observation rather than assuming configuration proves execution. [GitHub Actions troubleshooting, undated; accessed 2026-10-17](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows).
+
+Implemented: offline HTML anchor discovery with provenance, deduplication, HTML-base handling, inert-template exclusion, sensitive/query-link omission and explicit coverage limits; maintenance instructions for manual/scheduled checks and content drift. The tool never performs a network request. Synthetic regression tests cover extraction, provenance, sensitive omission and path containment. Live checker compatibility, browser collection, destination reachability, scheduler execution and notification delivery remain untested; no production quality claim follows from these unit tests.
+
+Follow-up verification, 2026-10-17: the official CLI reference explicitly lists `txt` among default input extensions, `json` among `--format` values, and `--method` with GET as the default. The example now specifies `--method GET` explicitly. Nine synthetic test cases pass, including HTML self-closing-template behavior and malformed-base rejection; this does not establish full browser-parser equivalence or live Lychee execution.

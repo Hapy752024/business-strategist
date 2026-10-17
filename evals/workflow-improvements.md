@@ -26,8 +26,21 @@ Single shared record for failures, problems and improvement candidates across th
 | WF-009 | P3 | open | Review tooling | Provider/model identity diagnostic needs verification |
 | WF-010 | P1 | resolved | Non-video contracts | Retry, preservation and audience gaps fixed |
 | WF-011 | P3 | open | Model evaluation | Expired OAuth prevents live trials |
+| WF-012 | P2 | resolved | SEO audit | Equivalent root canonical URLs produce a false failure |
+| WF-014 | P2 | resolved | Skill imports | Copied app-specific skills bypass catalog and context boundaries |
+| WF-015 | P2 | resolved | Website QA | Passing contract tests miss checker and offer-scope inconsistencies |
+| WF-016 | P2 | resolved | Website lifecycle | Link maintenance and privacy design lacked reusable implementation guidance |
 
 ## Entries
+
+### WF-016 — External-link maintenance and broader privacy design gaps
+
+- First/last observed: 2026-10-17. Owner: website skill maintainer. Priority: P2.
+- Observed: maintenance requested an owner/cadence but provided no outbound discovery/check procedure; launch criteria treated all external 4xx as broken. Consent guidance prescribed banner controls without first establishing whether consent-requiring technology existed, and lacked a broader form/data-lifecycle design reference.
+- Impact: incomplete maintenance handoff, bot-block false positives, unnecessary consent interfaces and policy-only privacy review. These are instruction gaps; no production incident is inferred.
+- Change/evidence: website `references/external-link-maintenance.md`, `references/privacy-design.md`, revised consent/launch/testing guidance and quality-review entrypoint; `scripts/brand/discover_external_links.py` with synthetic regressions. Dated research documents retain source provenance.
+- Closure 2026-10-17: 9 synthetic discovery regressions pass; both edited skills structurally validate (existing reviewer description warning); repository evaluation `20261017T110133Z-36f4683df7d8` PASS. Research in `evals/website-maintenance/` records official-source retrieval and Firecrawl-credit/EUR-Lex-access limitations with successful regulator-source fallback. Live checker/scheduler operation, agent behavior across hosts and application-specific legal compliance remain unverified; this closes the reusable instruction/tooling gap only.
+- Application follow-up 2026-10-17: Italy website now has route/rendered discovery plus conditional consulate-source coverage, pinned Lychee setup, reports and a disabled-by-default scheduled job. Initial Lychee connection resets on five public destinations were independently confirmed as HTTP 200 with curl; one delayed independent client confirmation is now limited to connection errors, retaining both observations and never retrying 403/429 or disabling TLS. Evidence: `projects/us-retirees-italy/web-site/qa/external-link-baseline/2026-10-17/`; all 32 routes and 15 outbound destinations checked, six offline decisions tests/build/lint/typecheck pass. Scheduled execution and notifications remain unverified; eight source-content reviews are due. This adds live transport evidence for that website, not general legal/content or scheduler assurance.
 
 ### WF-001 — Inert template anchor completes placement
 
@@ -100,6 +113,8 @@ Single shared record for failures, problems and improvement candidates across th
 - Impact/next action: independent review evidence unavailable; reproduce provider/model resolution with sanitized diagnostics, then verify a bounded read-only review completes. Local inspection/reproductions must remain separately attributed.
 - Evidence: the implementation review in this conversation; transient provider outputs under `.agent-review/deepseek/`. Closure: pending; no successful provider review is claimed.
 
+- WF-009 recurrence 2026-10-12: review-with auto retry produced no usable external-provider result and was stopped. Sanitized result: `projects/us-retirees-italy/web-site/.agent-review/auto/20261012-085709-result.md`. Independent agent fallback reviewed the plan and implementation; a newsletter state inconsistency was corrected. Provider completion/identity remains open.
+
 ### WF-010 — Non-video correction and evidence contract gaps
 
 - Priority/status: P1/resolved. First/last observed: 2026-10-11. Owner: shared packet/Marketing/website maintainers.
@@ -113,6 +128,14 @@ Single shared record for failures, problems and improvement candidates across th
 - Observed: five development current-arm trials exited before inference with expired OAuth session that could not refresh; zero output tokens. No quality score produced. Cause: reported authentication failure; no provider diagnosis attempted.
 - Impact/next action: authenticate the selected runtime and rerun both arms, then inspect outputs/traces; keep held-out work separate and run operator usability independently.
 - Evidence: `evals/non-video/README.md`, implementation receipt. Closure pending successful inference and output review.
+
+### WF-012 — Equivalent root canonical URLs produce a false failure
+
+- Priority/status: P2/resolved. First observed: 2026-10-11; closure: 2026-10-12. Owner: Website audit maintainer.
+- Observed/reproduction: Italy local production HTML declares `https://italyforretirees.com`; Chromium resolves the link href to `https://italyforretirees.com/`. Explicit expectations using either spelling fail the canonical check. Evidence: `projects/us-retirees-italy/web-site/qa/website-review-2026-10-11/seo-audit.json` and `seo-routes.json`.
+- Cause: confirmed raw string comparison in `scripts/brand/seo_checks.py` compares expected, HTML and DOM canonicals without normalizing an empty origin path.
+- Impact/expected: a correct root canonical is reported as a site defect. Treat these two root spellings as equivalent while preserving meaningful path/query differences.
+- Fix/closure: normalize only an empty origin path to `/` in expected/HTTP/DOM/sitemap comparisons. Four focused regressions pass, including real path/query mismatch rejection (`tests/test_seo_root_canonical.py`); the complete 31-route local browser SEO audit has no errors (`projects/us-retirees-italy/web-site/qa/website-fixes-2026-10-12/seo-audit.json`). This closes the comparator defect only, not production SEO/launch readiness.
 
 ## Latest verification receipt
 
@@ -143,3 +166,23 @@ Single shared record for failures, problems and improvement candidates across th
 - Change: scripts/evaluate.py delegates existing checks, records local immutable results and bounded selected-skill native trials, supports blind independent review, and exports summaries only by explicit request. No central runtime dependency.
 - Verification/evidence: evals/test_local_evaluation.py (32 tests), real Bubblewrap network/key/home exclusion probes, and evals/local-implementation-report.md. Native pilot hit expired OAuth before inference; no quality improvement or baseline acceptance is claimed.
 - WF-011 recurrence 2026-10-13: bounded native pilot returned “OAuth session expired and could not be refreshed”; append-only classification records INFRASTRUCTURE_ERROR. Existing authentication blocker remains open. After reauthentication, obtain observed native responses and independent grades; do not rotate credentials or silently substitute a paid provider.
+
+### WF-014 — Imported application skills need context and routing adaptation
+
+- Priority/status: P2/resolved for structural integration; live behavior unverified. First/last observed: 2026-10-17. Owner: Skill maintenance.
+- Observed/reproduction: seven copied skill folders included insurance-specific paths, providers, release defaults and missing dependencies. None had catalog/routes entries; the lightweight local evaluation PASS alone did not establish route parity.
+- Cause/impact: confirmed raw folder copy carried source-application assumptions and bypassed explicit catalog registration, risking wrong dispatch and invalid execution paths.
+- Resolution: removed overlapping/domain-bound add-flow, add-brand and frontend-design copies; generalized four retained helpers, registered explicit routes and website ownership, removed stale version defaults and unused examples/adapters. See `config/skill-catalog.json`, `config/workflow-routes.json`, `references/modules/website.md`.
+- Closure evidence: `python3 scripts/validate_skill_routes.py` passes; all four skill-creator quick validations pass; `python3 scripts/evaluate.py check` passes. These are deterministic checks, not live task-quality or production-payment evidence.
+- Next action: use selected-application context during real tasks; retain native trial and independent grading before claiming model-quality improvement.
+
+### WF-015 — Passing website contracts miss semantic and fallback defects
+
+- Priority/status: P2/resolved for the three local implementation defects. First/last observed: 2026-10-17. Owner: Italy website maintainer.
+- Observed: 100 existing browser tests pass against the existing local build while a remote-work selection still produces an ERV income headline; comparison-page promises exceed the narrower call/recap framing. Synthetic module execution also shows an invalid successful FX response overwrites last-good cache and makes the next load reject.
+- Reproduction/evidence: `projects/us-retirees-italy/web-site/qa/implementation-review-2026-10-17/findings.json`; implementation in `app/check/checker.tsx`, `app/check/fx.ts`, and `app/compare/page.tsx` within that website. No real customer data used.
+- Observed cause: checker evaluation omits selected activity, FX persistence precedes validation, and existing price/route assertions do not compare deliverable scope. Frequency of malformed provider responses is unknown.
+- Impact: green browser contracts do not establish correct route interpretation, robust last-good fallback, or consistent purchase expectations.
+- Fix: label other plans' results and email summaries as ERV income-only comparisons; label ERV documents/processing explicitly. Validate rate values and calendar dates before caching, reject invalid cache entries, and preserve last-good/built-in fallback. Align the comparison CTA with the $49 call/recap and separately priced full plan.
+- Closure evidence 2026-10-17: lint, TypeScript and fresh build pass; 115 local Chromium tests pass, including 15 new regressions in `projects/us-retirees-italy/web-site/tests/review-fixes.spec.ts`. Source hashes and checks are recorded in the findings JSON. Historical screenshots generated by tests were restored.
+- Remaining boundary: manual booking and paid-test scope preserved. This closes local implementation defects only; production verification, actual provider failure frequency and existing launch requirements remain unestablished.

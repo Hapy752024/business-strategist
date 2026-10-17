@@ -52,7 +52,11 @@
       "reference": "references/modules/website.md",
       "quality_reference": "references/modules/quality/website.md",
       "skills": [
-        "brand-website-designer-builder"
+        "brand-website-designer-builder",
+        "stripe-best-practices",
+        "security-review",
+        "webapp-testing",
+        "pre-release-regression"
       ]
     }
   },
@@ -1009,6 +1013,78 @@
           "cost": "medium"
         }
       }
+    },
+    "stripe-best-practices": {
+      "intent": [
+        "design or review Stripe integration"
+      ],
+      "excludes": [
+        "customer research",
+        "production deployment"
+      ],
+      "prerequisites": [
+        "selected target application and bounded task"
+      ],
+      "artifacts": [
+        "scoped findings and verification evidence"
+      ],
+      "side_effect": "local_files",
+      "cost": "low",
+      "required_references": []
+    },
+    "security-review": {
+      "intent": [
+        "review application security"
+      ],
+      "excludes": [
+        "customer research",
+        "production deployment"
+      ],
+      "prerequisites": [
+        "selected target application and bounded task"
+      ],
+      "artifacts": [
+        "scoped findings and verification evidence"
+      ],
+      "side_effect": "none",
+      "cost": "low",
+      "required_references": []
+    },
+    "webapp-testing": {
+      "intent": [
+        "test local web application behavior"
+      ],
+      "excludes": [
+        "customer research",
+        "production deployment"
+      ],
+      "prerequisites": [
+        "selected target application and bounded task"
+      ],
+      "artifacts": [
+        "scoped findings and verification evidence"
+      ],
+      "side_effect": "local_files",
+      "cost": "low",
+      "required_references": []
+    },
+    "pre-release-regression": {
+      "intent": [
+        "assess application release regression coverage"
+      ],
+      "excludes": [
+        "customer research",
+        "production deployment"
+      ],
+      "prerequisites": [
+        "selected target application and bounded task"
+      ],
+      "artifacts": [
+        "scoped findings and verification evidence"
+      ],
+      "side_effect": "local_files",
+      "cost": "low",
+      "required_references": []
     }
   }
 }

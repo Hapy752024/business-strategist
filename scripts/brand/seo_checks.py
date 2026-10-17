@@ -37,13 +37,21 @@ def is_noindex(values):
     return any({'noindex', 'none'} & set(re.split(r'[\s,:]+', v.lower())) for v in values)
 
 
+def canonical_key(value):
+    """Normalize only an origin's empty path, preserving paths and queries."""
+    if not value:
+        return value
+    parts = urlsplit(value)
+    return parts._replace(path=parts.path or '/').geturl()
+
+
 def check(payload: dict) -> dict:
     inventory, pages = payload['inventory'], payload['pages']
     errors, limits, sitemap = [], [], set()
     for doc in payload.get('sitemaps', []):
         try:
             urls, children = sitemap_urls(doc['body'])
-            sitemap.update(urls)
+            sitemap.update(canonical_key(url) for url in urls)
             captured = {item.get('url') for item in payload.get('sitemaps', [])}
             if children and not all(url in captured for url in children):
                 limits.append('sitemap-index children were not fully checked')
@@ -51,7 +59,7 @@ def check(payload: dict) -> dict:
             errors.append('sitemap: ' + str(exc))
     declared = {r['path']: r for r in inventory}
     observed = {p['path']: p for p in pages}
-    canonical_paths = {r.get('expectedCanonical'): r for r in inventory if r.get('expectedCanonical')}
+    canonical_paths = {canonical_key(r.get('expectedCanonical')): r for r in inventory if r.get('expectedCanonical')}
     for path, row in declared.items():
         if row.get('redirect'):
             continue
@@ -60,10 +68,10 @@ def check(payload: dict) -> dict:
             errors.append(path + ': declared page unmeasured')
             continue
         parser = Meta(); parser.feed(p.get('raw_html', ''))
-        expected = row.get('expectedCanonical')
+        expected = canonical_key(row.get('expectedCanonical'))
         if expected:
-            http_can = [urljoin(p.get('final_url', payload['base']), v) for v in parser.canonicals]
-            if p.get('canonical') != expected or http_can != [expected]:
+            http_can = [canonical_key(urljoin(p.get('final_url', payload['base']), v)) for v in parser.canonicals]
+            if canonical_key(p.get('canonical')) != expected or http_can != [expected]:
                 errors.append(path + ': canonical differs between expected, HTTP or DOM')
         else:
             limits.append(path + ': intended canonical undeclared')
@@ -94,8 +102,8 @@ def check(payload: dict) -> dict:
         if row.get('alternates') is not None and p.get('alternates', {}) != row['alternates']:
             errors.append(path + ': language alternates differ from configuration')
         for language, href in row.get('alternates', {}).items():
-            peer = canonical_paths.get(href)
-            if peer is not None and expected not in peer.get('alternates', {}).values():
+            peer = canonical_paths.get(canonical_key(href))
+            if peer is not None and expected not in {canonical_key(url) for url in peer.get('alternates', {}).values()}:
                 errors.append(path + ': language alternate is not reciprocal: ' + language)
     for url in sorted(sitemap):
         row = canonical_paths.get(url)

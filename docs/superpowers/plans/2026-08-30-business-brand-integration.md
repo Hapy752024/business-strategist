@@ -4,9 +4,9 @@
 
 **Status:** Agentic implementation complete; operational acceptance gates pending
 
-**Destination repository:** `/mnt/c/coding/general/business-strategist`
+**Destination repository:** `/home/habib/work/general/business-strategist`
 
-**Source repository:** `/mnt/c/coding/general/brand_designer` at `62fee9b8483ac9c36246d2666c225d599108d925`
+**Source repository:** `/home/habib/work/general/brand_designer` at `62fee9b8483ac9c36246d2666c225d599108d925`
 
 **Implementation note (2026-08-30):** The reusable agent/skill implementation is complete for the user-authorized scope. Existing research outputs were not inspected or changed. The 15 branding skills, independent and business-linked routing, revisioned manifests, explicit approvals, conflict-safe promotion, FAL finalization, preference-led Next.js website fixture, server-side Vercel Flags experiment, browser QA, CI, and reproducible structural comparison are installed. The remaining gates are empirical or external—not missing code: repeated authorized LLM/token benchmarks, human/blind visual acceptance across multiple generated sites, a selected GitHub/Vercel target, and any paid FAL or production experiment/deployment.
 

@@ -51,3 +51,9 @@ Run `node scripts/brand/audit_web_pages.mjs <site> <base-origin> <inventory.json
 Optional route `preserve` declarations name `id`, `purpose`, `selector`, expected `count` (default 1), optional `textIncludes`, and `contains` child selector/count pairs. `behaviorTest` names a separate local project test. The auditor checks presence/visibility across existing widths; behavior remains pending. Run separate local Playwright tests for calculation, validation, pending/failure/retry and truthful success using fixtures or approved mocks. Passing metadata or presence never proves interactive value.
 
 Example: `"preserve":[{"id":"estimate","purpose":"Retain useful estimate","selector":"#estimate","contains":[{"selector":"input","count":1}],"behaviorTest":"estimate recalculates"}]`.
+
+## External resources and privacy behavior
+
+Apply [external-link maintenance](external-link-maintenance.md) for outbound discovery and repeatable checks; the route auditor above does not verify every external target. Keep automated reachability, manual relevance review and unresolved coverage separate.
+
+Apply [privacy by design](privacy-design.md) to forms and data flows alongside consent tests. Inspect collection timing, actual fields/payloads, accessible notices and controls, recipient restrictions, and deletion/rights handling using synthetic data. Absence of a consent banner can be correct when the inventory demonstrates no consent-requiring technology; a banner is not a universal launch requirement.

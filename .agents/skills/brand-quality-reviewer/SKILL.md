@@ -19,3 +19,5 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 ## Quality Checklist
 
 Run the relevant validators before delivery; never promote unapproved artifacts.
+
+For website reviews involving personal data, load repo-root `.agents/skills/brand-website-designer-builder/references/privacy-design.md`: inspect timely layered information, necessary collection, fair choices and actual network/storage/deletion behavior. For external resources, load repo-root `.agents/skills/brand-website-designer-builder/references/external-link-maintenance.md` and review coverage and unresolved findings. A policy page or successful HTTP response alone is insufficient evidence.
