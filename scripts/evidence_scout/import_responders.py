@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Import smoke-test signups into an experiment result draft and an anonymised responder ledger.
 
-Counts are cumulative per variant and channel: a row that reached `booked` also counts as
-identified, exposed, responded and eligible. Rows with an unknown variant, missing channel
-or unmapped stage are reported, never counted. Names, emails and other identity fields are
-never copied; responder ids are salted-free SHA256 prefixes of the preset's id field.
+Rows are reduced to one person (the preset's id field) at their furthest stage, so
+event-per-row exports count each person once. Counts are cumulative per variant and channel:
+a person who reached `booked` also counts as identified, exposed, responded and eligible.
+Rows with an unknown variant, missing channel or unmapped stage are reported, never counted.
+Names, emails and other identity fields are never copied; responder ids are salted SHA256
+prefixes (salt kept in `responders.salt` beside the ledger) and segment fit is limited to
+fit / out_of_segment / unresolved.
 """
 from __future__ import annotations
 
@@ -12,10 +15,12 @@ import argparse
 import csv
 import hashlib
 import json
+import secrets
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+SEGMENT_FIT = {'fit', 'out_of_segment', 'unresolved'}
 STAGES = ('identified', 'exposed', 'responded', 'eligible', 'booked', 'attended', 'usable_incident')
 
 
@@ -39,12 +44,16 @@ def _empty() -> dict:
     return {stage: 0 for stage in STAGES}
 
 
-def import_rows(rows: list[dict], mapping: dict, variants: set[str]) -> tuple[list[dict], dict, list[dict]]:
-    responders, counts, unmapped = [], {}, []
+def _text(value) -> str:
+    return '' if value is None else str(value).strip()
+
+
+def import_rows(rows: list[dict], mapping: dict, variants: set[str], salt: str = '') -> tuple[list[dict], dict, list[dict]]:
+    people, order, unmapped = {}, [], []
     for index, row in enumerate(rows):
-        variant = str(_field(row, mapping['variant_field']) or '').strip()
-        channel = str(_field(row, mapping['channel_field']) or '').strip()
-        raw_stage = str(_field(row, mapping['stage_field']) or '').strip()
+        variant = _text(_field(row, mapping['variant_field']))
+        channel = _text(_field(row, mapping['channel_field']))
+        raw_stage = _text(_field(row, mapping['stage_field']))
         if variant not in variants:
             unmapped.append({'row': index, 'reason': f'unknown variant {variant or "<empty>"}'})
             continue
@@ -55,15 +64,50 @@ def import_rows(rows: list[dict], mapping: dict, variants: set[str]) -> tuple[li
         if stage not in STAGES:
             unmapped.append({'row': index, 'reason': f'unknown stage {raw_stage or "<empty>"}'})
             continue
-        funnel = counts.setdefault(variant, {}).setdefault(channel, _empty())
-        for name in STAGES[:STAGES.index(stage) + 1]:
+        ident = _text(_field(row, mapping['id_field'])) or f'row-{index}'
+        fit = _text(_field(row, mapping.get('segment_fit_field')))
+        person = people.get(ident)
+        if person is None:
+            people[ident] = person = {'variant': variant, 'source': channel, 'stage': stage, 'segment_fit': 'unresolved'}
+            order.append(ident)
+        elif STAGES.index(stage) > STAGES.index(person['stage']):
+            person['stage'] = stage
+        if fit in SEGMENT_FIT and fit != 'unresolved':
+            person['segment_fit'] = fit
+    responders, counts = [], {}
+    for ident in order:
+        person = people[ident]
+        funnel = counts.setdefault(person['variant'], {}).setdefault(person['source'], _empty())
+        for name in STAGES[:STAGES.index(person['stage']) + 1]:
             funnel[name] += 1
-        ident = str(_field(row, mapping['id_field']) or f'row-{index}')
-        fit = _field(row, mapping.get('segment_fit_field'))
-        responders.append({'id': 'R-' + hashlib.sha256(ident.encode()).hexdigest()[:12], 'variant': variant,
-                           'source': channel, 'stage': stage,
-                           'segment_fit': str(fit) if fit not in (None, '') else 'unresolved'})
+        pseudonym = 'R-' + hashlib.sha256((salt + '\0' + ident).encode()).hexdigest()[:12]
+        responders.append({'id': pseudonym, **person})
     return responders, counts, unmapped
+
+
+def _ledger_salt(ledger: Path) -> str:
+    path = ledger.with_name(ledger.stem + '.salt')
+    if not path.is_file():
+        path.write_text(secrets.token_hex(16) + '\n')
+    return path.read_text().strip()
+
+
+def _default_ledger(card_path: Path, card: dict) -> Path | None:
+    ref = card.get('responders_ref')
+    if not ref:
+        return None
+    path = Path(ref['path'])
+    if path.is_absolute():
+        return path
+    try:
+        from scripts import case_workspace as cases
+    except ModuleNotFoundError:
+        sys.path.insert(0, str(ROOT))
+        from scripts import case_workspace as cases
+    owner = cases.locate(card_path.absolute().parent)
+    if owner is None:
+        raise SystemExit('card is outside a business workspace; pass --responders explicitly')
+    return cases.safe(Path(owner), ref['path'])
 
 
 def read_source(path: Path) -> list[dict]:
@@ -86,12 +130,13 @@ def main(argv=None) -> int:
     ap.add_argument('--allow-unmapped', action='store_true')
     a = ap.parse_args(argv)
     card = json.loads(a.card.read_text())
-    responders, counts, unmapped = import_rows(read_source(a.source), load_presets()[a.preset], set(card['variants']))
+    ledger = a.responders or _default_ledger(a.card, card)
+    salt = _ledger_salt(ledger) if ledger is not None else secrets.token_hex(16)
+    responders, counts, unmapped = import_rows(read_source(a.source), load_presets()[a.preset], set(card['variants']), salt)
     for item in unmapped:
         print(f"unmapped row {item['row']}: {item['reason']}", file=sys.stderr)
     if unmapped and not a.allow_unmapped:
         return 1
-    ledger = a.responders or (Path(card['responders_ref']['path']) if card.get('responders_ref') else None)
     if ledger is not None:
         existing = json.loads(ledger.read_text()) if ledger.is_file() else []
         seen = {r.get('id') for r in existing}

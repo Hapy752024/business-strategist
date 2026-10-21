@@ -202,7 +202,7 @@ Vocabulary: prefer "Not checked" and "I don't know for sure" to hedged affirmati
 
 ## Contract version 3: assumption register
 
-Set `publication_contract_version: 3` for a case with `assumptions.json`. Version 3 keeps every version 2 rule and adds:
+A case with `assumptions.json` (every case registered since 2026-10-21) is held to the version 3 content rules below whatever version the packet declares; declaring `publication_contract_version: 3` also applies every version 2 publication rule. Version 3 adds:
 
 - Two required sections before `## Sources`: `## What would change this recommendation`, containing at least one `{{assumption.<id>}}` marker, and `## What we could not check`, with at least one `- ` bullet naming a gap and why. "Not checked" is a valid finding.
 - `{{assumption.<id>}}` renders the entry's current status and statement, for example `**[contested]** Owners pay for monthly bookkeeping help.` Unknown ids stop publication.

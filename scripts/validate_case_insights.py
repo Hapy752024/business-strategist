@@ -281,7 +281,7 @@ def _body(root: Path, case_id: str, packet: dict) -> str:
             from publication_claims import render as render_claims
         text = render_claims(root, {NAME: text}, packet.get('publication_claims', []), bindings, register=register)[NAME]
     text = render_assumptions({NAME: text}, register)[NAME]
-    if (packet.get('publication_contract_version') or 1) >= 3 and register is not None:
+    if register is not None:
         text = register_blocks(text, register, cases.experiment_cards(root, case_id))
     if packet.get('scope_status') == 'progress':
         summary = str(packet.get('pending_summary') or '').strip()
@@ -373,15 +373,19 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
     version = packet.get('publication_contract_version') or 1
     if version not in {1, 2, 3}:
         raise ValueError('unsupported insights publication contract version')
-    if version >= 3:
+    if version < 3 and (cases.resolve(root, case_id) / cases.REGISTER).is_file():
+        version_rules = 3  # a case with an assumption register is held to v3 content rules
+    else:
+        version_rules = version
+    if version_rules >= 3:
         authored = packet['document'] if isinstance(packet.get('document'), str) else ''
-        errors = check_v3_sections(authored) + check_truthfulness(authored, version)
+        errors = check_v3_sections(authored) + check_truthfulness(authored, version_rules)
         if errors:
             raise ValueError('; '.join(errors))
     text = _body(root, case_id, packet)
     rows = inventory(root, case_id, manifest=cm, source_bindings=packet.get('source_bindings', []))
     inv_digest = inventory_digest(root, case_id, manifest=cm, rows=rows)
-    _validate_content(text, project['cases'][case_id]['title'], version)
+    _validate_content(text, project['cases'][case_id]['title'], version_rules)
     _validate_links(root, case_id, text, has_sources=bool(packet.get('source_bindings')))
     coverage = packet.get('coverage')
     if not isinstance(coverage, list) or len(coverage) != len(rows):
@@ -398,7 +402,7 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
             raise ValueError('research coverage needs a reasoned disposition')
         if item['disposition'] == 'incorporated':
             section = item.get('section')
-            if section not in headings_for(version) or not isinstance(section, str):
+            if section not in headings_for(version_rules) or not isinstance(section, str):
                 raise ValueError('incorporated output needs a substantive insights section')
             member_paths = {member['path'] for row in rows if row['path'] == path for member in row.get('members', [])}
             if not any(b['path'] == path or b['path'] in member_paths for b in packet['source_bindings']):
@@ -426,7 +430,7 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
         if not isinstance(row, dict) or set(row) != {'id', 'section', 'reason'} or row.get('id') not in questions or row['id'] in qseen:
             raise ValueError('invalid or duplicate question coverage')
         qseen.add(row['id'])
-        if row['section'] not in headings_for(version) or not isinstance(row['reason'], str) or len(row['reason'].strip()) < 15:
+        if row['section'] not in headings_for(version_rules) or not isinstance(row['reason'], str) or len(row['reason'].strip()) < 15:
             raise ValueError('question coverage needs a section and reason')
         q = questions[row['id']]
         if q['status'] in {'answered', 'partial'} and q.get('answer_binding') not in packet['source_bindings']:
@@ -438,7 +442,7 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
         if not isinstance(conflict, dict) or set(conflict) != {'left', 'right', 'scope', 'resolution', 'rationale', 'section'}:
             raise ValueError('invalid conflict review row')
         if (conflict['left'] not in known_sources or conflict['right'] not in known_sources
-                or conflict['left'] == conflict['right'] or conflict['section'] not in headings_for(version)
+                or conflict['left'] == conflict['right'] or conflict['section'] not in headings_for(version_rules)
                 or conflict['resolution'] not in {'corrected', 'scope_qualified', 'historical_superseded', 'unresolved_disclosed'}
                 or not isinstance(conflict['scope'], str) or not conflict['scope'].strip()
                 or not isinstance(conflict['rationale'], str) or len(conflict['rationale'].strip()) < 20):

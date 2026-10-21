@@ -40,10 +40,18 @@ def setup_case(tmp_path):
     cases.record_question(root, 'a', {'id': 'market-size', 'question': 'How large is the reachable market?',
                                      'status': 'answered', 'answer_binding': binding},
                           'record-size-question', 'Record answered founder question')
+    cases.publish_assumptions(root, 'a', {'revision': 1, 'owner_module': 'idea-grill', 'entries': [{
+        'id': 'A-delay', 'statement': 'Segment A loses money from a two-week wait.', 'type': 'desirability',
+        'importance': 'critical', 'status': 'unknown', 'evidence_refs': [], 'counter_evidence_refs': [],
+        'confidence_note': 'Not checked.'}]}, 'seed-register', 'Seed register')
     return root, case
 
 
 def document():
+    return v3_document()
+
+
+def legacy_document():
     return '''# A
 Last updated: 2026-09-25
 
@@ -707,20 +715,13 @@ def test_interrupted_correction_restores_annex_and_numeric_receipt(tmp_path, mon
 
 def test_insights_render_assumption_marker_from_register(tmp_path):
     root, case = setup_case(tmp_path)
-    cases.publish_assumptions(root, 'a', {'revision': 1, 'owner_module': 'idea-grill', 'entries': [{
-        'id': 'A-delay', 'statement': 'Segment A loses money from a two-week wait.', 'type': 'desirability',
-        'importance': 'critical', 'status': 'unknown', 'evidence_refs': [], 'counter_evidence_refs': [],
-        'confidence_note': 'Not checked.'}]}, 'seed-register', 'Seed register')
     text = document().replace('The unanswered question is whether', 'Open: {{assumption.A-delay}} The unanswered question is whether')
     cases.publish_insights(root, 'a', packet(root, text=text), 'insight-assumption', 'Publish with assumption')
     assert '**[unknown]** Segment A loses money from a two-week wait.' in (case / 'case_insights.md').read_text()
 
 
 def _seed_register(root):
-    cases.publish_assumptions(root, 'a', {'revision': 1, 'owner_module': 'idea-grill', 'entries': [{
-        'id': 'A-delay', 'statement': 'Segment A loses money from a two-week wait.', 'type': 'desirability',
-        'importance': 'critical', 'status': 'unknown', 'evidence_refs': [], 'counter_evidence_refs': [],
-        'confidence_note': 'Not checked.'}]}, 'seed-register', 'Seed register')
+    """setup_case already seeds A-delay."""
 
 
 V3_SECTIONS = '''## What would change this recommendation
@@ -733,7 +734,7 @@ If {{assumption.A-delay}} is supported by interviews, the recommendation moves t
 
 
 def v3_document():
-    text = document().replace('## Sources', V3_SECTIONS)
+    text = legacy_document().replace('## Sources', V3_SECTIONS)
     text = text.replace('Segment A may have a meaningful delay problem, but',
                         '**Insufficient evidence** to commit: {{assumption.A-delay}} Segment A may have a meaningful delay problem, but')
     return text.replace('Interview recent segment A customers about the delay,',
@@ -759,13 +760,13 @@ def test_v3_requires_change_trigger_and_unchecked_sections(tmp_path):
     root, case = setup_case(tmp_path)
     _seed_register(root)
     with pytest.raises(ValueError, match='What would change this recommendation'):
-        cases.publish_insights(root, 'a', v3_packet(root, document()), 'v3-missing', 'v3 without sections')
+        cases.publish_insights(root, 'a', v3_packet(root, legacy_document()), 'v3-missing', 'v3 without sections')
 
 
 def test_v3_change_trigger_needs_assumption_marker(tmp_path):
     root, case = setup_case(tmp_path)
     _seed_register(root)
-    text = document().replace('## Sources', V3_SECTIONS.replace('If {{assumption.A-delay}} is', 'If delay is'))
+    text = legacy_document().replace('## Sources', V3_SECTIONS.replace('If {{assumption.A-delay}} is', 'If delay is'))
     with pytest.raises(ValueError, match='assumption marker'):
         cases.publish_insights(root, 'a', v3_packet(root, text), 'v3-nomarker', 'v3 without marker')
 
@@ -784,7 +785,7 @@ def test_v3_publishes_with_register_blocks(tmp_path):
 def test_legacy_insights_unaffected(tmp_path):
     root, case = setup_case(tmp_path)
     (case / 'assumptions.json').unlink()
-    cases.publish_insights(root, 'a', packet(root), 'legacy', 'Legacy publication')
+    cases.publish_insights(root, 'a', packet(root, text=legacy_document()), 'legacy', 'Legacy publication')
     assert 'Top unknowns' not in (case / 'case_insights.md').read_text()
 
 
@@ -809,7 +810,7 @@ def test_truthfulness_not_applied_to_v2():
 def test_v3_publication_rejects_unreferenced_decision_paragraph(tmp_path):
     root, case = setup_case(tmp_path)
     _seed_register(root)
-    text = document().replace('## Sources', V3_SECTIONS)
+    text = legacy_document().replace('## Sources', V3_SECTIONS)
     with pytest.raises(ValueError, match='paragraph without evidence or status'):
         cases.publish_insights(root, 'a', v3_packet(root, text), 'v3-untruthful', 'unreferenced decision')
 
@@ -819,3 +820,10 @@ def test_v3_packet_matches_shipped_schema(tmp_path):
     _seed_register(root)
     schema = json.loads((Path(__file__).resolve().parents[1] / 'schemas/case-insights.schema.json').read_text())
     assert not list(Draft202012Validator(schema).iter_errors(v3_packet(root, v3_document())))
+
+
+def test_register_case_gets_v3_rules_even_with_v1_packet(tmp_path):
+    root, case = setup_case(tmp_path)
+    assert (case / 'assumptions.json').is_file()
+    with pytest.raises(ValueError, match='What would change this recommendation'):
+        cases.publish_insights(root, 'a', packet(root, text=legacy_document()), 'v1-on-register', 'opt-out attempt')

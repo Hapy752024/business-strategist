@@ -188,3 +188,35 @@ def test_decision_kpis_update_on_close(tmp_path):
     assert kpis == c.decision_kpis(p, 'a')
     readme = (p / 'README.md').read_text()
     assert '| A | 1 of 1 | 1 of 1 | 0 |' in readme
+
+
+def test_founder_path_kit_plan_approve_start(tmp_path):
+    from scripts.evidence_scout import build_smoke_test_kit as kit
+    p = topic(tmp_path)
+    run = p / 'cases/a/market_research/pain_points/runs/source'
+    run.mkdir(parents=True)
+    (run / 'summary.json').write_text(json.dumps({'topic': 'bookkeeping delays'}))
+    out = kit.build(run_dir=run, experiment_id='E-path', assumption_ids=['A-pay'], library_id='message-smoke-test',
+                    offer='Bookkeeping in 48 hours', segment='solo owners', variants=2, p_low=0.02, p_high=0.05,
+                    out_dir=run / 'experiments/path')
+    c.experiment_plan(p, 'a', json.loads((out / 'experiment-card.json').read_text()), 'plan-path', 'plan')
+    budget = json.loads((out / 'budget-approval.json').read_text())
+    budget.update(status='approved', approved_by='founder', approved_at='2026-10-21', requested_amount=150, currency='EUR')
+    (out / 'budget-approval.json').write_text(json.dumps(budget))
+    card = c.experiment_transition(p, 'a', 'E-path', 'approve', 'approve-path', 'budget approved')
+    assert card['status'] == 'approved'
+    assert card['authorization_refs'][0]['digest'] == c.digest((out / 'budget-approval.json').read_bytes())
+    assert c.experiment_transition(p, 'a', 'E-path', 'start', 'start-path', 'start')['status'] == 'running'
+
+
+def test_close_rejects_pass_at_rate_below_threshold(tmp_path):
+    p = topic(tmp_path)
+    _approved(p)
+    low = result(3, 3)
+    for variant in low['counts'].values():
+        variant['linkedin']['eligible'] = 5000
+        variant['linkedin']['exposed'] = 5000
+        variant['linkedin']['responded'] = 5000
+        variant['linkedin']['identified'] = 5000
+    with pytest.raises(ValueError, match='pass below predeclared threshold'):
+        c.experiment_close(p, 'a', 'E-one', low, 'close-1', 'six bookings from ten thousand')

@@ -919,13 +919,16 @@ def _check_card(card):
         raise ValueError('invalid experiment card: ' + '; '.join(errors))
 
 
-def _check_file_ref(root, case_id, ref):
+def _bind_file_ref(root, case_id, ref):
+    """Re-bind a mutable side file (budget approval, responder ledger) to its current bytes."""
+    if not isinstance(ref, dict) or not isinstance(ref.get('path'), str):
+        raise ValueError('experiment file reference needs a path')
     if not ref['path'].startswith((f'cases/{case_id}/', 'market_research/')):
         raise ValueError('experiment file reference must be case-local or shared research: ' + ref['path'])
     target = safe(root, ref['path'])
-    if not target.is_file() or digest(target.read_bytes()) != ref['digest']:
-        raise ValueError('experiment file reference is missing or stale: ' + ref['path'])
-    return target
+    if not target.is_file():
+        raise ValueError('experiment file reference is missing: ' + ref['path'])
+    return {'path': ref['path'], 'digest': digest(target.read_bytes())}
 
 
 def _publish_case_files(root, case_id, outputs, decision_id, reason, project, cm=None):
@@ -957,8 +960,9 @@ def experiment_plan(root, case_id, draft, decision_id, reason):
         missing = [a for a in card['assumption_ids'] if a not in known]
         if missing:
             raise ValueError('experiment assumptions are not in the register: ' + ', '.join(missing))
-        for ref in card['authorization_refs'] + ([card['responders_ref']] if card['responders_ref'] else []):
-            _check_file_ref(root, case_id, ref)
+        card['authorization_refs'] = [_bind_file_ref(root, case_id, ref) for ref in card['authorization_refs']]
+        if card['responders_ref']:
+            card['responders_ref'] = _bind_file_ref(root, case_id, card['responders_ref'])
         outputs = {path: encoded(card)}
         if card['supersedes']:
             old = experiment_card(root, case_id, card['supersedes'])
@@ -981,10 +985,13 @@ def experiment_transition(root, case_id, exp_id, action, decision_id, reason):
             if _library_entry(card['library_id'])['authorization_needed'] != 'none':
                 if not card['authorization_refs']:
                     raise ValueError('this experiment type needs an authorization reference before approval')
+                bound = []
                 for ref in card['authorization_refs']:
-                    target = _check_file_ref(root, case_id, ref)
-                    if json.loads(target.read_text()).get('status') != 'approved':
+                    ref = _bind_file_ref(root, case_id, ref)
+                    if json.loads(safe(root, ref['path']).read_text()).get('status') != 'approved':
                         raise ValueError('authorization is not approved: ' + ref['path'])
+                    bound.append(ref)
+                card = {**card, 'authorization_refs': bound}
             nxt = 'approved'
         elif action == 'start':
             if card['status'] != 'approved':
@@ -1002,6 +1009,16 @@ def _metric_total(card, counts):
     return sum(stage[metric] for variant in counts.values() for stage in variant.values())
 
 
+def _meets_threshold(card, counts):
+    """Pass needs the absolute count and the predeclared rate (value per sample) over qualified visitors."""
+    threshold = card['hypothesis']['threshold']
+    total = _metric_total(card, counts)
+    eligible = sum(stage['eligible'] for variant in counts.values() for stage in variant.values())
+    if total < threshold['value'] or eligible == 0:
+        return False
+    return total * threshold['sample'] >= threshold['value'] * eligible
+
+
 def experiment_close(root, case_id, exp_id, result, decision_id, reason):
     """Close an experiment against its predeclared rule and apply its assumption updates atomically."""
     root = Path(root).absolute()
@@ -1016,7 +1033,7 @@ def experiment_close(root, case_id, exp_id, result, decision_id, reason):
         _check_card(closed)
         if result['interpretation'] is None:
             raise ValueError('closing an experiment needs an interpretation')
-        if result['interpretation'] == 'pass' and _metric_total(card, result['counts']) < card['hypothesis']['threshold']['value']:
+        if result['interpretation'] == 'pass' and not _meets_threshold(card, result['counts']):
             raise ValueError('pass below predeclared threshold')
         card_path = _card_path(case_id, exp_id)
         card_bytes = encoded(closed).encode()

@@ -87,3 +87,45 @@ def test_posthog_nested_fields():
 
 def test_flat_dotted_key_wins():
     assert imp._field({'a.b': 1, 'a': {'b': 2}}, 'a.b') == 1
+
+
+def test_event_export_counts_each_person_once_at_furthest_stage():
+    events = [{'distinct_id': 'u1', 'event': e, 'properties': {'$feature_flag_response': 'V1', 'utm_source': 'ads'}}
+              for e in ('$pageview', 'cta_clicked', 'booking_confirmed')]
+    responders, counts, unmapped = imp.import_rows(events, PRESETS['posthog'], {'V1'})
+    assert unmapped == [] and len(responders) == 1 and responders[0]['stage'] == 'booked'
+    assert counts['V1']['ads']['exposed'] == 1 and counts['V1']['ads']['booked'] == 1
+
+
+def test_growthbook_control_variant_zero_is_counted():
+    rows_ = [{'user_id': 'u1', 'variation_id': 0, 'utm_source': 'ads', 'event': 'signup'}]
+    _, counts, unmapped = imp.import_rows(rows_, PRESETS['growthbook'], {'0'})
+    assert unmapped == [] and counts['0']['ads']['responded'] == 1
+
+
+def test_pseudonym_is_salted_and_segment_fit_whitelisted():
+    data = [dict(rows()[0], segment_fit='Ana, CFO at Acme'), dict(rows()[1], segment_fit='fit')]
+    a, _, _ = imp.import_rows(data, PRESETS['generic_csv'], {'V1', 'V2'}, salt='s1')
+    b, _, _ = imp.import_rows(data, PRESETS['generic_csv'], {'V1', 'V2'}, salt='s2')
+    import hashlib
+    assert a[0]['id'] != b[0]['id'] and a[0]['id'] != 'R-' + hashlib.sha256(b'ana@example.org').hexdigest()[:12]
+    assert [r['segment_fit'] for r in a] == ['unresolved', 'fit']
+
+
+def test_import_cli_default_ledger_resolves_in_workspace(tmp_path):
+    from scripts import case_workspace as c
+    ws = tmp_path / 'ws'
+    c.initialize(ws, 'W'); c.add_case(ws, 'a', 'A')
+    kit_dir = ws / 'cases/a/market_research/smoke'; kit_dir.mkdir(parents=True)
+    (kit_dir / 'responders.json').write_text('[]\n')
+    card = kit_dir / 'experiment-card.json'
+    card.write_text(json.dumps({'variants': ['V1', 'V2'],
+                                'responders_ref': {'path': 'cases/a/market_research/smoke/responders.json', 'digest': 'x' * 64}}))
+    source = tmp_path / 's.json'; source.write_text(json.dumps(rows()))
+    done = subprocess.run([sys.executable, str(ROOT / 'scripts/evidence_scout/import_responders.py'), '--card', str(card),
+                           '--source', str(source), '--preset', 'generic_csv', '--out', str(tmp_path / 'r.json')],
+                          capture_output=True, text=True, cwd=str(ROOT))
+    assert done.returncode == 0, done.stderr
+    assert len(json.loads((kit_dir / 'responders.json').read_text())) == 3
+    assert (kit_dir / 'responders.salt').is_file()
+    assert not (ROOT / 'cases').exists()
