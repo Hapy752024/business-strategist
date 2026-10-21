@@ -736,6 +736,138 @@ def record_question(root, case_id, question, decision_id, reason):
                               decision_id=decision_id, reason=reason, affected=[case_id])
 
 
+AUTHORED_ENTRY_FIELDS = {'id', 'statement', 'type', 'importance', 'status', 'evidence_refs',
+                         'counter_evidence_refs', 'confidence_note'}
+IMPORTANCE_RANK = {'critical': 0, 'high': 1, 'medium': 2, 'low': 3}
+STATUS_RANK = {'unknown': 0, 'contested': 1, 'supported': 2, 'refuted': 3}
+REFUTING_MODULE = 'opportunity-risk-designer'
+
+
+def _ref_ids(data):
+    """Every claim/evidence/experiment identifier a reference may name inside a bound file."""
+    found = set()
+    stack = [data]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, dict):
+            for key in ('claim_id', 'evidence_id', 'id'):
+                if isinstance(item.get(key), (str, int)):
+                    found.add(str(item[key]))
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+    return found
+
+
+def check_register_ref(root, case_id, ref):
+    """Resolve a {path, digest, id} reference against current case-local or shared bytes."""
+    if not isinstance(ref, dict) or set(ref) != {'path', 'digest', 'id'}:
+        raise ValueError('register reference needs exactly path, digest and id')
+    path = ref['path']
+    if not isinstance(path, str) or not path.startswith((f'cases/{case_id}/', 'market_research/')):
+        raise ValueError('register reference must be case-local or shared research: ' + str(path))
+    target = safe(root, path)
+    if not target.is_file():
+        raise ValueError('register reference is missing: ' + path)
+    raw = target.read_bytes()
+    if digest(raw) != ref['digest']:
+        raise ValueError('register reference is stale: ' + path)
+    text = raw.decode('utf-8')
+    if path.endswith('.jsonl'):
+        records = [json.loads(line) for line in text.splitlines() if line.strip()]
+        ids = _ref_ids(records)
+    else:
+        data = json.loads(text)
+        ids = _ref_ids(data)
+        if isinstance(data, list) and isinstance(ref['id'], int) and 0 <= ref['id'] < len(data):
+            ids.add(str(ref['id']))
+    if str(ref['id']) not in ids:
+        raise ValueError(f"register reference id {ref['id']} does not resolve in {path}")
+
+
+def _riskiest(entries):
+    open_entries = [e for e in entries if e['status'] in {'unknown', 'contested'}]
+    return [e['id'] for e in sorted(open_entries, key=lambda e: (IMPORTANCE_RANK[e['importance']],
+                                                                 STATUS_RANK[e['status']], e['id']))]
+
+
+def _apply_register_draft(root, case_id, current, draft, owner, *, reason, history_ref=None):
+    """Return the next register from an authored draft; raise ValueError on any rule breach.
+
+    Shared by publish_assumptions and experiment_close. Publisher-owned fields
+    (revision, timestamps, history, riskiest) are never taken from the draft.
+    """
+    from scripts.validate_case_artifacts import validate_register
+    if not isinstance(draft, dict) or set(draft) - {'revision', 'owner_module', 'entries'}:
+        raise ValueError('register draft needs revision, owner_module and entries only')
+    if draft.get('revision') != current['revision']:
+        raise ValueError('register revision conflict')
+    if not isinstance(owner, str) or not owner.strip():
+        raise ValueError('register owner_module required')
+    entries = draft.get('entries')
+    if not isinstance(entries, list):
+        raise ValueError('register entries must be a list')
+    previous = {e['id']: e for e in current['entries']}
+    authored_ids = []
+    stamp = now()
+    nxt = []
+    for authored in entries:
+        if not isinstance(authored, dict) or set(authored) != AUTHORED_ENTRY_FIELDS:
+            raise ValueError('register entry fields must be exactly: ' + ', '.join(sorted(AUTHORED_ENTRY_FIELDS)))
+        authored_ids.append(authored['id'])
+        for ref in authored['evidence_refs'] + authored['counter_evidence_refs']:
+            check_register_ref(root, case_id, ref)
+        old = previous.get(authored['id'])
+        if authored['status'] == 'refuted' and (old is None or old['status'] != 'refuted') and owner != REFUTING_MODULE:
+            raise ValueError(f'only {REFUTING_MODULE} may refute an assumption')
+        if old is not None and all(old[k] == authored[k] for k in AUTHORED_ENTRY_FIELDS):
+            nxt.append(old)
+            continue
+        history = list(old['history']) if old else []
+        if old is None or old['status'] != authored['status']:
+            refs = authored['evidence_refs'] + authored['counter_evidence_refs']
+            history.append({'at': stamp, 'from': old['status'] if old else None, 'to': authored['status'],
+                            'reason': reason,
+                            'ref': history_ref or (refs[-1] if refs else None)})
+        nxt.append({**authored, 'owner_module': owner, 'updated_at': stamp,
+                    'revision': old['revision'] + 1 if old else 1, 'history': history})
+    removed = sorted(set(previous) - set(authored_ids))
+    if removed:
+        raise ValueError('register entries cannot be removed (mark them refuted instead): ' + ', '.join(removed))
+    register = {'schema_version': 1, 'case_id': case_id, 'revision': current['revision'] + 1,
+                'updated_at': stamp, 'entries': nxt, 'riskiest': _riskiest(nxt)}
+    errors = validate_register(register)
+    if errors:
+        raise ValueError('invalid register: ' + '; '.join(errors))
+    return register
+
+
+def _mark_insights_pending(root, case_id, cm, outputs):
+    if cm.get('insights', {}).get('state') == 'current':
+        cm['insights']['state'] = 'update_pending'
+        path = resolve(root, case_id) / 'case_insights.md'
+        outputs[f'cases/{case_id}/case_insights.md'] = pending_insights(path.read_text())
+
+
+def publish_assumptions(root, case_id, draft, decision_id, reason):
+    """Commit an authored register draft under the project lock and mark insights pending."""
+    root = Path(root).absolute()
+    with project_lock(root):
+        project = read_project(root)
+        current = assumption_register(root, case_id)
+        register = _apply_register_draft(root, case_id, current, draft,
+                                         draft.get('owner_module') if isinstance(draft, dict) else None, reason=reason)
+        cm = copy.deepcopy(case_manifest(root, case_id))
+        cm['manifest_revision'] += 1
+        cm['updated_at'] = now()
+        outputs = {f'cases/{case_id}/{REGISTER}': encoded(register)}
+        _mark_insights_pending(root, case_id, cm, outputs)
+        outputs[f'cases/{case_id}/market_research/manifest.json'] = encoded(cm)
+        publish_locked(root, outputs, expected_revision=project['manifest_revision'],
+                       decision_id=decision_id, reason=reason, affected=[case_id])
+        return register
+
+
 def register_research_assignment(root, case_id, assignment, decision_id, reason):
     """Freeze the requested case scope in the existing case manifest."""
     root = Path(root).absolute()
@@ -1331,7 +1463,7 @@ def correct(root, case_ids, reason, decision_id, *, source_path=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'add', 'rename', 'select', 'clear', 'correct', 'recover', 'show', 'appraise', 'plan', 'insights', 'record-question', 'register-research', 'prepare-appraisal', 'prepare-plan', 'case-plan', 'prepare-case-plan'])
+    parser.add_argument('action', choices=['init', 'add', 'rename', 'select', 'clear', 'correct', 'recover', 'show', 'appraise', 'plan', 'insights', 'record-question', 'register-research', 'assumptions', 'prepare-appraisal', 'prepare-plan', 'case-plan', 'prepare-case-plan'])
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--case', default='')
     parser.add_argument('--title', default='')
@@ -1365,6 +1497,10 @@ def main(argv=None):
             if args.input is None:
                 raise ValueError('--input required')
             register_research_assignment(args.workspace, args.case, load(args.input), args.decision_id, args.reason)
+        elif args.action == 'assumptions':
+            if args.input is None:
+                raise ValueError('--input required')
+            print(json.dumps(publish_assumptions(args.workspace, args.case, load(args.input), args.decision_id, args.reason)['riskiest']))
         elif args.action == 'insights':
             if args.input is None:
                 raise ValueError('--input required')
