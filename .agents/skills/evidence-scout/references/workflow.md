@@ -406,3 +406,7 @@ Before finalizing, check:
 ## Parallel collection with subagents
 
 When topic-led and entity-led frames or locales are independent, dispatch one `evidence-researcher` per packet using `references/modules/source-worker-packet.md`. Give each an exclusive output directory under the run and disjoint query IDs. Verify sources, deduplicate incidents, and own the synthesis. Worker agreement is not independent evidence; workers never edit the main evidence ledger, reviews, synthesis or manifests.
+
+## Subreddit discovery with the Dialog MCP
+
+When the relevant Reddit communities are unknown, and only if the `dialog-mcp` server is connected for this user (`claude mcp get dialog-mcp`), use `execute_operation('discover_subreddits', ...)` with short customer-language phrases. Do not send personal or confidential founder details: queries go to Dialog's hosted index. Save the result, convert it with `python3 scripts/evidence_scout/subreddit_query_rows.py --dialog-json <saved.json> --min-confidence 0.5 --keywords '<phrases>' --locale <CC:lang> --plan <query plan> --out <new plan>`, and collect with `collect.py --query-plan <new plan> --providers reddit`. Dialog output is a lead list, never evidence: quote and count only posts captured by the Reddit route. If the server is not connected, say so as a coverage gap and continue with the normal Reddit and community-discovery routes.
