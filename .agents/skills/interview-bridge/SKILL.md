@@ -18,6 +18,7 @@ For a registered Business case, pass reviewed interview learnings and still-open
 3. Supply a digest-bound `source-review.json` per the workflow; unreviewed records cannot generate probes. Research recruitment routes before recruiting.
 4. For smoke-test responders, pass the card's `responders_ref` path as `--responders` together with the evidence `--run-dir`; `scripts/route_workflow.py status` reports this skill runnable once a card has bookings. Screen segment fit and a recent incident before counting an interview.
 5. Interview, log results in `interview/interview-tracker.md`, and update the tally.
+6. Code each transcript yourself into `{"transcript_id", "items": [{"theme", "interpretation", "verbatim_quote", "speaker", "locator", "evidence_type", "author_voice_status"}]}`, copying quotes exactly. Run `python3 scripts/evidence_scout/ingest_transcript_coding.py --coding <coding.json> --transcript <id>=<path> --out <fresh evidence.jsonl>`; it rejects any quote not found verbatim. Quotes become evidence; themes stay labelled interpretation. Keep transcripts and speaker identities private.
 
 ## Output
 
