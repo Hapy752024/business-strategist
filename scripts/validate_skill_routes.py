@@ -13,6 +13,39 @@ except ModuleNotFoundError:
 ROOT = Path(__file__).resolve().parents[1]
 
 
+CONTRACT_KEYS = {'artifact', 'schema', 'path_patterns', 'freshness'}
+FRESHNESS = {'digest', 'revision', 'none'}
+
+
+def _contract_items(metadata: dict, key: str):
+    yield from metadata.get(key, [])
+    for contract in metadata.get('modes', {}).values():
+        yield from contract.get(key, [])
+
+
+def validate_contracts(catalog: dict, root: Path = ROOT) -> list[str]:
+    """Every consumed artifact must be produced somewhere or declared external; schemas must exist."""
+    errors, produced = [], set()
+    for name, metadata in catalog.items():
+        for key in ('produces', 'consumes'):
+            for item in _contract_items(metadata, key):
+                if (not isinstance(item, dict) or set(item) - {'external'} != CONTRACT_KEYS
+                        or not isinstance(item['artifact'], str) or item['freshness'] not in FRESHNESS
+                        or not isinstance(item['path_patterns'], list) or not item['path_patterns']
+                        or not all(isinstance(x, str) and x for x in item['path_patterns'])):
+                    errors.append(f'{name}: {key} entry needs artifact, schema, path_patterns and freshness')
+                    continue
+                if item['schema'] is not None and not (root / item['schema']).is_file():
+                    errors.append(f"schema {item['schema']} missing")
+                if key == 'produces':
+                    produced.add(item['artifact'])
+    for name, metadata in catalog.items():
+        for item in _contract_items(metadata, 'consumes'):
+            if isinstance(item, dict) and not item.get('external') and item.get('artifact') not in produced:
+                errors.append(f"consumed artifact {item.get('artifact')} by {name} is not produced by any skill and not external")
+    return errors
+
+
 def validate(root: Path = ROOT) -> list[str]:
     skills = {p.parent.name for p in (root / '.agents/skills').glob('*/SKILL.md')}
     catalog = json.loads((root / 'config/skill-catalog.json').read_text())['skills']
@@ -63,6 +96,7 @@ def validate(root: Path = ROOT) -> list[str]:
                     raise ValueError('mode has no checked route')
             except (ValueError, OSError) as exc:
                 errors.append(f'{name}/{mode}: {exc}')
+    errors += validate_contracts(catalog, root)
     for name in sorted(skills - catalog.keys()):
         errors.append(f'Installed skill missing from catalog: {name}')
     for name in sorted(catalog.keys() - skills):
