@@ -1,7 +1,6 @@
 ---
 name: stripe-best-practices
 description: Design or review Stripe payments, checkout, subscriptions and marketplace integrations. Use when the selected application needs Stripe integration or changes to existing Stripe behavior.
-
 ---
 
 Discover the target application and its pinned Stripe API/SDK versions. Verify current official Stripe documentation before implementation decisions; bundled references are starting guidance and may age. Do not silently upgrade existing integrations.
@@ -24,7 +23,6 @@ Read only the directly linked reference relevant to the task: [payments](referen
 Read the relevant reference file before answering any integration question or writing code.
 
 ## Key documentation
-
 When the user’s request does not clearly fit a single domain above, consult:
 
 - [Integration Options](https://docs.stripe.com/payments/payment-methods/integration-options.md) — Start here when designing any integration.

@@ -233,11 +233,22 @@ def competitor_args(**updates):
 
 
 def test_competitor_plan_preserves_input_and_does_not_inject_english():
-    snapshot = competitors.execution_plan(competitor_args())
+    # Korean has no built-in competitor vocabulary; Japanese gained one (COMPETITOR_TERMS['ja']).
+    snapshot = competitors.execution_plan(competitor_args(topic_keywords='과외', segment_keywords='가족',
+                                                          analog_market=['부산'], reference_capability=['예약'],
+                                                          language='ko', geo='KR'))
     assert snapshot['warnings']
     queries = snapshot['query_sets']['competitive_market']
-    assert all(row['query'] == '家庭教師 家族' for row in queries)
+    assert all(row['query'] == '과외 가족' for row in queries)
     assert all('scheduled' not in row for row in snapshot['input_plan']['queries'])
+
+
+def test_competitor_plan_uses_japanese_vocabulary_without_english():
+    snapshot = competitors.execution_plan(competitor_args())
+    assert snapshot['warnings'] == []
+    queries = [row['query'] for row in snapshot['query_sets']['competitive_market']]
+    assert all(q.startswith('家庭教師 家族') for q in queries) and any('比較' in q for q in queries)
+    assert not any(word in q for q in queries for word in ('providers', 'comparison', 'reviews'))
 
 
 @pytest.mark.parametrize('provider', ['firecrawl', 'brave_search'])

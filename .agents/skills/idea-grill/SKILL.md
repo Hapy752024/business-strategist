@@ -27,5 +27,4 @@ Use this skill to validate or challenge the founder’s idea by testing its cust
 ## Output
 
 Open every output with a `## Strongest reason this fails` section tied to a cited claim, an `{{assumption.<id>}}` or a named unknown with its test; never open with what is promising, and hold correct findings under pushback (repo-root `references/research-coaching.md`, truthful stance). Produce a core hypothesis, assumptions, counter-hypotheses, customer-language search terms, riskiest assumption, and next evidence command.
-
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).

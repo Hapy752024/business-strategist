@@ -12,7 +12,6 @@ This skill tests the user’s stated idea or explains a customer segment’s pai
 - **Research quality:** every consequential finding has reviewed source-linked experiences, explicit scope and contrary cases; every requested locale/source has an honest coverage disposition. API success, record counts and tool-call quotas are not quality measures.
 - **Qualitative:** users do not redirect mid-collection; provider failures are surfaced before evidence interpretation; evidence, interpretation, counter-evidence, and missing evidence are separated in every output.
 ## Workflow
-
 1. For substantive query design, apply repo-root `references/research-query-calibration.md` (shared repository dependency). Read `references/workflow.md`, `references/provider-policy.md`, repo-root `references/voc-research-method.md`, and repo-root `references/research-execution.md` for substantive customer-needs work.
 2. Initialize or reuse `projects/<topic-slug>/market_research/`.
 3. Run capability lookup and provider doctor when routing matters, then use repository-root scripts.
@@ -28,5 +27,4 @@ This skill tests the user’s stated idea or explains a customer segment’s pai
 
 Return artifact paths, provider status, evidence and counter-evidence, confidence, gaps, and next test. Never treat attention as willingness to pay.
 For segment sentiment/pain research, use discovery → provisional target hypothesis → narrowed validation; pass short `--segment-keywords` and semantically review target/adjacent/unresolved source membership. For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
-
 For substantive Business research, read repo-root `references/research-data-and-precedents.md`. Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals. Metadata is discovery until original findings are reviewed.
