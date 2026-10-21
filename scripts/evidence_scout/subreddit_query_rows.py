@@ -30,6 +30,8 @@ def _clean(name: str) -> str:
 
 def names_from_dialog(payload: dict, min_confidence: float = 0.0) -> list[str]:
     """Read subreddit names from a saved Dialog discover_subreddits result."""
+    if isinstance(payload.get('data'), dict):  # execute_operation wraps results under data
+        payload = payload['data']
     rows = payload.get('results') or payload.get('subreddits') or []
     out = []
     for row in rows:

@@ -51,3 +51,10 @@ def test_cli_appends_to_existing_plan(tmp_path):
     merged = json.loads(out.read_text())
     assert len(merged['queries']) == 2 and merged['revision'] == 'r1+dialog-subreddits'
     assert not list(Draft202012Validator(SCHEMA).iter_errors(merged))
+
+
+def test_reads_real_dialog_response_shape():
+    payload = {'success': True, 'data': {'query': 'x', 'subreddits': [
+        {'name': 'fireGermany', 'confidence': 0.499, 'match_tier': 'peripheral'},
+        {'name': 'medizin', 'confidence': 0.431, 'match_tier': 'peripheral'}]}}
+    assert sq.names_from_dialog(payload, min_confidence=0.45) == ['fireGermany']
