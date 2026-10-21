@@ -24,12 +24,8 @@ Use this skill to validate or challenge the founder’s idea by testing its cust
 6. If the founder targets venture scale, needs VC financing, or asks whether investors are active in the category, assess investor-topic activity separately under repo-root `references/vc-investment-signals.md`. Keep it distinct from pain validation and market demand.
 7. Stop before customer-evidence collection when the segment or painful job is not researchable.
 
-## Strongest reason this fails
-
-Begin every output with this section: the single most likely reason the idea or hypothesis fails, tied to a cited claim, a register assumption (`{{assumption.<id>}}`) or a named unknown with the test that would resolve it. Do not open with what is promising. Agreeable framing is a defect here: the founder is best served by the blunt case against, stated plainly. Say "Not checked" or "I don't know for sure" instead of filling a gap. Hold a correct finding when the founder disputes it without new evidence; name what evidence would change it.
-
 ## Output
 
-Produce a core hypothesis, assumptions, counter-hypotheses, customer-language search terms, riskiest assumption, and next evidence command.
+Open every output with a `## Strongest reason this fails` section tied to a cited claim, an `{{assumption.<id>}}` or a named unknown with its test; never open with what is promising, and hold correct findings under pushback (repo-root `references/research-coaching.md`, truthful stance). Produce a core hypothesis, assumptions, counter-hypotheses, customer-language search terms, riskiest assumption, and next evidence command.
 
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).

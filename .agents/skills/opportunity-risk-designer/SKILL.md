@@ -20,13 +20,9 @@ For the checked `case-insights` route, read repo-root `references/case-insights.
 4. Rank risks by importance, uncertainty, and test cost.
 5. Define explicit pass, pivot, repeat, and stop thresholds.
 
-## Strongest reason this fails
-
-Begin every output with this section: the single most likely reason the idea or hypothesis fails, tied to a cited claim, a register assumption (`{{assumption.<id>}}`) or a named unknown with the test that would resolve it. Do not open with what is promising. Agreeable framing is a defect here: the founder is best served by the blunt case against, stated plainly. Say "Not checked" or "I don't know for sure" instead of filling a gap. Hold a correct finding when the founder disputes it without new evidence; name what evidence would change it.
-
 ## Output
 
-In full mode produce opportunity areas, risk register, assumption map, test cards, evidence gaps, decision gates, and next actions. Contribute execution drafts to the startup builder's selected root `strategy-plan.json` authority and run `python3 scripts/strategy_review.py validate --plan <strategy-plan.json>`. Appraisal mode owns only its designated case outputs.
+Open every output with a `## Strongest reason this fails` section tied to a cited claim, an `{{assumption.<id>}}` or a named unknown with its test; never open with what is promising, and hold correct findings under pushback (repo-root `references/research-coaching.md`, truthful stance). In full mode produce opportunity areas, risk register, assumption map, test cards, evidence gaps, decision gates, and next actions. Contribute execution drafts to the startup builder's selected root `strategy-plan.json` authority and run `python3 scripts/strategy_review.py validate --plan <strategy-plan.json>`. Appraisal mode owns only its designated case outputs.
 
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
