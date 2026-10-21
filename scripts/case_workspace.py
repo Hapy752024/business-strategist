@@ -39,6 +39,8 @@ def initial_insights(title):
             '## Business potential and feasibility\nCommercial and delivery feasibility have not been assessed.\n\n'
             '## Risks, conflicting evidence and open questions\nThe main uncertainties depend on initial research.\n\n'
             '## Recommended next decisions\nInvestigate the target customer, journey and pain.\n\n'
+            '## What would change this recommendation\nNot checked. No assumptions have been tested yet.\n\n'
+            '## What we could not check\n- Not checked: no research has run for this case.\n\n'
             '## Sources\nNo research sources have been reviewed for this case.\n')
 
 
@@ -50,6 +52,26 @@ def pending_insights(text):
     if len(lines) != 2:
         return notice + text
     return lines[0] + '\n\n' + notice + lines[1].lstrip('\n')
+
+
+REGISTER = 'assumptions.json'
+
+
+def empty_register(case_id):
+    return {'schema_version': 1, 'case_id': case_id, 'revision': 1, 'updated_at': now(),
+            'entries': [], 'riskiest': []}
+
+
+def assumption_register(root, case_id):
+    """Current assumption register; FileNotFoundError when the case has not adopted one."""
+    path = resolve(root, case_id) / REGISTER
+    return json.loads(path.read_text())
+
+
+def register_adopted(root, case_id):
+    if (resolve(root, case_id) / REGISTER).is_file():
+        return True
+    return case_manifest(root, case_id).get('insights', {}).get('contract_version', 1) >= 3
 
 
 def now():
@@ -424,6 +446,7 @@ def add_case(root, case_id, title, *, open_blockers=(), next_action='Research se
                 'events': [], 'open_blockers': list(open_blockers), 'artifacts': [], 'next_action': next_action,
                 'insights': {'contract_version': 1, 'path': 'case_insights.md', 'state': 'draft'}}
     publish(root, {f'{relative}/case_insights.md': initial_insights(title),
+                   f'{relative}/{REGISTER}': encoded(empty_register(case_id)),
                    f'{relative}/market_research/manifest.json': encoded(research)},
             expected_revision=m['manifest_revision'], decision_id='register-' + case_id,
             reason='Register investigated case: ' + title, affected=[case_id], project=updated)

@@ -39,6 +39,16 @@ Explain remaining same-scope contradictions and what could change the view. -->
 <!-- Prioritize decisions or tests and state how their outcomes change the
 recommendation. A recommendation does not authorize external action. -->
 
+## What would change this recommendation
+
+<!-- Contract v3: name the assumptions whose status change would reverse or
+alter the recommendation, using {{assumption.<id>}} markers. -->
+
+## What we could not check
+
+<!-- Contract v3: one bullet per source, segment or question that could not be
+checked and why. "Not checked" is a valid finding; do not fill gaps from memory. -->
+
 ## Sources
 
 <!-- Give compact titled references and dates as navigation. Source-list links
