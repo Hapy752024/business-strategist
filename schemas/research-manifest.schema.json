@@ -16,6 +16,20 @@
     "artifacts"
   ],
   "properties": {
+    "decision_kpis": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Publisher-computed decision progress from the assumption register and experiment cards.",
+      "required": ["days_since_registration", "critical_assumptions", "critical_tested", "experiments_planned", "experiments_closed", "last_material_change_at"],
+      "properties": {
+        "days_since_registration": {"type": ["integer", "null"], "minimum": 0},
+        "critical_assumptions": {"type": "integer", "minimum": 0},
+        "critical_tested": {"type": "integer", "minimum": 0},
+        "experiments_planned": {"type": "integer", "minimum": 0},
+        "experiments_closed": {"type": "integer", "minimum": 0},
+        "last_material_change_at": {"type": ["string", "null"]}
+      }
+    },
     "schema_version": {
       "type": "string"
     },

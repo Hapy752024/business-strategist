@@ -12,7 +12,7 @@
     "impact": {"enum": ["presentation_only", "reviewed_findings"]},
     "scope_status": {"enum": ["progress", "complete"]},
     "pending_summary": {"type": "string", "minLength": 20},
-    "publication_contract_version": {"const": 2},
+    "publication_contract_version": {"enum": [2, 3]},
     "publication_claims": {"type": "array", "items": {"oneOf": [
       {"type": "object", "additionalProperties": false,
        "required": ["id", "document", "claim_id", "evidence_id", "ledger_binding", "source_kind", "limitation"],

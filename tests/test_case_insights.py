@@ -812,3 +812,10 @@ def test_v3_publication_rejects_unreferenced_decision_paragraph(tmp_path):
     text = document().replace('## Sources', V3_SECTIONS)
     with pytest.raises(ValueError, match='paragraph without evidence or status'):
         cases.publish_insights(root, 'a', v3_packet(root, text), 'v3-untruthful', 'unreferenced decision')
+
+
+def test_v3_packet_matches_shipped_schema(tmp_path):
+    root, case = setup_case(tmp_path)
+    _seed_register(root)
+    schema = json.loads((Path(__file__).resolve().parents[1] / 'schemas/case-insights.schema.json').read_text())
+    assert not list(Draft202012Validator(schema).iter_errors(v3_packet(root, v3_document())))

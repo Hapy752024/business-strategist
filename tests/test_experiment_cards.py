@@ -173,3 +173,18 @@ def test_kit_draft_inside_case_can_be_planned(tmp_path):
     assert card['responders_ref']['path'].startswith('cases/a/market_research/')
     with pytest.raises(ValueError, match='not approved'):
         c.experiment_transition(p, 'a', 'E-kit', 'approve', 'approve-kit', 'budget still pending')
+
+
+def test_decision_kpis_update_on_close(tmp_path):
+    p = topic(tmp_path)
+    kpis = c.case_manifest(p, 'a')['decision_kpis']
+    assert kpis['critical_assumptions'] == 1 and kpis['critical_tested'] == 0 and kpis['experiments_closed'] == 0
+    _approved(p)
+    assert c.case_manifest(p, 'a')['decision_kpis']['experiments_planned'] == 1
+    c.experiment_close(p, 'a', 'E-one', result(3, 3), 'close-1', 'close')
+    kpis = c.case_manifest(p, 'a')['decision_kpis']
+    assert kpis['critical_tested'] == 1 and kpis['experiments_closed'] == 1
+    assert kpis['days_since_registration'] == 0 and kpis['last_material_change_at']
+    assert kpis == c.decision_kpis(p, 'a')
+    readme = (p / 'README.md').read_text()
+    assert '| A | 1 of 1 | 1 of 1 | 0 |' in readme

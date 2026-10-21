@@ -7,6 +7,7 @@ metadata commits; immutable research runs may be collected concurrently.
 from __future__ import annotations
 
 import argparse
+import calendar
 import copy
 import fcntl
 import hashlib
@@ -293,6 +294,18 @@ def overview(m, root=None, updated_paths=()):
         if cm.get('insights', {}).get('state') == 'update_pending':
             summary = 'Update pending — ' + summary
         lines.append(f"| {clean(entry['title'])} {'(retired)' if entry.get('retired') else ''} | {clean(summary)} | {clean(comparison.get('principal_uncertainty', 'Unresolved'))} | {clean('Refresh assessment' if review and comparison else comparison.get('next_action', 'Investigate'))} | {main}; feasibility: {links[0]}; business plan: {links[1]} |")
+    progress = []
+    for name, entry in m['cases'].items():
+        manifest_path = entry['path'] + '/market_research/manifest.json'
+        payload = updated_paths.get(manifest_path) if isinstance(updated_paths, dict) else None
+        cm = json.loads(payload) if payload else load(safe(root, manifest_path)) if root is not None and safe(root, manifest_path).exists() else {}
+        k = cm.get('decision_kpis')
+        if k:
+            progress.append(f"| {entry['title'].replace('|', chr(92) + '|')} | {k['critical_tested']} of {k['critical_assumptions']} | "
+                            f"{k['experiments_closed']} of {k['experiments_planned']} | {k['days_since_registration']} |")
+    if progress:
+        lines += ['', '| Case | Critical assumptions tested | Experiments closed | Days since registration |',
+                  '|---|---|---|---|'] + progress
     lines += ['', '[Decision history](history/evolution.md)', '']
     if selected:
         lines += ['Business plan: `strategy/business-plan.md` when assembled and reviewed.', '']
@@ -863,14 +876,8 @@ def publish_assumptions(root, case_id, draft, decision_id, reason):
         current = assumption_register(root, case_id)
         register = _apply_register_draft(root, case_id, current, draft,
                                          draft.get('owner_module') if isinstance(draft, dict) else None, reason=reason)
-        cm = copy.deepcopy(case_manifest(root, case_id))
-        cm['manifest_revision'] += 1
-        cm['updated_at'] = now()
-        outputs = {f'cases/{case_id}/{REGISTER}': encoded(register)}
-        _mark_insights_pending(root, case_id, cm, outputs)
-        outputs[f'cases/{case_id}/market_research/manifest.json'] = encoded(cm)
-        publish_locked(root, outputs, expected_revision=project['manifest_revision'],
-                       decision_id=decision_id, reason=reason, affected=[case_id])
+        _publish_case_files(root, case_id, {f'cases/{case_id}/{REGISTER}': encoded(register)},
+                            decision_id, reason, project)
         return register
 
 
@@ -926,6 +933,8 @@ def _publish_case_files(root, case_id, outputs, decision_id, reason, project, cm
     cm['manifest_revision'] += 1
     cm['updated_at'] = now()
     _mark_insights_pending(root, case_id, cm, outputs)
+    pending = {k: (v.encode() if isinstance(v, str) else v) for k, v in outputs.items()}
+    cm['decision_kpis'] = decision_kpis(root, case_id, pending=pending, manifest=cm)
     outputs[f'cases/{case_id}/market_research/manifest.json'] = encoded(cm)
     return publish_locked(root, outputs, expected_revision=project['manifest_revision'],
                           decision_id=decision_id, reason=reason, affected=[case_id])
@@ -1031,6 +1040,37 @@ def experiment_close(root, case_id, exp_id, result, decision_id, reason):
         outputs = {card_path: card_bytes, f'cases/{case_id}/{REGISTER}': encoded(register)}
         _publish_case_files(root, case_id, outputs, decision_id, reason, project)
         return closed
+
+
+def decision_kpis(root, case_id, *, pending=None, manifest=None):
+    """Publisher-computed decision progress; ``pending`` maps paths to bytes in the same commit."""
+    root = Path(root).absolute()
+    pending = pending or {}
+    reg_path = f'cases/{case_id}/{REGISTER}'
+    if reg_path in pending:
+        register = json.loads(pending[reg_path])
+    elif (resolve(root, case_id) / REGISTER).is_file():
+        register = assumption_register(root, case_id)
+    else:
+        register = {'entries': []}
+    cards = {c['id']: c for c in experiment_cards(root, case_id)}
+    for path, data in pending.items():
+        if path.startswith(f'cases/{case_id}/{EXPERIMENTS}/') and data is not None:
+            card = json.loads(data)
+            cards[card['id']] = card
+    active = [c for c in cards.values() if c.get('status') != 'superseded']
+    critical = [e for e in register['entries'] if e['importance'] == 'critical']
+    stamps = [h['at'] for e in register['entries'] for h in e.get('history', [])]
+    cm = manifest or case_manifest(root, case_id)
+    created = cm.get('created_at') or now()
+    try:
+        days = max(0, int((time.time() - calendar.timegm(time.strptime(created[:19], '%Y-%m-%dT%H:%M:%S'))) // 86400))
+    except ValueError:
+        days = None
+    return {'days_since_registration': days, 'critical_assumptions': len(critical),
+            'critical_tested': sum(1 for e in critical if e['status'] != 'unknown'),
+            'experiments_planned': len(active), 'experiments_closed': sum(1 for c in active if c.get('status') == 'closed'),
+            'last_material_change_at': max(stamps) if stamps else None}
 
 
 def register_research_assignment(root, case_id, assignment, decision_id, reason):
@@ -1216,6 +1256,7 @@ def publish_insights(root, case_id, packet, decision_id, reason):
                           'scope_status': packet.get('scope_status', 'complete'),
                           'pending_summary': packet.get('pending_summary')}
         cm.setdefault('events', []).append({'ts': now(), 'event': 'case_insights', 'decision_id': decision_id})
+        cm['decision_kpis'] = decision_kpis(root, case_id, manifest=cm)
         outputs = {f'cases/{case_id}/case_insights.md': text,
                    review_path: review_bytes,
                    f'cases/{case_id}/numeric-claims.json': encoded(receipt),
