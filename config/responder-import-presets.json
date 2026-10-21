@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "note": "Field names for growthbook and posthog are assumptions about typical exports; verify against a real export before relying on them and adjust here, never in code.",
+  "presets": {
+    "generic_csv": {
+      "id_field": "email",
+      "variant_field": "variant",
+      "channel_field": "channel",
+      "stage_field": "stage",
+      "segment_fit_field": "segment_fit",
+      "stage_values": {"visited": "exposed", "clicked": "responded", "signed_up": "responded", "qualified": "eligible",
+                       "booked": "booked", "interviewed": "attended", "usable": "usable_incident"},
+      "verified_against_export": true
+    },
+    "growthbook": {
+      "id_field": "user_id",
+      "variant_field": "variation_id",
+      "channel_field": "utm_source",
+      "stage_field": "event",
+      "segment_fit_field": null,
+      "stage_values": {"viewed_experiment": "exposed", "cta_click": "responded", "signup": "responded",
+                       "qualified": "eligible", "booking_confirmed": "booked"},
+      "verified_against_export": false
+    },
+    "posthog": {
+      "id_field": "distinct_id",
+      "variant_field": "properties.$feature_flag_response",
+      "channel_field": "properties.utm_source",
+      "stage_field": "event",
+      "segment_fit_field": null,
+      "stage_values": {"$pageview": "exposed", "cta_clicked": "responded", "signup_submitted": "responded",
+                       "qualified": "eligible", "booking_confirmed": "booked"},
+      "verified_against_export": false
+    }
+  }
+}
