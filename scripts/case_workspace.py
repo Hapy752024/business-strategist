@@ -759,17 +759,23 @@ def _ref_ids(data):
     return found
 
 
-def check_register_ref(root, case_id, ref):
-    """Resolve a {path, digest, id} reference against current case-local or shared bytes."""
+def check_register_ref(root, case_id, ref, pending=None):
+    """Resolve a {path, digest, id} reference against current case-local or shared bytes.
+
+    ``pending`` maps project-relative paths to bytes published in the same commit.
+    """
     if not isinstance(ref, dict) or set(ref) != {'path', 'digest', 'id'}:
         raise ValueError('register reference needs exactly path, digest and id')
     path = ref['path']
     if not isinstance(path, str) or not path.startswith((f'cases/{case_id}/', 'market_research/')):
         raise ValueError('register reference must be case-local or shared research: ' + str(path))
     target = safe(root, path)
-    if not target.is_file():
+    if pending and path in pending:
+        raw = pending[path]
+    elif not target.is_file():
         raise ValueError('register reference is missing: ' + path)
-    raw = target.read_bytes()
+    else:
+        raw = target.read_bytes()
     if digest(raw) != ref['digest']:
         raise ValueError('register reference is stale: ' + path)
     text = raw.decode('utf-8')
@@ -791,7 +797,7 @@ def _riskiest(entries):
                                                                  STATUS_RANK[e['status']], e['id']))]
 
 
-def _apply_register_draft(root, case_id, current, draft, owner, *, reason, history_ref=None):
+def _apply_register_draft(root, case_id, current, draft, owner, *, reason, history_ref=None, pending=None):
     """Return the next register from an authored draft; raise ValueError on any rule breach.
 
     Shared by publish_assumptions and experiment_close. Publisher-owned fields
@@ -816,7 +822,7 @@ def _apply_register_draft(root, case_id, current, draft, owner, *, reason, histo
             raise ValueError('register entry fields must be exactly: ' + ', '.join(sorted(AUTHORED_ENTRY_FIELDS)))
         authored_ids.append(authored['id'])
         for ref in authored['evidence_refs'] + authored['counter_evidence_refs']:
-            check_register_ref(root, case_id, ref)
+            check_register_ref(root, case_id, ref, pending)
         old = previous.get(authored['id'])
         if authored['status'] == 'refuted' and (old is None or old['status'] != 'refuted') and owner != REFUTING_MODULE:
             raise ValueError(f'only {REFUTING_MODULE} may refute an assumption')
@@ -866,6 +872,165 @@ def publish_assumptions(root, case_id, draft, decision_id, reason):
         publish_locked(root, outputs, expected_revision=project['manifest_revision'],
                        decision_id=decision_id, reason=reason, affected=[case_id])
         return register
+
+
+EXPERIMENTS = 'experiments'
+FROZEN_FIELDS = ('hypothesis', 'kill_rule', 'sample_plan', 'variants')
+
+
+def _card_path(case_id, exp_id):
+    if not isinstance(exp_id, str) or not re.fullmatch(r'E-[a-z0-9][a-z0-9-]*', exp_id):
+        raise ValueError('invalid experiment identifier')
+    return f'cases/{case_id}/{EXPERIMENTS}/{exp_id}.json'
+
+
+def frozen_digest(card):
+    return digest(encoded({key: card[key] for key in FROZEN_FIELDS}).encode())
+
+
+def experiment_card(root, case_id, exp_id):
+    path = safe(Path(root).absolute(), _card_path(case_id, exp_id))
+    if not path.is_file():
+        raise ValueError('unknown experiment ' + exp_id)
+    return json.loads(path.read_text())
+
+
+def experiment_cards(root, case_id):
+    folder = resolve(root, case_id) / EXPERIMENTS
+    return [json.loads(path.read_text()) for path in sorted(folder.glob('E-*.json'))] if folder.is_dir() else []
+
+
+def _library_entry(library_id):
+    from scripts.validate_case_artifacts import load_library
+    return next(item for item in load_library(ROOT)['experiments'] if item['id'] == library_id)
+
+
+def _check_card(card):
+    from scripts.validate_case_artifacts import load_library, validate_card
+    errors = validate_card(card, load_library(ROOT))
+    if errors:
+        raise ValueError('invalid experiment card: ' + '; '.join(errors))
+
+
+def _check_file_ref(root, case_id, ref):
+    if not ref['path'].startswith((f'cases/{case_id}/', 'market_research/')):
+        raise ValueError('experiment file reference must be case-local or shared research: ' + ref['path'])
+    target = safe(root, ref['path'])
+    if not target.is_file() or digest(target.read_bytes()) != ref['digest']:
+        raise ValueError('experiment file reference is missing or stale: ' + ref['path'])
+    return target
+
+
+def _publish_case_files(root, case_id, outputs, decision_id, reason, project, cm=None):
+    cm = copy.deepcopy(cm or case_manifest(root, case_id))
+    cm['manifest_revision'] += 1
+    cm['updated_at'] = now()
+    _mark_insights_pending(root, case_id, cm, outputs)
+    outputs[f'cases/{case_id}/market_research/manifest.json'] = encoded(cm)
+    return publish_locked(root, outputs, expected_revision=project['manifest_revision'],
+                          decision_id=decision_id, reason=reason, affected=[case_id])
+
+
+def experiment_plan(root, case_id, draft, decision_id, reason):
+    """Commit an authored card as planned and freeze its hypothesis, threshold, kill rule and sample plan."""
+    root = Path(root).absolute()
+    with project_lock(root):
+        project = read_project(root)
+        if not isinstance(draft, dict) or draft.get('status') not in {None, 'planned'} or draft.get('result') is not None:
+            raise ValueError('a new experiment card has no status or result yet')
+        card = {**draft, 'status': 'planned', 'result': None}
+        card['frozen_digest'] = frozen_digest(card) if all(k in card for k in FROZEN_FIELDS) else None
+        _check_card(card)
+        path = _card_path(case_id, card['id'])
+        if safe(root, path).exists():
+            raise ValueError('experiment already exists: ' + card['id'] + '; supersede it with a new card')
+        known = {e['id'] for e in assumption_register(root, case_id)['entries']}
+        missing = [a for a in card['assumption_ids'] if a not in known]
+        if missing:
+            raise ValueError('experiment assumptions are not in the register: ' + ', '.join(missing))
+        for ref in card['authorization_refs'] + ([card['responders_ref']] if card['responders_ref'] else []):
+            _check_file_ref(root, case_id, ref)
+        outputs = {path: encoded(card)}
+        if card['supersedes']:
+            old = experiment_card(root, case_id, card['supersedes'])
+            if old['status'] not in {'planned', 'approved'}:
+                raise ValueError('only planned or approved experiments can be superseded')
+            outputs[_card_path(case_id, old['id'])] = encoded({**old, 'status': 'superseded'})
+        _publish_case_files(root, case_id, outputs, decision_id, reason, project)
+        return card
+
+
+def experiment_transition(root, case_id, exp_id, action, decision_id, reason):
+    """Move a card planned→approved (authorization checked) or approved→running."""
+    root = Path(root).absolute()
+    with project_lock(root):
+        project = read_project(root)
+        card = experiment_card(root, case_id, exp_id)
+        if action == 'approve':
+            if card['status'] != 'planned':
+                raise ValueError('only a planned experiment can be approved')
+            if _library_entry(card['library_id'])['authorization_needed'] != 'none':
+                if not card['authorization_refs']:
+                    raise ValueError('this experiment type needs an authorization reference before approval')
+                for ref in card['authorization_refs']:
+                    target = _check_file_ref(root, case_id, ref)
+                    if json.loads(target.read_text()).get('status') != 'approved':
+                        raise ValueError('authorization is not approved: ' + ref['path'])
+            nxt = 'approved'
+        elif action == 'start':
+            if card['status'] != 'approved':
+                raise ValueError('only an approved experiment can start')
+            nxt = 'running'
+        else:
+            raise ValueError('experiment action must be approve or start')
+        card = {**card, 'status': nxt}
+        _publish_case_files(root, case_id, {_card_path(case_id, exp_id): encoded(card)}, decision_id, reason, project)
+        return card
+
+
+def _metric_total(card, counts):
+    metric = card['hypothesis']['threshold']['metric']
+    return sum(stage[metric] for variant in counts.values() for stage in variant.values())
+
+
+def experiment_close(root, case_id, exp_id, result, decision_id, reason):
+    """Close an experiment against its predeclared rule and apply its assumption updates atomically."""
+    root = Path(root).absolute()
+    with project_lock(root):
+        project = read_project(root)
+        card = experiment_card(root, case_id, exp_id)
+        if card['status'] not in {'approved', 'running'}:
+            raise ValueError('only approved or running experiments can be closed')
+        if card['frozen_digest'] != frozen_digest(card):
+            raise ValueError('frozen experiment fields changed after planning')
+        closed = {**card, 'status': 'closed', 'result': result}
+        _check_card(closed)
+        if result['interpretation'] is None:
+            raise ValueError('closing an experiment needs an interpretation')
+        if result['interpretation'] == 'pass' and _metric_total(card, result['counts']) < card['hypothesis']['threshold']['value']:
+            raise ValueError('pass below predeclared threshold')
+        card_path = _card_path(case_id, exp_id)
+        card_bytes = encoded(closed).encode()
+        ref = {'path': card_path, 'digest': digest(card_bytes), 'id': exp_id}
+        current = assumption_register(root, case_id)
+        entries = [{k: e[k] for k in AUTHORED_ENTRY_FIELDS} for e in current['entries']]
+        by_id = {e['id']: e for e in entries}
+        for update in result['assumption_updates']:
+            entry = by_id.get(update['assumption_id'])
+            if entry is None or update['assumption_id'] not in card['assumption_ids']:
+                raise ValueError('assumption not tested by this experiment: ' + update['assumption_id'])
+            entry['status'] = update['to']
+            if update['to'] == 'supported':
+                entry['evidence_refs'] = entry['evidence_refs'] + [ref]
+            elif update['to'] in {'refuted', 'contested'}:
+                entry['counter_evidence_refs'] = entry['counter_evidence_refs'] + [ref]
+            entry['confidence_note'] = update['reason']
+        register = _apply_register_draft(root, case_id, current,
+                                         {'revision': current['revision'], 'owner_module': REFUTING_MODULE, 'entries': entries},
+                                         REFUTING_MODULE, reason=reason, history_ref=ref, pending={card_path: card_bytes})
+        outputs = {card_path: card_bytes, f'cases/{case_id}/{REGISTER}': encoded(register)}
+        _publish_case_files(root, case_id, outputs, decision_id, reason, project)
+        return closed
 
 
 def register_research_assignment(root, case_id, assignment, decision_id, reason):
@@ -1463,7 +1628,7 @@ def correct(root, case_ids, reason, decision_id, *, source_path=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'add', 'rename', 'select', 'clear', 'correct', 'recover', 'show', 'appraise', 'plan', 'insights', 'record-question', 'register-research', 'assumptions', 'prepare-appraisal', 'prepare-plan', 'case-plan', 'prepare-case-plan'])
+    parser.add_argument('action', choices=['init', 'add', 'rename', 'select', 'clear', 'correct', 'recover', 'show', 'appraise', 'plan', 'insights', 'record-question', 'register-research', 'assumptions', 'experiment-plan', 'experiment-approve', 'experiment-start', 'experiment-close', 'prepare-appraisal', 'prepare-plan', 'case-plan', 'prepare-case-plan'])
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--case', default='')
     parser.add_argument('--title', default='')
@@ -1471,6 +1636,7 @@ def main(argv=None):
     parser.add_argument('--decision-id', default='')
     parser.add_argument('--reason', default='')
     parser.add_argument('--source', default=None)
+    parser.add_argument('--experiment', default='', help='Experiment card id for approve, start and close.')
     parser.add_argument('--input', type=Path, help='Authored appraisal or structured strategy JSON; results are calculated.')
     parser.add_argument('--out', type=Path, help='Fresh directory for exact rendered review bundle.')
     args = parser.parse_args(argv)
@@ -1501,6 +1667,16 @@ def main(argv=None):
             if args.input is None:
                 raise ValueError('--input required')
             print(json.dumps(publish_assumptions(args.workspace, args.case, load(args.input), args.decision_id, args.reason)['riskiest']))
+        elif args.action == 'experiment-plan':
+            if args.input is None:
+                raise ValueError('--input required')
+            print(experiment_plan(args.workspace, args.case, load(args.input), args.decision_id, args.reason)['id'])
+        elif args.action in {'experiment-approve', 'experiment-start'}:
+            print(experiment_transition(args.workspace, args.case, args.experiment, args.action.split('-')[1], args.decision_id, args.reason)['status'])
+        elif args.action == 'experiment-close':
+            if args.input is None:
+                raise ValueError('--input required')
+            print(experiment_close(args.workspace, args.case, args.experiment, load(args.input), args.decision_id, args.reason)['status'])
         elif args.action == 'insights':
             if args.input is None:
                 raise ValueError('--input required')
