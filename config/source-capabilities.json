@@ -8,6 +8,21 @@
   ],
   "capabilities": [
     {
+      "id": "reddit_dialog_mcp",
+      "family": "customer_pain",
+      "label": "Dialog Reddit research MCP (hosted)",
+      "description": "Semantic search across indexed subreddits with post and comment deep-dives and full citations; no Reddit credentials. Hosted third-party service (dialog-tools/reddit-research-mcp).",
+      "use_when": ["reddit", "semantic reddit search", "subreddit discovery", "across subreddits", "mcp", "community discovery", "complaints"],
+      "avoid_when": ["representative market sizing", "proof of willingness to pay from one post", "private or sensitive queries (queries go to a third-party host)"],
+      "evidence_strength": "medium_when_repeated_otherwise_weak",
+      "collector_provider": null,
+      "hosted_third_party": true,
+      "requires_env": [],
+      "status_check": null,
+      "example": "claude mcp add --scope local --transport http dialog-mcp https://mcp.dialog.tools/mcp",
+      "caveat": "Not configured by default; add only with founder approval because queries leave the machine. Same citation and raw-capture rules as the Reddit API route: retain post URLs, cluster independent posts, separate user pain from provider content. Registered 2026-10-21; not yet validated by the provider doctor."
+    },
+    {
       "id": "vc_investment_activity",
       "family": "capital_market_signals",
       "label": "Parsers VC topic funding activity",
@@ -148,7 +163,7 @@
       ],
       "status_check": "python3 scripts/validate_apis/run_all.py",
       "example": "python3 scripts/google_trends_fetch.py compare --keyword '<phrase 1>' --keyword '<phrase 2>' --geo AUTO --timeframe 'today 12-m'",
-      "caveat": "Use short user-language phrases only. Trends are attention, not demand proof. Zero-cost fallback when SERPAPI_API_KEY/DATAFORSEO are missing: scripts/google_trends_fetch.py (pytrends, optional dependency)."
+      "caveat": "Use short user-language phrases only. Trends are attention, not demand proof. Zero-cost fallback when SERPAPI_API_KEY/DATAFORSEO are missing: scripts/google_trends_fetch.py (pytrends, optional dependency; upstream pytrends is archived and rate-limited). Evaluated 2026-10-21: akvise/trends-checker wraps the same pytrends library plus DataForSEO, so it is not a replacement; kept pytrends as fallback."
     },
     {
       "id": "youtube",
