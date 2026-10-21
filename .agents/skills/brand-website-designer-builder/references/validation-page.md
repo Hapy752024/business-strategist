@@ -2,7 +2,7 @@
 
 # Validation page mode
 
-A single-purpose page for a smoke test designed under `references/smoke-test.md`. Inputs: `smoke-test-plan.md`, `message-variants.json`, approved brand tokens if any, the conversion action, disclosure text and the analytics decision.
+A single-purpose page for a smoke test designed under `references/smoke-test.md`. Inputs: the committed experiment card (`cases/<id>/experiments/<E-id>.json`), `smoke-test-plan.md`, `message-variants.json`, approved brand tokens if any, the conversion action, disclosure text and the analytics decision.
 
 Requirements:
 - One page per variant or one page with a server-selected variant; no navigation, one CTA, message match to the ad or post that sends traffic.
@@ -11,4 +11,6 @@ Requirements:
 - Events: `page_view`, `cta_click`, `lead_submit`, `call_booked` with `variant` and `utm_*`; consent handling per `consent-eu.md` before non-essential scripts. Analytics remains opt-in and owner-activated.
 - Performance: mobile LCP under 2.5 s in the lab run; images sized; system or subset fonts.
 - Limit form fields to screening needs and include the screener question when responders will be interviewed.
+- Post-click page, in one step after the CTA: the honest reveal from `references/smoke-test.md` ("We are evaluating this and it is not available yet..."), the two qualifying questions (situation or role, and how they handle the problem today), and a booking link for a 15-minute interview. The `call_booked` event is the card's primary metric; a click alone is not a pass.
+- Variant ids on the page and in events must equal the card's `variants` so `import_responders.py` can count them.
 - Hand back preview URL or local build, variant mapping, event names, and plan path. Publishing and traffic buying keep their existing authorization.
