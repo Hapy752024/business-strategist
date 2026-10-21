@@ -15,6 +15,9 @@ from scripts import migrate_first_project as first
 
 ROOT = Path(__file__).resolve().parents[1]
 LEGACY_SOURCE = ROOT / "projects/_infra/layout-migrations/individualized-marketing-content/original-tree"
+# Rehearses a real, private local project; projects/ is gitignored, so clean clones (CI) skip.
+pytestmark = pytest.mark.skipif(not (ROOT / "projects/individualized-marketing-content").is_dir(),
+                                reason="requires the private local project data under projects/ (gitignored)")
 
 
 def legacy_fixture(tmp_path):

@@ -40,6 +40,8 @@ Thumbs.db
 # Generated research outputs
 projects/
 research/
+# Synthetic regression fixtures must stay tracked despite the research/ rule above.
+!fixtures/research/
 research.sqlite
 
 # Local business/brand project workspaces and eval runs

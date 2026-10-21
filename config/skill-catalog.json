@@ -129,6 +129,27 @@
       "required_references": [
         "references/opportunity-research-approaches.md",
         "references/strategic-positioning.md"
+      ],
+      "consumes": [
+        {
+          "artifact": "founder-brief",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/market_research/manifest.json"
+          ],
+          "freshness": "none",
+          "external": true
+        }
+      ],
+      "produces": [
+        {
+          "artifact": "assumption-register",
+          "schema": "schemas/assumption-register.schema.json",
+          "path_patterns": [
+            "cases/{case}/assumptions.json"
+          ],
+          "freshness": "revision"
+        }
       ]
     },
     "evidence-scout": {
@@ -148,6 +169,36 @@
       "cost": "medium",
       "required_references": [
         "references/customer-voice.md"
+      ],
+      "consumes": [
+        {
+          "artifact": "assumption-register",
+          "schema": "schemas/assumption-register.schema.json",
+          "path_patterns": [
+            "cases/{case}/assumptions.json"
+          ],
+          "freshness": "revision"
+        }
+      ],
+      "produces": [
+        {
+          "artifact": "evidence-run",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/market_research/**/runs/*/summary.json",
+            "market_research/**/runs/*/summary.json"
+          ],
+          "freshness": "digest"
+        },
+        {
+          "artifact": "claim-ledger",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/market_research/**/customer-feedback/claim-ledger.json",
+            "market_research/**/customer-feedback/claim-ledger.json"
+          ],
+          "freshness": "digest"
+        }
       ]
     },
     "competitive-landscape-builder": {
@@ -173,6 +224,28 @@
       "cost": "high",
       "required_references": [
         "references/customer-voice.md"
+      ],
+      "consumes": [
+        {
+          "artifact": "competitor-candidates",
+          "schema": "schemas/competitor.schema.json",
+          "path_patterns": [
+            "cases/{case}/market_research/**/competitors.json",
+            "market_research/**/competitors.json"
+          ],
+          "freshness": "digest"
+        }
+      ],
+      "produces": [
+        {
+          "artifact": "entity-landscape",
+          "schema": "schemas/entity-landscape.schema.json",
+          "path_patterns": [
+            "cases/{case}/market_research/**/entity-landscape.json",
+            "market_research/**/entity-landscape.json"
+          ],
+          "freshness": "digest"
+        }
       ]
     },
     "competitor-scout": {
@@ -189,7 +262,29 @@
         "competitor plan"
       ],
       "side_effect": "research",
-      "cost": "medium"
+      "cost": "medium",
+      "consumes": [
+        {
+          "artifact": "founder-brief",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/market_research/manifest.json"
+          ],
+          "freshness": "none",
+          "external": true
+        }
+      ],
+      "produces": [
+        {
+          "artifact": "competitor-candidates",
+          "schema": "schemas/competitor.schema.json",
+          "path_patterns": [
+            "cases/{case}/market_research/**/competitors.json",
+            "market_research/**/competitors.json"
+          ],
+          "freshness": "digest"
+        }
+      ]
     },
     "competitor-marketing-analyzer": {
       "intent": [
@@ -263,7 +358,27 @@
             "persisted questions",
             "reviewed source bindings"
           ],
-          "output_owner": "opportunity-risk-designer"
+          "output_owner": "opportunity-risk-designer",
+          "consumes": [
+            {
+              "artifact": "assumption-register",
+              "schema": "schemas/assumption-register.schema.json",
+              "path_patterns": [
+                "cases/{case}/assumptions.json"
+              ],
+              "freshness": "revision"
+            }
+          ],
+          "produces": [
+            {
+              "artifact": "case-insights",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/case_insights.md"
+              ],
+              "freshness": "revision"
+            }
+          ]
         },
         "appraisal": {
           "prerequisites": [
@@ -287,7 +402,36 @@
             "source/applicability bindings",
             "requested sections"
           ],
-          "output_owner": "opportunity-risk-designer"
+          "output_owner": "opportunity-risk-designer",
+          "consumes": [
+            {
+              "artifact": "assumption-register",
+              "schema": "schemas/assumption-register.schema.json",
+              "path_patterns": [
+                "cases/{case}/assumptions.json"
+              ],
+              "freshness": "revision"
+            },
+            {
+              "artifact": "claim-ledger",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/**/customer-feedback/claim-ledger.json",
+                "market_research/**/customer-feedback/claim-ledger.json"
+              ],
+              "freshness": "digest"
+            }
+          ],
+          "produces": [
+            {
+              "artifact": "case-insights",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/case_insights.md"
+              ],
+              "freshness": "revision"
+            }
+          ]
         },
         "smoke_test": {
           "prerequisites": [
@@ -299,20 +443,87 @@
             "references/interview-recruitment.md"
           ],
           "artifacts": [
+            "experiment-card.json",
             "smoke-test-plan.md",
             "message-variants.json",
             "budget-approval.json",
             "responders.json"
           ],
           "inputs": [
-            "hypothesis",
+            "register assumption ids",
             "offer",
             "segment",
             "evidence run"
           ],
-          "output_owner": "opportunity-risk-designer"
+          "output_owner": "opportunity-risk-designer",
+          "consumes": [
+            {
+              "artifact": "assumption-register",
+              "schema": "schemas/assumption-register.schema.json",
+              "path_patterns": [
+                "cases/{case}/assumptions.json"
+              ],
+              "freshness": "revision"
+            },
+            {
+              "artifact": "evidence-run",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/**/runs/*/summary.json",
+                "market_research/**/runs/*/summary.json"
+              ],
+              "freshness": "digest"
+            }
+          ],
+          "produces": [
+            {
+              "artifact": "experiment-card",
+              "schema": "schemas/experiment-card.schema.json",
+              "path_patterns": [
+                "cases/{case}/experiments/E-*.json"
+              ],
+              "freshness": "digest"
+            },
+            {
+              "artifact": "responders-ledger",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/**/responders.json"
+              ],
+              "freshness": "none"
+            }
+          ]
         }
-      }
+      },
+      "consumes": [
+        {
+          "artifact": "assumption-register",
+          "schema": "schemas/assumption-register.schema.json",
+          "path_patterns": [
+            "cases/{case}/assumptions.json"
+          ],
+          "freshness": "revision"
+        },
+        {
+          "artifact": "claim-ledger",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/market_research/**/customer-feedback/claim-ledger.json",
+            "market_research/**/customer-feedback/claim-ledger.json"
+          ],
+          "freshness": "digest"
+        }
+      ],
+      "produces": [
+        {
+          "artifact": "assumption-register",
+          "schema": "schemas/assumption-register.schema.json",
+          "path_patterns": [
+            "cases/{case}/assumptions.json"
+          ],
+          "freshness": "revision"
+        }
+      ]
     },
     "brand-designer": {
       "intent": [
@@ -691,7 +902,27 @@
           "side_effect": "local-publication",
           "cost": "medium"
         }
-      }
+      },
+      "consumes": [
+        {
+          "artifact": "case-insights",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/case_insights.md"
+          ],
+          "freshness": "revision"
+        }
+      ],
+      "produces": [
+        {
+          "artifact": "case-business-plan",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/business-plan.md"
+          ],
+          "freshness": "revision"
+        }
+      ]
     },
     "marketing-strategy-builder": {
       "intent": [
@@ -890,6 +1121,27 @@
       "cost": "low",
       "required_references": [
         "references/customer-voice.md"
+      ],
+      "consumes": [
+        {
+          "artifact": "evidence-run",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/market_research/**/runs/*/summary.json",
+            "market_research/**/runs/*/summary.json"
+          ],
+          "freshness": "digest"
+        }
+      ],
+      "produces": [
+        {
+          "artifact": "interview-tracker",
+          "schema": null,
+          "path_patterns": [
+            "cases/{case}/market_research/**/interview*/interview-tracker.md"
+          ],
+          "freshness": "none"
+        }
       ]
     },
     "startup-challenge-panel": {

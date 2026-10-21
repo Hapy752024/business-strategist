@@ -9,6 +9,9 @@ from scripts import migrate_project_cases as generic
 
 
 ROOT = Path(__file__).resolve().parents[1]
+# Rehearses a real, private local project; projects/ is gitignored, so clean clones (CI) skip.
+pytestmark = pytest.mark.skipif(not (ROOT / "projects/tattoo-insurance").is_dir(),
+                                reason="requires the private local project data under projects/ (gitignored)")
 
 
 def tattoo_copy(tmp_path):

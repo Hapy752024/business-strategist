@@ -15,14 +15,15 @@ Single shared record for failures, problems and improvement candidates across th
 
 | ID | Priority | Status | Area | Issue |
 | --- | --- | --- | --- | --- |
+| WF-024 | P2 | resolved | Validation loop | Modules shared no checked state; experiments and truthfulness were unenforced |
 | WF-001 | P1 | resolved | Placement evidence | Inert template anchor incorrectly completes a placement |
 | WF-002 | P1 | resolved | Capture privacy | Rejected sensitive URL retained in failure record |
 | WF-003 | P2 | resolved | SEO comparison | Aborted audit incorrectly resolves earlier defects |
 | WF-004 | P2 | resolved | Marketing provenance | Opportunity stays current after its source changes |
 | WF-005 | P2 | resolved | Public fetching | Trickled headers bypass total deadline |
 | WF-006 | P2 | resolved | Evidence recovery | Original capture/observation cannot be restored transactionally |
-| WF-007 | P2 | open | Research tests | Competitor-query warning expectation fails |
-| WF-008 | P3 | open | Skill maintenance | Three existing skill entries exceed line budget |
+| WF-007 | P2 | resolved | Research tests | Competitor-query warning expectation fails |
+| WF-008 | P3 | resolved | Skill maintenance | Three existing skill entries exceed line budget |
 | WF-009 | P3 | open | Review tooling | Provider/model identity diagnostic needs verification |
 | WF-010 | P1 | resolved | Non-video contracts | Retry, preservation and audience gaps fixed |
 | WF-011 | P3 | open | Model evaluation | Expired OAuth prevents live trials |
@@ -32,6 +33,16 @@ Single shared record for failures, problems and improvement candidates across th
 | WF-016 | P2 | resolved | Website lifecycle | Link maintenance and privacy design lacked reusable implementation guidance |
 
 ## Entries
+
+### WF-024 — Modules shared no checked state; experiments and truthfulness were unenforced
+
+- Dates: observed 2026-10-21, resolved 2026-10-21. Area: Business research and strategy modules. Priority: P2. Status: resolved (structural); live-quality gap open.
+- Observed: assumptions lived in prose, only the smoke test was a first-class experiment, results never flowed back into case insights, the router could not report runnability, and the truthful stance in AGENTS.md had no check. The smoke-test kit emitted placeholder thresholds.
+- Change: per-case `assumptions.json` register and `experiments/E-*.json` cards with publisher-only writes (`case_workspace.py assumptions|experiment-plan|experiment-approve|experiment-start|experiment-close`); `config/experiment-library.json`; rewritten smoke kit with computed sample plan; `import_responders.py`; insights contract v3 with `{{assumption.<id>}}`, change-trigger and could-not-check sections and a paragraph-level evidence/status rule; typed catalog `consumes`/`produces` and `route_workflow.py status`; transcript-coding ingester; decision KPIs; challenge-first skill outputs; `founder-pushback` and `premature-validation` eval cases. Design and plan: `docs/superpowers/specs/2026-10-21-agentic-validation-loop-design.md`, `docs/superpowers/plans/2026-10-21-agentic-validation-loop.md` (gitignored).
+- Closure evidence: branch `feature/validation-loop`; tests `test_case_artifacts_schema.py`, `test_assumption_register.py`, `test_experiment_cards.py`, `test_case_insights.py` (v3 and truthfulness cases), `test_smoke_test_kit.py`, `test_import_responders.py`, `test_catalog_contracts.py`, `test_case_status.py`, `test_truthfulness_structure.py`, `test_ingest_transcript_coding.py`, `test_capability_registrations.py`; full suite 1253 passed with only the WF-007 failure; `evaluate.py check` PASS.
+- Final review 2026-10-21 (fresh reviewer): fixed approval dead end, rate-blind pass, CWD-relative importer ledger, per-event counting, unsalted pseudonyms, variant-0 parsing and opt-in v3 rules; suite 1260 passed (WF-007 only). Five minors deferred in the branch ledger.
+- Still open: the two new eval cases have not been run as native trials or graded (WF-011 OAuth); GrowthBook/PostHog import presets are unverified against real exports; Dialog Reddit MCP is registered but not validated by the provider doctor. Structural checks do not prove agents are less agreeable in practice.
+- Follow-up 2026-10-21: Dialog Reddit MCP registered at local scope as subreddit discovery only, with `subreddit_query_rows.py` handing communities to the Reddit API collector; first use needs the founder's own OAuth sign-in through `/mcp`.
 
 ### WF-016 — External-link maintenance and broader privacy design gaps
 
@@ -98,6 +109,8 @@ Single shared record for failures, problems and improvement candidates across th
 - Evidence: `docs/agent-improvements/2026-10-11-seo-and-earned-media-implementation.md`. Closure: pending.
 - Recurrence 2026-10-11, shared-post agent review: unrestricted setup rerun produced 1147 passed, 1 failed, the same competitor-query warning assertion. Sandbox-only subprocess/browser/network failures cleared outside the sandbox. Evidence: `docs/agent-improvements/2026-10-11-shared-posts-review.md`. No fix attempted in this review.
 
+- Closure 2026-10-21: cause verified — `COMPETITOR_TERMS['ja']` was added to `scripts/evidence_scout/discover_competitors.py`, so the test's Japanese fixture stopped being an unsupported language; the code was correct. Test now uses Korean (still unsupported) with both original assertions kept, plus a new test pinning Japanese vocabulary without English injection. `tests/test_research_query_expansion.py` 67 passed.
+
 ### WF-008 — Existing skill entry line budgets
 
 - First/last observed: 2026-10-11 during setup validation. Owner: Skill maintenance.
@@ -105,6 +118,8 @@ Single shared record for failures, problems and improvement candidates across th
 - Impact/next action: setup validation fails; compact or move detail to direct references without losing required guidance, then rerun the entry checks.
 - Evidence: `docs/agent-improvements/2026-10-11-seo-and-earned-media-implementation.md`. Closure: pending.
 - Recurrence 2026-10-11, shared-post agent review: setup again detected evidence-scout 32 lines, idea-grill 31 and market-problem-discovery 31 against the 30-line budget. Evidence: `docs/agent-improvements/2026-10-11-shared-posts-review.md`. No skill changes made.
+
+- Closure 2026-10-21: removed redundant blank lines (no guidance cut) so idea-grill, evidence-scout, market-problem-discovery and stripe-best-practices are at 30 lines; `scripts/validate_setup.sh` reports 0 errors.
 
 ### WF-009 — Independent review provider produced no findings
 

@@ -1,0 +1,25 @@
+{
+  "unit_id": "a",
+  "scope": "Collect synthetic lane a only",
+  "inputs": [
+    {
+      "path": "inputs/brief.txt",
+      "sha256": "ef69155120f29a759d65dbe2cd5de7a6ff5f730adbd56ccfb4f346a67a41a7d5"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "outputs/a.txt",
+      "sha256": "5efaa63d82170ac736b3f6af4e92d7709332b91d9aef21940a486b48f2060f1e"
+    }
+  ],
+  "checks": {
+    "capture": {
+      "status": "pass",
+      "evidence": {
+        "path": "checks/a.json",
+        "sha256": "eb95beb5e9ec102d5f4a83f25bca51cff5258bca7a0a8fdb168fb5a325296483"
+      }
+    }
+  }
+}

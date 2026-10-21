@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "units": [
+    {
+      "id": "a",
+      "scope": "Collect synthetic lane a only",
+      "output_paths": [
+        "outputs/a.txt"
+      ],
+      "inputs": [
+        {
+          "path": "inputs/brief.txt",
+          "sha256": "ef69155120f29a759d65dbe2cd5de7a6ff5f730adbd56ccfb4f346a67a41a7d5"
+        }
+      ],
+      "dependencies": [],
+      "checks": [
+        "capture"
+      ],
+      "state": "accepted",
+      "attempts": 0,
+      "attempt_limit": 3,
+      "receipt": {
+        "path": "receipts/a.json",
+        "sha256": "b82dc204ec489d66639129eb82e45c9de6cc618e12aca9075760aaa210ecae2c"
+      }
+    },
+    {
+      "id": "b",
+      "scope": "Collect synthetic lane b only",
+      "output_paths": [
+        "outputs/b.txt"
+      ],
+      "inputs": [
+        {
+          "path": "inputs/brief.txt",
+          "sha256": "ef69155120f29a759d65dbe2cd5de7a6ff5f730adbd56ccfb4f346a67a41a7d5"
+        }
+      ],
+      "dependencies": [],
+      "checks": [
+        "capture"
+      ],
+      "state": "accepted",
+      "attempts": 0,
+      "attempt_limit": 3,
+      "receipt": {
+        "path": "receipts/b.json",
+        "sha256": "77c1dd1baf8571e731376a35b2756f21cf3a7f4dcf151940c732de0ee58b6352"
+      }
+    },
+    {
+      "id": "c",
+      "scope": "Collect synthetic lane c only",
+      "output_paths": [
+        "outputs/c.txt"
+      ],
+      "inputs": [
+        {
+          "path": "inputs/brief.txt",
+          "sha256": "ef69155120f29a759d65dbe2cd5de7a6ff5f730adbd56ccfb4f346a67a41a7d5"
+        }
+      ],
+      "dependencies": [],
+      "checks": [
+        "capture"
+      ],
+      "state": "accepted",
+      "attempts": 0,
+      "attempt_limit": 3,
+      "receipt": {
+        "path": "receipts/c.json",
+        "sha256": "a9b54bb1ac07efcd92e7bd5560a3fe92d578af2b1d84b4811ed60830613b0c6e"
+      }
+    },
+    {
+      "id": "d",
+      "scope": "Collect synthetic lane d only",
+      "output_paths": [
+        "outputs/d.txt"
+      ],
+      "inputs": [
+        {
+          "path": "inputs/brief.txt",
+          "sha256": "ef69155120f29a759d65dbe2cd5de7a6ff5f730adbd56ccfb4f346a67a41a7d5"
+        }
+      ],
+      "dependencies": [],
+      "checks": [
+        "capture"
+      ],
+      "state": "rejected",
+      "attempts": 1,
+      "attempt_limit": 3,
+      "return": {
+        "requirement": "capture",
+        "evidence": {
+          "path": "checks/d.json",
+          "sha256": "3ab37938c3d54ac1f608e732f00d4b52fa3a4ce0dfd73ef4d6b2c32e2be74acc"
+        },
+        "reason": "Synthetic missing capture",
+        "allowed_outputs": [
+          "outputs/d.txt"
+        ],
+        "next_action": "Repair only lane d"
+      }
+    }
+  ]
+}

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 import json
 import re
 import time
@@ -523,6 +524,12 @@ def route_request(request: str, **kwargs) -> dict[str, Any]:
 
 
 def main() -> int:
+    if len(sys.argv) > 1 and sys.argv[1] == 'status':
+        try:
+            from scripts import case_status
+        except ModuleNotFoundError:
+            import case_status
+        return case_status.main(sys.argv[2:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("request")
     parser.add_argument("--manifest", type=Path)
