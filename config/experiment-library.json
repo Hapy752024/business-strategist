@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "sources": [
+    "Strategyzer, Testing Business Ideas summary and experiment library (accessed 2026-10-21): evidence hierarchy behaviour > stated intent > opinion.",
+    "Koji smoke-test guide (2026-09-23); Horizon smoke test (2026-10-03); K. Riedl fake-door article (2026-07-23)."
+  ],
+  "experiments": [
+    {
+      "id": "problem-interview",
+      "name": "Customer problem interview",
+      "assumption_types": [
+        "desirability"
+      ],
+      "evidence_strength": "directional",
+      "cost": "low",
+      "setup_time": "days",
+      "run_time": "weeks",
+      "disclosure_rules": [
+        "No payment or incentive to participants unless the founder changes this preference."
+      ],
+      "authorization_needed": "outreach",
+      "kit_script": "scripts/evidence_scout/build_interview_kit.py",
+      "reference": "references/interview-recruitment.md"
+    },
+    {
+      "id": "message-smoke-test",
+      "name": "Message smoke test with free signup",
+      "assumption_types": [
+        "desirability"
+      ],
+      "evidence_strength": "directional",
+      "cost": "low",
+      "setup_time": "days",
+      "run_time": "weeks",
+      "disclosure_rules": [
+        "Disclose within one step that the offer is being evaluated and not yet available.",
+        "State what happens with collected data."
+      ],
+      "authorization_needed": "ad_spend",
+      "kit_script": "scripts/evidence_scout/build_smoke_test_kit.py",
+      "reference": "references/smoke-test.md"
+    },
+    {
+      "id": "priced-fake-door",
+      "name": "Priced fake door or price-variant page",
+      "assumption_types": [
+        "desirability",
+        "viability"
+      ],
+      "evidence_strength": "moderate",
+      "cost": "low",
+      "setup_time": "days",
+      "run_time": "weeks",
+      "disclosure_rules": [
+        "Disclose within one step that the offer is being evaluated and not yet available.",
+        "State what happens with collected data.",
+        "Never collect payment details on a fake door."
+      ],
+      "authorization_needed": "ad_spend",
+      "kit_script": "scripts/evidence_scout/build_smoke_test_kit.py",
+      "reference": "references/smoke-test.md"
+    },
+    {
+      "id": "booked-qualified-call",
+      "name": "Booked qualified call",
+      "assumption_types": [
+        "desirability"
+      ],
+      "evidence_strength": "moderate",
+      "cost": "low",
+      "setup_time": "hours",
+      "run_time": "weeks",
+      "disclosure_rules": [
+        "Disclose within one step that the offer is being evaluated and not yet available.",
+        "State what happens with collected data."
+      ],
+      "authorization_needed": "outreach",
+      "kit_script": null,
+      "reference": "references/smoke-test.md"
+    },
+    {
+      "id": "concierge-delivery",
+      "name": "Concierge delivery",
+      "assumption_types": [
+        "desirability",
+        "feasibility",
+        "viability"
+      ],
+      "evidence_strength": "strong",
+      "cost": "medium",
+      "setup_time": "days",
+      "run_time": "weeks",
+      "disclosure_rules": [
+        "Tell the customer the service is delivered manually."
+      ],
+      "authorization_needed": "outreach",
+      "kit_script": null,
+      "reference": null
+    },
+    {
+      "id": "pre-order-deposit",
+      "name": "Pre-order or refundable deposit",
+      "assumption_types": [
+        "desirability",
+        "viability"
+      ],
+      "evidence_strength": "strong",
+      "cost": "medium",
+      "setup_time": "days",
+      "run_time": "weeks",
+      "disclosure_rules": [
+        "State refund terms before payment.",
+        "Collect payment only with the ability to refund."
+      ],
+      "authorization_needed": "payment_collection",
+      "kit_script": null,
+      "reference": null
+    },
+    {
+      "id": "letter-of-intent",
+      "name": "Letter of intent",
+      "assumption_types": [
+        "desirability",
+        "viability"
+      ],
+      "evidence_strength": "moderate",
+      "cost": "low",
+      "setup_time": "days",
+      "run_time": "weeks",
+      "disclosure_rules": [
+        "State that the letter is non-binding unless agreed otherwise."
+      ],
+      "authorization_needed": "outreach",
+      "kit_script": null,
+      "reference": null
+    },
+    {
+      "id": "paid-pilot",
+      "name": "Paid pilot",
+      "assumption_types": [
+        "desirability",
+        "feasibility",
+        "viability"
+      ],
+      "evidence_strength": "strong",
+      "cost": "high",
+      "setup_time": "weeks",
+      "run_time": "months",
+      "disclosure_rules": [
+        "Written pilot terms with scope, price and exit."
+      ],
+      "authorization_needed": "payment_collection",
+      "kit_script": null,
+      "reference": null
+    },
+    {
+      "id": "feasibility-check",
+      "name": "Expert or supplier feasibility check",
+      "assumption_types": [
+        "feasibility"
+      ],
+      "evidence_strength": "directional",
+      "cost": "low",
+      "setup_time": "hours",
+      "run_time": "days",
+      "disclosure_rules": [],
+      "authorization_needed": "outreach",
+      "kit_script": null,
+      "reference": null
+    },
+    {
+      "id": "unit-economics-run",
+      "name": "Unit-economics model run",
+      "assumption_types": [
+        "viability"
+      ],
+      "evidence_strength": "directional",
+      "cost": "low",
+      "setup_time": "hours",
+      "run_time": "hours",
+      "disclosure_rules": [
+        "Model output is arithmetic on stated inputs, not demand evidence."
+      ],
+      "authorization_needed": "none",
+      "kit_script": "scripts/case_economics.py",
+      "reference": "references/case-assessment.md"
+    }
+  ]
+}

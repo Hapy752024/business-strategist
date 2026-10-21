@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assumption-register.schema.json",
+  "title": "Assumption Register",
+  "description": "Current case assumptions with evidence status. Written only by case_workspace publishers.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "case_id",
+    "revision",
+    "updated_at",
+    "entries",
+    "riskiest"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "required": [
+        "path",
+        "digest",
+        "id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "id": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "case_id": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "riskiest": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "statement",
+          "type",
+          "importance",
+          "status",
+          "evidence_refs",
+          "counter_evidence_refs",
+          "confidence_note",
+          "owner_module",
+          "updated_at",
+          "revision",
+          "history"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^A-[a-z0-9][a-z0-9-]*$"
+          },
+          "statement": {
+            "type": "string",
+            "minLength": 10
+          },
+          "type": {
+            "enum": [
+              "desirability",
+              "feasibility",
+              "viability",
+              "adaptability"
+            ]
+          },
+          "importance": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "status": {
+            "enum": [
+              "unknown",
+              "contested",
+              "supported",
+              "refuted"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ref"
+            }
+          },
+          "counter_evidence_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ref"
+            }
+          },
+          "confidence_note": {
+            "type": "string"
+          },
+          "owner_module": {
+            "type": "string",
+            "minLength": 1
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "at",
+                "from",
+                "to",
+                "reason",
+                "ref"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "at": {
+                  "type": "string"
+                },
+                "from": {
+                  "enum": [
+                    "unknown",
+                    "contested",
+                    "supported",
+                    "refuted",
+                    null
+                  ]
+                },
+                "to": {
+                  "enum": [
+                    "unknown",
+                    "contested",
+                    "supported",
+                    "refuted"
+                  ]
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ref": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/$defs/ref"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

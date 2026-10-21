@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "experiment-library.schema.json",
+  "title": "Experiment Library",
+  "description": "Catalogue of experiment types. Ratings are editable configuration, not claims.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "sources",
+    "experiments"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "assumption_types",
+          "evidence_strength",
+          "cost",
+          "setup_time",
+          "run_time",
+          "disclosure_rules",
+          "authorization_needed",
+          "kit_script",
+          "reference"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "assumption_types": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "enum": [
+                "desirability",
+                "feasibility",
+                "viability",
+                "adaptability"
+              ]
+            }
+          },
+          "evidence_strength": {
+            "enum": [
+              "directional",
+              "moderate",
+              "strong"
+            ]
+          },
+          "cost": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "setup_time": {
+            "enum": [
+              "hours",
+              "days",
+              "weeks"
+            ]
+          },
+          "run_time": {
+            "enum": [
+              "hours",
+              "days",
+              "weeks",
+              "months"
+            ]
+          },
+          "disclosure_rules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorization_needed": {
+            "enum": [
+              "none",
+              "ad_spend",
+              "payment_collection",
+              "outreach"
+            ]
+          },
+          "kit_script": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

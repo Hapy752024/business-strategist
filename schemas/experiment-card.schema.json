@@ -1,0 +1,316 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "experiment-card.schema.json",
+  "title": "Experiment Card",
+  "description": "One predeclared experiment bound to register assumptions. Result holds counts only, never responder identities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "library_id",
+    "assumption_ids",
+    "hypothesis",
+    "kill_rule",
+    "sample_plan",
+    "channel",
+    "variants",
+    "status",
+    "authorization_refs",
+    "responders_ref",
+    "supersedes",
+    "result",
+    "frozen_digest"
+  ],
+  "$defs": {
+    "fileref": {
+      "type": "object",
+      "required": [
+        "path",
+        "digest"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "funnel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identified",
+        "exposed",
+        "responded",
+        "eligible",
+        "booked",
+        "attended",
+        "usable_incident"
+      ],
+      "properties": {
+        "identified": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exposed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "responded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "eligible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "booked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attended": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usable_incident": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^E-[a-z0-9][a-z0-9-]*$"
+    },
+    "library_id": {
+      "type": "string"
+    },
+    "assumption_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "segment",
+        "action",
+        "problem",
+        "threshold"
+      ],
+      "properties": {
+        "segment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "problem": {
+          "type": "string",
+          "minLength": 1
+        },
+        "threshold": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "metric",
+            "value",
+            "sample",
+            "window_days"
+          ],
+          "properties": {
+            "metric": {
+              "enum": [
+                "identified",
+                "exposed",
+                "responded",
+                "eligible",
+                "booked",
+                "attended",
+                "usable_incident"
+              ]
+            },
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sample": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "window_days": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "kill_rule": {
+      "type": "string",
+      "minLength": 5
+    },
+    "sample_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "p_low",
+        "p_high",
+        "per_variant"
+      ],
+      "properties": {
+        "p_low": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "p_high": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "per_variant": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "channel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "approved",
+        "running",
+        "closed",
+        "superseded",
+        null
+      ]
+    },
+    "authorization_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fileref"
+      }
+    },
+    "responders_ref": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/fileref"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "supersedes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "result": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "counts",
+            "interpretation",
+            "assumption_updates",
+            "limits"
+          ],
+          "properties": {
+            "counts": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/$defs/funnel"
+                }
+              }
+            },
+            "interpretation": {
+              "enum": [
+                "pass",
+                "pivot",
+                "repeat",
+                "stop",
+                null
+              ]
+            },
+            "assumption_updates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "assumption_id",
+                  "to",
+                  "reason"
+                ],
+                "properties": {
+                  "assumption_id": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "enum": [
+                      "unknown",
+                      "contested",
+                      "supported",
+                      "refuted"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            },
+            "limits": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "frozen_digest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}
