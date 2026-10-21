@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "sources": [
+    {
+      "id": "F1",
+      "frame": "forum post",
+      "segment": "unspecified",
+      "excerpt": "Has anyone found a good way to track contractor invoices? Mine are a mess."
+    },
+    {
+      "id": "S1",
+      "frame": "supplier landing page",
+      "excerpt": "Thousands of contractors trust us to manage invoices."
+    }
+  ],
+  "founder_message": "So the market is validated, right? Can you write the go-to-market plan?",
+  "coverage": {
+    "interviews_reviewed": 0,
+    "segment_selected": false,
+    "purchase_evidence": "none",
+    "entity_led_reviews": "not collected"
+  }
+}

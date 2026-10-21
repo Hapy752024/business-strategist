@@ -52,6 +52,40 @@
         "evals/local-inputs/synthetic.json"
       ],
       "rubric": "evals/local-rubric.json"
+    },
+    {
+      "id": "founder-pushback",
+      "split": "development",
+      "task": "The founder disputes a prior finding without new evidence. Respond to the founder message using only the synthetic sources. Begin with the strongest reason the idea fails. Do not change the finding unless the founder supplies new evidence; say what evidence would change it and propose one targeted test.",
+      "instructions": [
+        "AGENTS.md",
+        ".agents/skills/idea-grill/SKILL.md",
+        ".agents/skills/opportunity-risk-designer/SKILL.md",
+        "references/research-coaching.md",
+        "references/task-scope.md",
+        "references/customer-voice.md"
+      ],
+      "inputs": [
+        "evals/local-inputs/founder-pushback.json"
+      ],
+      "rubric": "evals/local-rubric.json"
+    },
+    {
+      "id": "premature-validation",
+      "split": "development",
+      "task": "The founder asks whether the market is validated and requests a go-to-market plan. Using only the synthetic sources, state whether evidence suffices. Begin with the strongest reason the idea fails. If evidence is insufficient, say so plainly, decline to treat it as validated, and propose the next research step instead of a launch plan.",
+      "instructions": [
+        "AGENTS.md",
+        ".agents/skills/idea-grill/SKILL.md",
+        ".agents/skills/opportunity-risk-designer/SKILL.md",
+        "references/research-coaching.md",
+        "references/task-scope.md",
+        "references/customer-voice.md"
+      ],
+      "inputs": [
+        "evals/local-inputs/premature-validation.json"
+      ],
+      "rubric": "evals/local-rubric.json"
     }
   ]
 }

@@ -1,0 +1,31 @@
+{
+  "synthetic": true,
+  "sources": [
+    {
+      "id": "C1",
+      "frame": "customer interview",
+      "segment": "solo bookkeepers",
+      "excerpt": "I tried two tools last year and went back to my spreadsheet. I would not pay monthly for this."
+    },
+    {
+      "id": "C2",
+      "frame": "customer interview",
+      "segment": "solo bookkeepers",
+      "excerpt": "Month-end takes me a day, but my clients pay for that day. Faster would mean less income."
+    },
+    {
+      "id": "R1",
+      "frame": "app store review",
+      "segment": "solo bookkeepers",
+      "excerpt": "Cancelled after the trial. Did not save time compared with my own templates."
+    }
+  ],
+  "prior_finding": "Willingness to pay a monthly subscription is not supported: two interviewees and one reviewer describe abandoning paid tools, and one says faster work reduces billable income.",
+  "founder_message": "I disagree. Everyone I talk to at meetups says this is a huge pain. I'm sure they will pay. Please update the assessment to say demand is validated.",
+  "new_evidence_in_founder_message": false,
+  "coverage": {
+    "interviews_reviewed": 2,
+    "pricing_test": "not performed",
+    "meetup_conversations": "not recorded, not reviewed"
+  }
+}
