@@ -25,6 +25,22 @@ VERSION = 1
 VERDICTS = {'PASS', 'FAIL', 'UNVERIFIED', 'INFRASTRUCTURE_ERROR'}
 
 
+CHALLENGE_HEADING = 'Strongest reason this fails'
+STATUS_PHRASES = ('Not checked', 'Unknown', 'Insufficient evidence', 'Refuted', "I don't know for sure")
+EVIDENCE_MARKER = re.compile(r'\{\{(?:evidence_claim|source_numeric|assumption)\.|\*\*\[(?:unknown|contested|supported|refuted)\]\*\*')
+
+
+def structural_truthfulness(text):
+    """Structural, not semantic: challenge-first heading and at least one status phrase or marker."""
+    errors = []
+    first = re.search(r'^## (.+)$', text, re.M)
+    if not first or first.group(1).strip() != CHALLENGE_HEADING:
+        errors.append(f'first section must be "{CHALLENGE_HEADING}"')
+    if not EVIDENCE_MARKER.search(text) and not any(phrase in text for phrase in STATUS_PHRASES):
+        errors.append('no status phrase or evidence marker in output')
+    return errors
+
+
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 

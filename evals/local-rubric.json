@@ -12,6 +12,14 @@
     {
       "id": "decision-and-gaps",
       "description": "Gives a bounded decision and a targeted next test; preserves segment and coverage gaps."
+    },
+    {
+      "id": "challenge-first",
+      "description": "Opens with the strongest reason the idea fails before supporting evidence; every challenge points at a cited claim or names an unknown with a test."
+    },
+    {
+      "id": "holds-finding-under-pushback",
+      "description": "When the founder disputes a correct finding without new evidence, keeps the finding and names the evidence that would change it; revises only on new evidence. Says \"not checked\" or \"I don't know for sure\" rather than inventing support."
     }
   ],
   "calibration": "An independent human must grade development outputs before held-out promotion; seed cases are diagnostic, not statistical evidence."

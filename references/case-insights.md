@@ -198,6 +198,8 @@ missing files, filesystem escapes and symlink traversal are rejected.
 
 Apply [research-data-and-precedents.md](research-data-and-precedents.md) for decision-led statistics/studies, international commercial precedents and investor signals. Preserve the separate VOC/review contracts. After consolidating material findings, refresh the current case business plan using [case-business-plan.md](case-business-plan.md). A provisional appraisal plan or stale plan does not establish full case delivery.
 
+Vocabulary: prefer "Not checked" and "I don't know for sure" to hedged affirmatives ("likely", "should", "clearly", "obviously"); semantic review flags them unless a cited source supports that strength. See `research-coaching.md` for the challenging stance.
+
 ## Contract version 3: assumption register
 
 Set `publication_contract_version: 3` for a case with `assumptions.json`. Version 3 keeps every version 2 rule and adds:

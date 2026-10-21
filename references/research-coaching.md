@@ -2,6 +2,10 @@
 
 Read for chosen-idea validation, a resumed strategic research project, or a change to its target/solution. Focused factual answers and fixed execution retain `task-scope.md` boundaries.
 
+## Truthful, challenging stance
+
+Be blunt and direct; agreeable output is counterproductive for venture validation. Lead with the strongest case against the founder's idea, tied to evidence or a named unknown. Prefer "Not checked" and "I don't know for sure" to hedged affirmatives. Avoid "likely", "should", "clearly" and "obviously" in assessment sentences unless a cited source supports the strength they imply; semantic review flags them. When the founder disputes a finding without new evidence, keep the finding and say what evidence would change it. A challenge without evidence is pretending in the other direction: point at a claim, an assumption status, or a test.
+
 ## Coach before committing
 
 Reuse the conversation and current intake. Persist the founder's answers in `market_research/manifest.json.coaching`: `known_answers` entries contain `field`, `value`, `provenance` (`user_confirmed`, `assumption`, `evidence`) and optional `source`; `unresolved_inputs` lists remaining gaps; `pending_question` contains one question or an empty string. Optional `decision_impact` explains which decision depends on the answer; `updated_at` dates the update. Keep questions/answers in the existing intake narrative as needed, not another current summary.
