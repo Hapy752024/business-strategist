@@ -55,6 +55,30 @@ def check_v3_sections(document: str) -> list[str]:
     return errors
 
 
+STATUS_PHRASES = ('Not checked', 'Unknown', 'Insufficient evidence', 'Refuted')
+TRUTH_SECTIONS = ('Executive assessment', 'Recommended next decisions')
+EVIDENCE_MARKER_RE = re.compile(r'\{\{(?:evidence_claim|source_numeric|assumption)\.')
+PENDING_NOTICE = '**Assessment update pending:**'
+
+
+def check_truthfulness(text: str, version: int) -> list[str]:
+    """Under contract v3, every decision paragraph cites evidence or opens with a status phrase."""
+    if (version or 1) < 3:
+        return []
+    errors = []
+    body = sections(text)
+    for heading in TRUTH_SECTIONS:
+        for paragraph in re.split(r'\n\s*\n', body.get(heading, '')):
+            paragraph = paragraph.strip()
+            if not paragraph or paragraph.startswith(PENDING_NOTICE) or EVIDENCE_MARKER_RE.search(paragraph):
+                continue
+            if paragraph.lstrip('*').startswith(STATUS_PHRASES):
+                continue
+            first = paragraph.splitlines()[0]
+            errors.append(f'paragraph without evidence or status in {heading}: "{first[:60]}"')
+    return errors
+
+
 def register_blocks(text: str, register: dict, experiments: list[dict]) -> str:
     """Insert publisher-rendered register and experiment summaries into a v3 document."""
     by_id = {e['id']: e for e in register.get('entries', [])}
@@ -350,7 +374,8 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
     if version not in {1, 2, 3}:
         raise ValueError('unsupported insights publication contract version')
     if version >= 3:
-        errors = check_v3_sections(packet['document'] if isinstance(packet.get('document'), str) else '')
+        authored = packet['document'] if isinstance(packet.get('document'), str) else ''
+        errors = check_v3_sections(authored) + check_truthfulness(authored, version)
         if errors:
             raise ValueError('; '.join(errors))
     text = _body(root, case_id, packet)

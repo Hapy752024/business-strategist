@@ -207,4 +207,6 @@ Set `publication_contract_version: 3` for a case with `assumptions.json`. Versio
 - The publisher inserts "Top unknowns from the assumption register" before `## Recommended next decisions` and a "Closed experiments" list before the change-trigger section. Do not author these blocks.
 - Assumption status changes only through `case_workspace.py assumptions` or `experiment-close`; both mark current insights pending.
 
+- Every paragraph in `## Executive assessment` and `## Recommended next decisions` must contain an `{{evidence_claim.<id>}}`, `{{source_numeric.<id>}}` or `{{assumption.<id>}}` marker, or open with one of the status phrases `Not checked`, `Unknown`, `Insufficient evidence` or `Refuted` (bold allowed). Other sections are unaffected. A blunt recommendation must point at evidence or say plainly what is not known.
+
 Legacy cases without a register keep contracts 1 and 2 and cannot close version 3 delivery.

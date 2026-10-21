@@ -732,6 +732,14 @@ If {{assumption.A-delay}} is supported by interviews, the recommendation moves t
 ## Sources'''
 
 
+def v3_document():
+    text = document().replace('## Sources', V3_SECTIONS)
+    text = text.replace('Segment A may have a meaningful delay problem, but',
+                        '**Insufficient evidence** to commit: {{assumption.A-delay}} Segment A may have a meaningful delay problem, but')
+    return text.replace('Interview recent segment A customers about the delay,',
+                        'Not checked: whether segment A pays. Interview recent segment A customers about the delay,')
+
+
 def v3_packet(root, text):
     result = packet(root, text=text)
     result['publication_contract_version'] = 3
@@ -765,7 +773,7 @@ def test_v3_change_trigger_needs_assumption_marker(tmp_path):
 def test_v3_publishes_with_register_blocks(tmp_path):
     root, case = setup_case(tmp_path)
     _seed_register(root)
-    text = document().replace('## Sources', V3_SECTIONS)
+    text = v3_document()
     cases.publish_insights(root, 'a', v3_packet(root, text), 'v3-ok', 'v3 publication')
     body = (case / 'case_insights.md').read_text()
     assert 'Top unknowns from the assumption register:' in body
@@ -778,3 +786,29 @@ def test_legacy_insights_unaffected(tmp_path):
     (case / 'assumptions.json').unlink()
     cases.publish_insights(root, 'a', packet(root), 'legacy', 'Legacy publication')
     assert 'Top unknowns' not in (case / 'case_insights.md').read_text()
+
+
+def test_truthfulness_rejects_unreferenced_recommendation():
+    text = '## Executive assessment\nThe market is clearly large and customers will pay.\n\n## Recommended next decisions\nNot checked: buyer interviews.\n'
+    errors = insights.check_truthfulness(text, 3)
+    assert errors == ['paragraph without evidence or status in Executive assessment: "The market is clearly large and customers will pay."']
+
+
+def test_truthfulness_accepts_status_phrase_and_markers():
+    text = ('## Executive assessment\n**Insufficient evidence** to commit.\n\nDemand rests on {{assumption.A-pay}}.\n\n'
+            '## Recommended next decisions\nUnknown whether owners pay; run the priced fake door.\n\n'
+            'Interview recent buyers about {{evidence_claim.wait_source}}.\n')
+    assert insights.check_truthfulness(text, 3) == []
+
+
+def test_truthfulness_not_applied_to_v2():
+    text = '## Executive assessment\nThe market is clearly large.\n'
+    assert insights.check_truthfulness(text, 2) == []
+
+
+def test_v3_publication_rejects_unreferenced_decision_paragraph(tmp_path):
+    root, case = setup_case(tmp_path)
+    _seed_register(root)
+    text = document().replace('## Sources', V3_SECTIONS)
+    with pytest.raises(ValueError, match='paragraph without evidence or status'):
+        cases.publish_insights(root, 'a', v3_packet(root, text), 'v3-untruthful', 'unreferenced decision')
