@@ -16,6 +16,7 @@ except ModuleNotFoundError:
     import case_workspace as cases
 
 MARKER = re.compile(r"\{\{evidence_claim\.([a-z][a-z0-9_-]*)\}\}")
+ASSUMPTION_MARKER = re.compile(r"\{\{assumption\.([A-Za-z][A-Za-z0-9_-]*)\}\}")
 
 
 def bundle_digest(contents: dict[str, str | bytes], bindings: list) -> str:
@@ -67,8 +68,30 @@ def check_separate_review(root: Path, case_id: str, binding: dict | None,
         raise ValueError('separate review does not pass the exact rendered publication and inputs')
 
 
-def render(root: Path, texts: dict[str, str], references: list, bindings: list) -> dict[str, str]:
+def render_assumptions(texts: dict[str, str], register: dict | None) -> dict[str, str]:
+    """Replace {{assumption.<id>}} with the entry's current status and statement."""
+    if register is None:
+        if any(ASSUMPTION_MARKER.search(body) for body in texts.values()):
+            raise ValueError('assumption markers need the case assumption register')
+        return dict(texts)
+    entries = {e['id']: e for e in register.get('entries', [])}
+
+    def replace(match):
+        entry = entries.get(match.group(1))
+        if entry is None:
+            raise ValueError('unknown assumption ' + match.group(1))
+        return f"**[{entry['status']}]** {entry['statement']}"
+    output = {name: ASSUMPTION_MARKER.sub(replace, body) for name, body in texts.items()}
+    for name, body in output.items():
+        if '{{assumption.' in body:
+            raise ValueError(name + ': malformed assumption marker')
+    return output
+
+
+def render(root: Path, texts: dict[str, str], references: list, bindings: list,
+           register: dict | None = None) -> dict[str, str]:
     """Replace each declared marker with its original source link or safe private reference."""
+    texts = render_assumptions(texts, register)
     if not isinstance(references, list) or not isinstance(bindings, list):
         raise ValueError('publication claims and bindings must be lists')
     root = Path(root).absolute()

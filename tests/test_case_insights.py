@@ -703,3 +703,14 @@ def test_interrupted_correction_restores_annex_and_numeric_receipt(tmp_path, mon
     assert receipt_path.read_bytes() == receipt_before
     assert (case / 'feasibility.md').read_bytes() == annex_before
     assert (case / 'market_research/manifest.json').read_bytes() == manifest_before
+
+
+def test_insights_render_assumption_marker_from_register(tmp_path):
+    root, case = setup_case(tmp_path)
+    cases.publish_assumptions(root, 'a', {'revision': 1, 'owner_module': 'idea-grill', 'entries': [{
+        'id': 'A-delay', 'statement': 'Segment A loses money from a two-week wait.', 'type': 'desirability',
+        'importance': 'critical', 'status': 'unknown', 'evidence_refs': [], 'counter_evidence_refs': [],
+        'confidence_note': 'Not checked.'}]}, 'seed-register', 'Seed register')
+    text = document().replace('The unanswered question is whether', 'Open: {{assumption.A-delay}} The unanswered question is whether')
+    cases.publish_insights(root, 'a', packet(root, text=text), 'insight-assumption', 'Publish with assumption')
+    assert '**[unknown]** Segment A loses money from a two-week wait.' in (case / 'case_insights.md').read_text()

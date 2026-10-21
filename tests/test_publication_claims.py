@@ -167,3 +167,22 @@ def test_complete_insights_v2_renders_source_and_requires_fresh_separate_review(
     assert '[Source: e1](https://example.org/review/1)' in (case / 'case_insights.md').read_text()
     review_path.write_text(review_path.read_text().replace('reviewer-task', 'changed-reviewer'))
     assert insights.current_status(root, 'a')['status'] == 'invalid'
+
+
+def _register():
+    return {'entries': [{'id': 'A-pay', 'status': 'contested', 'statement': 'Owners pay for monthly bookkeeping help.'}]}
+
+
+def test_render_assumption_marker_inserts_status(tmp_path):
+    out = render(tmp_path, {'case_insights.md': 'Key risk: {{assumption.A-pay}}.'}, [], [], register=_register())
+    assert out['case_insights.md'] == 'Key risk: **[contested]** Owners pay for monthly bookkeeping help..'
+
+
+def test_render_unknown_assumption_rejected(tmp_path):
+    with pytest.raises(ValueError, match='unknown assumption A-missing'):
+        render(tmp_path, {'case_insights.md': '{{assumption.A-missing}}'}, [], [], register=_register())
+
+
+def test_render_assumption_marker_without_register_rejected(tmp_path):
+    with pytest.raises(ValueError, match='assumption register'):
+        render(tmp_path, {'case_insights.md': '{{assumption.A-pay}}'}, [], [])

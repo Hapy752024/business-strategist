@@ -208,6 +208,12 @@ def _body(root: Path, case_id: str, packet: dict) -> str:
         except ModuleNotFoundError:
             from publication_claims import render as render_claims
         text = render_claims(root, {NAME: text}, packet.get('publication_claims', []), bindings)[NAME]
+    try:
+        from scripts.publication_claims import render_assumptions
+    except ModuleNotFoundError:
+        from publication_claims import render_assumptions
+    register = cases.assumption_register(root, case_id) if (cases.resolve(root, case_id) / cases.REGISTER).is_file() else None
+    text = render_assumptions({NAME: text}, register)[NAME]
     if packet.get('scope_status') == 'progress':
         summary = str(packet.get('pending_summary') or '').strip()
         if not summary:
