@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "providers": {
+    "google_ads": {
+      "preferred": "official_google_ads_mcp",
+      "capability": "reporting",
+      "auth": [
+        "oauth",
+        "service_account"
+      ],
+      "status": "documented_not_connected"
+    },
+    "meta_ads": {
+      "preferred": "official_meta_ads_mcp",
+      "endpoint": "https://mcp.facebook.com/ads",
+      "auth": [
+        "oauth",
+        "user_token",
+        "employee_system_user_token"
+      ],
+      "requested_permissions": [
+        "ads_mcp_management",
+        "ads_read"
+      ],
+      "capability": "reporting_requires_verification",
+      "status": "documented_not_connected"
+    },
+    "gsc": {
+      "preferred": "search_analytics_api",
+      "status": "documented_not_connected"
+    },
+    "ga4": {
+      "preferred": "official_google_analytics_mcp",
+      "status": "documented_not_connected"
+    }
+  }
+}

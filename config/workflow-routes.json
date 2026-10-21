@@ -626,6 +626,51 @@
       "match": [],
       "skill": "pre-release-regression",
       "forbidden": []
+    },
+    {
+      "id": "marketing-campaign-setup",
+      "mode": "setup",
+      "skill": "marketing-campaign-operator",
+      "match": [
+        "set up marketing campaign",
+        "campaign operating setup"
+      ],
+      "requires_pain_gate": true,
+      "forbidden": []
+    },
+    {
+      "id": "marketing-results-import",
+      "mode": "import",
+      "skill": "marketing-campaign-operator",
+      "match": [
+        "import campaign results",
+        "upload campaign results",
+        "normalize campaign exports"
+      ],
+      "requires_pain_gate": false,
+      "forbidden": []
+    },
+    {
+      "id": "marketing-campaign-review",
+      "mode": "review",
+      "skill": "marketing-campaign-operator",
+      "match": [
+        "weekly campaign review",
+        "review campaign results"
+      ],
+      "requires_pain_gate": true,
+      "forbidden": []
+    },
+    {
+      "id": "marketing-connections",
+      "mode": "connections",
+      "skill": "marketing-campaign-operator",
+      "match": [
+        "marketing account connections",
+        "campaign connection configuration"
+      ],
+      "requires_pain_gate": false,
+      "forbidden": []
     }
   ],
   "ambiguity_policy": "ask one question only when the top two routes would materially change work; otherwise choose the most specific explicit intent"

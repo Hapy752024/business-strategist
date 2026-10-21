@@ -45,7 +45,8 @@
         "marketing-strategy-builder",
         "social-digital-marketing-planner",
         "social-media-idea-validator",
-        "earned-media-builder"
+        "earned-media-builder",
+        "marketing-campaign-operator"
       ]
     },
     "website": {
@@ -1337,6 +1338,88 @@
       "side_effect": "local_files",
       "cost": "low",
       "required_references": []
+    },
+    "marketing-campaign-operator": {
+      "intent": [
+        "operate recurring local marketing campaign reviews"
+      ],
+      "excludes": [
+        "new positioning strategy",
+        "publishing or advertising execution"
+      ],
+      "prerequisites": [
+        "Explicit project and campaign; current brief for recommendations"
+      ],
+      "artifacts": [
+        "campaign configuration",
+        "descriptive import packet",
+        "reviewed weekly report",
+        "owner task queue",
+        "website brief"
+      ],
+      "side_effect": "local_files_only",
+      "cost": "low",
+      "required_references": [
+        "references/marketing-campaign-operations.md"
+      ],
+      "modes": {
+        "setup": {
+          "inputs": [
+            "selected project and campaign",
+            "supplied aggregate exports or brief as applicable"
+          ],
+          "output_owner": "marketing",
+          "artifacts": [
+            "campaign configuration"
+          ],
+          "side_effect": "local_files_only",
+          "required_references": [
+            "references/marketing-campaign-operations.md"
+          ]
+        },
+        "import": {
+          "inputs": [
+            "selected project and campaign",
+            "supplied aggregate exports or brief as applicable"
+          ],
+          "output_owner": "marketing",
+          "artifacts": [
+            "private descriptive report and immutable packet"
+          ],
+          "side_effect": "local_files_only",
+          "required_references": [
+            "references/marketing-campaign-operations.md"
+          ]
+        },
+        "review": {
+          "inputs": [
+            "selected project and campaign",
+            "supplied aggregate exports or brief as applicable"
+          ],
+          "output_owner": "marketing",
+          "artifacts": [
+            "reviewed weekly report and proposed tasks"
+          ],
+          "side_effect": "local_files_only",
+          "required_references": [
+            "references/marketing-campaign-operations.md"
+          ]
+        },
+        "connections": {
+          "inputs": [
+            "selected project and campaign",
+            "supplied aggregate exports or brief as applicable"
+          ],
+          "output_owner": "marketing",
+          "artifacts": [
+            "secret-free connection validation and manual onboarding packet"
+          ],
+          "side_effect": "local_files_only",
+          "required_references": [
+            "references/marketing-campaign-operations.md"
+          ]
+        }
+      }
     }
   }
 }

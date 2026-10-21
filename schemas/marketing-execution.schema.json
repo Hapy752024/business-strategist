@@ -13,7 +13,8 @@
     "schema_version": {
       "enum": [
         1,
-        2
+        2,
+        3
       ]
     },
     "scope": {
@@ -133,7 +134,8 @@
             "proposed",
             "accepted",
             "deferred",
-            "completed"
+            "completed",
+            "declined"
           ]
         },
         "execution_status": {
@@ -229,6 +231,39 @@
             "null"
           ],
           "pattern": "^[a-f0-9]{64}$"
+        },
+        "campaign_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "occurrence_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "context_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "decline_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deferred_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "owner_reason": {
+          "type": "string"
+        },
+        "estimated_minutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 240
         }
       }
     }
@@ -238,7 +273,10 @@
       "if": {
         "properties": {
           "schema_version": {
-            "const": 2
+            "enum": [
+              2,
+              3
+            ]
           }
         }
       },
@@ -250,6 +288,75 @@
                 "action_kind",
                 "intended_result"
               ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "enum": [
+              1,
+              2
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "actions": {
+            "items": {
+              "properties": {
+                "commitment_state": {
+                  "enum": [
+                    "proposed",
+                    "accepted",
+                    "deferred",
+                    "completed"
+                  ]
+                }
+              },
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "campaign_id"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "occurrence_id"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "context_sha256"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "decline_reason"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "deferred_until"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "owner_reason"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "estimated_minutes"
+                    ]
+                  }
+                ]
+              }
             }
           }
         }

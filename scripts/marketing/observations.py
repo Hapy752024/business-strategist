@@ -6,6 +6,7 @@ import argparse
 from datetime import date
 import hashlib
 import json
+import math
 from pathlib import Path
 
 ALLOWED = {"property", "source", "period_start", "period_end", "timezone", "query", "page", "dimension", "metric", "unit", "value", "availability", "denominator", "exported_at"}
@@ -24,6 +25,13 @@ def normalize(path: Path, mapping: dict[str, str], metadata: dict) -> dict:
         rows = payload if isinstance(payload, list) else payload.get("rows", [])
     else:
         raise ValueError("only local CSV and JSON exports are supported")
+    return normalize_rows(rows, mapping, metadata, input_sha256=hashlib.sha256(raw).hexdigest())
+
+
+def normalize_rows(rows, mapping, metadata, *, input_sha256):
+    """Shared normalization for preset wide-to-long adapters; no raw upload is retained."""
+    if set(mapping) - ALLOWED:
+        raise ValueError("mapping contains unsupported fields")
     observations = []
     for index, row in enumerate(rows):
         item = {key: row.get(column) for key, column in mapping.items()}
@@ -44,14 +52,16 @@ def normalize(path: Path, mapping: dict[str, str], metadata: dict) -> dict:
                 try: value = float(value_raw)
                 except (TypeError, ValueError) as exc: raise ValueError(f"row {index + 1}: value must be numeric or blank") from exc
                 availability = "available"
+                if not math.isfinite(value): raise ValueError("metric value must be finite")
         # Only whitelisted aggregate dimensions survive normalization.
         denominator = None
         if mapping.get("denominator"):
             try: denominator = float(row.get(mapping["denominator"])) if row.get(mapping["denominator"]) not in (None, "") else None
             except (TypeError, ValueError) as exc: raise ValueError(f"row {index + 1}: denominator must be numeric or blank") from exc
+        if denominator is not None and not math.isfinite(denominator): raise ValueError("denominator must be finite")
         observations.append({key: item.get(key) for key in ("property", "source", "period_start", "period_end", "timezone", "query", "page", "dimension", "metric", "unit")} |
                             {"value": value, "availability": availability, "denominator": denominator, "exported_at": exported_at})
-    return {"schema_version": 1, "input_sha256": hashlib.sha256(raw).hexdigest(),
+    return {"schema_version": 1, "input_sha256": input_sha256,
             "row_count": len(observations), "observations": observations,
             "interpretation_boundary": "Aggregate export normalization does not establish attribution or causal uplift."}
 

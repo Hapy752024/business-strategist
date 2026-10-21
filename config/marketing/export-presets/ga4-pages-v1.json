@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "ga4-pages-v1",
+  "transform_version": 1,
+  "provider": "ga4",
+  "dimension": "Page path and screen class",
+  "required": [
+    "Page path and screen class",
+    "Views",
+    "Active users",
+    "Event count",
+    "Key events"
+  ],
+  "metrics": {
+    "views": {
+      "column": "Views",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "active_users": {
+      "column": "Active users",
+      "unit": "count",
+      "aggregate": "non_additive"
+    },
+    "event_count": {
+      "column": "Event count",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "key_events": {
+      "column": "Key events",
+      "unit": "count",
+      "aggregate": "sum"
+    }
+  },
+  "ratios": {}
+}

@@ -82,3 +82,6 @@ docs/
 
 # Private local evaluation evidence and raw runtime output
 evals/local-runs/
+
+# Private local marketing import/review packets (not credentials)
+.marketing-runtime/

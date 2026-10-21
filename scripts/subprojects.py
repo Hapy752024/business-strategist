@@ -88,6 +88,9 @@ def start(root, name, title='', brief=''):
 
 def marketing_artifact_errors(relative, raw, destination, staged=None):
     """Shared publication/resume validation for evidence-bearing Marketing artifacts."""
+    from scripts.marketing.artifacts import owns as campaign_owns, errors as campaign_errors
+    if campaign_owns(relative):
+        return campaign_errors(relative, raw, destination, staged)
     from scripts.marketing.keyword_map import validate as validate_map, validate_resource
     from scripts.marketing.earned_media import validate as validate_opportunities
     from scripts.marketing.customer_questions import validate as validate_questions, validate_brief
@@ -175,6 +178,22 @@ def publish_marketing_workstream(root, artifact_files, *, expected_manifest_revi
     artifact_files = dict(artifact_files)
     current = validate_marketing_workstream(root)
     destination = path(root, 'marketing')
+    recorded = {item['path']: item['sha256'] for item in current['state']['artifact_refs']}
+    for relative, content in artifact_files.items():
+        parts = Path(relative).parts
+        if parts and parts[0] == 'campaigns':
+            from scripts.marketing.campaign import safe as campaign_safe
+            if Path(relative).as_posix() != relative:
+                raise ValueError('campaign paths must use canonical relative spelling')
+            campaign_safe(destination, relative)
+        if len(parts) >= 5 and parts[0] == 'campaigns' and parts[2] == 'reviews':
+            raw = content.encode('utf-8') if isinstance(content, str) else content
+            expected = recorded.get(relative)
+            target = cases.safe(destination, relative)
+            if expected is not None and hashlib.sha256(raw).hexdigest() != expected:
+                raise ValueError('campaign review history is immutable; publish a new revision')
+            if expected is None and target.exists() and target.read_bytes() != raw:
+                raise ValueError('cannot overwrite an existing unbound campaign review file')
     replacement_paths = set(artifact_files)
     def repaired_with_transaction(issue):
         if issue.startswith('artifact: missing or changed '):

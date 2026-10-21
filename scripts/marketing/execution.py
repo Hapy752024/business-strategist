@@ -3,6 +3,9 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
+import re
+from copy import deepcopy
 import json
 import sys
 from pathlib import Path
@@ -24,6 +27,7 @@ def authorization_digest(action: dict) -> str:
     """Bind external authorization to the exact prepared action, not a campaign."""
     payload = {key: action.get(key) for key in ('action_kind', 'recipient', 'destination',
                'intended_result', 'prepared_materials', 'authorization_basis')}
+    if 'context_sha256' in action: payload['context_sha256'] = action['context_sha256']
     return hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
@@ -33,7 +37,7 @@ def invalidate_changed_action(old: dict, action: dict) -> None:
     if action.get('action_kind') == 'verify_placement':
         changed = any(old.get(k) != action.get(k) for k in ('source_url', 'target_url', 'action_kind'))
     else:
-        changed = old.get('prepared_materials', []) != action.get('prepared_materials', []) or any(
+        changed = old.get('context_sha256') != action.get('context_sha256') or old.get('prepared_materials', []) != action.get('prepared_materials', []) or any(
             old.get(k) != action.get(k) for k in ('recipient', 'destination', 'intended_result', 'action_kind', 'authorization_basis'))
     if changed:
         for key in ('verification', 'result', 'outcome_review'):
@@ -62,12 +66,20 @@ def validate(document: dict, base: Path | None = None, staged: dict | None = Non
         visiting.remove(ident); visited.add(ident)
     for ident in actions: visit(ident)
     for action in actions.values():
+        if action.get('commitment_state') == 'declined' and not str(action.get('decline_reason') or '').strip():
+            errors.append(f"{action.get('id')}: declining requires a reason")
+        if action.get('deferred_until'):
+            from datetime import date
+            try: date.fromisoformat(action['deferred_until'])
+            except ValueError: errors.append(f"{action.get('id')}: invalid snooze date")
+        if action.get('campaign_id') and not action.get('id', '').startswith(action['campaign_id'] + '--'):
+            errors.append(f"{action.get('id')}: campaign task ID needs its campaign prefix")
         for dependency in action.get("dependencies", []):
             if dependency not in actions:
                 errors.append(f"{action.get('id')}: unknown dependency {dependency}")
         if action.get("commitment_state") == "completed" and action.get("execution_status") not in {"submitted", "verified", "failed"}:
             errors.append(f"{action.get('id')}: completed commitment needs a completed execution status")
-        placement = document.get('schema_version') == 2 and action.get('action_kind') == 'verify_placement'
+        placement = document.get('schema_version') in {2, 3} and action.get('action_kind') == 'verify_placement'
         if placement:
             for field in ('source_url', 'target_url'):
                 try:
@@ -82,7 +94,7 @@ def validate(document: dict, base: Path | None = None, staged: dict | None = Non
                         action['observation'], base, staged, action.get('source_url', ''), action.get('target_url', '')))
         if action.get("execution_status") == "verified" and not placement and not action.get("verification"):
             errors.append(f"{action.get('id')}: verified status needs verification evidence")
-        if document.get('schema_version') == 2 and action.get('action_kind') in {'send_pitch', 'submit_listing'}:
+        if document.get('schema_version') in {2, 3} and action.get('action_kind') in {'send_pitch', 'submit_listing'}:
             if not action.get('recipient') or not action.get('prepared_materials'):
                 errors.append(f"{action['id']}: external delivery needs recipient and prepared materials")
             if action.get('execution_status') in {'submitted', 'verified'} and action.get('authorization_digest') != authorization_digest(action):
@@ -115,12 +127,20 @@ def scope_complete(document: dict, base: Path | None = None, staged: dict | None
                 dependency.get("execution_status") in {"submitted", "verified"})
     return all(not action.get("required_for_scope") or
                (action.get("commitment_state") == "completed" and action.get("execution_status") == "verified" and
-                bool(action.get("verification") or (document.get('schema_version') == 2 and action.get('action_kind') == 'verify_placement' and action.get('observation'))) and
+                bool(action.get("verification") or (document.get('schema_version') in {2, 3} and action.get('action_kind') == 'verify_placement' and action.get('observation'))) and
                 all(dependency_complete(ident) for ident in action.get("dependencies", [])))
                for action in document.get("actions", []))
 
 
 def render(document: dict) -> tuple[str, str]:
+    if document.get('schema_version') == 3:
+        document = deepcopy(document)
+        def escaped(value):
+            return re.sub(r'([\\`*_{}\[\]()#+!|])', r'\\\1', html.escape(str(value)).replace('\n',' '))
+        document['scope'] = escaped(document['scope'])
+        for action in document.get('actions', []):
+            for field in ('objective','next_step','completion_criterion','owner_reason','decline_reason','user_step','verification','result','outcome_review','audience_fit','authorization_basis','follow_up'):
+                if action.get(field): action[field] = escaped(action[field])
     rows = ["# Marketing execution plan", "", f"Scope: {document['scope']}", ""]
     owners = ["# Owner actions", ""]
     actions = {action["id"]: action for action in document.get("actions", [])}
@@ -147,7 +167,7 @@ def render(document: dict) -> tuple[str, str]:
         for field, label in (("destination", "Destination"), ("eligibility_checked_at", "Eligibility checked"),
                              ("audience_fit", "Audience fit"), ("user_step", "User step"), ("fee", "Fee"),
                              ("authorization_basis", "Authorization"), ("follow_up", "Follow-up"), ("verification", "Verification"),
-                             ("result", "Result"), ("outcome_review", "Outcome review")):
+                             ("result", "Result"), ("outcome_review", "Outcome review"), ("decline_reason", "Decline reason"), ("deferred_until", "Snoozed until"), ("owner_reason", "Why owner input is needed"), ("estimated_minutes", "Estimated minutes")):
             if action.get(field): rows.append(f"- {label}: {action[field]}")
         rows.append("")
         if action["actor"] == "owner" and action["commitment_state"] == "accepted" and action["execution_status"] in {"awaiting_owner", "prepared"}:

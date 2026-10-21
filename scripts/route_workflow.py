@@ -331,7 +331,8 @@ def _route_request(
     else:
         packet['specialist_owner'] = specialist_owner(skill)
     design = skill.startswith('brand-')
-    marketing = skill in {'marketing-strategy-builder', 'social-digital-marketing-planner', 'earned-media-builder'}
+    marketing = skill in {'marketing-strategy-builder', 'social-digital-marketing-planner', 'earned-media-builder', 'marketing-campaign-operator'}
+    descriptive_campaign = skill == 'marketing-campaign-operator' and selected.get('mode') in {'import','connections'}
     if entry_mode is None:
         entry_mode = 'business_linked' if marketing and project else 'standalone'
     if entry_mode not in {'standalone', 'business_linked'}:
@@ -369,11 +370,18 @@ def _route_request(
                     packet['marketing_workstream']['brief'] = state['state']['brief']
                     packet['marketing_workstream']['artifact_refs'] = state['state']['artifact_refs']
                     packet['marketing_workstream']['imported_decisions'] = state['state']['imported_decisions']
-                    if not state['valid_for_use']:
+                    if not state['valid_for_use'] and not descriptive_campaign:
                         packet.update(gate_blocked=True, gate='marketing_workstream_review', first_skill=skill,
                                       reason='Marketing workstream inputs changed or need review: ' + '; '.join(state['stale_bindings']))
                         return packet
 
+        if descriptive_campaign:
+            packet.update(read_only_preview=True, current_recommendation_allowed=False,
+                          canonical_publication_allowed=False, requires_pain_gate=False,
+                          required_stages=[], input_contract=['selected project/campaign', 'aggregate inputs; no strategy consumption'])
+            packet['expected_artifacts'] = ['private data_report_only preview or secret-free connection validation']
+            packet['preview_root'] = str(ROOT / '.marketing-runtime' / project) if project else 'explicit selected project required at execution'
+            return packet
         if entry_mode == 'standalone' and design:
             if case_id:
                 raise ValueError('standalone design does not consume a business case; use business_linked for a case handoff')

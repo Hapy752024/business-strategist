@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "marketing-campaign.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "campaign_id",
+    "objective",
+    "audience",
+    "offer",
+    "connection_ids",
+    "measurement"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 80
+    },
+    "campaign_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 80
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "audience": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "offer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "page_url": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "connection_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "maxLength": 80
+      }
+    },
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "property": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "attribution": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "maturity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "report_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        }
+      }
+    }
+  }
+}

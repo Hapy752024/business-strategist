@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "id": "google-ads-campaigns-v1",
+  "transform_version": 1,
+  "provider": "google_ads",
+  "dimension": "Campaign ID",
+  "required": [
+    "Campaign",
+    "Campaign ID",
+    "Cost",
+    "Clicks",
+    "Impressions"
+  ],
+  "metrics": {
+    "spend": {
+      "column": "Cost",
+      "unit": "currency",
+      "aggregate": "sum"
+    },
+    "clicks": {
+      "column": "Clicks",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "impressions": {
+      "column": "Impressions",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "conversions": {
+      "column": "Conversions",
+      "unit": "count",
+      "aggregate": "sum"
+    }
+  },
+  "ratios": {
+    "ctr": {
+      "numerator": "clicks",
+      "denominator": "impressions"
+    },
+    "conversion_rate": {
+      "numerator": "conversions",
+      "denominator": "clicks"
+    }
+  }
+}

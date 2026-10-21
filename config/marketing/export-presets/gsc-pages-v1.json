@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "id": "gsc-pages-v1",
+  "transform_version": 1,
+  "provider": "gsc",
+  "dimension": "Top pages",
+  "required": [
+    "Top pages",
+    "Clicks",
+    "Impressions",
+    "CTR",
+    "Position"
+  ],
+  "metrics": {
+    "clicks": {
+      "column": "Clicks",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "impressions": {
+      "column": "Impressions",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "position": {
+      "column": "Position",
+      "unit": "rank",
+      "aggregate": "weighted",
+      "weight": "impressions"
+    }
+  },
+  "ratios": {
+    "ctr": {
+      "numerator": "clicks",
+      "denominator": "impressions"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "meta-ads-campaigns-v1",
+  "transform_version": 1,
+  "provider": "meta_ads",
+  "dimension": "Campaign ID",
+  "required": [
+    "Campaign name",
+    "Campaign ID",
+    "Amount spent ({currency})",
+    "Impressions"
+  ],
+  "metrics": {
+    "spend": {
+      "column": "Amount spent ({currency})",
+      "unit": "currency",
+      "aggregate": "sum"
+    },
+    "impressions": {
+      "column": "Impressions",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "link_clicks": {
+      "column": "Link clicks",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "website_leads": {
+      "column": "Website leads",
+      "unit": "count",
+      "aggregate": "sum"
+    }
+  },
+  "ratios": {}
+}

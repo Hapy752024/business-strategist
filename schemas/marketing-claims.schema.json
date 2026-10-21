@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "marketing-claims.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "claims"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "text",
+          "source",
+          "reviewed_at",
+          "expires_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 80
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "reviewed_at": {
+            "type": "string",
+            "format": "date"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "marketing-connections.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "connections"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 80
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "provider",
+          "account_ids",
+          "credential_ref",
+          "capability",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 80
+          },
+          "provider": {
+            "enum": [
+              "google_ads",
+              "meta_ads",
+              "gsc",
+              "ga4"
+            ]
+          },
+          "account_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:/-]{1,250}$"
+            }
+          },
+          "manager_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "campaign_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4000
+            }
+          },
+          "credential_ref": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
+          },
+          "capability": {
+            "const": "reporting"
+          },
+          "status": {
+            "const": "unconfigured"
+          },
+          "transport": {
+            "enum": [
+              "stdio",
+              "streamable-http",
+              "api",
+              "export"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

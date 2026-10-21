@@ -54,6 +54,6 @@ Example: `"preserve":[{"id":"estimate","purpose":"Retain useful estimate","selec
 
 ## External resources and privacy behavior
 
-Apply [external-link maintenance](external-link-maintenance.md) for outbound discovery and repeatable checks; the route auditor above does not verify every external target. Keep automated reachability, manual relevance review and unresolved coverage separate.
+Apply [external-link maintenance](external-link-maintenance.md) for outbound discovery and repeatable checks; the route auditor above does not verify every external target. Link-QA delivery must include runnable weekly/manual GitHub Actions CI (or the existing provider's equivalent), retained reports and truthful activation/first-run evidence. Keep automated reachability, manual relevance review and unresolved coverage separate.
 
 Apply [privacy by design](privacy-design.md) to forms and data flows alongside consent tests. Inspect collection timing, actual fields/payloads, accessible notices and controls, recipient restrictions, and deletion/rights handling using synthetic data. Absence of a consent banner can be correct when the inventory demonstrates no consent-requiring technology; a banner is not a universal launch requirement.
