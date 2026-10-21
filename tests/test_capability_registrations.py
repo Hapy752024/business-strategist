@@ -19,4 +19,4 @@ def test_trends_fallback_records_upstream_status():
 def test_dialog_entry_is_discovery_only_with_collector_handoff():
     item = next(i for i in cl.load_catalog()['capabilities'] if i['id'] == 'reddit_dialog_mcp')
     assert item['family'] == 'community_discovery' and item['evidence_strength'] == 'none_discovery_only'
-    assert 'subreddit_query_rows.py' in item['example'] and '--scope local' in item['setup']
+    assert 'subreddit_query_rows.py' in item['example'] and 'project .mcp.json' in item['setup']

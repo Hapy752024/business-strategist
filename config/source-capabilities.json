@@ -19,7 +19,7 @@
       "hosted_third_party": true,
       "requires_env": [],
       "status_check": "claude mcp get dialog-mcp",
-      "setup": "claude mcp add --scope local --transport http dialog-mcp https://mcp.dialog.tools/mcp, then sign in once through /mcp (Descope OAuth). Local scope keeps the personal login and the third-party endpoint out of the shared project .mcp.json.",
+      "setup": "Declared in the project .mcp.json (decision 2026-10-21); each user signs in once through /mcp (Descope OAuth). Tokens stay in the user config, never in the repo. Other harnesses: codex mcp add dialog-mcp https://mcp.dialog.tools/mcp; opencode mcp add dialog-mcp --url https://mcp.dialog.tools/mcp.",
       "example": "Call execute_operation('discover_subreddits', {...}); save the result; python3 scripts/evidence_scout/subreddit_query_rows.py --dialog-json <saved.json> --min-confidence 0.5 --keywords '<customer phrases>' --locale DE:de --plan <query plan> --out <new plan>; then collect.py --query-plan <new plan> --providers reddit --geo DE --language de",
       "caveat": "Never cite Dialog output as evidence. Its semantic index is hosted by Dialog even when the server runs locally. Decision 2026-10-21: the Reddit API route validated live and duplicates Dialog's post/comment tools, so Dialog is used only for the community discovery the Reddit API cannot do (its search caps at 250 results)."
     },

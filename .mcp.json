@@ -25,6 +25,13 @@
       "_category": "web_research",
       "_priority": "high",
       "_comment": "Scrape/crawl/dynamic-page extraction for investor relations pages, transcripts, PDFs, product pages, and industry sources."
+    },
+    "dialog-mcp": {
+      "type": "http",
+      "url": "https://mcp.dialog.tools/mcp",
+      "_category": "community_discovery",
+      "_priority": "medium",
+      "_comment": "Hosted third-party subreddit discovery (OAuth, sign in once via /mcp). Discovery only: collect posts through the Reddit API route; never cite Dialog output as evidence. Queries go to Dialog's servers; keep founder-private details out of them."
     }
   }
 }
