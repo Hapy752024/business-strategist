@@ -197,3 +197,14 @@ missing files, filesystem escapes and symlink traversal are rejected.
 ## Enriched research and downstream case plans
 
 Apply [research-data-and-precedents.md](research-data-and-precedents.md) for decision-led statistics/studies, international commercial precedents and investor signals. Preserve the separate VOC/review contracts. After consolidating material findings, refresh the current case business plan using [case-business-plan.md](case-business-plan.md). A provisional appraisal plan or stale plan does not establish full case delivery.
+
+## Contract version 3: assumption register
+
+Set `publication_contract_version: 3` for a case with `assumptions.json`. Version 3 keeps every version 2 rule and adds:
+
+- Two required sections before `## Sources`: `## What would change this recommendation`, containing at least one `{{assumption.<id>}}` marker, and `## What we could not check`, with at least one `- ` bullet naming a gap and why. "Not checked" is a valid finding.
+- `{{assumption.<id>}}` renders the entry's current status and statement, for example `**[contested]** Owners pay for monthly bookkeeping help.` Unknown ids stop publication.
+- The publisher inserts "Top unknowns from the assumption register" before `## Recommended next decisions` and a "Closed experiments" list before the change-trigger section. Do not author these blocks.
+- Assumption status changes only through `case_workspace.py assumptions` or `experiment-close`; both mark current insights pending.
+
+Legacy cases without a register keep contracts 1 and 2 and cannot close version 3 delivery.

@@ -25,6 +25,49 @@ NAME = 'case_insights.md'
 HEADINGS = ('Executive assessment', 'Customer and problem', 'Market and demand',
             'Alternatives and competitive position', 'Business potential and feasibility',
             'Risks, conflicting evidence and open questions', 'Recommended next decisions', 'Sources')
+HEADINGS_V1 = HEADINGS
+CHANGE_TRIGGER = 'What would change this recommendation'
+UNCHECKED = 'What we could not check'
+HEADINGS_V3 = HEADINGS[:-1] + (CHANGE_TRIGGER, UNCHECKED, 'Sources')
+ASSUMPTION_RE = re.compile(r'\{\{assumption\.[A-Za-z][A-Za-z0-9_-]*\}\}')
+
+
+def headings_for(version: int) -> tuple[str, ...]:
+    return HEADINGS_V3 if (version or 1) >= 3 else HEADINGS_V1
+
+
+def sections(text: str) -> dict[str, str]:
+    """Map each level-two heading to its body text."""
+    parts = re.split(r'^## (.+)$', text, flags=re.M)
+    return {parts[i].strip(): parts[i + 1].strip() for i in range(1, len(parts) - 1, 2)}
+
+
+def check_v3_sections(document: str) -> list[str]:
+    body = sections(document)
+    errors = []
+    for heading in (CHANGE_TRIGGER, UNCHECKED):
+        if heading not in body or not body[heading]:
+            errors.append('missing insights section: ' + heading)
+    if body.get(CHANGE_TRIGGER) and not ASSUMPTION_RE.search(body[CHANGE_TRIGGER]):
+        errors.append(CHANGE_TRIGGER + ' needs at least one assumption marker')
+    if body.get(UNCHECKED) and not re.search(r'^- \S', body[UNCHECKED], re.M):
+        errors.append(UNCHECKED + ' needs at least one bullet naming a gap')
+    return errors
+
+
+def register_blocks(text: str, register: dict, experiments: list[dict]) -> str:
+    """Insert publisher-rendered register and experiment summaries into a v3 document."""
+    by_id = {e['id']: e for e in register.get('entries', [])}
+    top = [by_id[i] for i in register.get('riskiest', [])[:5] if i in by_id]
+    lines = [f"- **[{e['status']}]** {e['statement']}" for e in top] or ['- None open in the register.']
+    block = '\n\nTop unknowns from the assumption register:\n' + '\n'.join(lines) + '\n'
+    text = re.sub(r'\n+(## Recommended next decisions\n)', lambda m: block + '\n' + m.group(1), text, count=1)
+    closed = [x for x in experiments if x.get('status') == 'closed']
+    if closed:
+        rows = [f"- {x['id']} ({x['result']['interpretation']}): {x['kill_rule']}" for x in closed]
+        block = '\n\nClosed experiments:\n' + '\n'.join(rows) + '\n'
+        text = re.sub(r'\n+(## ' + re.escape(CHANGE_TRIGGER) + r'\n)', lambda m: block + '\n' + m.group(1), text, count=1)
+    return text
 DISPOSITIONS = {'incorporated', 'superseded', 'duplicate', 'no_material_finding', 'out_of_scope', 'pending'}
 REVIEW_CHECKS = {'accuracy', 'completeness', 'contradictions', 'clarity'}
 REVIEW_TYPES = {'analyst', 'independent_human', 'model'}
@@ -183,7 +226,7 @@ def _body(root: Path, case_id: str, packet: dict) -> str:
     claims = packet.get('numeric_claims', [])
     if not isinstance(claims, list) or any(c.get('document') != NAME for c in claims):
         raise ValueError('insights numeric claims must target case_insights.md')
-    if packet.get('publication_contract_version') == 2:
+    if (packet.get('publication_contract_version') or 1) >= 2:
         try:
             from scripts.publication_claims import check_numeric_citations
         except ModuleNotFoundError:
@@ -202,18 +245,20 @@ def _body(root: Path, case_id: str, packet: dict) -> str:
         raise ValueError('economics references require a model')
     rendered, _ = checked_claims(root, {NAME: text}, claims, bindings)
     text = rendered[NAME]
-    if packet.get('publication_contract_version') == 2:
-        try:
-            from scripts.publication_claims import render as render_claims
-        except ModuleNotFoundError:
-            from publication_claims import render as render_claims
-        text = render_claims(root, {NAME: text}, packet.get('publication_claims', []), bindings)[NAME]
     try:
         from scripts.publication_claims import render_assumptions
     except ModuleNotFoundError:
         from publication_claims import render_assumptions
     register = cases.assumption_register(root, case_id) if (cases.resolve(root, case_id) / cases.REGISTER).is_file() else None
+    if (packet.get('publication_contract_version') or 1) >= 2:
+        try:
+            from scripts.publication_claims import render as render_claims
+        except ModuleNotFoundError:
+            from publication_claims import render as render_claims
+        text = render_claims(root, {NAME: text}, packet.get('publication_claims', []), bindings, register=register)[NAME]
     text = render_assumptions({NAME: text}, register)[NAME]
+    if (packet.get('publication_contract_version') or 1) >= 3 and register is not None:
+        text = register_blocks(text, register, cases.experiment_cards(root, case_id))
     if packet.get('scope_status') == 'progress':
         summary = str(packet.get('pending_summary') or '').strip()
         if not summary:
@@ -228,12 +273,12 @@ def _body(root: Path, case_id: str, packet: dict) -> str:
     return text
 
 
-def _validate_content(text: str, title: str) -> None:
+def _validate_content(text: str, title: str, version: int = 1) -> None:
     if not text.startswith('# ' + title + '\n'):
         raise ValueError('insights title must match registered case')
     if not re.search(r'^Last updated: \d{4}-\d{2}-\d{2}$', text, re.M):
         raise ValueError('insights need a dated assessment')
-    for heading in HEADINGS:
+    for heading in headings_for(version):
         if not re.search(r'^## ' + re.escape(heading) + r'$', text, re.M):
             raise ValueError('missing insights section: ' + heading)
     if re.search(r'\{\{[^}]+\}\}|<!--|-->|\b(?:TODO|TBD|PLACEHOLDER)\b|Economics input digest:|Calculated contribution per unit:', text, re.I):
@@ -301,10 +346,17 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
             raise ValueError('insights comparison needs three substantive plain-language fields')
         if cm.get('comparison') and any(cm['comparison'][key] != comparison[key] for key in comparison):
             raise ValueError('changing an assessed comparison requires case-appraisal')
+    version = packet.get('publication_contract_version') or 1
+    if version not in {1, 2, 3}:
+        raise ValueError('unsupported insights publication contract version')
+    if version >= 3:
+        errors = check_v3_sections(packet['document'] if isinstance(packet.get('document'), str) else '')
+        if errors:
+            raise ValueError('; '.join(errors))
     text = _body(root, case_id, packet)
     rows = inventory(root, case_id, manifest=cm, source_bindings=packet.get('source_bindings', []))
     inv_digest = inventory_digest(root, case_id, manifest=cm, rows=rows)
-    _validate_content(text, project['cases'][case_id]['title'])
+    _validate_content(text, project['cases'][case_id]['title'], version)
     _validate_links(root, case_id, text, has_sources=bool(packet.get('source_bindings')))
     coverage = packet.get('coverage')
     if not isinstance(coverage, list) or len(coverage) != len(rows):
@@ -321,7 +373,7 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
             raise ValueError('research coverage needs a reasoned disposition')
         if item['disposition'] == 'incorporated':
             section = item.get('section')
-            if section not in HEADINGS or not isinstance(section, str):
+            if section not in headings_for(version) or not isinstance(section, str):
                 raise ValueError('incorporated output needs a substantive insights section')
             member_paths = {member['path'] for row in rows if row['path'] == path for member in row.get('members', [])}
             if not any(b['path'] == path or b['path'] in member_paths for b in packet['source_bindings']):
@@ -349,7 +401,7 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
         if not isinstance(row, dict) or set(row) != {'id', 'section', 'reason'} or row.get('id') not in questions or row['id'] in qseen:
             raise ValueError('invalid or duplicate question coverage')
         qseen.add(row['id'])
-        if row['section'] not in HEADINGS or not isinstance(row['reason'], str) or len(row['reason'].strip()) < 15:
+        if row['section'] not in headings_for(version) or not isinstance(row['reason'], str) or len(row['reason'].strip()) < 15:
             raise ValueError('question coverage needs a section and reason')
         q = questions[row['id']]
         if q['status'] in {'answered', 'partial'} and q.get('answer_binding') not in packet['source_bindings']:
@@ -361,7 +413,7 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
         if not isinstance(conflict, dict) or set(conflict) != {'left', 'right', 'scope', 'resolution', 'rationale', 'section'}:
             raise ValueError('invalid conflict review row')
         if (conflict['left'] not in known_sources or conflict['right'] not in known_sources
-                or conflict['left'] == conflict['right'] or conflict['section'] not in HEADINGS
+                or conflict['left'] == conflict['right'] or conflict['section'] not in headings_for(version)
                 or conflict['resolution'] not in {'corrected', 'scope_qualified', 'historical_superseded', 'unresolved_disclosed'}
                 or not isinstance(conflict['scope'], str) or not conflict['scope'].strip()
                 or not isinstance(conflict['rationale'], str) or len(conflict['rationale'].strip()) < 20):
@@ -370,7 +422,7 @@ def validate_packet(root: Path, case_id: str, packet: dict, *, manifest: dict | 
     validate_review(review)
     if review['rendered_digest'] != sha(text.encode()) or review['inventory_digest'] != inv_digest:
         raise ValueError('stale or incomplete semantic review')
-    if packet.get('publication_contract_version') == 2 and packet.get('scope_status', 'complete') == 'complete':
+    if (packet.get('publication_contract_version') or 1) >= 2 and packet.get('scope_status', 'complete') == 'complete':
         validate_independent_review(root, case_id, packet.get('independent_review'), text, inv_digest,
                                     packet.get('source_bindings', []))
     return text, rows, inv_digest
@@ -450,7 +502,7 @@ def current_status(root: Path, case_id: str) -> dict:
         return {'status': 'invalid', 'reason': 'research inventory contains an invalid input binding'}
     if current_inventory != state.get('inventory_digest'):
         return {'status': 'update_pending', 'reason': 'research inputs changed since review'}
-    if state.get('contract_version') == 2 and state.get('scope_status') == 'complete':
+    if (state.get('contract_version') or 1) >= 2 and state.get('scope_status') == 'complete':
         try:
             validate_independent_review(root, case_id, packet.get('independent_review'),
                                         path.read_text(encoding='utf-8'), current_inventory,

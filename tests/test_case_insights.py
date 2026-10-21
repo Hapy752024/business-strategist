@@ -714,3 +714,67 @@ def test_insights_render_assumption_marker_from_register(tmp_path):
     text = document().replace('The unanswered question is whether', 'Open: {{assumption.A-delay}} The unanswered question is whether')
     cases.publish_insights(root, 'a', packet(root, text=text), 'insight-assumption', 'Publish with assumption')
     assert '**[unknown]** Segment A loses money from a two-week wait.' in (case / 'case_insights.md').read_text()
+
+
+def _seed_register(root):
+    cases.publish_assumptions(root, 'a', {'revision': 1, 'owner_module': 'idea-grill', 'entries': [{
+        'id': 'A-delay', 'statement': 'Segment A loses money from a two-week wait.', 'type': 'desirability',
+        'importance': 'critical', 'status': 'unknown', 'evidence_refs': [], 'counter_evidence_refs': [],
+        'confidence_note': 'Not checked.'}]}, 'seed-register', 'Seed register')
+
+
+V3_SECTIONS = '''## What would change this recommendation
+If {{assumption.A-delay}} is supported by interviews, the recommendation moves toward a paid pilot.
+
+## What we could not check
+- Not checked: purchase behaviour, because no segment A buyer has been reached.
+
+## Sources'''
+
+
+def v3_packet(root, text):
+    result = packet(root, text=text)
+    result['publication_contract_version'] = 3
+    result['scope_status'] = 'progress'
+    result['pending_summary'] = 'Buyer interviews and purchase behaviour remain open for segment A.'
+    rendered = insights._body(root, 'a', result)
+    result['review']['rendered_digest'] = insights.sha(rendered.encode())
+    return result
+
+
+def test_headings_for_versions():
+    assert len(insights.headings_for(1)) == 8 and len(insights.headings_for(2)) == 8
+    assert insights.headings_for(3)[-3:] == ('What would change this recommendation', 'What we could not check', 'Sources')
+
+
+def test_v3_requires_change_trigger_and_unchecked_sections(tmp_path):
+    root, case = setup_case(tmp_path)
+    _seed_register(root)
+    with pytest.raises(ValueError, match='What would change this recommendation'):
+        cases.publish_insights(root, 'a', v3_packet(root, document()), 'v3-missing', 'v3 without sections')
+
+
+def test_v3_change_trigger_needs_assumption_marker(tmp_path):
+    root, case = setup_case(tmp_path)
+    _seed_register(root)
+    text = document().replace('## Sources', V3_SECTIONS.replace('If {{assumption.A-delay}} is', 'If delay is'))
+    with pytest.raises(ValueError, match='assumption marker'):
+        cases.publish_insights(root, 'a', v3_packet(root, text), 'v3-nomarker', 'v3 without marker')
+
+
+def test_v3_publishes_with_register_blocks(tmp_path):
+    root, case = setup_case(tmp_path)
+    _seed_register(root)
+    text = document().replace('## Sources', V3_SECTIONS)
+    cases.publish_insights(root, 'a', v3_packet(root, text), 'v3-ok', 'v3 publication')
+    body = (case / 'case_insights.md').read_text()
+    assert 'Top unknowns from the assumption register:' in body
+    assert body.index('Top unknowns') < body.index('## Recommended next decisions')
+    assert '**[unknown]** Segment A loses money from a two-week wait.' in body
+
+
+def test_legacy_insights_unaffected(tmp_path):
+    root, case = setup_case(tmp_path)
+    (case / 'assumptions.json').unlink()
+    cases.publish_insights(root, 'a', packet(root), 'legacy', 'Legacy publication')
+    assert 'Top unknowns' not in (case / 'case_insights.md').read_text()
