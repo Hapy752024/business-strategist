@@ -57,8 +57,9 @@ def case_run(tmp_path):
 
 
 def build(run, out, **kwargs):
-    return smoke.build(run_dir=run, hypothesis_id='H1', offer='Synthetic offer', segment='fixture users',
-                       variants=2, out_dir=out, **kwargs)
+    return smoke.build(run_dir=run, experiment_id='E-synthetic', assumption_ids=['A-synthetic'],
+                       library_id='message-smoke-test', offer='Synthetic offer', segment='fixture users',
+                       variants=2, p_low=0.02, p_high=0.05, out_dir=out, **kwargs)
 
 
 def test_smoke_requires_real_source_and_registered_output(tmp_path):
@@ -126,7 +127,8 @@ def test_smoke_to_interview_cli_flow(tmp_path):
     (run / 'summary.json').write_text(json.dumps({'topic':'synthetic test','customer_segment':'fixture users'}))
     out = run / 'experiments/smoke'
     result = subprocess.run([sys.executable, str(ROOT / 'scripts/evidence_scout/build_smoke_test_kit.py'),
-        '--run-dir', str(run), '--hypothesis-id', 'H1', '--offer', 'Synthetic offer', '--segment', 'fixture users',
+        '--run-dir', str(run), '--experiment-id', 'E-synthetic', '--assumption-id', 'A-synthetic',
+        '--library-id', 'message-smoke-test', '--offer', 'Synthetic offer', '--segment', 'fixture users',
         '--out-dir', str(out)], text=True, capture_output=True)
     assert result.returncode == 0, result.stderr
     assert json.loads((out / 'budget-approval.json').read_text())['status'] == 'pending'

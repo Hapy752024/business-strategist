@@ -157,3 +157,19 @@ def test_experiment_cli_plan(tmp_path):
     assert c.main(['experiment-plan', '--workspace', str(p), '--case', 'a', '--input', str(path),
                    '--decision-id', 'cli-plan', '--reason', 'plan']) == 0
     assert c.experiment_card(p, 'a', 'E-one')['status'] == 'planned'
+
+
+def test_kit_draft_inside_case_can_be_planned(tmp_path):
+    from scripts.evidence_scout import build_smoke_test_kit as kit
+    p = topic(tmp_path)
+    run = p / 'cases/a/market_research/pain_points/runs/source'
+    run.mkdir(parents=True)
+    (run / 'summary.json').write_text(json.dumps({'topic': 'bookkeeping delays'}))
+    out = kit.build(run_dir=run, experiment_id='E-kit', assumption_ids=['A-pay'], library_id='message-smoke-test',
+                    offer='Bookkeeping in 48 hours', segment='solo owners', variants=2, p_low=0.02, p_high=0.05,
+                    out_dir=run / 'experiments/smoke')
+    card = c.experiment_plan(p, 'a', json.loads((out / 'experiment-card.json').read_text()), 'plan-kit', 'plan from kit')
+    assert card['status'] == 'planned'
+    assert card['responders_ref']['path'].startswith('cases/a/market_research/')
+    with pytest.raises(ValueError, match='not approved'):
+        c.experiment_transition(p, 'a', 'E-kit', 'approve', 'approve-kit', 'budget still pending')

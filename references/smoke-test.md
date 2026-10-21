@@ -13,6 +13,28 @@ Default validation path for a founder without a customer panel: expose a specifi
 
 Choose the action that matches the buying cycle: email capture is directional only; a booked qualified call, deposit or payment is behavioral evidence. Set thresholds before launch and label them as proposed learning budgets, not benchmarks. Published ranges checked 2026-09-24 vary widely; one practitioner rule treats 5%+ visitor-to-signup from cold traffic as a go signal, while others reject universal benchmarks. Compute the required sample from the threshold: distinguishing 2% from 5% conversion takes several hundred qualified visitors per variant. Record visitor source, variant and segment fit for every responder; unqualified signups do not count.
 
+## Experiment card
+
+The kit writes a draft `experiment-card.json` bound to register assumptions, with a computed sample plan (qualified visitors per variant to tell the low rate from the high rate at one-sided 95% confidence, 80% power) and a pass threshold on qualified bookings. Commit it with `case_workspace.py experiment-plan`; the hypothesis, threshold, kill rule and sample plan are then frozen. Change them only with a new card that names `supersedes`. Move through `experiment-approve` (needs the approved budget file), `experiment-start`, and `experiment-close` with imported counts. A `pass` below the predeclared threshold is rejected. Closing updates the tested assumptions in the register and marks case insights pending.
+
+Qualified bookings, not clicks, are the primary measure. A high click rate with no qualified bookings is no demand signal. Practitioner rules of thumb (for example under 1% click-through means stop, 1–5% means interview, retrieved 2026-10-21 from a smoke-test vendor guide) are heuristics, not benchmarks.
+
+## Post-click page and interview script
+
+The page after the call to action does three things in one step: reveals honestly ("We are evaluating this and it is not available yet. Can we email you when it is, and would you talk to us for 15 minutes?"), asks two qualifying questions (role or situation, and how they handle the problem today), and offers a booking link. Invite immediately while context is fresh.
+
+Interview script, 5–8 minutes, past behaviour first:
+
+1. What did you hope this would do for you?
+2. What were you trying to get done when you clicked?
+3. How do you handle it today, and what does that cost you?
+4. How often does it come up?
+5. Have you paid for anything to solve it? What, and how much?
+6. What would have to be true for you to switch from what you do now?
+7. Who else is involved in deciding?
+
+Feed answers to interview-bridge. A stated price is intent, not willingness to pay.
+
 ## Disclosure
 
 A fake door must tell the responder within one step that the product is not yet available, what happens with their data, and offer the interview or waitlist honestly. No fake scarcity, fabricated testimonials, or payment details without the ability to refund.
