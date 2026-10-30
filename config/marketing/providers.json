@@ -8,7 +8,9 @@
         "oauth",
         "service_account"
       ],
-      "status": "documented_not_connected"
+      "status": "read_connector_available",
+      "mcp_server": "google-ads-mcp",
+      "connection_check": "python3 scripts/marketing/connections.py probe google_ads"
     },
     "meta_ads": {
       "preferred": "official_meta_ads_mcp",
@@ -27,7 +29,9 @@
     },
     "gsc": {
       "preferred": "search_analytics_api",
-      "status": "documented_not_connected"
+      "status": "read_connector_available",
+      "mcp_server": "search-console-mcp",
+      "connection_check": "python3 scripts/marketing/connections.py probe gsc"
     },
     "tiktok_ads": {
       "preferred": "tiktok_api_for_business",
@@ -37,7 +41,9 @@
     },
     "ga4": {
       "preferred": "official_google_analytics_mcp",
-      "status": "documented_not_connected"
+      "status": "read_connector_available",
+      "mcp_server": "analytics-mcp",
+      "connection_check": "python3 scripts/marketing/connections.py probe ga4"
     }
   }
 }
