@@ -313,12 +313,13 @@ import pytest  # noqa: E402
 
 @pytest.mark.parametrize("text,claims", [
     ("The case is not yet delivered.", False), ("Research is not complete yet.", False),
-    ("We delivered the logo.", False), ("I delivered the case to the founder.", True),
+    ("We delivered the logo.", False), ("The team has not delivered the case yet.", False),
+    ("We have not delivered the research.", False), ("We haven't delivered the case.", False),
     ("The rerun is complete.", True), ("The research rerun was fully complete.", True),
     ("The case was fully delivered.", True), ("This is the final delivery.", True),
 ])
 def test_stop_hook_claim_regex(text, claims):
-    assert bool(stop_hook.CLAIM.search(text)) is claims
+    assert stop_hook.claims_delivery(text) is claims
 
 
 def test_stop_hook_falls_back_to_case_parent_run(tmp_path):
@@ -336,4 +337,19 @@ def test_stop_hook_falls_back_to_case_parent_run(tmp_path):
     event = {"session_id": "s2", "transcript_path": _transcript(tmp_path, "The research is complete.")}
     assert stop_hook.stop_delivery_check(event, tmp_path)["decision"] == "block"
     manifest.write_text("{}")  # no registered parent run -> cannot check
+    assert stop_hook.stop_delivery_check(event, tmp_path) == {}
+
+
+@pytest.mark.parametrize("parent", ["../../outside", "/etc"])
+def test_stop_hook_rejects_escaping_parent_run(tmp_path, parent):
+    (tmp_path / "scripts").symlink_to(ROOT / "scripts")
+    (tmp_path / "outside").mkdir()
+    case_root = tmp_path / "projects/p/business-analysis/cases/c1"
+    (case_root / "market_research").mkdir(parents=True)
+    manifest = case_root / "market_research/manifest.json"
+    manifest.write_text(json.dumps({"research_assignment": {"parent_run": parent}}))
+    compaction_state.write_state(compaction_state.resume_path(tmp_path, "s3"), {
+        "session_id": "s3", "workspace": {"case_id": "c1", "run_id": None,
+                                          "manifest_path": manifest.relative_to(tmp_path).as_posix()}})
+    event = {"session_id": "s3", "transcript_path": _transcript(tmp_path, "The case is delivered.")}
     assert stop_hook.stop_delivery_check(event, tmp_path) == {}

@@ -20,7 +20,17 @@ from compaction_state import load_state, project_root, resume_path  # noqa: E402
 
 CLAIM = re.compile(r"\b(?:(?:case|research) (?:is|was) (?:fully )?(?:delivered|complete|rerun)|final delivery"
                    r"|delivered the (?:case|research)|(?:(?:case|research) )?rerun (?:is|was) (?:fully )?complete)\b", re.I)
+NEGATION = re.compile(r"\b(?:not|never|no longer)\b|n['\u2019]t\b", re.I)
 SUFFIX = " Either complete the missing items or restate the result as a progress snapshot."
+
+
+def claims_delivery(text: str) -> bool:
+    """True when a non-negated delivery claim appears (negation within the same sentence, before the phrase)."""
+    for match in CLAIM.finditer(text):
+        before = re.split(r"[.!?\n]", text[max(0, match.start() - 60):match.start()])[-1]
+        if not NEGATION.search(before):
+            return True
+    return False
 
 
 def last_assistant_text(transcript_path) -> str:
@@ -81,7 +91,7 @@ def stop_delivery_check(event: dict, root: Path) -> dict:
     try:
         if event.get("stop_hook_active"):
             return {}
-        if not CLAIM.search(last_assistant_text(event.get("transcript_path"))):
+        if not claims_delivery(last_assistant_text(event.get("transcript_path"))):
             return {}
         session_id = event.get("session_id")
         if not isinstance(session_id, str) or not session_id:
