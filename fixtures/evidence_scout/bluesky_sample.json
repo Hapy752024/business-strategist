@@ -1,0 +1,14 @@
+{
+  "_fixture_note": "Synthetic, shaped after the AT Protocol app.bsky.feed.searchPosts lexicon (https://docs.bsky.app/docs/api/app-bsky-feed-search-posts); not a recorded response. All identities are placeholders.",
+  "cursor": "2",
+  "posts": [
+    {"uri": "at://did:plc:redacteduser1/app.bsky.feed.post/3kaaaaaaaaa2a", "cid": "bafyreia1",
+     "author": {"did": "did:plc:redacteduser1", "handle": "redacted_user", "displayName": "redacted_user"},
+     "record": {"$type": "app.bsky.feed.post", "text": "Spent my whole Friday chasing late invoices again. There has to be a better way than a spreadsheet.", "createdAt": "2026-10-20T09:15:00.000Z", "langs": ["en"]},
+     "replyCount": 2, "repostCount": 1, "likeCount": 14, "quoteCount": 0, "indexedAt": "2026-10-20T09:15:02.000Z"},
+    {"uri": "at://did:plc:redacteduser2/app.bsky.feed.post/3kbbbbbbbbb2b", "cid": "bafyreia2",
+     "author": {"did": "did:plc:redacteduser2", "handle": "redacted_user", "displayName": "redacted_user"},
+     "record": {"$type": "app.bsky.feed.post", "text": "Clients pay 60 days late and I float payroll. Factoring fees are brutal.", "createdAt": "2026-10-22T14:00:00.000Z", "langs": ["en"]},
+     "replyCount": 0, "repostCount": 0, "likeCount": 3, "quoteCount": 1, "indexedAt": "2026-10-22T14:00:01.000Z"}
+  ]
+}

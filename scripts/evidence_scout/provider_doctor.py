@@ -280,6 +280,7 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
         ],
         "social": [
             _env_backend("x_api", ["X_BEARER_TOKEN"], risk="paid_or_quota_limited"),
+            _env_backend("bluesky_search", ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"], risk="free_app_password"),
             _env_backend("xai_x_search", ["GROK_API_KEY"], risk="model_tool_costs"),
             _env_backend("scrapecreators_social", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
         ],

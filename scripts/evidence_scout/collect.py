@@ -476,7 +476,7 @@ def balanced_queries(queries: list[str]) -> list[str]:
 
 
 QUERY_PLAN_PROVIDERS = {"reddit", "brave_search", "serper_search", "firecrawl", "hn", "github",
-                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "cfpb_complaints", "stackexchange", "producthunt"}
+                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "cfpb_complaints", "stackexchange", "producthunt", "bluesky"}
 RESUME_TERMINAL_PROVIDER_STATUSES = {"ok", "unsupported", "capture_gate_blocked", "not_applicable"}
 
 
@@ -1992,6 +1992,10 @@ def collect_producthunt(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "producthunt")
 
 
+def collect_bluesky(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "bluesky")
+
+
 def collect_x(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "x")
 
@@ -2183,6 +2187,55 @@ def _collect_producthunt_query(args: argparse.Namespace, queries: list[str], run
             break
     write_json(run_dir / "raw" / "producthunt.json", redact_sensitive(raw))
     return records, {"status": status, "record_count": len(records), "credential_source": key_name, "fields": fields_present(raw)}
+
+
+def _collect_bluesky_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Bluesky post search with an app-password session. Login traffic is never captured."""
+    from providers import bluesky as bsky
+    raw: dict[str, Any] = {"searches": []}
+    handle_name, handle = get_secret("BLUESKY_HANDLE")
+    _, password = get_secret("BLUESKY_APP_PASSWORD")
+    if not handle or not password:
+        write_json(run_dir / "raw" / "bluesky.json", raw)
+        return [], {"status": "missing_credentials", "record_count": 0, "required_env": ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"]}
+    jwt, login_status = bsky.get_session(handle, password)
+    raw["login"] = {"status": login_status}
+    if not jwt:
+        write_json(run_dir / "raw" / "bluesky.json", raw)
+        return [], {"status": login_status, "record_count": 0, "credential_source": handle_name}
+    lang = str(getattr(args, "language", "") or "").strip().casefold()
+    lang = lang if re.fullmatch(r"[a-z]{2}", lang) else ""
+    frame = getattr(args, "sampling_frame", "topic_led_voc") or "topic_led_voc"
+    entity = str(getattr(args, "subject_entity_id", "") or "").strip()
+    limit = max(1, int(args.limit))
+    records: list[dict[str, Any]] = []
+    status = "ok"
+    relogged = False
+    for query in queries:
+        body, meta = bsky.search(jwt, query, limit, getattr(args, "days", None), lang)
+        if meta["status"] == "session_expired" and not relogged:
+            relogged = True
+            bsky.clear_session()
+            jwt, login_status = bsky.login(handle, password)
+            raw["login"] = {"status": login_status, "relogin": True}
+            if not jwt:
+                status = login_status
+                break
+            body, meta = bsky.search(jwt, query, limit, getattr(args, "days", None), lang)
+        raw["searches"].append({"query": query, "response": meta["response"]})
+        if meta["status"] != "ok":
+            status = "permission_denied" if meta["status"] == "session_expired" else meta["status"]
+            break
+        found = bsky.to_records(body, query, now_iso(), build=normalize_record, customer_segment=args.customer_segment,
+                                hypothesis=args.hypothesis_id, sampling_frame=frame, subject_entity_id=entity)
+        for record in found[:limit]:
+            relevance, notes, score = assess_relevance(record["text"], args, record["query"], record["source_url"], record["author_context"])
+            record.update({"relevance": relevance, "relevance_notes": notes, "relevance_score": score})
+            if relevance == "irrelevant":
+                record.update({"evidence_type": "irrelevant", "strength": "irrelevant"})
+            records.append(record)
+    write_json(run_dir / "raw" / "bluesky.json", redact_sensitive(raw))
+    return records, {"status": status, "record_count": len(records), "credential_source": handle_name, "fields": fields_present(raw)}
 
 
 def _collect_github_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -4952,6 +5005,7 @@ PROVIDER_ROUTING_FAMILY = {
     "cfpb_complaints": "customer_reviews",
     "stackexchange": "founder_community",
     "producthunt": "customer_reviews",
+    "bluesky": "social",
     "serpapi_google_trends": "google_trends",
     "youtube": "youtube",
     "firecrawl": "web_search",
@@ -5325,6 +5379,7 @@ def main() -> int:
         "cfpb_complaints": collect_cfpb_complaints,
         "stackexchange": collect_stackexchange,
         "producthunt": collect_producthunt,
+        "bluesky": collect_bluesky,
         "serpapi_google_trends": collect_serpapi_google_trends,
         "serper_search": collect_serper_search,
         "youtube": collect_youtube,
