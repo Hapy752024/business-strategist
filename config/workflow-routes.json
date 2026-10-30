@@ -105,6 +105,21 @@
       ]
     },
     {
+      "id": "geo-audit",
+      "match": [
+        "AI citability audit",
+        "AI search citability",
+        "citability audit",
+        "geo-optimizer audit",
+        "GEO Optimizer audit"
+      ],
+      "skill": "geo-audit",
+      "forbidden": [
+        "competitor-marketing-analyzer"
+      ],
+      "single_mode": true
+    },
+    {
       "id": "app-ui",
       "match": [
         "dashboard UI",

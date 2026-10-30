@@ -42,6 +42,7 @@ Run build and real-browser responsive, accessibility, performance, state and vis
 Structural checks do not prove site quality or compliance.
 Production recording requires the complete release-bound launch assessment.
 After each authorized deploy, run the production host probe and hand the owner the Search Console steps (launch-contract `production_host`, `search_console`); do not wait for the owner to ask.
+Optional measurement after launch or on a preview URL: the `geo-audit` route (AI-citability issues) and the AI-answer panel in repo-root `references/ai-answer-recordings.md`. Report them as observations, never as ranking or citation claims.
 
 - Validation page for a smoke test: apply [validation page](references/validation-page.md) and repo-root `references/smoke-test.md`; use a static single-CTA page with disclosure and no analytics without owner activation.
 - When selected marketing work requires an owner action or third-party platform, use repo-root `references/marketing-execution.md` and keep local QA separate from externally verified outcomes.

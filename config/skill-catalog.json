@@ -57,7 +57,8 @@
         "stripe-best-practices",
         "security-review",
         "webapp-testing",
-        "pre-release-regression"
+        "pre-release-regression",
+        "geo-audit"
       ]
     }
   },
@@ -1493,6 +1494,41 @@
           ]
         }
       }
+    },
+    "geo-audit": {
+      "intent": [
+        "audit a public site or deployed build for AI-search citability issues"
+      ],
+      "excludes": [
+        "applying fixes to a site",
+        "ranking or citation-rate claims",
+        "local build directories without a public URL"
+      ],
+      "prerequisites": [
+        "public URL or deployed preview URL of the site"
+      ],
+      "artifacts": [
+        "GEO audit JSON with tool version and pinned commit",
+        "issue list for the website workflow"
+      ],
+      "side_effect": "local_files",
+      "cost": "low",
+      "required_references": [
+        ".agents/skills/geo-audit/VENDOR.md",
+        ".agents/skills/brand-website-designer-builder/references/aeo-geo-visibility.md"
+      ],
+      "consumes": [
+        {
+          "artifact": "website_build",
+          "schema": null,
+          "path_patterns": [
+            "website/website-manifest.json",
+            "website/**/website-manifest.json"
+          ],
+          "freshness": "none",
+          "external": true
+        }
+      ]
     }
   }
 }
