@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "credits_remaining": 1000,
+  "credits_charged": 1,
+  "posts": [
+    {
+      "id": "syn001",
+      "name": "t3_syn001",
+      "title": "Synthetic title one",
+      "selftext": "Synthetic body text about chasing late invoices with a spreadsheet.",
+      "subreddit": "example_sub",
+      "subreddit_name_prefixed": "r/example_sub",
+      "author": "redacted_user",
+      "permalink": "/r/example_sub/comments/syn001/synthetic_title/",
+      "url": "https://example.com/r/example_sub/comments/syn001/synthetic_title/",
+      "created_utc": 1790000000,
+      "created_at_iso": "2026-09-21T13:33:20.000Z",
+      "score": 12,
+      "ups": 12,
+      "num_comments": 2
+    },
+    {
+      "id": "syn002",
+      "name": "t3_syn002",
+      "title": "Synthetic title two",
+      "selftext": "Synthetic body text about chasing late invoices with a spreadsheet.",
+      "subreddit": "example_sub",
+      "subreddit_name_prefixed": "r/example_sub",
+      "author": "redacted_user",
+      "permalink": "/r/example_sub/comments/syn002/synthetic_title/",
+      "url": "https://example.com/r/example_sub/comments/syn002/synthetic_title/",
+      "created_utc": 1790000000,
+      "created_at_iso": "2026-09-21T13:33:20.000Z",
+      "score": 12,
+      "ups": 12,
+      "num_comments": 2
+    }
+  ],
+  "after": "t3_syn002"
+}

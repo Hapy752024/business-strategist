@@ -203,6 +203,12 @@ def _cfpb_backend() -> BackendStatus:
     )
 
 
+def _arctic_shift_backend() -> BackendStatus:
+    # No live probe: the archive throttles hard and a doctor run must not consume its allowance.
+    return BackendStatus(name="arctic_shift", status="ok", kind="public_http", risk="rate_limited",
+                         message="No credentials needed; subreddit-history only, volunteer-run and throttled (>=1 request/s, bounded backoff). Not probed by the doctor.")
+
+
 def _agent_reach_channel(channel: str) -> BackendStatus:
     path = shutil.which("agent-reach")
     if not path:
@@ -271,6 +277,7 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
             _agent_reach_channel("reddit"),
             _env_backend("apify_reddit", ["APIFY_TOKEN"], risk="paid_credits"),
             _env_backend("scrapecreators_reddit", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
+            _arctic_shift_backend(),
         ],
         "google_trends": [
             _env_backend("serpapi_google_trends", ["SERPAPI_API_KEY"], risk="paid_or_quota_limited"),

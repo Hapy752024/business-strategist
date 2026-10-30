@@ -1,0 +1,74 @@
+{
+  "success": true,
+  "credits_remaining": 999,
+  "credits_charged": 1,
+  "post": {
+    "id": "syn001",
+    "name": "t3_syn001",
+    "title": "Synthetic title one",
+    "selftext": "Synthetic body text about chasing late invoices with a spreadsheet.",
+    "subreddit": "example_sub",
+    "subreddit_name_prefixed": "r/example_sub",
+    "author": "redacted_user",
+    "permalink": "/r/example_sub/comments/syn001/synthetic_title/",
+    "url": "https://example.com/r/example_sub/comments/syn001/synthetic_title/",
+    "created_utc": 1790000000,
+    "created_at_iso": "2026-09-21T13:33:20.000Z",
+    "score": 12,
+    "ups": 12,
+    "num_comments": 2
+  },
+  "comments": [
+    {
+      "id": "c001",
+      "name": "t1_c001",
+      "author": "redacted_user",
+      "body": "Synthetic top-level comment about invoices.",
+      "score": 3,
+      "ups": 3,
+      "url": "https://example.com/r/example_sub/comments/syn001/synthetic_title/c001/",
+      "permalink": "/r/example_sub/comments/syn001/synthetic_title/c001/",
+      "created_utc": 1790000100,
+      "created_at_iso": "2026-09-21T13:35:00.000Z",
+      "parent_id": "t3_syn001",
+      "link_id": "t3_syn001",
+      "depth": 0,
+      "subreddit": "example_sub",
+      "replies": {
+        "items": [
+          {
+            "id": "c002",
+            "name": "t1_c002",
+            "author": "redacted_user",
+            "body": "Synthetic nested reply.",
+            "score": 3,
+            "ups": 3,
+            "url": "https://example.com/r/example_sub/comments/syn001/synthetic_title/c002/",
+            "permalink": "/r/example_sub/comments/syn001/synthetic_title/c002/",
+            "created_utc": 1790000100,
+            "created_at_iso": "2026-09-21T13:35:00.000Z",
+            "parent_id": "t1_c001",
+            "link_id": "t3_syn001",
+            "depth": 1,
+            "subreddit": "example_sub",
+            "replies": {
+              "items": [],
+              "more": {
+                "has_more": false,
+                "next_cursor": null
+              }
+            }
+          }
+        ],
+        "more": {
+          "has_more": false,
+          "next_cursor": null
+        }
+      }
+    }
+  ],
+  "more": {
+    "has_more": false,
+    "next_cursor": null
+  }
+}

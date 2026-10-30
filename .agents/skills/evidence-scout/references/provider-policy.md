@@ -214,8 +214,9 @@ Prefer sources in this order:
 
 Reddit's public Data API ends 2027-03-31 (no new access after 2026-10-31). Use the Reddit API
 first; then `apify_reddit` (third-party scraper, item-capped by `--apify-item-cap`), then
-`scrapecreators_reddit`, and `arctic_shift` for subreddit history. Fallbacks never become
-the only source of record, and their records stay unreviewed.
+`scrapecreators_reddit`, and `arctic_shift` for subreddit history (needs `--subreddit`; volunteer-run,
+throttled, backs off then reports `rate_limited`). Fallbacks never become the only source of record, and
+their records stay unreviewed.
 
 ## Apify Review and Community Lanes
 

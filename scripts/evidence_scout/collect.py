@@ -38,6 +38,7 @@ VERIFIED_COMMUNITY_SCHEMA_PATH = ROOT / "schemas" / "verified-community.schema.j
 sys.path.insert(0, str(VALIDATOR_DIR))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from providers import arctic_shift, scrapecreators_reddit  # noqa: E402
 from common import (  # noqa: E402
     fields_present,
     finish,
@@ -476,7 +477,7 @@ def balanced_queries(queries: list[str]) -> list[str]:
 
 
 QUERY_PLAN_PROVIDERS = {"reddit", "brave_search", "serper_search", "firecrawl", "hn", "github",
-                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "cfpb_complaints", "stackexchange", "producthunt", "bluesky"}
+                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "scrapecreators_reddit", "arctic_shift", "cfpb_complaints", "stackexchange", "producthunt", "bluesky"}
 RESUME_TERMINAL_PROVIDER_STATUSES = {"ok", "unsupported", "capture_gate_blocked", "not_applicable"}
 
 
@@ -1402,8 +1403,8 @@ def collect_reviewed_reddit_target(args: argparse.Namespace, run_dir: Path) -> t
     if not isinstance(thread, dict):
         _, sc_key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
         if sc_key:
-            fallback = http_get(with_query("https://api.scrapecreators.com/v1/reddit/post/comments",
-                {"url": locator, "trim": "true"}), headers={"x-api-key": sc_key})
+            _sc_body, _sc_meta = scrapecreators_reddit.fetch_thread(sc_key, locator)
+            fallback = _sc_meta["response"]
             raw["fallback"] = fallback
             if fallback.get("ok") and isinstance(fallback.get("body"), dict):
                 body = fallback["body"]
@@ -1633,8 +1634,7 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
             # configured paid endpoint. A failed primary read stays recorded.
             _, sc_key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
             if sc_key:
-                fallback = http_get(with_query("https://api.scrapecreators.com/v1/reddit/post/comments",
-                                               {"url": post_url, "trim": "true"}), headers={"x-api-key": sc_key})
+                fallback = scrapecreators_reddit.fetch_thread(sc_key, post_url)[1]["response"]
                 raw["conversations"].append({"post_id": post_id, "url": post_url, "backend": "scrapecreators", "response": fallback})
                 if fallback.get("ok") and isinstance(fallback.get("body"), dict):
                     body = fallback["body"]
@@ -1980,6 +1980,14 @@ def collect_apify_reddit(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "apify_reddit")
 
 
+def collect_scrapecreators_reddit(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "scrapecreators_reddit")
+
+
+def collect_arctic_shift(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "arctic_shift")
+
+
 APIFY_LANE_PROVIDERS = {f"apify_{lane}": lane for lane in
                         ("software_reviews", "g2_reviews", "shopify_app_reviews", "quora", "facebook_public_groups")}
 APIFY_ENTITY_PROVIDERS = {"apify_software_reviews", "apify_g2_reviews", "apify_shopify_app_reviews"}
@@ -2210,6 +2218,78 @@ def _collect_apify_reddit_query(args: argparse.Namespace, queries: list[str], ru
             "subset_limitations": "Third-party scrape of public Reddit pages, relevance-ranked; completeness unknown."})
     write_json(run_dir / "raw" / "apify_reddit.json", redact_sensitive(raw))
     return records, {"status": meta["status"], "record_count": len(records), "credential_source": key_name, "fields": fields_present(raw)}
+
+
+def _score_fallback_records(records, args, window_note: str) -> None:
+    for record in records:
+        relevance, notes, score = assess_relevance(record["text"], args, record["query"], record["source_url"], record["author_context"])
+        record.update({"relevance": relevance, "relevance_notes": notes, "relevance_score": score})
+        if relevance == "irrelevant":
+            record.update({"evidence_type": "irrelevant", "strength": "irrelevant"})
+        record["sampling_metadata"]["time_window"] = {"lookback_days": args.days, "applied_by": window_note}
+
+
+def _collect_scrapecreators_reddit_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Reddit search then top-thread comments through ScrapeCreators (third-party API)."""
+    raw: dict[str, Any] = {"searches": [], "conversations": []}
+    key_name, api_key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
+    if not api_key:
+        write_json(run_dir / "raw" / "scrapecreators_reddit.json", raw)
+        return [], {"status": "missing_credentials", "record_count": 0, "required_env": ["SCRAPE_CREATORS_API_KEY"]}
+    query = queries[0]
+    posts, meta = scrapecreators_reddit.search(api_key, query, timeframe=scrapecreators_reddit.window_for_days(args.days))
+    raw["searches"].append({"query": query, "response": meta["response"]})
+    now = now_iso()
+    records = scrapecreators_reddit.search_to_records(posts[:max(1, int(args.limit))], query, now, build=normalize_record,
+                                                      customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
+    status = meta["status"]
+    commented = [r for r in records if (r.get("engagement") or {}).get("comments")][:max(0, getattr(args, "reddit_comment_posts", 6))]
+    for post in commented:
+        body, cmeta = scrapecreators_reddit.fetch_thread(api_key, post["source_url"])
+        raw["conversations"].append({"post_id": post["source_record_id"], "response": cmeta["response"]})
+        if body is None:
+            status = "partial" if status == "ok" else status
+            continue
+        thread = scrapecreators_reddit.thread_to_records(body, query, now, build=normalize_record,
+                                                         customer_segment=args.customer_segment, hypothesis=args.hypothesis_id,
+                                                         max_comments=getattr(args, "reddit_comments_per_post", 100),
+                                                         post_url=post["source_url"])
+        records.extend(r for r in thread if r["source"] == "reddit_comment")
+    _score_fallback_records(records, args, "provider_timeframe")
+    write_json(run_dir / "raw" / "scrapecreators_reddit.json", redact_sensitive(raw))
+    return records, {"status": status, "record_count": len(records), "credential_source": key_name, "fields": fields_present(raw)}
+
+
+def _collect_arctic_shift_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Subreddit history from the Arctic Shift archive; refuses without --subreddit."""
+    raw: dict[str, Any] = {"searches": [], "conversations": []}
+    subreddit = str(getattr(args, "subreddit", "") or "").strip().removeprefix("r/")
+    if not subreddit:
+        write_json(run_dir / "raw" / "arctic_shift.json", raw)
+        return [], {"status": "subreddit_required", "record_count": 0,
+                    "reason": "Arctic Shift search works only within one subreddit (or author); pass --subreddit <name>."}
+    query = queries[0]
+    posts, meta = arctic_shift.search_posts(subreddit, query, max(1, int(args.limit)))
+    raw["searches"].append({"query": query, "subreddit": subreddit, "response": meta["response"]})
+    status = meta["status"]
+    now = now_iso()
+    records = arctic_shift.posts_to_records(posts, query, now, build=normalize_record,
+                                            customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
+    if status == "ok":
+        for post in [r for r in records if (r.get("engagement") or {}).get("comments")][:max(0, getattr(args, "reddit_comment_posts", 6))]:
+            comments, cmeta = arctic_shift.search_comments(post["source_record_id"], getattr(args, "reddit_comments_per_post", 100))
+            raw["conversations"].append({"post_id": post["source_record_id"], "response": cmeta["response"]})
+            if cmeta["status"] != "ok":
+                status = "partial" if cmeta["status"] != "rate_limited" else "rate_limited"
+                break
+            records.extend(arctic_shift.comments_to_records(comments, query, now, build=normalize_record,
+                           customer_segment=args.customer_segment, hypothesis=args.hypothesis_id))
+    _score_fallback_records(records, args, "collector")
+    write_json(run_dir / "raw" / "arctic_shift.json", redact_sensitive(raw))
+    summary = {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+    if status == "rate_limited":
+        summary["reason"] = meta.get("reason", "Arctic Shift throttled; coverage gap, not absence of content.")
+    return records, summary
 
 
 def _collect_cfpb_complaints_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -5124,6 +5204,8 @@ def load_provider_routing() -> dict[str, Any]:
 PROVIDER_ROUTING_FAMILY = {
     "reddit": "reddit",
     "apify_reddit": "reddit",
+    "scrapecreators_reddit": "reddit",
+    "arctic_shift": "reddit",
     "cfpb_complaints": "customer_reviews",
     "stackexchange": "founder_community",
     "producthunt": "customer_reviews",
@@ -5186,6 +5268,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--apify-review-item-cap", type=int, default=500, help="Per-run cap on Apify dataset items across the review/community lanes (apify_software_reviews, apify_g2_reviews, apify_shopify_app_reviews, apify_quora, apify_facebook_public_groups); counted as items x items_per_unit from config/apify-actors.json and checked before any call.")
     parser.add_argument("--apify-review-targets", default="", help="Comma-separated exact entity_id=url review pages (TrustRadius/Software Advice/GetApp, G2 product, apps.shopify.com app). Each must be a reviewed locator in --customer-feedback-source-plan.")
     parser.add_argument("--apify-facebook-groups", default="", help="Comma-separated PUBLIC Facebook group URLs for apify_facebook_public_groups (no login or cookies are ever used).")
+    parser.add_argument("--subreddit", default="", help="Subreddit name for arctic_shift (subreddit-history search); required by that provider.")
     parser.add_argument("--apify-item-cap", type=int, default=300, help="Cap on Apify dataset items per run, counted conservatively as posts x 10 (the actor has no per-post comment limit); apify_reddit refuses before any call when exceeded.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum normalized records per provider.")
     parser.add_argument(
@@ -5508,6 +5591,8 @@ def main() -> int:
     provider_funcs = {
         "reddit": collect_reddit,
         "apify_reddit": collect_apify_reddit,
+        "scrapecreators_reddit": collect_scrapecreators_reddit,
+        "arctic_shift": collect_arctic_shift,
         "cfpb_complaints": collect_cfpb_complaints,
         "stackexchange": collect_stackexchange,
         "producthunt": collect_producthunt,

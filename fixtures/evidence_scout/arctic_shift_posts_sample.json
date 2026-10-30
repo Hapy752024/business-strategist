@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "id": "syn101",
+      "title": "Synthetic archive title",
+      "selftext": "Synthetic body text about chasing late invoices with a spreadsheet.",
+      "subreddit": "example_sub",
+      "author": "redacted_user",
+      "permalink": "/r/example_sub/comments/syn101/synthetic_title/",
+      "url": "https://example.com/r/example_sub/comments/syn101/synthetic_title/",
+      "created_utc": 1790000000,
+      "score": 12,
+      "num_comments": 2
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "data": [
+    {
+      "id": "ac001",
+      "body": "Synthetic archived comment.",
+      "author": "redacted_user",
+      "link_id": "t3_syn101",
+      "parent_id": "t3_syn101",
+      "subreddit": "example_sub",
+      "score": 2,
+      "created_utc": 1790000200,
+      "permalink": "/r/example_sub/comments/syn101/synthetic_archive_title/ac001/"
+    }
+  ]
+}

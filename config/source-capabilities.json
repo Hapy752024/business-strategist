@@ -12,8 +12,19 @@
       "family": "community_discovery",
       "label": "Dialog Reddit MCP: subreddit discovery (hosted, local scope)",
       "description": "Semantic discovery of relevant subreddits across Dialog's hosted index of about 20,000 communities. Discovery only: posts and comments are collected through the Reddit API route so they are captured, hashed and reviewed.",
-      "use_when": ["subreddit discovery", "semantic reddit search", "across subreddits", "find communities", "mcp", "community discovery"],
-      "avoid_when": ["evidence or quotes (collect them through the reddit route)", "representative market sizing", "private or sensitive queries (queries go to a third-party host)"],
+      "use_when": [
+        "subreddit discovery",
+        "semantic reddit search",
+        "across subreddits",
+        "find communities",
+        "mcp",
+        "community discovery"
+      ],
+      "avoid_when": [
+        "evidence or quotes (collect them through the reddit route)",
+        "representative market sizing",
+        "private or sensitive queries (queries go to a third-party host)"
+      ],
       "evidence_strength": "none_discovery_only",
       "collector_provider": null,
       "hosted_third_party": true,
@@ -173,6 +184,68 @@
       "status_check": "python3 scripts/validate_apis/validate_apify_reddit.py && python3 scripts/evidence_scout/provider_doctor.py --json",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --providers apify_reddit --limit 20 --apify-item-cap 300",
       "caveat": "Third-party scraper of public Reddit pages: terms-of-service risk sits with the actor, availability can break without notice, and completeness is unknown. It is a fallback, never the only source of record. Records stay unreviewed; comments are separate records linked to their post. Item spend is capped by --apify-item-cap (default 300)."
+    },
+    {
+      "family": "customer_pain",
+      "evidence_strength": "weak_to_medium_when_repeated_user_pain",
+      "avoid_when": [
+        "Reddit API credentials work",
+        "representative market sizing",
+        "sole source of record",
+        "proof of willingness to pay from one post"
+      ],
+      "id": "scrapecreators_reddit",
+      "label": "ScrapeCreators Reddit fallback (third-party API)",
+      "description": "Reddit search results and post comments via the ScrapeCreators API, used after apify_reddit when the Reddit Data API is unavailable.",
+      "use_when": [
+        "reddit fallback",
+        "reddit api unavailable",
+        "reddit sunset",
+        "customer pain",
+        "workarounds",
+        "complaints"
+      ],
+      "collector_provider": "scrapecreators_reddit",
+      "provider_aliases": [],
+      "validation_providers": [
+        "scrapecreators_reddit"
+      ],
+      "requires_env": [
+        "SCRAPE_CREATORS_API_KEY"
+      ],
+      "status_check": "python3 scripts/validate_apis/validate_scrapecreators_reddit.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --providers scrapecreators_reddit --limit 10",
+      "caveat": "Third-party paid API over public Reddit pages: terms-of-service risk sits with the vendor, availability can break without notice, and completeness is unknown (1 credit per call). Fallback only, never the sole source of record; records stay unreviewed and carry collection_method third_party_api."
+    },
+    {
+      "family": "customer_pain",
+      "evidence_strength": "weak_to_medium_when_repeated_user_pain",
+      "avoid_when": [
+        "Reddit API credentials work",
+        "representative market sizing",
+        "sole source of record",
+        "proof of willingness to pay from one post"
+      ],
+      "id": "arctic_shift",
+      "label": "Arctic Shift Reddit archive (subreddit history only)",
+      "description": "Historical posts and comments for one named subreddit from the volunteer-run Arctic Shift archive.",
+      "use_when": [
+        "reddit fallback",
+        "reddit sunset",
+        "subreddit history",
+        "customer pain",
+        "workarounds",
+        "historical complaints"
+      ],
+      "collector_provider": "arctic_shift",
+      "provider_aliases": [],
+      "validation_providers": [
+        "arctic_shift"
+      ],
+      "requires_env": [],
+      "status_check": "python3 scripts/validate_apis/validate_arctic_shift.py",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --providers arctic_shift --subreddit <name> --limit 5",
+      "caveat": "Volunteer-run archive: indexing lag, may omit recent content, search works only within one --subreddit (or author), and it throttles hard (HTTP 422 'Timeout. Maybe slow down a bit'). The collector spaces calls 1 s apart, backs off 5 s up to 3 times, then reports rate_limited, which is a coverage gap. Be polite; records stay unreviewed and carry collection_method community_archive."
     },
     {
       "id": "apify_software_reviews",

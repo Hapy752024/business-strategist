@@ -35,3 +35,10 @@ def test_reddit_capability_declares_sunset_and_fallbacks():
     cap = capability('reddit')
     assert cap['sunset']['public_api_end'] == '2027-03-31'
     assert cap['sunset']['fallback_order'][0] == 'apify_reddit'
+
+
+def test_reddit_archive_and_scrapecreators_capabilities():
+    sc = capability('scrapecreators_reddit')
+    assert sc['collector_provider'] == 'scrapecreators_reddit' and sc['requires_env'] == ['SCRAPE_CREATORS_API_KEY']
+    ar = capability('arctic_shift')
+    assert ar['collector_provider'] == 'arctic_shift' and 'subreddit' in ar['caveat'] and 'volunteer' in ar['caveat'].lower()
