@@ -88,6 +88,21 @@ Preserve raw price tokens and inspect normalized price tokens. The normalized va
 
 Label page type for every analyzed URL: `homepage`, `product_page`, `blog_article`, `comparison_article`, or `other_page`. Do not interpret a blog article or SEO comparison page as equivalent to a broker landing page.
 
+## Content inventory (content/SEO planning input)
+
+When content or SEO planning needs to know which topics, questions, formats and depth competitors and similar companies publish, run the inventory on the landscape's verified entities against the search study's clusters:
+
+```bash
+python3 scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory --landscape "<run>/entity-landscape.json" --clusters "<content-opportunities.json>" --out "<dir>" --max-pages 25
+```
+
+It discovers URLs with Firecrawl map (fallback sitemap.xml), checks robots.txt before scraping, skips legal, careers, login/account and cart pages, and writes `competitor-content.json` (input to `keyword_map.py merge`) and `competitor-content.md`. Cost: one map plus up to `--max-pages` scrape credits per site. Rules:
+
+- Supplier content shows what suppliers publish, not what customers need.
+- Record topics, structure and formats; never reuse wording (no body text is stored; excerpts are capped at 300 characters).
+- A topic every competitor covers thinly is a quality-gap hypothesis; a topic nobody covers is a demand question to check against search and customer voice, not proof of opportunity.
+- Similar companies abroad and capability references are inspiration for format and structure only; only `competitor` rows count as market coverage.
+
 ## Interpretation Rules
 
 Do not assume marketing claims are true. Treat copy as evidence of how the competitor wants to be perceived, not proof that users care or that the channel converts.

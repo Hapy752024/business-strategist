@@ -168,6 +168,8 @@ def test_analog_and_untyped_competitor_content_never_counts(inputs):
     assert cap['single_input'] is True
     market = row(_comp(tmp, 'c.json', entity='Rival', entity_type='competitor'))
     assert market['single_input'] is False and market['input_count'] == 2 and market['inspiration_count'] == 0
+    uncovered = row(_comp(tmp, 'f.json', entity='Rival', entity_type='competitor', coverage='uncovered'))
+    assert uncovered['single_input'] is True and uncovered['input_count'] == 1
     untyped = row(_comp(tmp, 'd.json'))
     assert untyped['single_input'] is True and untyped['inputs']['competitor_content']['coverage'][0]['untyped'] is True
     with pytest.raises(ValueError):

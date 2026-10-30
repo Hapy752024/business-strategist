@@ -1,0 +1,54 @@
+{
+  "_note": "Synthetic replay fixture in the shape of Firecrawl v1 /map and /scrape responses plus robots.txt and sitemap.xml bodies. All hosts are example domains and all text is invented; no real page bodies.",
+  "robots": {
+    "https://www.example.com": {"status_code": 200, "text": "User-agent: *\nDisallow: /intern/\n"},
+    "https://www.example.org": {"status_code": 404, "text": null}
+  },
+  "map": {
+    "https://www.example.com": {"success": true, "links": [
+      "https://www.example.com/",
+      "https://www.example.com/ratgeber/bu-versicherung-vergleich",
+      "https://www.example.com/ratgeber/bu-kosten",
+      "https://www.example.com/faq",
+      "https://www.example.com/impressum",
+      "https://www.example.com/datenschutz",
+      "https://www.example.com/karriere/jobs",
+      "https://www.example.com/login",
+      "https://www.example.com/mein-konto/einstellungen",
+      "https://www.example.com/warenkorb",
+      "https://www.example.com/intern/ratgeber-entwurf",
+      "https://www.example.com/assets/broschuere.pdf"
+    ]},
+    "https://www.example.org": {"success": false, "error": "Payment required", "status_code": 402}
+  },
+  "sitemaps": {
+    "https://www.example.org/sitemap.xml": "<?xml version=\"1.0\"?><urlset><url><loc>https://www.example.org/guides/income-protection-comparison</loc></url><url><loc>https://www.example.org/terms</loc></url><url><loc>https://www.example.org/careers</loc></url><url><loc>https://www.example.org/account/sign-in</loc></url></urlset>"
+  },
+  "scrape": {
+    "https://www.example.com/": {"success": true, "data": {
+      "markdown": "# Versicherung einfach\n\nSynthetic homepage text for testing.\n\n[Jetzt vergleichen](https://www.example.com/vergleich)",
+      "rawHtml": "<html><head><script type=\"application/ld+json\">{\"@type\":\"Organization\",\"name\":\"Example Versicherung\"}</script></head><body></body></html>",
+      "metadata": {"title": "Example Versicherung", "description": "Synthetic homepage.", "statusCode": 200, "sourceURL": "https://www.example.com/"}
+    }},
+    "https://www.example.com/ratgeber/bu-versicherung-vergleich": {"success": true, "data": {
+      "markdown": "# BU-Versicherung im Vergleich\n\nStand: 12.03.2026\n\nSynthetic intro paragraph about comparing tariffs written only for this test.\n\n## Was kostet eine BU?\n\nSynthetic answer text.\n\n## Hinweise zur Auswahl\n\n| Tarif | Beitrag | Leistung |\n| --- | --- | --- |\n| A | 50 | gut |\n| B | 60 | sehr gut |\n\n### Wie finde ich den passenden Tarif?\n\nSynthetic text.\n\n## Checkliste vor dem Abschluss\n\n- [ ] Gesundheitsfragen\n- [ ] Laufzeit\n\n[Jetzt Beitrag berechnen](https://www.example.com/rechner)",
+      "rawHtml": "<html><head><script type=\"application/ld+json\">{\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"Wann zahlt die BU?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Synthetic.\"}},{\"@type\":\"Question\",\"name\":\"Was kostet eine BU?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"Synthetic.\"}}]}</script><script type=\"application/ld+json\">[{\"@type\":\"Article\",\"dateModified\":\"2026-03-12\"}]</script></head><body><iframe src=\"https://www.example.com/embed/video\"></iframe><video src=\"x.mp4\"></video></body></html>",
+      "metadata": {"title": "BU-Versicherung Vergleich | Example", "description": "Synthetic description that is deliberately long so the excerpt cap is exercised. Synthetic description that is deliberately long so the excerpt cap is exercised. Synthetic description that is deliberately long so the excerpt cap is exercised. Synthetic description that is deliberately long so the excerpt cap is exercised.", "statusCode": 200, "sourceURL": "https://www.example.com/ratgeber/bu-versicherung-vergleich"}
+    }},
+    "https://www.example.com/ratgeber/bu-kosten": {"success": true, "data": {
+      "markdown": "# BU Kosten\n\nShort synthetic note.",
+      "rawHtml": "<html><head></head><body></body></html>",
+      "metadata": {"title": "BU Kosten", "description": "Short synthetic note.", "statusCode": 200}
+    }},
+    "https://www.example.com/faq": {"success": true, "data": {
+      "markdown": "# Häufige Fragen\n\n## Wie kündige ich?\n\nSynthetic.",
+      "rawHtml": "<html></html>",
+      "metadata": {"title": "FAQ", "description": "", "statusCode": 200}
+    }},
+    "https://www.example.org/guides/income-protection-comparison": {"success": true, "data": {
+      "markdown": "# Income protection comparison\n\n## How much does income protection cost?\n\nSynthetic analog text.\n\nUse our income protection calculator.",
+      "rawHtml": "<html><head><script type=\"application/ld+json\">{\"@type\":\"WebPage\"}</script></head></html>",
+      "metadata": {"title": "Income protection comparison", "description": "Synthetic analog guide.", "statusCode": 200}
+    }}
+  }
+}

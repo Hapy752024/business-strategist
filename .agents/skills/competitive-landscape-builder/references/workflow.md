@@ -38,6 +38,10 @@ Build artifacts only from schema-validated entities. Lane A matrices include onl
 
 Include the marketing analyzer's visibility, sales, service and retention assessment in the existing positioning narrative. Preserve strengths and unknowns alongside weaknesses. Generated matrices alone do not complete this analyst review. For foreign entrants use the operator-playbook workflow to verify early customer acquisition and outcome evidence; current scale or funding is not proof of first-two-year success.
 
+## Content inventory handoff
+
+For content/SEO planning, `analyze_competitor_marketing.py --content-inventory --landscape entity-landscape.json` inventories verified entities' content (see the competitor-marketing-analyzer workflow). Lanes map to `entity_type`: `competitive_market` → `competitor`, `similar_company` → `similar_company`, `capability_reference` → `capability_reference`; uncertain or excluded entities are not inventoried. Supplier content is not customer need; similar companies abroad are inspiration for format and structure only; a topic nobody covers is a demand question, not whitespace.
+
 ## Required artifacts
 
 `entity-landscape.json`, `competitive-market-matrix.md`, `offer-price-matrix.json`, `social-presence.json`, `similar-company-inspiration.md`, `capability-reference-library.md`, `positioning-hypotheses.md`, `quality-gate.json`, and optional `competitive-insight-handoff.json`.

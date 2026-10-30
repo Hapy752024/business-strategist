@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
-"""Analyze competitor marketing from public web pages."""
+"""Analyze competitor marketing from public web pages.
+
+`--content-inventory` inventories what competitors and similar companies publish (topics, questions, formats,
+depth) into competitor-content.json (schemas/competitor-content.schema.json). It records topics and structure,
+never reuses wording: no page body is stored, excerpts are capped at 300 characters, and robots.txt is respected.
+Supplier content shows what suppliers publish, not what customers need; similar companies and capability
+references are inspiration for format and structure only, never market evidence.
+"""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
+import html as html_lib
 import json
 import re
 import sys
@@ -11,6 +20,7 @@ import time
 import urllib.parse
 from pathlib import Path
 from typing import Any
+from urllib.robotparser import RobotFileParser
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -62,14 +72,14 @@ def deep_urls(url: str) -> list[str]:
     return [base + path for path in paths]
 
 
-def scrape_url(url: str) -> dict[str, Any]:
+def scrape_url(url: str, formats: list[str] | None = None) -> dict[str, Any]:
     _, api_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
     if not api_key:
         return {"ok": False, "status": "missing_credentials", "required_env": ["FIRECRAWL_API_KEY_HGINVESTOR"]}
     return http_post(
         "https://api.firecrawl.dev/v1/scrape",
         headers={"Authorization": f"Bearer {api_key}"},
-        data={"url": url, "formats": ["markdown"], "onlyMainContent": True},
+        data={"url": url, "formats": formats or ["markdown"], "onlyMainContent": True},
     )
 
 
@@ -438,6 +448,507 @@ def analyze_text(url: str, page_bodies: list[dict[str, Any]], entity_meta: dict[
     return result
 
 
+# ---------------------------------------------------------------------------
+# Content inventory (--content-inventory)
+#
+# What competitors and similar companies publish: topics, questions answered, formats and depth per page.
+# Records topics and structure only and never reuses wording: no page body is stored, only headings, schema
+# types, counts and a <=300-character excerpt per page. Supplier content shows what suppliers choose to publish,
+# not what customers need. Only verified same-market competitors (entity_type `competitor`) can signal market
+# coverage; similar companies and capability references are inspiration for format and structure only.
+# Robots.txt is checked before any page is scraped; a site whose robots.txt cannot be read (network/5xx) is skipped.
+# ---------------------------------------------------------------------------
+
+EXCERPT_LIMIT = 300
+LANE_TO_ENTITY_TYPE = {
+    "competitive_market": "competitor", "market_competitor": "competitor", "competitor": "competitor",
+    "similar_company": "similar_company", "cross_market_analog": "similar_company",
+    "capability_reference": "capability_reference",
+}
+ENTITY_TYPES = ("competitor", "similar_company", "capability_reference")
+ROBOTS_AGENT = "FirecrawlAgent"  # Firecrawl fetches the pages; groups for it fall back to `*`.
+EXCLUDED_PATH = re.compile(
+    r"(?:^|/)(?:impressum|imprint|legal|rechtliche[s-]?hinweise?|datenschutz\w*|privacy\w*|agb|terms\w*|nutzungsbedingungen|"
+    r"cookie\w*|disclaimer|widerruf\w*|karriere|careers?|jobs?|stellenangebote|login|log-in|signin|sign-in|anmelden|"
+    r"logout|register|registrierung|account|mein-konto|konto|my-account|profil|password\w*|passwort\w*|cart|warenkorb|"
+    r"basket|checkout|kasse)(?:/|$|[.?#-])", re.IGNORECASE)
+ASSET_SUFFIX = re.compile(r"\.(?:pdf|jpe?g|png|gif|svg|webp|zip|docx?|xlsx?|mp4|mp3|xml|json|css|js)$", re.IGNORECASE)
+CONTENT_PATH = re.compile(
+    r"ratgeber|guide|blog|magazin|wissen|lexikon|glossar|glossary|faq|fragen|hilfe|help|vergleich|compare|comparison|"
+    r"\bvs\b|rechner|calculator|tarif|kosten|preis|pricing|checklist|checkliste|tipps|article|artikel|news|stadt|city|local",
+    re.IGNORECASE)
+QUESTION_START = re.compile(
+    r"^(?:wie|was|wann|warum|wieso|weshalb|welche[rsmn]?|wer|wo|wohin|woher|wieviel|wie\s?viel|kann|können|muss|müssen|"
+    r"darf|ist|sind|gibt|lohnt|brauche|braucht|soll|sollte|how|what|when|why|which|who|where|can|do|does|is|are|should|will)\b",
+    re.IGNORECASE)
+CTA_VERB = re.compile(r"jetzt|kostenlos|vergleich|berechn|angebot|beratung|termin|anfrag|abschlie|start|get|book|try|sign up|quote|demo|contact|kontakt", re.IGNORECASE)
+DATE_TEXT = re.compile(
+    r"(?:Stand|Aktualisiert(?: am)?|Zuletzt aktualisiert(?: am)?|Last updated|Updated(?: on)?)\s*[:\-]?\s*"
+    r"(\d{4}-\d{2}-\d{2}|\d{1,2}\.\s?\d{1,2}\.\s?\d{4}|\d{1,2}\.?\s+[A-Za-zäöüÄÖÜ]+\s+\d{4}|[A-Z][a-z]+\s+\d{1,2},\s+\d{4})")
+STOPWORDS = {"für", "fuer", "und", "oder", "der", "die", "das", "den", "dem", "des", "ein", "eine", "einer", "mit", "von", "vom",
+             "zum", "zur", "bei", "auf", "aus", "ist", "wie", "was", "the", "and", "for", "with", "what", "how", "best", "beste", "test"}
+COVERAGE_HEURISTIC = {
+    "match": "every meaningful query token (6-char stem) appears in the page topic, title, headings, questions or URL path",
+    "covered_well": "a matched page with >=800 words, or >=400 words plus a format or >=3 answered questions",
+    "covered_thin": "matched pages exist but none meets covered_well",
+    "uncovered": "no inventoried page matched; sample limited by max_pages, so this is not proof of absence",
+}
+INVENTORY_CAVEATS = [
+    "Supplier content shows what suppliers choose to publish, not what customers need.",
+    "Only entity_type `competitor` (verified same-market) signals market coverage; similar companies and capability references are inspiration for format and structure only, never evidence that a topic matters in this market.",
+    "A topic every competitor covers thinly is a quality-gap hypothesis; a topic nobody covers is a demand question to check against search and customer voice, not proof of opportunity.",
+    "Topics and structure are recorded, never wording: no body text is stored and excerpts are capped at 300 characters.",
+    "Coverage is a heuristic over a sample of at most max_pages per site; uncovered means not found in the sample.",
+]
+
+
+def sha256_hex(raw: bytes) -> str:
+    return hashlib.sha256(raw).hexdigest()
+
+
+def map_site(base_url: str, limit: int = 500) -> dict[str, Any]:
+    _, api_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
+    if not api_key:
+        return {"ok": False, "status": "missing_credentials", "required_env": ["FIRECRAWL_API_KEY_HGINVESTOR"]}
+    return http_post(
+        "https://api.firecrawl.dev/v1/map",
+        headers={"Authorization": f"Bearer {api_key}"},
+        data={"url": base_url, "limit": limit, "includeSubdomains": False},
+        timeout=90,
+    )
+
+
+class LiveInventoryFetcher:
+    """Firecrawl map/scrape via the analyzer's helpers; robots.txt and sitemap.xml by direct HTTP."""
+
+    def __init__(self) -> None:
+        self.firecrawl_calls = {"map": 0, "scrape": 0}
+        self.credits_reported = 0
+
+    def _count(self, kind: str, response: dict[str, Any]) -> None:
+        self.firecrawl_calls[kind] += 1
+        body = response.get("body") if isinstance(response.get("body"), dict) else {}
+        data = body.get("data") if isinstance(body.get("data"), dict) else {}
+        used = (data.get("metadata") or {}).get("creditsUsed") if isinstance(data.get("metadata"), dict) else None
+        if isinstance(used, (int, float)):
+            self.credits_reported += used
+
+    def robots(self, base: str) -> dict[str, Any]:
+        response = http_get(base + "/robots.txt", timeout=20, max_bytes=512_000, max_text_chars=512_000)
+        body = response.get("body")
+        text = body.get("text") if isinstance(body, dict) else (body if isinstance(body, str) else None)
+        return {"status_code": response.get("status_code"), "text": text if response.get("ok") else None}
+
+    def map(self, base: str) -> list[str] | None:
+        response = map_site(base)
+        if response.get("status") == "missing_credentials":
+            return None
+        self._count("map", response)
+        body = response.get("body") if isinstance(response.get("body"), dict) else {}
+        return _map_links(body) if response.get("ok") else None
+
+    def sitemap(self, url: str) -> str | None:
+        response = http_get(url, timeout=30, max_bytes=8_000_000, max_text_chars=8_000_000)
+        body = response.get("body")
+        return body.get("text") if response.get("ok") and isinstance(body, dict) else None
+
+    def scrape(self, url: str) -> dict[str, Any]:
+        response = scrape_url(url, formats=["markdown", "rawHtml"])
+        if response.get("status") != "missing_credentials":
+            self._count("scrape", response)
+        body = response.get("body") if isinstance(response.get("body"), dict) else {}
+        return body if response.get("ok") else {"success": False, "error": response.get("error") or response.get("status")}
+
+
+class FixtureInventoryFetcher:
+    """Replay of recorded/synthetic robots, map, sitemap and scrape responses (tests and offline runs)."""
+
+    def __init__(self, fixture: dict[str, Any]) -> None:
+        self.fixture = fixture
+        self.firecrawl_calls = {"map": 0, "scrape": 0}
+        self.credits_reported = 0
+
+    def robots(self, base: str) -> dict[str, Any]:
+        return self.fixture.get("robots", {}).get(base) or {"status_code": 404, "text": None}
+
+    def map(self, base: str) -> list[str] | None:
+        response = self.fixture.get("map", {}).get(base)
+        return _map_links(response) if isinstance(response, dict) and response.get("success") else None
+
+    def sitemap(self, url: str) -> str | None:
+        return self.fixture.get("sitemaps", {}).get(url)
+
+    def scrape(self, url: str) -> dict[str, Any]:
+        return self.fixture.get("scrape", {}).get(url) or {"success": False, "error": "not_in_fixture"}
+
+
+def _map_links(body: dict[str, Any]) -> list[str]:
+    links = body.get("links") or []
+    return [str(item.get("url") if isinstance(item, dict) else item) for item in links if item]
+
+
+def _robots_parser(record: dict[str, Any]) -> RobotFileParser | None:
+    """None means robots.txt could not be read (network/5xx): the site is skipped, not assumed open."""
+    parser = RobotFileParser()
+    status = record.get("status_code")
+    if isinstance(status, int) and 400 <= status < 500:
+        parser.parse([])  # no robots.txt: crawling allowed
+        return parser
+    if status != 200 or record.get("text") is None:
+        return None
+    parser.parse(str(record["text"]).splitlines())
+    return parser
+
+
+def _sitemap_urls(fetcher: Any, base: str, robots: RobotFileParser) -> list[str]:
+    queue = list(robots.site_maps() or []) or [base + "/sitemap.xml"]
+    urls: list[str] = []
+    seen: set[str] = set()
+    while queue and len(seen) < 4:
+        sitemap_url = queue.pop(0)
+        if sitemap_url in seen:
+            continue
+        seen.add(sitemap_url)
+        text = fetcher.sitemap(sitemap_url) or ""
+        locs = [html_lib.unescape(value.strip()) for value in re.findall(r"(?is)<loc>(.*?)</loc>", text)]
+        if re.search(r"(?is)<sitemapindex", text):
+            queue.extend(locs)
+        else:
+            urls.extend(locs)
+    return urls
+
+
+def _content_priority(url: str) -> tuple[int, int]:
+    path = urllib.parse.urlsplit(url).path
+    return (0 if CONTENT_PATH.search(path) else 1 if path.strip("/") else 2, len(path))
+
+
+def _select_urls(base: str, candidates: list[str], robots: RobotFileParser, max_pages: int,
+                 focus_terms: list[str] | None = None) -> tuple[list[str], list[dict[str, str]], list[str]]:
+    keep: list[str] = []
+    excluded: list[dict[str, str]] = []
+    disallowed: list[str] = []
+    for url in dict.fromkeys(candidates):
+        if domain_of(url) != domain_of(base):
+            continue
+        path = urllib.parse.urlsplit(url).path or "/"
+        if ASSET_SUFFIX.search(path):
+            excluded.append({"url": url, "reason": "asset"})
+        elif EXCLUDED_PATH.search(path):
+            excluded.append({"url": url, "reason": "legal_careers_account_or_cart"})
+        elif not robots.can_fetch(ROBOTS_AGENT, url):
+            disallowed.append(url)
+        else:
+            keep.append(url)
+    focus = _stems(" ".join(focus_terms or []))
+    keep.sort(key=lambda url: (-len(focus & _stems(urllib.parse.urlsplit(url).path.replace("-", " ").replace("/", " "))), *_content_priority(url)))
+    return keep[:max_pages], excluded, disallowed
+
+
+def _clean(value: str, limit: int) -> str:
+    value = re.sub(r"!\[[^\]]*\]\([^)]*\)|\[([^\]]*)\]\([^)]*\)", r"\1", value)
+    value = re.sub(r"[*_`#>]+", " ", value)
+    return " ".join(value.split())[:limit]
+
+
+def _json_ld_nodes(raw_html: str) -> list[dict[str, Any]]:
+    nodes: list[dict[str, Any]] = []
+    for block in re.findall(r'(?is)<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', raw_html or ""):
+        try:
+            data = json.loads(block.strip())
+        except json.JSONDecodeError:
+            continue
+        stack = [data]
+        while stack:
+            node = stack.pop()
+            if isinstance(node, list):
+                stack.extend(node)
+            elif isinstance(node, dict):
+                nodes.append(node)
+                stack.extend(value for key, value in node.items() if key in {"@graph", "mainEntity", "hasPart", "itemListElement"})
+    return nodes
+
+
+def _types(node: dict[str, Any]) -> list[str]:
+    value = node.get("@type")
+    return [str(v) for v in (value if isinstance(value, list) else [value]) if v]
+
+
+def extract_questions(markdown: str, nodes: list[dict[str, Any]]) -> tuple[list[str], list[str]]:
+    """Question-form H2/H3 headings plus FAQPage Question names; returns (questions, h2/h3 headings)."""
+    headings = [_clean(h, 200) for h in re.findall(r"(?m)^#{2,3}\s+(.+?)\s*#*\s*$", markdown or "")]
+    found = [h for h in headings if h.endswith("?") or QUESTION_START.match(h)]
+    for node in nodes:
+        if "Question" in _types(node) and node.get("name"):
+            found.append(_clean(str(node["name"]), 200))
+    questions: list[str] = []
+    for q in found:
+        if q and q.casefold() not in {x.casefold() for x in questions}:
+            questions.append(q)
+    return questions[:40], [h for h in headings if h][:40]
+
+
+def detect_formats(url: str, markdown: str, raw_html: str, headings: list[str], schema_types: list[str]) -> list[str]:
+    path = urllib.parse.urlsplit(url).path.lower()
+    blob = " ".join([path, *headings, markdown[:4000] if markdown else ""]).lower()
+    html_lower = (raw_html or "").lower()
+    formats = []
+    if re.search(r"rechner|calculator|berechnen sie|beitragsrechner", blob):
+        formats.append("calculator")
+    if re.search(r"(?m)^\s*\|.*\|.*\|.*\|\s*$", markdown or "") or re.search(r"<table\b", html_lower):
+        formats.append("comparison_table")
+    if re.search(r"<video\b|youtube\.com/embed|player\.vimeo|/embed/video", html_lower) or "VideoObject" in schema_types:
+        formats.append("video")
+    if re.search(r"checklist|checkliste", blob) or len(re.findall(r"(?m)^\s*[-*]\s+\[[ xX]\]", markdown or "")) >= 2:
+        formats.append("checklist")
+    if re.search(r"\btool\b|konfigurator|quiz|selbsttest|\bcheck\b", blob):
+        formats.append("tool")
+    return formats
+
+
+def _last_updated(metadata: dict[str, Any], nodes: list[dict[str, Any]], markdown: str) -> str | None:
+    for key in ("article:modified_time", "modifiedTime", "dateModified", "og:updated_time"):
+        value = metadata.get(key)
+        if value:
+            return str(value[0] if isinstance(value, list) else value)[:40]
+    for node in nodes:
+        if node.get("dateModified"):
+            return str(node["dateModified"])[:40]
+    match = DATE_TEXT.search(markdown or "")
+    return match.group(1) if match else None
+
+
+def _primary_cta(markdown: str) -> str | None:
+    for candidate in extract_button_like_ctas(markdown or ""):
+        if CTA_VERB.search(candidate):
+            return candidate[:120]
+    return None
+
+
+def inventory_page(url: str, body: dict[str, Any], retrieved_at: str) -> dict[str, Any]:
+    data = body.get("data") if isinstance(body.get("data"), dict) else body
+    metadata = data.get("metadata") if isinstance(data.get("metadata"), dict) else {}
+    markdown = str(data.get("markdown") or "")
+    raw_html = str(data.get("rawHtml") or data.get("html") or "")
+    nodes = _json_ld_nodes(raw_html)
+    schema_types = sorted({t for node in nodes for t in _types(node)} - {"Question", "Answer"})
+    questions, headings = extract_questions(markdown, nodes)
+    h1 = re.search(r"(?m)^#\s+(.+?)\s*$", markdown)
+    title = _clean(str(metadata.get("title") or ""), 200)
+    topic = _clean(h1.group(1), 200) if h1 else title
+    paragraphs = [p for p in re.split(r"\n\s*\n", markdown) if p.strip() and not p.lstrip().startswith(("#", "|", "-", "*", "["))]
+    excerpt = _clean(str(metadata.get("description") or "") or (paragraphs[0] if paragraphs else ""), EXCERPT_LIMIT)
+    page_type = classify_page_type(url, title, markdown[:2000])
+    path = urllib.parse.urlsplit(url).path.lower()
+    if re.search(r"faq|fragen", path) or "FAQPage" in schema_types:
+        page_type = "faq"
+    elif re.search(r"glossar|lexikon|glossary", path):
+        page_type = "glossary"
+    elif re.search(r"rechner|calculator", path):
+        page_type = "calculator"
+    elif re.search(r"vergleich|compare|comparison|\bvs\b", path):
+        page_type = "comparison"
+    return {
+        "url": url,
+        "page_type": page_type,
+        "topic": topic or title or url,
+        "title": title,
+        "headings": headings,
+        "questions_answered": questions,
+        "formats": detect_formats(url, markdown, raw_html, headings, schema_types),
+        "word_count": len(re.findall(r"\w+", _clean(markdown, 10**7))),
+        "schema_types": schema_types,
+        "primary_cta": _primary_cta(markdown),
+        "last_updated": _last_updated(metadata, nodes, markdown),
+        "excerpt": excerpt,
+        "retrieved_at": retrieved_at,
+    }
+
+
+def inventory_site(base_url: str, lane: str, max_pages: int = 25, *, entity: str = "", fetcher: Any = None,
+                   focus_terms: list[str] | None = None) -> dict[str, Any]:
+    """Inventory one site's content pages (see the section comment for what is and is not recorded).
+
+    `focus_terms` (the clusters' queries) rank URLs whose path shares terms with them first, so a small
+    `max_pages` sample of a large site is spent on relevant pages; content-type paths come next.
+    """
+    entity_type = LANE_TO_ENTITY_TYPE.get(lane)
+    if not entity_type:
+        raise ValueError(f"lane {lane!r} is not an inventory lane")
+    fetcher = fetcher or LiveInventoryFetcher()
+    base = normalize_base_url(base_url)
+    site: dict[str, Any] = {
+        "entity": entity or domain_of(base), "entity_type": entity_type, "lane": lane, "base_url": base,
+        "max_pages": max_pages, "discovery": None, "pages": [], "excluded": [], "robots_disallowed": [],
+        "failures": [], "gaps": [],
+    }
+    robots = _robots_parser(fetcher.robots(base))
+    if robots is None:
+        site["gaps"].append("robots.txt could not be read; site skipped rather than assumed open.")
+        return site
+    links = fetcher.map(base)
+    site["discovery"] = "firecrawl_map" if links else "sitemap"
+    if not links:
+        links = _sitemap_urls(fetcher, base, robots)
+        if not links:
+            site["discovery"] = "homepage_only"
+            links = [base + "/"]
+    selected, site["excluded"], site["robots_disallowed"] = _select_urls(base, links, robots, max_pages, focus_terms)
+    for url in selected:
+        body = fetcher.scrape(url)
+        if not body.get("success", True) or not isinstance(body.get("data", body), dict):
+            site["failures"].append({"url": url, "error": str(body.get("error", "scrape_failed"))[:200]})
+            continue
+        site["pages"].append(inventory_page(url, body, now_iso()))
+    if site["failures"]:
+        site["gaps"].append(f"{len(site['failures'])} page(s) failed to scrape.")
+    return site
+
+
+def _stems(text: str) -> set[str]:
+    return {t[:6] for t in re.findall(r"\w+", text.casefold()) if len(t) >= 3 and t not in STOPWORDS}
+
+
+def _cluster_terms(cluster: dict[str, Any]) -> list[str]:
+    return [str(q.get("query") if isinstance(q, dict) else q) for q in cluster.get("queries", []) if q]
+
+
+def _page_matches(page: dict[str, Any], terms: list[str]) -> bool:
+    path = urllib.parse.urlsplit(page["url"]).path.replace("-", " ").replace("/", " ")
+    tokens = _stems(" ".join([page.get("topic", ""), page.get("title", ""), path, *page.get("headings", []), *page.get("questions_answered", [])]))
+    return any((stems := _stems(term)) and stems <= tokens for term in terms)
+
+
+def _depth(page: dict[str, Any]) -> str:
+    words = page.get("word_count", 0)
+    if words >= 800 or (words >= 400 and (page.get("formats") or len(page.get("questions_answered", [])) >= 3)):
+        return "covered_well"
+    return "covered_thin"
+
+
+def _bind(out_dir: Path, rel: str, data: Any) -> dict[str, str]:
+    raw = (json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True) + "\n").encode("utf-8")
+    target = out_dir / rel
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(raw)
+    return {"path": rel, "sha256": sha256_hex(raw)}
+
+
+def coverage_matrix(inventories: list[dict[str, Any]], clusters: list[dict[str, Any]], *, out_dir: Path | str) -> dict[str, Any]:
+    """Per content-opportunity cluster and entity: covered_well | covered_thin | uncovered, with bound page refs.
+
+    Refs are `{path, sha256}` bindings relative to `out_dir` (the directory of competitor-content.json): each
+    covering page is written to `inventory/<entity>/pNN.json`, each site to `inventory/<entity>/index.json`
+    (cited by uncovered rows as the sample that was checked). Only `competitor` rows set
+    `market_competitor_coverage`; analog rows appear under `inspiration` only.
+    """
+    out_dir = Path(out_dir)
+    rows: list[dict[str, Any]] = []
+    page_refs: dict[tuple[str, str], dict[str, str]] = {}
+    index_refs: dict[str, dict[str, str]] = {}
+    for site in inventories:
+        slug = slugify(site["entity"])
+        for n, page in enumerate(site["pages"], start=1):
+            page_refs[(site["entity"], page["url"])] = _bind(out_dir, f"inventory/{slug}/p{n:02d}.json", {"entity": site["entity"], "entity_type": site["entity_type"], **page})
+        index_refs[site["entity"]] = _bind(out_dir, f"inventory/{slug}/index.json", {k: v for k, v in site.items() if k != "pages"} | {"page_urls": [p["url"] for p in site["pages"]]})
+    summaries: list[dict[str, Any]] = []
+    for cluster in clusters:
+        cid = str(cluster.get("cluster_id") or "").strip() or None
+        terms = _cluster_terms(cluster) or ([cid] if cid else [])
+        topic = terms[0] if terms else (cid or "topic")
+        by_type: dict[str, list[str]] = {t: [] for t in ENTITY_TYPES}
+        inspiration: list[dict[str, Any]] = []
+        for site in inventories:
+            matched = [p for p in site["pages"] if _page_matches(p, terms)]
+            coverage = "uncovered" if not matched else ("covered_well" if any(_depth(p) == "covered_well" for p in matched) else "covered_thin")
+            refs = [page_refs[(site["entity"], p["url"])] for p in matched] or [index_refs[site["entity"]]]
+            questions = list(dict.fromkeys(q for p in matched for q in p["questions_answered"]))
+            rows.append({"topic": topic, "cluster_id": cid, "questions": questions, "refs": refs,
+                         "entity": site["entity"], "entity_type": site["entity_type"], "coverage": coverage})
+            by_type[site["entity_type"]].append(coverage)
+            if site["entity_type"] != "competitor" and matched:
+                inspiration.append({"entity": site["entity"], "entity_type": site["entity_type"], "coverage": coverage,
+                                    "formats": sorted({f for p in matched for f in p["formats"]}),
+                                    "page_types": sorted({p["page_type"] for p in matched})})
+        competitor = by_type["competitor"]
+        if not competitor:
+            interpretation = "no_market_competitor_inventoried"
+        elif "covered_well" in competitor:
+            interpretation = "covered_by_market_competitors"
+        elif "covered_thin" in competitor:
+            interpretation = "quality_gap_hypothesis"
+        else:
+            interpretation = "demand_question"
+        summaries.append({"cluster_id": cid, "topic": topic,
+                          "by_entity_type": {t: {"entities": len(v), "covered_well": v.count("covered_well"), "covered_thin": v.count("covered_thin"), "uncovered": v.count("uncovered")} for t, v in by_type.items()},
+                          "market_competitor_coverage": any(c != "uncovered" for c in competitor),
+                          "interpretation": interpretation, "inspiration": inspiration})
+    return {"schema_version": 1, "generated_at": now_iso(), "caveats": INVENTORY_CAVEATS, "heuristics": COVERAGE_HEURISTIC,
+            "rows": rows, "cluster_summary": summaries}
+
+
+INTERPRETATION_TEXT = {
+    "covered_by_market_competitors": "covered by at least one market competitor",
+    "quality_gap_hypothesis": "market competitors cover it only thinly: quality-gap hypothesis",
+    "demand_question": "no market competitor covers it: demand question for search and customer voice, not proof of opportunity",
+    "no_market_competitor_inventoried": "no market competitor inventoried: no market signal",
+}
+
+
+def render_content_inventory(result: dict[str, Any], inventories: list[dict[str, Any]], skipped: list[dict[str, str]], fetcher: Any) -> str:
+    lines = ["# Competitor and similar-company content inventory", "", "## Read this first", ""]
+    lines += [f"- {c}" for c in result["caveats"]]
+    lines += ["", "## Sites", "", "| Entity | Type | Discovery | Pages | Excluded | Robots-disallowed | Failures |", "| --- | --- | --- | --- | --- | --- | --- |"]
+    for s in inventories:
+        lines.append(f"| {s['entity']} | {s['entity_type']} | {s['discovery'] or 'skipped'} | {len(s['pages'])} | {len(s['excluded'])} | {len(s['robots_disallowed'])} | {len(s['failures'])} |")
+    for item in skipped:
+        lines.append(f"| {item['entity']} | not inventoried | {item['reason']} | 0 | - | - | - |")
+    lines += ["", f"Firecrawl calls: map {fetcher.firecrawl_calls['map']}, scrape {fetcher.firecrawl_calls['scrape']} (credits reported by responses: {fetcher.credits_reported or 'not reported'}).",
+              "", "## Coverage by cluster", "", "| Cluster | Competitors (well/thin/none) | Similar companies | Capability refs | Reading |", "| --- | --- | --- | --- | --- |"]
+    for s in result["cluster_summary"]:
+        cell = lambda t: "{covered_well}/{covered_thin}/{uncovered}".format(**s["by_entity_type"][t])  # noqa: E731
+        lines.append(f"| {s['cluster_id'] or s['topic']} | {cell('competitor')} | {cell('similar_company')} | {cell('capability_reference')} | {INTERPRETATION_TEXT[s['interpretation']]} |")
+    lines += ["", "## Pages", ""]
+    for s in inventories:
+        lines.append(f"### {s['entity']} ({s['entity_type']})")
+        for p in s["pages"]:
+            lines.append(f"- {p['url']} | {p['page_type']} | {p['word_count']} words | questions {len(p['questions_answered'])} | formats {', '.join(p['formats']) or '-'} | schema {', '.join(p['schema_types']) or '-'} | updated {p['last_updated'] or '-'}")
+        for gap in s["gaps"]:
+            lines.append(f"- Gap: {gap}")
+        lines.append("")
+    return "\n".join(lines) + "\n"
+
+
+def main_content_inventory(args: argparse.Namespace) -> int:
+    out_dir = Path(args.out or args.out_dir or "")
+    if not args.landscape or not args.clusters or not str(out_dir).strip(". "):
+        print("--content-inventory needs --landscape, --clusters and --out", file=sys.stderr)
+        return 2
+    landscape = json.loads(Path(args.landscape).read_text(encoding="utf-8"))
+    clusters_doc = json.loads(Path(args.clusters).read_text(encoding="utf-8"))
+    clusters = clusters_doc.get("rows", []) if isinstance(clusters_doc, dict) else clusters_doc
+    fetcher: Any = FixtureInventoryFetcher(json.loads(Path(args.fixture_inventory_json).read_text(encoding="utf-8"))) if args.fixture_inventory_json else LiveInventoryFetcher()
+    inventories: list[dict[str, Any]] = []
+    skipped: list[dict[str, str]] = []
+    for entity in (landscape.get("entities", []) if isinstance(landscape, dict) else landscape)[: args.limit]:
+        name = str(entity.get("name") or domain_of(str(entity.get("url", ""))))
+        lane = str(entity.get("primary_lane") or entity.get("lane") or "")
+        if lane not in LANE_TO_ENTITY_TYPE or entity.get("verification_status", "verified") != "verified" or not entity.get("url"):
+            skipped.append({"entity": name, "reason": f"lane {lane or 'missing'} / {entity.get('verification_status', 'unknown')}: not inventoried"})
+            continue
+        inventories.append(inventory_site(str(entity["url"]), lane, args.max_pages, entity=name, fetcher=fetcher,
+                                          focus_terms=[t for c in clusters for t in _cluster_terms(c)]))
+    result = coverage_matrix(inventories, clusters, out_dir=out_dir)
+    result["firecrawl_calls"] = dict(fetcher.firecrawl_calls)
+    result["skipped_entities"] = skipped
+    write_json(out_dir / "competitor-content.json", result)
+    (out_dir / "competitor-content.md").write_text(render_content_inventory(result, inventories, skipped, fetcher), encoding="utf-8")
+    print(json.dumps({"out": str(out_dir), "sites": len(inventories), "pages": sum(len(s["pages"]) for s in inventories),
+                      "rows": len(result["rows"]), "skipped_entities": len(skipped), "firecrawl_calls": fetcher.firecrawl_calls,
+                      "credits_reported": fetcher.credits_reported}, indent=2))
+    return 0 if inventories else 1
+
+
 def write_marketing_plan(run_dir: Path, args: argparse.Namespace, urls: list[str]) -> None:
     source_note = f"competitors.json at `{args.competitors_json}`" if args.competitors_json else f"{len(urls)} URL argument(s)"
     lines = [
@@ -532,7 +1043,7 @@ def write_report(run_dir: Path, args: argparse.Namespace, analyses: list[dict[st
     (run_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Analyze public competitor marketing pages.")
     parser.add_argument("--topic", default="")
     parser.add_argument("--competitor-url", action="append", default=[], help="Competitor homepage or landing page URL. Repeatable.")
@@ -544,12 +1055,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--case", default="", help="Registered case ID within --workspace.")
     parser.add_argument("--out-dir", default="")
     parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
+    parser.add_argument("--content-inventory", action="store_true", help="Inventory content topics, questions, formats and depth of entities from --landscape against --clusters; writes competitor-content.json/.md to --out.")
+    parser.add_argument("--landscape", default="", help="entity-landscape.json (content-inventory mode).")
+    parser.add_argument("--clusters", default="", help="content-opportunities.json whose rows are the clusters (content-inventory mode).")
+    parser.add_argument("--out", default="", help="Output directory (content-inventory mode).")
+    parser.add_argument("--max-pages", type=int, default=25, help="Pages scraped per site (content-inventory mode).")
+    parser.add_argument("--fixture-inventory-json", default="", help="Offline robots/map/sitemap/scrape replay (content-inventory mode).")
     parser.add_argument("--legacy-output", action="store_true", help="Removed: the projects/research/evidence-scout layout is gone (now projects/_archive, read-only). Use --out-dir for an explicit path.")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
-def main() -> int:
-    args = parse_args()
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    if args.content_inventory:
+        return main_content_inventory(args)
     urls = list(args.competitor_url)
     competitor_items: dict[str, dict[str, Any]] = {}
     if args.competitors_json:

@@ -11,6 +11,93 @@
     "schema_version": {
       "const": 1
     },
+    "generated_at": {
+      "type": "string"
+    },
+    "caveats": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "heuristics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "cluster_summary": {
+      "type": "array",
+      "description": "Per-cluster reading. Only competitor rows set market_competitor_coverage; similar companies and capability references appear under inspiration only.",
+      "items": {
+        "type": "object",
+        "required": [
+          "cluster_id",
+          "topic",
+          "by_entity_type",
+          "market_competitor_coverage",
+          "interpretation",
+          "inspiration"
+        ],
+        "properties": {
+          "cluster_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "topic": {
+            "type": "string"
+          },
+          "by_entity_type": {
+            "type": "object"
+          },
+          "market_competitor_coverage": {
+            "type": "boolean"
+          },
+          "interpretation": {
+            "enum": [
+              "covered_by_market_competitors",
+              "quality_gap_hypothesis",
+              "demand_question",
+              "no_market_competitor_inventoried"
+            ]
+          },
+          "inspiration": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "entity",
+                "entity_type"
+              ],
+              "properties": {
+                "entity_type": {
+                  "enum": [
+                    "similar_company",
+                    "capability_reference"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "firecrawl_calls": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "skipped_entities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
     "rows": {
       "type": "array",
       "items": {
