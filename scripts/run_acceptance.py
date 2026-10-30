@@ -12,9 +12,13 @@ A live run spends model tokens (capped by --model-budget-usd) and paid evidence 
 cannot be enforced inside the tree under test: the cap is stated in the prompt and spend is measured
 before/after from provider account endpoints and recorded in the scorecard.
 
-Model cost is the sum of `total_cost_usd` over the result event of every round. The first smoke run must
-confirm that a resumed invocation reports per-call cost, not a session-cumulative figure; if it is
-cumulative, this sum overstates cost. A round killed on timeout emits no result event, so its cost is unreported.
+Model cost: `total_cost_usd` is session-cumulative across `--resume` and repeats on every result event (one
+round can emit several, e.g. background-agent notifications), as the 7.2 smoke run showed. Model cost is
+therefore the maximum `total_cost_usd` per session; per-round cost is the difference of consecutive maxima.
+Whether `--max-budget-usd` caps one invocation or the whole session is unverified; the runner takes the safer
+reading and passes the remaining budget (model budget minus cumulative cost) on every round, which is
+correct if the cap is per invocation and stricter than needed if it is per session.
+A round killed on timeout may emit no result event, so its cost can be unreported.
 """
 from __future__ import annotations
 
@@ -184,6 +188,16 @@ def _kw_hit(keyword: str, text: str) -> bool:
     return re.search(r'(?<![a-z0-9])' + re.escape(kw) + right, text) is not None
 
 
+GATE_CUE = re.compile(r'(?i)(override|pain[- ]first|problem_validation)')
+OPTIONS_LIST = re.compile(r'(?m)^\s*\d+[.)]\s+\S')
+OPTIONS_CUE = re.compile(r"(?i)(your call|option|choose|which|tell me|what i need from you|say:|decide|decision)")
+
+
+def offers_options(text: str) -> bool:
+    """A numbered options list (two or more items) next to a choice cue, as in 'Your call: 1. ... 2. ...'."""
+    return len(OPTIONS_LIST.findall(text)) >= 2 and OPTIONS_CUE.search(text) is not None
+
+
 INTAKE_CAP_AFTER = 4  # answered intake rounds before the feeder stops inviting more questions
 INTAKE_CAP_TEXT = 'No more intake questions; proceed under stated assumptions through all remaining steps.'
 
@@ -211,15 +225,23 @@ class Feeder:
         return next((e for e in self.data.get('answers', []) if e.get('id') == entry_id), None)
 
     def match(self, text: str) -> list[dict]:
+        tail = text[-1500:]
+        whole = offers_options(tail) or GATE_CUE.search(tail) is not None
         questions = question_sentences(text)[-2:]  # only the closing question(s) of the final message
-        context = ' '.join(questions) if questions else text[-600:]
+        # Options lists and gate requests are often not phrased as questions: match the whole final message then.
+        context = text if whole else (' '.join(questions) if questions else text[-600:])
         context = context.lower()
         scored = []
         for order, entry in enumerate(self.data.get('answers', [])):
             hits = sum(_kw_hit(k, context) for k in entry.get('keywords', []))
             if hits:
                 scored.append((-hits, order, entry))
-        return [e for _, _, e in sorted(scored, key=lambda t: (t[0], t[1]))]
+        ranked = [e for _, _, e in sorted(scored, key=lambda t: (t[0], t[1]))]
+        if whole:
+            gate = [e for e in ranked if e.get('id') == 'gate_override']
+            # The gate decision is the decision-changing one; otherwise keep the two strongest matches.
+            return gate if gate and GATE_CUE.search(tail) else ranked[:2]
+        return ranked
 
     def text_for(self, entry: dict) -> str:
         if entry.get('answer'):
@@ -239,7 +261,8 @@ class Feeder:
         text = final_text or ''
         if self.completed(text):
             return None
-        asks = bool(question_sentences(text[-800:])) or bool(INTAKE_PATTERN.search(text[-400:]))
+        asks = (bool(question_sentences(text[-800:])) or bool(INTAKE_PATTERN.search(text[-400:]))
+                or offers_options(text[-1500:]) or GATE_CUE.search(text[-1500:]) is not None)
         if asks:
             matched = self.match(text)
             kind = 'answer' if matched else 'generic'
@@ -338,7 +361,11 @@ def hook_denials(parsed: dict) -> dict:
             if HOOK_EVENT_DENY_RE.search(dumped):
                 events.append({'line': ev['line'], 'tool': str(ev['obj'].get('hook_name') or ev['obj'].get('subtype')),
                                'input': '', 'reason': dumped[:300]})
-    # A hook denial is reported both as a hook event and as an error tool result; count each line once.
+    # A hook denial is reported both as a hook event and as an error tool result: drop the hook event when a
+    # denied tool result for the same tool sits within 10 lines.
+    results = [e for e in events if not e['tool'].startswith('PreToolUse:')]
+    events = [e for e in events if not (e['tool'].startswith('PreToolUse:') and any(
+        r['tool'] == e['tool'].split(':', 1)[1] and abs(r['line'] - e['line']) <= 10 for r in results))]
     seen, unique = set(), []
     for e in events:
         key = (e['line'], e['tool'])
@@ -635,8 +662,29 @@ def gate_sequence(ctx: Ctx, check: dict) -> Result:
     return True, _line_ref(ctx, first_override), f'gate: blocked, overridden, then {len(late)} downstream call(s)'
 
 
+QUOTA_RE = re.compile(r'(?i)(\b402\b[^\n]{0,40}payment required|\b429\b[^\n]{0,40}too many|usage limit exceeded'
+                      r'|quota (exceeded|exhausted)|insufficient (credits?|balance)|\"status\"\s*:\s*402)')
+
+
+def quota_events(ctx: Ctx) -> list[dict]:
+    """Tool calls whose result says a provider is out of quota or credit (a coverage gap, not absence of demand)."""
+    out = []
+    for ev in ctx.events:
+        res = ev.get('result') if ev['kind'] == 'tool_use' else None
+        if not res or not QUOTA_RE.search(res['text'][:4000]):
+            continue
+        if ev['name'].startswith('mcp__'):
+            provider = ev['name'].split('__')[1]
+        else:
+            script = re.search(r'scripts/[\w/.-]+\.py', ev['input_text'])
+            provider = script.group(0) if script else ev['name']
+        out.append({'line': ev['line'] + 1, 'provider': provider})
+    return out
+
+
 def provider_status(ctx: Ctx) -> dict:
     ok, failed = set(), set()
+    quota = {q['provider'] for q in quota_events(ctx)}
     for p in ctx.glob('**/summary.json'):
         try:
             data = json.loads(ctx.read(p))
@@ -650,8 +698,9 @@ def provider_status(ctx: Ctx) -> dict:
             status = (attempts[-1].get('status') if attempts and isinstance(attempts[-1], dict) else
                       (info.get('status') if isinstance(info, dict) else None))
             (ok if status in ('ok', 'success', 'searched_empty', 'empty') else failed).add(name)
-    return {'attempted': sorted(ok | failed), 'ok': sorted(ok), 'failed': sorted(failed),
-            'source': 'summary.json provider attempts in eval-project artifacts'}
+    failed |= quota
+    return {'attempted': sorted(ok | failed), 'ok': sorted(ok - failed), 'failed': sorted(failed),
+            'source': 'summary.json provider attempts in eval-project artifacts, plus quota/402 tool results in the transcript'}
 
 
 def provider_gaps(ctx: Ctx, check: dict) -> Result:
@@ -661,8 +710,8 @@ def provider_gaps(ctx: Ctx, check: dict) -> Result:
     for ref, text in docs:
         if any(p.search(text) for p in absence):
             return False, ref, 'proxy: an assistant round states absence of demand'
-    if not docs or not ctx.glob('**/summary.json'):
-        return None, None, 'not exercised: needs at least one assistant round and one run summary.json'
+    if not docs or not (ctx.glob('**/summary.json') or quota_events(ctx)):
+        return None, None, 'not exercised: needs an assistant round and a run summary.json or a provider quota error'
     if not status['failed']:
         return None, None, 'not exercised: no provider failure in run summaries, so gap reporting was not tested'
     gaps = [re.compile(p) for p in check['gap_patterns']]
@@ -712,13 +761,15 @@ def score(out_dir: Path, checkpoints: Path, scenario_dir: Path | None = None) ->
         status = 'pass' if ok is True else ('not_exercised' if ok is None else 'fail')
         cps.append({'id': cp['id'], 'stage': cp['stage'], 'title': cp['title'], 'passed': ok is True, 'status': status,
                     'proxy': bool(cp.get('proxy')), 'evidence_path': evidence, 'detail': detail})
-    model_usd, tokens, perm = 0.0, {'input': 0, 'output': 0, 'cache_creation': 0, 'cache_read': 0}, 0
-    session = None
+    tokens, perm = {'input': 0, 'output': 0, 'cache_creation': 0, 'cache_read': 0}, 0
+    session, per_session = None, {}
     for ev in ctx.events:
         if ev['kind'] != 'result':
             continue
         obj = ev['obj']
-        model_usd += _num(obj.get('total_cost_usd')) or 0.0
+        sid = str(obj.get('session_id') or '')
+        # total_cost_usd is session-cumulative and repeated: keep the maximum per session, never sum.
+        per_session[sid] = max(per_session.get(sid, 0.0), _num(obj.get('total_cost_usd')) or 0.0)
         usage = obj.get('usage') or {}
         tokens['input'] += int(usage.get('input_tokens') or 0)
         tokens['output'] += int(usage.get('output_tokens') or 0)
@@ -726,18 +777,32 @@ def score(out_dir: Path, checkpoints: Path, scenario_dir: Path | None = None) ->
         tokens['cache_read'] += int(usage.get('cache_read_input_tokens') or 0)
         perm += len(obj.get('permission_denials') or [])
         session = obj.get('session_id') or session
+    model_usd = sum(per_session.values())
     budget = _num(manifest.get('budget_usd'))
     provider_spend, over = spend_summary(out_dir, budget)
     passed = sum(c['passed'] for c in cps)
     notes = [
+        'Model cost is the maximum cumulative total_cost_usd per session; token totals sum per-call usage of every '
+        'result event (verify against modelUsage if exact token counts matter).',
         'Checkpoints marked proxy test presence or a countable stand-in, not the quality judgement in their title.',
         'Provider spend is measured, not enforced; see cost.provider_spend.notes.',
         'Artifacts are copied only from the eval project directories; work written elsewhere is listed in writes_outside_eval, not scored.',
     ]
-    host_writes = [w for w in manifest.get('writes_outside_eval', []) if str(w).startswith('host:')]
-    if host_writes:
-        notes.insert(0, f'WARNING: {len(host_writes)} file(s) changed under a host checkout projects/ tree during the run '
-                        '(possibly the agent writing by absolute path, or a concurrent session); inspect writes_outside_eval.')
+    host = classify_host_writes(ctx, [w for w in manifest.get('writes_outside_eval', []) if str(w).startswith('host:')])
+    if host['attributed']:
+        notes.insert(0, f"WARNING: {len(host['attributed'])} host file change(s) under a projects/ tree match paths the "
+                        'agent used in tool calls; inspect host_writes.attributed.')
+    if host['unattributed_possibly_concurrent']:
+        notes.append(f"{len(host['unattributed_possibly_concurrent'])} host projects/ change(s) never referenced in the "
+                     'transcript; likely a concurrent session (listed under host_writes.unattributed_possibly_concurrent).')
+    quota = quota_events(ctx)
+    if quota:
+        by = {}
+        for q in quota:
+            by[q['provider']] = by.get(q['provider'], 0) + 1
+        notes.append('Provider quota/credit errors (402/429/usage limit): ' +
+                     ', '.join(f'{k} ({v} call(s))' for k, v in sorted(by.items())) +
+                     '. Counted as provider failures for cp11: a coverage gap, never absence of demand.')
     killed = [r['round'] for r in ctx.rounds if r.get('timed_out')]
     if killed:
         notes.append(f'Round(s) {killed} were killed on timeout and emitted no result event: their model cost is unreported.')
@@ -764,9 +829,24 @@ def score(out_dir: Path, checkpoints: Path, scenario_dir: Path | None = None) ->
         'hook_denials': hook_denials(ctx.parsed),
         'permission_denials': perm,
         'writes_outside_eval': list(manifest.get('writes_outside_eval', [])),
+        'host_writes': host,
         'friction': str(manifest.get('friction', '')),
         'honesty_notes': notes,
     }
+
+
+def classify_host_writes(ctx: Ctx, entries: list[str]) -> dict:
+    """Attributed if the changed path, or a parent down to projects/<name>, appears in any tool input."""
+    corpus = '\n'.join(ev['input_text'] for ev in ctx.events if ev['kind'] == 'tool_use')
+    out = {'attributed': [], 'unattributed_possibly_concurrent': []}
+    for entry in entries:
+        path = Path(str(entry)[len('host:'):])
+        parts = path.parts
+        stop = parts.index('projects') + 2 if 'projects' in parts else len(parts)
+        candidates = [path, *[q for q in path.parents if len(q.parts) >= stop]]
+        hit = any(str(c) in corpus for c in candidates)
+        out['attributed' if hit else 'unattributed_possibly_concurrent'].append(str(entry))
+    return out
 
 
 def write_scorecard(out_dir: Path, card: dict) -> Path:
@@ -976,12 +1056,12 @@ def run_round(cmd: list[str], *, cwd: Path, transcript: Path, stderr_log: Path, 
         session = obj.get('session_id') or session
         if obj.get('type') == 'result':
             final = obj.get('result') if isinstance(obj.get('result'), str) else final
-            cost += _num(obj.get('total_cost_usd')) or 0.0
+            cost = max(cost, _num(obj.get('total_cost_usd')) or 0.0)  # session-cumulative, repeated per event
         elif obj.get('type') == 'assistant' and obj.get('parent_tool_use_id') in (None, ''):
             texts = [b.get('text', '') for b in (obj.get('message') or {}).get('content') or [] if isinstance(b, dict) and b.get('type') == 'text']
             final = texts[-1] if texts and texts[-1] else final
     return {'line_start': start_lines, 'line_end': end_lines, 'session_id': session, 'final_text': final,
-            'cost_usd': round(cost, 4), 'exit_code': proc.returncode, 'timed_out': timed_out,
+            'session_cost_usd': round(cost, 4), 'exit_code': proc.returncode, 'timed_out': timed_out,
             'duration_s': round(time.monotonic() - started, 1)}
 
 
@@ -1109,9 +1189,11 @@ def _live(scenario_dir, out_dir, wt, eval_dirs, writes, prompt, slug, alt_slug, 
                                  tools_blocked=tools_blocked, model=model)
             info = run_round(cmd, cwd=wt, transcript=transcript, stderr_log=stderr_log,
                              timeout_s=min(ROUND_TIMEOUT_S, remaining_wall))
-            spent += info['cost_usd']
+            previous = spent
+            spent = max(spent, info['session_cost_usd'])  # cumulative across --resume
             session = info['session_id'] or session
             record = {'round': rnd, 'kind': kind, 'matched_ids': matched, 'prompt': message,
+                      'cost_usd': round(spent - previous, 4),
                       **{k: v for k, v in info.items() if k != 'final_text'}, 'final_text_tail': info['final_text'][-600:]}
             with rounds_log.open('a', encoding='utf-8') as fh:
                 fh.write(json.dumps(record, ensure_ascii=False) + '\n')

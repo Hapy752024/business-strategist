@@ -110,7 +110,7 @@ def test_scorecard_validates_schema(tmp_path):
     card = acc.score(out, CHECKPOINTS)
     jsonschema.validate(card, json.loads(SCHEMA.read_text()))
     assert len(card['checkpoints']) == 11
-    assert card['cost']['model_usd'] == pytest.approx(3.5)
+    assert card['cost']['model_usd'] == pytest.approx(2.0)  # cumulative max, not 1.5 + 2.0
     assert card['tokens']['input'] == 300
     assert card['providers']['failed'] == ['reddit']
     assert card['cost']['provider_spend']['complete'] is False  # SerpApi searches are unpriced
@@ -309,7 +309,7 @@ def test_agent_cannot_see_scoring_files(tmp_path, monkeypatch):
         wt = Path(cwd)
         seen['evals'] = (wt / 'evals/acceptance').exists()
         seen['files'] = sorted(p.name for p in wt.rglob('*') if p.is_file())
-        return {'line_start': 0, 'line_end': 0, 'session_id': None, 'final_text': '', 'cost_usd': 0.0,
+        return {'line_start': 0, 'line_end': 0, 'session_id': None, 'final_text': '', 'session_cost_usd': 0.0,
                 'exit_code': 0, 'timed_out': False, 'duration_s': 0.0}
     monkeypatch.setattr(acc, 'run_round', fake_round)
     acc.run_acceptance(SCENARIO, tmp_path / 'out', reference_project=_reference(tmp_path), now='20261030-120000')
@@ -443,3 +443,105 @@ def test_cp01_counts_script_created_workspaces(tmp_path):
     (out / 'transcript.jsonl').write_text(''.join(lines[:1] + [write, _result('w0', 'ok')] + lines[1:]))
     by_id = {c['id']: c for c in acc.score(out, CHECKPOINTS)['checkpoints']}
     assert by_id['cp01']['passed'] is False
+
+
+def _results(costs, session='s1'):
+    return ''.join(_line({'type': 'result', 'session_id': session, 'total_cost_usd': c, 'result': 'x',
+                          'usage': {'input_tokens': 1, 'output_tokens': 1}}) for c in costs)
+
+
+def test_model_cost_is_cumulative_max_not_sum(tmp_path):
+    out = tmp_path / 'o'
+    # Round 0 emits one result; round 1 repeats the cumulative figure on several events (background notifications).
+    _write(out / 'transcript.jsonl', _results([0.276]) + _results([2.033, 2.033, 2.033, 3.205, 3.205]))
+    _write(out / 'rounds.jsonl', _line({'round': 0, 'kind': 'initial', 'line_start': 0, 'line_end': 1}) +
+           _line({'round': 1, 'kind': 'nudge', 'line_start': 1, 'line_end': 6}))
+    card = acc.score(out, CHECKPOINTS)
+    assert card['cost']['model_usd'] == pytest.approx(3.205)
+    assert any('maximum cumulative' in n for n in card['honesty_notes'])
+
+
+def test_run_round_reports_session_cumulative_cost(tmp_path, monkeypatch):
+    transcript, err = tmp_path / 't.jsonl', tmp_path / 'e.log'
+    transcript.write_text(_results([1.0]))
+
+    class Proc:
+        pid, returncode = 1, 0
+
+        def __init__(self, cmd, cwd, stdout, stderr, text, start_new_session):
+            stdout.write(_results([1.4, 1.4, 1.9]))
+            stdout.flush()
+
+        def wait(self, timeout=None):
+            return 0
+    monkeypatch.setattr(acc.subprocess, 'Popen', Proc)
+    info = acc.run_round(['claude'], cwd=tmp_path, transcript=transcript, stderr_log=err, timeout_s=5)
+    assert info['session_cost_usd'] == pytest.approx(1.9) and info['line_start'] == 1 and info['line_end'] == 4
+
+
+GATE_OPTIONS_MESSAGE = """Step 2 is drafted: nine files with customer voices, search behaviour and regulation.
+
+Step 3 (business model, costs, regulation, risks) stays blocked until the customer problem is validated, and
+this research does not validate it. To go on I need you to record the explicit gate override you mentioned.
+It is not evidence, and everything built after it will be labelled untested. About 1 USD of the evidence budget is spent.
+
+**Your call:**
+1. Record the override and move on to step 3.
+2. Let me keep closing the step 2 gaps first, mainly recent voices and competitor reviews.
+
+I recommend option 2."""
+
+
+def test_feeder_sends_gate_override_for_options_list():
+    feeder = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='e', alt_slug='a', budget_usd=25.0)
+    kind, text, ids = feeder.reply(GATE_OPTIONS_MESSAGE)
+    assert kind == 'answer' and ids == ['gate_override'] and 'record an explicit gate override' in text.lower()
+    say_form = ('Gate: step 3 is still blocked. If you want to test the downstream steps, say: '
+                '"record the gate override for the hybrid insurance advisor".')
+    assert feeder.reply(say_form)[2] == ['gate_override']
+    plain_list = 'Done:\n1. Wrote the journey map.\n2. Wrote the source list.\nNext I compare competitors.'
+    assert feeder.reply(plain_list)[0] == 'nudge'  # a list without a choice cue is not a question
+
+
+def test_host_writes_attribution(tmp_path):
+    out = make_out_dir(tmp_path)
+    host = '/home/u/repo/projects'
+    manifest = json.loads((out / 'run-manifest.json').read_text())
+    manifest['writes_outside_eval'] = [f'host:{host}/agent-touched/notes.md', f'host:{host}/other-site/web-site/app/page.tsx']
+    (out / 'run-manifest.json').write_text(json.dumps(manifest))
+    lines = (out / 'transcript.jsonl').read_text()
+    touch = _assistant('', [_tool('h1', 'Bash', {'command': f'python3 scripts/x.py --out {host}/agent-touched'})])
+    (out / 'transcript.jsonl').write_text(lines + touch + _result('h1', 'ok'))
+    card = acc.score(out, CHECKPOINTS)
+    jsonschema.validate(card, json.loads(SCHEMA.read_text()))
+    assert card['host_writes']['attributed'] == [f'host:{host}/agent-touched/notes.md']
+    assert card['host_writes']['unattributed_possibly_concurrent'] == [f'host:{host}/other-site/web-site/app/page.tsx']
+    assert card['honesty_notes'][0].startswith('WARNING: 1 host file change')
+    manifest['writes_outside_eval'] = manifest['writes_outside_eval'][1:]
+    (out / 'run-manifest.json').write_text(json.dumps(manifest))
+    assert not any(n.startswith('WARNING') for n in acc.score(out, CHECKPOINTS)['honesty_notes'])
+
+
+def test_quota_errors_count_as_exercised_gap(tmp_path):
+    out = make_out_dir(tmp_path)
+    for p in (out / 'artifacts').rglob('summary.json'):
+        p.unlink()
+    lines = (out / 'transcript.jsonl').read_text()
+    call = _assistant('', [_tool('q1', 'mcp__brave-search__brave_web_search', {'query': 'PKV GKV'})])
+    err = _result('q1', '402 Payment Required\n{"status": 402, "detail": "Usage limit exceeded."}', is_error=True)
+    (out / 'transcript.jsonl').write_text(lines + call + err)
+    card = acc.score(out, CHECKPOINTS)
+    by_id = {c['id']: c for c in card['checkpoints']}
+    assert 'brave-search' in card['providers']['failed']
+    assert by_id['cp11']['status'] == 'pass'  # the fixture states a coverage gap
+    assert any('brave-search (1 call(s))' in n for n in card['honesty_notes'])
+
+
+def test_hook_denial_counted_once(tmp_path):
+    out = tmp_path / 'o'
+    hook = _line({'type': 'system', 'subtype': 'hook_response', 'hook_name': 'PreToolUse:Skill',
+                  'output': '{"hookSpecificOutput": {"permissionDecision": "deny"}}'})
+    call = _assistant('', [_tool('d1', 'Skill', {'skill': 'idea-grill'})])
+    res = _result('d1', 'PreToolUse:Skill hook error: Skill route rejected', is_error=True)
+    _write(out / 'transcript.jsonl', call + hook + res)
+    assert acc.hook_denials(acc.parse_transcript(out))['count'] == 1

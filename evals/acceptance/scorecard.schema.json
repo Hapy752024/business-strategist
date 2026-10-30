@@ -3,7 +3,7 @@
   "title": "Acceptance run scorecard",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "scenario", "run", "checkpoints", "summary", "providers", "cost", "wall_time_s", "tokens", "hook_denials", "permission_denials", "writes_outside_eval", "friction", "honesty_notes"],
+  "required": ["schema_version", "scenario", "run", "checkpoints", "summary", "providers", "cost", "wall_time_s", "tokens", "hook_denials", "permission_denials", "writes_outside_eval", "host_writes", "friction", "honesty_notes"],
   "properties": {
     "schema_version": {"const": 1},
     "scenario": {"type": "string", "minLength": 1},
@@ -104,6 +104,14 @@
     },
     "permission_denials": {"type": "integer"},
     "writes_outside_eval": {"type": "array", "items": {"type": "string"}},
+    "host_writes": {
+      "type": "object",
+      "required": ["attributed", "unattributed_possibly_concurrent"],
+      "properties": {
+        "attributed": {"type": "array", "items": {"type": "string"}},
+        "unattributed_possibly_concurrent": {"type": "array", "items": {"type": "string"}}
+      }
+    },
     "friction": {"type": "string"},
     "honesty_notes": {"type": "array", "items": {"type": "string"}}
   }
