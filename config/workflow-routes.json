@@ -68,8 +68,6 @@
         "website performance",
         "website audit",
         "LLM-EO",
-        "GEO audit",
-        "AEO audit",
         "AEO/GEO",
         "answer engine optimization",
         "structured data audit",
@@ -111,7 +109,10 @@
         "AI search citability",
         "citability audit",
         "geo-optimizer audit",
-        "GEO Optimizer audit"
+        "GEO Optimizer audit",
+        "GEO audit",
+        "AEO audit",
+        "AI search visibility audit"
       ],
       "skill": "geo-audit",
       "forbidden": [
@@ -196,7 +197,12 @@
         "own-brand mentions",
         "social listening",
         "AI citation tracking",
-        "AI visibility monitoring"
+        "AI visibility monitoring",
+        "visible in ChatGPT",
+        "visible in AI answers",
+        "visible in Perplexity",
+        "visible in Gemini",
+        "visible in AI search"
       ],
       "skill": "competitor-monitoring",
       "forbidden": [

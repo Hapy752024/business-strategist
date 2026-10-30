@@ -96,7 +96,7 @@ def test_production_record(tmp_path):
     Draft202012Validator(json.loads((ROOT / 'schemas/website-manifest.schema.json').read_text())).validate(d)
 
 
-@pytest.mark.parametrize('prompt', ['Fix website SEO', 'Improve website performance', 'Plan website maintenance', 'Run a GEO audit', 'Create a Next.js website', 'Implement campaign tracking', 'Integrate GA4', 'Set up PostHog analytics'])
+@pytest.mark.parametrize('prompt', ['Fix website SEO', 'Improve website performance', 'Plan website maintenance', 'Fix my website for AEO/GEO', 'Create a Next.js website', 'Implement campaign tracking', 'Integrate GA4', 'Set up PostHog analytics'])
 def test_website_routes(prompt):
     assert route_request(prompt)['skill'] == 'brand-website-designer-builder'
 
@@ -107,7 +107,9 @@ def test_scope_boundaries(prompt, expected):
 
 
 @pytest.mark.parametrize('prompt,expected', [
-    ('Run an AEO audit', 'brand-website-designer-builder'),
+    ('Run an AEO audit', 'geo-audit'),
+    ('Run a GEO audit', 'geo-audit'),
+    ('Is my site visible in ChatGPT?', 'competitor-monitoring'),
     ('Structured data audit', 'brand-website-designer-builder'),
     ('Track brand mentions', 'competitor-monitoring'),
     ('Set up AI citation tracking', 'competitor-monitoring'),

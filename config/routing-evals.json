@@ -500,6 +500,39 @@
           ],
           "files": [],
           "rationale": "Observing what engines answer is measurement of answers, not an audit of the site's markup and access."
+        },
+        {
+          "id": "route-geo-3",
+          "prompt": "Run a GEO audit on https://www.example.com",
+          "expected_output": "Routes to geo-audit for a read-only tool-backed audit of the public URL.",
+          "expected_skill": "geo-audit",
+          "forbidden_skills": [
+            "competitor-monitoring"
+          ],
+          "files": [],
+          "rationale": "An audit of a named public URL is geo-audit's scope; website content changes come afterwards through the website builder."
+        },
+        {
+          "id": "route-geo-4",
+          "prompt": "Fix my website for AEO/GEO so answer engines can use our content.",
+          "expected_output": "Routes to brand-website-designer-builder for AEO/GEO content, schema and access work on the site.",
+          "expected_skill": "brand-website-designer-builder",
+          "forbidden_skills": [
+            "geo-audit"
+          ],
+          "files": [],
+          "rationale": "Changing the site is website delivery work; geo-audit is read-only measurement."
+        },
+        {
+          "id": "route-geo-5",
+          "prompt": "Is my site visible in ChatGPT?",
+          "expected_output": "Routes to competitor-monitoring for a declared AI-answer panel (offline recordings or the capped live collector), not a markup audit.",
+          "expected_skill": "competitor-monitoring",
+          "forbidden_skills": [
+            "geo-audit"
+          ],
+          "files": [],
+          "rationale": "Whether an engine names or cites the site is an answer observation owned by competitor-monitoring's AI-answer visibility capability."
         }
       ]
     }

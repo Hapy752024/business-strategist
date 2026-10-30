@@ -79,11 +79,15 @@ def _perplexity_request(target, prompt):
             {'model': target['model'], 'messages': [{'role': 'user', 'content': prompt}]})
 
 
-def _dataforseo_task(target, prompt):
-    country = _country(target['locale'])
+def _location(locale):
+    country = _country(locale)
     if country not in DATAFORSEO_LOCATIONS:
-        raise ValueError(f'locale {target["locale"]!r}: no DataForSEO location_code mapping')
-    return {'keyword': prompt[:700], 'location_code': DATAFORSEO_LOCATIONS[country],
+        raise ValueError(f'locale {locale!r}: no DataForSEO location_code mapping; add one from /v3/serp/google/locations')
+    return DATAFORSEO_LOCATIONS[country]
+
+
+def _dataforseo_task(target, prompt):
+    return {'keyword': prompt[:700], 'location_code': _location(target['locale']),
             'language_code': _language(target['locale']), 'device': 'desktop'}
 
 
@@ -244,14 +248,14 @@ ENGINES = {
     'google-ai-mode': {'surface': 'consumer', 'secrets': ('DATAFORSEO_LOGIN', 'DATAFORSEO_PASSWORD'), 'pair': True,
                        'request': _ai_mode_request, 'parse': _dataforseo, 'source': 'dataforseo:serp/google/ai_mode/live/advanced',
                        'headers': lambda k: {'Authorization': 'Basic ' + base64.b64encode(f'{k[0]}:{k[1]}'.encode()).decode()},
-                       'config': lambda loc: f'dataforseo:ai_mode;location_code={DATAFORSEO_LOCATIONS.get(_country(loc))};device=desktop',
+                       'config': lambda loc: f'dataforseo:ai_mode;location_code={_location(loc)};device=desktop',
                        'estimate_usd': 0.01},
     'google-ai-overview': {'surface': 'ai_overview', 'secrets': ('DATAFORSEO_LOGIN', 'DATAFORSEO_PASSWORD'), 'pair': True,
                            'request': _ai_overview_request, 'parse': _dataforseo,
                            'source': 'dataforseo:serp/google/organic/live/advanced',
                            'headers': lambda k: {'Authorization': 'Basic ' + base64.b64encode(f'{k[0]}:{k[1]}'.encode()).decode()},
                            'config': lambda loc: (f'dataforseo:organic+load_async_ai_overview;location_code='
-                                                  f'{DATAFORSEO_LOCATIONS.get(_country(loc))};device=desktop'),
+                                                  f'{_location(loc)};device=desktop'),
                            'estimate_usd': 0.01},
 }
 
@@ -318,19 +322,29 @@ def _secret_lookup(name):
     return get_secret(name)[1]
 
 
-def _redactor(secrets):
+# Anchored key shapes for provider material we did not configure (e.g. a key echoed in an error body).
+KEY_SHAPES = re.compile(r'(?<![\w-])sk-(?:proj-|ant-)?[A-Za-z0-9_-]{20,}|\bAIza[0-9A-Za-z_-]{35}\b|(?<![\w-])xai-[A-Za-z0-9]{20,}')
+
+
+def _redactors(secrets):
+    """(exact, raw): exact removes configured key values only, so answers and citation URLs stay verbatim;
+    raw additionally removes anchored key shapes from provider responses and error text."""
     values = sorted({s for s in secrets if s}, key=len, reverse=True)
 
-    def redact(text):
+    def exact(text):
         for value in values:
             text = text.replace(value, '[REDACTED]')
-        return re.sub(r'(sk-|xai-|AIza)[A-Za-z0-9_\-]{8,}', r'\1[REDACTED]', text)
-    return redact
+        return text
+
+    def raw(text):
+        return KEY_SHAPES.sub('[REDACTED]', exact(text))
+    return exact, raw
 
 
 def _classify_http(status, body_text):
     lower = body_text.lower()
-    if status == 402 or 'insufficient_quota' in lower or 'credit balance' in lower or 'credits' in lower:
+    # Only documented credit signals: HTTP 402, OpenAI `insufficient_quota`, Anthropic "credit balance is too low".
+    if status == 402 or 'insufficient_quota' in lower or 'credit balance is too low' in lower:
         return 'credit_exhausted'
     if status == 429 and ('quota' in lower or 'billing' in lower):
         return 'quota_exceeded'  # plan/tier quota: check the provider billing/quota page, then rerun
@@ -361,10 +375,17 @@ def plan(panel_raw: dict, secret_lookup=_secret_lookup) -> list[dict]:
             found = next(((n, secret_lookup(n)) for n in names if secret_lookup(n)), None)
             keys, missing = ([found[1]], []) if found else ([], [names[0]])
         for prompt in panel['prompts']:
+            request = spec['request'](target, prompt['text'])  # invalid settings fail here, before any network
             for repetition in range(1, target['repetitions'] + 1):
-                jobs.append({'target': target, 'prompt': prompt, 'repetition': repetition,
+                jobs.append({'target': target, 'prompt': prompt, 'repetition': repetition, 'request': request,
                              'keys': keys, 'missing': missing})
     return jobs
+
+
+def domain_warnings(subject):
+    domains = set(subject['domains'])
+    return [f'{d} looks like an apex domain without www.{d}; citations to www.{d} will not count as url_cited unless declared'
+            for d in sorted(domains) if d.count('.') == 1 and 'www.' + d not in domains]
 
 
 def estimate(jobs) -> dict:
@@ -375,7 +396,8 @@ def estimate(jobs) -> dict:
         by_engine[engine] = by_engine.get(engine, 0) + 1
     return {'planned_calls': len(calls), 'skipped_missing_credentials': len(jobs) - len(calls), 'calls_by_engine': by_engine,
             'estimated_cost_usd': round(sum(ENGINES[e]['estimate_usd'] * n for e, n in by_engine.items()), 4),
-            'note': 'assumed per-call upper estimates (search fee + typical tokens); actual usage is recorded per row'}
+            'note': 'rough estimate from assumed per-call prices (search fee + typical tokens); search-heavy answers can cost '
+                    'several times more; actual usage and provider-reported cost are recorded per row'}
 
 
 def _now():
@@ -402,7 +424,7 @@ def _failed(row, status, detail, request_id=None):
 
 def _execute(job, row, subject, transport, resolver, redact):
     spec = ENGINES[job['target']['engine']]
-    url, body = spec['request'](job['target'], job['prompt']['text'])
+    url, body = job['request']
     raw = {'row_id': row['row_id'], 'timestamp': row['timestamp'], 'url': url, 'request_body': body}
     try:
         status, headers, payload = transport(url, spec['headers'](job['keys']), body)
@@ -445,58 +467,89 @@ def _public(url):
         return False
 
 
+INCOMPLETE_MARKER = 'INCOMPLETE'
+
+
+def _line(row):
+    return json.dumps(row, ensure_ascii=False) + '\n'
+
+
 def collect(panel_raw: dict, out: Path, *, max_calls: int = DEFAULT_CAP, transport=None, secret_lookup=_secret_lookup,
             resolver=_resolve_redirect, announce=None) -> dict:
+    """Rows and raw responses are appended as each call completes; INCOMPLETE stays until collection.json is final."""
     out = Path(out)
     if out.exists() or out.is_symlink():
         raise ValueError('--out must be a new, non-existing directory')
     jobs = plan(panel_raw, secret_lookup)
-    budget = estimate(jobs)
+    subject = probe.load_panel(panel_raw)['subject']
+    budget = {**estimate(jobs), 'warnings': domain_warnings(subject)}
     if announce:
         announce({**budget, 'cap': max_calls})
     if budget['planned_calls'] > max_calls:
         raise CapExceeded(f"{budget['planned_calls']} planned calls exceed --max-calls {max_calls}; nothing was sent")
     transport = transport or _urllib_transport
-    subject = probe.load_panel(panel_raw)['subject']
-    redact = _redactor([k for j in jobs for k in j['keys']])
-    rows, raws, sent = [], [], 0
-    for job in jobs:
-        row = _row(job, subject, _now())
-        if job['missing']:
-            rows.append(_failed(row, 'missing_credentials', ', '.join(job['missing'])))
-            continue
-        if sent >= max_calls:  # defensive: never exceed the cap even if planning changes
-            rows.append(_failed(row, 'cap_exceeded', f'--max-calls {max_calls} reached'))
-            continue
-        sent += 1
-        result, raw = _execute(job, row, subject, transport, resolver, redact)
-        rows.append(result)
-        raws.append(raw)
-    for row in rows:
-        probe.normalize_observation({**row, 'recommended': False} if row.get('review_required') else row)
+    exact, redact = _redactors([k for j in jobs for k in j['keys']])
     out.parent.mkdir(parents=True, exist_ok=True)
     out.mkdir()
+    for name, content in ((INCOMPLETE_MARKER, 'Collection not finalised; rows written so far are kept.\n'),
+                          ('panel.json', json.dumps(panel_raw, indent=2, ensure_ascii=False) + '\n'),
+                          ('recorded.jsonl', ''), ('raw.jsonl', '')):
+        with (out / name).open('x', encoding='utf-8') as handle:
+            handle.write(content)
+    rows, sent, completion = [], 0, 'complete'
+    with (out / 'recorded.jsonl').open('a', encoding='utf-8') as recorded, (out / 'raw.jsonl').open('a', encoding='utf-8') as raws:
+        def keep(row, raw=None):
+            probe.normalize_observation({**row, 'recommended': False} if row.get('review_required') else row)
+            if raw is not None:
+                raws.write(redact(_line(raw)))
+                raws.flush()
+            recorded.write(exact(_line(row)))
+            recorded.flush()
+            rows.append(row)
+        for index, job in enumerate(jobs):
+            row = _row(job, subject, _now())
+            if job['missing']:
+                keep(_failed(row, 'missing_credentials', ', '.join(job['missing'])))
+                continue
+            if sent >= max_calls:  # defensive: never exceed the cap even if planning changes
+                keep(_failed(row, 'cap_exceeded', f'--max-calls {max_calls} reached'))
+                continue
+            sent += 1
+            try:
+                result, raw = _execute(job, row, subject, transport, resolver, redact)
+            except KeyboardInterrupt:
+                completion = 'incomplete'
+                keep(_failed(row, 'interrupted', 'request in flight; no response recorded'))
+                for later in jobs[index + 1:]:
+                    keep(_failed(_row(later, subject, _now()), 'interrupted', 'not sent'))
+                break
+            except Exception as exc:  # unexpected local failure: keep the row, never drop it
+                keep(_failed(row, 'internal_error', redact(f'{type(exc).__name__}: {exc}')[:300]))
+                continue
+            keep(result, raw)
     pending = sum(1 for r in rows if r.get('review_required'))
     costs = [r['provider_cost_usd'] for r in rows if isinstance(r.get('provider_cost_usd'), (int, float))]
-    summary = {**budget, 'cap': max_calls, 'calls_sent': sent, 'rows': len(rows),
+    summary = {**budget, 'cap': max_calls, 'calls_sent': sent, 'rows': len(rows), 'completion': completion,
                'statuses': {s: sum(1 for r in rows if r['status'] == s) for s in probe.STATUSES},
                'failures': [{'row_id': r['row_id'], 'detail': r['error_detail']} for r in rows if r['status'] != 'success'],
+               'subdomain_citation_rows': sum(1 for r in rows if r.get('subdomain_citations')),
                'rows_needing_review': pending, 'importable': pending == 0,
                'provider_reported_cost_usd': round(sum(costs), 8) if costs else None,
                'next_step': ('run `review` with reviewer decisions for rows with review_required, then ai_answer_probe.py'
                              if pending else 'run ai_answer_probe.py with this panel and recorded.jsonl')}
-    files = {'recorded.jsonl': ''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in rows),
-             'raw.jsonl': ''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in raws),
-             'panel.json': json.dumps(panel_raw, indent=2, ensure_ascii=False) + '\n',
-             'collection.json': json.dumps(summary, indent=2, ensure_ascii=False) + '\n'}
-    for name, content in files.items():
-        with (out / name).open('x', encoding='utf-8') as handle:
-            handle.write(redact(content))
+    with (out / 'collection.json').open('x', encoding='utf-8') as handle:
+        handle.write(exact(json.dumps(summary, indent=2, ensure_ascii=False) + '\n'))
+    if completion == 'complete':
+        (out / INCOMPLETE_MARKER).unlink()
     return summary
 
 
 def apply_review(recorded: Path, decisions: dict, out: Path) -> int:
-    """Write a new recordings file with reviewer judgements for `recommended`; returns rows still pending."""
+    """Write a new recordings file with reviewer judgements; returns rows still pending.
+
+    A decision is {recommended?, brand_mentioned?, reviewer, note?}. A reviewer may correct the rule's
+    brand_mentioned; a named subject needs a boolean recommended; an unnamed subject cannot be recommended.
+    """
     out = Path(out)
     if out.exists() or out.is_symlink():
         raise ValueError('review output must be a new file')
@@ -506,12 +559,28 @@ def apply_review(recorded: Path, decisions: dict, out: Path) -> int:
             continue
         row = json.loads(line)
         decision = decisions.get(row.get('row_id'))
-        if row.get('review_required') and decision:
-            if type(decision.get('recommended')) is not bool or not str(decision.get('reviewer', '')).strip():
-                raise ValueError(f"{row['row_id']}: decision needs boolean recommended and a reviewer")
-            row.update(recommended=decision['recommended'], review_required=[], review_note=decision.get('note'),
-                       annotation_method=row['annotation_method'].replace('recommended pending reviewer',
-                                                                          f"recommended by reviewer {decision['reviewer']}"))
+        if decision and row.get('status') == 'success':
+            reviewer = str(decision.get('reviewer', '')).strip()
+            if not reviewer:
+                raise ValueError(f"{row['row_id']}: decision needs a reviewer")
+            notes = [row['annotation_method']]
+            if 'brand_mentioned' in decision:
+                if type(decision['brand_mentioned']) is not bool:
+                    raise ValueError(f"{row['row_id']}: brand_mentioned must be boolean")
+                row['brand_mentioned'] = decision['brand_mentioned']
+                notes.append(f'brand_mentioned by reviewer {reviewer}')
+            if row['brand_mentioned']:
+                if type(decision.get('recommended')) is not bool:
+                    raise ValueError(f"{row['row_id']}: a named subject needs boolean recommended")
+                row['recommended'] = decision['recommended']
+            else:
+                if decision.get('recommended') is True:
+                    raise ValueError(f"{row['row_id']}: an unnamed subject cannot be recommended")
+                row['recommended'] = False
+            if 'recommended' in decision:
+                notes.append(f'recommended by reviewer {reviewer}')
+            method = '; '.join(notes).replace('; recommended pending reviewer', '')
+            row.update(review_required=[], review_note=decision.get('note'), annotation_method=method)
             probe.normalize_observation(row)
         elif row.get('review_required'):
             pending += 1
@@ -558,7 +627,9 @@ def main(argv=None) -> int:
     except (OSError, ValueError, KeyError, TypeError) as exc:
         say({'status': 'fail', 'message': str(exc)})
         return 1
-    say({'status': 'complete', 'out': str(args.out), **summary})
+    say({'status': summary['completion'], 'out': str(args.out), **summary})
+    if summary['completion'] != 'complete':
+        return 130
     return 0 if summary['importable'] and not summary['failures'] else 2
 
 

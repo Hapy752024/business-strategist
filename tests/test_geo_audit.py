@@ -103,7 +103,10 @@ def test_tool_failure_is_reported_not_scored(tmp_path):
 
 
 @pytest.mark.parametrize('prompt', ['Run an AI citability audit on https://example.com',
-                                    'Check AI search citability of our live site'])
+                                    'Check AI search citability of our live site',
+                                    'Run a GEO audit on https://www.example.com',
+                                    'Do an AEO audit of our website',
+                                    'Run an AI search visibility audit for our site'])
 def test_geo_audit_route_reachable(prompt):
     assert route_request(prompt)['skill'] == 'geo-audit'
 
@@ -113,3 +116,18 @@ def test_geo_audit_explicit_intent_and_contract():
     assert packet['skill'] == 'geo-audit' and packet['route_id'] == 'geo-audit'
     catalog = json.loads((ROOT / 'config/skill-catalog.json').read_text())['skills']['geo-audit']
     assert [c['artifact'] for c in catalog['consumes']] == ['website_build']
+
+
+@pytest.mark.parametrize('prompt', ['Build my website for AEO/GEO', 'Fix my website for AEO/GEO', 'Improve LLM-EO on our landing page'])
+def test_aeo_geo_content_work_stays_with_website_builder(prompt):
+    assert route_request(prompt)['skill'] == 'brand-website-designer-builder'
+
+
+def test_routing_evals_cover_geo_cases():
+    pairs = json.loads((ROOT / 'config/routing-evals.json').read_text())['pairs']
+    cases = {e['prompt']: e['expected_skill'] for p in pairs if p['pair'].startswith('geo-audit') for e in p['evals']}
+    assert cases['Run a GEO audit on https://www.example.com'] == 'geo-audit'
+    assert cases['Fix my website for AEO/GEO so answer engines can use our content.'] == 'brand-website-designer-builder'
+    assert cases['Is my site visible in ChatGPT?'] == 'competitor-monitoring'
+    for prompt, skill in cases.items():
+        assert route_request(prompt)['skill'] == skill, prompt

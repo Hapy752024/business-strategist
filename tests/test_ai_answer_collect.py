@@ -258,3 +258,117 @@ def test_plan_quota_429_is_quota_exceeded_not_absence(tmp_path):
     transport = Transport({'generativelanguage.googleapis.com': (429, {}, body)})
     _, rows, _, _ = run(tmp_path, panel(target('gemini', 'gemini-3.8-flash')), transport)
     assert rows[0]['error_detail'].startswith('quota_exceeded') and rows[0]['brand_mentioned'] is None
+
+
+# ---------- fix round 1 ----------
+
+def responses_body(text, urls):
+    return json.dumps({'id': 'resp_r', 'model': 'gpt-5.4-mini-2026-03-17', 'output': [{'type': 'message', 'content': [
+        {'type': 'output_text', 'text': text, 'annotations': [
+            {'type': 'url_citation', 'url': u, 'start_index': 0, 'end_index': 4, 'title': 't'} for u in urls]}]}]}).encode()
+
+
+def test_redaction_never_rewrites_answers_or_citations(tmp_path):
+    text = 'Compare task-management-tools and desk-booking-software; also see AIza-like words and xai-research-notes.'
+    urls = ['https://desk-booking-software.example/x', 'https://cedar.example/task-management-tools']
+    transport = Transport({'api.openai.com': (200, {}, responses_body(text, urls))})
+    _, rows, _, out = run(tmp_path, panel(target('openai', 'gpt-5.4-mini-2026-03-17')), transport)
+    assert rows[0]['answer_text'] == text and rows[0]['citation_urls'] == urls
+    assert rows[0]['url_cited'] is True
+    assert 'desk-booking-software' in (out / 'raw.jsonl').read_text()
+
+
+def test_unconfigured_key_shapes_redacted_in_raw_and_errors(tmp_path):
+    foreign = 'sk-proj-' + 'A1b2C3d4E5f6G7h8I9j0K1l2'
+    body = json.dumps({'error': {'message': 'Incorrect API key provided: ' + foreign}}).encode()
+    transport = Transport({'api.openai.com': (401, {}, body)})
+    _, rows, _, out = run(tmp_path, panel(target('openai', 'gpt-5.4-mini-2026-03-17')), transport)
+    for path in out.iterdir():
+        assert foreign not in path.read_text(), path.name
+    assert rows[0]['error_detail'].startswith('auth_failed')
+
+
+def test_unmapped_dataforseo_locale_fails_before_network(tmp_path):
+    bad = panel({'engine': 'google-ai-mode', 'model': 'google-ai-mode', 'search_config': 'x', 'surface': 'consumer',
+                 'locale': 'ja-JP', 'repetitions': 1})
+    transport = Transport()
+    with pytest.raises(ValueError, match='location_code'):
+        c.collect(bad, tmp_path / 'out', transport=transport, secret_lookup=secrets())
+    assert transport.calls == [] and not (tmp_path / 'out').exists()
+
+
+def test_rows_and_raw_written_incrementally(tmp_path):
+    seen = []
+    base = Transport()
+
+    def transport(url, headers, body):
+        out = tmp_path / 'collected'
+        seen.append((len((out / 'raw.jsonl').read_text().splitlines()), len((out / 'recorded.jsonl').read_text().splitlines()),
+                     (out / c.INCOMPLETE_MARKER).exists()))
+        return base(url, headers, body)
+    summary, rows, _, out = run(tmp_path, panel(target('xai', 'grok-4.7', repetitions=3)), transport)
+    assert seen == [(0, 0, True), (1, 1, True), (2, 2, True)]
+    assert summary['completion'] == 'complete' and not (out / c.INCOMPLETE_MARKER).exists()
+
+
+def test_interrupt_keeps_paid_responses_and_marks_incomplete(tmp_path):
+    base, count = Transport(), []
+
+    def transport(url, headers, body):
+        count.append(1)
+        if len(count) == 2:
+            raise KeyboardInterrupt
+        return base(url, headers, body)
+    out = tmp_path / 'collected'
+    summary = c.collect(panel(target('xai', 'grok-4.7', repetitions=3)), out, transport=transport,
+                        secret_lookup=secrets(), resolver=resolver)
+    rows = [json.loads(l) for l in (out / 'recorded.jsonl').read_text().splitlines()]
+    assert summary['completion'] == 'incomplete' and (out / c.INCOMPLETE_MARKER).exists()
+    assert json.loads((out / 'collection.json').read_text())['completion'] == 'incomplete'
+    assert len((out / 'raw.jsonl').read_text().splitlines()) == 1
+    assert [r['status'] for r in rows] == ['success', 'error', 'error']
+    assert all(r['error_detail'].startswith('interrupted') for r in rows[1:])
+    for row in rows:
+        p.normalize_observation(row)
+
+
+def test_unexpected_job_exception_becomes_failed_row(tmp_path):
+    def bad_resolver(url):
+        raise RuntimeError('resolver exploded')
+    out = tmp_path / 'collected'
+    c.collect(panel(target('gemini', 'gemini-3.8-flash')), out, transport=Transport(), secret_lookup=secrets(),
+              resolver=bad_resolver)
+    row = json.loads((out / 'recorded.jsonl').read_text())
+    assert row['status'] == 'error' and row['error_detail'].startswith('internal_error')
+
+
+def test_apex_domain_without_www_warns_and_subdomain_counts_reported(tmp_path):
+    summary, _, _, _ = run(tmp_path)
+    assert any('www.cedar.example' in w for w in summary['warnings'])
+    assert 'subdomain_citation_rows' in summary
+    assert 'upper' not in summary['note']
+
+
+@pytest.mark.parametrize('status,body,expected', [
+    (402, '{}', 'credit_exhausted'),
+    (429, '{"error": {"code": "insufficient_quota"}}', 'credit_exhausted'),
+    (400, '{"error": {"message": "Your credit balance is too low"}}', 'credit_exhausted'),
+    (400, '{"error": {"message": "credits are mentioned in this unrelated validation error"}}', 'http_error'),
+    (429, '{"error": {"message": "Rate limit reached"}}', 'rate_limited'),
+])
+def test_credit_classification_is_narrow(status, body, expected):
+    assert c._classify_http(status, body) == expected
+
+
+def test_review_can_override_brand_mentioned(tmp_path):
+    _, rows, _, out = run(tmp_path, panel(target('xai', 'grok-4.7')))
+    row_id = rows[0]['row_id']
+    assert rows[0]['brand_mentioned'] is False
+    reviewed = tmp_path / 'reviewed.jsonl'
+    c.apply_review(out / 'recorded.jsonl', {row_id: {'brand_mentioned': True, 'recommended': False, 'reviewer': 'R'}}, reviewed)
+    row = json.loads(reviewed.read_text())
+    assert row['brand_mentioned'] is True and row['recommended'] is False
+    assert 'brand_mentioned by reviewer R' in row['annotation_method']
+    with pytest.raises(ValueError):
+        c.apply_review(out / 'recorded.jsonl', {row_id: {'brand_mentioned': False, 'recommended': True, 'reviewer': 'R'}},
+                       tmp_path / 'bad.jsonl')

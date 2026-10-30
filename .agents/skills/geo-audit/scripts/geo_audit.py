@@ -75,7 +75,10 @@ def main() -> int:
     if proc.returncode != 0 or not isinstance(raw, dict) or raw.get('error'):
         return emit('audit_failed', 1, message=str(raw.get('error') if isinstance(raw, dict) else 'unexpected output')[:300],
                     exit_code=proc.returncode)
-    version = subprocess.run([tool, '--version'], capture_output=True, text=True).stdout.strip() or None
+    try:
+        version = subprocess.run([tool, '--version'], capture_output=True, text=True, timeout=30).stdout.strip() or None
+    except (OSError, subprocess.TimeoutExpired):
+        version = None
     record = {'schema_version': 1, 'audited_url': args.url,
               'collected_at': datetime.now(timezone.utc).isoformat(timespec='seconds'),
               'tool': {'name': 'geo-optimizer', 'upstream': UPSTREAM, 'pinned_commit': PINNED_COMMIT,
