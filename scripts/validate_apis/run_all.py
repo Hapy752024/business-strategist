@@ -30,6 +30,7 @@ SCRIPTS = [
     "validate_app_reviews.py",
     "validate_sonar.py",
     "validate_apify.py",
+    "validate_apify_reddit.py",
     "validate_brightdata.py",
     "validate_parsersvc.py",
     "validate_eurostat.py",

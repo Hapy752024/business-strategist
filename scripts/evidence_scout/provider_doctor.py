@@ -256,6 +256,7 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
         "reddit": [
             _env_backend("reddit_api", ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"]),
             _agent_reach_channel("reddit"),
+            _env_backend("apify_reddit", ["APIFY_TOKEN"], risk="paid_credits"),
             _env_backend("scrapecreators_reddit", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
         ],
         "google_trends": [

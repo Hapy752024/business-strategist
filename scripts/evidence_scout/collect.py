@@ -36,6 +36,7 @@ COMMUNITY_AUTH_SCHEMA_PATH = ROOT / "schemas" / "community-capture-authorization
 COMMUNITY_RECEIPT_SCHEMA_PATH = ROOT / "schemas" / "community-review-receipt.schema.json"
 VERIFIED_COMMUNITY_SCHEMA_PATH = ROOT / "schemas" / "verified-community.schema.json"
 sys.path.insert(0, str(VALIDATOR_DIR))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (  # noqa: E402
     fields_present,
@@ -475,7 +476,7 @@ def balanced_queries(queries: list[str]) -> list[str]:
 
 
 QUERY_PLAN_PROVIDERS = {"reddit", "brave_search", "serper_search", "firecrawl", "hn", "github",
-                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators"}
+                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit"}
 RESUME_TERMINAL_PROVIDER_STATUSES = {"ok", "unsupported", "capture_gate_blocked", "not_applicable"}
 
 
@@ -1967,6 +1968,18 @@ def collect_youtube(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "youtube")
 
 
+def collect_apify_reddit(args, queries, run_dir):
+    cap = getattr(args, "apify_item_cap", 300)
+    ledger = provider_query_schedule(args, queries, "apify_reddit")
+    from providers.apify_reddit import ITEMS_PER_POST
+    requested = sum(row["per_query_result_limit"] for row in ledger if row["scheduled"]) * ITEMS_PER_POST
+    if requested > cap:
+        unattempted_queries(ledger, "request_budget_exhausted")
+        return [], {"status": "request_budget_exhausted", "record_count": 0, "query_ledger": ledger,
+                    "reason": f"Apify items requested ({requested}) exceed --apify-item-cap ({cap}); no call made."}
+    return collect_scheduled_provider(args, queries, run_dir, "apify_reddit")
+
+
 def collect_x(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "x")
 
@@ -2033,6 +2046,37 @@ def _collect_hn_query(args: argparse.Namespace, queries: list[str], run_dir: Pat
     status = "ok" if records else "failed" if raw["searches"] else "failed"
     write_json(run_dir / "raw" / "hn.json", redact_sensitive(raw))
     return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+
+
+def _collect_apify_reddit_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Reddit fallback through the Apify actor (third-party scraper of public pages)."""
+    from providers.apify_reddit import run_actor, to_records, time_window_for_days
+    raw: dict[str, Any] = {"searches": []}
+    key_name, token = get_secret("APIFY_TOKEN")
+    if not token:
+        write_json(run_dir / "raw" / "apify_reddit.json", raw)
+        return [], {"status": "missing_credentials", "record_count": 0, "required_env": ["APIFY_TOKEN"]}
+    from providers.apify_reddit import ITEMS_PER_POST
+    cap = getattr(args, "apify_item_cap", 300)
+    max_items = max(1, int(args.limit))
+    if max_items * ITEMS_PER_POST * max(1, len(queries)) > cap:
+        write_json(run_dir / "raw" / "apify_reddit.json", raw)
+        return [], {"status": "request_budget_exhausted", "record_count": 0,
+                    "reason": f"Apify items requested exceed --apify-item-cap ({cap}); no call made."}
+    items, meta = run_actor(token, list(queries), max_items, time_window_for_days(args.days), True)
+    raw["searches"].append({"queries": list(queries), "response": meta["response"]})
+    # The scheduler calls this once per query; a multi-query batch is attributed to the first query.
+    records = to_records(items, queries[0], now_iso(), build=normalize_record,
+                         customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
+    for record in records:
+        relevance, notes, score = assess_relevance(record["text"], args, record["query"], record["source_url"], record["author_context"])
+        record.update({"relevance": relevance, "relevance_notes": notes, "relevance_score": score})
+        if relevance == "irrelevant":
+            record.update({"evidence_type": "irrelevant", "strength": "irrelevant"})
+        record["sampling_metadata"].update({"time_window": {"lookback_days": args.days, "applied_by": "actor"},
+            "subset_limitations": "Third-party scrape of public Reddit pages, relevance-ranked; completeness unknown."})
+    write_json(run_dir / "raw" / "apify_reddit.json", redact_sensitive(raw))
+    return records, {"status": meta["status"], "record_count": len(records), "credential_source": key_name, "fields": fields_present(raw)}
 
 
 def _collect_github_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -4798,6 +4842,7 @@ def load_provider_routing() -> dict[str, Any]:
 
 PROVIDER_ROUTING_FAMILY = {
     "reddit": "reddit",
+    "apify_reddit": "reddit",
     "serpapi_google_trends": "google_trends",
     "youtube": "youtube",
     "firecrawl": "web_search",
@@ -4846,6 +4891,7 @@ def parse_args() -> argparse.Namespace:
                         help="Per-run cap on shared HTTP helper calls; excludes SDK/CLI traffic. Default: 100.")
     parser.add_argument("--fresh-http", action="store_true",
                         help="Disable in-run reuse of identical successful GET requests.")
+    parser.add_argument("--apify-item-cap", type=int, default=300, help="Cap on Apify dataset items per run, counted conservatively as posts x 10 (the actor has no per-post comment limit); apify_reddit refuses before any call when exceeded.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum normalized records per provider.")
     parser.add_argument(
         "--problem-keywords",
@@ -5165,6 +5211,7 @@ def main() -> int:
     write_research_plan(run_dir, args, queries, requested_providers)
     provider_funcs = {
         "reddit": collect_reddit,
+        "apify_reddit": collect_apify_reddit,
         "serpapi_google_trends": collect_serpapi_google_trends,
         "serper_search": collect_serper_search,
         "youtube": collect_youtube,

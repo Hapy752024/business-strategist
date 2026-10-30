@@ -210,6 +210,13 @@ Prefer sources in this order:
 14. Apify for actor-specific fallback after actor/schema review.
 15. Bright Data only for high-volume or hard-source work after permission issues are resolved.
 
+## Reddit Fallback Order
+
+Reddit's public Data API ends 2027-03-31 (no new access after 2026-10-31). Use the Reddit API
+first; then `apify_reddit` (third-party scraper, item-capped by `--apify-item-cap`), then
+`scrapecreators_reddit`, and `arctic_shift` for subreddit history. Fallbacks never become
+the only source of record, and their records stay unreviewed.
+
 ## Competitor Discovery Policy
 
 - Competitor search results are only candidates. Classify false positives explicitly.

@@ -39,7 +39,9 @@ def build(plan: dict, evidence: list[dict], annotations: list[dict], reviews: li
                           "quote_matches_proposal": quote is not None and proposal.get("quote") == quote,
                           "proposal": proposal})
         items.append({"evidence_id": ident, "source_url": record.get("source_url"),
-                      "source": record.get("source"), "text": text,
+                      "source": record.get("source"),
+                      "retrieval_backend": record.get("retrieval_backend"),
+                      "collection_method": record.get("collection_method"), "text": text,
                       "annotations": spans,
                       "review_status": review.get("status", "unreviewed"),
                       "review": review, "sampling_frame": record.get("sampling_frame")})
