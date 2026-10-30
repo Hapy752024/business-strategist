@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
 from typing import Mapping
 
@@ -18,6 +17,7 @@ def key_audit(capabilities_path: Path, environ: Mapping[str, str] | None = None)
     """Presence is resolved like the validators: get_secret (process env, then ~/.secrets).
 
     If `environ` is given, it is checked in addition (explicit overrides).
+    Only the declared env name is checked; validator aliases (e.g. SERPER_API_KEY) are not.
     """
     data = json.loads(Path(capabilities_path).read_text(encoding="utf-8"))
     rows = []
@@ -38,7 +38,7 @@ def main() -> int:
     for r in sorted(rows, key=lambda r: (r["family"], r["capability"], r["env"])):
         print(f"{r['family']:<26}{r['capability']:<36}{r['env']:<36}{'present' if r['present'] else 'absent'}")
     missing = sum(1 for r in rows if not r["present"])
-    print(f"\n{len(rows) - missing} present, {missing} absent of {len(rows)} required env vars", file=sys.stdout)
+    print(f"\n{len(rows) - missing} present, {missing} absent of {len(rows)} required env vars")
     return 0
 
 
