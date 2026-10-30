@@ -544,6 +544,18 @@
       "forbidden": []
     },
     {
+      "id": "claim-falsification",
+      "match": [
+        "falsify claims",
+        "try to disprove claims",
+        "adversarial claim check",
+        "stress-test findings"
+      ],
+      "skill": "opportunity-risk-designer",
+      "mode": "falsification",
+      "forbidden": []
+    },
+    {
       "id": "smoke-test-design",
       "match": [
         "smoke test",

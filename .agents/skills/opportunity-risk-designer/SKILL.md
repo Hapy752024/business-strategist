@@ -40,6 +40,7 @@ State when VC fit is immaterial for a smaller business.
 ## Workflow
 
 For the checked `case-appraisal` route, read repo-root `references/case-assessment.md` and use its bounded appraisal/publication mode. Under the contract above, cover all nine decision sections, direct reviewed-source links, conditional economics and missing inputs. Prepare the exact bundle and obtain separate review before final v2 publication. Progress may publish while research continues. A passed pain gate or selection is not required; do not advance commitment stages.
+For the checked `claim-falsification` route, follow `references/falsify.md` before final case delivery: export claims only, run the `claim-falsifier` agent, then apply its verdicts to a copy of the ledger.
 For the checked `case-insights` route, consolidate the registered case's reviewed findings, deep dives and answered questions into `case_insights.md` (see top). Use the full inventory, numeric and freshness checks, then record a semantic contradiction review before publishing. This mode does not run the full risk workflow or change stage gates.
 
 1. Read `references/workflow.md` completely.

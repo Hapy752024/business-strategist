@@ -494,6 +494,48 @@
               "freshness": "none"
             }
           ]
+        },
+        "falsification": {
+          "prerequisites": [
+            "reviewed claim ledger after synthesis"
+          ],
+          "strategy_stage_prerequisites": [],
+          "required_references": [
+            ".agents/skills/opportunity-risk-designer/references/falsify.md"
+          ],
+          "artifacts": [
+            "claim-ledger.falsified.json",
+            "falsification-report.json",
+            "falsification-report.md"
+          ],
+          "inputs": [
+            "reviewed claim-ledger.json",
+            "claims-only export",
+            "claim-falsifier verdicts"
+          ],
+          "output_owner": "opportunity-risk-designer",
+          "consumes": [
+            {
+              "artifact": "claim-ledger",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/**/customer-feedback/claim-ledger.json",
+                "market_research/**/customer-feedback/claim-ledger.json"
+              ],
+              "freshness": "digest"
+            }
+          ],
+          "produces": [
+            {
+              "artifact": "falsification-report",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/**/customer-feedback/falsification-report.json",
+                "market_research/**/customer-feedback/falsification-report.json"
+              ],
+              "freshness": "digest"
+            }
+          ]
         }
       },
       "consumes": [
