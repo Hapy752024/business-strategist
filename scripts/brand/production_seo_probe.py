@@ -191,12 +191,25 @@ def _fetch(url: str, timeout: float) -> dict:
         return {'status': 'unreachable'}
 
 
-def collect(origin: str, *, domains: dict[str, str] | None = None, timeout: float = 20) -> dict:
+def collect(origin: str, *, domains: dict[str, str] | None = None, timeout: float = 20,
+            fetch_origin: str | None = None) -> dict:
+    """Fetch observations keyed by production URLs. `fetch_origin` (pre-launch gate) serves
+    every production-origin URL from a local preview instead and fetches no other host."""
     origin = origin.rstrip('/')
-    obs = {'robots': _fetch(origin + '/robots.txt', timeout), 'pages': {}, 'domains': {}}
+    served = (fetch_origin or origin).rstrip('/')
+
+    def _get(url: str, timeout: float) -> dict:
+        parts = urlsplit(url)
+        if served != origin:
+            if f'{parts.scheme}://{parts.netloc}'.lower() != origin.lower():
+                return {'status': 'not fetched (preview gate stays on the preview origin)'}
+            url = served + (parts.path or '/') + (f'?{parts.query}' if parts.query else '')
+        return _fetch(url, timeout)
+
+    obs = {'robots': _get(origin + '/robots.txt', timeout), 'pages': {}, 'domains': {}}
     declared = [line.split(':', 1)[1].strip() for line in (obs['robots'].get('body') or '').splitlines()
                 if line.lower().startswith('sitemap:')]
-    obs['sitemap'] = _fetch(origin + '/sitemap.xml', timeout)
+    obs['sitemap'] = _get(origin + '/sitemap.xml', timeout)
     urls: list[str] = []
     if obs['sitemap'].get('status') == 200:
         try:
@@ -204,16 +217,16 @@ def collect(origin: str, *, domains: dict[str, str] | None = None, timeout: floa
         except Exception:
             urls = []
     for url in urls:
-        obs['pages'][url] = _fetch(url, timeout)
+        obs['pages'][url] = _get(url, timeout)
     for url in declared:  # a robots sitemap on another host must also be probed for redirects
         if _host(url) != _host(origin):
-            obs['pages'][url] = _fetch(url, timeout)
+            obs['pages'][url] = _get(url, timeout)
     for url, page in list(obs['pages'].items()):
         meta = PageMeta(); meta.feed(page.get('body', '') or ''); meta.close()
         for c in meta.canonicals[:1]:
             target = urljoin(url, c)
             if canonical_key(target) != canonical_key(url) and target not in obs['pages']:
-                obs['pages'][target] = _fetch(target, timeout)
+                obs['pages'][target] = _get(target, timeout)
     for host in domains or {}:
         obs['domains'][host] = _fetch(f'https://{host}/', timeout)
     return obs

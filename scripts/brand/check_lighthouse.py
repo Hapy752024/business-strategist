@@ -1,11 +1,34 @@
-"""Fail when a Lighthouse JSON report misses the default website lab budgets."""
+"""Fail when a Lighthouse JSON report misses the default website lab budgets.
+
+Also accepts a site-gate.json from scripts/brand/site_gate.py: it fails unless the gate
+verdict is pass and every check passed or was skipped with a recorded reason.
+"""
 import argparse
 import json
 import math
 from pathlib import Path
 
 
+def gate_errors(gate):
+    failures = []
+    checks = gate.get('checks')
+    if not isinstance(checks, list) or not checks:
+        return ['site gate: no checks recorded']
+    for check in checks:
+        status = check.get('status')
+        if status == 'skipped':
+            if not str((check.get('details') or {}).get('reason', '')).strip():
+                failures.append(f'{check.get("id")}: skipped without a reason')
+        elif status != 'pass':
+            failures.append(f'{check.get("id")}: {status}')
+    if gate.get('verdict') != 'pass':
+        failures.append(f'site gate verdict: {gate.get("verdict")}')
+    return failures
+
+
 def errors(report):
+    if str(report.get('schema', '')).startswith('site-gate/'):
+        return gate_errors(report)
     failures = []
     limits = {'largest-contentful-paint': 2500, 'cumulative-layout-shift': 0.1, 'total-blocking-time': 200}
     for key, limit in limits.items():

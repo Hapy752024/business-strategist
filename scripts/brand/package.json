@@ -1,0 +1,13 @@
+{
+  "name": "brand-site-gate-tooling",
+  "private": true,
+  "description": "Pinned tooling for scripts/brand/site_gate.py (Lighthouse, Playwright, axe). Install with npm ci in this directory.",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "lighthouse": "13.5.0",
+    "playwright": "1.62.1"
+  }
+}
