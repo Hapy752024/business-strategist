@@ -79,7 +79,7 @@ def import_export(path, name, metadata):
         if PRIVATE.search(dimension) and spec.get('dimension_kind')=='query':
             private_dropped+=1;continue
         if PRIVATE.search(dimension): raise ValueError('dimension may contain private data; use a sanitized aggregate export')
-        if spec['provider'] in {'gsc','ga4'} and spec.get('dimension_kind')!='query':
+        if spec['provider'] in {'gsc','ga4'} and spec.get('dimension_kind') not in {'query','event'}:
             parts=urlsplit(dimension)
             dimension=urlunsplit((parts.scheme,parts.netloc,parts.path,'',''))
         if len(dimension)>1000 or any(ord(c)<32 for c in dimension): raise ValueError('unsupported aggregate dimension')

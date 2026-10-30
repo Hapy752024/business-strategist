@@ -66,6 +66,8 @@ Implementation requirements: persist the event with the successful transaction (
 
 ## 6. Verify consent, event integrity and business outcomes separately
 
+Before launch spend, compare the event contract with events actually observed: run `scripts/marketing/verify_tracking.py` (procedure: "Verify tracking before launch" in the campaign operations reference).
+
 Use the project's consent/privacy design for browser, server and CRM paths. Do not add server tracking to bypass a refusal. Minimize URL, title, automatic-event and matching data; exclude sensitive questionnaire answers and free text. Hashing does not make prohibited data permissible. Confirm current platform and jurisdiction requirements before activating a regulated campaign.
 
 For Google, distinguish the consent interface from Consent Mode. Configure `ad_storage`, `analytics_storage`, `ad_user_data` and `ad_personalization` deliberately. Advanced mode can send cookieless pings after denial; it is not equivalent to blocking all requests. Choose the implementation against the project's documented policy and verify initial refusal and later withdrawal with real network/provider behavior. [Consent Mode overview](https://developers.google.com/tag-platform/security/concepts/consent-mode), checked 2026-10-24.

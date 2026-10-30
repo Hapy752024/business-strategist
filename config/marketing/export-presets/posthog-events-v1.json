@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "posthog-events-v1",
+  "transform_version": 1,
+  "provider": "posthog",
+  "dimension": "Event name",
+  "dimension_kind": "event",
+  "required": [
+    "Event name",
+    "Event count"
+  ],
+  "metrics": {
+    "event_count": {
+      "column": "Event count",
+      "unit": "count",
+      "aggregate": "sum"
+    }
+  },
+  "ratios": {}
+}
