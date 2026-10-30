@@ -1,5 +1,7 @@
 # Baseline acceptance run, pre-plan tree 486a7ae (2026-10-30)
 
+> Superseded: rescored on the fixed harness (cdf3768). Corrected numbers: 3 passed (cp11 now counted as a provider-gap pass via the Brave 402 result), model cost 4.29 USD, hook denials deduplicated. The tables below are the original pre-fix readings; see baseline-2026-10-30b for the re-run.
+
 Scenario: hybrid-insurance-advisor. Harness: scripts/run_acceptance.py at 7eea34e-era HEAD, default budgets (provider 25, model 40).
 Run: 5 rounds (1 initial + 4 nudges, nudges exhausted), 639 s wall time, stop_reason `completed`.
 

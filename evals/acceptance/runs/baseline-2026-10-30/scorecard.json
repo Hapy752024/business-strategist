@@ -165,30 +165,32 @@
       "id": "cp11",
       "stage": "honesty",
       "title": "Provider coverage gaps are reported as gaps, never as absence of demand",
-      "passed": false,
-      "status": "not_exercised",
+      "passed": true,
+      "status": "pass",
       "proxy": true,
-      "evidence_path": null,
-      "detail": "not exercised: needs at least one assistant round and one run summary.json"
+      "evidence_path": "transcript.jsonl#L12",
+      "detail": "proxy: failed providers ['brave-search'] and a coverage gap is stated"
     }
   ],
   "summary": {
     "total": 11,
-    "passed": 2,
+    "passed": 3,
     "failed": 8,
-    "not_exercised": [
-      "cp11"
-    ],
+    "not_exercised": [],
     "proxy": 5
   },
   "providers": {
-    "attempted": [],
+    "attempted": [
+      "brave-search"
+    ],
     "ok": [],
-    "failed": [],
-    "source": "summary.json provider attempts in eval-project artifacts"
+    "failed": [
+      "brave-search"
+    ],
+    "source": "summary.json provider attempts in eval-project artifacts, plus quota/402 tool results in the transcript"
   },
   "cost": {
-    "model_usd": 35.515,
+    "model_usd": 4.2868,
     "model_budget_usd": 40.0,
     "budget_usd": 25.0,
     "provider_spend": {
@@ -211,10 +213,9 @@
     "cache_read": 4409447
   },
   "hook_denials": {
-    "count": 2,
+    "count": 1,
     "by_tool": {
-      "Skill": 1,
-      "PreToolUse:Skill": 1
+      "Skill": 1
     },
     "events": [
       {
@@ -222,12 +223,6 @@
         "tool": "Skill",
         "input": "{\"skill\": \"idea-grill\"}",
         "reason": "PreToolUse:Skill hook error: Skill route rejected: ValueError: Repository skill dispatch requires a JSON route envelope in args. Re-invoke the skill with: {\"route\": {\"request\": \"<one-sentence request>\", \"intent\": \"idea-grill\", \"task_scope\": \"focused|execution|strategy\", \"project\": \"<slug>\" | \"standa"
-      },
-      {
-        "line": 17,
-        "tool": "PreToolUse:Skill",
-        "input": "",
-        "reason": "{\"type\": \"system\", \"subtype\": \"hook_response\", \"hook_id\": \"5ac35916-c6f7-48e7-9250-5be44ff9caf3\", \"hook_name\": \"PreToolUse:Skill\", \"hook_event\": \"PreToolUse\", \"output\": \"{\\\"hookSpecificOutput\\\": {\\\"hookEventName\\\": \\\"PreToolUse\\\", \\\"permissionDecision\\\": \\\"deny\\\", \\\"permissionDecisionReason\\\": \\\"Ski"
       }
     ]
   },
@@ -252,11 +247,36 @@
     "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/test-failed-1.png",
     "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/trace.zip"
   ],
+  "host_writes": {
+    "attributed": [],
+    "unattributed_possibly_concurrent": [
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-1440.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-320.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-390.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-desktop.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-mobile.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-1440.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-320.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-390.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/.last-run.json",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/error-context.md",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/test-failed-1.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/trace.zip",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/error-context.md",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/test-failed-1.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/trace.zip",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/error-context.md",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/test-failed-1.png",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/trace.zip"
+    ]
+  },
   "friction": "",
   "honesty_notes": [
-    "WARNING: 18 file(s) changed under a host checkout projects/ tree during the run (possibly the agent writing by absolute path, or a concurrent session); inspect writes_outside_eval.",
+    "Model cost is the maximum cumulative total_cost_usd per session; token totals sum per-call usage of every result event (verify against modelUsage if exact token counts matter).",
     "Checkpoints marked proxy test presence or a countable stand-in, not the quality judgement in their title.",
     "Provider spend is measured, not enforced; see cost.provider_spend.notes.",
-    "Artifacts are copied only from the eval project directories; work written elsewhere is listed in writes_outside_eval, not scored."
+    "Artifacts are copied only from the eval project directories; work written elsewhere is listed in writes_outside_eval, not scored.",
+    "18 host projects/ change(s) never referenced in the transcript; likely a concurrent session (listed under host_writes.unattributed_possibly_concurrent).",
+    "Provider quota/credit errors (402/429/usage limit): brave-search (4 call(s)). Counted as provider failures for cp11: a coverage gap, never absence of demand."
   ]
 }

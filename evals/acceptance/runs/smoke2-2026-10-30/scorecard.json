@@ -169,7 +169,7 @@
       "status": "not_exercised",
       "proxy": true,
       "evidence_path": null,
-      "detail": "not exercised: needs at least one assistant round and one run summary.json"
+      "detail": "not exercised: needs an assistant round and a run summary.json or a provider quota error"
     }
   ],
   "summary": {
@@ -185,10 +185,10 @@
     "attempted": [],
     "ok": [],
     "failed": [],
-    "source": "summary.json provider attempts in eval-project artifacts"
+    "source": "summary.json provider attempts in eval-project artifacts, plus quota/402 tool results in the transcript"
   },
   "cost": {
-    "model_usd": 1.2992,
+    "model_usd": 0.9736,
     "model_budget_usd": 3.0,
     "budget_usd": 2.0,
     "provider_spend": {
@@ -211,10 +211,9 @@
     "cache_read": 1382489
   },
   "hook_denials": {
-    "count": 2,
+    "count": 1,
     "by_tool": {
-      "Skill": 1,
-      "PreToolUse:Skill": 1
+      "Skill": 1
     },
     "events": [
       {
@@ -222,12 +221,6 @@
         "tool": "Skill",
         "input": "{\"skill\": \"idea-grill\"}",
         "reason": "PreToolUse:Skill hook error: Skill route rejected: ValueError: Repository skill dispatch requires a JSON route envelope in args. Re-invoke the skill with: {\"route\": {\"request\": \"<one-sentence request>\", \"intent\": \"idea-grill\", \"task_scope\": \"focused|execution|strategy\", \"project\": \"<slug>\" | \"standa"
-      },
-      {
-        "line": 14,
-        "tool": "PreToolUse:Skill",
-        "input": "",
-        "reason": "{\"type\": \"system\", \"subtype\": \"hook_response\", \"hook_id\": \"737c9875-da64-496b-899e-d6a0bab3df38\", \"hook_name\": \"PreToolUse:Skill\", \"hook_event\": \"PreToolUse\", \"output\": \"{\\\"hookSpecificOutput\\\": {\\\"hookEventName\\\": \\\"PreToolUse\\\", \\\"permissionDecision\\\": \\\"deny\\\", \\\"permissionDecisionReason\\\": \\\"Ski"
       }
     ]
   },
@@ -240,11 +233,23 @@
     "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/app/sitemap.ts",
     "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/routes.json"
   ],
+  "host_writes": {
+    "attributed": [],
+    "unattributed_possibly_concurrent": [
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/app/guide/costs/page.tsx",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/app/guide/how-much-money/page.tsx",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/app/guide/page.tsx",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/app/guide/visa/page.tsx",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/app/sitemap.ts",
+      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/routes.json"
+    ]
+  },
   "friction": "",
   "honesty_notes": [
-    "WARNING: 6 file(s) changed under a host checkout projects/ tree during the run (possibly the agent writing by absolute path, or a concurrent session); inspect writes_outside_eval.",
+    "Model cost is the maximum cumulative total_cost_usd per session; token totals sum per-call usage of every result event (verify against modelUsage if exact token counts matter).",
     "Checkpoints marked proxy test presence or a countable stand-in, not the quality judgement in their title.",
     "Provider spend is measured, not enforced; see cost.provider_spend.notes.",
-    "Artifacts are copied only from the eval project directories; work written elsewhere is listed in writes_outside_eval, not scored."
+    "Artifacts are copied only from the eval project directories; work written elsewhere is listed in writes_outside_eval, not scored.",
+    "6 host projects/ change(s) never referenced in the transcript; likely a concurrent session (listed under host_writes.unattributed_possibly_concurrent)."
   ]
 }

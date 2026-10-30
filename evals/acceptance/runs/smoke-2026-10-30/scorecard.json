@@ -169,7 +169,7 @@
       "status": "not_exercised",
       "proxy": true,
       "evidence_path": null,
-      "detail": "not exercised: needs at least one assistant round and one run summary.json"
+      "detail": "not exercised: needs an assistant round and a run summary.json or a provider quota error"
     }
   ],
   "summary": {
@@ -185,7 +185,7 @@
     "attempted": [],
     "ok": [],
     "failed": [],
-    "source": "summary.json provider attempts in eval-project artifacts"
+    "source": "summary.json provider attempts in eval-project artifacts, plus quota/402 tool results in the transcript"
   },
   "cost": {
     "model_usd": 0.3172,
@@ -211,10 +211,9 @@
     "cache_read": 343507
   },
   "hook_denials": {
-    "count": 2,
+    "count": 1,
     "by_tool": {
-      "Skill": 1,
-      "PreToolUse:Skill": 1
+      "Skill": 1
     },
     "events": [
       {
@@ -222,19 +221,18 @@
         "tool": "Skill",
         "input": "{\"skill\": \"idea-grill\"}",
         "reason": "PreToolUse:Skill hook error: Skill route rejected: ValueError: Repository skill dispatch requires a JSON route envelope in args. Re-invoke the skill with: {\"route\": {\"request\": \"<one-sentence request>\", \"intent\": \"idea-grill\", \"task_scope\": \"focused|execution|strategy\", \"project\": \"<slug>\" | \"standa"
-      },
-      {
-        "line": 16,
-        "tool": "PreToolUse:Skill",
-        "input": "",
-        "reason": "{\"type\": \"system\", \"subtype\": \"hook_response\", \"hook_id\": \"744363b8-59f9-4e78-b4f6-323e6b3c6a59\", \"hook_name\": \"PreToolUse:Skill\", \"hook_event\": \"PreToolUse\", \"output\": \"{\\\"hookSpecificOutput\\\": {\\\"hookEventName\\\": \\\"PreToolUse\\\", \\\"permissionDecision\\\": \\\"deny\\\", \\\"permissionDecisionReason\\\": \\\"Ski"
       }
     ]
   },
   "permission_denials": 1,
   "writes_outside_eval": [],
+  "host_writes": {
+    "attributed": [],
+    "unattributed_possibly_concurrent": []
+  },
   "friction": "",
   "honesty_notes": [
+    "Model cost is the maximum cumulative total_cost_usd per session; token totals sum per-call usage of every result event (verify against modelUsage if exact token counts matter).",
     "Checkpoints marked proxy test presence or a countable stand-in, not the quality judgement in their title.",
     "Provider spend is measured, not enforced; see cost.provider_spend.notes.",
     "Artifacts are copied only from the eval project directories; work written elsewhere is listed in writes_outside_eval, not scored."
