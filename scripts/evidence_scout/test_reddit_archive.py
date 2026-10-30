@@ -157,6 +157,14 @@ class ArcticShiftTests(unittest.TestCase):
         self.assertEqual({r["source"] for r in found}, {"reddit", "reddit_comment"})
 
 
+def comments_by_post(found: list[dict]) -> dict:
+    out: dict = {}
+    for r in found:
+        if r["source"] == "reddit_comment":
+            out.setdefault(r["parent_source_record_id"], []).append(r)
+    return out
+
+
 class SchedulerCapTests(unittest.TestCase):
     """Comments must survive collect_scheduled_provider's per-query post cap."""
 
@@ -170,38 +178,57 @@ class SchedulerCapTests(unittest.TestCase):
         return found
 
     def test_scrapecreators_comments_survive(self) -> None:
+        search = load("scrapecreators_reddit_search_sample.json")
+        thread = load("scrapecreators_reddit_thread_sample.json")
+        thread["comments"] = [dict(thread["comments"][0], id=f"c10{i}", replies={"items": []},
+                                   url=f"https://example.com/r/example_sub/comments/syn001/t/c10{i}/") for i in range(4)]
+
         def fake_get(url, **kw):
-            return resp(load("scrapecreators_reddit_search_sample.json") if "/search" in url else load("scrapecreators_reddit_thread_sample.json"))
+            if "/search" in url:
+                return resp(search)
+            post = search["posts"][0 if "syn001" in url else 1]
+            return resp(dict(thread, post=post))
         with mock.patch.object(collect, "get_secret", return_value=("K", "k")), mock.patch("providers.scrapecreators_reddit.http_get", side_effect=fake_get):
             found = self._run("scrapecreators_reddit")
-        posts = [r for r in found if r["source"] == "reddit"]
-        comments = [r for r in found if r["source"] == "reddit_comment"]
-        self.assertEqual(len(posts), 2)
-        self.assertTrue(comments)
-        self.assertLessEqual(len(comments), 2 * 2)
+        self.assertEqual(len([r for r in found if r["source"] == "reddit"]), 2)
+        grouped = comments_by_post(found)
+        self.assertTrue(grouped)
+        for post_id, comments in grouped.items():
+            self.assertTrue(1 <= len(comments) <= 2, (post_id, len(comments)))
+        self.assertTrue(all("trimmed" in r["sampling_metadata"]["subset_limitations"] and "without pagination" in r["sampling_metadata"]["subset_limitations"]
+                            for r in found))
 
     def test_arctic_shift_comments_survive(self) -> None:
-        posts = load("arctic_shift_posts_sample.json")
-        comments = {"data": load("arctic_shift_comments_sample.json")["data"] * 5}
-        two = {"data": posts["data"] * 1}
-        two["data"] = [dict(posts["data"][0], id="syn101"), dict(posts["data"][0], id="syn102", permalink="/r/example_sub/comments/syn102/t/")]
-        fake = lambda url, **kw: resp(comments if "comments/search" in url else two)
+        posts = load("arctic_shift_posts_sample.json")["data"][0]
+        two = {"data": [dict(posts, id="syn101"), dict(posts, id="syn102", permalink="/r/example_sub/comments/syn102/t/")]}
+        base = load("arctic_shift_comments_sample.json")["data"][0]
+
+        def fake(url, **kw):
+            if "comments/search" not in url:
+                return resp(two)
+            link = "syn102" if "syn102" in url else "syn101"
+            return resp({"data": [dict(base, id=f"{link}c{i}", link_id="t3_" + link,
+                                       permalink=f"/r/example_sub/comments/{link}/t/{link}c{i}/") for i in range(4)]})
         with mock.patch("providers.arctic_shift.http_get", side_effect=fake), mock.patch("providers.arctic_shift.time.sleep"):
             found = self._run("arctic_shift")
         self.assertEqual(len([r for r in found if r["source"] == "reddit"]), 2)
-        self.assertTrue([r for r in found if r["source"] == "reddit_comment"])
+        grouped = comments_by_post(found)
+        self.assertEqual(set(grouped), {"syn101", "syn102"})
+        for post_id, comments in grouped.items():
+            self.assertTrue(1 <= len(comments) <= 2, (post_id, len(comments)))
 
     def test_apify_comments_survive_and_per_post_bound(self) -> None:
         items = json.loads((FIX / "apify_reddit_sample.json").read_text())[:2]
         with mock.patch.object(collect, "get_secret", return_value=("APIFY_TOKEN", "t")), \
                 mock.patch("providers.apify_reddit.http_post", return_value=resp(items)):
             found = self._run("apify_reddit")
-        comments = [r for r in found if r["source"] == "reddit_comment"]
-        self.assertTrue(comments)
-        per_post: dict = {}
-        for c in comments:
-            per_post[c["parent_source_record_id"]] = per_post.get(c["parent_source_record_id"], 0) + 1
-        self.assertLessEqual(max(per_post.values()), 2)
+        # Discriminating: both posts must survive alongside their comments. Without the
+        # exemption comments interleave with posts and consume the 2-record cap.
+        self.assertEqual(len([r for r in found if r["source"] == "reddit"]), 2)
+        grouped = comments_by_post(found)
+        self.assertTrue(grouped)
+        for post_id, comments in grouped.items():
+            self.assertTrue(1 <= len(comments) <= 2, (post_id, len(comments)))
 
 
 if __name__ == "__main__":

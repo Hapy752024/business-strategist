@@ -141,7 +141,7 @@ class HydrateTests(unittest.TestCase):
 
     def test_sunset_skips_reddit_api_without_calling_it(self) -> None:
         rget = mock.Mock()
-        with mock.patch.object(collect, "reddit_api_sunset_reached", return_value=True):
+        with mock.patch.object(collect, "reddit_api_sunset_status", return_value=(True, None)):
             _, summary, _, _, _ = run(make_args(reddit_hydrate_max=1), token="tok", reddit_get=rget)
         rget.assert_not_called()
         self.assertEqual(summary["hydrate_ledger"][0]["skipped"][0], {"backend": "reddit", "reason": "sunset"})
@@ -150,6 +150,22 @@ class HydrateTests(unittest.TestCase):
         from datetime import date
         self.assertFalse(collect.reddit_api_sunset_reached(date(2027, 3, 30)))
         self.assertTrue(collect.reddit_api_sunset_reached(date(2027, 3, 31)))
+
+    def test_real_catalog_sunset_date_parses(self) -> None:
+        reached, error = collect.reddit_api_sunset_status()
+        self.assertIsNone(error)
+        data = json.loads((Path(collect.ROOT) / "config" / "source-capabilities.json").read_text())
+        end = next(c for c in data["capabilities"] if c["id"] == "reddit")["sunset"]["public_api_end"]
+        from datetime import date
+        self.assertEqual(reached, date.today() >= date.fromisoformat(end))
+
+    def test_sunset_check_failure_is_visible_and_fails_open(self) -> None:
+        rget = mock.Mock(return_value={"ok": True, "status_code": 200, "body": reddit_listing("syn001")})
+        with mock.patch.object(collect, "reddit_api_sunset_status", return_value=(False, "KeyError: 'sunset'")):
+            records, summary, *_ = run(make_args(reddit_hydrate_max=1), token="tok", reddit_get=rget)
+        self.assertEqual(summary["sunset_check_failed"], "KeyError: 'sunset'")
+        rget.assert_called_once()
+        self.assertEqual(summary["hydrate_ledger"][0]["backend"], "reddit")
 
     def test_no_input_file(self) -> None:
         _, summary, *_ = run(make_args(reddit_hydrate_from=""))

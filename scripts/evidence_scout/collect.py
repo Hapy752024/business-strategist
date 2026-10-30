@@ -2295,7 +2295,7 @@ def _collect_arctic_shift_query(args: argparse.Namespace, queries: list[str], ru
             if cmeta["status"] != "ok":
                 status = "partial" if cmeta["status"] != "rate_limited" else "rate_limited"
                 break
-            records.extend(arctic_shift.comments_to_records(comments, query, now, build=normalize_record,
+            records.extend(arctic_shift.comments_to_records(comments[:max(1, getattr(args, "reddit_comments_per_post", 100))], query, now, build=normalize_record,
                            customer_segment=args.customer_segment, hypothesis=args.hypothesis_id))
     _score_fallback_records(records, args, "collector")
     write_json(run_dir / "raw" / "arctic_shift.json", redact_sensitive(raw))
@@ -2305,14 +2305,21 @@ def _collect_arctic_shift_query(args: argparse.Namespace, queries: list[str], ru
     return records, summary
 
 
-def reddit_api_sunset_reached(today: date | None = None) -> bool:
-    """True once today is on/after the reddit capability's sunset.public_api_end."""
+def reddit_api_sunset_status(today: date | None = None) -> tuple[bool, str | None]:
+    """(reached, error): reached once today >= the reddit capability's sunset.public_api_end.
+
+    Fails open (reached=False) when the date cannot be read, but returns the reason so callers can surface it.
+    """
     try:
         data = json.loads((ROOT / "config" / "source-capabilities.json").read_text(encoding="utf-8"))
         end = next(c for c in data["capabilities"] if c["id"] == "reddit")["sunset"]["public_api_end"]
-        return (today or datetime.now(timezone.utc).date()) >= date.fromisoformat(end)
-    except (OSError, ValueError, StopIteration, KeyError):
-        return False
+        return (today or datetime.now(timezone.utc).date()) >= date.fromisoformat(end), None
+    except (OSError, ValueError, StopIteration, KeyError, TypeError) as exc:
+        return False, f"{type(exc).__name__}: {exc}"
+
+
+def reddit_api_sunset_reached(today: date | None = None) -> bool:
+    return reddit_api_sunset_status(today)[0]
 
 
 def collect_reddit_hydrate(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -2344,7 +2351,9 @@ def collect_reddit_hydrate(args: argparse.Namespace, queries: list[str], run_dir
     common = dict(customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
     records: list[dict[str, Any]] = []
     ledger: list[dict[str, Any]] = []
-    sunset_over = reddit_api_sunset_reached()
+    sunset_over, sunset_error = reddit_api_sunset_status()
+    if sunset_error:
+        summary_base["sunset_check_failed"] = sunset_error
     for ref in selected:
         skipped: list[dict[str, str]] = []
         served: str | None = None
