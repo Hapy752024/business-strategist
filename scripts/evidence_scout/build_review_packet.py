@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 def build(plan: dict, evidence: list[dict], annotations: list[dict], reviews: list[dict], closeout: dict,
-          evidence_ids: list[str] | None = None, limit: int = 30) -> dict:
+          evidence_ids: list[str] | None = None, limit: int = 30, voc_table: dict | None = None) -> dict:
     by_id = {str(row.get("evidence_id")): row for row in evidence if row.get("evidence_id")}
     ann: dict[str, list[dict]] = defaultdict(list)
     for row in annotations:
@@ -49,6 +49,7 @@ def build(plan: dict, evidence: list[dict], annotations: list[dict], reviews: li
             "authority": "original evidence, annotations, source review and research closeout",
             "closeout": closeout, "planned_queries": plan.get("input_plan", {}).get("queries", []),
             "items": items,
+            "voc_table": voc_table,
             "statement_typing": True,
             "statement_typing_instruction": "For each accepted review set statement_type: past_behaviour | commitment | compliment | fluff | feature_request | unclassified, and copy statement_typing: true into the source-review file. Only past_behaviour and commitment can support pain or demand claims.",
             "warning": "Packet creation does not accept evidence or annotations. Review original source context before changing existing review artifacts."}
@@ -60,6 +61,7 @@ def main() -> int:
         p.add_argument("--" + name, type=Path, required=True)
     p.add_argument("--ids", default="", help="Comma-separated exact evidence IDs; defaults to file order.")
     p.add_argument("--limit", type=int, default=30)
+    p.add_argument("--voc-table", type=Path, help="Optional voc-table.json from build_voc_table.py, embedded for the reviewer.")
     a = p.parse_args()
     load_json = lambda path: json.loads(path.read_text(encoding="utf-8"))
     def load_jsonl(path): return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
@@ -69,7 +71,8 @@ def main() -> int:
     reviews = load_json(a.source_review).get("reviews", [])
     closeout = load_json(a.closeout)
     result = build(plan, evidence, annotations, reviews, closeout,
-                   [x for x in a.ids.split(",") if x] or None, a.limit)
+                   [x for x in a.ids.split(",") if x] or None, a.limit,
+                   load_json(a.voc_table) if a.voc_table else None)
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return 0
