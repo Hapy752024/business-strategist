@@ -1,6 +1,7 @@
 ---
 name: pre-release-regression
 description: Plan and run regression checks for a selected website or application release, prioritizing changed journeys and shared dependencies. Use when assessing release readiness.
+disable-model-invocation: true
 ---
 
 # Pre-Release Regression

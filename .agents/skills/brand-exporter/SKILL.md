@@ -1,6 +1,7 @@
 ---
 name: brand-exporter
 description: Export approved brand decisions as CSS variables and an agent-readable design package. Use after a brand identity passes approval and quality review.
+disable-model-invocation: true
 ---
 
 # Brand Exporter

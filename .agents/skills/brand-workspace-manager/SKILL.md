@@ -1,6 +1,7 @@
 ---
 name: brand-workspace-manager
 description: Create and manage per-project brand workspaces and archive earlier iteration assets. Use when initializing, resuming, or revising a brand workspace.
+disable-model-invocation: true
 ---
 
 # Brand Workspace Manager

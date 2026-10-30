@@ -67,3 +67,7 @@ Legacy projects continue ordinary research under their existing paths and stage 
 - **CI:** `.github/workflows/validate.yml` runs `scripts/validate_setup.sh` and `scripts/run_evals.py` on push and pull requests; keep both green.
 
 - **Live evals (opt-in, spends tokens):** `python3 scripts/run_live_evals.py --skill <name> --live`; results under `evals/live-results/`.
+
+## Skill listing budget
+
+Claude Code drops skill descriptions from the listing when it exceeds a share of context, so skills show by name only and cannot be routed to. `.claude/settings.json` sets `skillListingBudgetFraction` to 0.03. Five side-effect skills set `disable-model-invocation: true` and are invoked explicitly only: brand-exporter, brand-workspace-manager, setup-multiharness-project, marketing-campaign-operator, pre-release-regression. The ~30 firecrawl skills in `~/.claude/skills` are user-level and cannot be disabled from this repo; move them to a plugin or prune them to keep the listing under budget.

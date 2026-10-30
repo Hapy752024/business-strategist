@@ -1,6 +1,7 @@
 ---
 name: marketing-campaign-operator
 description: Prepare recurring campaign reports from aggregate exports, maintain owner tasks, and configure project-specific reporting connections. Use for campaign setup, result imports, weekly reviews and connection onboarding.
+disable-model-invocation: true
 ---
 
 # Marketing Campaign Operator
