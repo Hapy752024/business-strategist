@@ -11,6 +11,10 @@ are copied from the eval project directories only; the worktree is always remove
 A live run spends model tokens (capped by --model-budget-usd) and paid evidence APIs. Provider spend
 cannot be enforced inside the tree under test: the cap is stated in the prompt and spend is measured
 before/after from provider account endpoints and recorded in the scorecard.
+
+Model cost is the sum of `total_cost_usd` over the result event of every round. The first smoke run must
+confirm that a resumed invocation reports per-call cost, not a session-cumulative figure; if it is
+cumulative, this sum overstates cost. A round killed on timeout emits no result event, so its cost is unreported.
 """
 from __future__ import annotations
 
@@ -35,6 +39,7 @@ DEFAULT_SCENARIO = ROOT / 'evals/acceptance/hybrid-insurance-advisor'
 SCHEMA_PATH = ROOT / 'evals/acceptance/scorecard.schema.json'
 BASELINE_REF = '486a7ae'
 HARD_BUDGET_CEILING_USD = 50.0  # refuse to start above this, for provider and model budgets alike
+COMBINED_BUDGET_CEILING_USD = 65.0  # and when provider + model budget together exceed this
 MAX_ROUNDS = 12
 ROUND_TIMEOUT_S = 45 * 60
 WALL_CAP_S = 4 * 60 * 60
@@ -56,7 +61,7 @@ ALLOWED_TOOLS = [
     'Bash(tail *)', 'Bash(wc *)', 'Bash(find *)', 'Bash(grep *)', 'Bash(rg *)', 'Bash(sed -n *)', 'Bash(jq *)',
     'Bash(sort *)', 'Bash(uniq *)', 'Bash(date*)', 'Bash(pwd)', 'Bash(echo *)', 'Bash(mkdir *)', 'Bash(cp *)',
     'Bash(mv *)', 'Bash(touch *)', 'Bash(test *)', 'Bash(diff *)', 'Bash(git status*)', 'Bash(git diff*)',
-    'Bash(git log*)', 'Bash(git rev-parse*)', 'Bash(node *)', 'Bash(npm *)', 'Bash(npx *)',
+    'Bash(git log*)', 'Bash(node *)', 'Bash(npm *)', 'Bash(npx *)',
     'mcp__brave-search', 'mcp__firecrawl', 'mcp__dialog-mcp', 'mcp__apify',
 ]
 # Anything that deploys, sends, publishes, writes to an external account or generates paid assets.
@@ -69,7 +74,7 @@ DISALLOWED_TOOLS = [
     'mcp__firecrawl__firecrawl_monitor_delete', 'mcp__firecrawl__firecrawl_monitor_run',
     'mcp__firecrawl__firecrawl_interact', 'mcp__firecrawl__firecrawl_feedback',
     'mcp__firecrawl__firecrawl_search_feedback',
-    'Bash(git push*)', 'Bash(git commit*)', 'Bash(git remote*)', 'Bash(gh *)', 'Bash(curl*)', 'Bash(wget*)',
+    'Bash(git push*)', 'Bash(git commit*)', 'Bash(git remote*)', 'Bash(git rev-parse*)', 'Bash(gh *)', 'Bash(curl*)', 'Bash(wget*)',
     'Bash(vercel*)', 'Bash(npx vercel*)', 'Bash(netlify*)', 'Bash(npx netlify*)', 'Bash(wrangler*)',
     'Bash(npx wrangler*)', 'Bash(firebase*)', 'Bash(npx firebase*)', 'Bash(npm publish*)',
     'Bash(python3 scripts/fal_assets.py*)', 'Bash(python3 scripts/brand/finalize_fal_assets.py*)',
@@ -116,6 +121,9 @@ def check_budgets(budget_usd: float, model_budget_usd: float) -> None:
             raise ValueError(f'{name} must be a positive number')
         if value > HARD_BUDGET_CEILING_USD:
             raise ValueError(f'{name}={value} exceeds the hard ceiling of {HARD_BUDGET_CEILING_USD} USD; refusing to start')
+    if budget_usd + model_budget_usd > COMBINED_BUDGET_CEILING_USD:
+        raise ValueError(f'provider + model budget {budget_usd + model_budget_usd:g} USD exceeds the combined ceiling of '
+                         f'{COMBINED_BUDGET_CEILING_USD} USD; refusing to start')
 
 
 def blocked_tools(host_roots: Iterable[Path]) -> list[str]:
@@ -171,7 +179,13 @@ def load_answers(path: Path, private_path: Path | None = None) -> dict:
 
 
 def _kw_hit(keyword: str, text: str) -> bool:
-    return re.search(r'(?<![a-z0-9])' + re.escape(keyword.lower()), text) is not None
+    kw = keyword.lower()
+    right = r'(?![a-z0-9])' if kw[-1:].isalnum() else ''  # whole words; 'invest' must not match 'investigate'
+    return re.search(r'(?<![a-z0-9])' + re.escape(kw) + right, text) is not None
+
+
+INTAKE_CAP_AFTER = 4  # answered intake rounds before the feeder stops inviting more questions
+INTAKE_CAP_TEXT = 'No more intake questions; proceed under stated assumptions through all remaining steps.'
 
 
 class Feeder:
@@ -182,6 +196,7 @@ class Feeder:
         self.subs = {'{eval_dir}': eval_dir, '{alt_slug}': alt_slug, '{budget_usd}': f'{budget_usd:g}'}
         self.nudges_left = int(data.get('nudge', {}).get('max', 4))
         self.marker = str(data.get('completion_marker', 'journey complete')).lower()
+        self.intake_answers = 0
 
     @classmethod
     def load(cls, path: Path, private_path: Path | None = None, **kwargs) -> 'Feeder':
@@ -196,7 +211,7 @@ class Feeder:
         return next((e for e in self.data.get('answers', []) if e.get('id') == entry_id), None)
 
     def match(self, text: str) -> list[dict]:
-        questions = question_sentences(text)
+        questions = question_sentences(text)[-2:]  # only the closing question(s) of the final message
         context = ' '.join(questions) if questions else text[-600:]
         context = context.lower()
         scored = []
@@ -212,18 +227,28 @@ class Feeder:
         generic = self.data.get('generic', {})
         return generic.get('text') or 'Please proceed under a stated assumption.'
 
-    def reply(self, final_text: str) -> tuple[str, str, list[str]] | None:
-        """Return (kind, reply, matched_ids), or None when the run should stop."""
+    def completed(self, text: str) -> bool:
+        """The completion marker counts only at the very end of the final message."""
+        return text.rstrip(' \t\r\n.!*_`\'"').lower().endswith(self.marker)
+
+    def reply(self, final_text: str, rounds_left: int | None = None) -> tuple[str, str, list[str]] | None:
+        """Return (kind, reply, matched_ids), or None when the run should stop.
+
+        After INTAKE_CAP_AFTER answered intake rounds, or when at most that many rounds remain, the answer
+        is followed by INTAKE_CAP_TEXT and logged with kind 'intake_cap'."""
         text = final_text or ''
-        if self.marker in text.lower():
+        if self.completed(text):
             return None
         asks = bool(question_sentences(text[-800:])) or bool(INTAKE_PATTERN.search(text[-400:]))
         if asks:
             matched = self.match(text)
-            if not matched:
-                return 'generic', self.text_for({}), []
-            parts = list(dict.fromkeys(self.text_for(e) for e in matched))
-            return 'answer', '\n\n'.join(parts), [e['id'] for e in matched]
+            kind = 'answer' if matched else 'generic'
+            reply = '\n\n'.join(dict.fromkeys(self.text_for(e) for e in matched)) if matched else self.text_for({})
+            capped = self.intake_answers >= INTAKE_CAP_AFTER or (rounds_left is not None and rounds_left <= INTAKE_CAP_AFTER)
+            self.intake_answers += 1
+            if capped:
+                return 'intake_cap', reply + '\n\n' + INTAKE_CAP_TEXT, [e['id'] for e in matched]
+            return kind, reply, [e['id'] for e in matched]
         if self.nudges_left <= 0:
             return None
         self.nudges_left -= 1
@@ -404,7 +429,8 @@ def glob_regex(pattern: str) -> re.Pattern:
     return re.compile(out)
 
 
-Result = tuple[bool, str | None, str]  # passed, evidence_path, detail
+Result = tuple[bool | None, str | None, str]  # passed (None = not exercised), evidence_path, detail
+ANSWER_KINDS = ('answer', 'generic', 'intake_cap')
 
 
 def _tool_matches(ctx: Ctx, check: dict) -> list[dict]:
@@ -447,9 +473,9 @@ def run_check(ctx: Ctx, check: dict) -> Result:
     label = check.get('label') or kind
     if kind in ('all', 'any'):
         results = [(c, run_check(ctx, c)) for c in check['checks']]
-        oks = [r for _, r in results if r[0]]
+        oks = [r for _, r in results if r[0] is True]
         if kind == 'all':
-            failed = [(c.get('label') or c['type'], r[2]) for c, r in results if not r[0]]
+            failed = [(c.get('label') or c['type'], r[2]) for c, r in results if r[0] is not True]
             evidence = next((r[1] for _, r in results if r[1]), None)
             if failed:
                 return False, evidence, 'missing: ' + '; '.join(f'{l} ({d})' for l, d in failed)
@@ -459,6 +485,7 @@ def run_check(ctx: Ctx, check: dict) -> Result:
         return False, None, f'{label}: none matched (' + '; '.join(r[2] for _, r in results) + ')'
     if kind == 'not':
         ok, ev, detail = run_check(ctx, check['check'])
+        ok = ok is True
         return (not ok), ev, (f'{label}: forbidden event found ({detail})' if ok else f'{label}: none found')
     if kind == 'text':
         pats = [re.compile(p) for p in check['patterns']]
@@ -513,7 +540,7 @@ def run_check(ctx: Ctx, check: dict) -> Result:
             return False, _line_ref(ctx, thens[0]), 'order: a write happened before the first event'
         return True, _line_ref(ctx, firsts[0]), 'order: first event precedes any later event'
     if kind == 'max_questions_per_turn':
-        answered = {r['round'] for r in ctx.rounds if r.get('kind') in ('answer', 'generic')}
+        answered = {r['round'] for r in ctx.rounds if r.get('kind') in ANSWER_KINDS}
         worst, worst_ref, checked = 0, None, 0
         for r in ctx.rounds:
             if r['round'] + 1 not in answered:
@@ -529,7 +556,7 @@ def run_check(ctx: Ctx, check: dict) -> Result:
         return worst <= limit, worst_ref, f'proxy: max {worst} question sentence(s) over {checked} answered turn(s), limit {limit}'
     if kind == 'answers_persisted':
         feeder_data = _founder_answers(ctx)
-        fed = [i for r in ctx.rounds if r.get('kind') == 'answer' for i in r.get('matched_ids', [])]
+        fed = [i for r in ctx.rounds if r.get('kind') in ANSWER_KINDS for i in r.get('matched_ids', [])]
         with_markers = [e for e in feeder_data.get('answers', []) if e.get('id') in set(fed) and e.get('persist_markers')]
         if not with_markers:
             return False, None, 'answers_persisted: no fed answer carried persist markers (not exercised)'
@@ -572,7 +599,9 @@ def round_final_text(ctx: Ctx, rnd: int) -> str:
 
 
 def gate_sequence(ctx: Ctx, check: dict) -> Result:
-    route_re, blocked_re = re.compile(check['route']), re.compile(check['blocked'])
+    route_re = re.compile(check['route'])
+    blocked_res = [re.compile(b) for b in (check['blocked'] if isinstance(check['blocked'], list) else [check['blocked']])]
+    denial_re = re.compile(check.get('denial', r'(?i)pain.first|problem_validation'))
     override_re, down_re = re.compile(check['override']), re.compile(check['downstream'])
     blocks, overrides, downstream = [], [], []
     for ev in ctx.events:
@@ -583,10 +612,10 @@ def gate_sequence(ctx: Ctx, check: dict) -> Result:
             if override_re.search(ev['input_text']):
                 if not res['is_error']:
                     overrides.append(ev['idx'])
-            elif blocked_re.search(res['text']):
+            elif all(b.search(res['text']) for b in blocked_res):  # matched independently: key order varies
                 blocks.append(ev['idx'])
         elif ev['name'] == 'Skill' and down_re.search(ev['input_text']):
-            if ev['denied'] and re.search(r'(?i)gate', res['text']):
+            if ev['denied'] and denial_re.search(res['text']):
                 blocks.append(ev['idx'])
             elif not res['is_error']:
                 downstream.append(ev['idx'])
@@ -632,8 +661,10 @@ def provider_gaps(ctx: Ctx, check: dict) -> Result:
     for ref, text in docs:
         if any(p.search(text) for p in absence):
             return False, ref, 'proxy: an assistant round states absence of demand'
+    if not docs or not ctx.glob('**/summary.json'):
+        return None, None, 'not exercised: needs at least one assistant round and one run summary.json'
     if not status['failed']:
-        return True, None, 'proxy: no provider failure observed in run summaries (gap reporting not exercised)'
+        return None, None, 'not exercised: no provider failure in run summaries, so gap reporting was not tested'
     gaps = [re.compile(p) for p in check['gap_patterns']]
     for ref, text in docs:
         if any(p.search(text) for p in gaps):
@@ -657,8 +688,13 @@ def spend_summary(out_dir: Path, budget_usd: float | None) -> tuple[dict, bool |
     notes = ('Measured as account usage deltas around the run; other concurrent use of the same accounts is included, '
              'Apify usage can lag, and SerpApi reports searches, not USD (priced only with --serpapi-usd-per-search). '
              'The runner does not enforce provider caps inside the tree under test.')
-    any_measured = any(v is not None for v in (apify, dfs, serp_usd))
-    over = (measured > budget_usd) if (any_measured and budget_usd is not None) else None
+    # Known only when every component is measured, or when the measured part alone already exceeds the cap.
+    if budget_usd is None:
+        over = None
+    elif complete or measured > budget_usd:
+        over = measured > budget_usd
+    else:
+        over = None
     return ({'apify_usd': apify, 'dataforseo_usd': dfs, 'serpapi_searches': serp_n, 'serpapi_usd': serp_usd,
              'measured_usd': round(measured, 4), 'complete': complete, 'notes': notes}, over)
 
@@ -673,7 +709,8 @@ def score(out_dir: Path, checkpoints: Path, scenario_dir: Path | None = None) ->
     for cp in spec['checkpoints']:
         validate_check(cp['check'])
         ok, evidence, detail = run_check(ctx, cp['check'])
-        cps.append({'id': cp['id'], 'stage': cp['stage'], 'title': cp['title'], 'passed': bool(ok),
+        status = 'pass' if ok is True else ('not_exercised' if ok is None else 'fail')
+        cps.append({'id': cp['id'], 'stage': cp['stage'], 'title': cp['title'], 'passed': ok is True, 'status': status,
                     'proxy': bool(cp.get('proxy')), 'evidence_path': evidence, 'detail': detail})
     model_usd, tokens, perm = 0.0, {'input': 0, 'output': 0, 'cache_creation': 0, 'cache_read': 0}, 0
     session = None
@@ -697,6 +734,13 @@ def score(out_dir: Path, checkpoints: Path, scenario_dir: Path | None = None) ->
         'Provider spend is measured, not enforced; see cost.provider_spend.notes.',
         'Artifacts are copied only from the eval project directories; work written elsewhere is listed in writes_outside_eval, not scored.',
     ]
+    host_writes = [w for w in manifest.get('writes_outside_eval', []) if str(w).startswith('host:')]
+    if host_writes:
+        notes.insert(0, f'WARNING: {len(host_writes)} file(s) changed under a host checkout projects/ tree during the run '
+                        '(possibly the agent writing by absolute path, or a concurrent session); inspect writes_outside_eval.')
+    killed = [r['round'] for r in ctx.rounds if r.get('timed_out')]
+    if killed:
+        notes.append(f'Round(s) {killed} were killed on timeout and emitted no result event: their model cost is unreported.')
     if manifest.get('reference_seeded') is False:
         notes.append('The reference workspace could not be seeded; cp01 cannot pass on this run.')
     return {
@@ -708,7 +752,10 @@ def score(out_dir: Path, checkpoints: Path, scenario_dir: Path | None = None) ->
                 'stop_reason': manifest.get('stop_reason'), 'session_id': session,
                 'blocked_tools': list(manifest.get('blocked_tools', []))},
         'checkpoints': cps,
-        'summary': {'total': len(cps), 'passed': passed, 'failed': len(cps) - passed, 'proxy': sum(c['proxy'] for c in cps)},
+        'summary': {'total': len(cps), 'passed': passed,
+                    'failed': sum(c['status'] == 'fail' for c in cps),
+                    'not_exercised': [c['id'] for c in cps if c['status'] == 'not_exercised'],
+                    'proxy': sum(c['proxy'] for c in cps)},
         'providers': provider_status(ctx),
         'cost': {'model_usd': round(model_usd, 4), 'model_budget_usd': _num(manifest.get('model_budget_usd')),
                  'budget_usd': budget, 'provider_spend': provider_spend, 'over_budget': over, 'spend_enforced': False},
@@ -914,12 +961,11 @@ def run_round(cmd: list[str], *, cwd: Path, transcript: Path, stderr_log: Path, 
             proc.wait(timeout=max(1.0, timeout_s))
         except subprocess.TimeoutExpired:
             timed_out = True
-            try:
-                os.killpg(proc.pid, signal.SIGTERM)
-                proc.wait(timeout=30)
-            except Exception:
-                os.killpg(proc.pid, signal.SIGKILL)
-                proc.wait()
+            terminate(proc)
+        except BaseException:
+            # Ctrl-C / SIGTERM: the child runs in its own session and never sees SIGINT, so stop it explicitly.
+            terminate(proc)
+            raise
     end_lines = _count_lines(transcript)
     session, final, cost = None, '', 0.0
     for raw in transcript.read_text(encoding='utf-8', errors='replace').splitlines()[start_lines:end_lines]:
@@ -937,6 +983,44 @@ def run_round(cmd: list[str], *, cwd: Path, transcript: Path, stderr_log: Path, 
     return {'line_start': start_lines, 'line_end': end_lines, 'session_id': session, 'final_text': final,
             'cost_usd': round(cost, 4), 'exit_code': proc.returncode, 'timed_out': timed_out,
             'duration_s': round(time.monotonic() - started, 1)}
+
+
+def terminate(proc) -> None:
+    """SIGTERM the child's process group, wait, then SIGKILL; a group that is already gone is fine."""
+    for sig, wait_s in ((signal.SIGTERM, 30), (signal.SIGKILL, 30)):
+        try:
+            os.killpg(proc.pid, sig)
+        except (ProcessLookupError, PermissionError):
+            return
+        try:
+            proc.wait(timeout=wait_s)
+            return
+        except subprocess.TimeoutExpired:
+            continue
+
+
+def _raise_interrupt(signum, frame):
+    raise KeyboardInterrupt(f'signal {signum}')
+
+
+class signals_interrupt:
+    """While active, SIGTERM and SIGHUP raise KeyboardInterrupt so every finally (kill, cleanup) runs."""
+
+    def __enter__(self):
+        self.saved = {}
+        for sig in (signal.SIGTERM, getattr(signal, 'SIGHUP', None)):
+            if sig is None:
+                continue
+            try:
+                self.saved[sig] = signal.signal(sig, _raise_interrupt)
+            except (ValueError, OSError):  # not the main thread
+                pass
+        return self
+
+    def __exit__(self, *exc):
+        for sig, handler in self.saved.items():
+            signal.signal(sig, handler)
+        return False
 
 
 def _count_lines(path: Path) -> int:
@@ -962,6 +1046,13 @@ def run_acceptance(scenario_dir: Path = DEFAULT_SCENARIO, out_dir: Path | None =
     reference_project = Path(reference_project) if reference_project else default_reference_project()
     sha = resolve_ref(ref)
     tools_blocked = blocked_tools(host_repo_roots())
+    with signals_interrupt():
+        return _run_in_worktree(scenario_dir, out_dir, sha, slug, alt_slug, ref, budget_usd, model_budget_usd, dry_run,
+                                reference_project, model, serpapi_usd_per_search, max_rounds, tools_blocked)
+
+
+def _run_in_worktree(scenario_dir, out_dir, sha, slug, alt_slug, ref, budget_usd, model_budget_usd, dry_run,
+                     reference_project, model, serpapi_usd_per_search, max_rounds, tools_blocked):
     parent, wt = create_worktree(sha)
     try:
         eval_dir = wt / 'projects/_eval' / slug
@@ -1000,6 +1091,7 @@ def _live(scenario_dir, out_dir, wt, eval_dirs, writes, prompt, slug, alt_slug, 
                 'dry_run': False, 'limits': {'max_rounds': max_rounds, 'round_timeout_s': ROUND_TIMEOUT_S, 'wall_cap_s': WALL_CAP_S}}
     (out_dir / 'run-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     before_projects = snapshot(wt / 'projects')
+    before_host = {root: snapshot(root / 'projects') for root in host_repo_roots()}
     spend = {'before': measure_provider_spend()}
     started, spent, session = time.monotonic(), 0.0, None
     message, kind, matched, stop = prompt, 'initial', [], 'max_rounds'
@@ -1029,7 +1121,7 @@ def _live(scenario_dir, out_dir, wt, eval_dirs, writes, prompt, slug, alt_slug, 
             if not session:
                 stop = 'no_session_id'
                 break
-            nxt = feeder.reply(info['final_text'])
+            nxt = feeder.reply(info['final_text'], rounds_left=max_rounds - rnd - 1)
             if nxt is None:
                 stop = 'completed'
                 break
@@ -1040,13 +1132,13 @@ def _live(scenario_dir, out_dir, wt, eval_dirs, writes, prompt, slug, alt_slug, 
         (out_dir / 'provider-spend.json').write_text(json.dumps(spend, indent=2) + '\n', encoding='utf-8')
         copy_artifacts(wt, eval_dirs, out_dir / 'artifacts')
         manifest.update(finished_at=now_iso(), wall_time_s=round(time.monotonic() - started, 1), stop_reason=stop,
-                        writes_outside_eval=writes_outside_eval(wt, eval_dirs, before_projects))
+                        writes_outside_eval=writes_outside_eval(wt, eval_dirs, before_projects, before_host))
         (out_dir / 'run-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     card = score(out_dir, scenario_dir / 'checkpoints.json', scenario_dir)
     return write_scorecard(out_dir, card)
 
 
-def writes_outside_eval(wt: Path, eval_dirs: list[Path], before: dict) -> list[str]:
+def writes_outside_eval(wt: Path, eval_dirs: list[Path], before: dict, before_host: dict | None = None) -> list[str]:
     after = snapshot(wt / 'projects')
     prefixes = [d.relative_to(wt / 'projects').as_posix() + '/' for d in eval_dirs]
     changed = [f'projects/{rel}' for rel, meta in after.items()
@@ -1054,6 +1146,11 @@ def writes_outside_eval(wt: Path, eval_dirs: list[Path], before: dict) -> list[s
     status = subprocess.run(['git', 'status', '--porcelain'], cwd=wt, capture_output=True, text=True, check=False).stdout
     changed += [f'repo:{line.strip()}' for line in status.splitlines()
                 if line.strip() and HIDDEN_TREE + '/' not in line]  # the runner's own deletion is not an agent write
+    # The agent can reach host checkouts by absolute path through allowed Bash; audit their projects/ trees too.
+    for root, snap in (before_host or {}).items():
+        after_host = snapshot(Path(root) / 'projects')
+        changed += [f'host:{Path(root) / "projects" / rel}' for rel in sorted(set(snap) | set(after_host))
+                    if snap.get(rel) != after_host.get(rel)]
     return sorted(changed)
 
 

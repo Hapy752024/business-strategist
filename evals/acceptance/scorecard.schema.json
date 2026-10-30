@@ -28,12 +28,13 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "stage", "title", "passed", "proxy", "evidence_path", "detail"],
+        "required": ["id", "stage", "title", "passed", "status", "proxy", "evidence_path", "detail"],
         "properties": {
           "id": {"type": "string"},
           "stage": {"type": "string"},
           "title": {"type": "string"},
           "passed": {"type": "boolean"},
+          "status": {"enum": ["pass", "fail", "not_exercised"]},
           "proxy": {"type": "boolean"},
           "evidence_path": {"type": ["string", "null"]},
           "detail": {"type": "string"}
@@ -42,10 +43,11 @@
     },
     "summary": {
       "type": "object",
-      "required": ["total", "passed", "failed", "proxy"],
+      "required": ["total", "passed", "failed", "not_exercised", "proxy"],
       "properties": {
         "total": {"type": "integer"}, "passed": {"type": "integer"},
-        "failed": {"type": "integer"}, "proxy": {"type": "integer"}
+        "failed": {"type": "integer"}, "proxy": {"type": "integer"},
+        "not_exercised": {"type": "array", "items": {"type": "string"}}
       }
     },
     "providers": {

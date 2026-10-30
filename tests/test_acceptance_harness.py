@@ -58,7 +58,7 @@ def make_out_dir(tmp_path: Path, with_memo: bool = True) -> Path:
         _assistant('', [_tool('t1', 'Skill', {'skill': 'idea-grill', 'args': '{"route": {}}'})]),
         _result('t1', 'Launching skill: idea-grill'),
         _assistant('', [_tool('t2', 'Bash', {'command': 'python3 scripts/route_workflow.py "GTM" --project eval-x --check-skill archetype-gtm-strategist'})]),
-        _result('t2', '{"gate_blocked": true, "first_skill": "idea-grill"}'),
+        _result('t2', '{\n  "first_skill": "idea-grill",\n  "gate": "pain_first",\n  "gate_blocked": true\n}'),
         _assistant('', [_tool('t3', 'Bash', {'command': 'python3 scripts/route_workflow.py "GTM" --project eval-x --override-gate'})]),
         _result('t3', '{"gate_blocked": false, "override": true}'),
         _assistant('', [_tool('t4', 'Skill', {'skill': 'archetype-gtm-strategist', 'args': '{}'})]),
@@ -145,6 +145,9 @@ def test_runner_refuses_budget_over_cap(tmp_path, monkeypatch):
         acc.run_acceptance(SCENARIO, tmp_path / 'out', budget_usd=acc.HARD_BUDGET_CEILING_USD + 0.01)
     with pytest.raises(ValueError, match='ceiling'):
         acc.run_acceptance(SCENARIO, tmp_path / 'out', model_budget_usd=acc.HARD_BUDGET_CEILING_USD * 10)
+    with pytest.raises(ValueError, match='combined ceiling'):
+        acc.run_acceptance(SCENARIO, tmp_path / 'out', budget_usd=30.0, model_budget_usd=40.0)
+    acc.check_budgets(25.0, 40.0)  # the defaults stay allowed
     assert calls == [] and not (tmp_path / 'out').exists()
     assert acc.main(['--budget-usd', '75', '--dry-run']) == 2
 
@@ -314,3 +317,129 @@ def test_agent_cannot_see_scoring_files(tmp_path, monkeypatch):
     assert 'founder-answers.json' not in seen['files'] and 'checkpoints.json' not in seen['files']
     assert acc.PRIVATE_ANSWERS not in seen['files'] and 'scenario.md' in seen['files']
     assert any(r.startswith('Read(') and r.endswith('/evals/acceptance/**)') for r in acc.blocked_tools([ROOT]))
+
+
+def test_gate_requires_pain_first_gate(tmp_path):
+    out = make_out_dir(tmp_path)
+    path = out / 'transcript.jsonl'
+    path.write_text(path.read_text().replace('pain_first', 'case_scope_required'))
+    by_id = {c['id']: c for c in acc.score(out, CHECKPOINTS)['checkpoints']}
+    assert by_id['cp09']['passed'] is False and 'no blocked' in by_id['cp09']['detail']
+
+
+def test_empty_run_is_not_exercised_not_passed(tmp_path):
+    out = tmp_path / 'empty'
+    out.mkdir()
+    card = acc.score(out, CHECKPOINTS)
+    jsonschema.validate(card, json.loads(SCHEMA.read_text()))
+    by_id = {c['id']: c for c in card['checkpoints']}
+    assert by_id['cp11']['status'] == 'not_exercised' and by_id['cp11']['passed'] is False
+    assert 'cp11' in card['summary']['not_exercised'] and card['summary']['passed'] == 0
+    assert card['cost']['over_budget'] is None
+
+
+def test_cp11_not_exercised_without_provider_failure(tmp_path):
+    out = make_out_dir(tmp_path)
+    summary = next((out / 'artifacts').rglob('summary.json'))
+    summary.write_text(json.dumps({'providers': {'brave_search': {'attempts': [{'status': 'ok'}]}}}))
+    by_id = {c['id']: c for c in acc.score(out, CHECKPOINTS)['checkpoints']}
+    assert by_id['cp11']['status'] == 'not_exercised'
+
+
+def test_over_budget_needs_complete_measurement(tmp_path):
+    out = tmp_path / 'o'
+    _write(out / 'provider-spend.json', json.dumps({'delta': {'apify_usd': 3.0, 'dataforseo_usd': None,
+                                                               'serpapi_searches': 5, 'serpapi_usd': None}}))
+    assert acc.spend_summary(out, 25.0)[1] is None
+    _write(out / 'provider-spend.json', json.dumps({'delta': {'apify_usd': 30.0}}))
+    assert acc.spend_summary(out, 25.0)[1] is True
+    _write(out / 'provider-spend.json', json.dumps({'delta': {'apify_usd': 3.0, 'dataforseo_usd': 1.0,
+                                                               'serpapi_searches': 5, 'serpapi_usd': 0.5}}))
+    assert acc.spend_summary(out, 25.0)[1] is False
+
+
+def test_feeder_whole_words_and_last_questions():
+    feeder = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='e', alt_slug='a', budget_usd=25.0)
+    kind, text, ids = feeder.reply('Should I investigate the PKV journey first?')
+    assert 'capital_budget' not in ids
+    kind, text, ids = feeder.reply('How much capital do you have? Fine. Which product do you want to start with?')
+    assert 'capital_budget' in ids  # within the last two question sentences
+    kind, text, ids = feeder.reply('What capital do you have? Who pays? Which region? Do you speak English?')
+    assert 'capital_budget' not in ids and 'languages' in ids
+
+
+def test_feeder_intake_cap():
+    feeder = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='e', alt_slug='a', budget_usd=25.0)
+    kinds = [feeder.reply('Roughly how many hours per week can you put into this?', rounds_left=10)[0] for _ in range(5)]
+    assert kinds[:4] == ['answer'] * 4 and kinds[4] == 'intake_cap'
+    fresh = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='e', alt_slug='a', budget_usd=25.0)
+    kind, text, _ = fresh.reply('Which segment first?', rounds_left=4)
+    assert kind == 'intake_cap' and text.endswith(acc.INTAKE_CAP_TEXT)
+
+
+def test_completion_marker_only_at_end():
+    feeder = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='e', alt_slug='a', budget_usd=25.0)
+    assert feeder.reply('All steps done. **Journey complete.**') is None
+    kind, _, _ = feeder.reply('Once the journey complete marker is reached I will stop; next I build the site.')
+    assert kind == 'nudge'
+
+
+def test_interrupt_kills_child_and_removes_worktree(tmp_path, monkeypatch):
+    git = FakeGit()
+    monkeypatch.setattr(acc.subprocess, 'run', git)
+    monkeypatch.setattr(acc.tempfile, 'mkdtemp', lambda prefix='': str(tmp_path / 'tmp'))
+    (tmp_path / 'tmp').mkdir()
+    monkeypatch.setattr(acc, 'measure_provider_spend', lambda: {})
+    kills = []
+
+    class Proc:
+        pid = 424242
+        returncode = None
+
+        def __init__(self, *a, **k):
+            self.calls = 0
+
+        def wait(self, timeout=None):
+            self.calls += 1
+            if self.calls == 1:
+                raise KeyboardInterrupt
+            return 0
+
+    def killpg(pid, sig):
+        kills.append((pid, sig))
+        if sig == acc.signal.SIGKILL:
+            raise ProcessLookupError
+    monkeypatch.setattr(acc.subprocess, 'Popen', Proc)
+    monkeypatch.setattr(acc.os, 'killpg', killpg)
+    with pytest.raises(KeyboardInterrupt):
+        acc.run_acceptance(SCENARIO, tmp_path / 'out', reference_project=_reference(tmp_path), now='20261030-120000')
+    assert kills[0] == (424242, acc.signal.SIGTERM)
+    wt = str(tmp_path / 'tmp/wt')
+    assert ['git', 'worktree', 'remove', '--force', wt] in git.calls and ['git', 'worktree', 'prune'] in git.calls
+    assert acc.signal.getsignal(acc.signal.SIGTERM) is not acc._raise_interrupt  # handlers restored
+
+
+def test_terminate_tolerates_vanished_group(monkeypatch):
+    monkeypatch.setattr(acc.os, 'killpg', lambda pid, sig: (_ for _ in ()).throw(ProcessLookupError()))
+    acc.terminate(type('P', (), {'pid': 1, 'wait': lambda self, timeout=None: 0})())
+
+
+def test_host_projects_audit(tmp_path):
+    host = tmp_path / 'host'
+    _write(host / 'projects/real/file.md', 'a')
+    wt = tmp_path / 'wt'
+    (wt / 'projects').mkdir(parents=True)
+    before_host = {host: acc.snapshot(host / 'projects')}
+    _write(host / 'projects/real/new.md', 'agent wrote here')
+    changed = acc.writes_outside_eval(wt, [wt / 'projects/_eval/s'], acc.snapshot(wt / 'projects'), before_host)
+    assert any(c.startswith('host:') and c.endswith('real/new.md') for c in changed)
+    assert 'Bash(git rev-parse*)' in acc.DISALLOWED_TOOLS and 'Bash(git rev-parse*)' not in acc.ALLOWED_TOOLS
+
+
+def test_cp01_counts_script_created_workspaces(tmp_path):
+    out = make_out_dir(tmp_path)
+    lines = (out / 'transcript.jsonl').read_text().splitlines(keepends=True)
+    write = _assistant('', [_tool('w0', 'Bash', {'command': 'python3 scripts/evidence_scout/workspace.py --workspace projects/_eval/x'})])
+    (out / 'transcript.jsonl').write_text(''.join(lines[:1] + [write, _result('w0', 'ok')] + lines[1:]))
+    by_id = {c['id']: c for c in acc.score(out, CHECKPOINTS)['checkpoints']}
+    assert by_id['cp01']['passed'] is False
