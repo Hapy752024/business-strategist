@@ -101,9 +101,11 @@ def test_non_video_baseline_is_working_tree_snapshot_and_digest_checked(tmp_path
     with pytest.raises(ValueError,match='escapes'):module.frozen_baseline('file',fixture,tmp_path)
 
 
-def _fake_runner(live, calls, claude_raises=False):
+def _fake_runner(calls, claude_raises=False, add_raises=False):
     def fake_run(cmd, **kwargs):
         calls.append((list(cmd), kwargs.get('cwd')))
+        if add_raises and cmd[:3] == ['git', 'worktree', 'add']:
+            raise RuntimeError('add failed')
         if claude_raises and cmd[0] == 'claude':
             raise RuntimeError('boom')
 
@@ -119,7 +121,7 @@ def test_live_runner_uses_disposable_worktree(monkeypatch):
     """Live runs use a throwaway worktree of HEAD outside the repo, so hooks/skills load but nothing leaks."""
     from scripts import run_live_evals as live
     calls = []
-    monkeypatch.setattr(live.subprocess, 'run', _fake_runner(live, calls))
+    monkeypatch.setattr(live.subprocess, 'run', _fake_runner(calls))
     assert live.run_case('idea-grill', {'prompt': 'x'}) == 'ok'
     add = next(c for c in calls if c[0][:3] == ['git', 'worktree', 'add'])
     claude = next(c for c in calls if c[0][0] == 'claude')
@@ -133,7 +135,19 @@ def test_live_runner_cleans_worktree_when_claude_raises(monkeypatch):
     from scripts import run_live_evals as live
     import pytest
     calls = []
-    monkeypatch.setattr(live.subprocess, 'run', _fake_runner(live, calls, claude_raises=True))
+    monkeypatch.setattr(live.subprocess, 'run', _fake_runner(calls, claude_raises=True))
     with pytest.raises(RuntimeError):
         live.run_case('idea-grill', {'prompt': 'x'})
     assert any(c[0][:4] == ['git', 'worktree', 'remove', '--force'] for c in calls)
+
+
+def test_live_runner_prunes_after_failed_worktree_add(monkeypatch):
+    from scripts import run_live_evals as live
+    import pytest
+    calls = []
+    monkeypatch.setattr(live.subprocess, 'run', _fake_runner(calls, add_raises=True))
+    with pytest.raises(RuntimeError, match='add failed'):
+        live.run_case('idea-grill', {'prompt': 'x'})
+    cmds = [c[0][:4] for c in calls]
+    assert ['git', 'worktree', 'remove', '--force'] in cmds and cmds[-1][:3] == ['git', 'worktree', 'prune']
+    assert not any(c[0][0] == 'claude' for c in calls)

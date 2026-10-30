@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Opt-in live skill evals: dry run by default; --live invokes `claude -p` and spends tokens."""
+"""Opt-in live skill evals: dry run by default; --live invokes `claude -p` and spends tokens.
+
+Live evals test the committed HEAD (uncommitted edits and gitignored projects/ are absent)."""
 from __future__ import annotations
 import argparse
 import json
@@ -42,6 +44,7 @@ def run_case(skill: str, case: dict) -> str:
     finally:
         subprocess.run(['git', 'worktree', 'remove', '--force', str(wt)], cwd=ROOT, capture_output=True, text=True)
         shutil.rmtree(parent, ignore_errors=True)
+        subprocess.run(['git', 'worktree', 'prune'], cwd=ROOT, capture_output=True, text=True, check=False)
     if out.returncode != 0:
         raise RuntimeError(out.stderr[-2000:])
     payload = json.loads(out.stdout)
