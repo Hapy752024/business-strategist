@@ -4,16 +4,21 @@
 from __future__ import annotations
 
 import json
-import os
 import sys
 from pathlib import Path
 from typing import Mapping
+
+from common import get_secret
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CAPABILITIES = ROOT / "config" / "source-capabilities.json"
 
 
-def key_audit(capabilities_path: Path, environ: Mapping[str, str]) -> list[dict]:
+def key_audit(capabilities_path: Path, environ: Mapping[str, str] | None = None) -> list[dict]:
+    """Presence is resolved like the validators: get_secret (process env, then ~/.secrets).
+
+    If `environ` is given, it is checked in addition (explicit overrides).
+    """
     data = json.loads(Path(capabilities_path).read_text(encoding="utf-8"))
     rows = []
     for cap in data.get("capabilities", []):
@@ -21,14 +26,14 @@ def key_audit(capabilities_path: Path, environ: Mapping[str, str]) -> list[dict]
             rows.append({
                 "capability": cap["id"],
                 "env": env,
-                "present": bool(environ.get(env)),
+                "present": bool((environ or {}).get(env)) or get_secret(env)[1] is not None,
                 "family": cap.get("family", ""),
             })
     return rows
 
 
 def main() -> int:
-    rows = key_audit(DEFAULT_CAPABILITIES, os.environ)
+    rows = key_audit(DEFAULT_CAPABILITIES)
     print(f"{'family':<26}{'capability':<36}{'env':<36}status")
     for r in sorted(rows, key=lambda r: (r["family"], r["capability"], r["env"])):
         print(f"{r['family']:<26}{r['capability']:<36}{r['env']:<36}{'present' if r['present'] else 'absent'}")
