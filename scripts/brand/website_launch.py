@@ -12,8 +12,12 @@ CHECKS = (
     'mobile_breakpoints', 'sticky_mobile_cta', 'loading_states', 'form_errors',
     'spam_protection', 'thank_you', 'privacy_policy', 'terms', 'cookie_consent',
     'analytics', 'contact_address', 'compressed_images', 'seo_geo',
-    'broken_links', 'performance', 'browser_tests',
+    'broken_links', 'performance', 'browser_tests', 'production_host',
+    'search_console',
 )
+# Non-pass dispositions a check may record with evidence. search_console needs the
+# owner's Google account and DNS, so launch can record the owner handoff instead.
+ALLOWED_DISPOSITIONS = {'analytics': {'not_requested'}, 'search_console': {'owner_handoff'}}
 
 
 def pending() -> dict:
@@ -40,7 +44,7 @@ def errors(assessment, *, commit: str, url: str, deployment_id: str) -> list[str
         result.append('launch checks must contain exactly the canonical check IDs')
     for key in CHECKS:
         row = checks.get(key)
-        if not isinstance(row, dict) or row.get('status') not in ({'pass', 'not_requested'} if key == 'analytics' else {'pass'}):
+        if not isinstance(row, dict) or row.get('status') not in {'pass'} | ALLOWED_DISPOSITIONS.get(key, set()):
             result.append(f'{key}: requires pass')
         elif not isinstance(row.get('evidence'), str) or not row['evidence'].strip():
             result.append(f'{key}: evidence locator and explanation required')

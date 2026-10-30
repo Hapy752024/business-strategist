@@ -23,7 +23,7 @@ def sitemap_urls(raw: str) -> tuple[list[str], list[str]]:
 class Meta(HTMLParser):
     def __init__(self):
         super().__init__()
-        self.robots, self.canonicals = [], []
+        self.robots, self.canonicals, self.title, self._in_title = [], [], '', False
 
     def handle_starttag(self, tag, attrs):
         d = dict(attrs)
@@ -31,6 +31,19 @@ class Meta(HTMLParser):
             self.robots.append(d.get('content', ''))
         if tag == 'link' and 'canonical' in d.get('rel', '').lower().split():
             self.canonicals.append(d.get('href', ''))
+        if tag == 'title':
+            self._in_title = True
+
+    def handle_endtag(self, tag):
+        if tag == 'title':
+            self._in_title = False
+
+    def handle_data(self, data):
+        if self._in_title:
+            self.title += data
+
+
+TITLE_MAX = 60
 
 
 def is_noindex(values):
@@ -47,7 +60,7 @@ def canonical_key(value):
 
 def check(payload: dict) -> dict:
     inventory, pages = payload['inventory'], payload['pages']
-    errors, limits, sitemap = [], [], set()
+    errors, limits, warnings, sitemap = [], [], [], set()
     for doc in payload.get('sitemaps', []):
         try:
             urls, children = sitemap_urls(doc['body'])
@@ -75,6 +88,9 @@ def check(payload: dict) -> dict:
                 errors.append(path + ': canonical differs between expected, HTTP or DOM')
         else:
             limits.append(path + ': intended canonical undeclared')
+        title = ' '.join(parser.title.split())
+        if len(title) > TITLE_MAX and row.get('expectedIndexable') is not False:
+            warnings.append(f'{path}: title is {len(title)} characters (over {TITLE_MAX}, likely truncated)')
         directives = parser.robots + p.get('robots', []) + [p.get('x_robots_tag', '')]
         if 'expectedCrawlable' in row:
             raw_robots = payload.get('robots', '')
@@ -115,7 +131,8 @@ def check(payload: dict) -> dict:
                 errors.append('sitemap has noncanonical URL: ' + url)
             else:
                 limits.append('sitemap URL outside declared canonical coverage: ' + url)
-    return {'errors': sorted(set(errors)), 'limits': sorted(set(limits)), 'sitemap_urls': sorted(sitemap)}
+    return {'errors': sorted(set(errors)), 'limits': sorted(set(limits)), 'warnings': sorted(set(warnings)),
+            'sitemap_urls': sorted(sitemap)}
 
 
 if __name__ == '__main__':

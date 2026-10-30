@@ -141,7 +141,14 @@ def setup(root, document, connections=None):
         raise ValueError('setup cannot replace existing project connections')
     context = ('# Campaign context\n\nAudience: ' + document['audience'] + '\n\nOffer: ' + document['offer'] +
         '\n\nObjective: ' + document['objective'] + '\n\nStatus: supplied brief; factual claims require reviewed sources.\n'
-        '\nBanned/regulated language and jurisdiction: to be confirmed for this project.\n')
+        '\nBanned/regulated language and jurisdiction: to be confirmed for this project.\n'
+        '\nJourney hooks and sales path: pending; record sourced touchpoint, useful intervention, '
+        'distribution, CTA, qualification and follow-up owner.\n'
+        '\nEvent contract: pending; define successful triggers, canonical occurrence IDs, '
+        'platform mappings/destinations, optimization role, consent and actual outcome verification.\n'
+        '\nApply references/journey-activation-and-measurement.md and '
+        'references/ad-platform-connections.md before implementation or launch recommendations. '
+        'Local reporting can proceed with these gaps explicitly disclosed.\n')
     files = {relative+'/campaign.json':encoded(document), relative+'/campaign-context.md':context,
         relative+'/approved-claims.json':encoded({'schema_version':1, 'claims':[]})}
     if not config_path.exists(): files['connections.json'] = encoded(config)

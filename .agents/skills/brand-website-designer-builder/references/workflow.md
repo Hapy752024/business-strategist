@@ -3,7 +3,8 @@
 Existing-site repairs use `references/maintenance.md` without repeating creative selection. Every new site applies `references/launch-contract.md` and executable `references/testing.md`.
 
 1. Inspect an explicit brand manifest or start a standalone brief. Do not trigger business research automatically.
-2. Load/create `website-preferences.json`; separate brand-locked, user-stated, user-selected, and agent-inferred choices.
+2. Load/create `website-preferences.json`; separate brand-locked, user-stated, user-selected, and agent-inferred choices. Apply `reference-sites.md`: reuse supplied sites/photos or ask once, inspect actual references, and record accepted inspiration plus per-photo use modes. A user with no references/photos can proceed.
+   Before sourcing or generating imagery, apply `../../brand-asset-producer/references/image-sourcing.md`; consume supplied assets and the imagery manifest, including permitted licensed-stock AI references and native imagegen handoff.
 3. Resolve the current stable Next.js version with `scripts/resolve-next-stable.mjs`; pin it and the lockfile.
 4. Produce two or three lightweight territories (tokens, layout sketch, type, imagery, motion, signature device). Use screenshots or small proofs, not three production builds.
 5. Ask for selection unless the user delegated it. Record the decision and rationale in `website-manifest.json`.

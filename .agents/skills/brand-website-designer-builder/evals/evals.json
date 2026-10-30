@@ -44,7 +44,7 @@
     },
     {
       "id": 4,
-      "prompt": "Build the homepage so it radiates confidence. Use a subtle amount of superlative language\u2014enough to feel compelling, never inflated\u2014and support it with proof.",
+      "prompt": "Build the homepage so it radiates confidence. Use a subtle amount of superlative language—enough to feel compelling, never inflated—and support it with proof.",
       "expected_output": "Uses decisive, specific copy and hierarchy; applies at most a small number of earned superlatives, avoids unsupported rankings or guarantees, and places proof near the CTA.",
       "files": [],
       "must_mention": [
@@ -116,6 +116,30 @@
       "id": "visibility-price-drift",
       "prompt": "Product page shows EUR29; approved inventory says EUR35; last feed export is stale. Prepare local fixes only.",
       "expected_output": "Bind product/variant to current authority, correct draft visible price and applicable markup, prepare fresh export only if freshness established. No publication, stale feed or redundant approval of already approved price.",
+      "files": []
+    },
+    {
+      "id": "website-reference-intake",
+      "prompt": "Build a new website. I have not provided design references or photos.",
+      "expected_output": "Ask once for a small set of admired sites with reasons and offer supplied photos for direct use or AI guidance. Record none/delegated and continue if the user has no examples. Do not start business research.",
+      "files": []
+    },
+    {
+      "id": "website-inspect-provided-references",
+      "prompt": "Build a new site using these two supplied reference URLs and my attached photo set. Photo A is for direct use; B and C should guide AI imagery. Do not ask me for references again.",
+      "expected_output": "Inspect the supplied sites/photos, record actual style observations, preserve the per-photo modes, produce an original direction, use native imagegen when available and trace generated outputs to the references actually used. Do not upload A as an AI reference.",
+      "files": []
+    },
+    {
+      "id": "website-maintenance-no-new-intake",
+      "prompt": "Fix only a broken navigation link. Keep the current design and images.",
+      "expected_output": "Repair the link without asking for inspiration sites, photos or a new design direction.",
+      "files": []
+    },
+    {
+      "id": "website-post-deploy-production-host-and-search-console",
+      "prompt": "I just deployed the website to production at https://www.example.com; the apex domain redirects to www and I also own example.org. Is the SEO side done?",
+      "expected_output": "Run or request the production host probe (robots, sitemap, canonical and og:url on the production host with 200 and no redirect; a recorded decision for example.org), report its warnings, and write the owner-only Search Console/Bing onboarding steps into owner-actions with search_console recorded as owner_handoff. Do not claim the site is indexed.",
       "files": []
     }
   ]

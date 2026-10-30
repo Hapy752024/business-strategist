@@ -630,15 +630,19 @@
     "brand-asset-producer": {
       "intent": [
         "produce logo, imagery, and brand assets",
-        "define imagery art direction (style gate)"
+        "define imagery art direction (style gate)",
+        "source licensed website imagery",
+        "use supplied photos directly or as AI guidance",
+        "generate website images with the available native imagegen capability"
       ],
       "excludes": [],
       "prerequisites": [
-        "approved direction"
+        "approved direction, existing site/brand brief, or user-specified image brief appropriate to the requested scope"
       ],
       "artifacts": [
         "approved assets",
-        "approved imagery art-direction brief + style frames"
+        "approved imagery art-direction brief + style frames",
+        "website imagery and source/reference lineage with license and usage records"
       ],
       "side_effect": "workspace",
       "cost": "medium",

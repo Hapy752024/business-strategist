@@ -9,3 +9,5 @@ Track relevant exposure through qualified response, conversion and contribution,
 Review claims, consent/tracking, sensitive targeting, landing-page consistency, exclusions and spending limits before recommending launch. Show the approval required. Drafting a plan never authorizes publishing, uploading customer data or spending.
 
 Plan first with `references/paid-campaign-planning.md`.
+
+Use repo-root `references/ad-platform-connections.md` for the selected platform's campaign/ad-set-or-group/ad structure, existing asset IDs, budget semantics and daily/weekly/cohort review. Apply `references/journey-activation-and-measurement.md` for sourced hook placement, sales handoff, event contract and real-provider QA. Missing tracking/CRM evidence blocks a launch-ready claim, but does not block a clearly labeled draft or descriptive report.

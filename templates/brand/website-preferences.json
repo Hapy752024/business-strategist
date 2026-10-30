@@ -14,7 +14,12 @@
     "typography_personality": "unresolved",
     "imagery_mode": "unresolved",
     "motion_appetite": "unresolved",
-    "accessibility_needs": "unresolved"
+    "accessibility_needs": "unresolved",
+    "reference_sites_status": "unresolved",
+    "reference_sites": [],
+    "reference_review": "",
+    "supplied_photo_assets": [],
+    "image_asset_manifest": ""
   },
   "likes": [],
   "dislikes": [],

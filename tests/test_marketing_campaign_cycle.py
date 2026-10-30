@@ -59,6 +59,7 @@ def test_end_to_end_local_report_is_bound_idempotent_and_noncausal(tmp_path):
     ('ga4-pages-v1','ga4-pages.csv',('views',150)),
     ('google-ads-campaigns-v1','google-ads-campaigns.csv',('spend',42.5)),
     ('meta-ads-campaigns-v1','meta-ads-campaigns.csv',('spend',30)),
+    ('tiktok-ads-campaigns-v1','tiktok-ads-campaigns.csv',('spend',40)),
 ])
 def test_each_shipped_wide_export_preset(preset,filename,expected):
     doc=imp.import_export(FIX/filename,preset,CURRENT|{'property':'example','timezone':'UTC','currency':'USD','attribution':'confirmed-platform-setting','maturity':'pending'})
@@ -97,6 +98,73 @@ def test_import_identity_includes_confirmed_metadata_and_preset(tmp_path,monkeyp
     monkeypatch.setattr(imp,'preset',lambda name:original(name)|{'transform_version':2})
     new=imp.import_export(FIX/'gsc-current.csv','gsc-pages-v1',metadata)
     assert new['import_id']!=a['import_id']
+
+
+def test_tiktok_destination_clicks_are_not_all_clicks_or_customer_results(tmp_path):
+    metadata=CURRENT|{'property':'advertiser-a','timezone':'UTC','currency':'USD',
+        'attribution':'confirmed setting','maturity':'pending'}
+    output=imp.import_export(FIX/'tiktok-ads-campaigns.csv','tiktok-ads-campaigns-v1',metadata)
+    assert output['summary']['destination_clicks']['value']==25
+    assert output['summary']['destination_ctr']['value']==pytest.approx(25/1500)
+    assert not {'clicks','results','conversions','leads','sales'} & output['summary'].keys()
+    file=tmp_path/'ambiguous.csv'
+    file.write_text((FIX/'tiktok-ads-campaigns.csv').read_text().replace('Clicks (destination)','Clicks (all)'))
+    with pytest.raises(ValueError,match='requires columns'):
+        imp.import_export(file,'tiktok-ads-campaigns-v1',metadata)
+    file.write_text('Campaign name,Campaign ID,Cost,Impressions,Clicks (destination)\nDemo,701,10,100,--\n')
+    output=imp.import_export(file,'tiktok-ads-campaigns-v1',metadata)
+    assert output['summary']['destination_clicks']['value'] is None
+    assert output['summary']['destination_ctr']['value'] is None
+
+
+@pytest.mark.parametrize('missing',['currency','attribution','maturity'])
+def test_tiktok_requires_advertising_measurement_context(missing):
+    metadata=CURRENT|{'property':'advertiser-a','timezone':'UTC','currency':'USD',
+        'attribution':'confirmed setting','maturity':'pending'}
+    del metadata[missing]
+    with pytest.raises(ValueError,match='confirm export metadata: '+missing):
+        imp.import_export(FIX/'tiktok-ads-campaigns.csv','tiktok-ads-campaigns-v1',metadata)
+
+
+def test_tiktok_reporting_preserves_account_campaign_and_context_boundaries(tmp_path):
+    root=tmp_path/'alpha-project'
+    subprojects.start(root,'marketing','Alpha','Established repair workshop; standalone brief')
+    config={'schema_version':1,'project_id':root.name,'connections':[
+        {'id':'video','provider':'tiktok_ads','account_ids':['advertiser-a'],
+         'campaign_ids':['701','702'],'credential_ref':'alpha-project/video',
+         'capability':'reporting','status':'unconfigured','transport':'export'}]}
+    assert not connections.validate(config,root.name)
+    wrong=deepcopy(config);wrong['connections'][0]['credential_ref']='another-project/video'
+    assert connections.validate(wrong,root.name)
+    wrong=deepcopy(config);wrong['connections'][0]['status']='connected'
+    assert connections.validate(wrong,root.name)
+    c.setup(root,{'schema_version':1,'project_id':root.name,'campaign_id':'workshops',
+        'objective':'Qualified repairs','audience':'Equipment owners','offer':'Repair booking',
+        'connection_ids':['video'],'measurement':{'property':'advertiser-a','timezone':'UTC',
+        'currency':'USD','attribution':'confirmed setting','maturity':'pending'}},config)
+    packet,_=r.prepare(root,'workshops','tiktok-ads-campaigns-v1',FIX/'tiktok-ads-campaigns.csv',
+        CURRENT,runtime_root=tmp_path/'runtime')
+    response=review(packet);response['diagnosis']='Destination traffic observed; qualified repairs remain unknown.'
+    output=r.finalize(root,'workshops',packet['packet_id'],response,tmp_path/'runtime')
+    assert packet['current']['provider']=='tiktok_ads'
+    assert packet['current']['summary']['spend']['value']==40
+    assert subprojects.validate_marketing_workstream(root)['valid_for_use']
+    assert 'qualified repairs remain unknown' in Path(output['report']).read_text()
+    with pytest.raises(ValueError,match='selected project connection'):
+        r.prepare(root,'workshops','tiktok-ads-campaigns-v1',FIX/'tiktok-ads-campaigns.csv',
+            CURRENT|{'property':'advertiser-b'},runtime_root=tmp_path/'runtime')
+    wrong_csv=tmp_path/'wrong-campaign.csv'
+    wrong_csv.write_text((FIX/'tiktok-ads-campaigns.csv').read_text().replace(',701,',',999,'))
+    with pytest.raises(ValueError,match='this account connection scope'):
+        r.prepare(root,'workshops','tiktok-ads-campaigns-v1',wrong_csv,CURRENT,runtime_root=tmp_path/'runtime')
+    pending,_=r.prepare(root,'workshops','tiktok-ads-campaigns-v1',FIX/'tiktok-ads-campaigns.csv',
+        CURRENT,runtime_root=tmp_path/'runtime')
+    context_path=c.marketing(root)/'campaigns/workshops/campaign-context.md'
+    c.publish(root,{'campaigns/workshops/campaign-context.md':context_path.read_text()+
+        '\nOptimization event changed from enquiry to qualified repair.\n'},'Reviewed event contract update')
+    with pytest.raises(ValueError,match='changed|stale'):
+        r.finalize(root,'workshops',pending['packet_id'],review(pending),tmp_path/'runtime')
+    assert r.finalize(root,'workshops',packet['packet_id'],response,tmp_path/'runtime')['status']=='already_published'
 
 
 def test_first_noncomparable_and_overlapping_periods_do_not_claim_winners(tmp_path):

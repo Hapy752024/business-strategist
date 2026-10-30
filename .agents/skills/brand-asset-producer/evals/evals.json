@@ -6,6 +6,30 @@
       "prompt": "Produce an approved logo asset package from the selected brand direction.",
       "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
       "files": []
+    },
+    {
+      "id": "supplied-photo-mixed-uses",
+      "prompt": "Use my attached photos: A unchanged on the website, B and C as AI generation guidance; D for a visual brief only and never upload D. I own these photos.",
+      "expected_output": "Inspect all available photos, retain originals, map the mixed modes and placements, reuse the ownership/permission statement, do not upload A or D to AI, use the native imagegen reference mechanism for B/C if available, and record source/output lineage. No mandatory new logo or three-concept gate.",
+      "files": []
+    },
+    {
+      "id": "licensed-stock-ai-inspiration-permitted",
+      "prompt": "Use this licensed stock photo as inspiration for a new hero image. The provided license permits the planned reference input and derivative use. Native image generation is available.",
+      "expected_output": "Allow the stock inspiration, inspect the source, retain license proof and reference lineage, use the native imagegen skill, and create an original image fitting the brief. Do not demand FAL credentials or refuse merely because it is stock.",
+      "files": []
+    },
+    {
+      "id": "stock-display-only-no-model-upload",
+      "prompt": "This license permits commercial website display but explicitly prohibits third-party AI uploads. Use it for inspiration without uploading it.",
+      "expected_output": "Honor the no-upload restriction; use a permitted abstract visual brief if covered or a suitable alternative. Distinguish display, brief-only inspiration, model input and training. Do not upload the restricted file or abandon unrelated website work.",
+      "files": []
+    },
+    {
+      "id": "stock-license-unknown",
+      "prompt": "Use this search thumbnail on a commercial landing page; no creator or license is provided.",
+      "expected_output": "Find the original asset page and verify the applicable license and attribution before publishing. If unresolved, choose a permitted substitute. A search result is not license evidence and a stock purchase is not implied.",
+      "files": []
     }
   ]
 }

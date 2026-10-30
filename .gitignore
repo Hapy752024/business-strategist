@@ -85,3 +85,6 @@ evals/local-runs/
 
 # Private local marketing import/review packets (not credentials)
 .marketing-runtime/
+
+# Local design reference collection
+/awesome-design/

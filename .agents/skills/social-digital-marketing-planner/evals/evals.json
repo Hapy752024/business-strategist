@@ -119,6 +119,42 @@
       ],
       "required_artifacts": [],
       "files": []
+    },
+    {
+      "id": "measurement-alignment",
+      "prompt": "Our booking site fires Meta Lead when Submit is clicked and CAPI Schedule on booking success, with different random IDs. Google Ads and imported GA4 booking conversions are both primary. TikTok reports Results. Prepare the repair and monitoring plan.",
+      "expected_output": "Separates click, saved lead and confirmed booking; aligns copies of each actual occurrence by exact name/destination/shared ID; stable retries and new milestone IDs; audits Google goals including custom-goal secondary exception; refuses to read TikTok Results as qualified sales; retains consent and provider QA boundaries.",
+      "files": []
+    },
+    {
+      "id": "journey-tool-placement",
+      "prompt": "A repair workshop has sourced evidence that customers search for fault codes, compare repair-versus-replace costs and abandon booking while finding a serial number. Show where ads and a useful tool belong in that journey.",
+      "expected_output": "Maps each observed touchpoint to a proposed hook, distribution route, useful tool/asset, CTA, sales handoff, completion event, customer-quality outcome and affordable test. No invented demand or default three-platform spend.",
+      "files": []
+    },
+    {
+      "id": "native-form-sales-path",
+      "prompt": "Our TikTok campaign uses an instant form and closes sales by telephone. Design the tracking, organization and review, without launching.",
+      "expected_output": "Keeps native form, CRM qualification and phone sale distinct from website events; defines owners, stable IDs, permitted attribution joins, objective/event mapping and mature cohort monitoring; stages connection enrollment without claiming a verified MCP or live access.",
+      "files": []
+    },
+    {
+      "id": "agent-intervention-overlap",
+      "prompt": "Our campaign agent changed bids, audiences and landing pages yesterday. Sales take 10 days. Today CTR is down, so propose three more optimizations. Tracking works and spend is within the authorized limit.",
+      "expected_output": "Does not manufacture three changes; inspects actual intervention timing, scope, baseline and overlap, separates CTR from mature sales, proposes waiting/collecting data with a defined review date or evidence trigger and records confounding. Uses existing context/tasks, permits zero new tasks, and does not claim the local controller enforces a live cooldown.",
+      "files": []
+    },
+    {
+      "id": "attribution-definition-drift",
+      "prompt": "Meta ROAS rose after a reporting settings change. We only exported total purchases, while old and new click-attribution definitions may differ. Pixel/CAPI deduplication is clean. Can we double spend and add 1-day plus 7-day click purchases to show the gain?",
+      "expected_output": "Rejects overlapping-window addition and unsupported scaling; requests current and historical event/counting/model/windows/definition metadata and component breakdowns, checks dated primary platform guidance, separates deduplication from attribution and incrementality, and uses comparable restated windows or marks comparison unavailable. No automatic exclusion of all view credit or universal lead window.",
+      "files": []
+    },
+    {
+      "id": "creative-allocation-bias",
+      "prompt": "Meta allocated 95% of spend to creative A and 5% to B in three days. B has a better hook rate but no purchases. A creator recommends producing 100 variants weekly. Declare the loser and our next production plan.",
+      "expected_output": "Treats B as underexposed rather than a demonstrated loser; distinguishes adaptive delivery from randomization and similar spend from comparable audiences; inspects lag, budget and qualified outcomes; proposes a feasible controlled or explicitly directional test, separates concepts from hooks/proof/CTA, and rejects a universal creative-volume quota.",
+      "files": []
     }
   ]
 }

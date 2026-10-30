@@ -24,3 +24,11 @@ def test_equivalent_root_http_dom_and_sitemap_urls_pass(expected):
 def test_root_normalization_does_not_hide_path_or_query_mismatch(mismatch):
     result = check(payload(html=mismatch, dom=mismatch))
     assert any('canonical differs' in error for error in result['errors'])
+
+
+def test_long_indexable_title_warns_without_failing():
+    data = payload()
+    data['pages'][0]['raw_html'] += '<title>' + 'T' * 61 + '</title>'
+    result = check(data)
+    assert result['errors'] == []
+    assert result['warnings'] == ['/: title is 61 characters (over 60, likely truncated)']

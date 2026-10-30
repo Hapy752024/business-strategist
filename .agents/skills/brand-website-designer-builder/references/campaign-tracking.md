@@ -1,6 +1,8 @@
-# Optional campaign measurement: PostHog, Google and Meta
+# Optional campaign measurement: PostHog, Google, Meta and TikTok
 
 Use only for user-selected website tracking implementation or measurement repair. This is not campaign strategy, ad creation, spend authorization or autonomous publishing. Route technical work via website-build; broader strategy remains marketing-strategy-builder/social-digital-marketing-planner. Analytics can be disabled. Advertising measurement is a separate opt-in from product analytics and each destination requires purpose-specific consent.
+
+Apply repo-root `references/journey-activation-and-measurement.md` for the shared sales/event contract and `references/ad-platform-connections.md` for account onboarding. Keep this website reference's Basic Consent Mode/no-request default unless the owner explicitly changes the reviewed policy.
 
 ## Select the smallest topology
 
@@ -26,7 +28,7 @@ Create a project-owned measurement-plan.json or table: canonical event, trigger,
 
 Define UTM naming and approved click-ID handling, first/last touch choice, attribution windows, timezone/currency, bot/internal/QA exclusions and anonymous-to-known identity policy. Avoid duplicate SPA pageviews by choosing automatic OR manual navigation capture. A user refusing measurement is absent from tracked cohorts; report coverage/bias, not invented attribution.
 
-For Pixel+CAPI dual delivery use the same event_name and event_id for the same outcome, preserving event time and source URL/action_source as required by current Meta docs. CAPI retries must be bounded and idempotent; validate actual Events Manager deduplication. Hashing personal fields does not anonymize them. For GA4 and Google Ads use documented destination-specific transaction/dedup rules; do not assume Meta event_id semantics apply everywhere. PostHog destination filtering must require the right consent, not merely the existence of a product analytics event.
+For Meta Pixel+CAPI dual delivery use the same destination and exact event name, with browser `eventID` equal to server `event_id` for the same outcome, preserving the original event time and required source URL/action_source. TikTok Pixel/Events API use matching `event` and `event_id` for overlapping actions; verify the selected data source and current timing rules. Later qualification or sale milestones are new business occurrences, not retries of the initial lead. CAPI retries must be bounded and idempotent; validate actual Events Manager deduplication. Hashing personal fields does not anonymize them. For GA4 and Google Ads use documented destination-specific transaction/dedup rules; do not assume Meta event_id semantics apply everywhere. PostHog destination filtering must require the right consent, not merely the existence of a product analytics event.
 
 ## Tests and connection proof
 
@@ -36,7 +38,7 @@ Then use authorized GA4 DebugView/Realtime, Google Tag Assistant Preview and Met
 
 For reports reconcile spend imports and event totals across platforms, date ranges/currency/attribution windows and consent coverage. Cross-platform counts differ by design; do not add attributed conversions together as unique sales. Record observable discrepancies and latency. An account connection or ROAS dashboard does not prove causal campaign uplift. A/B causal analysis follows experimentation.md.
 
-Sources checked 2026-09-14: [Google consent](https://developers.google.com/tag-platform/security/guides/consent), [GA4 events](https://developers.google.com/analytics/devguides/collection/ga4/events), [GA4 validation](https://developers.google.com/analytics/devguides/collection/protocol/ga4/validating-events), [PostHog pipelines](https://posthog.com/docs/cdp), [PostHog Meta destination source](https://github.com/PostHog/posthog.com/blob/master/contents/docs/cdp/destinations/meta-ads.md). Direct Meta deduplication documentation retrieval failed in this audit; re-fetch current official Meta CAPI requirements before implementation. No accounts or live tracking connected here.
+Sources checked 2026-09-14: [Google consent](https://developers.google.com/tag-platform/security/guides/consent), [GA4 events](https://developers.google.com/analytics/devguides/collection/ga4/events), [GA4 validation](https://developers.google.com/analytics/devguides/collection/protocol/ga4/validating-events), [PostHog pipelines](https://posthog.com/docs/cdp), [PostHog Meta destination source](https://github.com/PostHog/posthog.com/blob/master/contents/docs/cdp/destinations/meta-ads.md). Follow-up 2026-10-24: official Meta deduplication documentation was retrieved via Firecrawl; the current rule and dated source are in repo-root `references/journey-activation-and-measurement.md`. Recheck the active API and permissions at implementation. No accounts or live tracking connected here.
 
 
 ## Robust server-side delivery (when selected)

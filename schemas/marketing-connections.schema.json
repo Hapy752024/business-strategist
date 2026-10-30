@@ -40,6 +40,7 @@
             "enum": [
               "google_ads",
               "meta_ads",
+              "tiktok_ads",
               "gsc",
               "ga4"
             ]

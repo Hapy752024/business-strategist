@@ -42,7 +42,7 @@ def promote(path, **overrides):
 
 def test_pending_complete_schema_and_no_pass():
     data = launch.pending()
-    assert len(data['checks']) == 26
+    assert len(data['checks']) == 28
     assert all(r['status'] == 'pending' for r in data['checks'].values())
     assert launch.errors(data, commit=SHA, url=URL, deployment_id='config')
     schema = json.loads((ROOT / 'schemas/website-manifest.schema.json').read_text())
@@ -140,3 +140,12 @@ def test_validation_page_route_is_lightweight_and_reads_smoke_reference():
                                          task_scope='execution', check_skill='brand-website-designer-builder')
     assert packet['mode'] == 'validation_page'
     assert 'references/smoke-test.md' in packet['required_references']
+
+
+def test_search_console_allows_recorded_owner_handoff_only():
+    d = ready(); d['checks']['search_console'] = {'status': 'owner_handoff', 'evidence': 'owner-actions.md search-console row added 2026-10-30'}
+    assert not launch.errors(d, commit=SHA, url=URL, deployment_id=d['deployment_id'])
+    d['checks']['search_console']['evidence'] = ' '
+    assert launch.errors(d, commit=SHA, url=URL, deployment_id=d['deployment_id'])
+    d = ready(); d['checks']['production_host']['status'] = 'owner_handoff'
+    assert launch.errors(d, commit=SHA, url=URL, deployment_id=d['deployment_id'])

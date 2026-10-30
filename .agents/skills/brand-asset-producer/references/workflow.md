@@ -3,9 +3,9 @@
 
 Use SVG/vector masters first.
 
-Produce only assets that map to the approved brief and territory.
+Produce only assets that map to the approved brief and territory. A scoped website-image brief or an existing approved site direction is sufficient for imagery work; do not require a new brand identity project for it. Read [image sourcing](image-sourcing.md) for supplied photo sets, licensed stock, allowed AI inspiration, native imagegen and source/output lineage.
 
-Work in stage gates: show exactly 3 visible alternatives, ask the user which numbered option to pursue, iterate on that option, and wait for approval before producing variants/exports.
+For logo/concept exploration, show exactly 3 visible alternatives, ask which numbered option to pursue, iterate on that option, and wait for approval before producing logo variants/exports. For website imagery, respect the requested quantity and approved visual brief; supplied-photo placement, a specific edit or an approved-style asset does not restart logo concept gates.
 For every asset response, tell the user what to inspect and recommend the next action: choose, revise, approve, or export.
 
 Required variants when logo work is requested:
@@ -27,7 +27,7 @@ After a logo direction is approved:
 Use `references/asset-rules.md` before designing.
 Use `scripts/export-brand-assets.py` for SVG exports when local tools exist.
 Prefer `scripts/export-logo-package.py <logos/source> <logos/export>` for final approved logo packages.
-Use `assets/.env.example` and `scripts/generate-openrouter-images.py` for optional image-model alternatives.
+For raster generation/editing, use the available native `imagegen` skill and `image_gen` tool first as described in `image-sourcing.md`. Use `assets/.env.example` and `scripts/generate-openrouter-images.py` only for selected or appropriate authorized model alternatives.
 
 For FAL generation, first run `python3 scripts/fal_assets.py ...` in dry-run mode and show model, dimensions, variants, estimated cost, maximum cost, and approval ID. A paid request requires both `--execute` and `--confirm`. When the completed provider JSON is available, immediately run `python3 scripts/brand/finalize_fal_assets.py --response <result.json> --output-dir <local-assets> --record <asset-record.json> --expected-width <px> --expected-height <px>`. The finalizer accepts validated PNG/JPEG outputs from trusted FAL hosts, enforces size/MIME/dimensions, hashes local files, and persists no temporary URL. Record finalized files as candidate artifacts before approval/promotion.
 

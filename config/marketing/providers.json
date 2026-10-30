@@ -29,6 +29,12 @@
       "preferred": "search_analytics_api",
       "status": "documented_not_connected"
     },
+    "tiktok_ads": {
+      "preferred": "tiktok_api_for_business",
+      "initial_transport": "export",
+      "capability": "reporting_requires_verification",
+      "status": "documented_not_connected"
+    },
     "ga4": {
       "preferred": "official_google_analytics_mcp",
       "status": "documented_not_connected"

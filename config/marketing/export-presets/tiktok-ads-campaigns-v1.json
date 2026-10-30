@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "tiktok-ads-campaigns-v1",
+  "transform_version": 1,
+  "provider": "tiktok_ads",
+  "dimension": "Campaign ID",
+  "required": ["Campaign name", "Campaign ID", "Cost", "Impressions", "Clicks (destination)"],
+  "metrics": {
+    "spend": {"column": "Cost", "unit": "currency", "aggregate": "sum"},
+    "destination_clicks": {"column": "Clicks (destination)", "unit": "count", "aggregate": "sum"},
+    "impressions": {"column": "Impressions", "unit": "count", "aggregate": "sum"}
+  },
+  "ratios": {
+    "destination_ctr": {"numerator": "destination_clicks", "denominator": "impressions"}
+  }
+}

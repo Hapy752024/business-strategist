@@ -46,6 +46,16 @@ The browser auditor accepts optional row fields `expectedCanonical` (absolute in
 
 Run `node scripts/brand/audit_web_pages.mjs <site> <base-origin> <inventory.json> <tested-source-revision>`; outputs retain site/config/inventory identity, date and source revision. Unknown revision or incompatible scopes cannot produce an eligible comparison. `python3 scripts/brand/compare_seo_audits.py <before.json> <after.json>` reports new/existing/resolved technical issues, not ranking gains. Tests must actually run Chromium; optional skips remain pending. Query tokens and raw page HTML are excluded from the final browser report.
 
+## Production host probe
+
+After an authorized deployment, from the repository root:
+
+```bash
+python3 scripts/brand/production_seo_probe.py https://www.example.com --domain example.org=redirect --article-prefix /guide/ --owner-action YYYY-MM-DD > <website>/qa/production-seo-probe.json
+```
+
+It fetches robots.txt, the sitemap and every sitemap URL without following redirects, then checks canonical/og:url hosts, redirect-free 200 responses, noindex pages in the sitemap and every `--domain` decision. Exit 1 means errors; warnings (titles over 60 characters, thin indexable pages, article pages without `<time datetime>`, a `id="sources"` section or Article JSON-LD) need review. `--observations <file>` re-analyzes saved observations. It checks at most 200 URLs, does not probe sitemap-index children and does not read Search Console; those remain limits.
+
 ## Preserve useful page components
 
 Optional route `preserve` declarations name `id`, `purpose`, `selector`, expected `count` (default 1), optional `textIncludes`, and `contains` child selector/count pairs. `behaviorTest` names a separate local project test. The auditor checks presence/visibility across existing widths; behavior remains pending. Run separate local Playwright tests for calculation, validation, pending/failure/retry and truthful success using fixtures or approved mocks. Passing metadata or presence never proves interactive value.

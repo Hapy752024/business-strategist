@@ -1,5 +1,7 @@
 # Creative direction
 
+Consume the inspected reference review, supplied-photo use decisions and approved brand before proposing territories. Explain which observed principles inform this site without copying reference assets or treating an inferred preference as approved.
+
 Each territory must state:
 
 - the audience and conversion job;

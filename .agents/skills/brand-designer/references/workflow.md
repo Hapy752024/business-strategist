@@ -19,7 +19,7 @@ Routing: see `references/routing.md` for the child-skill dispatch table.
 Pipeline order: discovery -> naming (if needed) -> strategy -> voice -> logo -> colors -> typography -> guidelines -> export; imagery-style (`brand-asset-producer`, art-direction mode) -> motion-concept (`brand-motion-designer`, concept mode) -> imagery (`brand-asset-producer`) -> tokens (`brand-ui-kit-producer`) -> motion tokens/impls (`brand-motion-designer`) -> components (`brand-ui-component-producer`) -> screens (`brand-frontend-app-designer`).
 
 Gates:
-- `imagery-style` must be approved before any imagery asset production: medium (photo/illustration/hybrid), treatment (grading, overlays), subject mix, crop ratios, licensing, and 2-3 style frames. Template: `brand-asset-producer/references/imagery-art-direction.md`.
+- For a new imagery system, approve `imagery-style`: medium, treatment, subject mix, crops, licensing and 2-3 style frames. Reuse an existing approved style or scoped user photo/image brief for direct placement, edits or generation; do not restart full branding for supplied photos. Apply `../../brand-asset-producer/references/image-sourcing.md` for user photo modes, licensed stock inspiration and native imagegen. Template: `brand-asset-producer/references/imagery-art-direction.md`.
 - `motion-concept` must be approved before tokenization: motion principles, duration/easing primitives, named signature moments (e.g. hover illustration-to-photo crossfade), and reduced-motion policy. Template: `brand-motion-designer/references/concept.md`. The later `motion` stage consumes the approved concept.
 
 Canonical package workflow:

@@ -4,6 +4,8 @@ This is the P0/P1/minimum-P2 release. Shared code operates on explicit projects 
 
 ## Select and set up
 
+For campaign design and tracking, apply [journey activation and measurement](journey-activation-and-measurement.md). Record hooks, sales paths, event mappings and QA in the existing campaign context. For asset inventory, provider onboarding and monitoring, apply [ad platform connections](ad-platform-connections.md). These are planning/implementation requirements; the local report validator does not certify event delivery or launch readiness. Descriptive imports remain available with measurement gaps disclosed.
+
 Resolve `projects/<slug>` through its manifest; use its registered Marketing path. Existing legacy paths are preserved. Start Marketing through `scripts/subprojects.py` only when the user selected that project and supplied its brief. No Business research is started by an export import.
 
 ```bash
@@ -27,6 +29,7 @@ Presets declare exact supported English CSV layouts, not every provider export v
 | `ga4-pages-v1` | Pages and screens aggregate CSV with `Page path and screen class,Views,Active users,Event count,Key events` | Comment preambles are supported. Users across page rows are not additive. Confirm reporting identity/settings as applicable. |
 | `google-ads-campaigns-v1` | Campaigns aggregate report with `Campaign,Campaign ID,Cost,Clicks,Impressions` | `Conversions` is optional and otherwise unknown. Confirm conversion definition, attribution, currency and maturity. |
 | `meta-ads-campaigns-v1` | Ads Manager campaign-level report with `Campaign name,Campaign ID,Amount spent (<confirmed currency>),Impressions` | `Link clicks`, `Website leads` optional. Ambiguous `Results` is not treated as leads. Row reporting dates, when supplied, must match confirmed dates. |
+| `tiktok-ads-campaigns-v1` | Exact English custom-column campaign aggregate with `Campaign name,Campaign ID,Cost,Impressions,Clicks (destination)` | Spend and destination-click CTR only; `Results` and generic `Conversions` are deliberately not interpreted. Qualification/conversion reporting requires a separately reviewed event-specific mapping. Fixture-tested layout; actual account export compatibility remains unverified. |
 
 Exclude breakdowns, customer rows and duplicated totals. Query strings are stripped from page dimensions; apparent email/token dimensions are rejected. The importer supports UTF-8/BOM, English thousands separators and known blank/suppressed cells. Other locales, negative amounts, oversized files, non-finite values and unknown layouts produce explicit errors. This does not certify absence of all personal data; inspect source scope before import.
 
@@ -57,6 +60,16 @@ The report opens with available spend/outcomes, exposes coverage limits and give
 
 The weekly report and shared owner summary use the same task selection rules. Up to three due tasks per campaign appear first; snoozed tasks and blocked tasks appear separately. Existing owner steps, destinations, prepared-material paths and dependency blockers remain visible. Submitted work is marked for outcome review so it is not presented as a new action to repeat.
 
+## Observe changes before proposing more
+
+Before recommending another bid, budget, targeting, creative or landing-page change, inspect the campaign's recent interventions. In the existing `campaign-context.md` and execution plan, retain the hypothesis, affected IDs/versions, actual implementation time/evidence, baseline, expected qualified-customer effect, conversion-lag/observation window, next review and rollback condition. Acceptance or task completion alone does not prove a live change occurred.
+
+Avoid overlapping interventions that make the question unanswerable. Bundle necessary changes as one intervention when their individual effects cannot be separated; use a controlled design for individual causal claims. Review actual exposure and mature outcomes before another discretionary change to the same scope. Compare business/CRM aggregates where available, while labeling before/after associations as observational. No fixed waiting period fits every campaign.
+
+Zero new tasks is valid. Use `continue` with an explicit no-change rationale when comparable evidence supports it; use `collect_more_data` for insufficient evidence, including first/non-comparable reports. Record what evidence/date will reopen the decision. Broken tracking, disapprovals or a breached spending boundary may need urgent action within existing authority; record the exception and its interference with the test. Frequent recommendations and owner approval are not evidence of improvement. These are reasoning requirements; the local controller does not enforce a cooldown or control live ads.
+
+Source checked 2026-10-24: [Kirk Williams on agent over-optimization](https://zatomarketing.com/blog/ai-ppc-agents-and-the-over-optimization-trap-are-claudgents-hurting-your-accounts) (2026-10-02). The record and decision rules above are repository adaptations of the identified risk, not measured performance gains.
+
 ## Task decisions
 
 ```bash
@@ -82,4 +95,4 @@ The generated `website-brief.md` is a handoff for the existing website builder: 
 
 ## Offline demonstration and connection status
 
-`python3 scripts/marketing/demo.py --out <new-empty-directory>` creates a synthetic project, imports two example periods, finalizes a review and exercises task continuity. Fixture data proves only deterministic local behavior. `python3 scripts/marketing/connections.py --project <slug>` validates definitions and explicitly reports that live access is unverified. Provider preferences/auth notes are in `config/marketing/providers.json`; Google/Meta eligibility and exact current permissions must be checked when implementing the isolated reporting pilot. Do not add an execution route or globally inherited write connector for this local release.
+`python3 scripts/marketing/demo.py --out <new-empty-directory>` creates a synthetic project, imports two example periods, finalizes a review and exercises task continuity. Fixture data proves only deterministic local behavior. `python3 scripts/marketing/connections.py --project <slug>` validates definitions and explicitly reports that live access is unverified. Provider preferences/auth notes are in `config/marketing/providers.json`; Google/Meta/TikTok eligibility and exact current permissions must be checked when implementing the isolated reporting pilot. See `ad-platform-connections.md` for dated setup guidance. Do not add an execution route or globally inherited write connector for this local release.

@@ -12,6 +12,7 @@ from scripts.marketing.campaign import ROOT, identifier, read_json, digest, byte
 
 MAX_BYTES=10*1024*1024
 MAX_ROWS=50000
+AD_PROVIDERS={'google_ads','meta_ads','tiktok_ads'}
 PRIVATE=re.compile(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|\b(?:Bearer\s+\S+|sk-[A-Za-z0-9_-]{12,}|EA[A-Za-z0-9]{40,})',re.I)
 
 
@@ -39,7 +40,7 @@ def metadata_check(metadata, provider):
     if set(metadata)-allowed or any(not isinstance(v,str) or len(v)>4000 for v in metadata.values()):
         raise ValueError('export metadata contains unsupported fields or values')
     required={'report_scope','property','period_start','period_end','timezone','exported_at'}
-    if provider in {'google_ads','meta_ads'}: required|={'currency','attribution','maturity'}
+    if provider in AD_PROVIDERS: required|={'currency','attribution','maturity'}
     missing=sorted(k for k in required if not metadata.get(k))
     if missing: raise ValueError('confirm export metadata: '+', '.join(missing))
     start,end=date.fromisoformat(metadata['period_start']),date.fromisoformat(metadata['period_end'])
@@ -72,7 +73,7 @@ def import_export(path, name, metadata):
         if not row or not any(v.strip() for v in row) or (row[0].startswith('#')): continue
         if len(row)!=len(header): raise ValueError('CSV row '+str(index)+' does not match its header')
         item=dict(zip(header,row)); dimension=item[spec['dimension']].strip()
-        if spec['provider'] in {'google_ads','meta_ads'} and dimension in {'','--'} and any(v.strip().lower().startswith('total:') for v in row[:2]):
+        if spec['provider'] in AD_PROVIDERS and dimension in {'','--'} and any(v.strip().lower().startswith('total:') for v in row[:2]):
             discarded+=1;continue
         if not dimension: raise ValueError('export row is missing its dimension')
         if PRIVATE.search(dimension): raise ValueError('dimension may contain private data; use a sanitized aggregate export')

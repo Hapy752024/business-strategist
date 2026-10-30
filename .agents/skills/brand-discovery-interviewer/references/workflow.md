@@ -20,7 +20,7 @@ Question order:
 8. Values/principles.
 9. Desired personality.
 10. Design preferences and constraints.
-11. Good examples and why they work.
+11. Good examples and why they work. For website/image deliverables, reuse supplied URLs/photos or ask once for reference sites and any photo set for direct use or AI guidance. Record none/delegated when applicable; apply `../../brand-website-designer-builder/references/reference-sites.md` without repeating an answered intake.
 12. Required formats, tools, and environments.
 
 After the last answer, summarize the brief and ask for confirmation.

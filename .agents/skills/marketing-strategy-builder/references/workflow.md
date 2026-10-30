@@ -64,7 +64,7 @@ Do not start with channels unless the user explicitly asks for channel execution
 3. Narrow the early adopter segment and buyer trigger.
 4. Express the selected business position through customer language, promise, differentiation, and proof. For an unresolved business-position choice or material contradiction, use repo-root `references/strategic-positioning.md` and GTM ownership; a narrow message/copy request uses supplied assumptions without reopening strategy.
 5. Design the offer and risk reversal within the selected service boundaries, relative price, and proof limits. Make any conflicting business change explicit and reuse the active strategy record rather than creating another positioning decision.
-6. Map the funnel and identify the conversion action.
+6. Map sourced journey touchpoints to useful hooks/ads/tools, accessible distribution, sales paths and events under repo-root `references/journey-activation-and-measurement.md`. Distinguish acquisition channels, sales destinations, diagnostic events and the selected optimization outcome; link qualification and retained value back to the source cohort.
 7. Choose channels based on customer behavior and available proof.
 8. Define campaign tests with budgets, thresholds, and stop conditions.
 9. End with a seven-day action plan.
@@ -96,6 +96,14 @@ Define:
 - Enemy: what outdated, painful, risky, or wasteful behavior the company stands against.
 
 Use customer language when available. Do not overuse vague claims such as "simple", "AI-powered", "seamless", "all-in-one", "smarter", or "revolutionary" unless they are translated into concrete outcomes.
+
+## Buyer comprehension and choice check
+
+For material offer/message decisions before paid scale, reuse current target-buyer research or prepare a small qualitative check. Ask suitable buyers, without first explaining the page, what is offered, for whom, what result/how it works, why they would choose it over their actual alternative, what is unclear or unbelievable, and what happens after the CTA. Separate must-have eligibility features from reasons that influence their choice. Record verbatim misunderstandings, missing proof and the next revision in existing message/test artifacts. Avoid leading preference questions and founder/AI scores as buyer evidence.
+
+Use unpaid recruitment under repo-root `references/interview-recruitment.md`; choosing a method does not authorize outreach or a paid panel. If comparing alternatives, account for presentation/order effects and include the real workaround or doing nothing where relevant. Understanding and stated preference are qualitative findings, not purchase behavior or measured conversion lift. Low traffic may favor this diagnostic over an underpowered A/B test. A narrow copy request remains a copy task; deliver it with assumptions rather than imposing new research.
+
+Sources checked 2026-10-24: [Peep Laja on buyer-relevant differentiation](https://wynter.com/post/competitive-messaging-analysis) (2026-10-02) and [Harry Dry on concrete, customer-specific copy](https://marketingexamples.com/copywriting/conversion) (undated). These inform the check; vendor benchmarks and copy examples are not predicted campaign results.
 
 ## Offer Design
 

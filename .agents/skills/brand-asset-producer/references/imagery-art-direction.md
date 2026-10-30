@@ -1,6 +1,6 @@
 # Imagery Art Direction (style gate)
 
-Run this BEFORE any imagery asset production. Output: `stages/imagery-style/art-direction.md` plus a moodboard and 2–3 style frames. The gate is approved only when the user approves the style frames, not just the written brief.
+Run this before establishing or materially changing an imagery system. Reuse an approved system or the user's explicit photo/image brief for scoped placement, editing or generation; do not demand a new moodboard for each supplied photo. Apply [image sourcing](image-sourcing.md) for licensed stock and user-provided photos, including allowed AI references. Output: `stages/imagery-style/art-direction.md` plus a moodboard and 2–3 style frames. The gate is approved only when the user approves the style frames, not just the written brief.
 
 ## Brief template
 

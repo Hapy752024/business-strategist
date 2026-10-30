@@ -77,7 +77,8 @@
         "integrate GA4",
         "integrate Meta Pixel",
         "install Google Tag Manager",
-        "PostHog analytics"
+        "PostHog analytics",
+        "build a website"
       ],
       "skill": "brand-website-designer-builder",
       "requires_pain_gate": true,
@@ -262,7 +263,8 @@
       "match": [
         "brand references",
         "design benchmark",
-        "visual codes"
+        "visual codes",
+        "inspect reference websites"
       ],
       "skill": "brand-guideline-researcher",
       "forbidden": [
@@ -277,7 +279,16 @@
         "brand hero image",
         "generate brand asset",
         "favicon set",
-        "create favicon"
+        "create favicon",
+        "source website images",
+        "licensed stock images",
+        "stock image inspiration",
+        "generate website imagery",
+        "use my photos as AI guidance",
+        "use supplied photos as is",
+        "website hero image",
+        "stock photo as inspiration",
+        "use attached photos for website"
       ],
       "skill": "brand-asset-producer",
       "forbidden": [

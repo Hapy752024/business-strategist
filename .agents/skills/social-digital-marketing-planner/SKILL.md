@@ -19,3 +19,5 @@ Return only the requested answer, calendar, creative or campaign plan. Full stra
 
 For channel choice, budget sizing, structure and stop rules read [paid campaign planning](references/paid-campaign-planning.md) first.
 For selected multi-step execution, read repo-root `references/marketing-execution.md`; prepare owner and third-party steps with exact destinations, ready materials and verification criteria.
+
+For paid plans and journey-based growth interventions, read repo-root `references/journey-activation-and-measurement.md` and `references/ad-platform-connections.md` (shared repository dependencies). Specify placement, useful hook/tool, accessible distribution, sales destination, event mappings and mature customer outcomes; prepare platform-specific campaign structure and monitoring without inferring live authority.

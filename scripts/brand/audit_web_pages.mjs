@@ -14,7 +14,7 @@ if (!project || !baseArg || !inventoryPath) {
 }
 const errors = [], pages = [];
 const preservation = [];
-let seoLimits = [], inventoryDigest, siteIdentity;
+let seoLimits = [], seoWarnings = [], inventoryDigest, siteIdentity;
 let auditComplete = false;
 const completedRoutes = [];
 const digest = raw => createHash('sha256').update(raw).digest('hex');
@@ -227,6 +227,7 @@ try {
   const seoReport = JSON.parse(seo.stdout);
   errors.push(...seoReport.errors);
   seoLimits = seoReport.limits;
+  seoWarnings = seoReport.warnings || [];
   const missing = await context.request.get(new URL('/__audit_missing_' + Date.now(), base).href);
   if (missing.status() !== 404) errors.push('unknown route does not return 404');
   errors.push(...resourceErrors);
@@ -244,7 +245,7 @@ for (const p of pages) {
 console.log(JSON.stringify({schema_version: 1, checker_version: 'seo-audit-v3', checked_at: new Date().toISOString(),
   coverage: {complete: auditComplete, routes: completedRoutes.sort()},
   site_identity: siteIdentity, inventory_sha256: inventoryDigest, config_sha256: inventoryDigest,
-  source_revision: process.argv[5] || null, seo_limits: seoLimits,
+  source_revision: process.argv[5] || null, seo_limits: seoLimits, seo_warnings: seoWarnings,
   preservation,
   status: errors.length ? 'fail' : 'pass', pages, errors: [...new Set(errors)],
   manual_checks: ['inventory completeness', 'metadata/alt meaning', 'favicon provenance', '404 design', 'sitemap URL coverage', 'robots policy', 'CTA obstruction/keyboard', 'consent network transitions', 'form states', 'legal/contact truth', 'performance via Lighthouse and field data'],

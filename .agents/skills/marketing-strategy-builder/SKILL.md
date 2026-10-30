@@ -21,3 +21,5 @@ For interview recruitment or strategic acquisition planning, apply repo-root `re
 
 For keyword research, the `seo-page-planning` route and public-resource briefs read [keyword research](references/keyword-research.md). Use earned-media-builder for selected external opportunity work.
 For selected multi-step work, read repo-root `references/marketing-execution.md`; prepare the agent work, exact owner/platform handoffs and observable completion checks.
+
+For funnel, growth-tool or campaign design, read repo-root `references/journey-activation-and-measurement.md`. Carry sourced placement hooks into an explicit sales path and event contract. Use `references/ad-platform-connections.md` for selected Meta/Google/TikTok setup and monitoring; these shared dependencies do not authorize connections or spend.

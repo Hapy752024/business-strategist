@@ -49,6 +49,10 @@ Runtime installation:
 - Ask separately before installing system tools such as Inkscape/ImageMagick.
 - Continue with SVG masters even if export tools are unavailable.
 
+## Website photography and AI guidance
+
+Follow [image sourcing](image-sourcing.md) for direct photo use, licensed stock acquisition, and AI generation informed by user photos or permitted stock. Do not automatically replace supplied photos or reject licensed stock inspiration. Preserve originals and source/output lineage; the native imagegen skill is the first raster generation/editing option when available.
+
 ## AI Image Alternatives
 
 Use OpenRouter when the user wants multiple image/model alternatives:

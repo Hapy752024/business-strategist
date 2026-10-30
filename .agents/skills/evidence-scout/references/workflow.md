@@ -173,6 +173,8 @@ initial matrix is not completion evidence.
 
 For venture research, reconstruct the customer journey from web context and relevant social/community posts, comments and reviews. Branch where different triggers or roles materially change the need; do not collapse every user into one funnel. Cover trigger, discovery, evaluation, purchase, onboarding, use/service, renewal/referral and exit where applicable. For each stage record `segment/trigger | desired outcome | current action/alternative | pain and consequence | source ID/URL/date and role | counter-evidence | unknown/next check`. Customer-language quotes must be real, not composites; company tutorials show an intended journey, not actual customer behavior.
 
+Apply repo-root `references/journey-activation-and-measurement.md`, section 1: identify sourced touchpoints where an ad, useful tool or partner placement might help; record the obstacle, candidate hook, access route, next action and measurable outcome. Label these as hypotheses or unsupported where evidence is missing. Do not turn a pure pain study into a campaign strategy or treat placement hypotheses as validated demand.
+
 Audit claims for job, geography, author role and causal context. Include satisfied customers and successful workarounds. If social evidence is unavailable, report that part of the journey as unverified; do not supply inferred customer statements. Stage-specific friction does not prove market-wide dissatisfaction. Save the journey in the existing report/deep dive and summarize decision-relevant findings in README.
 
 ## Execution Rule

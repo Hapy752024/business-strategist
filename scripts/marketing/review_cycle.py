@@ -69,7 +69,8 @@ def report(packet, review=None, plan=None, publication=None):
         lines.append(f"| {display(metric)} ({display(unit)}) | {fmt(cell['value'])} | {fmt(comp.get('before'))} | {fmt(comp.get('difference'))} |")
     lines+=['', 'Comparison: '+display(packet['comparison']['status'])+'. '+display(packet['comparison'].get('reason','Observed changes do not establish causal uplift.')),
         '', '## Coverage and limits','', '- Only the selected export and its reporting definitions are covered.',
-        '- Platform-attributed conversions are not reconciled qualified leads, sales or unique customers.']
+        '- Platform-attributed conversions are not reconciled qualified leads, sales or unique customers.',
+        '- Metrics absent from the preset remain unknown; clicks or ambiguous Results do not establish customer outcomes.']
     for metric,cell in current['summary'].items():
         if cell['limitation']: lines.append('- '+display(metric)+': '+display(cell['limitation']))
     for issue in packet['gate_reasons']: lines.append('- Publication pending: '+display(issue))
@@ -178,7 +179,11 @@ def website_brief(doc):
         'Destination: '+display(doc.get('page_url') or 'owner/page selection pending'), '',
         '- Match page intent, evidence, offer and CTA; preserve useful interactive tools.',
         '- Define the full form-to-destination path and confirmed customer outcome.',
+        '- Carry the sourced journey hook, useful tool/asset, distribution route and sales follow-up owner from campaign context.',
+        '- Apply references/journey-activation-and-measurement.md; keep native forms, messaging and website conversions distinct.',
         '- Confirm event definitions, consent, deduplication and test exclusions before activation.',
+        '- For Meta copies of one action: same destination/name and Pixel eventID = CAPI event_id; keep IDs stable on retry.',
+        '- Map Google bidding/observation goals and TikTok Pixel/Events API separately; later CRM milestones get new occurrence IDs.',
         '- Technical SEO, speed, accessibility and release checks remain with the website builder.',
         '- Claims need approved sources; measurement installation does not verify lead receipt.', ''])
 

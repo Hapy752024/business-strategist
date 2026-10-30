@@ -82,6 +82,18 @@
         "owner",
         "handoff"
       ]
+    },
+    {
+      "id": "journey-to-sales",
+      "prompt": "Use our approved home-energy audit offer and sourced homeowner journey to connect Google/Meta/TikTok opportunities to actual completed audits. We have no CRM outcome imports yet.",
+      "expected_output": "Compares evidence-backed hook placements and tools, distinguishes channel from sales path, defines saved/qualified/booked/attended/paid stages and ownership, maps selected bidding versus observation events, gives monitoring and CRM gaps without claiming live linkage or authorizing spend.",
+      "files": []
+    },
+    {
+      "id": "buyer-comprehension-before-scale",
+      "prompt": "Our B2B page says \"AI-powered all-in-one workflow\". The founder and an AI grader rate it 9/10. Only 80 suitable visitors arrive monthly. Competitors all claim security, which we call our differentiator. Should we scale ads or run an A/B test first?",
+      "expected_output": "Diagnoses missing buyer comprehension and choice evidence; proposes unpaid target-fit qualitative review using unaided explanation, real alternatives, must-have versus choice drivers, objections/proof and CTA understanding; avoids automatic paid panels, underpowered A/B claims and treating stated preference as conversion lift. Reuses existing positioning instead of silently replacing the business strategy.",
+      "files": []
     }
   ]
 }
