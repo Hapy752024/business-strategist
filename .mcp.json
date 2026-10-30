@@ -32,6 +32,16 @@
       "_category": "community_discovery",
       "_priority": "medium",
       "_comment": "Hosted third-party subreddit discovery (OAuth, sign in once via /mcp). Discovery only: collect posts through the Reddit API route; never cite Dialog output as evidence. Queries go to Dialog's servers; keep founder-private details out of them."
+    },
+    "apify": {
+      "type": "http",
+      "url": "https://mcp.apify.com",
+      "headers": {
+        "Authorization": "Bearer ${APIFY_TOKEN}"
+      },
+      "_category": "community_discovery",
+      "_priority": "medium",
+      "_comment": "Hosted Apify MCP: run Store actors (Reddit, review sites) as capped paid fallbacks. Actor output is collected via scripts, never cited raw."
     }
   }
 }

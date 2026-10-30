@@ -147,3 +147,14 @@ def test_project_subagents_exist_with_restricted_tools():
         tools = re.search(r"^tools:\s*(.+)$", front, re.M).group(1)
         assert must_have in tools and must_not not in tools, f"{name}: tools={tools}"
     assert not (ROOT / "agent-modes").exists(), "agent-modes/ is superseded by .claude/agents/"
+
+
+def test_enabled_mcp_servers_are_defined():
+    local = ROOT / ".claude/settings.local.json"
+    if not local.exists():  # gitignored, per-machine file
+        import pytest
+        pytest.skip("no settings.local.json on this machine")
+    enabled = json.loads(local.read_text()).get("enabledMcpjsonServers", [])
+    defined = json.loads((ROOT / ".mcp.json").read_text())["mcpServers"]
+    assert [name for name in enabled if name not in defined] == []
+    assert "apify" in defined and defined["apify"]["type"] == "http"
