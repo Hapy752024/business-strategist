@@ -88,3 +88,7 @@ evals/local-runs/
 
 # Local design reference collection
 /awesome-design/
+
+# site gate evidence (scripts/brand/site_gate.py)
+qa/site-gate/
+site-gate/

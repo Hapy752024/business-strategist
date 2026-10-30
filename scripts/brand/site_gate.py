@@ -13,7 +13,7 @@ Checks, in order, against a base URL (a local preview or the live host):
   interface_guidelines a deterministic SUBSET of the Vercel web interface guidelines read
                        from the rendered DOM (see site_gate.mjs); rules are local, not fetched
 
-Writes <out-dir>/site-gate.json with per-check {id, status, details, evidence_path} and
+Writes <out-dir>/site-gate.json (default <site-dir>/qa/site-gate, else a temp dir) with per-check {id, status, details, evidence_path} and
 exits 1 when any check fails or a tool is unavailable. `--skip CHECK=REASON` records a skip;
 a skip without a reason is refused. The gate never deploys, pings search engines or edits
 the site; IndexNow lives in indexnow_ping.py and runs only after an authorized deploy.
@@ -27,6 +27,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -41,6 +42,11 @@ DEFAULT_BUDGETS = {'performance': 85, 'accessibility': 95}
 AXE_ROUTES = 5
 AXE_BLOCKING = {'serious', 'critical'}
 MAX_URLS = 50
+LIGHTHOUSE_TIMEOUT = 300
+BROWSER_TIMEOUT = 600
+NO_SITEMAP_LIMIT = 'no usable sitemap: audited / only'
+EXPERIMENTAL = 'experimental (Lighthouse marks agentic-browsing as under development)'
+UNSCORED_MODES = {'notApplicable', 'manual', 'informative'}
 CHROME_CANDIDATES = ('/usr/bin/google-chrome', '/usr/bin/google-chrome-stable', '/usr/bin/chromium',
                      '/usr/bin/chromium-browser', '/snap/bin/chromium')
 
@@ -76,17 +82,25 @@ def run_lighthouse(urls: list[str], out_dir: Path, tooling_dir: Path) -> dict:
     chrome = find_chrome()
     if not chrome:
         return {'unavailable': 'no Chrome/Chromium executable found (set CHROME_PATH)'}
-    version = subprocess.run([str(binary), '--version'], capture_output=True, text=True, timeout=60).stdout.strip()
+    try:
+        version = subprocess.run([str(binary), '--version'], capture_output=True, text=True, timeout=60).stdout.strip()
+    except subprocess.TimeoutExpired:
+        return {'unavailable': f'{binary} --version timed out after 60s'}
     out = (Path(out_dir) / 'lighthouse').resolve()
     out.mkdir(parents=True, exist_ok=True)
     reports, errors = {}, {}
     for i, url in enumerate(urls):
         path = out / f'{i:03d}.json'
-        proc = subprocess.run([str(binary), url, '--only-categories=agentic-browsing,accessibility,performance',
-                               '--output=json', f'--output-path={path}', '--quiet',
-                               '--chrome-flags=--headless=new --no-sandbox'],
-                              capture_output=True, text=True, timeout=300, env={**os.environ, 'CHROME_PATH': chrome},
-                              cwd=out)  # chrome-launcher on WSL writes profile dirs relative to cwd
+        try:
+            proc = subprocess.run([str(binary), url, '--only-categories=agentic-browsing,accessibility,performance',
+                                   '--output=json', f'--output-path={path}', '--quiet',
+                                   '--chrome-flags=--headless=new --no-sandbox'],
+                                  capture_output=True, text=True, timeout=LIGHTHOUSE_TIMEOUT,
+                                  env={**os.environ, 'CHROME_PATH': chrome},
+                                  cwd=out)  # chrome-launcher on WSL writes profile dirs relative to cwd
+        except subprocess.TimeoutExpired:
+            errors[url] = [f'timed out after {LIGHTHOUSE_TIMEOUT}s']
+            continue
         if proc.returncode == 0 and path.exists():
             reports[url] = str(path)
         else:
@@ -101,8 +115,11 @@ def run_browser(base: str, routes: list[str], out_dir: Path, tooling_dir: Path) 
         return {'tool_unavailable': 'node is not on PATH'}
     routes_file, out_file = Path(out_dir) / 'routes.json', Path(out_dir) / 'browser.json'
     routes_file.write_text(json.dumps(routes))
-    proc = subprocess.run([node, str(HERE / 'site_gate.mjs'), base, str(routes_file), str(out_file), str(tooling_dir)],
-                          capture_output=True, text=True, timeout=600)
+    try:
+        proc = subprocess.run([node, str(HERE / 'site_gate.mjs'), base, str(routes_file), str(out_file), str(tooling_dir)],
+                              capture_output=True, text=True, timeout=BROWSER_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        return {'error': f'browser step timed out after {BROWSER_TIMEOUT}s'}
     if not out_file.exists():
         return {'error': f'browser step exited {proc.returncode} without output: {proc.stderr.strip()[-300:]}'}
     return {**json.loads(out_file.read_text()), 'evidence_path': str(out_file)}
@@ -119,10 +136,11 @@ def check_seo(base: str, canonical: str, out_dir: Path) -> tuple[dict, list[str]
         urls = sitemap_urls(obs['sitemap'].get('body') or '')[0] if obs['sitemap'].get('status') == 200 else []
     except Exception:
         urls = []
-    paths = list(dict.fromkeys(urlsplit(u).path or '/' for u in urls if probe._host(u) == probe._host(canonical)))
+    paths = list(dict.fromkeys((urlsplit(u).path or '/') + (f'?{urlsplit(u).query}' if urlsplit(u).query else '')
+                               for u in urls if probe._host(u) == probe._host(canonical)))
     details = {'errors': result['errors'], 'warnings': result['warnings'], 'limits': result['limits'],
                'sitemap_urls': result['sitemap_urls'], 'boundary': result['boundary']}
-    return _check('seo_signals', 'fail' if result['errors'] else 'pass', details, evidence), paths or ['/']
+    return _check('seo_signals', 'fail' if result['errors'] else 'pass', details, evidence), paths
 
 
 def check_llms_txt(base: str) -> dict:
@@ -165,24 +183,41 @@ def evaluate_lighthouse(run: dict, budgets: dict, *, skip_budgets: bool, skip_ag
             if not category:
                 missing.append(url)
                 continue
-            audits = {}
+            audits, scored = {}, 0
+            if report.get('runtimeError'):
+                failing.append(f'{url}: Lighthouse runtime error {report["runtimeError"].get("code")}')
             for ref in category.get('auditRefs', []):
-                audit = report.get('audits', {}).get(ref['id'], {})
-                audits[ref['id']] = audit.get('score') if audit.get('score') is not None else audit.get('scoreDisplayMode')
-                if audit.get('score') is not None and audit['score'] < 0.9:
-                    failing.append(f'{url}: {ref["id"]} ({audit.get("title", "")}) score {audit["score"]}')
+                audit = report.get('audits', {}).get(ref['id'])
+                if audit is None:
+                    audits[ref['id']] = 'missing'
+                    failing.append(f'{url}: {ref["id"]} missing from the report')
+                    continue
+                score, mode = audit.get('score'), audit.get('scoreDisplayMode')
+                audits[ref['id']] = score if score is not None else mode
+                if mode == 'error':
+                    failing.append(f'{url}: {ref["id"]} errored: {audit.get("errorMessage", "no message")}')
+                elif score is not None:
+                    scored += 1
+                    if score < 0.9:
+                        failing.append(f'{url}: {ref["id"]} ({audit.get("title", "")}) score {score}')
+                elif mode not in UNSCORED_MODES:
+                    failing.append(f'{url}: {ref["id"]} has no score (mode {mode})')
+            if not scored:
+                failing.append(f'{url}: no agentic-browsing audit produced a score; nothing was tested')
             per_url[url] = {'category_score': category.get('score'), 'audits': audits}
         if missing or (not reports and not run_errors):
             out.append(_check('agentic_browsing', 'fail', {
                 'reason': 'category_unavailable',
-                'message': f'installed Lighthouse {version} produced no agentic-browsing category '
-                           f'(introduced in Lighthouse 13.3); upgrade the pinned version', 'urls': missing}, evidence))
+                'message': f'installed Lighthouse {version} produced no agentic-browsing category; '
+                           'upgrade the pinned version', 'urls': missing,
+                'experimental': EXPERIMENTAL}, evidence))
         else:
             failing += [f'{url}: Lighthouse did not complete' for url in run_errors]
             out.append(_check('agentic_browsing', 'fail' if failing else 'pass', {
                 'failures': failing, 'results': per_url, 'lighthouse_version': version,
-                'rule': 'every applicable (scored) audit in the category scores >= 0.9; not-applicable audits are recorded',
-                'boundary': 'Lighthouse marks this category as under development'}, evidence))
+                'rule': 'every scored audit >= 0.9; errored, missing or unexpectedly unscored audits and runtime '
+                        'errors fail; at least one audit must be scored; notApplicable/manual/informative are recorded',
+                'experimental': EXPERIMENTAL}, evidence))
     return out
 
 
@@ -231,25 +266,37 @@ def run_gate(base: str, *, out_dir: Path, canonical_origin: str | None = None, s
     base, canonical = _origin(base), _origin(canonical_origin or base)
     budgets = {**DEFAULT_BUDGETS, **(budgets or {})}
     runners = {'lighthouse': run_lighthouse, 'browser': run_browser, **(runners or {})}
-    out_dir = Path(out_dir)
+    out_dir = Path(out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     results: dict[str, dict] = {}
 
     seo, paths = check_seo(base, canonical, out_dir)
     results['seo_signals'] = seo
     results['llms_txt'] = check_llms_txt(base)
+    coverage = [] if paths else [NO_SITEMAP_LIMIT]
+    paths = paths or ['/']
     urls = [base + p for p in paths]
-    limits = [f'{len(urls)} sitemap URLs; Lighthouse ran on the first {max_urls}'] if len(urls) > max_urls else []
+    limits = coverage + ([f'{len(urls)} sitemap URLs; Lighthouse ran on the first {max_urls}'] if len(urls) > max_urls else [])
     if not ({'lighthouse_budgets', 'agentic_browsing'} <= skips.keys()):
-        run = runners['lighthouse'](urls[:max_urls], out_dir, tooling_dir)
-        for check in evaluate_lighthouse(run, budgets, skip_budgets='lighthouse_budgets' in skips,
-                                         skip_agentic='agentic_browsing' in skips):
+        try:
+            run = runners['lighthouse'](urls[:max_urls], out_dir, tooling_dir)
+            lighthouse_checks = evaluate_lighthouse(run, budgets, skip_budgets='lighthouse_budgets' in skips,
+                                                    skip_agentic='agentic_browsing' in skips)
+        except Exception as exc:  # a crashed step is a recorded failure, never a missing check
+            lighthouse_checks = [_check(cid, 'fail', {'message': f'Lighthouse step crashed: {exc!r}'})
+                                 for cid in ('lighthouse_budgets', 'agentic_browsing') if cid not in skips]
+        for check in lighthouse_checks:
             if limits:
                 check['details']['limits'] = limits
             results[check['id']] = check
     if not ({'axe', 'interface_guidelines'} <= skips.keys()):
-        run = runners['browser'](base, paths[:AXE_ROUTES], out_dir, tooling_dir)
+        try:
+            run = runners['browser'](base, paths[:AXE_ROUTES], out_dir, tooling_dir)
+        except Exception as exc:
+            run = {'error': f'browser step crashed: {exc!r}'}
         for check in evaluate_browser(run, skip_axe='axe' in skips, skip_guidelines='interface_guidelines' in skips):
+            if coverage:
+                check['details']['limits'] = coverage
             results[check['id']] = check
     for check_id, reason in skips.items():
         results[check_id] = _check(check_id, 'skipped', {'reason': reason.strip()})
@@ -265,6 +312,13 @@ def run_gate(base: str, *, out_dir: Path, canonical_origin: str | None = None, s
     return gate
 
 
+def default_out_dir(site_dir: Path | None) -> Path:
+    """Evidence goes under the site's own qa/ directory, or a fresh temp dir; never the agent repo."""
+    if site_dir:
+        return (Path(site_dir) / 'qa/site-gate').resolve()
+    return Path(tempfile.mkdtemp(prefix='site-gate-')).resolve()
+
+
 def exit_code(gate: dict) -> int:
     return 1 if gate['verdict'] != 'pass' or any(c['status'] in {'fail', 'tool_unavailable'} for c in gate['checks']) else 0
 
@@ -273,7 +327,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('base_url', help='served site origin, e.g. http://127.0.0.1:3000 or https://www.example.com')
     parser.add_argument('--canonical-origin', help='production origin the canonicals/sitemap name (defaults to base_url)')
-    parser.add_argument('--out-dir', type=Path, default=Path('site-gate'), help='evidence directory (site-gate.json lands here)')
+    parser.add_argument('--site-dir', type=Path, help='site project directory; evidence defaults to <site-dir>/qa/site-gate')
+    parser.add_argument('--out-dir', type=Path, help='evidence directory (default: <site-dir>/qa/site-gate, else a temp dir)')
     parser.add_argument('--skip', action='append', default=[], metavar='CHECK=REASON')
     parser.add_argument('--min-performance', type=int, default=DEFAULT_BUDGETS['performance'])
     parser.add_argument('--min-accessibility', type=int, default=DEFAULT_BUDGETS['accessibility'])
@@ -286,14 +341,15 @@ def main(argv: list[str] | None = None) -> int:
         if not reason.strip():
             parser.error(f'--skip {check_id} needs a reason: --skip {check_id}="why this check does not apply"')
         skips[check_id.strip()] = reason
+    out_dir = args.out_dir.resolve() if args.out_dir else default_out_dir(args.site_dir)
     try:
-        gate = run_gate(args.base_url, out_dir=args.out_dir, canonical_origin=args.canonical_origin, skips=skips,
+        gate = run_gate(args.base_url, out_dir=out_dir, canonical_origin=args.canonical_origin, skips=skips,
                         budgets={'performance': args.min_performance, 'accessibility': args.min_accessibility},
                         tooling_dir=args.tooling_dir, max_urls=args.max_urls)
     except ValueError as exc:
         parser.error(str(exc))
     print(json.dumps({'verdict': gate['verdict'], 'checks': {c['id']: c['status'] for c in gate['checks']},
-                      'report': str(args.out_dir / 'site-gate.json')}, indent=2))
+                      'report': str(out_dir / 'site-gate.json')}, indent=2))
     return exit_code(gate)
 
 

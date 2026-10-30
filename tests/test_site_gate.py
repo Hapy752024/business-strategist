@@ -226,3 +226,96 @@ def test_browser_step_detects_guideline_and_axe_defects(tmp_path, serve):
                  'mobile-input-size', 'no-horizontal-overflow'):
         assert rule in rules, rules
     assert checks['axe']['status'] == 'fail'
+
+
+def _rewrite_reports(run, mutate):
+    for path in run['reports'].values():
+        report = json.loads(Path(path).read_text())
+        mutate(report)
+        Path(path).write_text(json.dumps(report))
+    return run
+
+
+@pytest.mark.parametrize('case', ['errored', 'all_not_applicable', 'runtime_error', 'missing_audit'])
+def test_agentic_errored_or_untested_audits_fail(tmp_path, serve, case):
+    def mutate(report):
+        refs = report['categories']['agentic-browsing']['auditRefs']
+        if case == 'errored':
+            report['audits']['agent-accessibility-tree'] = {'score': None, 'scoreDisplayMode': 'error',
+                                                            'errorMessage': 'protocol timeout'}
+        elif case == 'all_not_applicable':
+            report['audits']['agent-accessibility-tree'] = {'score': None, 'scoreDisplayMode': 'notApplicable'}
+        elif case == 'runtime_error':
+            report['runtimeError'] = {'code': 'NO_FCP'}
+        else:
+            refs.append({'id': 'webmcp-registered-tools'})
+
+    def lighthouse(urls, out_dir, tooling_dir):
+        return _rewrite_reports(green_lighthouse(urls, out_dir, tooling_dir), mutate)
+    result = site_gate.run_gate(serve(FIXTURE), canonical_origin=CANONICAL, out_dir=tmp_path / 'out',
+                                runners={**GREEN, 'lighthouse': lighthouse})
+    agentic = by_id(result)['agentic_browsing']
+    assert agentic['status'] == 'fail', agentic
+    assert 'experimental' in agentic['details']['experimental']
+    assert site_gate.exit_code(result) == 1
+
+
+def test_missing_sitemap_records_coverage_limit(tmp_path, serve):
+    site = site_copy(tmp_path)
+    (site / 'sitemap.xml').unlink()
+    result = site_gate.run_gate(serve(site), canonical_origin=CANONICAL, out_dir=tmp_path / 'out', runners=GREEN)
+    checks = by_id(result)
+    assert checks['seo_signals']['status'] == 'fail'
+    for check in ('lighthouse_budgets', 'agentic_browsing', 'axe', 'interface_guidelines'):
+        assert site_gate.NO_SITEMAP_LIMIT in checks[check]['details']['limits'], checks[check]
+    with_sitemap = by_id(site_gate.run_gate(serve(FIXTURE), canonical_origin=CANONICAL, out_dir=tmp_path / 'b', runners=GREEN))
+    assert 'limits' not in with_sitemap['axe']['details']
+
+
+def test_sitemap_query_strings_are_kept(tmp_path, serve):
+    site = site_copy(tmp_path)
+    sitemap = site / 'sitemap.xml'
+    sitemap.write_text(sitemap.read_text().replace('/services/</loc>', '/services/?lang=en</loc>'))
+    seen = {}
+
+    def browser(base, routes, out_dir, tooling_dir):
+        seen['routes'] = routes
+        return green_browser(base, routes, out_dir, tooling_dir)
+    site_gate.run_gate(serve(site), canonical_origin=CANONICAL, out_dir=tmp_path / 'out',
+                       runners={**GREEN, 'browser': browser})
+    assert '/services/?lang=en' in seen['routes']
+
+
+def test_default_out_dir_is_outside_the_repo(tmp_path, serve):
+    site_dir = tmp_path / 'my-site'
+    target = site_gate.default_out_dir(site_dir)
+    assert target.is_absolute() and target == (site_dir / 'qa/site-gate').resolve()
+    assert ROOT not in target.parents
+    temp = site_gate.default_out_dir(None)
+    assert temp.is_absolute() and ROOT not in temp.parents
+    cli = subprocess.run([sys.executable, '-m', 'scripts.brand.site_gate', serve(FIXTURE), '--canonical-origin', CANONICAL,
+                          '--site-dir', str(site_dir),
+                          *[arg for check in ('lighthouse_budgets', 'agentic_browsing', 'axe', 'interface_guidelines')
+                            for arg in ('--skip', f'{check}=not under test here')]],
+                         cwd=ROOT, capture_output=True, text=True, timeout=60)
+    assert cli.returncode == 0, cli.stdout + cli.stderr
+    assert (site_dir / 'qa/site-gate/site-gate.json').exists()
+    assert not (ROOT / 'site-gate').exists()
+
+
+def test_timeouts_are_recorded_and_report_written(tmp_path, serve, monkeypatch):
+    tooling = tmp_path / 'tooling'
+    (tooling / 'node_modules/.bin').mkdir(parents=True)
+    (tooling / 'node_modules/.bin/lighthouse').write_text('')
+    monkeypatch.setattr(site_gate, 'find_chrome', lambda: '/usr/bin/true')
+    monkeypatch.setattr(site_gate.shutil, 'which', lambda name: '/usr/bin/node')
+
+    def timeout(cmd, **kwargs):
+        raise subprocess.TimeoutExpired(cmd, kwargs.get('timeout'))
+    monkeypatch.setattr(site_gate.subprocess, 'run', timeout)
+    result = site_gate.run_gate(serve(FIXTURE), canonical_origin=CANONICAL, out_dir=tmp_path / 'out', tooling_dir=tooling)
+    checks = by_id(result)
+    for check in ('lighthouse_budgets', 'agentic_browsing', 'axe', 'interface_guidelines'):
+        assert checks[check]['status'] in {'fail', 'tool_unavailable'}, checks[check]
+    assert 'timed out' in json.dumps(checks['axe'])
+    assert json.loads((tmp_path / 'out/site-gate.json').read_text())['verdict'] == 'fail'

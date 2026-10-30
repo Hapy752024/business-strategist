@@ -193,8 +193,9 @@ def _fetch(url: str, timeout: float) -> dict:
 
 def collect(origin: str, *, domains: dict[str, str] | None = None, timeout: float = 20,
             fetch_origin: str | None = None) -> dict:
-    """Fetch observations keyed by production URLs. `fetch_origin` (pre-launch gate) serves
-    every production-origin URL from a local preview instead and fetches no other host."""
+    """Fetch observations keyed by production URLs. With `fetch_origin` (pre-launch gate),
+    production-origin URLs are served from the local preview and URLs on other hosts are not
+    fetched; the explicit `domains` decisions are still requested from those real hosts."""
     origin = origin.rstrip('/')
     served = (fetch_origin or origin).rstrip('/')
 
