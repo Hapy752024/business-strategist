@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "gsc-queries-v1",
+  "transform_version": 1,
+  "provider": "gsc",
+  "dimension": "Top queries",
+  "dimension_kind": "query",
+  "required": [
+    "Top queries",
+    "Clicks",
+    "Impressions",
+    "CTR",
+    "Position"
+  ],
+  "metrics": {
+    "clicks": {
+      "column": "Clicks",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "impressions": {
+      "column": "Impressions",
+      "unit": "count",
+      "aggregate": "sum"
+    },
+    "position": {
+      "column": "Position",
+      "unit": "rank",
+      "aggregate": "weighted",
+      "weight": "impressions"
+    }
+  },
+  "ratios": {
+    "ctr": {
+      "numerator": "clicks",
+      "denominator": "impressions"
+    }
+  }
+}

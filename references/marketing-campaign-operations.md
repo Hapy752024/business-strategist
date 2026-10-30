@@ -26,12 +26,17 @@ Presets declare exact supported English CSV layouts, not every provider export v
 | Preset | Export scope and required columns | Optional metrics and limits |
 |---|---|---|
 | `gsc-pages-v1` | Search Console Performance → Search results → Pages → Export CSV; use the Pages table: `Top pages,Clicks,Impressions,CTR,Position` | CTR is recomputed; position is weighted by impressions. Confirm report filters and full date range. |
+| `gsc-queries-v1` | Search Console Performance → Search results → Queries → Export CSV: `Top queries,Clicks,Impressions,CTR,Position` | Query text is kept verbatim (no URL stripping); same limits as `gsc-pages-v1`. Used by `search_feedback.py`. |
 | `ga4-pages-v1` | Pages and screens aggregate CSV with `Page path and screen class,Views,Active users,Event count,Key events` | Comment preambles are supported. Users across page rows are not additive. Confirm reporting identity/settings as applicable. |
 | `google-ads-campaigns-v1` | Campaigns aggregate report with `Campaign,Campaign ID,Cost,Clicks,Impressions` | `Conversions` is optional and otherwise unknown. Confirm conversion definition, attribution, currency and maturity. |
 | `meta-ads-campaigns-v1` | Ads Manager campaign-level report with `Campaign name,Campaign ID,Amount spent (<confirmed currency>),Impressions` | `Link clicks`, `Website leads` optional. Ambiguous `Results` is not treated as leads. Row reporting dates, when supplied, must match confirmed dates. |
 | `tiktok-ads-campaigns-v1` | Exact English custom-column campaign aggregate with `Campaign name,Campaign ID,Cost,Impressions,Clicks (destination)` | Spend and destination-click CTR only; `Results` and generic `Conversions` are deliberately not interpreted. Qualification/conversion reporting requires a separately reviewed event-specific mapping. Fixture-tested layout; actual account export compatibility remains unverified. |
 
 Exclude breakdowns, customer rows and duplicated totals. Query strings are stripped from page dimensions; apparent email/token dimensions are rejected. The importer supports UTF-8/BOM, English thousands separators and known blank/suppressed cells. Other locales, negative amounts, oversized files, non-finite values and unknown layouts produce explicit errors. This does not certify absence of all personal data; inspect source scope before import.
+
+## Post-launch search review
+
+Before a review that relies on Google data, run `python3 scripts/marketing/connections.py probe <gsc|ga4|google_ads>`; `unconnected` is a gap with owner steps (`references/ad-platform-connections.md`, Read connectors), not a zero. After a page set has been live for a full Search Console window, export Queries with `gsc-queries-v1` and run `python3 scripts/marketing/search_feedback.py <keyword-map.json> <queries.csv> --metadata <meta.json> --out <dir>/keyword-map.search-feedback.proposed.json`. It reports planned clusters with no observed impressions (anonymised queries are omitted, so not proven zero), blank-value clusters as unknown, impressions without clicks (a title/snippet hypothesis, not a finding) and unplanned queries with impressions (content opportunities). Output is a proposal for the map's `decision` field; the reviewed map is never edited, and a human review applies any change.
 
 ## Prepare, review and finalize
 
