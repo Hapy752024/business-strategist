@@ -218,6 +218,11 @@ first; then `apify_reddit` (third-party scraper, item-capped by `--apify-item-ca
 throttled, backs off then reports `rate_limited`). Fallbacks never become the only source of record, and
 their records stay unreviewed.
 
+Cheapest route: discover threads with Brave/Serper `site:reddit.com` searches, then run
+`collect.py --reddit-hydrate-from <search-results.json>` (capped by `--reddit-hydrate-max`, default 25),
+which fetches each thread through the first available of reddit, `apify_reddit` (still bounded by
+`--apify-item-cap`) and `scrapecreators_reddit`, recording the serving backend and the reason each earlier one was skipped.
+
 ## Apify Review and Community Lanes
 
 `apify_software_reviews` (TrustRadius, Software Advice, GetApp), `apify_g2_reviews`,

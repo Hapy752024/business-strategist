@@ -1,0 +1,45 @@
+{
+  "searches": [
+    {
+      "query": "site:reddit.com synthetic",
+      "response": {
+        "body": {
+          "web": {
+            "results": [
+              {
+                "url": "https://www.reddit.com/r/example_sub/comments/syn001/synthetic_title/",
+                "title": "t"
+              },
+              {
+                "url": "https://www.reddit.com/r/example_sub/comments/syn001/synthetic_title/?utm_source=x",
+                "title": "dup"
+              },
+              {
+                "url": "https://old.reddit.com/r/example_sub/comments/syn002/synthetic_title/",
+                "title": "old"
+              },
+              {
+                "url": "https://www.reddit.com/r/example_sub/",
+                "title": "subreddit home"
+              },
+              {
+                "url": "https://www.reddit.com/user/redacted_user/",
+                "title": "user page"
+              },
+              {
+                "url": "https://example.com/not-reddit",
+                "title": "other"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "organic": [
+    {
+      "link": "https://www.reddit.com/r/example_sub/comments/syn003/synthetic_title/",
+      "title": "serper style"
+    }
+  ]
+}

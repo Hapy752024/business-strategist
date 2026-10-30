@@ -2292,6 +2292,110 @@ def _collect_arctic_shift_query(args: argparse.Namespace, queries: list[str], ru
     return records, summary
 
 
+def collect_reddit_hydrate(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Fetch the threads named in saved web-search results (discovery-then-hydrate).
+
+    Each thread goes through the first available backend in order reddit -> apify_reddit ->
+    scrapecreators_reddit. Skip reasons and the serving backend are recorded per thread.
+    """
+    import blocked as blocked_markers
+    from providers import apify_reddit, reddit_hydrate
+    source = str(getattr(args, "reddit_hydrate_from", "") or "")
+    if not source:
+        return [], {"status": "not_applicable", "record_count": 0, "reason": "--reddit-hydrate-from not provided"}
+    refs = reddit_hydrate.extract_thread_refs(Path(source))
+    max_threads = max(0, int(getattr(args, "reddit_hydrate_max", 25)))
+    selected, over_max = refs[:max_threads], max(0, len(refs) - max_threads)
+    raw: dict[str, Any] = {"source": source, "threads": []}
+    summary_base = {"threads_found": len(refs), "threads_not_hydrated_over_max": over_max}
+    if not refs:
+        write_json(run_dir / "raw" / "reddit_hydrate.json", raw)
+        return [], {"status": "no_thread_urls", "record_count": 0, "hydrate_ledger": [], **summary_base,
+                    "reason": "No reddit.com/r/<sub>/comments/<id> URLs in the supplied search results."}
+    cap = getattr(args, "apify_item_cap", 300)
+    query = args.topic
+    now = now_iso()
+    token_cache: dict[str, Any] = {}
+    apify_items_requested = 0
+    comments_per_post = getattr(args, "reddit_comments_per_post", 100)
+    common = dict(customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
+    records: list[dict[str, Any]] = []
+    ledger: list[dict[str, Any]] = []
+    for ref in selected:
+        skipped: list[dict[str, str]] = []
+        served: str | None = None
+        found: list[dict[str, Any]] = []
+        for backend in ("reddit", "apify_reddit", "scrapecreators_reddit"):
+            if not getattr(args, "force_blocked", False) and blocked_markers.blocked_reason(backend):
+                skipped.append({"backend": backend, "reason": blocked_markers.BLOCKED})
+                continue
+            if backend == "reddit":
+                if "token" not in token_cache:
+                    token_cache["token"] = reddit_token()[0]
+                token = token_cache["token"]
+                if not token:
+                    skipped.append({"backend": backend, "reason": "missing_credentials"})
+                    continue
+                response = http_get(with_query(f"https://oauth.reddit.com/comments/{ref['post_id']}",
+                    {"limit": min(100, max(1, comments_per_post)), "depth": 4, "sort": "confidence", "raw_json": 1}),
+                    headers={"Authorization": f"Bearer {token}", "User-Agent": "evidence-scout/0.1"})
+                raw["threads"].append({"post_id": ref["post_id"], "backend": backend, "response": response})
+                status = status_from_response(response)
+                found = reddit_hydrate.api_listing_to_records(response.get("body"), ref, query, now, normalize_record,
+                                                              max_comments=comments_per_post, **common) if status == "ok" else []
+            elif backend == "apify_reddit":
+                _, token = get_secret("APIFY_TOKEN")
+                if not token:
+                    skipped.append({"backend": backend, "reason": "missing_credentials"})
+                    continue
+                if apify_items_requested + apify_reddit.ITEMS_PER_POST > cap:
+                    skipped.append({"backend": backend, "reason": "request_budget_exhausted"})
+                    continue
+                apify_items_requested += apify_reddit.ITEMS_PER_POST
+                items, meta = apify_reddit.run_actor(token, [], apify_reddit.ITEMS_PER_POST, "all", True, start_urls=[ref["url"]])
+                raw["threads"].append({"post_id": ref["post_id"], "backend": backend, "response": meta["response"]})
+                status = meta["status"]
+                found = apify_reddit.to_records(reddit_hydrate.apify_items_with_comments(items), query, now,
+                                                build=normalize_record, **common) if status == "ok" else []
+            else:
+                _, key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
+                if not key:
+                    skipped.append({"backend": backend, "reason": "missing_credentials"})
+                    continue
+                body, meta = scrapecreators_reddit.fetch_thread(key, ref["url"])
+                raw["threads"].append({"post_id": ref["post_id"], "backend": backend, "response": meta["response"]})
+                status = meta["status"]
+                found = scrapecreators_reddit.thread_to_records(body, query, now, build=normalize_record,
+                                                                max_comments=comments_per_post, post_url=ref["url"], **common) if body else []
+            if status == "ok" and found:
+                served = backend
+                break
+            skipped.append({"backend": backend, "reason": status if status != "ok" else "empty_response"})
+            found = []
+        for record in found:
+            record["retrieval_backend"] = served
+            record["sampling_metadata"].update({"conversation_backend": served, "collector_provider": "reddit_hydrate",
+                "hydrate_skipped_backends": skipped, "subset_limitations": record["sampling_metadata"].get("subset_limitations") or
+                "Exact thread fetched after web-search discovery; comment completeness depends on the backend."})
+        _score_fallback_records(found, args, "not_applied_exact_thread")
+        records.extend(found)
+        ledger.append({"post_id": ref["post_id"], "url": ref["url"], "backend": served, "skipped": skipped,
+                       "record_count": len(found), "status": "ok" if served else "not_hydrated"})
+    write_json(run_dir / "raw" / "reddit_hydrate.json", redact_sensitive(raw))
+    done = sum(1 for row in ledger if row["backend"])
+    if done == len(ledger):
+        status = "ok" if not over_max else "partial"
+    elif done:
+        status = "partial"
+    else:
+        reasons = {s["reason"] for row in ledger for s in row["skipped"]}
+        status = "missing_credentials" if reasons == {"missing_credentials"} else \
+            "request_budget_exhausted" if "request_budget_exhausted" in reasons else \
+            sorted(reasons - {"missing_credentials"})[0] if reasons - {"missing_credentials"} else "failed"
+    return records, {"status": status, "record_count": len(records), "hydrate_ledger": ledger,
+                     "threads_hydrated": done, **summary_base}
+
+
 def _collect_cfpb_complaints_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """CFPB consumer complaint narratives via the free public API (no credentials)."""
     from providers.cfpb import fetch, to_records
@@ -5206,6 +5310,7 @@ PROVIDER_ROUTING_FAMILY = {
     "apify_reddit": "reddit",
     "scrapecreators_reddit": "reddit",
     "arctic_shift": "reddit",
+    "reddit_hydrate": "reddit",
     "cfpb_complaints": "customer_reviews",
     "stackexchange": "founder_community",
     "producthunt": "customer_reviews",
@@ -5268,6 +5373,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--apify-review-item-cap", type=int, default=500, help="Per-run cap on Apify dataset items across the review/community lanes (apify_software_reviews, apify_g2_reviews, apify_shopify_app_reviews, apify_quora, apify_facebook_public_groups); counted as items x items_per_unit from config/apify-actors.json and checked before any call.")
     parser.add_argument("--apify-review-targets", default="", help="Comma-separated exact entity_id=url review pages (TrustRadius/Software Advice/GetApp, G2 product, apps.shopify.com app). Each must be a reviewed locator in --customer-feedback-source-plan.")
     parser.add_argument("--apify-facebook-groups", default="", help="Comma-separated PUBLIC Facebook group URLs for apify_facebook_public_groups (no login or cookies are ever used).")
+    parser.add_argument("--reddit-hydrate-from", default="", help="JSON/JSONL of web-search results (Brave/Serper). Reddit thread URLs (reddit.com/r/<sub>/comments/<id>) are fetched via the first available of reddit, apify_reddit, scrapecreators_reddit.")
+    parser.add_argument("--reddit-hydrate-max", type=int, default=25, help="Maximum threads hydrated per run (default 25); Apify spend also obeys --apify-item-cap.")
     parser.add_argument("--subreddit", default="", help="Subreddit name for arctic_shift (subreddit-history search); required by that provider.")
     parser.add_argument("--apify-item-cap", type=int, default=300, help="Cap on Apify dataset items per run, counted conservatively as posts x 10 (the actor has no per-post comment limit); apify_reddit refuses before any call when exceeded.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum normalized records per provider.")
@@ -5584,6 +5691,8 @@ def main() -> int:
         )
 
     requested_providers = selected_providers(args.providers)
+    if getattr(args, "reddit_hydrate_from", "") and "reddit_hydrate" not in requested_providers:
+        requested_providers.append("reddit_hydrate")
     args.youtube_transcript_remaining = max(
         0, args.youtube_transcript_max - checkpoint.get("allowances_consumed", {}).get("youtube_transcript", 0)
     )
@@ -5593,6 +5702,7 @@ def main() -> int:
         "apify_reddit": collect_apify_reddit,
         "scrapecreators_reddit": collect_scrapecreators_reddit,
         "arctic_shift": collect_arctic_shift,
+        "reddit_hydrate": collect_reddit_hydrate,
         "cfpb_complaints": collect_cfpb_complaints,
         "stackexchange": collect_stackexchange,
         "producthunt": collect_producthunt,
@@ -5690,7 +5800,8 @@ def main() -> int:
             # a hypothetical backend after collection. Language fields express the
             # requested search scope; they do not claim a language detector ran.
             for record in provider_records:
-                record["retrieval_backend"] = provider
+                if provider != "reddit_hydrate":  # hydrate records keep the backend that actually served each thread
+                    record["retrieval_backend"] = provider
                 record["query_language"] = args.language
                 record.setdefault("source_language", "und")
                 record["output_language"] = "en"
@@ -5702,7 +5813,8 @@ def main() -> int:
             accepted = merge_provider_records(prior_provider_records.get(provider, []), accepted)
             relevant_provider_records = [record for record in accepted if record.get("relevance") != "irrelevant"]
             irrelevant_provider_records = [record for record in accepted if record.get("relevance") == "irrelevant"]
-            records = [record for record in records if record.get("retrieval_backend") != provider]
+            records = [record for record in records if record.get("retrieval_backend") != provider
+                       and (record.get("sampling_metadata") or {}).get("collector_provider") != provider]
             records.extend(accepted)
             provider_summary["record_count"] = len(relevant_provider_records)
             provider_summary["irrelevant_count"] = len(irrelevant_provider_records)

@@ -32,14 +32,22 @@ def time_window_for_days(days: int) -> str:
 
 
 def run_actor(token: str, searches: list[str], max_items: int, time_window: str,
-              fetch_comments: bool, timeout_s: int = 150) -> tuple[list[dict], dict]:
-    """Run the actor synchronously. The token goes in the Authorization header only."""
+              fetch_comments: bool, timeout_s: int = 150, start_urls: list[str] | None = None) -> tuple[list[dict], dict]:
+    """Run the actor synchronously. The token goes in the Authorization header only.
+
+    ``start_urls`` fetches exact post URLs (the post and its comments) instead of searching.
+    """
+    if start_urls:
+        payload: dict[str, Any] = {"startUrls": [{"url": u} for u in start_urls], "maxItems": max_items,
+                                   "skipComments": not fetch_comments, "skipCommunity": True, "skipUserPosts": True}
+    else:
+        payload = {"searches": searches, "searchPosts": True, "searchComments": False,
+                   "fetchPostComments": fetch_comments, "maxItems": max_items,
+                   "sort": "relevance", "time": time_window}
     response = http_post(
         f"{ENDPOINT}?timeout={timeout_s}&memory=512",
         headers={"Authorization": f"Bearer {token}"},
-        data={"searches": searches, "searchPosts": True, "searchComments": False,
-              "fetchPostComments": fetch_comments, "maxItems": max_items,
-              "sort": "relevance", "time": time_window},
+        data=payload,
         timeout=timeout_s + 30,
         max_text_chars=2_000_000,
     )

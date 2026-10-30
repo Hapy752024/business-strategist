@@ -19,6 +19,10 @@ HOST_EXEMPT = {
     "bluesky_sample.json": {"docs.bsky.app"},
     "producthunt_sample.json": {"api.producthunt.com", "www.producthunt.com"},
 }
+# Synthetic reddit thread URLs for the hydrate route parse as reddit URLs, so example.com is not usable.
+# Exempt only r/example_sub thread/subreddit URLs and the redacted_user user page.
+SYNTHETIC_REDDIT_FIXTURE = "reddit_hydrate_search_results.json"
+SYNTHETIC_REDDIT_URL = re.compile(r"^https://(www|old)\.reddit\.com/(r/example_sub(/.*)?|user/redacted_user/)$")
 SAFE_HOSTS = {"example.com", "www.example.com", "example.org", "www.example.org"}
 DENYLIST = ["63181993057", "People Relocating", "Charlotte", "Concord", "Uwe-Dreissigacker", "Dreissigacker", "Allan-B",
             "InvoiceBerry", "LessFilms", "linkedin.com/in/", "scontent", "fbcdn"]
@@ -51,6 +55,10 @@ class FixturePrivacyTests(unittest.TestCase):
                     self.assertEqual(value, "redacted_user", f"{path.name}: {parent}/{key}")
                 for url in re.findall(r"https?://[^\s\"'<>)]+", value):
                     host = urlparse(url).netloc.lower()
+                    if path.name == SYNTHETIC_REDDIT_FIXTURE and host.endswith("reddit.com"):
+                        base = url.split("?")[0]
+                        self.assertRegex(base, SYNTHETIC_REDDIT_URL, f"{path.name}: non-synthetic reddit URL {url}")
+                        continue
                     allowed = SAFE_HOSTS | (exempt or set())
                     self.assertIn(host, allowed, f"{path.name}: live URL host {host}")
                     self.assertIsNone(re.search(r"/(profile|people|user|users)/[^/]", url), f"{path.name}: profile URL {url}")
