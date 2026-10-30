@@ -61,6 +61,7 @@ class ScrapeCreatorsRedditTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as d:
                 found, summary = collect._collect_scrapecreators_reddit_query(make_args(), ["x"], Path(d))
         self.assertEqual((found, summary["status"]), ([], "missing_credentials"))
+        self.assertEqual(summary["required_env"], ["SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY"])
         get.assert_not_called()
 
     def test_search_then_comments_with_mocked_http_and_key_not_leaked(self) -> None:
@@ -154,6 +155,53 @@ class ArcticShiftTests(unittest.TestCase):
                 found, summary = collect._collect_arctic_shift_query(make_args(), ["invoice"], Path(d))
         self.assertEqual(summary["status"], "ok")
         self.assertEqual({r["source"] for r in found}, {"reddit", "reddit_comment"})
+
+
+class SchedulerCapTests(unittest.TestCase):
+    """Comments must survive collect_scheduled_provider's per-query post cap."""
+
+    def _run(self, provider: str, **patches) -> list[dict]:
+        args = make_args(limit=2, query_limit=12, results_per_query=5, reddit_comments_per_post=2, reddit_comment_posts=2)
+        import providers.arctic_shift as _a
+        _a._reset_throttle()
+        with tempfile.TemporaryDirectory() as d:
+            found, summary = collect.collect_scheduled_provider(args, ["invoice"], Path(d), provider)
+        self.assertEqual(summary["status"], "ok")
+        return found
+
+    def test_scrapecreators_comments_survive(self) -> None:
+        def fake_get(url, **kw):
+            return resp(load("scrapecreators_reddit_search_sample.json") if "/search" in url else load("scrapecreators_reddit_thread_sample.json"))
+        with mock.patch.object(collect, "get_secret", return_value=("K", "k")), mock.patch("providers.scrapecreators_reddit.http_get", side_effect=fake_get):
+            found = self._run("scrapecreators_reddit")
+        posts = [r for r in found if r["source"] == "reddit"]
+        comments = [r for r in found if r["source"] == "reddit_comment"]
+        self.assertEqual(len(posts), 2)
+        self.assertTrue(comments)
+        self.assertLessEqual(len(comments), 2 * 2)
+
+    def test_arctic_shift_comments_survive(self) -> None:
+        posts = load("arctic_shift_posts_sample.json")
+        comments = {"data": load("arctic_shift_comments_sample.json")["data"] * 5}
+        two = {"data": posts["data"] * 1}
+        two["data"] = [dict(posts["data"][0], id="syn101"), dict(posts["data"][0], id="syn102", permalink="/r/example_sub/comments/syn102/t/")]
+        fake = lambda url, **kw: resp(comments if "comments/search" in url else two)
+        with mock.patch("providers.arctic_shift.http_get", side_effect=fake), mock.patch("providers.arctic_shift.time.sleep"):
+            found = self._run("arctic_shift")
+        self.assertEqual(len([r for r in found if r["source"] == "reddit"]), 2)
+        self.assertTrue([r for r in found if r["source"] == "reddit_comment"])
+
+    def test_apify_comments_survive_and_per_post_bound(self) -> None:
+        items = json.loads((FIX / "apify_reddit_sample.json").read_text())[:2]
+        with mock.patch.object(collect, "get_secret", return_value=("APIFY_TOKEN", "t")), \
+                mock.patch("providers.apify_reddit.http_post", return_value=resp(items)):
+            found = self._run("apify_reddit")
+        comments = [r for r in found if r["source"] == "reddit_comment"]
+        self.assertTrue(comments)
+        per_post: dict = {}
+        for c in comments:
+            per_post[c["parent_source_record_id"]] = per_post.get(c["parent_source_record_id"], 0) + 1
+        self.assertLessEqual(max(per_post.values()), 2)
 
 
 if __name__ == "__main__":

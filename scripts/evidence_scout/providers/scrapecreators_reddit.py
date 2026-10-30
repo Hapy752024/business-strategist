@@ -19,7 +19,7 @@ if str(_VALIDATOR_DIR) not in sys.path:
 from common import http_get, status_from_response, with_query  # noqa: E402
 
 BASE = "https://api.scrapecreators.com/v1/reddit"
-SCRAPE_NOTE = "scrapecreators_reddit (third-party API) over public Reddit pages; relevance-ranked, completeness unknown, not a representative sample."
+SCRAPE_NOTE = "scrapecreators_reddit (third-party API) over public Reddit pages; relevance-ranked, completeness unknown, not a representative sample. Comments are the trimmed set one call returns, without pagination."
 COLLECTION_METHOD = "third_party_api"
 BACKEND = "scrapecreators_reddit"
 

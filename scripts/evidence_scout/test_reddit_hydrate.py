@@ -139,6 +139,18 @@ class HydrateTests(unittest.TestCase):
         apost.assert_not_called()
         self.assertEqual(summary["hydrate_ledger"][0]["skipped"][1], {"backend": "apify_reddit", "reason": "blocked_by_provider"})
 
+    def test_sunset_skips_reddit_api_without_calling_it(self) -> None:
+        rget = mock.Mock()
+        with mock.patch.object(collect, "reddit_api_sunset_reached", return_value=True):
+            _, summary, _, _, _ = run(make_args(reddit_hydrate_max=1), token="tok", reddit_get=rget)
+        rget.assert_not_called()
+        self.assertEqual(summary["hydrate_ledger"][0]["skipped"][0], {"backend": "reddit", "reason": "sunset"})
+
+    def test_sunset_date_logic(self) -> None:
+        from datetime import date
+        self.assertFalse(collect.reddit_api_sunset_reached(date(2027, 3, 30)))
+        self.assertTrue(collect.reddit_api_sunset_reached(date(2027, 3, 31)))
+
     def test_no_input_file(self) -> None:
         _, summary, *_ = run(make_args(reddit_hydrate_from=""))
         self.assertEqual(summary["status"], "not_applicable")

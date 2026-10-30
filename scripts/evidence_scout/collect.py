@@ -20,7 +20,7 @@ import sys
 import time
 import unicodedata
 import urllib.parse
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -1917,11 +1917,14 @@ def collect_scheduled_provider(args: argparse.Namespace, queries: list[str], run
             row["execution_boundary"] = "Seed sent in model prompt; underlying X queries are not observable. Cited leads require direct review."
         # Transcript enrichment has its own explicit allowance. The search
         # record cap must not silently discard a successfully fetched transcript.
-        retained = [record for record in found if record.get("source") == "youtube_transcript"]
-        retained.extend(record for record in found if record.get("source") != "youtube_transcript")
+        # Reddit comments are likewise bounded by --reddit-comment-posts and
+        # --reddit-comments-per-post inside each lane, not by the post cap.
+        uncapped = {"youtube_transcript", "reddit_comment"}
+        retained = [record for record in found if record.get("source") in uncapped]
+        retained.extend(record for record in found if record.get("source") not in uncapped)
         regular = 0
         for record in retained:
-            if record.get("source") != "youtube_transcript":
+            if record.get("source") not in uncapped:
                 if regular >= row["per_query_result_limit"]:
                     continue
                 regular += 1
@@ -2209,6 +2212,16 @@ def _collect_apify_reddit_query(args: argparse.Namespace, queries: list[str], ru
     # The scheduler calls this once per query; a multi-query batch is attributed to the first query.
     records = to_records(items, queries[0], now_iso(), build=normalize_record,
                          customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
+    per_post_bound, seen_per_post = max(0, getattr(args, "reddit_comments_per_post", 100)), {}
+    bounded = []
+    for record in records:
+        if record["source"] == "reddit_comment":
+            parent = record.get("parent_source_record_id")
+            seen_per_post[parent] = seen_per_post.get(parent, 0) + 1
+            if seen_per_post[parent] > per_post_bound:
+                continue
+        bounded.append(record)
+    records = bounded
     for record in records:
         relevance, notes, score = assess_relevance(record["text"], args, record["query"], record["source_url"], record["author_context"])
         record.update({"relevance": relevance, "relevance_notes": notes, "relevance_score": score})
@@ -2235,7 +2248,7 @@ def _collect_scrapecreators_reddit_query(args: argparse.Namespace, queries: list
     key_name, api_key = get_secret("SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY")
     if not api_key:
         write_json(run_dir / "raw" / "scrapecreators_reddit.json", raw)
-        return [], {"status": "missing_credentials", "record_count": 0, "required_env": ["SCRAPE_CREATORS_API_KEY"]}
+        return [], {"status": "missing_credentials", "record_count": 0, "required_env": ["SCRAPE_CREATORS_API_KEY", "SCRAPECREATORS_API_KEY"]}
     query = queries[0]
     posts, meta = scrapecreators_reddit.search(api_key, query, timeframe=scrapecreators_reddit.window_for_days(args.days))
     raw["searches"].append({"query": query, "response": meta["response"]})
@@ -2292,6 +2305,16 @@ def _collect_arctic_shift_query(args: argparse.Namespace, queries: list[str], ru
     return records, summary
 
 
+def reddit_api_sunset_reached(today: date | None = None) -> bool:
+    """True once today is on/after the reddit capability's sunset.public_api_end."""
+    try:
+        data = json.loads((ROOT / "config" / "source-capabilities.json").read_text(encoding="utf-8"))
+        end = next(c for c in data["capabilities"] if c["id"] == "reddit")["sunset"]["public_api_end"]
+        return (today or datetime.now(timezone.utc).date()) >= date.fromisoformat(end)
+    except (OSError, ValueError, StopIteration, KeyError):
+        return False
+
+
 def collect_reddit_hydrate(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Fetch the threads named in saved web-search results (discovery-then-hydrate).
 
@@ -2321,6 +2344,7 @@ def collect_reddit_hydrate(args: argparse.Namespace, queries: list[str], run_dir
     common = dict(customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
     records: list[dict[str, Any]] = []
     ledger: list[dict[str, Any]] = []
+    sunset_over = reddit_api_sunset_reached()
     for ref in selected:
         skipped: list[dict[str, str]] = []
         served: str | None = None
@@ -2330,6 +2354,9 @@ def collect_reddit_hydrate(args: argparse.Namespace, queries: list[str], run_dir
                 skipped.append({"backend": backend, "reason": blocked_markers.BLOCKED})
                 continue
             if backend == "reddit":
+                if sunset_over:
+                    skipped.append({"backend": backend, "reason": "sunset"})
+                    continue
                 if "token" not in token_cache:
                     token_cache["token"] = reddit_token()[0]
                 token = token_cache["token"]
