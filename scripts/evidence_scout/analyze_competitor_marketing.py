@@ -466,7 +466,11 @@ LANE_TO_ENTITY_TYPE = {
     "capability_reference": "capability_reference",
 }
 ENTITY_TYPES = ("competitor", "similar_company", "capability_reference")
-ROBOTS_AGENT = "FirecrawlAgent"  # Firecrawl fetches the pages; groups for it fall back to `*`.
+COVERAGE_VALUES = ("covered_well", "covered_thin", "covered_low_confidence", "uncovered")
+# Firecrawl applies robots.txt rules for the token `FirecrawlAgent` plus `*` (docs.firecrawl.dev/advanced-scraping-guide,
+# "Whitelisting Firecrawl"); the token is not necessarily its User-Agent header. Our check mirrors that token.
+ROBOTS_AGENT = "FirecrawlAgent"
+MAP_LIMIT = 500
 EXCLUDED_PATH = re.compile(
     r"(?:^|/)(?:impressum|imprint|legal|rechtliche[s-]?hinweise?|datenschutz\w*|privacy\w*|agb|terms\w*|nutzungsbedingungen|"
     r"cookie\w*|disclaimer|widerruf\w*|karriere|careers?|jobs?|stellenangebote|login|log-in|signin|sign-in|anmelden|"
@@ -488,7 +492,9 @@ DATE_TEXT = re.compile(
 STOPWORDS = {"für", "fuer", "und", "oder", "der", "die", "das", "den", "dem", "des", "ein", "eine", "einer", "mit", "von", "vom",
              "zum", "zur", "bei", "auf", "aus", "ist", "wie", "was", "the", "and", "for", "with", "what", "how", "best", "beste", "test"}
 COVERAGE_HEURISTIC = {
-    "match": "every meaningful query token (6-char stem) appears in the page topic, title, headings, questions or URL path",
+    "match": "every meaningful query token (6-char stem) appears in the page title, H1, headings/questions or URL path",
+    "match_confidence": "high = the whole term matches in the title or H1, or in two location kinds; low = URL path only, a single heading, or the term's tokens split across locations",
+    "covered_low_confidence": "only low-confidence matches; listed for review, never market coverage",
     "covered_well": "a matched page with >=800 words, or >=400 words plus a format or >=3 answered questions",
     "covered_thin": "matched pages exist but none meets covered_well",
     "uncovered": "no inventoried page matched; sample limited by max_pages, so this is not proof of absence",
@@ -506,7 +512,7 @@ def sha256_hex(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
-def map_site(base_url: str, limit: int = 500) -> dict[str, Any]:
+def map_site(base_url: str, limit: int = MAP_LIMIT) -> dict[str, Any]:
     _, api_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
     if not api_key:
         return {"ok": False, "status": "missing_credentials", "required_env": ["FIRECRAWL_API_KEY_HGINVESTOR"]}
@@ -588,9 +594,16 @@ def _map_links(body: dict[str, Any]) -> list[str]:
 
 
 def _robots_parser(record: dict[str, Any]) -> RobotFileParser | None:
-    """None means robots.txt could not be read (network/5xx): the site is skipped, not assumed open."""
+    """None means robots.txt could not be read (network/5xx): the site is skipped, not assumed open.
+
+    401/403 is read as disallow-all (the conservative reading, as in RobotFileParser.read); other 4xx (404,
+    410...) mean no robots.txt, so crawling is allowed.
+    """
     parser = RobotFileParser()
     status = record.get("status_code")
+    if status in (401, 403):
+        parser.disallow_all = True
+        return parser
     if isinstance(status, int) and 400 <= status < 500:
         parser.parse([])  # no robots.txt: crawling allowed
         return parser
@@ -624,7 +637,7 @@ def _content_priority(url: str) -> tuple[int, int]:
 
 
 def _select_urls(base: str, candidates: list[str], robots: RobotFileParser, max_pages: int,
-                 focus_terms: list[str] | None = None) -> tuple[list[str], list[dict[str, str]], list[str]]:
+                 focus_terms: list[str] | None = None) -> tuple[list[str], list[dict[str, str]], list[str], int]:
     keep: list[str] = []
     excluded: list[dict[str, str]] = []
     disallowed: list[str] = []
@@ -642,7 +655,7 @@ def _select_urls(base: str, candidates: list[str], robots: RobotFileParser, max_
             keep.append(url)
     focus = _stems(" ".join(focus_terms or []))
     keep.sort(key=lambda url: (-len(focus & _stems(urllib.parse.urlsplit(url).path.replace("-", " ").replace("/", " "))), *_content_priority(url)))
-    return keep[:max_pages], excluded, disallowed
+    return keep[:max_pages], excluded, disallowed, len(keep)
 
 
 def _clean(value: str, limit: int) -> str:
@@ -753,6 +766,7 @@ def inventory_page(url: str, body: dict[str, Any], retrieved_at: str) -> dict[st
         "page_type": page_type,
         "topic": topic or title or url,
         "title": title,
+        "h1": _clean(h1.group(1), 200) if h1 else None,
         "headings": headings,
         "questions_answered": questions,
         "formats": detect_formats(url, markdown, raw_html, headings, schema_types),
@@ -780,7 +794,7 @@ def inventory_site(base_url: str, lane: str, max_pages: int = 25, *, entity: str
     site: dict[str, Any] = {
         "entity": entity or domain_of(base), "entity_type": entity_type, "lane": lane, "base_url": base,
         "max_pages": max_pages, "discovery": None, "pages": [], "excluded": [], "robots_disallowed": [],
-        "failures": [], "gaps": [],
+        "failures": [], "gaps": [], "urls_eligible": 0, "pages_sampled": 0, "map_capped": False,
     }
     robots = _robots_parser(fetcher.robots(base))
     if robots is None:
@@ -788,20 +802,24 @@ def inventory_site(base_url: str, lane: str, max_pages: int = 25, *, entity: str
         return site
     links = fetcher.map(base)
     site["discovery"] = "firecrawl_map" if links else "sitemap"
+    site["map_capped"] = bool(links) and len(links) >= MAP_LIMIT
     if not links:
         links = _sitemap_urls(fetcher, base, robots)
         if not links:
             site["discovery"] = "homepage_only"
             links = [base + "/"]
-    selected, site["excluded"], site["robots_disallowed"] = _select_urls(base, links, robots, max_pages, focus_terms)
+    selected, site["excluded"], site["robots_disallowed"], site["urls_eligible"] = _select_urls(base, links, robots, max_pages, focus_terms)
     for url in selected:
         body = fetcher.scrape(url)
         if not body.get("success", True) or not isinstance(body.get("data", body), dict):
             site["failures"].append({"url": url, "error": str(body.get("error", "scrape_failed"))[:200]})
             continue
         site["pages"].append(inventory_page(url, body, now_iso()))
+    site["pages_sampled"] = len(site["pages"])
     if site["failures"]:
         site["gaps"].append(f"{len(site['failures'])} page(s) failed to scrape.")
+    if site["map_capped"]:
+        site["gaps"].append(f"Firecrawl map returned its {MAP_LIMIT}-URL cap; relevant pages beyond it were not eligible.")
     return site
 
 
@@ -813,10 +831,35 @@ def _cluster_terms(cluster: dict[str, Any]) -> list[str]:
     return [str(q.get("query") if isinstance(q, dict) else q) for q in cluster.get("queries", []) if q]
 
 
-def _page_matches(page: dict[str, Any], terms: list[str]) -> bool:
+def _page_locations(page: dict[str, Any]) -> list[tuple[str, set[str]]]:
+    h1 = page.get("h1")
+    if h1 is None and page.get("topic") and page.get("topic") != page.get("title"):
+        h1 = page["topic"]  # records written before `h1` was stored
     path = urllib.parse.urlsplit(page["url"]).path.replace("-", " ").replace("/", " ")
-    tokens = _stems(" ".join([page.get("topic", ""), page.get("title", ""), path, *page.get("headings", []), *page.get("questions_answered", [])]))
-    return any((stems := _stems(term)) and stems <= tokens for term in terms)
+    locations = [("title", _stems(page.get("title") or "")), ("h1", _stems(h1 or "")), ("url_path", _stems(path))]
+    locations += [("heading", _stems(h)) for h in [*page.get("headings", []), *page.get("questions_answered", [])]]
+    return locations
+
+
+def page_match(page: dict[str, Any], terms: list[str]) -> dict[str, Any] | None:
+    """Best match of any cluster term on a page, with where it matched and a confidence.
+
+    high: the whole term in the title or H1, or in two location kinds; low: URL path only, one heading kind,
+    or the term's tokens split across locations (e.g. `vergleich` in the title, `haftpflicht` in a heading).
+    """
+    locations = _page_locations(page)
+    best: dict[str, Any] | None = None
+    for term in terms:
+        stems = _stems(term)
+        if not stems or not stems <= set().union(*(tokens for _, tokens in locations)):
+            continue
+        whole = sorted({kind for kind, tokens in locations if stems <= tokens})
+        high = bool({"title", "h1"} & set(whole)) or len(whole) >= 2
+        basis = {"url": page["url"], "term": term, "locations": whole or sorted({kind for kind, tokens in locations if stems & tokens}),
+                 "split_across_locations": not whole, "confidence": "high" if high else "low"}
+        if best is None or (high and best["confidence"] == "low"):
+            best = basis
+    return best
 
 
 def _depth(page: dict[str, Any]) -> str:
@@ -835,7 +878,10 @@ def _bind(out_dir: Path, rel: str, data: Any) -> dict[str, str]:
 
 
 def coverage_matrix(inventories: list[dict[str, Any]], clusters: list[dict[str, Any]], *, out_dir: Path | str) -> dict[str, Any]:
-    """Per content-opportunity cluster and entity: covered_well | covered_thin | uncovered, with bound page refs.
+    """Per content-opportunity cluster and entity: covered_well | covered_thin | covered_low_confidence | uncovered.
+
+    Every row carries `coverage_basis` (pages sampled, URLs eligible, discovery path, map cap) and, when matched,
+    `match_basis` (page, term, locations) and `match_confidence`; only high-confidence matches yield covered_*.
 
     Refs are `{path, sha256}` bindings relative to `out_dir` (the directory of competitor-content.json): each
     covering page is written to `inventory/<entity>/pNN.json`, each site to `inventory/<entity>/index.json`
@@ -859,12 +905,25 @@ def coverage_matrix(inventories: list[dict[str, Any]], clusters: list[dict[str, 
         by_type: dict[str, list[str]] = {t: [] for t in ENTITY_TYPES}
         inspiration: list[dict[str, Any]] = []
         for site in inventories:
-            matched = [p for p in site["pages"] if _page_matches(p, terms)]
-            coverage = "uncovered" if not matched else ("covered_well" if any(_depth(p) == "covered_well" for p in matched) else "covered_thin")
+            hits = [(p, m) for p in site["pages"] if (m := page_match(p, terms))]
+            matched = [p for p, _ in hits]
+            strong = [p for p, m in hits if m["confidence"] == "high"]
+            if not hits:
+                coverage = "uncovered"
+            elif not strong:
+                coverage = "covered_low_confidence"
+            else:
+                coverage = "covered_well" if any(_depth(p) == "covered_well" for p in strong) else "covered_thin"
             refs = [page_refs[(site["entity"], p["url"])] for p in matched] or [index_refs[site["entity"]]]
             questions = list(dict.fromkeys(q for p in matched for q in p["questions_answered"]))
-            rows.append({"topic": topic, "cluster_id": cid, "questions": questions, "refs": refs,
-                         "entity": site["entity"], "entity_type": site["entity_type"], "coverage": coverage})
+            row = {"topic": topic, "cluster_id": cid, "questions": questions, "refs": refs,
+                   "entity": site["entity"], "entity_type": site["entity_type"], "coverage": coverage,
+                   "coverage_basis": {"pages_sampled": site.get("pages_sampled", len(site["pages"])), "urls_eligible": site.get("urls_eligible", 0),
+                                      "discovery": site.get("discovery"), "map_capped": bool(site.get("map_capped"))},
+                   "match_basis": [{k: v for k, v in m.items() if k != "confidence"} | {"confidence": m["confidence"]} for _, m in hits]}
+            if hits:
+                row["match_confidence"] = "high" if strong else "low"
+            rows.append(row)
             by_type[site["entity_type"]].append(coverage)
             if site["entity_type"] != "competitor" and matched:
                 inspiration.append({"entity": site["entity"], "entity_type": site["entity_type"], "coverage": coverage,
@@ -877,17 +936,20 @@ def coverage_matrix(inventories: list[dict[str, Any]], clusters: list[dict[str, 
             interpretation = "covered_by_market_competitors"
         elif "covered_thin" in competitor:
             interpretation = "quality_gap_hypothesis"
+        elif "covered_low_confidence" in competitor:
+            interpretation = "low_confidence_match_needs_review"
         else:
             interpretation = "demand_question"
         summaries.append({"cluster_id": cid, "topic": topic,
-                          "by_entity_type": {t: {"entities": len(v), "covered_well": v.count("covered_well"), "covered_thin": v.count("covered_thin"), "uncovered": v.count("uncovered")} for t, v in by_type.items()},
-                          "market_competitor_coverage": any(c != "uncovered" for c in competitor),
+                          "by_entity_type": {t: {"entities": len(v), **{c: v.count(c) for c in COVERAGE_VALUES}} for t, v in by_type.items()},
+                          "market_competitor_coverage": any(c in {"covered_well", "covered_thin"} for c in competitor),
                           "interpretation": interpretation, "inspiration": inspiration})
     return {"schema_version": 1, "generated_at": now_iso(), "caveats": INVENTORY_CAVEATS, "heuristics": COVERAGE_HEURISTIC,
             "rows": rows, "cluster_summary": summaries}
 
 
 INTERPRETATION_TEXT = {
+    "low_confidence_match_needs_review": "only low-confidence matches on market competitors: review before treating as covered",
     "covered_by_market_competitors": "covered by at least one market competitor",
     "quality_gap_hypothesis": "market competitors cover it only thinly: quality-gap hypothesis",
     "demand_question": "no market competitor covers it: demand question for search and customer voice, not proof of opportunity",
@@ -904,13 +966,21 @@ def render_content_inventory(result: dict[str, Any], inventories: list[dict[str,
     for item in skipped:
         lines.append(f"| {item['entity']} | not inventoried | {item['reason']} | 0 | - | - | - |")
     lines += ["", f"Firecrawl calls: map {fetcher.firecrawl_calls['map']}, scrape {fetcher.firecrawl_calls['scrape']} (credits reported by responses: {fetcher.credits_reported or 'not reported'}).",
-              "", "## Coverage by cluster", "", "| Cluster | Competitors (well/thin/none) | Similar companies | Capability refs | Reading |", "| --- | --- | --- | --- | --- |"]
+              "", "## Coverage by cluster", "", "| Cluster | Competitors (well/thin/low-confidence/none) | Similar companies | Capability refs | Reading |", "| --- | --- | --- | --- | --- |"]
     for s in result["cluster_summary"]:
-        cell = lambda t: "{covered_well}/{covered_thin}/{uncovered}".format(**s["by_entity_type"][t])  # noqa: E731
+        cell = lambda t: "{covered_well}/{covered_thin}/{covered_low_confidence}/{uncovered}".format(**s["by_entity_type"][t])  # noqa: E731
         lines.append(f"| {s['cluster_id'] or s['topic']} | {cell('competitor')} | {cell('similar_company')} | {cell('capability_reference')} | {INTERPRETATION_TEXT[s['interpretation']]} |")
+    lines += ["", "## Coverage rows", "", "| Cluster | Entity | Type | Coverage | Basis |", "| --- | --- | --- | --- | --- |"]
+    for r in result["rows"]:
+        b = r["coverage_basis"]
+        if r["coverage"] == "uncovered":
+            basis = f"not found in {b['pages_sampled']} sampled of {b['urls_eligible']} eligible pages ({b['discovery'] or 'not discovered'}{', map capped' if b['map_capped'] else ''})"
+        else:
+            basis = f"{r['match_confidence']} confidence: " + "; ".join(f"{m['url']} [{', '.join(m['locations'])}{', split' if m['split_across_locations'] else ''}]" for m in r["match_basis"][:3])
+        lines.append(f"| {r['cluster_id'] or r['topic']} | {r['entity']} | {r['entity_type']} | {r['coverage']} | {basis} |")
     lines += ["", "## Pages", ""]
     for s in inventories:
-        lines.append(f"### {s['entity']} ({s['entity_type']})")
+        lines.append(f"### {s['entity']} ({s['entity_type']}): {s.get('pages_sampled', len(s['pages']))} sampled of {s.get('urls_eligible', 0)} eligible pages")
         for p in s["pages"]:
             lines.append(f"- {p['url']} | {p['page_type']} | {p['word_count']} words | questions {len(p['questions_answered'])} | formats {', '.join(p['formats']) or '-'} | schema {', '.join(p['schema_types']) or '-'} | updated {p['last_updated'] or '-'}")
         for gap in s["gaps"]:

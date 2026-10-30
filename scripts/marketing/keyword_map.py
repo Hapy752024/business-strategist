@@ -92,6 +92,12 @@ def _norm(text: str) -> str:
     return ' '.join(text.split()).casefold()
 
 
+def _market_coverage(item: dict) -> bool:
+    """A competitor row counts as market coverage only when typed `competitor`, covered, and not a low-confidence match."""
+    return (item.get('entity_type') == 'competitor' and item.get('coverage') not in {'uncovered', 'covered_low_confidence'}
+            and item.get('match_confidence') != 'low')
+
+
 def merge_content_inputs(search: Path, competitor_content: Path | None = None, voc_questions: Path | None = None,
                          social_topics: Path | None = None, *, existing_map: Path | None = None, out: Path | None = None) -> dict:
     """Propose keyword-map rows from up to four content inputs, keeping per-input attribution.
@@ -108,7 +114,7 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
     (case-insensitive); otherwise it becomes its own proposed cluster. Absent optional inputs are tolerated.
 
     Each proposed row lists `inputs` (name -> refs and questions) and `questions` (text -> contributing inputs).
-    A cluster backed by one input is `single_input`; competitor_content counts as an input only via rows typed `competitor` whose coverage is not `uncovered` (analog_only/untyped rows stay in attribution and in `inspiration_count`). `existing_map` (the reviewed keyword-map.json) is matched
+    A cluster backed by one input is `single_input`; competitor_content counts as an input only via rows typed `competitor` whose coverage is not `uncovered`/`covered_low_confidence` and whose match confidence is not `low` (analog_only/untyped rows stay in attribution and in `inspiration_count`). `existing_map` (the reviewed keyword-map.json) is matched
     first by primary/secondary term and locale: matches become `improve` with the existing URL, others `create`.
     Output goes to `out` (default `keyword-map.proposed.json` beside `search`); the reviewed map is never
     written, and the proposal is not a reviewed map.
@@ -174,7 +180,7 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
             present.append(name)
             for r in _load(path, schema, name)['rows']:
                 if name == 'competitor_content':
-                    item = {k: r[k] for k in ('entity', 'entity_type', 'coverage', 'topic') if r.get(k)}
+                    item = {k: r[k] for k in ('entity', 'entity_type', 'coverage', 'match_confidence', 'topic') if r.get(k)}
                     if r.get('entity_type') != 'competitor':
                         item['untyped' if not r.get('entity_type') else 'analog_only'] = True
                     detail = {'coverage': item}
@@ -193,7 +199,7 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
                       and ({_norm(e['primary_term']), *map(_norm, e.get('secondary_terms', []))} & keys)), None)
         cov = c['inputs'].get('competitor_content', {}).get('coverage', [])
         inspiration = sum(1 for x in cov if x.get('analog_only') or x.get('untyped'))
-        counted = sum(1 for n in c['inputs'] if n != 'competitor_content') + (1 if any(x.get('entity_type') == 'competitor' and x.get('coverage') != 'uncovered' for x in cov) else 0)
+        counted = sum(1 for n in c['inputs'] if n != 'competitor_content') + (1 if any(_market_coverage(x) for x in cov) else 0)
         features = [k for k, v in (c['serp_features'] or {}).items() if v is True or v == 'observed']
         rows.append({'cluster_id': c['cluster_id'], 'primary_term': terms[0] if terms else None, 'secondary_terms': terms[1:], 'question_only': bool(c.get('question_only')),
                      'locale': c['locale'], 'intent': c['intent'], 'journey_stage': c['journey_stage'], 'page_type': c['page_type'],

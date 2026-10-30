@@ -170,6 +170,13 @@ def test_analog_and_untyped_competitor_content_never_counts(inputs):
     assert market['single_input'] is False and market['input_count'] == 2 and market['inspiration_count'] == 0
     uncovered = row(_comp(tmp, 'f.json', entity='Rival', entity_type='competitor', coverage='uncovered'))
     assert uncovered['single_input'] is True and uncovered['input_count'] == 1
+    low = row(_comp(tmp, 'g.json', entity='Rival', entity_type='competitor', coverage='covered_low_confidence', match_confidence='low'))
+    assert low['single_input'] is True and low['input_count'] == 1
+    assert low['inputs']['competitor_content']['coverage'][0]['match_confidence'] == 'low'
+    low_thin = row(_comp(tmp, 'h.json', entity='Rival', entity_type='competitor', coverage='covered_thin', match_confidence='low'))
+    assert low_thin['single_input'] is True
+    high = row(_comp(tmp, 'i.json', entity='Rival', entity_type='competitor', coverage='covered_thin', match_confidence='high'))
+    assert high['single_input'] is False and high['input_count'] == 2
     untyped = row(_comp(tmp, 'd.json'))
     assert untyped['single_input'] is True and untyped['inputs']['competitor_content']['coverage'][0]['untyped'] is True
     with pytest.raises(ValueError):

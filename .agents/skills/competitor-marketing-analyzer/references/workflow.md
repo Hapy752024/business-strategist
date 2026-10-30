@@ -102,6 +102,7 @@ It discovers URLs with Firecrawl map (fallback sitemap.xml), checks robots.txt b
 - Record topics, structure and formats; never reuse wording (no body text is stored; excerpts are capped at 300 characters).
 - A topic every competitor covers thinly is a quality-gap hypothesis; a topic nobody covers is a demand question to check against search and customer voice, not proof of opportunity.
 - Similar companies abroad and capability references are inspiration for format and structure only; only `competitor` rows count as market coverage.
+- `covered_low_confidence` (term only in the URL path, one heading, or split across locations) needs review and never counts as coverage; `uncovered` means not found in the sampled pages (`coverage_basis`), not absent from the site.
 
 ## Interpretation Rules
 

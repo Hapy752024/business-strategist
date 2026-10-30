@@ -51,7 +51,114 @@
             "type": "string"
           },
           "by_entity_type": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "competitor",
+              "similar_company",
+              "capability_reference"
+            ],
+            "properties": {
+              "competitor": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "entities",
+                  "covered_well",
+                  "covered_thin",
+                  "covered_low_confidence",
+                  "uncovered"
+                ],
+                "properties": {
+                  "entities": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_well": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_thin": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_low_confidence": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "uncovered": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              },
+              "similar_company": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "entities",
+                  "covered_well",
+                  "covered_thin",
+                  "covered_low_confidence",
+                  "uncovered"
+                ],
+                "properties": {
+                  "entities": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_well": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_thin": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_low_confidence": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "uncovered": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              },
+              "capability_reference": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "entities",
+                  "covered_well",
+                  "covered_thin",
+                  "covered_low_confidence",
+                  "uncovered"
+                ],
+                "properties": {
+                  "entities": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_well": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_thin": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "covered_low_confidence": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "uncovered": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
           },
           "market_competitor_coverage": {
             "type": "boolean"
@@ -61,7 +168,8 @@
               "covered_by_market_competitors",
               "quality_gap_hypothesis",
               "demand_question",
-              "no_market_competitor_inventoried"
+              "no_market_competitor_inventoried",
+              "low_confidence_match_needs_review"
             ]
           },
           "inspiration": {
@@ -163,8 +271,89 @@
             "enum": [
               "covered_well",
               "covered_thin",
+              "covered_low_confidence",
               "uncovered"
             ]
+          },
+          "match_confidence": {
+            "enum": [
+              "high",
+              "low"
+            ],
+            "description": "high = term matched in the title or H1, or in two location kinds; low rows never count as market coverage."
+          },
+          "match_basis": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "url",
+                "term",
+                "locations",
+                "confidence"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "term": {
+                  "type": "string"
+                },
+                "locations": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "title",
+                      "h1",
+                      "heading",
+                      "url_path",
+                      "body_topic"
+                    ]
+                  }
+                },
+                "split_across_locations": {
+                  "type": "boolean"
+                },
+                "confidence": {
+                  "enum": [
+                    "high",
+                    "low"
+                  ]
+                }
+              }
+            }
+          },
+          "coverage_basis": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pages_sampled",
+              "urls_eligible",
+              "discovery",
+              "map_capped"
+            ],
+            "properties": {
+              "pages_sampled": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "urls_eligible": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "discovery": {
+                "enum": [
+                  "firecrawl_map",
+                  "sitemap",
+                  "homepage_only",
+                  null
+                ]
+              },
+              "map_capped": {
+                "type": "boolean"
+              }
+            }
           }
         },
         "dependentRequired": {

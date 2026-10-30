@@ -169,3 +169,71 @@ def test_cli_writes_json_and_markdown(tmp_path):
     assert not list(Draft202012Validator(SCHEMA).iter_errors(doc))
     md = (out / "competitor-content.md").read_text()
     assert "not what customers need" in md and "Unclear Co" in md
+
+
+def _car_insurance_inventory():
+    page = {"url": "https://www.example.com/autoversicherung/vergleich", "page_type": "comparison", "topic": "Autoversicherung Vergleich",
+            "title": "Autoversicherung Vergleich", "h1": "Autoversicherung Vergleich", "headings": ["Was deckt die Kfz-Haftpflicht ab?"],
+            "questions_answered": ["Was deckt die Kfz-Haftpflicht ab?"], "formats": ["calculator"], "word_count": 2500, "schema_types": [],
+            "primary_cta": None, "last_updated": None, "excerpt": "", "retrieved_at": "2026-10-31T00:00:00Z"}
+    return {"entity": "Example Direkt", "entity_type": "competitor", "lane": "competitive_market", "base_url": "https://www.example.com",
+            "max_pages": 10, "discovery": "firecrawl_map", "pages": [page], "excluded": [], "robots_disallowed": [], "failures": [], "gaps": [],
+            "urls_eligible": 40, "pages_sampled": 1, "map_capped": False}
+
+
+def test_split_word_overlap_is_low_confidence_and_never_market_coverage(tmp_path):
+    clusters = [_search_row("haftpflicht-vergleich", ["haftpflichtversicherung vergleich"]), _search_row("kfz-vergleich", ["autoversicherung vergleich"])]
+    result = acm.coverage_matrix([_car_insurance_inventory()], clusters, out_dir=tmp_path)
+    assert not list(Draft202012Validator(SCHEMA).iter_errors(result))
+    rows = {r["cluster_id"]: r for r in result["rows"]}
+    fp = rows["haftpflicht-vergleich"]
+    assert fp["coverage"] == "covered_low_confidence" and fp["match_confidence"] == "low"
+    assert fp["match_basis"][0]["split_across_locations"] is True
+    true_hit = rows["kfz-vergleich"]
+    assert true_hit["coverage"] == "covered_well" and true_hit["match_confidence"] == "high"
+    assert {"title", "h1", "url_path"} <= set(true_hit["match_basis"][0]["locations"])
+    summary = {s["cluster_id"]: s for s in result["cluster_summary"]}
+    assert summary["haftpflicht-vergleich"]["market_competitor_coverage"] is False
+    assert summary["haftpflicht-vergleich"]["interpretation"] == "low_confidence_match_needs_review"
+    search = tmp_path / "content-opportunities.json"
+    search.write_text(json.dumps({'schema_version': 1, 'source': 'search_journey_serp_study', 'caveats': ['c'], 'rows': clusters}))
+    comp = tmp_path / "competitor-content.json"
+    comp.write_text(json.dumps(result))
+    merged = {r["cluster_id"]: r for r in merge_content_inputs(search, competitor_content=comp, out=tmp_path / "keyword-map.proposed.json")["rows"]}
+    assert merged["haftpflicht-vergleich"]["single_input"] is True and merged["haftpflicht-vergleich"]["input_count"] == 1
+    assert merged["kfz-vergleich"]["single_input"] is False
+
+
+def test_url_path_or_single_heading_only_is_low_confidence():
+    page = _car_insurance_inventory()["pages"][0] | {"title": "Ratgeber", "h1": "Ratgeber", "headings": ["Hausrat richtig versichern"], "questions_answered": []}
+    assert acm.page_match(page, ["autoversicherung vergleich"])["confidence"] == "low"   # URL path only
+    assert acm.page_match(page, ["hausrat versichern"])["confidence"] == "low"           # one heading only
+
+
+def test_every_row_carries_coverage_basis(inventories, tmp_path):
+    site = inventories[0]
+    assert site["urls_eligible"] == 4 and site["pages_sampled"] == 4 and site["map_capped"] is False
+    assert inventories[1]["urls_eligible"] == 1 and inventories[1]["discovery"] == "sitemap"
+    result = acm.coverage_matrix(inventories, CLUSTERS, out_dir=tmp_path)
+    for row in result["rows"]:
+        assert set(row["coverage_basis"]) == {"pages_sampled", "urls_eligible", "discovery", "map_capped"}
+    row = next(r for r in result["rows"] if r["cluster_id"] == "bu-studenten" and r["entity_type"] == "competitor")
+    assert row["coverage"] == "uncovered" and "match_confidence" not in row
+    md = acm.render_content_inventory(result, inventories, [], _fetcher())
+    assert "not found in 4 sampled of 4 eligible pages" in md
+
+
+def test_map_cap_is_recorded():
+    fixture = json.loads(json.dumps(FIXTURE))
+    fixture["map"][COMPETITOR]["links"] += [f"{COMPETITOR}/ratgeber/x{i}" for i in range(acm.MAP_LIMIT)]
+    site = acm.inventory_site(COMPETITOR, "competitive_market", max_pages=2, fetcher=acm.FixtureInventoryFetcher(fixture))
+    assert site["map_capped"] is True and site["urls_eligible"] > 2 and len(site["pages"]) + len(site["failures"]) == 2
+    assert any("cap" in gap for gap in site["gaps"])
+
+
+@pytest.mark.parametrize("status", [401, 403])
+def test_robots_401_403_disallow_everything(status):
+    fixture = json.loads(json.dumps(FIXTURE))
+    fixture["robots"][COMPETITOR] = {"status_code": status, "text": None}
+    site = acm.inventory_site(COMPETITOR, "competitive_market", max_pages=10, fetcher=acm.FixtureInventoryFetcher(fixture))
+    assert site["pages"] == [] and COMPETITOR + "/ratgeber/bu-kosten" in site["robots_disallowed"]
