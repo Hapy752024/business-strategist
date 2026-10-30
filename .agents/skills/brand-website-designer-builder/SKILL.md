@@ -26,6 +26,7 @@ Minimize collection and use layered, timely information; distinguish notices fro
 - For sites with external resources, apply [external-link maintenance](references/external-link-maintenance.md): derive the inventory from published content, retain referring pages, classify uncertain checks and automatically create or update GitHub Actions CI with a weekly schedule and manual trigger.
 Include the runnable checker, reports and owner handoff; instructions alone are incomplete delivery.
 Preserve an explicit user opt-out or an existing equivalent CI provider.
+- SEO checks (hreflang, drift, programmatic pages, schema, llms.txt): apply repo-root `references/seo-rule-pack.md`.
 - Repairs/audits: use [maintenance](references/maintenance.md), preserving design and unrelated work.
 Visibility work also loads [AEO/GEO](references/aeo-geo-visibility.md), repo-root `references/search-visibility-decisions.md` and `references/owner-actions.md`; [DEO](references/deo-agent-readiness.md) only when applicable.
 - Campaign-driven pages and result-led revisions: apply [campaign review handoff](references/campaign-review-handoff.md), binding audience, offer, claims, CTA and measurement to the selected Marketing artifacts.

@@ -29,5 +29,7 @@ Also read when the stage needs it:
 - `references/customer-question-tracking.md` (tracking customer questions)
 - `references/evidence-registry.md` (sequencing rule and weak-evidence list)
 - `references/owner-actions.md` (owner-only actions)
+- `references/product-marketing-context.md` (shared context to fill and read first)
+- repo-root `references/seo-rule-pack.md` (SEO hygiene rules and evidence classes)
 - `references/search-visibility-decisions.md` (search and AI visibility choices)
 - `references/strategic-positioning.md` (served-vs-entrant check before channel choice)

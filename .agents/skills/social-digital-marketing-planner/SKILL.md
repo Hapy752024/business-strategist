@@ -27,4 +27,5 @@ Also read when the stage needs it:
 - `references/comparative-creative-analysis.md` (comparing competitor creative)
 - `references/marketing-campaign-operations.md` (recurring campaign reporting)
 - `references/owner-actions.md` (owner-only actions)
+- `../marketing-strategy-builder/references/product-marketing-context.md` (shared context, read first if filled)
 - `references/search-visibility-decisions.md` (search and AI visibility choices)
