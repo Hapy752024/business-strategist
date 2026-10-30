@@ -99,3 +99,24 @@ def test_non_video_baseline_is_working_tree_snapshot_and_digest_checked(tmp_path
     with pytest.raises(ValueError,match='digest differs'):module.frozen_baseline('file',fixture,tmp_path)
     fixture['baseline_snapshot']['directory']='../escape'
     with pytest.raises(ValueError,match='escapes'):module.frozen_baseline('file',fixture,tmp_path)
+
+
+def test_live_runner_uses_repo_cwd(monkeypatch):
+    """Live runs must start in the repo so project hooks, CLAUDE.md and skills load."""
+    from scripts import run_live_evals as live
+    seen = {}
+
+    def fake_run(cmd, **kwargs):
+        seen['cwd'] = kwargs.get('cwd')
+        seen['cmd'] = cmd
+
+        class R:
+            returncode = 0
+            stdout = '{"result": "ok", "is_error": false}'
+            stderr = ''
+        return R()
+
+    monkeypatch.setattr(live.subprocess, 'run', fake_run)
+    assert live.run_case('idea-grill', {'prompt': 'x'}) == 'ok'
+    assert Path(seen['cwd']) == live.ROOT
+    assert '--add-dir' not in seen['cmd']

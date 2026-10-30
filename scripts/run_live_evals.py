@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
-import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,9 +27,10 @@ def score(case: dict, answer: str) -> dict:
 
 def run_case(skill: str, case: dict) -> str:
     prompt = f"Use the {skill} skill. {case['prompt']}"
-    with tempfile.TemporaryDirectory() as cwd:
-        out = subprocess.run(['claude', '-p', prompt, '--output-format', 'json', '--add-dir', str(ROOT)],
-                             cwd=cwd, text=True, capture_output=True, timeout=600)
+    # cwd=ROOT so project hooks, CLAUDE.md and skills load (a temp cwd + --add-dir loads none of them).
+    # Scratch output goes to --out, never into tracked files.
+    out = subprocess.run(['claude', '-p', prompt, '--output-format', 'json'],
+                         cwd=ROOT, text=True, capture_output=True, timeout=600)
     if out.returncode != 0:
         raise RuntimeError(out.stderr[-2000:])
     payload = json.loads(out.stdout)
