@@ -5,6 +5,12 @@ description: Research sourced founder and operator playbooks for a specific busi
 
 # Business Archetype Playbook Researcher
 
+**Trigger.**
+When the idea is clear enough to identify its industry, business model and target customer, run this skill before strategic or launch recommendations.
+Search the web and relevant social media for named founders/operators who built comparable successful businesses, including other countries as a source of venture ideas and adaptations.
+Verify the claimed outcomes, extract patterns, practical to-dos and mistakes to avoid, and check applicability to the target market and the founder's resources and stage.
+Reuse current research; narrow factual or execution requests do not trigger a full playbook study.
+
 For a registered Business case, pass applicable operator lessons, transfer limits and answered founder questions to the case-insights owner under repo-root `references/case-insights.md`; retain the sourced playbook separately.
 
 ## Success Criteria
@@ -17,7 +23,7 @@ For substantive query design and refinement, apply repo-root `references/researc
 
 1. Read `references/workflow.md` completely.
 2. Reuse the active topic workspace and identify archetype, stage, geography, and constraints.
-3. For a clear idea, search web and relevant social sources for comparable successful founders/operators; verify success claims and separate operator lessons from customer-demand evidence.
+3. Run the search defined under Trigger; separate operator lessons from customer-demand evidence.
 4. Preserve source URLs, dates, context, failure cases, and selection bias.
    For founder/SaaS discovery, selectively use `references/founder-source-candidates.md`; listed communities are not pre-approved promotion channels or verified audience sizes.
 5. Update the topic playbook artifact and manifest gaps.

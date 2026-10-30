@@ -5,6 +5,11 @@ description: Discover sourced customer problems, workarounds, segments, and cand
 
 # Market Problem Discovery
 
+**Market-discovery sequence.**
+1. Use `market-problem-discovery` to collect public evidence and write a detailed discovery report.
+2. Ask the user to choose one candidate, change the scope, extend the research, or stop.
+3. Once the user selects a candidate, use `idea-grill` to fill remaining hypothesis gaps, then continue with its core validation sequence.
+
 When a selected candidate becomes a registered Business case, pass material findings and answered founder questions to the case-insights owner under repo-root `references/case-insights.md`. Keep discovery artifacts in their normal research location.
 
 The user’s requested outcome governs the study. For a topic or segment pain-point question, explain customer experiences and uncertainty without inventing a product or business. For a supplied idea, route to idea validation and challenge that idea; relevant similar companies are optional evidence, not a prompt to import one. Use the complementary methods in `references/opportunity-research-approaches.md` only when they contribute distinct evidence.
@@ -22,7 +27,7 @@ For substantive query design and refinement, apply repo-root `references/researc
 3. Create a durable discovery run, validate source routes, and collect public evidence before proposing candidates.
 4. Write source-linked outcome shortfalls, competing explanations and next tests in the existing report; distinguish candidate underserved needs, adequate service and insufficient evidence.
 5. For a selected candidate with explicit venture-scale or VC-financing relevance, optionally assess topic funding activity under repo-root `references/vc-investment-signals.md`; do not treat it as customer evidence or use it to rank customer pain.
-6. Let the user choose the next path; do not automatically convert a discovery candidate into a startup thesis.
+6. Stop for the user's choice (sequence step 2); do not automatically convert a discovery candidate into a startup thesis.
 
 ## Output
 

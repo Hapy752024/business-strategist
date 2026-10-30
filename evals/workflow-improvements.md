@@ -4,6 +4,9 @@ Single shared record for failures, problems and improvement candidates across th
 
 ## How to use
 
+- Use this file as the single shared log for observed agent/workflow failures, recurring friction, missing capabilities and improvement candidates. Check relevant open entries when starting related work. Record material issues when discovered or before handoff, including failures fixed during the task; do not log every routine success.
+- Each entry records a stable ID, dates, area, priority, status, observed versus suspected cause, reproducible evidence, impact, next action and closure evidence. Mark a fix resolved only after the relevant checks pass; structural tests do not close live-quality or business-outcome gaps. Use sanitized repository-relative evidence links and synthetic examples.
+- The log is a review backlog, not customer research evidence or a replacement for existing evaluation suites. Logging does not authorize unrelated implementation, external actions or spend.
 - Search by symptom and component before adding an entry. Repeated incidents update the same ID and history.
 - Use the next `WF-NNN` ID. Priorities: P1 incorrect completion, evidence integrity or data exposure; P2 workflow reliability/correctness; P3 improvement opportunity. State the impact rather than relying only on priority.
 - Status: `open`, `in_progress`, `blocked`, `deferred`, `resolved`. A blocked/deferred entry needs the condition for resuming. An implemented change remains in progress until its relevant verification passes.

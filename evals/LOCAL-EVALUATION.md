@@ -1,5 +1,10 @@
 # Local agent evaluation
 
+Use `python3 scripts/evaluate.py check` after every workflow/skill change; `--full` delegates to the existing complete checks.
+Before claiming model-quality improvement, retain matched baseline/current outputs and independent grades; fixture passes and prepared trials do not qualify.
+Record material regressions in the existing workflow improvement log (`evals/workflow-improvements.md`).
+Each repository evaluates independently; central observability is optional.
+
 Run from this repository. Domain cases, evidence and results stay local; no `~/agent-evals`, Langfuse, provider SDK or external evaluation service is required for offline operations.
 
 ```bash

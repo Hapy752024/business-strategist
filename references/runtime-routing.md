@@ -1,5 +1,19 @@
 # Runtime routing boundary
 
+## Route selection
+
+Before specialist dispatch, run `scripts/route_workflow.py` with the understood `--intent`, `--task-scope`, and `--check-skill <selected-skill>`; include `--project <slug>` and the investigated `--case <id>` for a versioned venture.
+Exit 2 means stop dispatch (blocked gate or invalid selection).
+Research focus never selects execution.
+For explicit specialist requests, use the configured route ID; an unambiguous skill name is accepted as an alias.
+Multi-mode specialists require the specific route ID (for example `case-appraisal` for provisional feasibility/economics, because `opportunity-risk-designer` has several modes).
+Empty `match` lists are intentional internal-stage routes, not orphan skills.
+Routing does not waive specialist prerequisites or authorize side effects.
+`scripts/validate_skill_routes.py` checks catalog/disk parity, route reachability and typed `consumes`/`produces` contracts in CI.
+For a registered case, the read-only `status` subcommand (see Case status below) reports runnable, blocked, stale or not-adopted routes; it does not authorize dispatch.
+
+## Claude dispatch hooks
+
 Claude Code binds `scripts/enforce_skill_route.py` to `PreToolUse` (`Skill`) and `UserPromptExpansion` (direct slash commands). The adapter checks repository-owned skills only and leaves foreign plugin skills and the `business-strategist` routing entrypoint alone. It recomputes the route and current pain gate rather than trusting a previous pass. It never returns `permissionDecision: allow`, so normal permissions still apply.
 
 For agent-driven specialist invocation, pass routing metadata in the skill's args:

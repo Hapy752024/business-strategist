@@ -5,19 +5,47 @@ description: Use when customer/problem validation needs topic-led customer voice
 
 # Evidence Scout
 
+**Research execution and completion.**
+For substantive customer research and case reruns, follow repo-root `references/research-execution.md`.
+Check collection, reviewed research and case delivery separately with `scripts/evidence_scout/validate_research_completion.py`.
+A collector report or provider count does not prove the study was completed.
 For a registered Business case, retain reviewed sources and counter-evidence in this skill's normal artifacts.
-Update that case's single `case_insights.md` after each coherent batch of reviewed findings, deep dives, answered founder questions or material corrections.
-Keep it a concise business recap, qualify provisional findings and disclose remaining questions in plain language.
-Do not wait for the whole research workflow to finish, and do not call a progress snapshot final delivery.
+Update that case's single `case_insights.md` progressively after each coherent batch of reviewed findings, deep dives, answered founder questions or material corrections, even while other research remains open.
+Keep it a concise business recap, qualify provisional findings and label remaining questions in plain language.
+Do not call a progress snapshot final delivery.
 Bind the exact reviewed run and its claim ledger into the current insight publication.
 Render material VOC claims with direct original-source markers under repo-root `references/case-insights.md`;
 preserve source limitations and private-source references.
 Completed delivery also requires a separate review of the exact final document and consumed inputs.
+Resume unfinished source capture, review, synthesis or publication before describing a case as fully rerun.
+Valid empty research can end as insufficient evidence; inaccessible sources remain explicit gaps.
+
+**Two customer-voice frames.**
+For substantive customer-input research, always run a topic-led VOC pass from the customer job/problem/trigger without requiring competitor names.
+When verified competitors, substitutes or similar services exist, also apply repo-root `references/customer-voice.md`:
+run a separate entity-led feedback pass across applicable independent review sites, Google business/location reviews, company Facebook/Instagram comments, Apple App Store reviews, Google Play reviews and external forums;
+keep supplier posts/replies/testimonials separately attributed.
+If no entity is yet known, mark entity-led analysis pending, discover candidates, then run it after verification.
+Keep the two sampling frames separate, map independent customer needs separately from solution-use requirements, and assess each before segment/journey/pain and risk synthesis.
+Evidence-scout owns customer voice; competitor-marketing-analyzer owns supplier claims.
+Read applicable `required_references` returned by the route packet before specialist dispatch.
+Reuse current evidence; focused factual lookups do not trigger a full study.
+
+**Concurrent approaches.**
+Research approaches may run concurrently when they examine different source frames or competing explanations.
+The coordinator owns the shared scope and final synthesis; workers use isolated work packets, retain provenance and counterevidence, deduplicate shared sources/incidents, and do not count agreement as independent evidence.
+Customer-voice requirements and the Business pain-first gate still apply.
+
+**Research data and precedents.**
+For substantive Business research, read repo-root `references/research-data-and-precedents.md`:
+official statistics/studies, separate customer-voice frames, international commercial precedents and relevant VC activity serve different claims.
+Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals.
+Source collection never establishes review or demand; metadata is discovery until original findings are reviewed.
+
 A provider failure is a coverage gap; continue applicable authorized fallbacks.
 This skill tests the user’s stated idea or explains a customer segment’s pain, depending on the requested outcome.
 Similar companies at home or abroad are optional comparison evidence;
 importing one is not the default objective.
-Keep complementary research approaches in separate packets when they answer different questions, and deduplicate sources before synthesis.
 ## Success Criteria
 - **Research quality:** every consequential finding has reviewed source-linked experiences, explicit scope and contrary cases;
 every requested locale/source has an honest coverage disposition.
@@ -32,7 +60,7 @@ Read `references/workflow.md`, `references/provider-policy.md`, repo-root `refer
 2. Initialize or reuse `projects/<topic-slug>/market_research/`.
 3. Run capability lookup and provider doctor when routing matters, then use repository-root scripts.
 4.
-Always run topic-led VOC discovery from the customer job/problem/trigger without requiring competitor names.
+Run the topic-led VOC pass (top of file).
 For inferred vocabulary, new locales or poor retrieval, apply [pain-query calibration](references/pain-query-calibration.md): brainstorm wording and source locations → review the plan → execute exact candidate probes → review source experiences → refine and check fresh searches.
 Use short `--topic-keywords` for generated searches and `--query-plan` for exact probes.
 When forums or Facebook plausibly contain the target audience, use systematic community discovery with explicit locale pairs and per-seed forum/Group/Page lanes, signed metadata provenance, separate source-shape and fit checks, and evidence-bound promotion.
@@ -45,10 +73,7 @@ bind a reviewed original source or scoped discovery capture.
 Close via the assignment-aware completion check.
 Do not let a successful provider call or a small manually reviewed pack stand in for the whole case request.
 5.
-Whenever verified competitors, substitutes or similar companies exist, also run entity-led customer-feedback analysis.
-Cover applicable independent review sites, Google business/location reviews, company Facebook/Instagram comments, Apple App Store reviews, Google Play reviews and external forums;
-keep company posts, replies and testimonials as supplier context.
-If entities are not known, mark this pass pending and start it after competitor discovery.
+Run the entity-led feedback pass (top of file) once entities are verified.
 Apply repo-root `references/customer-voice.md`, complete the executable source matrix, and validate separate topic/entity frames plus reviewed U-need and R-requirement mappings before synthesis.
 6.
 Collection requires the authoritative current generation and separate discovery/review signing keys.
@@ -69,7 +94,7 @@ Block unsupported claims and invalid source attribution.
 Missing sources/geographies remain coverage gaps;
 publish only supported scoped findings, or an insufficient-evidence result.
 10.
-After each coherent reviewed batch, update the current case insights through the validated publication flow, including while other source cells remain open.
+Publish each coherent reviewed batch to the current case insights through the validated publication flow.
 Before saying a substantive run is complete, execute the collection, research and, for a registered Business case, delivery checks in the research execution contract.
 A search batch's `passed` state means capture ran; it does not prove reviewed VOC or final delivery.
 Resume the first missing obligation and report partial work truthfully.
@@ -80,9 +105,6 @@ Never treat attention as willingness to pay.
 For segment sentiment/pain research, use discovery → provisional target hypothesis → narrowed validation;
 pass short `--segment-keywords` and semantically review target/adjacent/unresolved source membership.
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
-For substantive Business research, read repo-root `references/research-data-and-precedents.md`.
-Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals.
-Metadata is discovery until original findings are reviewed.
 
 For customer-journey analysis, read repo-root `references/journey-activation-and-measurement.md`, section 1 (shared repository dependency).
 Record sourced touchpoints and candidate ad/tool/partner hooks with access, next action and measurement;

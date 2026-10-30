@@ -5,6 +5,15 @@ description: Build provisional per-case business plans or a selected startup exe
 
 # Startup Business Builder
 
+**Per-case business plans.**
+V2 appraisal generates a provisional case plan automatically as its initial draft.
+For a versioned case project, read repo-root `references/case-assessment.md` and `references/case-business-plan.md`.
+Publish each substantively researched case's complete provisional plan through the explicit `case-business-plan` route and `case_workspace.py case-plan`.
+This conditional document requires current reviewed insights and source bindings, but no selection or passed pain gate.
+Provisional plans do not select execution or waive the pain-first gate.
+Generate selected execution plans from the current case plan and structured strategy authority, preserving full execution prerequisites.
+Evidence maturity and publication status are distinct.
+
 For a registered Business case, read current `case_insights.md` as orientation and verify its underlying source bindings before using a conclusion. Pass material plan findings and corrections to the case-insights owner under repo-root `references/case-insights.md`; the selected strategy plan retains its own gates.
 Use the nine existing `business_plan_sections` and v2 citation/review flow in repo-root `references/case-assessment.md`. Prepare and review the exact rendered selected plan with original sources, model inputs, contrary evidence and founder constraints. Do not reuse a plan after new case questions or deep dives make selected insights stale; update affected case analysis first.
 
@@ -21,8 +30,6 @@ Use the nine existing `business_plan_sections` and v2 citation/review flow in re
 5. Keep launch and scaling behind payment, retention, economics, and channel evidence.
 
 ## Output
-
-For a versioned case project, read repo-root `references/case-assessment.md` and `references/case-business-plan.md`. Route `case-business-plan` to publish a complete provisional plan for each substantively researched case through `case_workspace.py case-plan`. This conditional document requires current reviewed insights and source bindings, but no selection or passed pain gate. Appraisal creates its initial draft automatically. Generate selected execution plans from the current case plan and structured strategy authority, preserving full execution prerequisites. Evidence maturity and publication status are distinct.
 
 Produce thesis, assumptions, discovery and MVP plans, first-ten-customer plan, model/pricing, metrics, risks, gates, and 7/30/60/90-day actions.
 
