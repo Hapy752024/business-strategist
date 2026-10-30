@@ -280,3 +280,29 @@ def test_stop_hook_registered_without_onfailure():
     entry = settings["hooks"]["Stop"][0]["hooks"][0]
     assert entry["command"].endswith(".claude/hooks/stop_delivery_check.py\"") and entry["timeout"] == 60
 
+
+
+# --- SessionStart: invariants after compaction -----------------------------
+
+def _session_context(root, session="s1"):
+    payload = {"hook_event_name": "SessionStart", "source": "compact", "session_id": session}
+    env = {**os.environ, "CLAUDE_PROJECT_DIR": str(root)}
+    done = subprocess.run(["python3", str(ROOT / ".claude/hooks/session_start.py")], input=json.dumps(payload),
+                          text=True, capture_output=True, env=env, timeout=10)
+    assert done.returncode == 0, done.stderr
+    return json.loads(done.stdout)["hookSpecificOutput"]["additionalContext"]
+
+
+def test_session_start_compact_output_le_20_lines(tmp_path):
+    context = _session_context(tmp_path)
+    assert len(context.splitlines()) <= 20
+    for needle in ("Evidence first", "I don't know", "unpaid", "coverage gaps", "--project <slug>", "task-scope.md"):
+        assert needle in context
+
+
+def test_session_start_invariants_block_le_12_lines_with_checkpoint(tmp_path):
+    _case_checkpoint(tmp_path)
+    context = _session_context(tmp_path)
+    start = context.index("Standing rules")
+    assert len(context[start:].splitlines()) <= 12
+    assert "Restored this session's checkpoint" in context

@@ -6,6 +6,17 @@ import sys
 from compaction_state import load_state, project_root, resume_path
 
 
+INVARIANTS = [
+    "Standing rules (apply after compaction):",
+    "- Evidence first: retrieve before answering market, competitor, pricing or channel questions; end research answers with dated sources; say what could not be checked.",
+    "- Be blunt and truthful: do not validate by default; separate what users said or did from interpretation; say \"I don't know\" when unsure.",
+    "- Interview recruitment is unpaid: no cash, vouchers or gifts unless the founder changes this.",
+    "- Spend: paid customer-evidence API calls are pre-authorized; ads, paid asset generation and deployment need explicit approval; credit failures are coverage gaps, not absent demand.",
+    "- Pain-first gate: business commitments wait for problem_validation; route with scripts/route_workflow.py --project <slug>.",
+    "- Focused requests: apply references/task-scope.md before starting research or full outputs.",
+]
+
+
 def main() -> int:
     try:
         data = json.loads(sys.stdin.read())
@@ -14,7 +25,7 @@ def main() -> int:
     session_id = data.get("session_id")
     state = load_state(resume_path(project_root(), session_id), session_id) if isinstance(session_id, str) and session_id else None
     if not state:
-        print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "No saved checkpoint for this session. Resolve the active request and workspace from current context."}}))
+        print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "No saved checkpoint for this session. Resolve the active request and workspace from current context.\n" + "\n".join(INVARIANTS)}}))
         return 0
     ws = state.get("workspace")
     lines = ["Restored this session's checkpoint after compaction."]
@@ -45,6 +56,7 @@ def main() -> int:
         lines.extend(f"- {item}" for item in state["accepted_decisions"])
     if state.get("custom_instructions"):
         lines.extend(["", "Pre-compaction instructions:", state["custom_instructions"]])
+    lines.extend(["", *INVARIANTS])
     result = {"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "\n".join(lines)}}
     print(json.dumps(result))
     return 0
