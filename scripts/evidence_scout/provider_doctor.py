@@ -299,6 +299,7 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
                 "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/",
                 {"search_term": "overdraft", "field": "all", "size": 1, "no_aggs": "true"},
             ),
+            _env_backend("producthunt", ["PRODUCTHUNT_TOKEN"], risk="free_token"),
             _env_backend("scrapecreators_social", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
         ],
         "founder_community": [

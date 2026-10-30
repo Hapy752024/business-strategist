@@ -20,7 +20,7 @@
     "signal_quality": {"type": "object", "properties": {"directness": {"type": "string"}, "specificity": {"type": "string"}, "authenticity": {"type": "string"}, "recency": {"type": "string"}, "relevance": {"type": "string"}}},
     "source": {
       "type": "string",
-      "enum": ["reddit", "reddit_comment", "youtube", "youtube_comment", "youtube_transcript", "interview_transcript", "google_trends", "google_autocomplete", "google_places_review", "trustpilot_review", "forum", "web_search", "x", "xai_x_search", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "itunes_reviews", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "hn", "github", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu", "cfpb_complaint", "stackexchange"]
+      "enum": ["reddit", "reddit_comment", "youtube", "youtube_comment", "youtube_transcript", "interview_transcript", "google_trends", "google_autocomplete", "google_places_review", "trustpilot_review", "forum", "web_search", "x", "xai_x_search", "tiktok", "instagram", "threads", "facebook", "app_store", "app_review", "itunes_reviews", "amazon", "news", "web", "brave_search", "firecrawl", "crawl4ai", "markitdown", "scrapling", "hn", "github", "bilibili", "bilibili_comment", "v2ex", "zhihu", "weibo", "douban", "tieba", "xiaohongshu", "cfpb_complaint", "stackexchange", "producthunt", "producthunt_comment"]
     },
     "source_url": { "type": "string", "format": "uri" },
     "retrieved_at": { "type": "string", "format": "date-time" },

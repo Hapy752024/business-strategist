@@ -1,0 +1,16 @@
+{
+  "_fixture_note": "Synthetic, shaped after the Product Hunt API v2 GraphQL docs (https://api.producthunt.com/v2/docs); not a recorded response. All names are placeholders.",
+  "topics": {"data": {"topics": {"edges": [{"node": {"slug": "fintech", "name": "Fintech"}}]}}},
+  "posts": {"data": {"posts": {"edges": [{"node": {
+    "id": "1001", "name": "InvoiceNudge", "tagline": "Chase late invoices automatically",
+    "description": "InvoiceNudge sends polite reminders for overdue invoices.",
+    "url": "https://www.producthunt.com/posts/invoicenudge", "votesCount": 210, "commentsCount": 3,
+    "createdAt": "2026-09-15T08:00:00Z",
+    "makers": [{"id": "u-maker", "username": "redacted_user"}],
+    "comments": {"edges": [
+      {"node": {"id": "c1", "body": "I waste two hours every Friday chasing late invoices by hand. Does this work with Xero?", "createdAt": "2026-09-15T09:10:00Z", "votesCount": 12, "url": "https://www.producthunt.com/posts/invoicenudge#comment-c1", "user": {"id": "u-cust", "username": "redacted_user", "isMaker": false}}},
+      {"node": {"id": "c2", "body": "Thanks! Yes, Xero sync ships next week.", "createdAt": "2026-09-15T09:30:00Z", "votesCount": 3, "url": "https://www.producthunt.com/posts/invoicenudge#comment-c2", "user": {"id": "u-maker", "username": "redacted_user", "isMaker": true}}},
+      {"node": {"id": "c3", "body": "We tried a spreadsheet reminder system but clients ignored it.", "createdAt": "2026-09-16T11:00:00Z", "votesCount": 5, "url": "https://www.producthunt.com/posts/invoicenudge#comment-c3", "user": {"id": "u-cust2", "username": "redacted_user", "isMaker": true}}}
+    ]}
+  }}]}}}
+}
