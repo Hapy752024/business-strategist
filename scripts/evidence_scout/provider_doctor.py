@@ -190,6 +190,19 @@ def _public_http_backend(name: str, url: str, params: dict[str, Any] | None = No
     )
 
 
+def _cfpb_backend() -> BackendStatus:
+    from blocked import blocked_reason
+    reason = blocked_reason("cfpb_complaints")
+    if reason:
+        return BackendStatus(name="cfpb_complaints", status="optional_unavailable",
+                             message=f"Blocked by provider; live probe skipped: {reason}", kind="public_http")
+    return _public_http_backend(
+        "cfpb_complaints",
+        "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/",
+        {"search_term": "overdraft", "field": "all", "size": 1, "no_aggs": "true"},
+    )
+
+
 def _agent_reach_channel(channel: str) -> BackendStatus:
     path = shutil.which("agent-reach")
     if not path:
@@ -295,11 +308,7 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
         "customer_reviews": [
             _env_backend("trustpilot_reviews", ["TRUSTPILOT_API_KEY"], risk="paid_or_account_module"),
             _env_backend("google_places_reviews", ["GOOGLE_PLACES_API_KEY"], risk="paid_credits"),
-            _public_http_backend(
-                "cfpb_complaints",
-                "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/",
-                {"search_term": "overdraft", "field": "all", "size": 1, "no_aggs": "true"},
-            ),
+            _cfpb_backend(),
             _env_backend("producthunt", ["PRODUCTHUNT_TOKEN"], risk="free_token"),
             _env_backend("scrapecreators_social", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
         ],

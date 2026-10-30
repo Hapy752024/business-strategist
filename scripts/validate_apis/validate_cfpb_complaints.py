@@ -2,13 +2,33 @@
 """Smallest live check of the CFPB Consumer Complaint Database API (no key)."""
 from __future__ import annotations
 
-from common import cli_arg, fields_present, finish, http_get, status_from_response, with_query
+import json
+import sys
+
+from common import cli_arg, project_root, fields_present, finish, http_get, status_from_response, with_query
 
 PROVIDER = "cfpb_complaints"
 ENDPOINT = "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/"
 
 
+def blocked_reason() -> str | None:
+    try:
+        data = json.loads((project_root() / "config" / "source-capabilities.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    for item in data.get("capabilities", []):
+        if item.get("id") == PROVIDER and item.get("status") == "blocked_by_provider":
+            return str(item.get("status_reason") or "blocked by provider")
+    return None
+
+
 def main() -> int:
+    reason = blocked_reason()
+    if reason and "--force-blocked" not in sys.argv:
+        summary = {"status": "optional_unavailable", "blocked": "blocked_by_provider", "status_reason": reason,
+                   "note": "Live probe skipped. Pass --force-blocked to probe anyway."}
+        finish(PROVIDER, summary, {"skipped": True, "reason": reason})
+        return 0  # blocked is an expected state, not a validation failure
     query = cli_arg("query", "overdraft fee")
     response = http_get(with_query(ENDPOINT, {"search_term": query, "field": "all", "size": 3,
                                               "has_narrative": "true", "no_aggs": "true"}), timeout=40)

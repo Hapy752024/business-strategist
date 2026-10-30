@@ -177,6 +177,8 @@
     {
       "id": "cfpb_complaints",
       "family": "customer_reviews",
+      "status": "blocked_by_provider",
+      "status_reason": "CFPB edge returns HTTP 403 to this client and the public search API no longer returns complaint narratives (verified 2026-10-30); bulk-file download deferred. US-finance source only.",
       "label": "CFPB consumer complaints (free)",
       "description": "Public CFPB Consumer Complaint Database: product, issue, company complained about, date and state for U.S. financial-services complaints; narrative text when the API returns it.",
       "use_when": [

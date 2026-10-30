@@ -113,6 +113,24 @@ class BlueskyTests(unittest.TestCase):
             self.assertNotIn(leaked, json.dumps(summary))
         self.assertNotIn(PASSWORD, "".join(r["text"] + r["author_context"] for r in found))
 
+    def test_end_to_end_run_dir_has_no_secrets(self) -> None:
+        """Scan every file the collector glue writes (raw, query captures, summary) for sentinel secrets."""
+        search = {"ok": True, "status_code": 200, "body": load_fixture(), "headers": {}}
+        run_dir = Path(self.tmp.name) / "e2e"
+        args = make_args(limit=2)
+        ledger_args = [args]
+        with mock.patch.object(collect, "get_secret", side_effect=secrets()), \
+                mock.patch("providers.bluesky.http_post", return_value=SESSION_OK), \
+                mock.patch("providers.bluesky.http_get", return_value=search):
+            found, summary = collect.collect_scheduled_provider(args, ["late invoices"], run_dir, "bluesky")
+            (run_dir / "summary.json").write_text(json.dumps({"summary": summary, "records": found}))
+        files = [p for p in run_dir.rglob("*") if p.is_file()]
+        self.assertTrue(any(p.name == "bluesky.json" for p in files))
+        for path in files:
+            text = path.read_text(errors="ignore")
+            for sentinel in (PASSWORD, JWT, "refresh.SECRET"):
+                self.assertNotIn(sentinel, text, f"{sentinel} leaked into {path}")
+
     def test_cached_session_is_reused_without_login(self) -> None:
         self.session_file.write_text(json.dumps({"handle": "me.bsky.social", "accessJwt": JWT, "created_at": bluesky.time.time()}))
         search = {"ok": True, "status_code": 200, "body": {"posts": []}, "headers": {}}

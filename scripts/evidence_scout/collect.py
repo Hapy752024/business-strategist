@@ -2099,6 +2099,11 @@ def _collect_cfpb_complaints_query(args: argparse.Namespace, queries: list[str],
     """CFPB consumer complaint narratives via the free public API (no credentials)."""
     from providers.cfpb import fetch, to_records
     raw: dict[str, Any] = {"searches": []}
+    from blocked import BLOCKED, blocked_reason
+    reason = None if getattr(args, "force_blocked", False) else blocked_reason("cfpb_complaints")
+    if reason:
+        write_json(run_dir / "raw" / "cfpb_complaints.json", raw)
+        return [], {"status": BLOCKED, "record_count": 0, "reason": reason + " Pass --force-blocked to attempt anyway."}
     records: list[dict[str, Any]] = []
     status = "ok"
     for query in queries:
@@ -5054,6 +5059,7 @@ def parse_args() -> argparse.Namespace:
                         help="Per-run cap on shared HTTP helper calls; excludes SDK/CLI traffic. Default: 100.")
     parser.add_argument("--fresh-http", action="store_true",
                         help="Disable in-run reuse of identical successful GET requests.")
+    parser.add_argument("--force-blocked", action="store_true", help="Attempt providers marked blocked_by_provider in config/source-capabilities.json (e.g. cfpb_complaints) instead of returning that status without a network call.")
     parser.add_argument("--stackexchange-site", default="stackoverflow", help="Stack Exchange site slug for the stackexchange provider (e.g. stackoverflow, money, workplace, webmasters).")
     parser.add_argument("--apify-item-cap", type=int, default=300, help="Cap on Apify dataset items per run, counted conservatively as posts x 10 (the actor has no per-post comment limit); apify_reddit refuses before any call when exceeded.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum normalized records per provider.")
