@@ -11,10 +11,14 @@ VOICES = {
     "prospective_user": "firsthand_prospective_user", "nonadopter": "firsthand_nonadopter",
 }
 CUSTOMER_ROLES = {"customer_statement", "customer_review", "community_context"}
+# Mom Test statement typing: only observed behaviour and real commitments can back a pain/demand claim.
+STATEMENT_TYPES = {"past_behaviour", "commitment", "compliment", "fluff", "feature_request", "unclassified"}
+CLAIM_SUPPORTING_TYPES = {"past_behaviour", "commitment"}
 SUPPLIER_VOICES = {"supplier_context", "supplier", "company", "affiliate", "official_provider"}
 
 
-def review_voice(record: dict, review: dict, segment: str) -> list[str]:
+def review_voice(record: dict, review: dict, segment: str, require_statement_type: bool = False) -> list[str]:
+    """require_statement_type is set for reviews created under statement typing (packet flag)."""
     errors = []
     if review.get("reviewed_segment") != segment:
         errors.append("reviewed_segment mismatch")
@@ -25,6 +29,11 @@ def review_voice(record: dict, review: dict, segment: str) -> list[str]:
     if not str(review.get("relevance_rationale") or "").strip():
         errors.append("accepted review requires relevance_rationale")
     voice = review.get("voice")
+    stype = review.get("statement_type")
+    if stype is not None and stype not in STATEMENT_TYPES:
+        errors.append(f"statement_type must be one of {sorted(STATEMENT_TYPES)}")
+    elif stype is None and require_statement_type and voice in VOICES:
+        errors.append("reviewed firsthand record requires statement_type")
     if voice not in VOICES:
         return errors
     if review.get("author_relationship") != VOICES[voice]:

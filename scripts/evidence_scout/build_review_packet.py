@@ -49,6 +49,8 @@ def build(plan: dict, evidence: list[dict], annotations: list[dict], reviews: li
             "authority": "original evidence, annotations, source review and research closeout",
             "closeout": closeout, "planned_queries": plan.get("input_plan", {}).get("queries", []),
             "items": items,
+            "statement_typing": True,
+            "statement_typing_instruction": "For each accepted review set statement_type: past_behaviour | commitment | compliment | fluff | feature_request | unclassified, and copy statement_typing: true into the source-review file. Only past_behaviour and commitment can support pain or demand claims.",
             "warning": "Packet creation does not accept evidence or annotations. Review original source context before changing existing review artifacts."}
 
 

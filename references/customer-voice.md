@@ -145,6 +145,21 @@ Classify each voice as firsthand current/former customer, prospective user, obse
 
 Record target/adjacent/unresolved segment fit with its reason. Country, business model, personal versus business use, product vintage and transaction journey matter. A foreign business owner's report can suggest a local interview hypothesis; it cannot validate the local target. Historical bugs, fees and eligibility rules require current verification before describing current product behavior. Source-access failures and zero collected records are coverage gaps, not evidence of no demand or no complaints.
 
+## Type every reviewed statement (Mom Test)
+
+Set `statement_type` on each accepted source review (the review layer holds the judgement; raw collector records may only carry `unclassified`). Packets from `build_review_packet.py` carry `statement_typing: true`; copy it into the source-review file and every accepted review then requires the field. Older reviews without it count as `unclassified` and produce a validator warning.
+
+| Type | Meaning | Example | May support pain/demand? |
+|---|---|---|---|
+| `past_behaviour` | What they actually did or experienced | "Last month I re-keyed 40 invoices by hand." | Yes |
+| `commitment` | Time, reputation or money given up | "I paid 90 CHF for a template; intro'd my boss." | Yes |
+| `compliment` | Praise or encouragement | "Great idea, I love it." | No |
+| `fluff` | Generic or hypothetical talk | "I would definitely use that." / "I always..." | No |
+| `feature_request` | A wished-for solution | "It should have an export button." | No (lead for a follow-up question) |
+| `unclassified` | Not yet judged or unclear | Snippet without context | No |
+
+The synthesis validator rejects any U/R item whose `evidence_ids` cite a statement that is not `past_behaviour` or `commitment`.
+
 ## Separate the reasons, allow multiple motives
 
 For each supported observation, distinguish:

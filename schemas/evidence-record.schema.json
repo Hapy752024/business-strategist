@@ -27,6 +27,7 @@
     "query": { "type": "string" },
     "customer_segment": { "type": "string" },
     "segment_relation": {"enum": ["target", "adjacent", "unresolved"]},
+    "statement_type": {"enum": ["past_behaviour", "commitment", "compliment", "fluff", "feature_request", "unclassified"], "description": "Mom Test type. Collectors may only set unclassified; the typed judgement lives on the source review."},
     "hypothesis_id": { "type": "string" },
     "evidence_type": {
       "type": "string",

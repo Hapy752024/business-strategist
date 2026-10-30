@@ -107,6 +107,34 @@ def test_needs_quality_requires_context_and_blocks_supplier_countervoice():
     assert any("trigger" in e for e in validate_quality(s, {"t1": r}, {"t1": review(r)}, {}))
 
 
+def test_compliment_cannot_support_pain_claim():
+    r = record(); s = synthesis()
+    for bad in ("compliment", "fluff", "feature_request", "unclassified"):
+        errors = validate_quality(s, {"t1": r}, {"t1": review(r, statement_type=bad)}, {"coverage_status": "partial"})
+        assert any("statement_type" in e and "t1" in e for e in errors), bad
+    for good in ("past_behaviour", "commitment"):
+        assert not validate_quality(s, {"t1": r}, {"t1": review(r, statement_type=good)}, {"coverage_status": "partial"})
+
+
+def test_commitment_can_support_demand_claim():
+    r = record(); s = synthesis()
+    assert not validate_quality(s, {"t1": r}, {"t1": review(r, statement_type="commitment")}, {"coverage_status": "partial"}, typed=True)
+
+
+def test_review_requires_statement_type():
+    r = record(); rv = review(r)
+    assert not review_voice(r, rv, "households")  # legacy review: tolerated
+    assert any("statement_type" in e for e in review_voice(r, rv, "households", require_statement_type=True))
+    assert any("statement_type" in e for e in review_voice(r, review(r, statement_type="praise"), "households"))
+    assert not review_voice(r, review(r, statement_type="past_behaviour"), "households", require_statement_type=True)
+    # legacy artifact: missing type is a warning, not an error; new artifact: an error
+    s = synthesis(); warnings = []
+    assert not validate_quality(s, {"t1": r}, {"t1": rv}, {"coverage_status": "partial"}, warnings=warnings)
+    assert any("statement_type" in w and "t1" in w for w in warnings)
+    errors = validate_quality(s, {"t1": r}, {"t1": rv}, {"coverage_status": "partial"}, typed=True)
+    assert any("statement_type" in e for e in errors)
+
+
 def test_segment_comparison_links_only_accepted_firsthand_episodes_and_contrary_cases():
     r = record(); s = synthesis()
     comparison = {"id":"self-packers-vs-full-service", "segment_a":"self-packing households",

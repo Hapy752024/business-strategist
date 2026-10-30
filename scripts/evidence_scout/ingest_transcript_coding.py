@@ -19,7 +19,7 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = json.loads((ROOT / 'schemas/evidence-record.schema.json').read_text())
 ITEM_FIELDS = {'theme', 'interpretation', 'verbatim_quote', 'speaker', 'locator'}
-OPTIONAL = {'evidence_type', 'author_voice_status', 'strength'}
+OPTIONAL = {'evidence_type', 'author_voice_status', 'strength', 'statement_type'}
 
 
 def _norm(text: str) -> str:
@@ -41,7 +41,7 @@ def ingest(coding: dict, transcripts: dict[str, str]) -> list[dict]:
             raise ValueError('quote not found: ' + quote[:40])
         record = {'evidence_id': f'{tid}-q{index}', 'source': 'interview_transcript', 'retrieved_at': stamp,
                   'evidence_type': item.get('evidence_type', 'pain'), 'text': quote, 'verbatim_quote': quote,
-                  'strength': item.get('strength', 'medium'), 'sampling_frame': 'topic_led_voc',
+                  'strength': item.get('strength', 'medium'), 'statement_type': item.get('statement_type', 'unclassified'), 'sampling_frame': 'topic_led_voc',
                   'author_voice_status': item.get('author_voice_status', 'unresolved'),
                   'author_context': f"speaker {item['speaker']}", 'collection_locator': f"{tid}#{item['locator']}",
                   'confidence_notes': 'Interpretation: ' + item['interpretation'].strip() + ' Theme: ' + item['theme'].strip()}
