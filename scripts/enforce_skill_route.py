@@ -44,7 +44,7 @@ def check_dispatch(event: dict) -> dict:
         looks_like_json = text[:1] in ('{', '[') or envelope is not None
         envelope = None if looks_like_json else bare_envelope(name, args, event)
         if envelope is None:
-            prefix = f'Malformed JSON route envelope ({parse_error}). ' if parse_error else ''
+            prefix = f'Malformed JSON route envelope ({parse_error}). ' if parse_error and looks_like_json else ''
             raise ValueError(prefix + envelope_hint(name, args if isinstance(args, str) else ''))
     route = envelope['route']
     for key in ('request', 'intent', 'task_scope'):

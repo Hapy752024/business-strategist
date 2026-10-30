@@ -186,8 +186,9 @@ def test_bare_single_mode_skill_passes():
 def test_bare_multi_mode_skill_still_requires_envelope():
     import pytest
     from scripts import enforce_skill_route as hook
-    with pytest.raises(ValueError, match="JSON route envelope"):
+    with pytest.raises(ValueError, match="JSON route envelope") as excinfo:
         hook.check_dispatch(_skill_event("opportunity-risk-designer", "rank my risks"))
+    assert "Malformed" not in str(excinfo.value)
 
 
 def test_bare_single_mode_skill_still_gated(tmp_path, monkeypatch):
@@ -279,7 +280,6 @@ def test_stop_hook_registered_without_onfailure():
     settings = json.loads((ROOT / ".claude/settings.json").read_text())
     entry = settings["hooks"]["Stop"][0]["hooks"][0]
     assert entry["command"].endswith(".claude/hooks/stop_delivery_check.py\"") and entry["timeout"] == 60
-
 
 
 # --- SessionStart: invariants after compaction -----------------------------
