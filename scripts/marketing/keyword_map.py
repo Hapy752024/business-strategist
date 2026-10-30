@@ -14,6 +14,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from scripts.marketing.link_observations import ROOT, bound_bytes, url_key
 
 SCHEMA = json.loads((ROOT / 'schemas/keyword-map.schema.json').read_text())
+COMPETITOR = json.loads((ROOT / 'schemas/competitor-content.schema.json').read_text())
+SOCIAL = json.loads((ROOT / 'schemas/social-topics.schema.json').read_text())
 OPPORTUNITIES = json.loads((ROOT / 'schemas/content-opportunities.schema.json').read_text())
 QUESTIONS = json.loads((ROOT / 'schemas/customer-questions.schema.json').read_text())
 RESOURCE = json.loads((ROOT / 'schemas/content-brief.schema.json').read_text())['properties']['public_resource']
@@ -86,20 +88,6 @@ def _load(path: Path, schema: dict | None, label: str) -> dict:
     return doc
 
 
-def _topic_rows(doc: dict, label: str) -> list[dict]:
-    """Minimal contract for competitor-content.json (Task 5.6) and social-topics.json (Task 5.7)."""
-    rows = doc.get('rows') if isinstance(doc, dict) else None
-    if not isinstance(rows, list):
-        raise ValueError(f'{label} invalid: needs a rows array')
-    for r in rows:
-        if not (isinstance(r, dict) and isinstance(r.get('topic'), str) and r['topic'].strip()
-                and isinstance(r.get('questions'), list) and all(isinstance(q, str) for q in r['questions'])
-                and isinstance(r.get('refs'), list) and r['refs'] and all(isinstance(x, str) and x for x in r['refs'])
-                and r.get('cluster_id', '') is not None and isinstance(r.get('cluster_id', ''), str)):
-            raise ValueError(f'{label} invalid: every row needs topic (str), questions (list of str), refs (non-empty list of str); cluster_id optional')
-    return rows
-
-
 def _norm(text: str) -> str:
     return ' '.join(text.split()).casefold()
 
@@ -112,7 +100,10 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
     `voc_questions` = customer-questions.json (only kind=customer counts as customer voice; supplier and
     hypothesis items are ignored); `competitor_content` = competitor-content.json (Task 5.6) and
     `social_topics` = social-topics.json (Task 5.7). Contract those two tasks must meet: a JSON object
-    `{"rows": [{"topic": str, "questions": [str], "refs": [str, non-empty], "cluster_id": str (optional)}]}`.
+    `schemas/competitor-content.schema.json` / `schemas/social-topics.schema.json` (rows of topic, questions,
+    refs as {path, sha256} bindings, optional cluster_id which may be null; competitor rows add entity,
+    entity_type competitor|similar_company|capability_reference and coverage, kept in the attribution so
+    analogs are never counted as market evidence; social rows add platforms and speaker_mix).
     A row joins the search cluster named by `cluster_id`, else the cluster whose id or query equals `topic`
     (case-insensitive); otherwise it becomes its own proposed cluster. Absent optional inputs are tolerated.
 
@@ -132,8 +123,11 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
         return clusters.setdefault(cid, {'cluster_id': cid, 'terms': [], 'locale': None, 'intent': None, 'page_type': None,
                                          'journey_stage': None, 'serp_features': None, 'content_gap': None, 'inputs': {}, 'questions': {}, **init})
 
-    def attach(c: dict, name: str, questions: list[str], refs: list[str]) -> None:
+    def attach(c: dict, name: str, questions: list[str], refs: list, **detail) -> None:
         entry = c['inputs'].setdefault(name, {'refs': [], 'questions': []})
+        for key, value in detail.items():
+            if value:
+                entry.setdefault(key, []).append(value)
         entry['refs'] += [r for r in refs if r not in entry['refs']]
         for q in questions:
             if q not in entry['questions']:
@@ -160,6 +154,10 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
         slug = re.sub(r'[^\w]+', '-', (topic or cid or 'topic').casefold()).strip('-')
         return cluster(cid or 'topic:' + slug, terms=[topic] if topic else [])
 
+    inputs_paths = {Path(p).resolve() for p in (search, competitor_content, voc_questions, social_topics) if p}
+    if target.resolve() in inputs_paths:
+        raise ValueError('proposal target must not be one of the input files')
+
     ignored = 0
     if voc_questions:
         present.append('voc_questions')
@@ -167,13 +165,19 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
             if item['kind'] != 'customer':
                 ignored += 1
                 continue
-            refs = [f"{item['id']}:{item['source']['path']}"]
-            attach(locate(item.get('cluster_id'), None if item.get('cluster_id') else item['passage']), 'voc_questions', [item['passage']], refs)
-    for name, path in (('competitor_content', competitor_content), ('social_topics', social_topics)):
+            ref = {'question_id': item['id'], 'source': item['source'], 'review': item['review']}
+            cid = item.get('cluster_id')
+            c = locate(cid, None) if cid else cluster('question:' + item['id'], question_only=True)
+            attach(c, 'voc_questions', [item['passage']], [ref])
+    for name, path, schema in (('competitor_content', competitor_content, COMPETITOR), ('social_topics', social_topics, SOCIAL)):
         if path:
             present.append(name)
-            for r in _topic_rows(_load(path, None, name), name):
-                attach(locate(r.get('cluster_id') or None, r['topic']), name, r['questions'], r['refs'])
+            for r in _load(path, schema, name)['rows']:
+                if name == 'competitor_content':
+                    detail = {'coverage': {k: r.get(k) for k in ('entity', 'entity_type', 'coverage', 'topic') if r.get(k)} if r.get('entity') else None}
+                else:
+                    detail = {'discussion': {k: r[k] for k in ('platforms', 'speaker_mix', 'topic') if r.get(k)} if (r.get('platforms') or r.get('speaker_mix')) else None}
+                attach(locate(r.get('cluster_id'), r['topic']), name, r['questions'], r['refs'], **detail)
 
     existing = []
     if existing_map:
@@ -182,10 +186,10 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
     for c in clusters.values():
         terms = [t for t in dict.fromkeys(c['terms'])]
         keys = {_norm(t) for t in terms}
-        match = next((e for e in existing if (c['locale'] is None or e['locale'] == c['locale'])
+        match = None if c.get('question_only') else next((e for e in existing if (c['locale'] is None or e['locale'] == c['locale'])
                       and ({_norm(e['primary_term']), *map(_norm, e.get('secondary_terms', []))} & keys)), None)
         features = [k for k, v in (c['serp_features'] or {}).items() if v is True or v == 'observed']
-        rows.append({'cluster_id': c['cluster_id'], 'primary_term': terms[0] if terms else c['cluster_id'], 'secondary_terms': terms[1:],
+        rows.append({'cluster_id': c['cluster_id'], 'primary_term': terms[0] if terms else None, 'secondary_terms': terms[1:], 'question_only': bool(c.get('question_only')),
                      'locale': c['locale'], 'intent': c['intent'], 'journey_stage': c['journey_stage'], 'page_type': c['page_type'],
                      'content_gap_hypothesis': c['content_gap'], 'serp_features_targeted': features,
                      'questions': list(c['questions'].values()), 'inputs': c['inputs'], 'input_count': len(c['inputs']),
@@ -195,7 +199,9 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
                      'matched_row_id': match['id'] if match else None, 'volume': None, 'needs_review': True})
     result = {'schema_version': 1, 'status': 'proposal', 'reviewed': False, 'inputs_present': present,
               'ignored_non_customer_questions': ignored, 'rows': rows}
-    target.write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n')
+    tmp = target.with_name(target.name + '.tmp')
+    tmp.write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n')
+    tmp.replace(target)
     return result
 
 

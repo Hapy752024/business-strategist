@@ -67,8 +67,8 @@ def inputs(tmp_path):
         {'id': 'q2', 'kind': 'supplier', 'passage': 'Supplier claim', 'source_date': None, 'segment': 's', 'segment_relation': 'target',
          'buyer_context': None, 'cluster_id': 'bu-student', 'buyer_stage': None, 'current_answer': None, 'linked_brief_ids': [], 'visibility': 'public',
          'source': {'path': 'sources/q2.json', 'sha256': 'c' * 64}}]})
-    comp = _write(tmp_path / 'competitor-content.json', {'rows': [{'cluster_id': 'bu-vergleich', 'topic': 'BU Vergleich', 'questions': ['Wie vergleiche ich Tarife?'], 'refs': ['comp/a.json']}]})
-    social = _write(tmp_path / 'social-topics.json', {'rows': [{'topic': 'BU Tipps für Berufseinsteiger', 'questions': ['Ab wann BU abschließen?'], 'refs': ['soc/b.json']}]})
+    comp = _write(tmp_path / 'competitor-content.json', {'rows': [{'cluster_id': 'bu-vergleich', 'topic': 'BU Vergleich', 'questions': ['Wie vergleiche ich Tarife?'], 'entity': 'Acme Versicherung', 'entity_type': 'similar_company', 'coverage': 'covered_thin', 'refs': [{'path': 'comp/a.json', 'sha256': 'd' * 64}]}]})
+    social = _write(tmp_path / 'social-topics.json', {'rows': [{'topic': 'BU Tipps für Berufseinsteiger', 'questions': ['Ab wann BU abschließen?'], 'platforms': ['reddit'], 'speaker_mix': {'customers': 0.8}, 'refs': [{'path': 'soc/b.json', 'sha256': 'e' * 64}]}]})
     return tmp_path, search, voc, comp, social
 
 
@@ -78,7 +78,9 @@ def test_merge_keeps_input_attribution(inputs):
     rows = {r['cluster_id']: r for r in result['rows']}
     r = rows['bu-vergleich']
     assert set(r['inputs']) == {'search', 'competitor_content', 'voc_questions'}
-    assert r['inputs']['voc_questions']['refs'] and r['inputs']['competitor_content']['refs'] == ['comp/a.json']
+    assert r['inputs']['voc_questions']['refs'] and r['inputs']['competitor_content']['refs'][0]['path'] == 'comp/a.json'
+    cov = r['inputs']['competitor_content']['coverage'][0]
+    assert cov['entity_type'] == 'similar_company' and cov['entity'] == 'Acme Versicherung' and cov['coverage'] == 'covered_thin'
     assert {q['text']: q['inputs'] for q in r['questions']}['Welche BU lohnt sich?'] == ['voc_questions']
     assert (tmp / 'keyword-map.proposed.json').exists() and result['status'] == 'proposal'
     assert all(row['inputs'] and all(v['refs'] for v in row['inputs'].values()) for row in result['rows'])
@@ -123,3 +125,28 @@ def test_invalid_optional_input_rejected(inputs):
     tmp, search, *_ = inputs
     with pytest.raises(ValueError):
         merge_content_inputs(search, _write(tmp / 'bad.json', {'rows': [{'refs': ['x']}]}))
+
+
+def test_null_cluster_id_accepted_and_bad_refs_rejected(inputs):
+    tmp, search, voc, comp, social = inputs
+    doc = json.loads(social.read_text()); doc['rows'][0]['cluster_id'] = None
+    assert merge_content_inputs(search, social_topics=_write(tmp / 's2.json', doc))
+    doc['rows'][0]['refs'] = ['bare-string']
+    with pytest.raises(ValueError):
+        merge_content_inputs(search, social_topics=_write(tmp / 's3.json', doc))
+    doc = json.loads(comp.read_text()); doc['rows'][0]['entity_type'] = 'market_leader'
+    with pytest.raises(ValueError):
+        merge_content_inputs(search, competitor_content=_write(tmp / 'c2.json', doc))
+
+
+def test_question_only_row_and_voc_refs_and_input_target_refused(inputs):
+    tmp, search, voc, comp, social = inputs
+    doc = json.loads(voc.read_text()); doc['questions'][0]['cluster_id'] = None
+    result = merge_content_inputs(search, voc_questions=_write(tmp / 'v2.json', doc))
+    row = next(r for r in result['rows'] if r['question_only'])
+    assert row['primary_term'] is None and row['decision'] == 'create'
+    ref = row['inputs']['voc_questions']['refs'][0]
+    assert ref['review']['sha256'] == 'b' * 64 and ref['source']['path'] == 'sources/q1.json'
+    with pytest.raises(ValueError):
+        merge_content_inputs(search, out=search)
+    assert not list(tmp.glob('*.tmp'))

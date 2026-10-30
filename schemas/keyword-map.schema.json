@@ -162,6 +162,12 @@
               "string",
               "null"
             ]
+          },
+          "last_refetch": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [

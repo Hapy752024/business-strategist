@@ -34,6 +34,12 @@ class CapExceeded(RuntimeError):
     status = 'cap_exceeded'
 
 
+class ProviderError(RuntimeError):
+    def __init__(self, status: str, message: str):
+        super().__init__(message)
+        self.status = status
+
+
 def credentials() -> tuple[str | None, str | None]:
     return get_secret('DATAFORSEO_LOGIN', 'DATAFORSEO_USERNAME')[1], get_secret('DATAFORSEO_PASSWORD')[1]
 
@@ -45,8 +51,14 @@ def estimate_cost(count: int) -> float:
 def _post(url: str, payload: list, auth: tuple[str, str]) -> dict:
     token = base64.b64encode(f'{auth[0]}:{auth[1]}'.encode()).decode()
     req = urllib.request.Request(url, json.dumps(payload).encode(), {'Authorization': 'Basic ' + token, 'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return json.loads(resp.read())
+    except urllib.error.HTTPError as exc:
+        status = {401: 'auth_failed', 403: 'auth_failed', 429: 'rate_limited'}.get(exc.code, 'http_error')
+        raise ProviderError(status, f'DataForSEO HTTP {exc.code}') from None
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        raise ProviderError('network_error', type(exc).__name__) from None
 
 
 def _dedupe(keywords: list[str]) -> list[str]:
@@ -75,7 +87,7 @@ def fetch_volumes(keywords: list[str], location_code: int, language_code: str, *
         body = post(ENDPOINT, [{'keywords': batch, 'location_code': location_code, 'language_code': language_code}], (login, password))
         for task in body.get('tasks') or []:
             if task.get('status_code') != 20000:
-                raise RuntimeError(f"DataForSEO task failed: {task.get('status_code')} {task.get('status_message')}")
+                raise ProviderError('task_failed', f"DataForSEO task failed: {task.get('status_code')} {task.get('status_message')}")
             cost = task.get('cost')
             for item in task.get('result') or []:
                 found[' '.join(str(item.get('keyword', '')).split()).casefold()] = {**item, '_cost': cost}
@@ -97,8 +109,11 @@ def apply_to_map(document: dict, volumes: list[dict]) -> int:
         v = by_term.get(' '.join(row['primary_term'].split()).casefold())
         if not v:
             continue
-        row.update(volume=v['volume'], cpc=v['cpc'], competition=v['competition'], source='dataforseo', fetched_at=v['fetched_at'],
-                   volume_provider='dataforseo', volume_checked_at=v['fetched_at'][:10])
+        if v['volume'] is None and v['cpc'] is None and row.get('volume') is not None:
+            row['last_refetch'] = 'no_data'  # keep the earlier known values and their dates
+        else:
+            row.update(volume=v['volume'], cpc=v['cpc'], competition=v['competition'], source='dataforseo', fetched_at=v['fetched_at'],
+                       volume_provider='dataforseo', volume_checked_at=v['fetched_at'][:10], last_refetch=None)
         touched += 1
     return touched
 
@@ -121,7 +136,7 @@ def main() -> int:
         return 0
     try:
         rows = fetch_volumes(terms, args.location_code, args.language_code, max_keywords=args.max_keywords)
-    except (MissingCredentials, CapExceeded) as exc:
+    except (MissingCredentials, CapExceeded, ProviderError) as exc:
         print(json.dumps({'status': exc.status, 'message': str(exc)}))
         return 1
     if doc is not None:

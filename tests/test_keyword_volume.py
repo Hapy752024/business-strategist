@@ -71,3 +71,29 @@ def test_apply_to_map_keeps_unknown_null_and_validates(creds):
     assert not [e for e in errors if 'volume' in e or 'Additional' in e]
     doc['rows'][0]['volume_provider'] = doc['rows'][0]['volume_checked_at'] = doc['rows'][0]['source'] = doc['rows'][0]['fetched_at'] = None
     assert any('provider and date' in e for e in validate(doc))
+
+
+def test_refetch_no_data_keeps_known_values(creds):
+    doc = {'rows': [{'primary_term': 'x', 'volume': 500, 'cpc': 2.0, 'competition': 40, 'fetched_at': 'old'}]}
+    nodata = [{'keyword': 'x', 'volume': None, 'cpc': None, 'competition': None, 'fetched_at': '2026-10-30T00:00:00Z'}]
+    kv.apply_to_map(doc, nodata)
+    assert doc['rows'][0]['volume'] == 500 and doc['rows'][0]['fetched_at'] == 'old' and doc['rows'][0]['last_refetch'] == 'no_data'
+
+
+def test_http_errors_become_status(creds):
+    def boom(url, payload, auth):
+        raise kv.ProviderError('rate_limited', 'DataForSEO HTTP 429')
+    with pytest.raises(kv.ProviderError) as exc:
+        kv.fetch_volumes(['x'], 2276, 'de', post=boom)
+    assert exc.value.status == 'rate_limited'
+
+
+def test_post_maps_http_error(monkeypatch):
+    import urllib.error
+
+    def raise_429(*a, **k):
+        raise urllib.error.HTTPError('u', 429, 'x', {}, None)
+    monkeypatch.setattr(kv.urllib.request, 'urlopen', raise_429)
+    with pytest.raises(kv.ProviderError) as exc:
+        kv._post('https://x', [], ('a', 'b'))
+    assert exc.value.status == 'rate_limited'
