@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "scenario": "hybrid-insurance-advisor",
+  "notes": "Scripted founder replies for the headless feeder. Non-sensitive recorded facts come from projects/german-insurance-opportunity (read-only, sources named per entry). Private values (capital, income needs, commission estimates, licence/registration details, names, location finer than country) live in the gitignored founder-answers.private.json and are referenced by private_ref; without that file the feeder replies 'proceed under a stated assumption'. Every fact not recorded is {answer: null, instruction: 'proceed under a stated assumption'}. Placeholders: {eval_dir}, {alt_slug}, {budget_usd}.",
+  "generic": {
+    "answer": null,
+    "instruction": "proceed under a stated assumption",
+    "text": "I can't answer that right now. Please proceed under a stated assumption, label it clearly as an assumption, and continue."
+  },
+  "nudge": {
+    "text": "Please continue with the next step of the journey I asked for, under the same ground rules. If every step is done, give me a short final summary and end it with the words 'journey complete'.",
+    "max": 4
+  },
+  "completion_marker": "journey complete",
+  "answers": [
+    {
+      "id": "workspace_choice",
+      "keywords": [
+        "which path",
+        "continue [",
+        "start new",
+        "existing research",
+        "existing workspace",
+        "resume"
+      ],
+      "answer": "Start new research. Keep everything for this session under {eval_dir}/ and leave the existing german-insurance-opportunity workspace untouched. If a script only accepts a top-level project slug, use the slug {alt_slug}.",
+      "source": "scenario rule",
+      "persist_markers": []
+    },
+    {
+      "id": "gate_override",
+      "keywords": [
+        "override",
+        "pain-first",
+        "problem_validation",
+        "problem validation",
+        "gate"
+      ],
+      "answer": "Yes. Record an explicit gate override to continue to GTM so we can test the downstream steps. I understand the override is not evidence that the problem is validated; label everything downstream as provisional.",
+      "source": "scenario rule",
+      "persist_markers": []
+    },
+    {
+      "id": "continue_permission",
+      "keywords": [
+        "shall i continue",
+        "should i continue",
+        "want me to continue",
+        "shall i proceed",
+        "should i proceed",
+        "want me to proceed",
+        "go ahead",
+        "move on to"
+      ],
+      "answer": "Yes, continue with the next step of the journey under the same ground rules.",
+      "source": "scenario rule",
+      "persist_markers": []
+    },
+    {
+      "id": "evidence_spend",
+      "keywords": [
+        "paid provider",
+        "paid data",
+        "paid api",
+        "credits",
+        "evidence budget",
+        "usd"
+      ],
+      "answer": "Paid evidence providers are fine within the {budget_usd} USD cap for this session. No ad spend and no paid asset generation.",
+      "source": "scenario rule",
+      "persist_markers": []
+    },
+    {
+      "id": "scale_ambition",
+      "keywords": [
+        "scale",
+        "venture",
+        "investor",
+        "vc",
+        "national",
+        "ambition",
+        "how big",
+        "lifestyle"
+      ],
+      "answer": "A small, profitable advisory business, not a venture-scale company. I don't want external financing and I'm not raising VC.",
+      "source": "business-analysis/history/legacy/strategy/intake/startup-thesis.md (2026-09-06)",
+      "persist_markers": [
+        "no external financing",
+        "not venture",
+        "small, profitable",
+        "small profitable",
+        "bootstrap",
+        "without outside"
+      ]
+    },
+    {
+      "id": "capital_budget",
+      "keywords": [
+        "capital",
+        "invest",
+        "how much money",
+        "savings",
+        "runway",
+        "funding",
+        "budget"
+      ],
+      "answer": null,
+      "source": "private (founder-answers.private.json); recorded in the reference workspace",
+      "private_ref": "capital_budget",
+      "instruction": "proceed under a stated assumption"
+    },
+    {
+      "id": "income_goal",
+      "keywords": [
+        "income",
+        "salary",
+        "earn",
+        "pay yourself",
+        "take-home"
+      ],
+      "answer": null,
+      "source": "private (founder-answers.private.json); recorded in the reference workspace",
+      "private_ref": "income_goal",
+      "instruction": "proceed under a stated assumption"
+    },
+    {
+      "id": "licence_status",
+      "keywords": [
+        "34d",
+        "34e",
+        "licen",
+        "registration",
+        "register",
+        "erlaubnis",
+        "authoris",
+        "authoriz",
+        "permission",
+        "ihk"
+      ],
+      "answer": null,
+      "source": "private (founder-answers.private.json); recorded in the reference workspace",
+      "private_ref": "licence_status",
+      "instruction": "proceed under a stated assumption"
+    },
+    {
+      "id": "background",
+      "keywords": [
+        "background",
+        "experience",
+        "your skills",
+        "strengths",
+        "about yourself",
+        "your role"
+      ],
+      "answer": "My background is technology, enterprise architecture and insurance; I prefer product vision and architecture. I want few direct reports. These are my own statements, not assessed capabilities.",
+      "source": "business-analysis/history/legacy/strategy/intake/startup-thesis.md (2026-09-06)",
+      "persist_markers": [
+        "enterprise architecture",
+        "architecture"
+      ]
+    },
+    {
+      "id": "revenue_model",
+      "keywords": [
+        "commission",
+        "fee-based",
+        "who pays",
+        "revenue model",
+        "honorar",
+        "monetis",
+        "monetiz",
+        "pricing"
+      ],
+      "answer": null,
+      "source": "private (founder-answers.private.json); recorded in the reference workspace",
+      "private_ref": "revenue_model",
+      "instruction": "proceed under a stated assumption"
+    },
+    {
+      "id": "distribution_preference",
+      "keywords": [
+        "partner",
+        "distribution",
+        "b2b",
+        "employer",
+        "channel",
+        "paid search"
+      ],
+      "answer": "Pure B2C to start, no distribution partners. I prefer organic explainers over paid search, and there is no ad spend in this session.",
+      "source": "business-analysis/history/legacy/strategy/decisions/three-ideas-decision-memo.md",
+      "persist_markers": [
+        "B2C",
+        "no distribution partner",
+        "organic"
+      ]
+    },
+    {
+      "id": "adviser_capacity",
+      "keywords": [
+        "adviser",
+        "advisor",
+        "human advice",
+        "who advises",
+        "qualified person",
+        "team"
+      ],
+      "answer": "The plan is me on product and acquisition plus a qualified lead adviser who owns advice quality. No adviser is hired or contracted yet.",
+      "source": "business-analysis/history/legacy/strategy/decisions/three-ideas-decision-memo.md (hypothesis, not a contract)",
+      "persist_markers": [
+        "no adviser",
+        "not contracted",
+        "lead adviser"
+      ]
+    },
+    {
+      "id": "time_horizon",
+      "keywords": [
+        "timeline",
+        "horizon",
+        "deadline",
+        "how soon",
+        "by when"
+      ],
+      "answer": null,
+      "source": "private (founder-answers.private.json); recorded in the reference workspace",
+      "private_ref": "time_horizon",
+      "instruction": "proceed under a stated assumption"
+    },
+    {
+      "id": "time_commitment",
+      "keywords": [
+        "hours",
+        "per week",
+        "full-time",
+        "full time",
+        "part-time",
+        "part time",
+        "your time"
+      ],
+      "answer": null,
+      "instruction": "proceed under a stated assumption",
+      "source": "not recorded"
+    },
+    {
+      "id": "languages",
+      "keywords": [
+        "language",
+        "speak",
+        "english",
+        "german-speaking",
+        "multilingual"
+      ],
+      "answer": null,
+      "instruction": "proceed under a stated assumption",
+      "source": "not recorded (founder's own languages unknown)"
+    },
+    {
+      "id": "location",
+      "keywords": [
+        "where are you",
+        "based",
+        "city",
+        "located",
+        "location",
+        "region"
+      ],
+      "answer": null,
+      "instruction": "proceed under a stated assumption",
+      "source": "not recorded"
+    },
+    {
+      "id": "customer_access",
+      "keywords": [
+        "reach",
+        "network",
+        "introducer",
+        "know anyone",
+        "contacts",
+        "access to"
+      ],
+      "answer": null,
+      "instruction": "proceed under a stated assumption",
+      "source": "recorded as an unanswered question in startup-thesis.md"
+    },
+    {
+      "id": "first_segment",
+      "keywords": [
+        "segment",
+        "target customer",
+        "which customers",
+        "first group",
+        "niche",
+        "who exactly"
+      ],
+      "answer": null,
+      "instruction": "proceed under a stated assumption",
+      "source": "recorded as unconfirmed founder selection in intake/process-status.md"
+    },
+    {
+      "id": "first_product",
+      "keywords": [
+        "which product",
+        "first product",
+        "start with",
+        "narrow the scope",
+        "one product"
+      ],
+      "answer": null,
+      "instruction": "proceed under a stated assumption",
+      "source": "not recorded"
+    }
+  ]
+}

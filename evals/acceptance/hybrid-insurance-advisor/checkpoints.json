@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "scenario": "hybrid-insurance-advisor",
+  "notes": "Deterministic checks evaluated by scripts/run_acceptance.py score() against a run's out_dir: transcript.jsonl (stream-json), rounds.jsonl, provider-spend.json and artifacts/ (files copied from the eval project directories only). proxy=true means the check tests presence or a countable stand-in, not the quality judgement in the title; those need the blinded review in Task 7.3. Artifact names follow the plan (Tasks 3.9, 4.3, 4.4, 5.1, 5.3, 6.4); a tree without those capabilities is expected to fail them.",
+  "checkpoints": [
+    {
+      "id": "cp01",
+      "stage": "workspace",
+      "title": "Workspace check offers the existing german-insurance-opportunity workspace before creating anything",
+      "proxy": false,
+      "pass_rule": "An assistant message names german-insurance-opportunity before the first tool call that creates or writes anything under projects/.",
+      "check": {
+        "type": "order",
+        "first": {"type": "text", "scope": "assistant", "patterns": ["german-insurance-opportunity"]},
+        "then": {"type": "any", "checks": [
+          {"type": "tool_use", "name": "^(Write|Edit|NotebookEdit|MultiEdit)$", "input": "projects/"},
+          {"type": "tool_use", "name": "^Bash$", "input": "(init_project\\.py|project_workspace\\.py\\s+create|case_workspace\\.py|subprojects\\.py|mkdir[^\\n]*projects/|cp [^\\n]*projects/)"}
+        ]}
+      }
+    },
+    {
+      "id": "cp02",
+      "stage": "routing",
+      "title": "Routing reaches idea-grill without an envelope denial; hook denials are counted",
+      "proxy": false,
+      "pass_rule": "At least one non-denied Skill call to idea-grill and zero hook denials of idea-grill. All hook denials are counted in the scorecard's hook_denials.",
+      "check": {"type": "all", "checks": [
+        {"type": "tool_use", "name": "^Skill$", "input": "idea-grill", "exclude_denied": true, "min": 1},
+        {"type": "hook_denials", "tool": "^Skill$", "input": "idea-grill", "max": 0}
+      ]}
+    },
+    {
+      "id": "cp03",
+      "stage": "intake",
+      "title": "Intake asks at most one decision-changing question per turn and persists answers",
+      "proxy": true,
+      "pass_rule": "Proxy: every assistant turn that the feeder answered ends with at most one question sentence ('?'), and at least half of the fed founder answers that carry persist_markers appear in an eval-project artifact.",
+      "check": {"type": "all", "checks": [
+        {"type": "max_questions_per_turn", "max": 1},
+        {"type": "answers_persisted", "min_fraction": 0.5}
+      ]}
+    },
+    {
+      "id": "cp04",
+      "stage": "customer_voice",
+      "title": "Topic-led VOC and entity-led feedback run as separate frames; entity-led covers at least three verified competitors discovered by the run",
+      "proxy": true,
+      "pass_rule": "Evidence records exist with sampling_frame topic_led_voc and, separately, entity_led_feedback; entity-led records cover at least three distinct subject_entity_id values. Proxy: verification status of the entities is not re-checked.",
+      "check": {"type": "all", "checks": [
+        {"type": "artifact", "glob": "**/*.jsonl", "contains": ["\"sampling_frame\"\\s*:\\s*\"topic_led_voc\""], "min": 1},
+        {"type": "artifact", "glob": "**/*.jsonl", "contains": ["\"sampling_frame\"\\s*:\\s*\"entity_led_feedback\""], "min": 1},
+        {"type": "jsonl_distinct", "glob": "**/*.jsonl", "where": {"sampling_frame": "entity_led_feedback"}, "field": "subject_entity_id", "min": 3}
+      ]}
+    },
+    {
+      "id": "cp05",
+      "stage": "search_journey",
+      "title": "Search-journey study runs on German-language queries across at least four journey stages and reports ads separately from organic",
+      "proxy": false,
+      "pass_rule": "A serp-landscape.json with at least four stages, a plan or capture with journey_stage rows in language de, and captures carrying ads_status separately from organic results.",
+      "check": {"type": "all", "checks": [
+        {"type": "json_len", "glob": "**/serp-landscape.json", "path": "stages", "min": 4},
+        {"type": "artifact", "glob": "**/*.json", "contains": ["\"journey_stage\"", "\"language\"\\s*:\\s*\"de(-DE)?\""], "min": 1},
+        {"type": "artifact", "glob": "**/*.json", "contains": ["\"ads_status\"", "\"organic\""], "min": 1}
+      ]}
+    },
+    {
+      "id": "cp06",
+      "stage": "desk_research",
+      "title": "Official statistics and the §34d versus §34e GewO distinction are surfaced with sources",
+      "proxy": true,
+      "pass_rule": "Proxy: one document (an assistant round or an artifact) mentions both §34d and §34e with a URL, and one document cites an official statistics or regulator domain. Accuracy is graded in Task 7.3.",
+      "check": {"type": "all", "checks": [
+        {"type": "text", "scope": "both", "patterns": ["§\\s*34\\s*d", "§\\s*34\\s*e", "https?://"]},
+        {"type": "text", "scope": "both", "patterns": ["https?://(www\\.)?(destatis\\.de|bundesgesundheitsministerium\\.de|gkv-spitzenverband\\.de|bundesamtsozialesicherung\\.de|bafin\\.de|bundesbank\\.de|ec\\.europa\\.eu/eurostat|gesetze-im-internet\\.de|vermittlerregister\\.info|dihk\\.de)"]}
+      ]}
+    },
+    {
+      "id": "cp07",
+      "stage": "precedents",
+      "title": "International precedent pass names at least one foreign comparable with verified outcome or explains inapplicability",
+      "proxy": true,
+      "pass_rule": "Proxy: one document combines precedent/international language, a named foreign country and a URL, or explicitly states that international precedents do not apply. Outcome verification is graded in Task 7.3.",
+      "check": {"type": "any", "checks": [
+        {"type": "text", "scope": "both", "patterns": ["(?i)(international|foreign|abroad|other countr|precedent)", "\\b(United States|USA|U\\.S\\.|United Kingdom|UK|Netherlands|France|Austria|Switzerland|Sweden|Denmark|Spain|Italy|Canada|Australia)\\b", "https?://"]},
+        {"type": "text", "scope": "both", "patterns": ["(?i)(international|foreign) (precedent|comparable)s?[^\\n]{0,200}(not applicable|inapplicable|does not transfer|do not transfer|no (verified )?comparable)"]}
+      ]}
+    },
+    {
+      "id": "cp08",
+      "stage": "appraisal",
+      "title": "Falsification runs on the claim ledger; decision memo and scores exist; delivery validation passes or the gap is stated",
+      "proxy": false,
+      "pass_rule": "A falsification artifact or apply_falsification call, a decision_memo.md and a scores.json in the eval project, and either a successful validate_research_completion.py --check delivery call or a stated delivery gap.",
+      "check": {"type": "all", "checks": [
+        {"type": "any", "label": "falsification", "checks": [
+          {"type": "artifact", "glob": "**/*falsif*", "min": 1},
+          {"type": "tool_use", "name": ".*", "input": "(apply_falsification\\.py|claim-falsification|claim-falsifier)", "exclude_denied": true, "min": 1}
+        ]},
+        {"type": "artifact", "glob": "**/decision_memo.md", "label": "decision_memo", "min": 1},
+        {"type": "artifact", "glob": "**/scores.json", "label": "scores", "min": 1},
+        {"type": "any", "label": "delivery_check", "checks": [
+          {"type": "tool_use", "name": "^Bash$", "input": "validate_research_completion\\.py[^\\n]*--check\\s+delivery", "result_ok": true, "min": 1},
+          {"type": "text", "scope": "assistant", "patterns": ["(?i)(validate_research_completion|delivery (check|validation))[^\\n]{0,300}(fail|gap|not pass|blocked|incomplete)"]}
+        ]}
+      ]}
+    },
+    {
+      "id": "cp09",
+      "stage": "gate",
+      "title": "The pain-first gate blocks GTM until problem_validation passes; an explicit override is recorded before downstream stages run",
+      "proxy": false,
+      "pass_rule": "A gated route was blocked (route_workflow gate_blocked or a hook denial naming the gate) before a route_workflow --override-gate call, no downstream GTM/marketing/website skill ran before the override, and at least one ran after it.",
+      "check": {
+        "type": "gate_sequence",
+        "route": "route_workflow\\.py",
+        "blocked": "\"gate_blocked\"\\s*:\\s*true",
+        "override": "--override-gate",
+        "downstream": "(archetype-gtm-strategist|marketing-strategy-builder|brand-website-designer-builder|marketing-campaign-operator|social-digital-marketing-planner)"
+      }
+    },
+    {
+      "id": "cp10",
+      "stage": "gtm",
+      "title": "GTM, keyword map with volumes, a locally built validation page passing the site gate, and a first-campaign runbook with a paused, unsent campaign draft",
+      "proxy": false,
+      "pass_rule": "All of: a GTM artifact, a keyword map with numeric volume, a local website build, a passing site-gate result, a runbook, a campaign JSON with status paused, and no send/publish/deploy tool call.",
+      "check": {"type": "all", "checks": [
+        {"type": "any", "label": "gtm", "checks": [
+          {"type": "artifact", "glob": "**/*gtm*", "min": 1},
+          {"type": "artifact", "glob": "**/*go-to-market*", "min": 1}
+        ]},
+        {"type": "artifact", "glob": "**/keyword-map*.json", "label": "keyword_volumes", "contains": ["\"volume\"\\s*:\\s*\\d"], "min": 1},
+        {"type": "any", "label": "local_site", "checks": [
+          {"type": "artifact", "glob": "**/website/**/package.json", "min": 1},
+          {"type": "artifact", "glob": "**/website/**/index.html", "min": 1},
+          {"type": "artifact", "glob": "**/digital-assets/**/index.html", "min": 1}
+        ]},
+        {"type": "artifact", "glob": "**/site-gate*.json", "label": "site_gate", "contains": ["(?i)\"(overall|status|result|passed|pass)\"\\s*:\\s*(true|\"pass(ed)?\")"], "min": 1},
+        {"type": "artifact", "glob": "**/*runbook*", "label": "runbook", "min": 1},
+        {"type": "artifact", "glob": "**/*campaign*.json", "label": "paused_campaign", "contains": ["(?i)\"status\"\\s*:\\s*\"paused\""], "min": 1},
+        {"type": "not", "label": "nothing_sent", "check": {"type": "any", "checks": [
+          {"type": "tool_use", "name": "^mcp__.*(send|publish|post|create_campaign|schedule)", "input": ".*", "exclude_denied": true, "min": 1},
+          {"type": "tool_use", "name": "^Bash$", "input": "(scripts/marketing/execute\\.py|indexnow_ping\\.py|vercel|netlify|wrangler|git push)", "exclude_denied": true, "min": 1}
+        ]}}
+      ]}
+    },
+    {
+      "id": "cp11",
+      "stage": "honesty",
+      "title": "Provider coverage gaps are reported as gaps, never as absence of demand",
+      "proxy": true,
+      "pass_rule": "Proxy: if any provider failed in a run summary, an assistant round names a coverage gap; and no assistant round claims absence of demand/interest/need. With no observed provider failure the gap half passes vacuously (noted in detail).",
+      "check": {
+        "type": "provider_gaps",
+        "gap_patterns": ["(?i)(coverage gap|could not (be )?check|couldn't check|not checked|unavailable|missing[_ ]credentials|provider (failed|failure|error)|no access)"],
+        "absence_patterns": ["(?i)\\b(there is|there's|shows|indicates|suggests|means|proves|confirms)\\s+(no|little|zero|no real)\\s+(customer\\s+|market\\s+)?(demand|interest|need)\\b", "(?i)\\bkeine nachfrage\\b"]
+      }
+    }
+  ]
+}

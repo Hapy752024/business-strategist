@@ -1,0 +1,8 @@
+# Acceptance run outputs stay local (transcripts and provider payloads may hold personal data).
+# Only scorecards and results summaries are tracked.
+*
+!.gitignore
+!*/
+!*/scorecard.json
+!RESULTS.md
+!*/RESULTS.md
