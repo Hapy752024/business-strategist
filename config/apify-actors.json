@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Per-lane Apify actor settings for third-party scrapes of public customer-review and community pages. Used by scripts/evidence_scout/providers/apify_actor.py. Only public pages: no logins, cookies or credentialed proxies are ever configured. Customer-evidence spend is pre-authorized (approval_required false) but every run is item-capped.",
+  "approval_required": false,
+  "default_item_cap_per_run": 500,
+  "verified_on": "2026-10-30",
+  "lanes": {
+    "software_reviews": {
+      "actor_id": "lergassy/capterra-reviews-scraper",
+      "source": "software_review",
+      "sampling_frame": "entity_led_feedback",
+      "source_role": "customer_review",
+      "entity_hosts": ["trustradius.com", "softwareadvice.com", "getapp.com", "capterra.com"],
+      "unit": "entity_url",
+      "input_template": {"productUrls": ["{entity_url}"], "maxReviews": "{max_items}", "includeProductRow": false},
+      "field_map": {
+        "reviewUrl": "source_url", "reviewId": "raw_id", "publishedAt": "published_at",
+        "title": "text:Title", "pros": "text:Pros", "cons": "text:Cons", "comments": "text:Review",
+        "normalizedRating": "rating",
+        "sourceLabel": "context:site", "reviewerJobTitle": "context:role", "reviewerCompanySize": "context:company_size",
+        "reviewerIndustry": "context:industry", "reviewerDepartment": "context:department"
+      },
+      "children": [],
+      "cost_per_1k_usd": 1.2,
+      "fixed_cost_per_run_usd": 0.0,
+      "items_per_unit": 1,
+      "incentivised_flag_field": "incentivized",
+      "public_only": true,
+      "pricing_basis": "PAY_PER_EVENT review-scraped 0.0012 USD (FREE tier); product rows disabled. 599 runs, last run 2026-10-30.",
+      "known_limits": "Capterra serves a block page to datacentre addresses and needs a residential proxy, which this repo does not configure: Capterra URLs are unsupported. TrustRadius verified live 2026-10-30; Software Advice and GetApp URLs are accepted by the actor but were not live-checked."
+    },
+    "g2_reviews": {
+      "actor_id": "zen-studio/g2-reviews-scraper",
+      "source": "g2_review",
+      "sampling_frame": "entity_led_feedback",
+      "source_role": "customer_review",
+      "entity_hosts": ["g2.com"],
+      "unit": "entity_url",
+      "input_template": {"url": "{entity_url}", "limit": "{max_items}", "sortOrder": "most_recent", "includeProsConsSummary": false},
+      "field_map": {
+        "reviewUrl": "source_url", "reviewId": "raw_id", "date": "published_at",
+        "title": "text:Title", "likes": "text:Likes", "dislikes": "text:Dislikes", "problemsSolved": "text:Problems solved",
+        "starRating": "rating",
+        "reviewerTitle": "context:role_or_segment", "reviewerIndustry": "context:industry", "companySize": "context:company_size",
+        "reviewSource": "context:review_source", "validatedReviewer": "context:validated_reviewer"
+      },
+      "children": [],
+      "cost_per_1k_usd": 6.49,
+      "fixed_cost_per_run_usd": 0.0,
+      "items_per_unit": 1,
+      "incentivised_flag_field": "incentivized",
+      "public_only": true,
+      "pricing_basis": "PAY_PER_EVENT review_scraped 0.00649 USD (tiered) plus 0.00005 actor start. The actor returns at least 10 reviews per request.",
+      "known_limits": "G2 terms prohibit automated access; the scrape is third-party and may break or be blocked. Minimum 10 reviews per call, so the live-check floor is 10 items."
+    },
+    "shopify_app_reviews": {
+      "actor_id": "ethanteague/shopify-app-store-scraper",
+      "source": "shopify_app_review",
+      "sampling_frame": "entity_led_feedback",
+      "source_role": "customer_review",
+      "entity_hosts": ["apps.shopify.com"],
+      "unit": "entity_url",
+      "input_template": {"appUrls": ["{entity_url}"], "includeAppDetails": false, "includeReviews": true, "maxReviewsPerApp": "{max_items}"},
+      "field_map": {
+        "url": "source_url", "dateIso": "published_at", "text": "text:Review", "stars": "rating",
+        "country": "context:country", "tenure": "context:tenure", "appSlug": "context:app"
+      },
+      "children": [],
+      "cost_per_1k_usd": 2.0,
+      "fixed_cost_per_run_usd": 0.07,
+      "items_per_unit": 1,
+      "incentivised_flag_field": null,
+      "public_only": true,
+      "pricing_basis": "PAY_PER_EVENT review-scraped 0.002 USD plus 0.001 actor start; platform/proxy usage observed about 0.07 USD for a 3-review run (fixed_cost_per_run_usd). App detail rows (0.005 each) are disabled.",
+      "known_limits": "Reviews carry no review id; the collector derives a stable id from URL and text. Merchant store names are redacted from fixtures and not retained in author_context."
+    },
+    "quora": {
+      "actor_id": "fatihtahta/quora-scraper",
+      "source": "quora",
+      "sampling_frame": "topic_led_voc",
+      "source_role": null,
+      "entity_hosts": [],
+      "unit": "query",
+      "input_template": {"queries": ["{query}"], "searchType": "Answer", "timeFilter": "All Time", "maxItemsPerQuery": "{max_items}"},
+      "field_map": {
+        "url": "source_url", "answer.id": "raw_id", "posted_at": "published_at", "text": "text",
+        "title": "context:question", "author.credential": "context:author_credential",
+        "metrics.upvotes": "engagement:upvotes", "metrics.views": "engagement:views", "metrics.comments": "engagement:comments"
+      },
+      "children": [],
+      "cost_per_1k_usd": 0.99,
+      "fixed_cost_per_run_usd": 0.0,
+      "items_per_unit": 1,
+      "incentivised_flag_field": null,
+      "public_only": true,
+      "min_max_charge_usd": 1.0,
+      "pricing_basis": "PAY_PER_EVENT outputRecord 0.00099 USD. The actor rejects a per-run charge cap below 1.00 USD, so the item cap is the effective limit.",
+      "known_limits": "Answers are self-selected and often vendor self-promotion (author_credential is retained so promotional answers can be separated in review). Quora terms restrict automated access."
+    },
+    "facebook_public_groups": {
+      "actor_id": "apify/facebook-groups-scraper",
+      "source": "facebook",
+      "sampling_frame": "topic_led_voc",
+      "source_role": null,
+      "entity_hosts": [],
+      "unit": "group_url",
+      "input_template": {"startUrls": [{"url": "{group_url}"}], "resultsLimit": "{max_items}", "viewOption": "CHRONOLOGICAL"},
+      "field_map": {
+        "url": "source_url", "legacyId": "raw_id", "time": "published_at", "text": "text",
+        "groupTitle": "context:group", "likesCount": "engagement:likes", "commentsCount": "engagement:comments"
+      },
+      "children": [
+        {
+          "path": "topComments",
+          "source": "facebook",
+          "field_map": {"commentUrl": "source_url", "commentId": "raw_id", "date": "published_at", "text": "text", "likesCount": "engagement:likes"}
+        }
+      ],
+      "cost_per_1k_usd": 5.0,
+      "fixed_cost_per_run_usd": 0.001,
+      "items_per_unit": 1,
+      "incentivised_flag_field": null,
+      "public_only": true,
+      "pricing_basis": "PAY_PER_EVENT post 0.005 USD plus 0.001 actor start (official Apify actor, 6.8M runs). Billed per post; top comments ride on the post item.",
+      "known_limits": "Public groups only; private groups are never attempted and there is no cookie or login option. Only the posts' top comments are returned. Meta terms restrict automated access."
+    }
+  }
+}

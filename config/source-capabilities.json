@@ -175,6 +175,167 @@
       "caveat": "Third-party scraper of public Reddit pages: terms-of-service risk sits with the actor, availability can break without notice, and completeness is unknown. It is a fallback, never the only source of record. Records stay unreviewed; comments are separate records linked to their post. Item spend is capped by --apify-item-cap (default 300)."
     },
     {
+      "id": "apify_software_reviews",
+      "family": "customer_reviews",
+      "label": "Software review sites via Apify (TrustRadius, Software Advice, GetApp)",
+      "description": "Entity-led B2B software reviews (pros, cons, reviewer role and company size) from TrustRadius, Software Advice and GetApp product pages through the lergassy Apify actor.",
+      "use_when": [
+        "software review sites",
+        "b2b software competitor reviews",
+        "TrustRadius reviews",
+        "Software Advice reviews",
+        "GetApp reviews",
+        "entity-led competitor feedback"
+      ],
+      "avoid_when": [
+        "consumer products",
+        "representative sentiment",
+        "sole source of record"
+      ],
+      "evidence_strength": "weak_to_medium_when_repeated_user_pain",
+      "collector_provider": "apify_software_reviews",
+      "provider_aliases": [
+        "trustradius_reviews",
+        "software_advice_reviews"
+      ],
+      "validation_providers": [
+        "apify_review_lanes"
+      ],
+      "requires_env": [
+        "APIFY_TOKEN"
+      ],
+      "status_check": "python3 scripts/validate_apis/validate_apify_review_lanes.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --sampling-frame entity_led_feedback --subject-entity-id <entity> --customer-feedback-source-plan <plan.json> --providers apify_software_reviews --apify-review-targets '<entity>=https://www.trustradius.com/products/<product>/reviews' --limit 30",
+      "caveat": "Capterra is unsupported (it needs a residential proxy this repo does not configure). G2 now owns Capterra, GetApp and Software Advice, so reviews can be duplicated across those sites; the collector drops exact-text duplicates per entity by content_sha256, but near-duplicates survive. Vendor-invited and incentivised reviews are common on these sites. Third-party scrape of public pages via an Apify actor (fallback: independent review sites by manual or firecrawl capture, Trustpilot/Google/app-store lanes); the actor can break or be blocked without notice, so a failure is a coverage gap, never absence of demand. Reviews can be incentivised (flagged signal_quality.authenticity=incentivised where the actor exposes it) and are self-selected; records stay unreviewed and vendor replies are separate supplier records. Item spend is capped per run by --apify-review-item-cap (default 500) across all Apify review lanes."
+    },
+    {
+      "id": "apify_g2_reviews",
+      "family": "customer_reviews",
+      "label": "G2 product reviews via Apify",
+      "description": "Entity-led G2 reviews (likes, dislikes, problems solved, reviewer segment) through the zen-studio Apify actor.",
+      "use_when": [
+        "G2 reviews",
+        "b2b software competitor reviews",
+        "entity-led competitor feedback",
+        "switching reasons"
+      ],
+      "avoid_when": [
+        "consumer products",
+        "representative sentiment",
+        "sole source of record"
+      ],
+      "evidence_strength": "weak_to_medium_when_repeated_user_pain",
+      "collector_provider": "apify_g2_reviews",
+      "provider_aliases": [
+        "g2"
+      ],
+      "validation_providers": [
+        "apify_review_lanes"
+      ],
+      "requires_env": [
+        "APIFY_TOKEN"
+      ],
+      "status_check": "python3 scripts/validate_apis/validate_apify_review_lanes.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --sampling-frame entity_led_feedback --subject-entity-id <entity> --customer-feedback-source-plan <plan.json> --providers apify_g2_reviews --apify-review-targets '<entity>=https://www.g2.com/products/<product>/reviews' --limit 30",
+      "caveat": "G2 and Gartner-family terms prohibit automated access: terms-of-service risk sits with the actor and the user, and Cloudflare-style blocking can end availability at any time. The actor returns at least 10 reviews per call and costs about 6.49 USD per 1,000 reviews. G2 owns Capterra, GetApp and Software Advice, so the same review may appear in several lanes. Third-party scrape of public pages via an Apify actor (fallback: independent review sites by manual or firecrawl capture, Trustpilot/Google/app-store lanes); the actor can break or be blocked without notice, so a failure is a coverage gap, never absence of demand. Reviews can be incentivised (flagged signal_quality.authenticity=incentivised where the actor exposes it) and are self-selected; records stay unreviewed and vendor replies are separate supplier records. Item spend is capped per run by --apify-review-item-cap (default 500) across all Apify review lanes."
+    },
+    {
+      "id": "apify_shopify_app_reviews",
+      "family": "customer_reviews",
+      "label": "Shopify App Store reviews via Apify",
+      "description": "Entity-led merchant reviews of Shopify apps (stars, country, time using the app, text) through the ethanteague Apify actor.",
+      "use_when": [
+        "Shopify app reviews",
+        "ecommerce merchant pain",
+        "shopify app competitor feedback",
+        "entity-led competitor feedback"
+      ],
+      "avoid_when": [
+        "non-Shopify markets",
+        "representative sentiment",
+        "sole source of record"
+      ],
+      "evidence_strength": "weak_to_medium_when_repeated_user_pain",
+      "collector_provider": "apify_shopify_app_reviews",
+      "provider_aliases": [
+        "shopify_app_store"
+      ],
+      "validation_providers": [
+        "apify_review_lanes"
+      ],
+      "requires_env": [
+        "APIFY_TOKEN"
+      ],
+      "status_check": "python3 scripts/validate_apis/validate_apify_review_lanes.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --sampling-frame entity_led_feedback --subject-entity-id <entity> --customer-feedback-source-plan <plan.json> --providers apify_shopify_app_reviews --apify-review-targets '<entity>=https://apps.shopify.com/<app-slug>' --limit 30",
+      "caveat": "Reviews are merchant-written and public but carry no review id (the collector derives a stable id). Merchant store names are not retained. A run has a platform-usage floor of roughly 0.07 USD besides per-review events. Third-party scrape of public pages via an Apify actor (fallback: independent review sites by manual or firecrawl capture, Trustpilot/Google/app-store lanes); the actor can break or be blocked without notice, so a failure is a coverage gap, never absence of demand. Reviews can be incentivised (flagged signal_quality.authenticity=incentivised where the actor exposes it) and are self-selected; records stay unreviewed and vendor replies are separate supplier records. Item spend is capped per run by --apify-review-item-cap (default 500) across all Apify review lanes."
+    },
+    {
+      "id": "apify_quora",
+      "family": "founder_community",
+      "label": "Quora answers via Apify",
+      "description": "Topic-led Quora answers and the questions they respond to, via the fatihtahta Apify actor (no cookies).",
+      "use_when": [
+        "quora",
+        "consumer questions",
+        "workarounds",
+        "how do people solve",
+        "vendor recommendation threads"
+      ],
+      "avoid_when": [
+        "representative prevalence",
+        "proof of demand from one answer",
+        "sole source of record"
+      ],
+      "evidence_strength": "weak",
+      "collector_provider": "apify_quora",
+      "provider_aliases": [
+        "quora_answers"
+      ],
+      "validation_providers": [
+        "apify_review_lanes"
+      ],
+      "requires_env": [
+        "APIFY_TOKEN"
+      ],
+      "status_check": "python3 scripts/validate_apis/validate_apify_review_lanes.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --providers apify_quora --limit 20",
+      "caveat": "Third-party scrape of public Quora pages; Quora terms restrict automated access and the actor can break without notice. Answers are self-selected, often vendor self-promotion (author credential is kept in author_context so promotion can be separated) and rarely show the asker's real situation. Records stay topic-led and unreviewed. Item spend is capped per run by --apify-review-item-cap (default 500) across all Apify review lanes."
+    },
+    {
+      "id": "apify_facebook_public_groups",
+      "family": "social_public",
+      "label": "Public Facebook Groups via Apify",
+      "description": "Topic-led posts and top comments from PUBLIC Facebook groups you name, via the official apify/facebook-groups-scraper actor (no login or cookies).",
+      "use_when": [
+        "facebook groups",
+        "community pain",
+        "workarounds",
+        "local or niche communities",
+        "complaints"
+      ],
+      "avoid_when": [
+        "private groups",
+        "representative prevalence",
+        "personal data collection",
+        "sole source of record"
+      ],
+      "evidence_strength": "weak",
+      "collector_provider": "apify_facebook_public_groups",
+      "provider_aliases": [
+        "facebook_groups"
+      ],
+      "validation_providers": [
+        "apify_review_lanes"
+      ],
+      "requires_env": [
+        "APIFY_TOKEN"
+      ],
+      "status_check": "python3 scripts/validate_apis/validate_apify_review_lanes.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --providers apify_facebook_public_groups --apify-facebook-groups 'https://www.facebook.com/groups/<id>/' --limit 20",
+      "caveat": "Public groups only; private groups are never attempted and there is no login, cookie or session option. Meta terms restrict automated access and posters are private individuals: keep records unreviewed, do not collect member lists, and do not quote identifiable people in reports. Only each post's top comments come back. Item spend is capped per run by --apify-review-item-cap (default 500) across all Apify review lanes."
+    },
+    {
       "id": "cfpb_complaints",
       "family": "customer_reviews",
       "status": "blocked_by_provider",

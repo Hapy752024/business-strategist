@@ -217,6 +217,19 @@ first; then `apify_reddit` (third-party scraper, item-capped by `--apify-item-ca
 `scrapecreators_reddit`, and `arctic_shift` for subreddit history. Fallbacks never become
 the only source of record, and their records stay unreviewed.
 
+## Apify Review and Community Lanes
+
+`apify_software_reviews` (TrustRadius, Software Advice, GetApp), `apify_g2_reviews`,
+`apify_shopify_app_reviews`, `apify_quora` and `apify_facebook_public_groups` are
+third-party scrapes of public pages; settings live in `config/apify-actors.json`.
+They never use logins, cookies or credentialed proxies. Customer-evidence spend is
+pre-authorized, but every run is capped by `--apify-review-item-cap` (default 500
+items across all five lanes, counted before any call). Entity lanes need reviewed
+locators (`--apify-review-targets entity=url` plus a source plan); Facebook needs
+named public group URLs (`--apify-facebook-groups`). G2-family and Quora/Meta terms
+restrict automated access, reviews can be incentivised or duplicated across G2-owned
+sites, and a failed run is a coverage gap, never absence of demand.
+
 ## Competitor Discovery Policy
 
 - Competitor search results are only candidates. Classify false positives explicitly.

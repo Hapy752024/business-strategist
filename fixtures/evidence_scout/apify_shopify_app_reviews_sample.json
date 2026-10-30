@@ -1,0 +1,38 @@
+[
+  {
+    "type": "review",
+    "appSlug": "klaviyo-email-marketing",
+    "url": "https://apps.shopify.com/klaviyo-email-marketing/reviews",
+    "store": "redacted_user",
+    "country": "Ukraine",
+    "tenure": "1 day using the app",
+    "date": "October 29, 2026",
+    "dateIso": "2026-10-29",
+    "stars": 5,
+    "text": "Looks good so far!"
+  },
+  {
+    "type": "review",
+    "appSlug": "klaviyo-email-marketing",
+    "url": "https://apps.shopify.com/klaviyo-email-marketing/reviews",
+    "store": "redacted_user",
+    "country": "United States",
+    "tenure": "Over 7 years using the app",
+    "date": "October 29, 2026",
+    "dateIso": "2026-10-29",
+    "stars": 5,
+    "text": "The best platform around BY FAR. Seems to be getting even better in the agentic era"
+  },
+  {
+    "type": "review",
+    "appSlug": "klaviyo-email-marketing",
+    "url": "https://apps.shopify.com/klaviyo-email-marketing/reviews",
+    "store": "redacted_user",
+    "country": "Canada",
+    "tenure": "2 months using the app",
+    "date": "October 29, 2026",
+    "dateIso": "2026-10-29",
+    "stars": 5,
+    "text": "KLaviyo has definitely increase our revenue beyond our expectations. The system itself is comprehensive and intuitive, although the interface is well design and easy to get around its a learning curve we had to embrace and worth dedicating time. For E-commerce it's the best"
+  }
+]

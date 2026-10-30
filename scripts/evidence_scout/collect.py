@@ -1980,6 +1980,116 @@ def collect_apify_reddit(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "apify_reddit")
 
 
+APIFY_LANE_PROVIDERS = {f"apify_{lane}": lane for lane in
+                        ("software_reviews", "g2_reviews", "shopify_app_reviews", "quora", "facebook_public_groups")}
+APIFY_ENTITY_PROVIDERS = {"apify_software_reviews", "apify_g2_reviews", "apify_shopify_app_reviews"}
+
+
+def collect_apify_lane(lane: str, args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Run one Apify review/community lane (public pages only, item-capped before any call)."""
+    from urllib.parse import urlparse
+    from blocked import BLOCKED, blocked_reason
+    from providers import apify_actor
+    raw: dict[str, Any] = {"runs": []}
+    raw_path = run_dir / "raw" / f"apify_{lane}.json"
+    cfg = apify_actor.load_config()["lanes"][lane]
+    reason = None if getattr(args, "force_blocked", False) else blocked_reason(f"apify_{lane}")
+    if reason:
+        write_json(raw_path, raw)
+        return [], {"status": BLOCKED, "record_count": 0, "reason": reason + " Pass --force-blocked to attempt anyway."}
+    entity_lane = cfg["sampling_frame"] == "entity_led_feedback"
+    units: list[tuple[str, str]] = []  # (subject_entity_id, value substituted into the input template)
+    if cfg["unit"] == "entity_url":
+        pairs = parse_entity_locator_pairs(getattr(args, "apify_review_targets", ""), "--apify-review-targets")
+        def on_lane_host(url: str) -> bool:
+            host = urlparse(url).netloc.lower().removeprefix("www.")
+            return any(host == h or host.endswith("." + h) for h in cfg["entity_hosts"])
+        pairs = [(entity, url) for entity, url in pairs if on_lane_host(url)]
+        if not pairs:
+            write_json(raw_path, raw)
+            return [], {"status": "not_run", "record_count": 0, "required_arg": "--apify-review-targets", "reason": f"No target URL on {', '.join(cfg['entity_hosts'])}."}
+        allowed, gate_reason = validate_entity_pairs_in_plan(args, pairs, "independent_review_platforms", "--apify-review-targets")
+        if not allowed:
+            write_json(raw_path, raw)
+            return [], {"status": "capture_gate_blocked", "reason": gate_reason, "record_count": 0}
+        units = pairs
+    elif cfg["unit"] == "group_url":
+        groups = [url for url in csv_terms(getattr(args, "apify_facebook_groups", "")) if "facebook.com/groups/" in url]
+        if not groups:
+            write_json(raw_path, raw)
+            return [], {"status": "not_run", "record_count": 0, "required_arg": "--apify-facebook-groups", "reason": "Public group URLs (facebook.com/groups/...) are required; private groups are never attempted."}
+        units = [("", url) for url in groups]
+    else:
+        limit_queries = balanced_queries(queries)[:max(1, getattr(args, "query_limit", 12))]
+        units = [("", query) for query in limit_queries]
+    key_name, token = get_secret("APIFY_TOKEN")
+    if not token:
+        write_json(raw_path, raw)
+        return [], {"status": "missing_credentials", "record_count": 0, "required_env": ["APIFY_TOKEN"]}
+    total = max(1, int(args.limit))
+    per_unit = total if cfg["unit"] != "query" else max(1, total // max(1, len(units)))
+    cap = getattr(args, "apify_review_item_cap", 500)
+    used = getattr(args, "_apify_review_items_used", 0)
+    requested = apify_actor.requested_items(cfg, len(units), per_unit)
+    if used + requested > cap:
+        write_json(raw_path, raw)
+        return [], {"status": "request_budget_exhausted", "record_count": 0,
+                    "reason": f"Apify items requested ({requested}) plus already used this run ({used}) exceed --apify-review-item-cap ({cap}); no call made."}
+    args._apify_review_items_used = used + requested
+    if not hasattr(args, "_apify_review_hashes"):
+        args._apify_review_hashes = set()
+    records: list[dict[str, Any]] = []
+    statuses: list[str] = []
+    estimated = 0.0
+    for entity_id, value in units:
+        placeholder = {"entity_url": value, "group_url": value, "query": value, "max_items": per_unit}
+        actor_input = apify_actor.render_input(cfg["input_template"], placeholder)
+        items_here = apify_actor.requested_items(cfg, 1, per_unit)
+        items, meta = apify_actor.run_actor(cfg["actor_id"], actor_input, cap, requested_items=items_here, token=token,
+                                           max_charge_usd=apify_actor.charge_cap_usd(cfg, items_here))
+        estimated += items_here * cfg["cost_per_1k_usd"] / 1000 + cfg.get("fixed_cost_per_run_usd", 0)
+        statuses.append(meta["status"])
+        raw["runs"].append({"unit": value, "response": meta["response"]})
+        found = apify_actor.to_records(lane, items, value if cfg["unit"] == "query" else f"entity:{entity_id}" if entity_id else value,
+                                       now_iso(), build=normalize_record, customer_segment=args.customer_segment,
+                                       hypothesis=args.hypothesis_id, subject_entity_id=entity_id,
+                                       seen_hashes=args._apify_review_hashes)
+        for record in found:
+            if not entity_lane:
+                relevance, notes, score = assess_relevance(record["text"], args, record["query"], record["source_url"], record["author_context"])
+                record.update({"relevance": relevance, "relevance_notes": notes, "relevance_score": score})
+                if relevance == "irrelevant":
+                    record.update({"evidence_type": "irrelevant", "strength": "irrelevant"})
+            record["sampling_metadata"]["time_window"] = {"lookback_days": None, "applied_by": "none; newest or relevance order as returned by the actor"}
+        records.extend(found)
+    write_json(raw_path, redact_sensitive(raw))
+    failures = [value for value in statuses if value != "ok"]
+    status = ("partial" if len(failures) < len(statuses) else failures[0]) if failures else "ok"
+    return records, {"status": status, "record_count": len(records), "credential_source": key_name, "fields": fields_present(raw),
+                     "items_requested": requested, "estimated_cost_usd": round(estimated, 4),
+                     "caveat": "Third-party scrape of public pages; completeness unknown; reviews may be incentivised or syndicated across G2-family sites."}
+
+
+def collect_apify_software_reviews(args, queries, run_dir):
+    return collect_apify_lane("software_reviews", args, queries, run_dir)
+
+
+def collect_apify_g2_reviews(args, queries, run_dir):
+    return collect_apify_lane("g2_reviews", args, queries, run_dir)
+
+
+def collect_apify_shopify_app_reviews(args, queries, run_dir):
+    return collect_apify_lane("shopify_app_reviews", args, queries, run_dir)
+
+
+def collect_apify_quora(args, queries, run_dir):
+    return collect_apify_lane("quora", args, queries, run_dir)
+
+
+def collect_apify_facebook_public_groups(args, queries, run_dir):
+    return collect_apify_lane("facebook_public_groups", args, queries, run_dir)
+
+
 def collect_cfpb_complaints(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "cfpb_complaints")
 
@@ -5011,6 +5121,11 @@ PROVIDER_ROUTING_FAMILY = {
     "stackexchange": "founder_community",
     "producthunt": "customer_reviews",
     "bluesky": "social",
+    "apify_software_reviews": "customer_reviews",
+    "apify_g2_reviews": "customer_reviews",
+    "apify_shopify_app_reviews": "customer_reviews",
+    "apify_quora": "founder_community",
+    "apify_facebook_public_groups": "social",
     "serpapi_google_trends": "google_trends",
     "youtube": "youtube",
     "firecrawl": "web_search",
@@ -5061,6 +5176,9 @@ def parse_args() -> argparse.Namespace:
                         help="Disable in-run reuse of identical successful GET requests.")
     parser.add_argument("--force-blocked", action="store_true", help="Attempt providers marked blocked_by_provider in config/source-capabilities.json (e.g. cfpb_complaints) instead of returning that status without a network call.")
     parser.add_argument("--stackexchange-site", default="stackoverflow", help="Stack Exchange site slug for the stackexchange provider (e.g. stackoverflow, money, workplace, webmasters).")
+    parser.add_argument("--apify-review-item-cap", type=int, default=500, help="Per-run cap on Apify dataset items across the review/community lanes (apify_software_reviews, apify_g2_reviews, apify_shopify_app_reviews, apify_quora, apify_facebook_public_groups); counted as items x items_per_unit from config/apify-actors.json and checked before any call.")
+    parser.add_argument("--apify-review-targets", default="", help="Comma-separated exact entity_id=url review pages (TrustRadius/Software Advice/GetApp, G2 product, apps.shopify.com app). Each must be a reviewed locator in --customer-feedback-source-plan.")
+    parser.add_argument("--apify-facebook-groups", default="", help="Comma-separated PUBLIC Facebook group URLs for apify_facebook_public_groups (no login or cookies are ever used).")
     parser.add_argument("--apify-item-cap", type=int, default=300, help="Cap on Apify dataset items per run, counted conservatively as posts x 10 (the actor has no per-post comment limit); apify_reddit refuses before any call when exceeded.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum normalized records per provider.")
     parser.add_argument(
@@ -5286,6 +5404,7 @@ def parse_args() -> argparse.Namespace:
         args.query_plan_data = load_query_plan(args)
         parse_entity_locator_pairs(args.trustpilot_domains, "--trustpilot-domains")
         parse_entity_locator_pairs(args.google_place_ids, "--google-place-ids")
+        parse_entity_locator_pairs(args.apify_review_targets, "--apify-review-targets")
         parse_entity_locator_pairs(args.itunes_entity_apps, "--itunes-entity-apps")
         parse_entity_store_apps(args.sonar_entity_apps, "--sonar-entity-apps")
         if args.ig_handles:
@@ -5386,6 +5505,11 @@ def main() -> int:
         "stackexchange": collect_stackexchange,
         "producthunt": collect_producthunt,
         "bluesky": collect_bluesky,
+        "apify_software_reviews": collect_apify_software_reviews,
+        "apify_g2_reviews": collect_apify_g2_reviews,
+        "apify_shopify_app_reviews": collect_apify_shopify_app_reviews,
+        "apify_quora": collect_apify_quora,
+        "apify_facebook_public_groups": collect_apify_facebook_public_groups,
         "serpapi_google_trends": collect_serpapi_google_trends,
         "serper_search": collect_serper_search,
         "youtube": collect_youtube,
@@ -5444,7 +5568,7 @@ def main() -> int:
             locator_search = (provider in {"serper_search", "brave_search"} and bool(args.query_plan_data)
                               and all(row.get("intent") == "entity_locator_discovery"
                                       for row in args.query_plan_data.get("queries", [])))
-            if args.sampling_frame == "entity_led_feedback" and not locator_search and provider not in {"firecrawl", "itunes_reviews", "trustpilot_reviews", "google_places_reviews", "scrapecreators", "sonar", "reddit"}:
+            if args.sampling_frame == "entity_led_feedback" and not locator_search and provider not in {"firecrawl", "itunes_reviews", "trustpilot_reviews", "google_places_reviews", "scrapecreators", "sonar", "reddit"} | APIFY_ENTITY_PROVIDERS:
                 provider_summaries[provider] = {"status": "capture_gate_blocked", "record_count": 0, "reason": "Generic entity capture requires firecrawl and an exact reviewed URL; broad search remains topic-led discovery."}
                 continue
             func = ((lambda a, _q, d: collect_reviewed_reddit_target(a, d))
