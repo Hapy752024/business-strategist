@@ -313,6 +313,14 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
                 {"client": "firefox", "hl": "en", "gl": "us", "q": "why is my accountant"},
             ),
         ],
+        "stackexchange": [
+            _public_http_backend(
+                "stackexchange_keyless",
+                "https://api.stackexchange.com/2.3/search/advanced",
+                {"q": "late invoice", "site": "stackoverflow", "pagesize": 1},
+            ),
+            _env_backend("stackexchange_key", ["STACKEXCHANGE_KEY"], risk="free_optional_higher_rate"),
+        ],
         "github_issues": [
             _public_http_backend(
                 "github_search_anonymous",

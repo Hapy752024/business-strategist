@@ -17,7 +17,7 @@ These cost nothing, need no keys, and are part of `default` runs:
 - `google_autocomplete` — real user query phrasing around problem seeds. Language proxy only, never volume or intent strength.
 - `itunes_reviews` — public App Store customer-review RSS per app/storefront. Free alternative to paid Sonar for competitor review mining; requires `--itunes-app-ids` and is therefore opt-in. Public reviews only; revenue estimates still need Sonar.
 
-Use `--providers free_community` to run just the three zero-credential collectors without spending any paid credits.
+Use `--providers free_community` to run just the zero-credential collectors (`hn`, `github`, `google_autocomplete`, `stackexchange`) without spending any paid credits.
 
 ## YouTube Transcripts
 
@@ -108,7 +108,7 @@ Competitor paid-ads evidence uses `scripts/evidence_scout/collect_ads.py`, not `
 ## Provider Sets
 
 - `default`: Reddit, SerpAPI Google Trends, YouTube Data API, Firecrawl, Brave Search, HN Algolia (`hn`), GitHub issues (`github`), Google autocomplete (`google_autocomplete`).
-- `free_community`: only the zero-credential collectors — `hn`, `github`, `google_autocomplete`. Zero cost; use for cheap first passes.
+- `free_community`: only the zero-credential collectors — `hn`, `github`, `google_autocomplete`, `stackexchange`. Zero cost; use for cheap first passes.
 - `social`: direct X API and ScrapeCreators. Grok/xAI X Search is explicit only via `xai_x_search`.
 - `local_web`: crawl4ai local page extraction after lightweight URL discovery.
 - `china_public`: Bilibili public search with Serper/Brave/Firecrawl site-search fallback, V2EX topic search/public fallback, and China web/domain search.

@@ -204,6 +204,41 @@
       "caveat": "Verified 2026-10-30: the CFPB edge returned HTTP 403 (permission_denied) to this repo's HTTP client, and the public search API documentation lists no narrative field (field=complaint_what_happened is rejected; hits carry metadata only). The collector therefore yields zero records live until access and narratives are confirmed; it never fabricates text. Complainants self-select, narratives (when present) are consent-published and keep CFPB's XXXX redactions, the named company is the subject not the speaker, and only state-level geography is kept."
     },
     {
+      "id": "stackexchange",
+      "family": "founder_operator_sources",
+      "label": "Stack Exchange question search (free)",
+      "description": "Official Stack Exchange API search over questions and bodies on any network site (default stackoverflow; e.g. money, workplace, webmasters, expatriates). Practitioner and consumer how-do-I and what-went-wrong language.",
+      "use_when": [
+        "stack exchange",
+        "stack overflow",
+        "practitioner questions",
+        "workarounds",
+        "how do I",
+        "free community search",
+        "developer pain"
+      ],
+      "avoid_when": [
+        "consumer sentiment outside technical or professional niches",
+        "representative prevalence or market sizing",
+        "proof of willingness to pay from one question"
+      ],
+      "evidence_strength": "weak_to_medium_when_repeated_user_pain",
+      "collector_provider": "stackexchange",
+      "provider_aliases": [
+        "free_community"
+      ],
+      "validation_providers": [
+        "stackexchange"
+      ],
+      "requires_env": [],
+      "optional_env": [
+        "STACKEXCHANGE_KEY"
+      ],
+      "status_check": "python3 scripts/validate_apis/validate_stackexchange.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --providers stackexchange --stackexchange-site money --limit 20",
+      "caveat": "Works keyless at 300 requests/day per IP; the API backoff field is honoured (collector stops with rate_limited rather than sleeping more than 30 s). Askers skew technical and professional; question bodies are CC BY-SA and HTML is stripped. Records stay unreviewed community context."
+    },
+    {
       "id": "google_trends",
       "family": "search_demand",
       "label": "Google Trends via SerpAPI/DataForSEO",

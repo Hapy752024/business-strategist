@@ -476,7 +476,7 @@ def balanced_queries(queries: list[str]) -> list[str]:
 
 
 QUERY_PLAN_PROVIDERS = {"reddit", "brave_search", "serper_search", "firecrawl", "hn", "github",
-                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "cfpb_complaints"}
+                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "cfpb_complaints", "stackexchange"}
 RESUME_TERMINAL_PROVIDER_STATUSES = {"ok", "unsupported", "capture_gate_blocked", "not_applicable"}
 
 
@@ -1323,7 +1323,7 @@ def selected_providers(value: str) -> list[str]:
         elif part == "local_web":
             providers.extend(local_web)
         elif part == "free_community":
-            providers.extend(["hn", "github", "google_autocomplete"])
+            providers.extend(["hn", "github", "google_autocomplete", "stackexchange"])
         elif part == "china_public":
             providers.extend(china_public)
         elif part == "china_social":
@@ -1984,6 +1984,10 @@ def collect_cfpb_complaints(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "cfpb_complaints")
 
 
+def collect_stackexchange(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "stackexchange")
+
+
 def collect_x(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "x")
 
@@ -2105,6 +2109,33 @@ def _collect_cfpb_complaints_query(args: argparse.Namespace, queries: list[str],
             records.append(record)
     write_json(run_dir / "raw" / "cfpb_complaints.json", redact_sensitive(raw))
     return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
+
+
+def _collect_stackexchange_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Stack Exchange question search. STACKEXCHANGE_KEY is optional (300 requests/day without)."""
+    from providers.stackexchange import DEFAULT_SITE, fetch, to_records
+    key_name, key = get_secret("STACKEXCHANGE_KEY")
+    site = getattr(args, "stackexchange_site", None) or DEFAULT_SITE
+    raw: dict[str, Any] = {"searches": []}
+    records: list[dict[str, Any]] = []
+    status = "ok"
+    limit = max(1, int(args.limit))
+    for query in queries:
+        body, meta = fetch(query, site, min(limit, 100), key)
+        raw["searches"].append({"query": query, "site": site, "response": meta["response"]})
+        if meta["status"] != "ok":
+            status = meta["status"]
+            break
+        found = to_records(body, query, site, now_iso(), build=normalize_record,
+                           customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
+        for record in found[:limit]:
+            relevance, notes, score = assess_relevance(record["text"], args, record["query"], record["source_url"], record["author_context"])
+            record.update({"relevance": relevance, "relevance_notes": notes, "relevance_score": score})
+            if relevance == "irrelevant":
+                record.update({"evidence_type": "irrelevant", "strength": "irrelevant"})
+            records.append(record)
+    write_json(run_dir / "raw" / "stackexchange.json", redact_sensitive(raw))
+    return records, {"status": status, "record_count": len(records), "credential_source": key_name, "fields": fields_present(raw)}
 
 
 def _collect_github_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -4872,6 +4903,7 @@ PROVIDER_ROUTING_FAMILY = {
     "reddit": "reddit",
     "apify_reddit": "reddit",
     "cfpb_complaints": "customer_reviews",
+    "stackexchange": "founder_community",
     "serpapi_google_trends": "google_trends",
     "youtube": "youtube",
     "firecrawl": "web_search",
@@ -4920,6 +4952,7 @@ def parse_args() -> argparse.Namespace:
                         help="Per-run cap on shared HTTP helper calls; excludes SDK/CLI traffic. Default: 100.")
     parser.add_argument("--fresh-http", action="store_true",
                         help="Disable in-run reuse of identical successful GET requests.")
+    parser.add_argument("--stackexchange-site", default="stackoverflow", help="Stack Exchange site slug for the stackexchange provider (e.g. stackoverflow, money, workplace, webmasters).")
     parser.add_argument("--apify-item-cap", type=int, default=300, help="Cap on Apify dataset items per run, counted conservatively as posts x 10 (the actor has no per-post comment limit); apify_reddit refuses before any call when exceeded.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum normalized records per provider.")
     parser.add_argument(
@@ -5242,6 +5275,7 @@ def main() -> int:
         "reddit": collect_reddit,
         "apify_reddit": collect_apify_reddit,
         "cfpb_complaints": collect_cfpb_complaints,
+        "stackexchange": collect_stackexchange,
         "serpapi_google_trends": collect_serpapi_google_trends,
         "serper_search": collect_serper_search,
         "youtube": collect_youtube,
