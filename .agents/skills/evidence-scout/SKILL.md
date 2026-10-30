@@ -28,7 +28,7 @@ keep supplier posts/replies/testimonials separately attributed.
 If no entity is yet known, mark entity-led analysis pending, discover candidates, then run it after verification.
 Keep the two sampling frames separate, map independent customer needs separately from solution-use requirements, and assess each before segment/journey/pain and risk synthesis.
 Evidence-scout owns customer voice; competitor-marketing-analyzer owns supplier claims.
-Read applicable `required_references` returned by the route packet before specialist dispatch.
+Read the `required_references` from your route packet.
 Reuse current evidence; focused factual lookups do not trigger a full study.
 
 **Concurrent approaches.**

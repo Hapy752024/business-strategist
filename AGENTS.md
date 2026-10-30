@@ -32,7 +32,7 @@ Credit failures are coverage gaps, never absence of demand.
 Details: `references/operating-guide.md`.
 
 **Pain-first gate.**
-Business commitments (business model, offer and GTM) stay gated until `problem_validation` passes or an explicit override is recorded; `scripts/route_workflow.py` enforces it.
+Business commitments (business model, offer and GTM) stay gated until `problem_validation` passes or an explicit override is recorded; `scripts/route_workflow.py` enforces it with `--project <slug>`.
 Gate details: `.agents/skills/business-strategist/SKILL.md` and `.claude/rules/business-gate.md`.
 
 ## Workspace check: always first
@@ -63,6 +63,7 @@ Full resume procedure: `references/workspace-lifecycle.md`.
 ## Research mode
 
 Select the research mode first; do not treat every rough input as a request to be grilled.
+Focused answers and execution requests: apply `references/task-scope.md`; they do not start research workspaces or full strategy outputs.
 
 - **Market discovery**: use `market-problem-discovery` when the user wants to explore a broad market, find customer problems, discover possible segments, or identify underserved pockets before they have a thesis.
 - **Idea validation**: use `idea-grill` when the user has a candidate idea, problem, or segment and wants to make it researchable or pressure-test it.
