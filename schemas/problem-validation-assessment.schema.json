@@ -16,6 +16,7 @@
     "research_design_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "section_inputs": {"type": "object", "required": ["customer_segments", "customer_journey", "pain_points"], "properties": {"customer_segments": {"$ref": "#/$defs/input"}, "customer_journey": {"$ref": "#/$defs/input"}, "pain_points": {"$ref": "#/$defs/input"}}},
     "voc_pack_path": {"type": "string", "minLength": 1},
+    "legacy_untyped_evidence": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
     "voc_pack_hashes": {"type": "object", "required": ["evidence.jsonl", "source-review.json", "customer-feedback-coverage.json", "customer-voc-synthesis.json", "claim-ledger.json", "customer-feedback-source-plan.json"], "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
     "finding_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^U[0-9]+$"}},
     "claim_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},

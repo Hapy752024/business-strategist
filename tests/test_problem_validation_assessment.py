@@ -51,3 +51,27 @@ def test_builder_rejects_study_identity_mismatch(tmp_path, monkeypatch):
         assert 'supported v3 synthesis' in str(exc)
     else:
         raise AssertionError('mismatched study identity was accepted')
+
+
+def test_gate_records_legacy_untyped_evidence_warnings(tmp_path, monkeypatch, capsys):
+    import json
+    from types import SimpleNamespace
+    scope = tmp_path / 'workspace'
+    scope.mkdir()
+    ws = __import__('scripts.evidence_scout.workspace', fromlist=['workspace'])
+    _, _, pack = prepare(scope, ws, monkeypatch)
+    (scope / 'market_research/pain_points/problem-validation-assessment.json').unlink()
+    out = json.dumps({"status": "valid", "errors": [], "legacy_untyped_evidence": ["E1"]})
+    monkeypatch.setattr(builder.subprocess, 'run', lambda *a, **k: SimpleNamespace(returncode=0, stdout=out, stderr=''))
+    args = Namespace(
+        workspace=str(scope), case_id='', assessment_revision=1, study_id='run-1',
+        research_design_digest='a' * 64, customer_segments='market_research/customer_segments/current.md',
+        customer_journey='market_research/customer_journey/current.md',
+        pain_points='market_research/pain_points/current.md',
+        voc_pack=str(pack.relative_to(scope)), target_segment='target customers', intent='customer_problem',
+        geography='DE', scope_limits='Synthetic fixture only.', finding_id=['U1'], claim_id=['C1'],
+        reviewer_id='r', reviewer_type='independent_human', review_mode='independent_review',
+        reviewed_at='2026-09-23T12:00:00Z', review_rationale='Reviewed.', replace=False,
+    )
+    _, assessment = builder.build(args)
+    assert assessment['legacy_untyped_evidence'] == ['E1']

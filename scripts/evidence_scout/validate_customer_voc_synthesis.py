@@ -11,7 +11,7 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from reviewed_voice import review_voice, reviewed_collection_locales, VOICES, CLAIM_SUPPORTING_TYPES
+from reviewed_voice import review_voice, reviewed_collection_locales, VOICES, review_file_is_typed, statement_support_problem
 
 
 def validate_quality(synthesis: dict, evidence: dict, reviews: dict, coverage: dict,
@@ -92,16 +92,13 @@ def validate_quality(synthesis: dict, evidence: dict, reviews: dict, coverage: d
         if not item.get("counter_evidence_ids") and not str(item.get("counter_search_scope") or "").strip():
             errors.append(f"{ident}: contrary cases or bounded counter_search_scope required")
         for e in item.get("evidence_ids", []):
-            if e not in reviews:
+            problem = statement_support_problem(reviews.get(e), typed)
+            if problem is None:
                 continue
-            stype = reviews[e].get("statement_type")
-            if stype is None:
-                if not typed and warnings is not None:
-                    warnings.append(f"{ident}: {e} has no statement_type (legacy review); treated as unclassified, retype before relying on it")
-                elif typed:
-                    errors.append(f"{ident}: {e} lacks statement_type; a typed review must classify every statement")
-            elif stype not in CLAIM_SUPPORTING_TYPES:
-                errors.append(f"{ident}: {e} statement_type={stype} cannot support a pain/need/demand claim; only past_behaviour or commitment")
+            if problem[0] == "error":
+                errors.append(f"{ident}: {e} {problem[1]}")
+            elif warnings is not None:
+                warnings.append(f"{ident}: {e} {problem[1]} (legacy review, warns only); retype before relying on it")
         for e in item.get("counter_evidence_ids", []):
             if e not in reviews or reviews[e].get("status") != "accepted" or e not in evidence:
                 errors.append(f"{ident}: counter evidence {e} is not reviewed")
@@ -178,7 +175,7 @@ def main() -> int:
         errors.append("source review is stale: evidence_sha256 mismatch")
     if review.get("target_segment") != args.customer_segment:
         errors.append("source review target_segment mismatch")
-    typed = review.get("statement_typing") is True
+    typed = review_file_is_typed(review, Path(args.source_review).resolve().parent)
     warnings: list[str] = []
     reviewed_user_ids: set[str] = set()
     perspective_by_id: dict[str, str] = {}
@@ -259,7 +256,7 @@ def main() -> int:
             if linked not in u_ids:
                 errors.append(f"{item.get('id')}: unknown linked customer need {linked}")
     errors.extend(validate_quality(synthesis, evidence, review_by_id, coverage, typed, warnings))
-    result = {"status": "blocked" if errors else "valid", "quality_contract": "v2" if synthesis.get("schema_version", 1) >= 2 else "legacy_unassessed", "error_count": len(errors), "errors": errors, "warnings": warnings}
+    result = {"status": "blocked" if errors else "valid", "quality_contract": "v2" if synthesis.get("schema_version", 1) >= 2 else "legacy_unassessed", "error_count": len(errors), "errors": errors, "warnings": warnings, "legacy_untyped_evidence": sorted({w.split(": ")[1].split(" ")[0] for w in warnings})}
     print(json.dumps(result, indent=2))
     return 2 if errors else 0
 

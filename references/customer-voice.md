@@ -147,12 +147,12 @@ Record target/adjacent/unresolved segment fit with its reason. Country, business
 
 ## Type every reviewed statement (Mom Test)
 
-Set `statement_type` on each accepted source review (the review layer holds the judgement; raw collector records may only carry `unclassified`). Packets from `build_review_packet.py` carry `statement_typing: true`; copy it into the source-review file and every accepted review then requires the field. Older reviews without it count as `unclassified` and produce a validator warning.
+Set `statement_type` on each accepted source review (the review layer holds the judgement; raw collector records may only carry `unclassified`). Packets from `build_review_packet.py` carry `statement_typing: true`; reference the packet from the source-review file via `source_packet` (or start the file with `statement_typing: true`); every accepted review then requires the field. Older reviews without it count as `unclassified` and warn but do not block. A review file is new-style (typing required) if it carries `statement_typing: true`, references a typed packet via `source_packet`, has `schema_version` >= 2, or is dated 2026-10-30 or later. The same check applies to claim-ledger `supporting_evidence` for occurrence, pattern, unmetness, prevalence and willingness_to_pay claims.
 
 | Type | Meaning | Example | May support pain/demand? |
 |---|---|---|---|
 | `past_behaviour` | What they actually did or experienced | "Last month I re-keyed 40 invoices by hand." | Yes |
-| `commitment` | Time, reputation or money given up | "I paid 90 CHF for a template; intro'd my boss." | Yes |
+| `commitment` | Time, reputation or money given up | "I paid 90 CHF for a template; intro'd my boss." An agreed meeting with no cost is not a commitment. | Yes |
 | `compliment` | Praise or encouragement | "Great idea, I love it." | No |
 | `fluff` | Generic or hypothetical talk | "I would definitely use that." / "I always..." | No |
 | `feature_request` | A wished-for solution | "It should have an export button." | No (lead for a follow-up question) |

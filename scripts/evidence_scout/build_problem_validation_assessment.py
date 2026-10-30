@@ -98,10 +98,15 @@ def build(args: argparse.Namespace) -> tuple[Path, dict]:
          "--source-review", str(pack_paths["source-review.json"]), "--customer-segment", args.target_segment,
          "--require-verification", "--synthesis", str(pack_paths["customer-voc-synthesis.json"])],
     ]
+    legacy_untyped: set[str] = set()
     for command in commands:
         checked = subprocess.run(command, capture_output=True, text=True, check=False)
         if checked.returncode:
             raise ValueError("VoC pack validation failed: " + checked.stdout + checked.stderr)
+        try:
+            legacy_untyped.update(json.loads(checked.stdout).get("legacy_untyped_evidence", []))
+        except (json.JSONDecodeError, AttributeError):
+            pass
 
     assessment = {
         "schema_version": 1, "status": "supported", "intent": args.intent,
@@ -115,6 +120,8 @@ def build(args: argparse.Namespace) -> tuple[Path, dict]:
                    "review_mode": args.review_mode, "reviewed_at": args.reviewed_at,
                    "rationale": args.review_rationale},
     }
+    if legacy_untyped:
+        assessment["legacy_untyped_evidence"] = sorted(legacy_untyped)
     schema = json.loads((ROOT / "schemas/problem-validation-assessment.schema.json").read_text())
     from jsonschema import Draft202012Validator
     errors = list(Draft202012Validator(schema, format_checker=Draft202012Validator.FORMAT_CHECKER).iter_errors(assessment))
@@ -160,8 +167,13 @@ def main() -> int:
         json.dump(assessment, handle, indent=2, sort_keys=True)
         handle.write("\n")
     os.replace(temporary, destination)
-    print(json.dumps({"status": "recorded", "assessment": str(destination),
-                      "finding_ids": assessment["finding_ids"], "claim_ids": assessment["claim_ids"]}, indent=2))
+    summary = {"status": "recorded", "assessment": str(destination),
+               "finding_ids": assessment["finding_ids"], "claim_ids": assessment["claim_ids"]}
+    if assessment.get("legacy_untyped_evidence"):
+        summary["note"] = ("WARNING: " + str(len(assessment["legacy_untyped_evidence"])) +
+                           " cited evidence item(s) have no Mom Test statement_type (legacy); retype before relying on them")
+        summary["legacy_untyped_evidence"] = assessment["legacy_untyped_evidence"]
+    print(json.dumps(summary, indent=2))
     return 0
 
 

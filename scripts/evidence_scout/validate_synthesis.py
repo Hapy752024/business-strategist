@@ -9,7 +9,8 @@ import json
 from pathlib import Path
 from typing import Any
 from build_claim_ledger import stable_id, independent_groups
-from reviewed_voice import review_voice, reviewed_view, VOICES
+from reviewed_voice import (review_voice, reviewed_view, VOICES, review_file_is_typed,
+                            statement_support_problem, CLAIM_TYPES_NEEDING_TYPED_SUPPORT)
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
@@ -95,7 +96,9 @@ def validate_finding_claim_links(synthesis: dict[str, Any], ledger: list[dict[st
 
 
 def validate(ledger: list[dict[str, Any]], evidence: list[dict[str, Any]], *, require_source_review: bool = False,
-             require_verification: bool = False, evidence_sha256: str = "", source_review_sha256: str = "") -> list[str]:
+             require_verification: bool = False, evidence_sha256: str = "", source_review_sha256: str = "",
+             statement_reviews: dict | None = None, typed: bool = False, warnings: list[str] | None = None) -> list[str]:
+    """statement_reviews: evidence_id -> source-review entry; enables the Mom Test support-type check."""
     known = {record["evidence_id"]: record for record in evidence}
     errors: list[str] = []
     for claim in ledger:
@@ -162,6 +165,15 @@ def validate(ledger: list[dict[str, Any]], evidence: list[dict[str, Any]], *, re
                 errors.append(f"{ident}: transfer requires applicability_basis")
             if kind == "pattern" and claim.get("confidence") == "high" and derived < 2:
                 errors.append(f"{ident}: high-confidence cross-customer pattern requires independently attributable customers; one occurrence is not a pattern")
+        if statement_reviews is not None and kind in CLAIM_TYPES_NEEDING_TYPED_SUPPORT:
+            for evidence_id in support:
+                problem = statement_support_problem(statement_reviews.get(evidence_id), typed)
+                if problem is None:
+                    continue
+                if problem[0] == "error":
+                    errors.append(f"{ident}: {evidence_id} {problem[1]}")
+                elif warnings is not None:
+                    warnings.append(f"{ident}: {evidence_id} {problem[1]} (legacy review, warns only)")
         if not counter:
             scope = claim.get("none_found_scope")
             if not isinstance(scope, dict) or not SCOPE_KEYS.issubset(scope) or any(not scope[key] and key != "failed_routes" for key in SCOPE_KEYS):
@@ -198,8 +210,13 @@ def main() -> int:
     ledger = json.loads(args.ledger.read_text(encoding="utf-8"))
     records = read_jsonl(args.evidence)
     errors = []
+    statement_reviews = None
+    typed = False
+    warnings: list[str] = []
     if args.source_review:
         review = json.loads(args.source_review.read_text())
+        typed = review_file_is_typed(review, args.source_review.resolve().parent)
+        statement_reviews = {r.get("evidence_id"): r for r in review.get("reviews", [])}
         if review.get("evidence_sha256") != hashlib.sha256(args.evidence.read_bytes()).hexdigest() or review.get("target_segment") != args.customer_segment:
             errors.append("stale or wrong-segment source review")
         by_id = {r.get("evidence_id"): r for r in review.get("reviews", [])}
@@ -207,17 +224,19 @@ def main() -> int:
             item = by_id.get(record["evidence_id"], {})
             record.pop("analyst_review", None)
             if item.get("status") == "accepted":
-                problems = review_voice(record, item, args.customer_segment)
+                problems = review_voice(record, item, args.customer_segment, typed)
                 errors.extend(f"{record['evidence_id']}: {p}" for p in problems)
                 if not problems:
                     records[index] = reviewed_view(record, item)
     errors.extend(validate(ledger, records, require_source_review=args.require_source_review or bool(args.source_review),
                            require_verification=args.require_verification,
                            evidence_sha256=hashlib.sha256(args.evidence.read_bytes()).hexdigest(),
-                           source_review_sha256=hashlib.sha256(args.source_review.read_bytes()).hexdigest() if args.source_review else ""))
+                           source_review_sha256=hashlib.sha256(args.source_review.read_bytes()).hexdigest() if args.source_review else "",
+                           statement_reviews=statement_reviews, typed=typed, warnings=warnings))
     if args.synthesis:
         errors.extend(validate_finding_claim_links(json.loads(args.synthesis.read_text()), ledger, records))
-    print(json.dumps({"status": "pass" if not errors else "fail", "errors": errors}, indent=2))
+    legacy = sorted({w.split(": ")[1].split(" ")[0] for w in warnings})
+    print(json.dumps({"status": "pass" if not errors else "fail", "errors": errors, "warnings": warnings, "legacy_untyped_evidence": legacy}, indent=2))
     return 0 if not errors else 1
 
 

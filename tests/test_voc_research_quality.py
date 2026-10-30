@@ -287,3 +287,49 @@ def test_unsupported_claim_cannot_support_a_positive_customer_finding():
                  "solution_requirements": []}
     errors = validate_finding_claim_links(synthesis, [claim], [source])
     assert any("does not support this published finding" in error for error in errors)
+
+
+def _claim_pack(tmp_path, stype, *, packet_flag=None, file_flags=None):
+    r = {"evidence_id": "t1", "source_url": "https://community.example/1", "source": "forum", "text": "I paid for a workaround last month.",
+         "sampling_frame": "topic_led_voc", "collection_locale": "CH:de", "source_role": "community_context", "author_voice_status": "unreviewed"}
+    ev = json.dumps(r) + "\n"
+    (tmp_path / "evidence.jsonl").write_text(ev)
+    rv = review(r, **({"statement_type": stype} if stype else {}))
+    sr = {"evidence_sha256": hashlib.sha256(ev.encode()).hexdigest(), "target_segment": "households", "reviews": [rv], **(file_flags or {})}
+    if packet_flag is not None:
+        (tmp_path / "packet.json").write_text(json.dumps({"statement_typing": packet_flag}))
+    (tmp_path / "source-review.json").write_text(json.dumps(sr))
+    claim = {"claim_id": "C1", "claim_type": "occurrence", "claim": "x", "supporting_evidence": ["t1"], "counter_evidence": [],
+             "independence_count": 1, "confidence": "unresolved", "confidence_rationale": "t",
+             "none_found_scope": {}}
+    (tmp_path / "ledger.json").write_text(json.dumps([claim]))
+    return subprocess.run([sys.executable, str(ROOT / "scripts/evidence_scout/validate_synthesis.py"), "--evidence", str(tmp_path / "evidence.jsonl"),
+                           "--ledger", str(tmp_path / "ledger.json"), "--source-review", str(tmp_path / "source-review.json"),
+                           "--customer-segment", "households"], capture_output=True, text=True)
+
+
+def test_claim_ledger_rejects_compliment_support(tmp_path):
+    result = _claim_pack(tmp_path, "compliment")
+    assert "statement_type=compliment" in result.stdout
+    ok = _claim_pack(tmp_path / "b" if (tmp_path / "b").mkdir() is None else tmp_path, "past_behaviour")
+    assert "statement_type" not in ok.stdout
+
+
+def test_claim_ledger_legacy_missing_type_warns_typed_fails(tmp_path):
+    legacy = _claim_pack(tmp_path, None)
+    assert "statement_type" not in " ".join(json.loads(legacy.stdout)["errors"])
+    assert json.loads(legacy.stdout)["legacy_untyped_evidence"] == ["t1"]
+    d = tmp_path / "typed"; d.mkdir()
+    typed = _claim_pack(d, None, file_flags={"statement_typing": True})
+    assert any("statement_type" in e for e in json.loads(typed.stdout)["errors"])
+
+
+def test_review_from_new_packet_is_enforced_without_copied_flag(tmp_path):
+    result = _claim_pack(tmp_path, None, packet_flag=True, file_flags={"source_packet": "packet.json"})
+    assert any("statement_type" in e for e in json.loads(result.stdout)["errors"])
+    d = tmp_path / "legacy"; d.mkdir()
+    old = _claim_pack(d, None, packet_flag=False, file_flags={"source_packet": "packet.json"})
+    assert not any("statement_type" in e for e in json.loads(old.stdout)["errors"])
+    # packet builder marks itself typed
+    from build_review_packet import build as build_packet
+    assert build_packet({}, [], [], [], {})["statement_typing"] is True

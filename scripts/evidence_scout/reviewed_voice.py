@@ -6,6 +6,9 @@ be overridden. This validates review structure, not the reviewer's interpretatio
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 VOICES = {
     "customer": "firsthand_customer", "former_customer": "firsthand_former_customer",
     "prospective_user": "firsthand_prospective_user", "nonadopter": "firsthand_nonadopter",
@@ -14,6 +17,9 @@ CUSTOMER_ROLES = {"customer_statement", "customer_review", "community_context"}
 # Mom Test statement typing: only observed behaviour and real commitments can back a pain/demand claim.
 STATEMENT_TYPES = {"past_behaviour", "commitment", "compliment", "fluff", "feature_request", "unclassified"}
 CLAIM_SUPPORTING_TYPES = {"past_behaviour", "commitment"}
+TYPING_EFFECTIVE_DATE = "2026-10-30"  # reviews created on/after this date are new-style
+# claim_type values (schemas/claim-record.schema.json) that assert customer pain/need/demand
+CLAIM_TYPES_NEEDING_TYPED_SUPPORT = {"occurrence", "pattern", "unmetness", "prevalence", "willingness_to_pay"}
 SUPPLIER_VOICES = {"supplier_context", "supplier", "company", "affiliate", "official_provider"}
 
 
@@ -88,3 +94,41 @@ def reviewed_collection_locales(record: dict, review: dict) -> set[str]:
     language = resolution.get("language")
     return {item for item in record.get("requested_locales", [])
             if item.split(":", 1)[0] == locale.split(":", 1)[0] and item.split(":", 1)[1] == language}
+
+
+def review_file_is_typed(review_file: dict, base_dir: Path | None = None) -> bool:
+    """New-style review file: carries the flag, references a typed packet, or postdates the change.
+
+    Legacy = none of these. A referenced packet that cannot be read counts as typed (strict).
+    """
+    if review_file.get("statement_typing") is True:
+        return True
+    version = review_file.get("schema_version")
+    if type(version) is int and version >= 2:
+        return True
+    created = str(review_file.get("created_at") or review_file.get("reviewed_at") or "")[:10]
+    if created and created >= TYPING_EFFECTIVE_DATE:
+        return True
+    packet = review_file.get("source_packet")
+    if isinstance(packet, str) and packet.strip():
+        path = Path(packet)
+        if not path.is_absolute() and base_dir is not None:
+            path = base_dir / path
+        try:
+            return json.loads(path.read_text(encoding="utf-8")).get("statement_typing") is True
+        except (OSError, ValueError, AttributeError):
+            return True
+    return False
+
+
+def statement_support_problem(review: dict | None, typed: bool) -> tuple[str, str] | None:
+    """('error'|'warn', message) when this review cannot back a pain/need/demand claim, else None.
+
+    A missing review or missing type counts as unclassified: warn for legacy files, error for typed ones.
+    """
+    stype = (review or {}).get("statement_type")
+    if stype is None:
+        return ("error" if typed else "warn", "has no statement_type (unclassified)")
+    if stype not in CLAIM_SUPPORTING_TYPES:
+        return ("error", f"statement_type={stype} cannot support a pain/need/demand claim; only past_behaviour or commitment")
+    return None
