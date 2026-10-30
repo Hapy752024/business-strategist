@@ -713,6 +713,41 @@
       "caveat": "Ads are a supplier-spend signal for an intent, not customer demand; no ads observed is not evidence of no demand, and unobserved (Serper fallback) is never zero. Point-in-time, unpersonalised sample that varies by time, location and device. Brainstormed queries are hypotheses. Volumes stay null."
     },
     {
+      "id": "dataforseo_keywords",
+      "family": "demand_proxy",
+      "label": "DataForSEO Google Ads keyword volumes",
+      "description": "Monthly search volume, CPC and paid-competition index per keyword and location from DataForSEO Keywords Data (google_ads/search_volume/live). Fills the keyword map's volume fields; the official DataForSEO MCP server is also configured in .mcp.json for ad hoc SEO data.",
+      "use_when": [
+        "keyword volume",
+        "search volume",
+        "cpc",
+        "keyword map volumes",
+        "seo demand sizing"
+      ],
+      "avoid_when": [
+        "customer pain proof",
+        "willingness to pay",
+        "market size",
+        "unbounded keyword lists"
+      ],
+      "evidence_strength": "weak_demand_proxy_point_in_time",
+      "collector_provider": "scripts/marketing/keyword_volume.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "dataforseo"
+      ],
+      "requires_env": [
+        "DATAFORSEO_LOGIN",
+        "DATAFORSEO_PASSWORD"
+      ],
+      "fallbacks": [],
+      "approval_required": false,
+      "authorization_policy": "Metered per task (up to 1000 keywords); paid customer-evidence API spend is pre-authorized, bound each run with --max-keywords (default 200) and read the printed estimate first. Does not authorize ads or publication.",
+      "status_check": "python3 scripts/validate_apis/validate_dataforseo.py",
+      "example": "python3 scripts/marketing/keyword_volume.py --map marketing/keywords/keyword-map.json --location-code 2276 --language-code de --max-keywords 200",
+      "caveat": "Demand proxy, not customer pain. Google Ads volumes are bucketed, rounded estimates, may combine similar keywords and return null for some terms; unknown stays null. Record provider and date."
+    },
+    {
       "id": "firecrawl",
       "family": "web_discovery_extraction",
       "label": "Firecrawl search/scrape",

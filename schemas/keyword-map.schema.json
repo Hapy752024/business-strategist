@@ -134,6 +134,34 @@
               "string",
               "null"
             ]
+          },
+          "cpc": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "competition": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Google Ads competition index 0-100 (paid SERP only)"
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fetched_at": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [

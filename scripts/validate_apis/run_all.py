@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = [
     "validate_serpapi_google_trends.py",
     "validate_dataforseo_google_trends.py",
+    "validate_dataforseo.py",
     "validate_reddit.py",
     "validate_youtube.py",
     "validate_firecrawl.py",

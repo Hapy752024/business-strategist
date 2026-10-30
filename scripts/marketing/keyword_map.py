@@ -41,7 +41,8 @@ def validate(document: dict, base: Path | None = None, staged: dict | None = Non
             errors.append('existing page requires retain/improve/consolidate decision: ' + row['id'])
         if row['decision'] in {'consolidate', 'retire'} and 'redirect_to' not in row:
             errors.append('consolidate/retire requires intentional redirect_to (null allowed): ' + row['id'])
-        if row.get('volume') is not None and not (row.get('volume_provider') and row.get('volume_checked_at')):
+        if row.get('volume') is not None and not ((row.get('volume_provider') and row.get('volume_checked_at'))
+                                                  or (row.get('source') and row.get('fetched_at'))):
             errors.append('volume estimate requires provider and date: ' + row['id'])
         for binding in row['evidence_refs']:
             try:

@@ -42,6 +42,16 @@
       "_category": "community_discovery",
       "_priority": "medium",
       "_comment": "Hosted Apify MCP: run Store actors (Reddit, review sites) as capped paid fallbacks. Actor output is collected via scripts, never cited raw."
+    },
+    "dataforseo": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "dataforseo-mcp-server@3.1.3"
+      ],
+      "_category": "seo_data",
+      "_priority": "medium",
+      "_comment": "Official DataForSEO MCP (metered per call). It reads DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD from the launching shell environment (export them; no env block so no secrets are templated here). Keyword volumes for the keyword map go through scripts/marketing/keyword_volume.py (capped, cost shown first); use MCP tools for ad hoc SERP/keyword questions. Demand proxy, not customer pain."
     }
   }
 }
