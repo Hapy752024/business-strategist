@@ -77,7 +77,8 @@ def test_proposals_only_and_reviewed_map_not_modified(files, tmp_path):
     before = hashlib.sha256(m.read_bytes()).hexdigest()
     result = sf.compare(m, g, metadata=META)
     assert hashlib.sha256(m.read_bytes()).hexdigest() == before
-    kinds = {p['signal']: p['suggested_decision'] for p in result['decision_proposals']}
+    kinds = {p['signal']: p['suggested_decision'] for p in result['decision_proposals'] if 'suggested_decision' in p}
+    assert all(p['suggested_action'] == 'review' for p in result['decision_proposals'] if p['signal'] == 'planned_no_impressions')
     assert kinds['impressions_no_clicks'] == 'improve' and kinds['unplanned_with_impressions'] == 'create'
     assert all(p['reviewed'] is False for p in result['decision_proposals'])
     with pytest.raises(ValueError):
@@ -104,3 +105,51 @@ def test_query_preset_keeps_question_marks(tmp_path):
     g.write_text('Top queries,Clicks,Impressions,CTR,Position\nwas kostet eine bu? preis,1,10,10%,3\n')
     doc = import_export(g, 'gsc-queries-v1', META)
     assert doc['observations'][0]['dimension'] == 'was kostet eine bu? preis'
+
+
+def _write(tmp_path, rows, csv):
+    m = tmp_path / 'm.json'
+    m.write_text(json.dumps({'rows': rows}))
+    g = tmp_path / 'q.csv'
+    g.write_text('Top queries,Clicks,Impressions,CTR,Position\n' + csv)
+    return m, g
+
+
+def test_unmatched_unknown_impressions_are_listed(tmp_path):
+    m, g = _write(tmp_path, MAP['rows'], 'mystery query,,,,\nbu für studenten,,,,\n')
+    result = sf.compare(m, g, metadata=META)
+    assert [q['query'] for q in result['unknown']['queries']] == ['mystery query']
+    summary = {c['id']: c for c in result['cluster_summary']}
+    assert summary['r3']['unknown_rows'] == 1 and summary['r3']['matched_rows'] == 1
+
+
+def test_short_single_token_term_does_not_absorb_queries(tmp_path):
+    rows = [{'id': 'b', 'primary_term': 'bu', 'secondary_terms': ['rechner'], 'target_url': 'u', 'decision': 'create'},
+            {'id': 'c', 'primary_term': 'berufsunfähigkeitsversicherung', 'secondary_terms': [], 'target_url': 'v', 'decision': 'create'}]
+    m, g = _write(tmp_path, rows, 'bu versicherung kosten selbstständige,0,220,0%,12\nbu,3,50,6%,5\n'
+                  'berufsunfähigkeitsversicherung für beamte und studenten im ersten jahr,1,40,2%,7\n')
+    result = sf.compare(m, g, metadata=META)
+    assert [q['query'] for q in result['unplanned_with_impressions']['queries']] == ['bu versicherung kosten selbstständige']
+    got = {x['query']: x for x in result['matched']}
+    assert got['bu']['match'] == 'exact'
+    assert got['berufsunfähigkeitsversicherung für beamte und studenten im ersten jahr'].get('broad_match') is True
+
+
+def test_retiring_clusters_not_proposed_for_review(tmp_path):
+    rows = [{'id': 'x', 'primary_term': 'alt thema', 'target_url': 'u', 'decision': 'retire'}]
+    m, g = _write(tmp_path, rows, 'anderes,1,20,5%,3\n')
+    result = sf.compare(m, g, metadata=META)
+    assert result['planned_no_impressions']['count'] == 0 and result['planned_no_impressions']['skipped_retiring'][0]['id'] == 'x'
+
+
+def test_query_preset_drops_private_rows_but_pages_preset_still_fails(tmp_path):
+    from scripts.marketing.import_presets import import_export
+    g = tmp_path / 'q.csv'
+    g.write_text('Top queries,Clicks,Impressions,CTR,Position\nmail me a@b.de,1,10,10%,3\nbu kosten,2,20,10%,4\n')
+    doc = import_export(g, 'gsc-queries-v1', META)
+    assert [o['dimension'] for o in doc['observations'] if o['metric'] == 'clicks'] == ['bu kosten']
+    assert doc['excluded_private_query_rows'] == 1
+    p = tmp_path / 'p.csv'
+    p.write_text('Top pages,Clicks,Impressions,CTR,Position\nhttps://x.de/a@b.de,1,10,10%,3\n')
+    with pytest.raises(ValueError):
+        import_export(p, 'gsc-pages-v1', META)

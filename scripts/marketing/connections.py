@@ -32,8 +32,8 @@ PROBES={
            'call':'Google Ads listAccessibleCustomers'},
 }
 OWNER_STEPS={
-    'gsc':['Run: npx search-console-mcp@2.1.3 setup (browser OAuth; keep the default read-only webmasters.readonly scope) or create Application Default Credentials with the webmasters.readonly scope.',
-           'Add the authorizing Google account (or service-account email) as a user of the Search Console property.'],
+    'gsc':['Run: npx search-console-mcp@2.1.3 setup (user OAuth; keep the default webmasters.readonly scope). That OAuth does not create ADC, so this probe also needs ADC with the webmasters.readonly scope (gcloud auth application-default login --scopes https://www.googleapis.com/auth/webmasters.readonly). Do not use owner-level service-account credentials.',
+           'Add the authorizing Google account as a user of the Search Console property.'],
     'ga4':['Run: gcloud auth application-default login --scopes https://www.googleapis.com/auth/analytics.readonly,https://www.googleapis.com/auth/cloud-platform',
            'Enable the Google Analytics Admin API and Data API in the Cloud project, and give the authorizing account Viewer access to the GA4 property.'],
     'google_ads':['Create Application Default Credentials for an account with access to the Ads customer (scope https://www.googleapis.com/auth/adwords; broad, so read-only rests on the MCP tool list, not the scope).',

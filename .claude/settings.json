@@ -58,7 +58,15 @@
       "Bash(git push --force *)",
       "Read(.env)",
       "Read(.env.*)",
-      "Read(**/*secret*)"
+      "Read(**/*secret*)",
+      "mcp__search-console-mcp__sites_manage",
+      "mcp__search-console-mcp__sitemaps_submit",
+      "mcp__search-console-mcp__sitemaps_delete",
+      "mcp__search-console-mcp__indexing_submit",
+      "mcp__search-console-mcp__accounts_manage",
+      "mcp__search-console-mcp__adsense_accounts",
+      "mcp__search-console-mcp__adsense_report",
+      "mcp__search-console-mcp__adsense_payments_alerts"
     ]
   },
   "hooks": {

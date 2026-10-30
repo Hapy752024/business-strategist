@@ -68,7 +68,7 @@ def import_export(path, name, metadata):
     if len(rows)-header_index-1>MAX_ROWS: raise ValueError('export exceeds row limit')
     header=rows[header_index]
     if len(header)!=len(set(header)): raise ValueError('duplicate CSV headers')
-    observed=[]; seen=set(); discarded=0
+    observed=[]; seen=set(); discarded=0; private_dropped=0
     for index, row in enumerate(rows[header_index+1:],header_index+2):
         if not row or not any(v.strip() for v in row) or (row[0].startswith('#')): continue
         if len(row)!=len(header): raise ValueError('CSV row '+str(index)+' does not match its header')
@@ -76,6 +76,8 @@ def import_export(path, name, metadata):
         if spec['provider'] in AD_PROVIDERS and dimension in {'','--'} and any(v.strip().lower().startswith('total:') for v in row[:2]):
             discarded+=1;continue
         if not dimension: raise ValueError('export row is missing its dimension')
+        if PRIVATE.search(dimension) and spec.get('dimension_kind')=='query':
+            private_dropped+=1;continue
         if PRIVATE.search(dimension): raise ValueError('dimension may contain private data; use a sanitized aggregate export')
         if spec['provider'] in {'gsc','ga4'} and spec.get('dimension_kind')!='query':
             parts=urlsplit(dimension)
@@ -122,6 +124,7 @@ def import_export(path, name, metadata):
         'transform_version':spec['transform_version'],'input_sha256':bytes_digest(raw),'metadata':metadata,
         'observations':observed,'summary':summary,'excluded_total_rows':discarded,
         'limitations':['Aggregate exports do not establish causal uplift.','Dimensions are limited to the selected export; missing or suppressed data is not zero.']}
+    if spec.get('dimension_kind')=='query': document['excluded_private_query_rows']=private_dropped
     document['import_id']=digest(document)
     return document
 

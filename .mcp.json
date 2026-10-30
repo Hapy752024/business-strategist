@@ -61,7 +61,7 @@
       ],
       "_category": "first_party_analytics",
       "_priority": "low",
-      "_comment": "Official Google Analytics MCP (googleanalytics/google-analytics-mcp), read-only: never add --allow-write. Credentials come from Application Default Credentials created by the account owner with the analytics.readonly scope (see references/ad-platform-connections.md, Read connectors). Pinned to 0.7.0 (2026-07-29); 0.8.0 (2026-10-22) was under two weeks old. Enable in .claude/settings.local.json."
+      "_comment": "Official Google Analytics MCP (googleanalytics/google-analytics-mcp), read-only: 0.7.0 exposes no write tools and hard-codes the readonly scope. Credentials come from Application Default Credentials created by the account owner with the analytics.readonly scope (see references/ad-platform-connections.md, Read connectors). Pinned to 0.7.0 (2026-07-29); 0.8.0 (2026-10-22) was under two weeks old. Enable in .claude/settings.local.json."
     },
     "google-ads-mcp": {
       "command": "pipx",
@@ -83,7 +83,7 @@
       ],
       "_category": "first_party_analytics",
       "_priority": "low",
-      "_comment": "saurabhsharma2u/search-console-mcp 2.1.3 (2026-09-02, tag commit ec9cf15). Default OAuth scope is webmasters.readonly, so its write tools (sites_manage, sitemaps_submit/delete, indexing_submit) cannot succeed; never run setup with the indexing scope, never set BING_API_KEY, and do not use its GA4/AdSense engines (use analytics-mcp). Read-only is enforced by the credential scope, not by the tool list. Enable in .claude/settings.local.json."
+      "_comment": "saurabhsharma2u/search-console-mcp 2.1.3 (2026-09-02, tag commit ec9cf15). Read-only is enforced by the permissions.deny list in .claude/settings.json (sites_manage, sitemaps_submit/delete, indexing_submit, accounts_manage, adsense_*) plus the OAuth webmasters.readonly scope; the server itself has no read-only flag and requests the indexing scope on its own with service-account credentials, so use user OAuth only and never owner-level service-account credentials. Do not run setup with the indexing scope, never set BING_API_KEY, and do not use its GA4 engine (use analytics-mcp). Enable in .claude/settings.local.json."
     }
   }
 }

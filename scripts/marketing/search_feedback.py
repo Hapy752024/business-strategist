@@ -3,7 +3,8 @@
 Matching rule (documented, deterministic): a query and each planned term (primary term, secondary terms and, for
 proposed maps, question texts) are normalised (casefold, punctuation to spaces, whitespace collapsed). A query matches
 a cluster `exact` when it equals one of its terms, or `contains` when a term's tokens appear as a contiguous run inside
-the query tokens. Exact beats contains; then the longer term wins; then map order. Locale is not used for matching
+the query tokens (single-token terms shorter than 6 characters match exactly only, so "bu" does not absorb every query;
+a contains match covering under half the query's tokens carries `broad_match`). Exact beats contains; then the longer term wins; then map order. Locale is not used for matching
 (Search Console exports carry no locale). No stemming or fuzzy matching: unmatched queries are reported, not guessed.
 
 Interpretation limits: Search Console omits rare (anonymised) queries, so a planned cluster with no matching rows is
@@ -21,6 +22,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 MIN_IMPRESSIONS = 10
+MIN_SINGLE_TOKEN_CHARS = 6
 LIMITATION = ('Search Console omits rare (anonymised) queries and exports are row-limited, so "no impressions" means none '
               'observed in this export, not proven zero.')
 
@@ -37,12 +39,12 @@ def _clusters(document: dict) -> list[dict]:
             continue
         terms = [row['primary_term'], *row.get('secondary_terms', []),
                  *[q['text'] if isinstance(q, dict) else q for q in row.get('questions', [])]]
-        out.append({'id': cid, 'primary_term': row['primary_term'], 'target_url': row.get('target_url') or row.get('existing_url'),
+        out.append({'id': cid, 'primary_term': row['primary_term'], 'target_url': row.get('target_url') or row.get('existing_url'), 'decision': row.get('decision'),
                     'terms': [t for t in dict.fromkeys(normalise(t) for t in terms if t) if t]})
     return out
 
 
-def _match(query: str, clusters: list[dict]):
+def _match(query: str, clusters: list[dict], min_single: int = MIN_SINGLE_TOKEN_CHARS):
     q = normalise(query)
     tokens = q.split()
     best = None
@@ -51,13 +53,13 @@ def _match(query: str, clusters: list[dict]):
             t = term.split()
             if q == term:
                 kind = 2
-            elif any(tokens[i:i + len(t)] == t for i in range(len(tokens) - len(t) + 1)):
+            elif (len(t) > 1 or len(term) >= min_single) and any(tokens[i:i + len(t)] == t for i in range(len(tokens) - len(t) + 1)):
                 kind = 1
             else:
                 continue
             rank = (kind, len(t), -index)
             if best is None or rank > best[0]:
-                best = (rank, cluster, 'exact' if kind == 2 else 'contains', term)
+                best = (rank, cluster, 'exact' if kind == 2 else 'contains', term, len(t) * 2 < len(tokens))
     return None if best is None else best[1:]
 
 
@@ -74,7 +76,8 @@ def _observations(gsc_export: Path, metadata: dict | None) -> dict:
     return import_export(path, 'gsc-queries-v1', metadata)
 
 
-def compare(keyword_map: Path, gsc_export: Path, *, metadata: dict | None = None, min_impressions: int = MIN_IMPRESSIONS) -> dict:
+def compare(keyword_map: Path, gsc_export: Path, *, metadata: dict | None = None, min_impressions: int = MIN_IMPRESSIONS,
+            min_single_token_chars: int = MIN_SINGLE_TOKEN_CHARS) -> dict:
     """Compare planned clusters with real queries; returns proposals only and never writes the map."""
     clusters = _clusters(json.loads(Path(keyword_map).read_text()))
     document = _observations(gsc_export, metadata)
@@ -82,23 +85,30 @@ def compare(keyword_map: Path, gsc_export: Path, *, metadata: dict | None = None
     queries: dict[str, dict] = {}
     for obs in document['observations']:
         queries.setdefault(obs['dimension'], {})[obs['metric']] = obs['value']
-    matched, unplanned, per_cluster = [], [], {c['id']: [] for c in clusters}
+    matched, unplanned, unknown_queries, per_cluster = [], [], [], {c['id']: [] for c in clusters}
     for query, values in queries.items():
-        hit = _match(query, clusters)
+        hit = _match(query, clusters, min_single_token_chars)
         row = {'query': query, 'impressions': values.get('impressions'), 'clicks': values.get('clicks'), 'position': values.get('position')}
         if hit:
-            cluster, kind, term = hit
+            cluster, kind, term, broad = hit
             per_cluster[cluster['id']].append(row)
-            matched.append(row | {'cluster_id': cluster['id'], 'match': kind, 'matched_term': term})
-        elif (row['impressions'] or 0) > 0:
+            matched.append(row | {'cluster_id': cluster['id'], 'match': kind, 'matched_term': term}
+                           | ({'broad_match': True} if broad and kind == 'contains' else {}))
+        elif row['impressions'] is None:
+            unknown_queries.append(row)
+        elif row['impressions'] > 0:
             unplanned.append(row)
-    no_impr, unknown, no_clicks = [], [], []
+    no_impr, unknown, no_clicks, skipped, summary = [], [], [], [], []
     for cluster in clusters:
         rows = per_cluster[cluster['id']]
         known = [r for r in rows if r['impressions'] is not None]
+        summary.append({'id': cluster['id'], 'matched_rows': len(rows), 'unknown_rows': len(rows) - len(known)})
         ref = {'id': cluster['id'], 'primary_term': cluster['primary_term'], 'target_url': cluster['target_url']}
         if not rows:
-            no_impr.append(ref)
+            if cluster['decision'] in {'retire', 'consolidate'}:
+                skipped.append(ref | {'decision': cluster['decision']})
+            else:
+                no_impr.append(ref)
         elif not known:
             unknown.append(ref | {'reason': 'matching export rows have blank or suppressed values'})
         for r in known:
@@ -108,7 +118,7 @@ def compare(keyword_map: Path, gsc_export: Path, *, metadata: dict | None = None
     no_clicks.sort(key=lambda r: -r['impressions'])
     proposals = [{'signal': 'impressions_no_clicks', 'cluster_id': r['cluster_id'], 'query': r['query'], 'suggested_decision': 'improve',
                   'note': 'Hypothesis: title/snippet does not earn the click; test before rewriting.', 'reviewed': False} for r in no_clicks]
-    proposals += [{'signal': 'planned_no_impressions', 'cluster_id': c['id'], 'suggested_decision': 'review',
+    proposals += [{'signal': 'planned_no_impressions', 'cluster_id': c['id'], 'suggested_action': 'review',
                    'note': 'No impressions observed in this window; check indexing, publication date and window length first.', 'reviewed': False} for c in no_impr]
     proposals += [{'signal': 'unplanned_with_impressions', 'query': r['query'], 'suggested_decision': 'create',
                    'note': 'Real query with no planned cluster; candidate new content or an addition to an existing cluster.', 'reviewed': False} for r in unplanned]
@@ -117,8 +127,10 @@ def compare(keyword_map: Path, gsc_export: Path, *, metadata: dict | None = None
             'window': {k: meta[k] for k in ('period_start', 'period_end', 'timezone')},
             'matching_rule': 'normalised exact term, else contiguous term tokens inside the query; exact > contains > longer term > map order',
             'matched': matched,
-            'planned_no_impressions': {'count': len(no_impr), 'clusters': no_impr, 'limitation': LIMITATION},
-            'unknown': {'count': len(unknown), 'clusters': unknown},
+            'planned_no_impressions': {'count': len(no_impr), 'clusters': no_impr, 'skipped_retiring': skipped, 'limitation': LIMITATION},
+            'unknown': {'count': len(unknown), 'clusters': unknown, 'queries': unknown_queries,
+                        'note': 'Rows with blank or suppressed impressions; unknown is not zero.'},
+            'cluster_summary': summary,
             'impressions_no_clicks': {'count': len(no_clicks), 'min_impressions': min_impressions, 'queries': no_clicks,
                                       'interpretation': 'Title/snippet problem hypothesis only; position, intent and SERP features also lower click-through.'},
             'unplanned_with_impressions': {'count': len(unplanned), 'queries': unplanned},

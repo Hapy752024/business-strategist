@@ -76,3 +76,13 @@ def test_providers_and_mcp_entries_are_read_only_and_pinned():
         text = json.dumps({k: v for k, v in servers[name].items() if not k.startswith('_')})
         assert '--allow-write' not in text and 'BING_API_KEY' not in text and 'DEVELOPER_TOKEN' not in text.upper()
         assert '==' in text or '@2.' in text or '@0.' in text, 'version must be pinned'
+
+
+def test_search_console_write_tools_denied_and_not_allowed():
+    perms = json.loads((ROOT / '.claude/settings.json').read_text())['permissions']
+    assert 'search-console-mcp' in json.loads((ROOT / '.mcp.json').read_text())['mcpServers']
+    for tool in ('sites_manage', 'sitemaps_submit', 'sitemaps_delete', 'indexing_submit', 'accounts_manage',
+                 'adsense_accounts', 'adsense_report', 'adsense_payments_alerts'):
+        assert 'mcp__search-console-mcp__' + tool in perms['deny']
+    assert 'Bash(rm -rf *)' in perms['deny']
+    assert not [a for a in perms['allow'] if a.startswith('mcp__')]
