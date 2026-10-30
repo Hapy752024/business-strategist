@@ -13,6 +13,16 @@ Single shared record for failures, problems and improvement candidates across th
 
 ## Review queue
 
+### WF-028 — Reddit public Data API sunset breaks reddit + Dialog MCP lanes
+
+- Priority/status: P1/open.
+- First/last observed: 2026-10-30. Owner: Provider maintenance; app registration needs the founder/account owner.
+- Observed (unverified against Reddit's own notice in this repo; recorded from the task brief): no new API access after 2026-10-31; RSS feeds off 2026-11-13; unregistered apps cut off 2027-01-12; public Data API ends March 2027 (recorded as 2027-03-31 in `config/source-capabilities.json`, `reddit.sunset`). The `reddit_dialog_mcp` lane (`dialog-mcp` in `.mcp.json`) wraps the same API and retires with it.
+- Expected behavior and impact: Reddit customer-voice collection (`reddit` provider, Dialog discovery) keeps working or degrades to a declared fallback. Without action, community pain, workaround and reachable-community evidence from Reddit becomes a coverage gap after the cutoffs; a gap is not absence of demand.
+- Cause: upstream platform policy change; confirmed only as far as the brief states it.
+- Next action: owner registers the app at https://www.reddit.com/prefs/apps with the Developer Platform (https://developers.reddit.com) before 2027-01-12 and applies to the migration program by 2026-11-30. Fallback order is recorded as `apify_reddit`, `scrapecreators_reddit`, `arctic_shift`; those providers are not yet registered as capabilities or collectors.
+- Resolution/history: 2026-10-30 sunset dates and fallback order recorded in the capability file; fallback collectors still to be built.
+
 ### WF-027 — Website SEO launch misses production host canonicals and owner indexing handoff
 
 - Priority/status: P2/resolved for deterministic implementation; live agent behavior unverified. First/last observed: 2026-10-30. Owner: Website skill maintenance (`brand-website-designer-builder`).
@@ -99,6 +109,7 @@ Single shared record for failures, problems and improvement candidates across th
 
 | ID | Priority | Status | Area | Issue |
 | --- | --- | --- | --- | --- |
+| WF-028 | P1 | open | Reddit API | Public Data API sunset breaks reddit and Dialog MCP lanes |
 | WF-027 | P2 | resolved | Website SEO launch | Production host canonicals unverified; no Search Console owner handoff |
 | WF-023 | P2 | in_progress | Visa-check email | Raw JSON email and unclear successful-send state |
 | WF-024 | P2 | resolved | Validation loop | Modules shared no checked state; experiments and truthfulness were unenforced |

@@ -1,4 +1,7 @@
 """New provider capability registrations stay valid and discoverable."""
+import json
+from pathlib import Path
+
 from scripts import capability_lookup as cl
 
 
@@ -20,3 +23,15 @@ def test_dialog_entry_is_discovery_only_with_collector_handoff():
     item = next(i for i in cl.load_catalog()['capabilities'] if i['id'] == 'reddit_dialog_mcp')
     assert item['family'] == 'community_discovery' and item['evidence_strength'] == 'none_discovery_only'
     assert 'subreddit_query_rows.py' in item['example'] and 'project .mcp.json' in item['setup']
+
+
+def capability(cap_id):
+    path = Path(__file__).resolve().parents[1] / 'config' / 'source-capabilities.json'
+    caps = json.loads(path.read_text())['capabilities']
+    return next(c for c in caps if c['id'] == cap_id)
+
+
+def test_reddit_capability_declares_sunset_and_fallbacks():
+    cap = capability('reddit')
+    assert cap['sunset']['public_api_end'] == '2027-03-31'
+    assert cap['sunset']['fallback_order'][0] == 'apify_reddit'
