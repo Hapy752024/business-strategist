@@ -150,3 +150,25 @@ def test_question_only_row_and_voc_refs_and_input_target_refused(inputs):
     with pytest.raises(ValueError):
         merge_content_inputs(search, out=search)
     assert not list(tmp.glob('*.tmp'))
+
+
+def _comp(tmp, name, **row):
+    base = {'cluster_id': 'bu-student', 'topic': 'x', 'questions': [], 'refs': [{'path': 'c.json', 'sha256': 'd' * 64}]}
+    return _write(tmp / name, {'rows': [{**base, **row}]})
+
+
+def test_analog_and_untyped_competitor_content_never_counts(inputs):
+    tmp, search, *_ = inputs
+    def row(path):
+        return next(r for r in merge_content_inputs(search, competitor_content=path)['rows'] if r['cluster_id'] == 'bu-student')
+    analog = row(_comp(tmp, 'a.json', entity='Acme', entity_type='similar_company'))
+    assert analog['single_input'] is True and analog['input_count'] == 1 and analog['inspiration_count'] == 1
+    assert analog['inputs']['competitor_content']['coverage'][0]['analog_only'] is True
+    cap = row(_comp(tmp, 'b.json', entity='Acme', entity_type='capability_reference'))
+    assert cap['single_input'] is True
+    market = row(_comp(tmp, 'c.json', entity='Rival', entity_type='competitor'))
+    assert market['single_input'] is False and market['input_count'] == 2 and market['inspiration_count'] == 0
+    untyped = row(_comp(tmp, 'd.json'))
+    assert untyped['single_input'] is True and untyped['inputs']['competitor_content']['coverage'][0]['untyped'] is True
+    with pytest.raises(ValueError):
+        merge_content_inputs(search, competitor_content=_comp(tmp, 'e.json', entity='Acme'))

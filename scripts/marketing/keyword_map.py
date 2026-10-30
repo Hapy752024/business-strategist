@@ -108,7 +108,7 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
     (case-insensitive); otherwise it becomes its own proposed cluster. Absent optional inputs are tolerated.
 
     Each proposed row lists `inputs` (name -> refs and questions) and `questions` (text -> contributing inputs).
-    A cluster backed by one input is `single_input`. `existing_map` (the reviewed keyword-map.json) is matched
+    A cluster backed by one input is `single_input`; competitor_content counts as an input only via rows typed `competitor` (analog_only/untyped rows stay in attribution and in `inspiration_count`). `existing_map` (the reviewed keyword-map.json) is matched
     first by primary/secondary term and locale: matches become `improve` with the existing URL, others `create`.
     Output goes to `out` (default `keyword-map.proposed.json` beside `search`); the reviewed map is never
     written, and the proposal is not a reviewed map.
@@ -174,7 +174,10 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
             present.append(name)
             for r in _load(path, schema, name)['rows']:
                 if name == 'competitor_content':
-                    detail = {'coverage': {k: r.get(k) for k in ('entity', 'entity_type', 'coverage', 'topic') if r.get(k)} if r.get('entity') else None}
+                    item = {k: r[k] for k in ('entity', 'entity_type', 'coverage', 'topic') if r.get(k)}
+                    if r.get('entity_type') != 'competitor':
+                        item['untyped' if not r.get('entity_type') else 'analog_only'] = True
+                    detail = {'coverage': item}
                 else:
                     detail = {'discussion': {k: r[k] for k in ('platforms', 'speaker_mix', 'topic') if r.get(k)} if (r.get('platforms') or r.get('speaker_mix')) else None}
                 attach(locate(r.get('cluster_id'), r['topic']), name, r['questions'], r['refs'], **detail)
@@ -188,12 +191,15 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
         keys = {_norm(t) for t in terms}
         match = None if c.get('question_only') else next((e for e in existing if (c['locale'] is None or e['locale'] == c['locale'])
                       and ({_norm(e['primary_term']), *map(_norm, e.get('secondary_terms', []))} & keys)), None)
+        cov = c['inputs'].get('competitor_content', {}).get('coverage', [])
+        inspiration = sum(1 for x in cov if x.get('analog_only') or x.get('untyped'))
+        counted = sum(1 for n in c['inputs'] if n != 'competitor_content') + (1 if any(x.get('entity_type') == 'competitor' for x in cov) else 0)
         features = [k for k, v in (c['serp_features'] or {}).items() if v is True or v == 'observed']
         rows.append({'cluster_id': c['cluster_id'], 'primary_term': terms[0] if terms else None, 'secondary_terms': terms[1:], 'question_only': bool(c.get('question_only')),
                      'locale': c['locale'], 'intent': c['intent'], 'journey_stage': c['journey_stage'], 'page_type': c['page_type'],
                      'content_gap_hypothesis': c['content_gap'], 'serp_features_targeted': features,
-                     'questions': list(c['questions'].values()), 'inputs': c['inputs'], 'input_count': len(c['inputs']),
-                     'single_input': len(c['inputs']) == 1,
+                     'questions': list(c['questions'].values()), 'inputs': c['inputs'], 'input_count': counted, 'inspiration_count': inspiration,
+                     'single_input': counted == 1,
                      'decision': 'improve' if match else 'create',
                      'existing_url': (match.get('existing_url') or match.get('target_url')) if match else None,
                      'matched_row_id': match['id'] if match else None, 'volume': None, 'needs_review': True})

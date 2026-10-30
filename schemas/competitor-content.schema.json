@@ -79,6 +79,11 @@
               "uncovered"
             ]
           }
+        },
+        "dependentRequired": {
+          "entity": [
+            "entity_type"
+          ]
         }
       }
     }
