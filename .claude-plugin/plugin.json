@@ -1,0 +1,6 @@
+{
+  "name": "evidence-scout-agent-set",
+  "description": "Business-idea validation, brand, marketing and website skill set (used by the skill-trigger eval suite)",
+  "version": "0.1.0",
+  "experimental": { "evals": "evals/plugin-triggers" }
+}
