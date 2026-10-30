@@ -46,7 +46,7 @@ Hook contract source: [Claude Code hooks reference](https://code.claude.com/docs
 
 ## Bare dispatch
 
-A skill that exactly one route targets (`"single_mode": true` in `config/workflow-routes.json`, checked against the route count by `validate_skill_routes.py`) accepts plain-text `args`: the hook synthesizes a focused route (the skill's route ID; standalone, or the current business workspace from `cwd`) and the pain-first gate applies as usual. Multi-mode skills still need the JSON envelope with an explicit route ID. Plain text never bypasses the gate.
+A skill that exactly one route targets (`"single_mode": true` in `config/workflow-routes.json`, checked against the route count by `validate_skill_routes.py`) accepts plain-text `args`: the hook synthesizes a focused route (the skill's route ID; standalone, or the current business workspace from `cwd`) and the pain-first gate applies as usual. Routes that are pain-gated or have strategy prerequisites accept bare text only when `cwd` is inside a business workspace (the project then comes from `cwd`); elsewhere they need an explicit envelope. Multi-mode skills always need the JSON envelope with an explicit route ID. Malformed JSON is rejected, never treated as plain text.
 
 ## Versioned cases
 

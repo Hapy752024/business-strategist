@@ -32,15 +32,20 @@ def check_dispatch(event: dict) -> dict:
     if name == 'business-strategist':
         return {}
     args = event.get('command_args', '') if expansion else tool_input.get('args', '')
+    text = args.strip() if isinstance(args, str) else ''
+    parse_error = ''
     try:
-        envelope = json.loads(args) if isinstance(args, str) and args.strip() else None
-    except json.JSONDecodeError:
+        envelope = json.loads(text) if text else None
+    except json.JSONDecodeError as exc:
         envelope = None
+        parse_error = str(exc)
     if not isinstance(envelope, dict) or not isinstance(envelope.get('route'), dict):
-        # Parsed-but-malformed JSON stays an error; only non-JSON text is bare input.
-        envelope = bare_envelope(name, args, event) if envelope is None else None
-    if envelope is None:
-        raise ValueError(envelope_hint(name, args if isinstance(args, str) else ''))
+        # Only text that does not look like JSON is bare input; anything else is a failed envelope.
+        looks_like_json = text[:1] in ('{', '[') or envelope is not None
+        envelope = None if looks_like_json else bare_envelope(name, args, event)
+        if envelope is None:
+            prefix = f'Malformed JSON route envelope ({parse_error}). ' if parse_error else ''
+            raise ValueError(prefix + envelope_hint(name, args if isinstance(args, str) else ''))
     route = envelope['route']
     for key in ('request', 'intent', 'task_scope'):
         if not isinstance(route.get(key), str) or not route[key].strip():
@@ -58,11 +63,9 @@ def check_dispatch(event: dict) -> dict:
         raise ValueError('Declare a project slug or standalone=true')
     # Context may strengthen the caller's declaration, never silently weaken it.
     cwd = Path(event.get('cwd', str(ROOT))).resolve()
-    try:
-        parts = cwd.relative_to(ROOT / 'projects').parts
-    except ValueError:
-        parts = ()
-    if parts and ((ROOT / 'projects' / parts[0] / 'market_research/manifest.json').is_file() or (ROOT / 'projects' / parts[0] / 'project-manifest.json').is_file()):
+    workspace_slug = cwd_workspace(event)
+    if workspace_slug:
+        parts = (workspace_slug,)
         if project and project != parts[0]:
             raise ValueError('Route project conflicts with the current business workspace')
         has_independent_marketing_brief = (name in {'marketing-strategy-builder', 'social-digital-marketing-planner'}
@@ -115,6 +118,18 @@ def check_dispatch(event: dict) -> dict:
     return output
 
 
+def cwd_workspace(event: dict) -> str:
+    """Slug of the business workspace containing the event cwd, or ''."""
+    try:
+        parts = Path(event.get('cwd', str(ROOT))).resolve().relative_to(ROOT / 'projects').parts
+    except ValueError:
+        return ''
+    if parts and ((ROOT / 'projects' / parts[0] / 'market_research/manifest.json').is_file()
+                  or (ROOT / 'projects' / parts[0] / 'project-manifest.json').is_file()):
+        return parts[0]
+    return ''
+
+
 def single_mode_routes() -> dict[str, str]:
     """Map skill -> route ID for skills that exactly one route targets."""
     routes = load_routes()
@@ -135,14 +150,14 @@ def bare_envelope(skill: str, args: object, event: dict) -> dict | None:
     if route_id is None or not isinstance(args, str) or not args.strip():
         return None
     route = {'request': args, 'intent': route_id, 'task_scope': 'focused'}
-    try:
-        parts = Path(event.get('cwd', str(ROOT))).resolve().relative_to(ROOT / 'projects').parts
-    except ValueError:
-        parts = ()
-    if parts and ((ROOT / 'projects' / parts[0] / 'market_research/manifest.json').is_file()
-                  or (ROOT / 'projects' / parts[0] / 'project-manifest.json').is_file()):
-        route['project'] = parts[0]
+    slug = cwd_workspace(event)
+    if slug:
+        route['project'] = slug
     else:
+        # Without a workspace the gate cannot run, so gated routes need an explicit envelope.
+        spec = next(r for r in load_routes() if r['id'] == route_id)
+        if spec.get('requires_pain_gate') or load_catalog().get(skill, {}).get('strategy_stage_prerequisites'):
+            return None
         route['standalone'] = True
     return {'route': route, 'input': args}
 

@@ -200,7 +200,7 @@ def test_bare_single_mode_skill_still_gated(tmp_path, monkeypatch):
     cwd = tmp_path / "projects" / "gated"
     with pytest.raises(ValueError, match="pain-first"):
         hook.check_dispatch(_skill_event("social-digital-marketing-planner", "Create paid social", cwd))
-    # The same text run through main() surfaces as a deny decision, not a pass.
+    # An ungated single-mode skill in a gated project is still allowed.
     out = hook.check_dispatch(_skill_event("idea-grill", "Pressure test my idea", cwd))
     assert out["hookSpecificOutput"].get("permissionDecision") != "deny"
 
@@ -208,3 +208,18 @@ def test_bare_single_mode_skill_still_gated(tmp_path, monkeypatch):
 def test_single_mode_flag_matches_derived_route_count():
     from scripts import validate_skill_routes
     assert validate_skill_routes.validate() == []
+
+
+def test_bare_gated_single_mode_skill_outside_workspace_requires_envelope():
+    import pytest
+    from scripts import enforce_skill_route as hook
+    for skill in ("strategy-draft-tournament", "company-operating-system", "social-digital-marketing-planner"):
+        with pytest.raises(ValueError, match="JSON route envelope"):
+            hook.check_dispatch(_skill_event(skill, "Pick our GTM strategy for the dog-walking venture"))
+
+
+def test_malformed_json_envelope_is_denied_not_treated_as_text():
+    import pytest
+    from scripts import enforce_skill_route as hook
+    with pytest.raises(ValueError, match="Malformed JSON route envelope"):
+        hook.check_dispatch(_skill_event("idea-grill", '{"route": {"request": "x", "project": "foo"'))
