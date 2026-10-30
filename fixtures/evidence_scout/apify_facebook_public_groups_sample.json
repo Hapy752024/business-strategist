@@ -1,29 +1,29 @@
 [
   {
-    "facebookUrl": "https://www.facebook.com/groups/63181993057/",
-    "url": "https://www.facebook.com/groups/63181993057/permalink/10165003609873058/",
+    "facebookUrl": "https://www.example.com/groups/syn001/",
+    "url": "https://www.example.com/groups/syn001/permalink/syn002/",
     "time": "2026-10-29T20:01:25.000Z",
     "user": {
-      "id": "redacted_user",
+      "id": "syn003",
       "name": "redacted_user",
       "profilePic": "redacted_user"
     },
     "collaborators": [],
-    "text": "Thoughts on the following areas: Concord, Matthews, Kannapolis, Monroe. Looking for insight on schools, family activities and diversity. Thanks!",
+    "text": "Looking for advice from people who have been through this before. Any experience with the options in the area would be appreciated.",
     "topReactionsCount": 0,
-    "feedbackId": "ZmVlZGJhY2s6cGZiaWQwWXVtbW9WYnJ6dGhFejJINTNYQXFnU1Z3ZDhEN1J5bTI1QkFIWW1mZHUzdjN3b3AyREx3WnpYNG84NUExYzhIWmw=",
+    "feedbackId": "syn004",
     "paidPartnership": false,
     "topComments": [
       {
-        "commentUrl": "https://www.facebook.com/groups/63181993057/posts/10165003609873058/?comment_id=10165004809688058",
-        "commentId": "10165004809688058",
-        "id": "Y29tbWVudDoxMDE2NTAwMzYwOTg3MzA1OF8xMDE2NTAwNDgwOTY4ODA1OA==",
-        "feedbackId": "ZmVlZGJhY2s6cGZiaWQwVWFpb1hxTTVIV3NDbWhBb1JoMUhnMkZDYUJwVWloajVHQ0Q0aWZtemRORDJ4UlpwM1A4N2F5Mld4ZDFiTTJHZ0Z5UXJ4WWJiQXZEdmlINHZNUXQ1REFSaEJwVzN6eHBqd1N1cWVs",
+        "commentUrl": "https://www.example.com/groups/syn001/posts/syn002",
+        "commentId": "syn005",
+        "id": "syn006",
+        "feedbackId": "syn007",
         "date": "2026-10-30T00:19:20.000Z",
-        "text": "I live in concord and my kids go to elementary school with a Spanish immersion program which has been amazing for them. We’re from a very white town in upstate NY so I was also looking for diversity & affordability. My kids are currently the only 2 white kids ",
+        "text": "Any experience with the options in the area would be appreciated. Costs and time are the main considerations for the family. Thanks in advance for any suggestions. Looking for advice from people who have been through this before.",
         "author": {
           "__typename": "User",
-          "id": "redacted_user",
+          "id": "syn003",
           "name": "redacted_user",
           "__isActor": "User",
           "profile_picture_depth_0": {
@@ -47,17 +47,17 @@
         "threadingDepth": 0
       }
     ],
-    "id": "UzpfSTEyNDg1NzY2NDA6Vks6MTAxNjUwMDM2MDk4NzMwNTg=",
-    "legacyId": "10165003609873058",
+    "id": "syn008",
+    "legacyId": "syn002",
     "likesCount": 0,
     "sharesCount": 0,
     "commentsCount": 13,
-    "facebookId": "63181993057",
-    "groupTitle": "People Relocating to the Charlotte NC area",
+    "facebookId": "syn001",
+    "groupTitle": "Example community group",
     "pageAdLibrary": {
       "is_business_page_active": false,
-      "id": "723966834122901"
+      "id": "syn009"
     },
-    "inputUrl": "https://www.facebook.com/groups/63181993057/"
+    "inputUrl": "https://www.example.com/groups/syn001/"
   }
 ]

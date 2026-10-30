@@ -50,7 +50,7 @@ class ConfigTests(unittest.TestCase):
         cfg = load_config()["lanes"]
         self.assertEqual(set(cfg), set(LANES))
         for lane, row in cfg.items():
-            for key in ("actor_id", "input_template", "field_map", "cost_per_1k_usd", "items_per_unit", "incentivised_flag_field", "public_only"):
+            for key in ("actor_id", "input_template", "field_map", "cost_per_1k_usd", "items_per_unit", "incentivised_flag_field", "public_only", "vendor_reply_field", "min_items_per_call"):
                 self.assertIn(key, row, f"{lane} missing {key}")
             self.assertIs(row["public_only"], True)
             self.assertGreater(row["cost_per_1k_usd"], 0)
@@ -177,6 +177,20 @@ class MappingTests(unittest.TestCase):
             for r in convert(lane):
                 self.assertNotIn("redacted_user", r["author_context"] + r["text"], lane)
 
+    def test_quora_credential_is_a_flag_not_text(self) -> None:
+        recs = convert("quora")
+        self.assertIn("has_professional_credential=true", recs[0]["author_context"])
+        self.assertNotIn("credential", recs[0]["author_context"].replace("has_professional_credential", ""))
+        self.assertNotIn("Placeholder professional credential", json.dumps(recs))
+
+    def test_cross_lane_dedupe_on_raw_text(self) -> None:
+        seen: set[str] = set()
+        g2 = {"reviewId": "1", "reviewUrl": "https://www.g2.com/products/a/reviews/a-1", "likes": "Great  tool for\nteams, TOO slow on mobile."}
+        sw = {"reviewId": "9", "reviewUrl": "https://www.softwareadvice.com/x/reviews/9", "comments": "great tool for teams, too slow on mobile."}
+        first = to_records("g2_reviews", [g2], "q", "2026-10-30T00:00:00Z", subject_entity_id="a", seen_hashes=seen)
+        second = to_records("software_reviews", [sw], "q", "2026-10-30T00:00:00Z", subject_entity_id="b", seen_hashes=seen)
+        self.assertEqual((len(first), len(second)), (1, 0))
+
     def test_duplicate_text_is_dropped_by_content_hash(self) -> None:
         items = load_fixture("g2_reviews")
         dup = dict(items[0], reviewId="other", reviewUrl="https://www.g2.com/products/notion/reviews/other")
@@ -254,6 +268,31 @@ class CollectorTests(unittest.TestCase):
         (_, s2), post2, _ = self.run_lane("quora", args, queries=("b",))
         self.assertEqual(s2["status"], "request_budget_exhausted")
         post2.assert_not_called()
+
+    def test_g2_call_floor_counts_for_cap_cost_and_charge_ceiling(self) -> None:
+        cfg = load_config()["lanes"]["g2_reviews"]
+        self.assertEqual(apify_actor.requested_items(cfg, 1, 3), 10)
+        self.assertGreaterEqual(apify_actor.charge_cap_usd(cfg, 10), 10 * 6.49 / 1000 * 2)
+        args = make_args(limit=3, apify_review_item_cap=9, apify_review_targets="x=https://www.g2.com/products/notion/reviews")
+        with mock.patch.object(collect, "validate_entity_pairs_in_plan", return_value=(True, "authorized")):
+            (_, summary), post, _ = self.run_lane("g2_reviews", args)
+        self.assertEqual(summary["status"], "request_budget_exhausted")
+        post.assert_not_called()
+        args = make_args(limit=3, apify_review_item_cap=10, apify_review_targets="x=https://www.g2.com/products/notion/reviews")
+        with mock.patch.object(collect, "validate_entity_pairs_in_plan", return_value=(True, "authorized")):
+            (_, summary), post, _ = self.run_lane("g2_reviews", args)
+        self.assertEqual(summary["status"], "ok")
+        self.assertEqual(summary["items_requested"], 10)
+        self.assertAlmostEqual(summary["estimated_cost_usd"], 10 * 6.49 / 1000, places=4)
+        self.assertEqual(post.call_args.kwargs["data"]["limit"], 10)
+        self.assertIn("maxTotalChargeUsd", post.call_args.args[0])
+
+    def test_run_actor_receives_remaining_budget(self) -> None:
+        args = make_args(limit=4, apify_review_item_cap=10, _apify_review_items_used=2)
+        with mock.patch("providers.apify_actor.run_actor", return_value=([], {"status": "ok", "response": {}})) as run, \
+                mock.patch.object(collect, "get_secret", return_value=("APIFY_TOKEN", "t")), tempfile.TemporaryDirectory() as d:
+            collect.collect_apify_lane("quora", args, ["a"], Path(d))
+        self.assertEqual(run.call_args.args[2], 8)  # cap - used(2) - consumed(0), not the whole cap
 
     def test_single_lane_cap_refusal(self) -> None:
         (_, summary), post, _ = self.run_lane("quora", make_args(limit=50, apify_review_item_cap=10), queries=("a", "b"))

@@ -3,9 +3,9 @@
     "record_type": "answer",
     "source_context": {
       "seed_type": "keyword",
-      "seed_value": "unpaid invoices freelancer",
-      "source_url": "https://www.quora.com/search?q=unpaid%20invoices%20freelancer&type=answer",
-      "loaded_url": "https://www.quora.com/search?q=unpaid%20invoices%20freelancer&type=answer",
+      "seed_value": "example query",
+      "source_url": "https://www.example.com/search",
+      "loaded_url": "https://www.example.com/search",
       "scraped_at": "2026-10-30T20:45:55.352377Z",
       "search_type": "Answer",
       "search_time_filter": "All Time"
@@ -13,13 +13,13 @@
     "status": {
       "has_results": true
     },
-    "url": "https://www.quora.com/What-are-some-FreshBooks-alternatives/answer/Uwe-Dreissigacker",
-    "title": "What are some FreshBooks alternatives?",
-    "text": "Hi there, InvoiceBerry is an alternative to Freshbooks. You can create, send and manage your invoices online and keep track of payments and expenses. It’s used by tens of thousands of small businesses and freelancers from around the world. I’ve attached some screenshots to this Quora reply so you can get a first impression of the user interface: Add payments to invoices Run company reports Choose from 15 professional invoice templates Turn quotes into invoices View your unpaid invoices",
+    "url": "https://www.example.com/item-1/answer/item-2",
+    "title": "Chasing late invoices takes more time than it should",
+    "text": "The current spreadsheet approach breaks down once there are more than a few clients. Payment reminders are sent by hand and often forgotten. A simple way to see which invoices are overdue would help. Fees and processing delays are the main worry when choosing a tool. Other tools were tried but none fit a small team with irregular orders. Looking for what has worked for others in a similar situation.",
     "author": {
       "name": "redacted_user",
       "url": "redacted_user",
-      "credential": "founder of InvoiceBerry.com, an online invoicing software for small businesses"
+      "credential": "Placeholder professional credential"
     },
     "metrics": {
       "comments": 0,
@@ -33,10 +33,10 @@
       "is_sensitive": false
     },
     "question": {
-      "id": 214950,
-      "slug": "What-are-some-FreshBooks-alternatives",
-      "title": "What are some FreshBooks alternatives?",
-      "url": "https://www.quora.com/What-are-some-FreshBooks-alternatives",
+      "id": 1,
+      "slug": "example-slug",
+      "title": "Payment reminders are sent by hand and often forgotten",
+      "url": "https://www.example.com/item-1",
       "posted_at": "2011-02-17T08:50:18.125000Z",
       "metrics": {
         "answers": 12,
@@ -49,9 +49,9 @@
       }
     },
     "answer": {
-      "id": 24025257,
-      "url": "https://www.quora.com/What-are-some-FreshBooks-alternatives/answer/Uwe-Dreissigacker",
-      "text": "Hi there, InvoiceBerry is an alternative to Freshbooks. You can create, send and manage your invoices online and keep track of payments and expenses. It’s used by tens of thousands of small businesses and freelancers from around the world. I’ve attached some screenshots to this Quora reply so you can get a first impression of the user interface: Add payments to invoices Run company reports Choose from 15 professional invoice templates Turn quotes into invoices View your unpaid invoices",
+      "id": 2,
+      "url": "https://www.example.com/item-1/answer/item-2",
+      "text": "A simple way to see which invoices are overdue would help. Fees and processing delays are the main worry when choosing a tool. Other tools were tried but none fit a small team with irregular orders. Looking for what has worked for others in a similar situation. Chasing late invoices takes more time than it should. The current spreadsheet approach breaks down once there are more than a few clients.",
       "posted_at": "2016-06-17T14:06:01.554000Z",
       "access_option": "free",
       "metrics": {
@@ -63,7 +63,7 @@
       "author": {
         "name": "redacted_user",
         "url": "redacted_user",
-        "credential": "founder of InvoiceBerry.com, an online invoicing software for small businesses"
+        "credential": "Placeholder professional credential"
       }
     }
   },
@@ -71,9 +71,9 @@
     "record_type": "answer",
     "source_context": {
       "seed_type": "keyword",
-      "seed_value": "unpaid invoices freelancer",
-      "source_url": "https://www.quora.com/search?q=unpaid%20invoices%20freelancer&type=answer",
-      "loaded_url": "https://www.quora.com/search?q=unpaid%20invoices%20freelancer&type=answer",
+      "seed_value": "example query",
+      "source_url": "https://www.example.com/search",
+      "loaded_url": "https://www.example.com/search",
       "scraped_at": "2026-10-30T20:45:55.353578Z",
       "search_type": "Answer",
       "search_time_filter": "All Time"
@@ -81,13 +81,13 @@
     "status": {
       "has_results": true
     },
-    "url": "https://www.quora.com/My-freelance-client-is-not-paying-me-on-time-is-this-a-sign-I-should-drop-them-as-a-client/answer/Andrea-Bergamasco",
-    "title": "My freelance client is not paying me on time, is this a sign I should drop them as a client?",
-    "text": "Rediscuss your contract. Next assignements come with a 50% advance, otherwise they won't get a byte. No further assignements as long as there are unpaid invoices. If they like you they'll make a hell at first but then they'll accept. Take that contract and frame it, when they're again in delay reply with the contract pdf.",
+    "url": "https://www.example.com/item-3/answer/item-4",
+    "title": "Fees and processing delays are the main worry when choosing a tool",
+    "text": "Other tools were tried but none fit a small team with irregular orders. Looking for what has worked for others in a similar situation. Chasing late invoices takes more time than it should. The current spreadsheet approach breaks down once there are more than a few clients.",
     "author": {
       "name": "redacted_user",
       "url": "redacted_user",
-      "credential": "works at Freelancing"
+      "credential": "Placeholder professional credential"
     },
     "metrics": {
       "comments": 0,
@@ -101,10 +101,10 @@
       "is_sensitive": false
     },
     "question": {
-      "id": 1608937,
-      "slug": "My-freelance-client-is-not-paying-me-on-time-is-this-a-sign-I-should-drop-them-as-a-client",
-      "title": "My freelance client is not paying me on time, is this a sign I should drop them as a client?",
-      "url": "https://www.quora.com/My-freelance-client-is-not-paying-me-on-time-is-this-a-sign-I-should-drop-them-as-a-client",
+      "id": 3,
+      "slug": "example-slug",
+      "title": "Looking for what has worked for others in a similar situation",
+      "url": "https://www.example.com/item-3",
       "posted_at": "2014-02-03T17:48:44.370000Z",
       "metrics": {
         "answers": 6,
@@ -117,9 +117,9 @@
       }
     },
     "answer": {
-      "id": 4062399,
-      "url": "https://www.quora.com/My-freelance-client-is-not-paying-me-on-time-is-this-a-sign-I-should-drop-them-as-a-client/answer/Andrea-Bergamasco",
-      "text": "Rediscuss your contract. Next assignements come with a 50% advance, otherwise they won't get a byte. No further assignements as long as there are unpaid invoices. If they like you they'll make a hell at first but then they'll accept. Take that contract and frame it, when they're again in delay reply with the contract pdf.",
+      "id": 4,
+      "url": "https://www.example.com/item-3/answer/item-4",
+      "text": "Chasing late invoices takes more time than it should. The current spreadsheet approach breaks down once there are more than a few clients. Payment reminders are sent by hand and often forgotten. A simple way to see which invoices are overdue would help. Fees and processing delays are the main worry when choosing a tool.",
       "posted_at": "2014-02-03T18:51:28.891000Z",
       "access_option": "free",
       "metrics": {
@@ -131,7 +131,7 @@
       "author": {
         "name": "redacted_user",
         "url": "redacted_user",
-        "credential": "works at Freelancing"
+        "credential": "Placeholder professional credential"
       }
     }
   },
@@ -139,9 +139,9 @@
     "record_type": "answer",
     "source_context": {
       "seed_type": "keyword",
-      "seed_value": "unpaid invoices freelancer",
-      "source_url": "https://www.quora.com/search?q=unpaid%20invoices%20freelancer&type=answer",
-      "loaded_url": "https://www.quora.com/search?q=unpaid%20invoices%20freelancer&type=answer",
+      "seed_value": "example query",
+      "source_url": "https://www.example.com/search",
+      "loaded_url": "https://www.example.com/search",
       "scraped_at": "2026-10-30T20:45:55.354256Z",
       "search_type": "Answer",
       "search_time_filter": "All Time"
@@ -149,13 +149,13 @@
     "status": {
       "has_results": true
     },
-    "url": "https://www.quora.com/What-are-good-resources-for-a-crash-course-in-the-business-of-freelancing/answer/Allan-Branch",
-    "title": "What are good resources for a crash course in the business of freelancing?",
-    "text": "We started out as freelancers, so I write a lot about the common mistakes we made. Learn from our mistakes. 3 Common Business Proposal Mistakes How to Keep Outstanding Invoices From Killing Your Business Collecting Unpaid Invoices The Easy Way",
+    "url": "https://www.example.com/item-5/answer/item-6",
+    "title": "The current spreadsheet approach breaks down once there are more than a few clients",
+    "text": "Payment reminders are sent by hand and often forgotten. A simple way to see which invoices are overdue would help. Fees and processing delays are the main worry when choosing a tool. Other tools were tried but none fit a small team with irregular orders.",
     "author": {
       "name": "redacted_user",
       "url": "redacted_user",
-      "credential": "cofounder of LessFilms.com"
+      "credential": "Placeholder professional credential"
     },
     "metrics": {
       "comments": 0,
@@ -169,10 +169,10 @@
       "is_sensitive": false
     },
     "question": {
-      "id": 615315,
-      "slug": "What-are-good-resources-for-a-crash-course-in-the-business-of-freelancing",
-      "title": "What are good resources for a crash course in the business of freelancing?",
-      "url": "https://www.quora.com/What-are-good-resources-for-a-crash-course-in-the-business-of-freelancing",
+      "id": 5,
+      "slug": "example-slug",
+      "title": "A simple way to see which invoices are overdue would help",
+      "url": "https://www.example.com/item-5",
       "posted_at": "2012-03-29T18:39:14.687000Z",
       "metrics": {
         "answers": 5,
@@ -185,9 +185,9 @@
       }
     },
     "answer": {
-      "id": 3352714,
-      "url": "https://www.quora.com/What-are-good-resources-for-a-crash-course-in-the-business-of-freelancing/answer/Allan-Branch",
-      "text": "We started out as freelancers, so I write a lot about the common mistakes we made. Learn from our mistakes. 3 Common Business Proposal Mistakes How to Keep Outstanding Invoices From Killing Your Business Collecting Unpaid Invoices The Easy Way",
+      "id": 6,
+      "url": "https://www.example.com/item-5/answer/item-6",
+      "text": "Fees and processing delays are the main worry when choosing a tool. Other tools were tried but none fit a small team with irregular orders. Looking for what has worked for others in a similar situation.",
       "posted_at": "2013-10-17T13:29:17.038000Z",
       "access_option": "free",
       "metrics": {
@@ -199,7 +199,7 @@
       "author": {
         "name": "redacted_user",
         "url": "redacted_user",
-        "credential": "cofounder of LessFilms.com"
+        "credential": "Placeholder professional credential"
       }
     }
   }

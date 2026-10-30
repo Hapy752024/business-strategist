@@ -2041,12 +2041,19 @@ def collect_apify_lane(lane: str, args: argparse.Namespace, queries: list[str], 
     records: list[dict[str, Any]] = []
     statuses: list[str] = []
     estimated = 0.0
+    consumed = 0
     for entity_id, value in units:
-        placeholder = {"entity_url": value, "group_url": value, "query": value, "max_items": per_unit}
+        placeholder = {"entity_url": value, "group_url": value, "query": value, "max_items": max(per_unit, int(cfg.get("min_items_per_call", 1)))}
         actor_input = apify_actor.render_input(cfg["input_template"], placeholder)
         items_here = apify_actor.requested_items(cfg, 1, per_unit)
-        items, meta = apify_actor.run_actor(cfg["actor_id"], actor_input, cap, requested_items=items_here, token=token,
-                                           max_charge_usd=apify_actor.charge_cap_usd(cfg, items_here))
+        try:
+            items, meta = apify_actor.run_actor(cfg["actor_id"], actor_input, cap - used - consumed, requested_items=items_here, token=token,
+                                               max_charge_usd=apify_actor.charge_cap_usd(cfg, items_here))
+        except apify_actor.CapExceeded as exc:
+            statuses.append("request_budget_exhausted")
+            raw["runs"].append({"unit": value, "refused": str(exc)})
+            break
+        consumed += items_here
         estimated += items_here * cfg["cost_per_1k_usd"] / 1000 + cfg.get("fixed_cost_per_run_usd", 0)
         statuses.append(meta["status"])
         raw["runs"].append({"unit": value, "response": meta["response"]})

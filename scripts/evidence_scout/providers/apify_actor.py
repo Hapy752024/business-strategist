@@ -49,7 +49,8 @@ def render_input(template: Any, values: dict[str, Any]) -> Any:
 
 
 def requested_items(lane_cfg: dict[str, Any], units: int, per_unit_limit: int) -> int:
-    return max(0, units) * max(1, per_unit_limit) * int(lane_cfg.get("items_per_unit", 1))
+    floor = int(lane_cfg.get("min_items_per_call", 1))
+    return max(0, units) * max(1, per_unit_limit, floor) * int(lane_cfg.get("items_per_unit", 1))
 
 
 def charge_cap_usd(lane_cfg: dict[str, Any], items: int) -> float:
@@ -103,6 +104,8 @@ def _map(item: dict, field_map: dict[str, str]) -> dict[str, Any]:
             body = html.unescape(str(value)).strip()
             if body:
                 out["text"].append(f"{label}: {body}" if label else body)
+        elif kind == "flag":
+            out["context"].append(f"{label}=true")
         elif kind == "context":
             out["context"].append(f"{label}={_clean(value)}")
         elif kind == "engagement":
@@ -110,6 +113,13 @@ def _map(item: dict, field_map: dict[str, str]) -> dict[str, Any]:
         else:
             out[kind] = value
     return out
+
+
+def _text_fingerprint(item: dict, field_map: dict[str, str]) -> str:
+    """Hash of the raw free-text fields (no labels), lowercased and whitespace-collapsed."""
+    parts = [str(_dig(item, f)) for f, target in field_map.items() if target.partition(":")[0] == "text" and _dig(item, f) not in (None, "", [], {})]
+    norm = " ".join(html.unescape(" ".join(parts)).lower().split())
+    return hashlib.sha256(norm.encode()).hexdigest()
 
 
 def _default_builder() -> Callable[..., dict[str, Any]]:
@@ -151,9 +161,9 @@ def to_records(lane: str, items: list[dict], query: str, retrieved_at: str,
         url = _clean(m.get("source_url"))
         if not text or not url:
             return None
-        digest = hashlib.sha256(text.encode()).hexdigest()
-        if cfg["sampling_frame"] == "entity_led_feedback" and (subject_entity_id, digest) in seen:
-            return None  # same review text already collected (e.g. a syndicated copy on a sister site)
+        digest = _text_fingerprint(item, fmap)
+        if entity_lane and digest in seen:
+            return None  # same review text already collected, on any entity or lane (e.g. a syndicated G2-family copy)
         raw_id = _clean(m.get("raw_id")) or hashlib.sha256(f"{url}|{text}".encode()).hexdigest()[:16]
         if parent:
             raw_id = f"{parent}/{raw_id}"
@@ -169,7 +179,8 @@ def to_records(lane: str, items: list[dict], query: str, retrieved_at: str,
             source_intent_override="customer_feedback" if cfg.get("source_role") == "customer_review" else None,
         )
         finish(rec, parent)
-        seen.add((subject_entity_id, digest))
+        if entity_lane:
+            seen.add(digest)
         return rec
 
     entity_lane = cfg["sampling_frame"] == "entity_led_feedback"
