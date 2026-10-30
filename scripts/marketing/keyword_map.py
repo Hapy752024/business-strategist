@@ -93,9 +93,15 @@ def _norm(text: str) -> str:
 
 
 def _market_coverage(item: dict) -> bool:
-    """A competitor row counts as market coverage only when typed `competitor`, covered, and not a low-confidence match."""
+    """A competitor row counts as market coverage only when typed `competitor`, covered, and match_confidence is `high` (missing = low)."""
+
     return (item.get('entity_type') == 'competitor' and item.get('coverage') not in {'uncovered', 'covered_low_confidence'}
-            and item.get('match_confidence') != 'low')
+            and item.get('match_confidence') == 'high')
+
+
+def _social_counts(item: dict) -> bool:
+    """A social row counts as an input only when reviewed-grade: multi-word anchor, >= 5 records, not supplier-only (needs_review false; missing = weak)."""
+    return item.get('needs_review') is False and not item.get('supplier_only')
 
 
 def merge_content_inputs(search: Path, competitor_content: Path | None = None, voc_questions: Path | None = None,
@@ -185,7 +191,10 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
                         item['untyped' if not r.get('entity_type') else 'analog_only'] = True
                     detail = {'coverage': item}
                 else:
-                    detail = {'discussion': {k: r[k] for k in ('platforms', 'speaker_mix', 'topic') if r.get(k)} if (r.get('platforms') or r.get('speaker_mix')) else None}
+                    d = {k: r[k] for k in ('platforms', 'speaker_mix', 'topic', 'search_check', 'anchor_kind', 'grouping_basis') if r.get(k)}
+                    d.update({k: r[k] for k in ('supplier_only', 'single_platform', 'needs_review', 'record_count') if k in r})
+                    d['weak_input'] = not _social_counts(r)
+                    detail = {'discussion': d}
                 attach(locate(r.get('cluster_id'), r['topic']), name, r['questions'], r['refs'], **detail)
 
     existing = []
@@ -199,13 +208,16 @@ def merge_content_inputs(search: Path, competitor_content: Path | None = None, v
                       and ({_norm(e['primary_term']), *map(_norm, e.get('secondary_terms', []))} & keys)), None)
         cov = c['inputs'].get('competitor_content', {}).get('coverage', [])
         inspiration = sum(1 for x in cov if x.get('analog_only') or x.get('untyped'))
-        counted = sum(1 for n in c['inputs'] if n != 'competitor_content') + (1 if any(_market_coverage(x) for x in cov) else 0)
+        disc = c['inputs'].get('social_topics', {}).get('discussion', [])
+        social_ok = any(not x.get('weak_input') for x in disc) if 'social_topics' in c['inputs'] else False
+        weak = 1 if ('social_topics' in c['inputs'] and not social_ok) else 0
+        counted = sum(1 for n in c['inputs'] if n not in ('competitor_content', 'social_topics')) + (1 if social_ok else 0) + (1 if any(_market_coverage(x) for x in cov) else 0)
         features = [k for k, v in (c['serp_features'] or {}).items() if v is True or v == 'observed']
         rows.append({'cluster_id': c['cluster_id'], 'primary_term': terms[0] if terms else None, 'secondary_terms': terms[1:], 'question_only': bool(c.get('question_only')),
                      'locale': c['locale'], 'intent': c['intent'], 'journey_stage': c['journey_stage'], 'page_type': c['page_type'],
                      'content_gap_hypothesis': c['content_gap'], 'serp_features_targeted': features,
-                     'questions': list(c['questions'].values()), 'inputs': c['inputs'], 'input_count': counted, 'inspiration_count': inspiration,
-                     'single_input': counted == 1,
+                     'questions': list(c['questions'].values()), 'inputs': c['inputs'], 'input_count': counted, 'inspiration_count': inspiration, 'weak_count': weak,
+                     'single_input': counted <= 1,
                      'decision': 'improve' if match else 'create',
                      'existing_url': (match.get('existing_url') or match.get('target_url')) if match else None,
                      'matched_row_id': match['id'] if match else None, 'volume': None, 'needs_review': True})

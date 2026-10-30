@@ -166,7 +166,9 @@ def test_analog_and_untyped_competitor_content_never_counts(inputs):
     assert analog['inputs']['competitor_content']['coverage'][0]['analog_only'] is True
     cap = row(_comp(tmp, 'b.json', entity='Acme', entity_type='capability_reference'))
     assert cap['single_input'] is True
-    market = row(_comp(tmp, 'c.json', entity='Rival', entity_type='competitor'))
+    unconfirmed = row(_comp(tmp, 'c0.json', entity='Rival', entity_type='competitor'))
+    assert unconfirmed['single_input'] is True and unconfirmed['input_count'] == 1  # no match_confidence = low
+    market = row(_comp(tmp, 'c.json', entity='Rival', entity_type='competitor', match_confidence='high'))
     assert market['single_input'] is False and market['input_count'] == 2 and market['inspiration_count'] == 0
     uncovered = row(_comp(tmp, 'f.json', entity='Rival', entity_type='competitor', coverage='uncovered'))
     assert uncovered['single_input'] is True and uncovered['input_count'] == 1

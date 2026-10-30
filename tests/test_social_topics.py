@@ -116,3 +116,44 @@ def test_phrases_capped_and_social_row_schema_and_merge(tmp_path):
     result = merge_content_inputs(search, social_topics=cdir / 'social-topics.json', out=tmp_path / 'keyword-map.proposed.json')
     assert 'social_topics' in result['inputs_present']
     assert any('social_topics' in r['inputs'] for r in result['rows'])
+
+
+def _merge_rows(tmp_path, rows):
+    doc = {'schema_version': 1, 'rows': rows}
+    sp = tmp_path / 'social-topics.json'
+    sp.write_text(json.dumps(doc))
+    search = tmp_path / 'content-opportunities.json'
+    search.write_text(json.dumps({'schema_version': 1, 'source': 'search_journey_serp_study', 'caveats': ['c'], 'rows': [SEARCH_ROW]}))
+    res = merge_content_inputs(search, social_topics=sp, out=tmp_path / 'keyword-map.proposed.json')
+    return next(r for r in res['rows'] if r['cluster_id'] == 'late-invoices')
+
+
+def _row(**kw):
+    base = {'topic': 'late invoices', 'cluster_id': 'late-invoices', 'questions': [], 'refs': [{'path': 'e.jsonl', 'sha256': 'b' * 64}],
+            'platforms': ['reddit'], 'speaker_mix': {'customers': 6}, 'supplier_only': False, 'single_platform': True,
+            'record_count': 6, 'needs_review': False, 'search_check': 'matched_search_cluster'}
+    return {**base, **kw}
+
+
+def test_strong_social_topic_clears_single_input(tmp_path):
+    r = _merge_rows(tmp_path, [_row()])
+    assert r['single_input'] is False and r['input_count'] == 2 and r['weak_count'] == 0
+    d = r['inputs']['social_topics']['discussion'][0]
+    assert d['single_platform'] is True and d['supplier_only'] is False and d['record_count'] == 6 and not d['weak_input']
+
+
+def test_supplier_only_and_single_word_topics_do_not_clear_single_input(tmp_path):
+    for kw in ({'supplier_only': True, 'needs_review': True}, {'needs_review': True, 'anchor_kind': 'word'}):
+        r = _merge_rows(tmp_path, [_row(**kw)])
+        assert r['single_input'] is True and r['input_count'] == 1 and r['weak_count'] == 1
+        assert r['inputs']['social_topics']['discussion'][0]['weak_input'] is True
+
+
+def test_generated_flags_follow_rule():
+    recs = [rec(i, f'Why are late invoices so hard to collect? Late invoices again {i}.') for i in range(4)]
+    recs += [rec(10 + i, f'Reminder about {w} timing and invoice.', source='reddit') for i, w in enumerate(['alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot'])]
+    rows = build_social_topics(recs, None)['rows']
+    small = next(t for t in rows if 'ev-0' in t['record_ids'])
+    assert small['needs_review'] is True and small['record_count'] == 4 and small['anchor_kind'] == 'bigram'
+    word = next(t for t in rows if t['anchor_kind'] == 'word')
+    assert word['needs_review'] is True

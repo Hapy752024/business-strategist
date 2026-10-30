@@ -160,6 +160,18 @@
             "additionalProperties": {
               "type": "integer"
             }
+          },
+          "anchor_kind": {
+            "enum": [
+              "bigram",
+              "word"
+            ]
+          },
+          "grouping_basis": {
+            "type": "string"
+          },
+          "needs_review": {
+            "type": "boolean"
           }
         }
       }
@@ -185,6 +197,10 @@
       "minimum": 0
     },
     "records_unassigned": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "topics_dropped": {
       "type": "integer",
       "minimum": 0
     }

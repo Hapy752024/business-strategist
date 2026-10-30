@@ -36,6 +36,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MIN_RECORDS = 3
 MAX_DF_SHARE = 0.35
 MAX_TOPICS = 30
+NEEDS_REVIEW_BELOW = 5  # single-word anchors, fewer than this many records, or supplier-only topics need review and never count as an input
 MAX_PHRASES = 5
 PHRASE_LEN = 120
 MAX_QUESTIONS = 8
@@ -96,6 +97,10 @@ def _phrases(text: str) -> set[str]:
                 found.add(f'{a} {b}')
         found.update(w for w in words if w and len(w) >= 4)
     return found
+
+
+def _is_int(v) -> bool:
+    return isinstance(v, int) and not isinstance(v, bool)
 
 
 def _speaker(r: dict) -> str:
@@ -165,10 +170,10 @@ def _engagement(records: list[dict]) -> dict:
     for platform, rs in sorted(by_platform.items()):
         entry: dict = {'records': len(rs), 'records_with_engagement': 0}
         for m in METRICS:
-            vals = [r['engagement'][m] for r in rs if isinstance(r.get('engagement'), dict) and isinstance(r['engagement'].get(m), int)]
+            vals = [r['engagement'][m] for r in rs if isinstance(r.get('engagement'), dict) and _is_int(r['engagement'].get(m))]
             if vals:
                 entry[m] = {'median': statistics.median(vals), 'top': max(vals), 'n': len(vals)}
-        entry['records_with_engagement'] = sum(1 for r in rs if any(isinstance(r.get('engagement', {}).get(m), int) for m in METRICS))
+        entry['records_with_engagement'] = sum(1 for r in rs if any(_is_int(r.get('engagement', {}).get(m)) for m in METRICS))
         out[platform] = entry
     return out
 
@@ -182,7 +187,7 @@ def _formats(records: list[dict]) -> dict:
             sub = [r for r in rs if PLATFORM[r['source']] == platform]
             attention = {}
             for m in METRICS:
-                vals = [r['engagement'][m] for r in sub if isinstance(r.get('engagement'), dict) and isinstance(r['engagement'].get(m), int)]
+                vals = [r['engagement'][m] for r in sub if isinstance(r.get('engagement'), dict) and _is_int(r['engagement'].get(m))]
                 if vals:
                     attention[m + '_median'] = statistics.median(vals)
             per[platform] = {'records': len(sub), **attention}
@@ -206,7 +211,7 @@ def _match(anchor: str, index) -> list[str]:
 
 
 def _dedupe(records: list[dict], skipped: Counter) -> list[dict]:
-    seen, out = set(), []
+    seen, out, first_platform = set(), [], {}
     for r in records:
         if r.get('source') not in PLATFORM:
             skipped['not_a_discussion_source'] += 1
@@ -219,15 +224,19 @@ def _dedupe(records: list[dict], skipped: Counter) -> list[dict]:
             keys = {k for k in keys if k[0] == 'text'}
         if keys & seen:
             skipped['duplicate'] += 1
+            if PLATFORM[r['source']] != PLATFORM[first_platform.get(next(iter(keys & seen)), r['source'])]:
+                skipped['duplicate_across_platforms'] += 1
             continue
         seen |= keys
+        for k in keys:
+            first_platform.setdefault(k, r['source'])
         out.append(r)
     return out
 
 
 def build_social_topics(records: list[dict], clusters: list[dict] | None, *, source_ref: dict | None = None) -> dict:
     skipped: Counter = Counter()
-    recs = _dedupe(records, skipped)
+    recs = _dedupe([dict(r) for r in records], skipped)
     for i, r in enumerate(recs):
         r.setdefault('evidence_id', f'rec-{i}-' + hashlib.sha256(r['text'].encode()).hexdigest()[:8])
     feats = [_phrases(r['text']) for r in recs]
@@ -244,7 +253,8 @@ def build_social_topics(records: list[dict], clusters: list[dict] | None, *, sou
     index = _cluster_index(clusters)
     ref = source_ref or {'path': 'records', 'sha256': hashlib.sha256(json.dumps([r['evidence_id'] for r in recs]).encode()).hexdigest()}
     rows = []
-    for anchor, idx in sorted(members.items(), key=lambda kv: (-len(kv[1]), kv[0]))[:MAX_TOPICS]:
+    ordered = sorted(members.items(), key=lambda kv: (-len(kv[1]), kv[0]))
+    for anchor, idx in ordered[:MAX_TOPICS]:
         rs = [recs[i] for i in idx]
         platforms = Counter(PLATFORM[r['source']] for r in rs)
         mix = Counter(_speaker(r) for r in rs)
@@ -273,6 +283,9 @@ def build_social_topics(records: list[dict], clusters: list[dict] | None, *, sou
             'phrases': phrases, 'engagement': _engagement(rs), 'formats': _formats(rs),
             'first_seen': min(d for d, _ in dates) if dates else None, 'last_seen': max(d for d, _ in dates) if dates else None,
             'date_basis': sorted({b for _, b in dates}), 'label': label.strip(),
+            'anchor_kind': 'bigram' if ' ' in anchor else 'word',
+            'grouping_basis': f"{len(rs)} records share the {'two-word phrase' if ' ' in anchor else 'single word'} '{anchor}' (surface match, no semantics)",
+            'needs_review': ' ' not in anchor or len(rs) < NEEDS_REVIEW_BELOW or supplier_only,
         })
     return {
         'schema_version': 1,
@@ -284,10 +297,11 @@ def build_social_topics(records: list[dict], clusters: list[dict] | None, *, sou
             'note': 'Engagement measures attention, not need or demand, and is never compared or summed across platforms. '
                     'Creator and supplier posts are kept apart from customer posts (speaker_mix). Single-platform topics are flagged. '
                     'Topics with no search-study cluster are candidates to check in search, not content gaps. '
-                    'Grouping is surface-phrase based and misses paraphrase.',
+                    'Grouping is surface-phrase based: no German stemming or compound splitting (kind/kinder are separate), partial de/en/es stopword lists, no paraphrase. '
+                    'Topics with needs_review true (single-word anchor, under 5 records or supplier-only) do not count as a keyword-map input.',
         },
         'records_considered': len(recs), 'records_assigned': len(assigned), 'records_unassigned': len(recs) - len(assigned),
-        'records_skipped': dict(skipped), 'rows': rows,
+        'records_skipped': dict(skipped), 'topics_dropped': max(0, len(ordered) - MAX_TOPICS), 'rows': rows,
     }
 
 
