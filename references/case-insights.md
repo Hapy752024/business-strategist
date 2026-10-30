@@ -5,6 +5,7 @@ Contents:
 - [Draft and review](#draft-and-review)
 - [Enriched research and downstream case plans](#enriched-research-and-downstream-case-plans)
 - [Contract version 3: assumption register](#contract-version-3-assumption-register)
+- [Decision memo](#decision-memo)
 
 For a registered Business case, `cases/<id>/case_insights.md` is the one current
 reader-facing assessment. The project README navigates cases; supporting
@@ -218,3 +219,11 @@ A case with `assumptions.json` (every case registered since 2026-10-21) is held 
 - Every paragraph in `## Executive assessment` and `## Recommended next decisions` must contain an `{{evidence_claim.<id>}}`, `{{source_numeric.<id>}}` or `{{assumption.<id>}}` marker, or open with one of the status phrases `Not checked`, `Unknown`, `Insufficient evidence` or `Refuted` (bold allowed). Other sections are unaffected. A blunt recommendation must point at evidence or say plainly what is not known.
 
 Legacy cases without a register keep contracts 1 and 2 and cannot close version 3 delivery.
+
+## Decision memo
+
+`python3 scripts/evidence_scout/build_decision_memo.py --ledger <claim-ledger.json> [--assessment <problem-validation-assessment.json>] [--voc-table <voc-table.json>] [--economics <economics.json>] [--factor-claims <factor-claims.json>] [--cost-cap 100 --currency EUR] --out cases/<id>/market_research/decision_memo/` writes `decision_memo.md` and `scores.json` (schema `schemas/decision-memo-scores.schema.json`). It is a read-only summary of reviewed artifacts, not a publication route.
+
+- Scoring: pain, buyer, reachability, economics and competition, each 0–100 from the rubric in the script docstring, traceable to an artifact field, or `unknown`. The total is multiplicative; any factor ≤ 20 caps it at 20 and any `unknown` caps it at 40 and becomes the first next test. A `claim-ledger.falsified.json` sibling is applied: falsified claims never score, weakened claims score at their downgraded confidence.
+- Verdict words are the strategy-plan `verdict` enum (`insufficient_evidence`, `test`, `commit`, `pivot`, `stop`); a memo `commit` only permits preparing the commit decision review. Every factor ≥ 80 prints a grade-inflation warning: verdicts above `test` should be rare.
+- Placement: the memo is not an extra insights section, because the version 2/3 section contract is fixed. Carry its verdict, riskiest assumption, ≤ 2-week test with cost cap and kill criteria into `## Executive assessment` and `## Recommended next decisions` with the usual evidence or status markers, and link `decision_memo.md` under `## Sources`. Rerun the memo after any ledger, falsification, VOC table or economics change.
