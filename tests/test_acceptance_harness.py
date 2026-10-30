@@ -281,9 +281,36 @@ def test_feeder_merges_private_answers(tmp_path):
 
 def test_scenario_copy_excludes_private_answers(tmp_path):
     scen = tmp_path / 'scen'
-    for name in ('scenario.md', 'founder-answers.json', acc.PRIVATE_ANSWERS, '.gitignore'):
+    for name in ('scenario.md', 'founder-answers.json', 'checkpoints.json', acc.PRIVATE_ANSWERS, '.gitignore'):
         _write(scen / name, '{}')
     wt = tmp_path / 'wt'
     writes = acc.stage_inputs(scen, wt, wt / 'projects/_eval/s', None)
-    names = {Path(w['path']).name for w in writes}
-    assert names == {'scenario.md', 'founder-answers.json'}
+    assert {Path(w['path']).name for w in writes} == {'scenario.md'}
+
+
+def test_agent_cannot_see_scoring_files(tmp_path, monkeypatch):
+    class GitWithTrackedEvals(FakeGit):
+        def __call__(self, cmd, *args, **kwargs):
+            res = super().__call__(cmd, *args, **kwargs)
+            if cmd[:3] == ['git', 'worktree', 'add']:
+                for name in ('founder-answers.json', 'checkpoints.json', 'scenario.md'):
+                    _write(Path(cmd[4]) / 'evals/acceptance/hybrid-insurance-advisor' / name, '{}')
+            return res
+    monkeypatch.setattr(acc.subprocess, 'run', GitWithTrackedEvals())
+    monkeypatch.setattr(acc.tempfile, 'mkdtemp', lambda prefix='': str(tmp_path / 'tmp'))
+    (tmp_path / 'tmp').mkdir()
+    monkeypatch.setattr(acc, 'measure_provider_spend', lambda: {})
+    seen = {}
+
+    def fake_round(cmd, *, cwd, transcript, stderr_log, timeout_s):
+        wt = Path(cwd)
+        seen['evals'] = (wt / 'evals/acceptance').exists()
+        seen['files'] = sorted(p.name for p in wt.rglob('*') if p.is_file())
+        return {'line_start': 0, 'line_end': 0, 'session_id': None, 'final_text': '', 'cost_usd': 0.0,
+                'exit_code': 0, 'timed_out': False, 'duration_s': 0.0}
+    monkeypatch.setattr(acc, 'run_round', fake_round)
+    acc.run_acceptance(SCENARIO, tmp_path / 'out', reference_project=_reference(tmp_path), now='20261030-120000')
+    assert seen['evals'] is False
+    assert 'founder-answers.json' not in seen['files'] and 'checkpoints.json' not in seen['files']
+    assert acc.PRIVATE_ANSWERS not in seen['files'] and 'scenario.md' in seen['files']
+    assert any(r.startswith('Read(') and r.endswith('/evals/acceptance/**)') for r in acc.blocked_tools([ROOT]))

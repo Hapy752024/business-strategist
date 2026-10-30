@@ -122,6 +122,7 @@ def blocked_tools(host_roots: Iterable[Path]) -> list[str]:
     host = []
     for root in host_roots:
         host += [f'Edit(/{root}/**)', f'Write(/{root}/**)']  # `//abs/path` form: never edit the host checkouts
+        host += [f'Read(/{root}/{HIDDEN_TREE}/**)']  # nor read the scoring rules/answers from the runner's repo
     return [*DISALLOWED_TOOLS, *host]
 
 
@@ -147,7 +148,9 @@ def count_questions(text: str) -> int:
 
 
 PRIVATE_ANSWERS = 'founder-answers.private.json'
-SCENARIO_COPY_EXCLUDE = {PRIVATE_ANSWERS, '.gitignore'}
+# Only the founder brief reaches the agent: scripted answers and scoring rules stay with the runner.
+SCENARIO_COPY_FILES = ('scenario.md',)
+HIDDEN_TREE = 'evals/acceptance'
 
 
 def load_answers(path: Path, private_path: Path | None = None) -> dict:
@@ -823,8 +826,8 @@ def stage_inputs(scenario_dir: Path, wt: Path, eval_dir: Path, reference_project
     """Copy the scenario and the read-only reference seed into the disposable worktree."""
     writes = []
     target = eval_dir / 'scenario'
-    # The private answers file is never copied: the agent under test must not read the founder's private values.
-    for src in sorted(p for p in scenario_dir.rglob('*') if p.is_file() and p.name not in SCENARIO_COPY_EXCLUDE):
+    # Only scenario.md is copied: the agent under test must not read the answers, private values or scoring rules.
+    for src in sorted(scenario_dir / name for name in SCENARIO_COPY_FILES if (scenario_dir / name).is_file()):
         dst = target / src.relative_to(scenario_dir)
         if not _inside(dst, eval_dir):
             raise RuntimeError(f'refusing to write outside the eval slug: {dst}')
@@ -843,6 +846,17 @@ def stage_inputs(scenario_dir: Path, wt: Path, eval_dir: Path, reference_project
                 shutil.copyfile(src, dst)  # read-only use of the source; content only
                 writes.append({'kind': 'reference_seed', 'path': str(dst)})
     return writes
+
+
+def hide_scoring_files(wt: Path) -> list[str]:
+    """Delete evals/acceptance/ inside the disposable worktree before the model starts."""
+    target = wt / HIDDEN_TREE
+    if not _inside(target, wt):
+        raise RuntimeError(f'refusing to delete outside the worktree: {target}')
+    if target.exists():
+        shutil.rmtree(target)
+        return [str(target)]
+    return []
 
 
 def out_dir_writes(out_dir: Path) -> list[dict]:
@@ -952,6 +966,7 @@ def run_acceptance(scenario_dir: Path = DEFAULT_SCENARIO, out_dir: Path | None =
     try:
         eval_dir = wt / 'projects/_eval' / slug
         eval_dirs = [eval_dir, wt / 'projects' / alt_slug]
+        removed = hide_scoring_files(wt)
         writes = stage_inputs(scenario_dir, wt, eval_dir, reference_project)
         eval_rel = f'projects/_eval/{slug}'
         prompt = load_prompt(scenario_dir, budget_usd=budget_usd, eval_dir=eval_rel, alt_slug=alt_slug)
@@ -959,6 +974,7 @@ def run_acceptance(scenario_dir: Path = DEFAULT_SCENARIO, out_dir: Path | None =
             plan = {'ref': ref, 'ref_sha': sha, 'worktree': str(wt), 'eval_dirs': [str(d) for d in eval_dirs],
                     'out_dir': str(out_dir), 'writes': writes + out_dir_writes(out_dir),
                     'reference_seeded': any(w['kind'] == 'reference_seed' for w in writes),
+                    'removed_from_worktree': removed,
                     'first_command': claude_command(prompt[:80] + '...', session_id=None, model_budget=model_budget_usd,
                                                     wt=wt, tools_blocked=tools_blocked, model=model),
                     'blocked_tools': tools_blocked}
@@ -1036,7 +1052,8 @@ def writes_outside_eval(wt: Path, eval_dirs: list[Path], before: dict) -> list[s
     changed = [f'projects/{rel}' for rel, meta in after.items()
                if before.get(rel) != meta and not any(rel.startswith(p) for p in prefixes)]
     status = subprocess.run(['git', 'status', '--porcelain'], cwd=wt, capture_output=True, text=True, check=False).stdout
-    changed += [f'repo:{line.strip()}' for line in status.splitlines() if line.strip()]
+    changed += [f'repo:{line.strip()}' for line in status.splitlines()
+                if line.strip() and HIDDEN_TREE + '/' not in line]  # the runner's own deletion is not an agent write
     return sorted(changed)
 
 
@@ -1047,6 +1064,8 @@ def print_plan(plan: dict) -> None:
     for d in plan['eval_dirs']:
         print(f'  {d}')
     print(f"[dry-run] reference workspace seeded: {plan['reference_seeded']}")
+    for r in plan.get('removed_from_worktree', []):
+        print(f'[dry-run] hidden from the agent (deleted in worktree): {r}')
     print('[dry-run] planned writes:')
     for w in plan['writes']:
         print(f"  {w['kind']:<15} {w['path']}")
