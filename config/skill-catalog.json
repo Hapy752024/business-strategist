@@ -534,6 +534,15 @@
                 "market_research/**/customer-feedback/falsification-report.json"
               ],
               "freshness": "digest"
+            },
+            {
+              "artifact": "claim-ledger-falsified",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/**/customer-feedback/claim-ledger.falsified.json",
+                "market_research/**/customer-feedback/claim-ledger.falsified.json"
+              ],
+              "freshness": "digest"
             }
           ]
         }

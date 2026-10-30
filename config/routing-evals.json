@@ -457,6 +457,23 @@
           "files": []
         }
       ]
+    },
+    {
+      "pair": "claim falsification vs case appraisal vs evidence-scout",
+      "evals": [
+        {
+          "id": "route-claim-falsification-1",
+          "prompt": "Before final delivery, falsify claims in my reviewed claim ledger: try to disprove each material finding with adversarial web searches.",
+          "expected_output": "Routes to opportunity-risk-designer via the claim-falsification route (mode falsification): export claims only, run the claim-falsifier agent, apply verdicts to a copy of the ledger.",
+          "expected_skill": "opportunity-risk-designer",
+          "forbidden_skills": [
+            "evidence-scout",
+            "startup-challenge-panel"
+          ],
+          "files": [],
+          "rationale": "Adversarial falsification of synthesized claims is a post-synthesis risk check owned by opportunity-risk-designer; evidence-scout collects new supporting evidence and the challenge panel critiques strategy, neither isolates the falsifier from the findings."
+        }
+      ]
     }
   ]
 }

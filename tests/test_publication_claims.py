@@ -186,3 +186,35 @@ def test_render_unknown_assumption_rejected(tmp_path):
 def test_render_assumption_marker_without_register_rejected(tmp_path):
     with pytest.raises(ValueError, match='assumption register'):
         render(tmp_path, {'case_insights.md': '{{assumption.A-pay}}'}, [], [])
+
+
+def _falsify(pack, quarantined_ids, sha=None):
+    import hashlib
+    ledger = pack / 'claim-ledger.json'
+    rows = json.loads(ledger.read_text())
+    (pack / 'claim-ledger.falsified.json').write_text(json.dumps({
+        'schema_version': 1, 'source_ledger_sha256': sha or hashlib.sha256(ledger.read_bytes()).hexdigest(),
+        'claims': [r for r in rows if r['claim_id'] not in quarantined_ids],
+        'quarantined': [{'claim': r, 'reason': 'falsified by adversarial search: contrary 2026 survey', 'evidence': []}
+                        for r in rows if r['claim_id'] in quarantined_ids]}))
+
+
+def test_falsification_quarantined_claim_is_refused(tmp_path):
+    root, pack, bindings, ref = reviewed_claim(tmp_path)
+    _falsify(pack, {'wait'})
+    with pytest.raises(ValueError, match=r'wait_source: claim quarantined by falsification \(falsified by adversarial'):
+        render(root, {'case_insights.md': 'Wait {{evidence_claim.wait_source}}.'}, [ref], bindings)
+
+
+def test_stale_falsification_is_refused(tmp_path):
+    root, pack, bindings, ref = reviewed_claim(tmp_path)
+    _falsify(pack, set(), sha='0' * 64)
+    with pytest.raises(ValueError, match='stale.*apply_falsification.py'):
+        render(root, {'case_insights.md': 'Wait {{evidence_claim.wait_source}}.'}, [ref], bindings)
+
+
+def test_claim_unaffected_by_falsification_publishes(tmp_path):
+    root, pack, bindings, ref = reviewed_claim(tmp_path)
+    _falsify(pack, set())
+    rendered = render(root, {'case_insights.md': 'Wait {{evidence_claim.wait_source}}.'}, [ref], bindings)['case_insights.md']
+    assert '[Source: e1](https://example.org/review/1)' in rendered

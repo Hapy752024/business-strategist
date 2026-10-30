@@ -26,14 +26,15 @@ from typing import Any
 import jsonschema
 
 try:
-    from scripts.evidence_scout.export_claims_for_falsification import load_ledger
+    from scripts.evidence_scout.export_claims_for_falsification import is_material, load_ledger
 except ModuleNotFoundError:  # direct script execution
-    from export_claims_for_falsification import load_ledger
+    from export_claims_for_falsification import is_material, load_ledger
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = ROOT / "schemas/falsification-verdicts.schema.json"
 LEVELS = ["unresolved", "low", "medium", "high"]
-SURVIVED_PHRASE = re.compile(r"no disconfirming evidence found within \d+ searches", re.I)
+SURVIVED_PHRASE = re.compile(r"no disconfirming evidence found within (\d+) searches", re.I)
+CONFIRMATION_WORDS = re.compile(r"\b(confirm|verif|validat)", re.I)
 LEDGER_NAME = "claim-ledger.falsified.json"
 REPORT_NAME = "falsification-report"
 
@@ -54,7 +55,7 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def validate_verdicts(data: Any, ledger: dict[str, dict[str, Any]]) -> list[str]:
+def validate_verdicts(data: Any, ledger: dict[str, dict[str, Any]], exported: set[str]) -> list[str]:
     """Return all problems with an untrusted verdict file; empty means accepted."""
     validator = jsonschema.Draft202012Validator(json.loads(SCHEMA.read_text(encoding="utf-8")))
     errors = []
@@ -75,12 +76,20 @@ def validate_verdicts(data: Any, ledger: dict[str, dict[str, Any]]) -> list[str]
         if cid not in ledger:
             errors.append(f"unknown claim id {cid}: not in the reviewed ledger")
             continue
+        if cid not in exported:
+            errors.append(f"claim id {cid} was not in the exported claims set given to the falsifier")
         current = ledger[cid].get("confidence")
         proposed = item.get("proposed_confidence")
         if proposed is not None and _rank(proposed) > _rank(current):
             errors.append(f"{cid}: verdict tries to upgrade confidence {current} -> {proposed}; falsification never upgrades")
-        if item["verdict"] == "survived" and not SURVIVED_PHRASE.search(item["rationale"]):
-            errors.append(f"{cid}: survived rationale must state 'no disconfirming evidence found within N searches', not confirmation")
+        if item["verdict"] == "survived":
+            match = SURVIVED_PHRASE.search(item["rationale"])
+            if not match:
+                errors.append(f"{cid}: survived rationale must state 'no disconfirming evidence found within N searches', not confirmation")
+            elif int(match.group(1)) != len(item["searches_run"]):
+                errors.append(f"{cid}: survived rationale says {match.group(1)} searches but searches_run lists {len(item['searches_run'])}")
+            if CONFIRMATION_WORDS.search(item["rationale"]):
+                errors.append(f"{cid}: survived rationale must not claim confirmation, verification or validation")
     return errors
 
 
@@ -109,15 +118,27 @@ def render_markdown(report: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def apply(ledger: Path, verdicts: Path, out_dir: Path | None = None, checked_at: str | None = None) -> dict[str, Any]:
+def exported_ids(claims_export: Path | None, rows: list[dict[str, Any]]) -> set[str]:
+    """Claim ids the falsifier was given: from the export file, else recomputed materiality."""
+    if claims_export is None:
+        return {str(row["claim_id"]) for row in rows if is_material(row)}
+    data = json.loads(Path(claims_export).read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or not isinstance(data.get("claims"), list):
+        raise FalsificationInputError(f"{claims_export}: not a falsification claims export")
+    return {str(row.get("claim_id")) for row in data["claims"] if isinstance(row, dict)}
+
+
+def apply(ledger: Path, verdicts: Path, out_dir: Path | None = None, checked_at: str | None = None,
+          claims_export: Path | None = None) -> dict[str, Any]:
     ledger, verdicts = Path(ledger), Path(verdicts)
     rows = load_ledger(ledger)
     by_id = {str(row["claim_id"]): row for row in rows}
+    exported = exported_ids(claims_export, rows)
     try:
         data = json.loads(verdicts.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         raise FalsificationInputError(f"verdict file is not valid JSON: {exc}") from exc
-    errors = validate_verdicts(data, by_id)
+    errors = validate_verdicts(data, by_id, exported)
     if errors:
         raise FalsificationInputError("rejected verdicts:\n- " + "\n- ".join(errors))
 
@@ -165,7 +186,7 @@ def apply(ledger: Path, verdicts: Path, out_dir: Path | None = None, checked_at:
     outputs = {"ledger": str(out_dir / LEDGER_NAME), "report_json": str(out_dir / f"{REPORT_NAME}.json"),
                "report_md": str(out_dir / f"{REPORT_NAME}.md")}
     report = {"schema_version": 1, **provenance, "search_budget_per_claim": budget, "counts": counts,
-              "claims": entries, "not_checked": [str(r["claim_id"]) for r in rows if str(r["claim_id"]) not in verdict_by_id],
+              "claims": entries, "not_checked": sorted(exported - verdict_by_id.keys()),
               "warnings": warnings, "outputs": outputs}
     falsified_ledger = {"schema_version": 1, **provenance, "claims": publishable, "quarantined": quarantined}
     if Path(outputs["ledger"]).resolve() == ledger.resolve():
@@ -180,10 +201,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--ledger", type=Path, required=True, help="Reviewed claim-ledger.json (read only)")
     parser.add_argument("--verdicts", type=Path, required=True, help="claim-falsifier JSON output (untrusted)")
+    parser.add_argument("--claims", type=Path, help="The falsification-claims.json export given to the agent (default: recompute material claims)")
     parser.add_argument("--out-dir", type=Path, help="Defaults to the ledger's directory")
     args = parser.parse_args()
     try:
-        report = apply(args.ledger, args.verdicts, args.out_dir)
+        report = apply(args.ledger, args.verdicts, args.out_dir, claims_export=args.claims)
     except (OSError, ValueError) as exc:
         parser.error(str(exc))
     print(json.dumps({"counts": report["counts"], "not_checked": len(report["not_checked"]), "outputs": report["outputs"]}, indent=2))

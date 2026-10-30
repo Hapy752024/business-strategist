@@ -136,6 +136,7 @@ def render(root: Path, texts: dict[str, str], references: list, bindings: list,
         claim = next((row for row in ledger if row.get('claim_id') == ref['claim_id']), None)
         if not claim or claim.get('verification', {}).get('support_assessment') != 'supported' or ref['evidence_id'] not in claim.get('supporting_evidence', []):
             raise ValueError(ident + ': claim is not verified as supported by this evidence')
+        _check_falsification(ident, ledger_path, ref['claim_id'])
         evidence = {row['evidence_id']: row for line in siblings[0].read_text(encoding='utf-8').splitlines()
                     if line.strip() for row in [json.loads(line)]}
         record = evidence.get(ref['evidence_id'])
@@ -163,6 +164,25 @@ def render(root: Path, texts: dict[str, str], references: list, bindings: list,
         if '{{evidence_claim.' in body:
             raise ValueError(name + ': undeclared or malformed evidence claim marker')
     return output
+
+
+def _check_falsification(ident: str, ledger_path: Path, claim_id: str) -> None:
+    """Enforce quarantine recorded by apply_falsification.py in the reviewed ledger's sibling."""
+    path = ledger_path.parent / 'claim-ledger.falsified.json'
+    if not path.exists():
+        return
+    try:
+        result = json.loads(path.read_text(encoding='utf-8'))
+    except json.JSONDecodeError as exc:
+        raise ValueError(ident + ': claim-ledger.falsified.json is not valid JSON') from exc
+    if not isinstance(result, dict) or not isinstance(result.get('quarantined'), list):
+        raise ValueError(ident + ': claim-ledger.falsified.json is malformed; re-run apply_falsification.py')
+    if result.get('source_ledger_sha256') != hashlib.sha256(ledger_path.read_bytes()).hexdigest():
+        raise ValueError(ident + ': falsification is stale for the current reviewed claim ledger; '
+                         're-run export_claims_for_falsification.py, the claim-falsifier and apply_falsification.py')
+    for row in result['quarantined']:
+        if isinstance(row, dict) and isinstance(row.get('claim'), dict) and row['claim'].get('claim_id') == claim_id:
+            raise ValueError(f"{ident}: claim quarantined by falsification ({row.get('reason', 'no reason recorded')})")
 
 
 def _render_capture(root: Path, ident: str, ref: dict, bindings: list) -> str:
