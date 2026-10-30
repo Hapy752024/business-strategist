@@ -177,7 +177,7 @@ ScrapeCreators specifics: `collect_scrapecreators` does a free pre-flight credit
 
 ## AI answer-engine probing and brand-mention listening
 
-Current implementation: `ai_answer_engines` processes supplied recordings offline with no credentials or spend (repo-root `references/ai-answer-recordings.md`). Live engine collection is unimplemented and `brand_mention_listening` remains a separate pending pilot. Credential validation for a search provider does not establish listening or model-API readiness. The rules below govern an explicitly selected future collection, not a claim that these collectors exist.
+Current implementation: `ai_answer_engines` processes supplied recordings offline with no credentials or spend (repo-root `references/ai-answer-recordings.md`). Live answer collection for declared panel targets is `scripts/monitoring/ai_answer_collect.py` (capped; credit/quota failures stay unknown); `brand_mention_listening` remains a separate pending pilot. Credential validation for a search provider does not establish listening or model-API readiness. The rules below govern an explicitly selected future collection, not a claim that these collectors exist.
 
 Observation providers (OpenAI, Anthropic, Gemini, Perplexity APIs for answer panels; licensed listening APIs for own-brand mentions) produce visibility observations, never customer-demand evidence. Saved model answers retain their surface label, prompt-type label, model/version, search/tool configuration, locale, timestamp, prompt version and collection status (success/error/unsupported).
 

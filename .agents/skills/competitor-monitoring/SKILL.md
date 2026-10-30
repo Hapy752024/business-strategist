@@ -1,6 +1,6 @@
 ---
 name: competitor-monitoring
-description: Monitor competitor changes, own-brand mentions, and recorded AI-answer visibility. Use for watchlists, snapshots, diffs, and scoped monitoring; live answer collection and listening automation need a selected implementation.
+description: Monitor competitor changes, own-brand mentions, and recorded AI-answer visibility. Use for watchlists, snapshots, diffs, and scoped monitoring; live AI-answer collection is capped; listening is pending.
 ---
 
 # Competitor Monitoring

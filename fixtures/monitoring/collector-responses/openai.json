@@ -1,0 +1,10 @@
+{"id": "resp_fixture_openai_1", "object": "response", "model": "gpt-5.4-mini-2026-03-17", "status": "completed",
+ "output": [
+  {"type": "web_search_call", "id": "ws_fixture", "status": "completed",
+   "action": {"type": "search", "query": "garden service", "sources": [{"type": "url", "url": "https://consulted.example/a"}]}},
+  {"type": "message", "id": "msg_fixture", "role": "assistant", "status": "completed",
+   "content": [{"type": "output_text", "text": "Cedar is a garden service many people use. Another option is Birch.",
+     "annotations": [
+      {"type": "url_citation", "start_index": 0, "end_index": 5, "url": "https://cedar.example/services?utm_source=openai", "title": "Cedar"},
+      {"type": "url_citation", "start_index": 47, "end_index": 52, "url": "https://birch.example/", "title": "Birch"}]}]}],
+ "usage": {"input_tokens": 1200, "output_tokens": 80, "total_tokens": 1280}}

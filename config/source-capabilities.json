@@ -1496,7 +1496,7 @@
       "authorization_policy": "offline_no_credentials_or_spend",
       "status_check": "python3 -m pytest tests/test_ai_answer_probe.py -q",
       "example": "python3 scripts/monitoring/ai_answer_probe.py --panel fixtures/monitoring/recorded-example/panel.json --recorded fixtures/monitoring/recorded-example/current.jsonl --out /tmp/<new-unique-run>/",
-      "caveat": "Synthetic fixture is format documentation, not measured visibility. Live collection unimplemented. Read references/ai-answer-recordings.md; incomplete or incompatible measurements never yield eligible trends.",
+      "caveat": "Synthetic fixture is format documentation, not measured visibility. Live collection: scripts/monitoring/ai_answer_collect.py (separate, capped, spends provider credits). Read references/ai-answer-recordings.md; incomplete or incompatible measurements never yield eligible trends.",
       "implementation_status": "offline_only"
     },
     {

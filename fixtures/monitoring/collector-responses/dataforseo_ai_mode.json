@@ -1,0 +1,8 @@
+{"status_code": 20000, "status_message": "Ok.", "cost": 0.004, "tasks_count": 1,
+ "tasks": [{"id": "10311200-fixture-task", "status_code": 20000, "status_message": "Ok.", "cost": 0.004, "result_count": 1,
+  "data": {"api": "serp", "function": "live", "se": "google", "se_type": "ai_mode", "keyword": "Which garden service can I use?", "language_code": "en", "location_code": 2826, "device": "desktop"},
+  "result": [{"keyword": "Which garden service can I use?", "type": "ai_mode", "se_domain": "google.co.uk", "location_code": 2826, "language_code": "en",
+   "check_url": "https://www.google.co.uk/search?q=garden&udm=50", "datetime": "2026-10-31 10:00:00 +00:00", "item_types": ["ai_overview"], "items_count": 1,
+   "items": [{"type": "ai_overview", "rank_group": 1, "rank_absolute": 1, "markdown": "Popular options include **Cedar** and Birch.",
+     "items": [{"type": "ai_overview_element", "title": null, "text": "Popular options include Cedar and Birch.", "markdown": "Popular options include **Cedar** and Birch.",
+       "references": [{"type": "ai_overview_reference", "source": "Cedar", "domain": "cedar.example", "url": "https://cedar.example/", "title": "Cedar", "text": "snippet"}]}]}]}]}]}

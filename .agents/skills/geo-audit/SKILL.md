@@ -70,7 +70,8 @@ from a research benchmark, not citation rates on current engines. Do not quote t
 
 An audit does not show whether engines cite the site. If the owner needs that, use the
 AI-answer panel owned by the `competitor-monitoring` route
-(`scripts/monitoring/ai_answer_probe.py`). Panel rates are descriptive observations of
+(`scripts/monitoring/ai_answer_probe.py`; live answers via
+`scripts/monitoring/ai_answer_collect.py`). Panel rates are descriptive observations of
 declared prompts, not rankings, demand or causal uplift from an audit fix.
 
 ## Handoff

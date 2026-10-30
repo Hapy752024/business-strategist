@@ -1,0 +1,5 @@
+{"id": "pplx-fixture-1", "model": "sonar", "object": "chat.completion",
+ "choices": [{"index": 0, "finish_reason": "stop", "message": {"role": "assistant", "content": "Birch is a garden service [1]."}}],
+ "citations": ["https://birch.example/"],
+ "search_results": [{"title": "Birch", "url": "https://birch.example/"}],
+ "usage": {"prompt_tokens": 10, "completion_tokens": 9}}

@@ -1,0 +1,9 @@
+{"id": "msg_fixture_anthropic", "type": "message", "role": "assistant", "model": "claude-sonnet-5-5",
+ "content": [
+  {"type": "text", "text": "I'll search for garden services."},
+  {"type": "server_tool_use", "id": "srvtoolu_1", "name": "web_search", "input": {"query": "garden service"}},
+  {"type": "web_search_tool_result", "tool_use_id": "srvtoolu_1", "content": [
+    {"type": "web_search_result", "url": "https://cedar.example/", "title": "Cedar", "encrypted_content": "x", "page_age": "May 1, 2026"}]},
+  {"type": "text", "text": "Cedar offers garden services.", "citations": [
+    {"type": "web_search_result_location", "url": "https://cedar.example/", "title": "Cedar", "encrypted_index": "y", "cited_text": "Cedar garden services"}]}],
+ "stop_reason": "end_turn", "usage": {"input_tokens": 500, "output_tokens": 30, "server_tool_use": {"web_search_requests": 1}}}

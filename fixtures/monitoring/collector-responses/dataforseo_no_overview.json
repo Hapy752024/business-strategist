@@ -1,0 +1,5 @@
+{"status_code": 20000, "status_message": "Ok.", "cost": 0.002, "tasks_count": 1,
+ "tasks": [{"id": "10311200-fixture-noaio", "status_code": 20000, "status_message": "Ok.", "cost": 0.002, "result_count": 1,
+  "data": {"keyword": "Which garden service can I use?"},
+  "result": [{"keyword": "Which garden service can I use?", "type": "organic", "item_types": ["organic"], "items_count": 1,
+   "items": [{"type": "organic", "rank_group": 1, "url": "https://birch.example/", "title": "Birch"}]}]}]}

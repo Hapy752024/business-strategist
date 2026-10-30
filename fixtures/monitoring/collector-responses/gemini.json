@@ -1,0 +1,9 @@
+{"candidates": [{"content": {"role": "model", "parts": [{"text": "You could try Cedar (cedar.example). "}, {"text": "Birch also offers gardening."}]},
+  "finishReason": "STOP",
+  "groundingMetadata": {"webSearchQueries": ["garden service"],
+   "groundingChunks": [
+    {"web": {"uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AAA", "title": "cedar.example"}},
+    {"web": {"uri": "https://birch.example/about", "title": "birch.example"}}],
+   "groundingSupports": [{"segment": {"startIndex": 0, "endIndex": 35, "text": "You could try Cedar (cedar.example)."}, "groundingChunkIndices": [0]}]}}],
+ "usageMetadata": {"promptTokenCount": 10, "candidatesTokenCount": 30, "totalTokenCount": 40},
+ "modelVersion": "gemini-3.8-flash", "responseId": "gemini-fixture-response-1"}
