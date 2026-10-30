@@ -476,7 +476,7 @@ def balanced_queries(queries: list[str]) -> list[str]:
 
 
 QUERY_PLAN_PROVIDERS = {"reddit", "brave_search", "serper_search", "firecrawl", "hn", "github",
-                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit"}
+                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "cfpb_complaints"}
 RESUME_TERMINAL_PROVIDER_STATUSES = {"ok", "unsupported", "capture_gate_blocked", "not_applicable"}
 
 
@@ -1980,6 +1980,10 @@ def collect_apify_reddit(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "apify_reddit")
 
 
+def collect_cfpb_complaints(args, queries, run_dir):
+    return collect_scheduled_provider(args, queries, run_dir, "cfpb_complaints")
+
+
 def collect_x(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "x")
 
@@ -2077,6 +2081,30 @@ def _collect_apify_reddit_query(args: argparse.Namespace, queries: list[str], ru
             "subset_limitations": "Third-party scrape of public Reddit pages, relevance-ranked; completeness unknown."})
     write_json(run_dir / "raw" / "apify_reddit.json", redact_sensitive(raw))
     return records, {"status": meta["status"], "record_count": len(records), "credential_source": key_name, "fields": fields_present(raw)}
+
+
+def _collect_cfpb_complaints_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """CFPB consumer complaint narratives via the free public API (no credentials)."""
+    from providers.cfpb import fetch, to_records
+    raw: dict[str, Any] = {"searches": []}
+    records: list[dict[str, Any]] = []
+    status = "ok"
+    for query in queries:
+        body, meta = fetch(query, max(1, int(args.limit)))
+        raw["searches"].append({"query": query, "response": meta["response"]})
+        if meta["status"] != "ok":
+            status = meta["status"]
+            break
+        found = to_records(body, query, now_iso(), build=normalize_record,
+                           customer_segment=args.customer_segment, hypothesis=args.hypothesis_id)
+        for record in found[:max(1, int(args.limit))]:
+            relevance, notes, score = assess_relevance(record["text"], args, record["query"], record["source_url"], record["author_context"])
+            record.update({"relevance": relevance, "relevance_notes": notes, "relevance_score": score})
+            if relevance == "irrelevant":
+                record.update({"evidence_type": "irrelevant", "strength": "irrelevant"})
+            records.append(record)
+    write_json(run_dir / "raw" / "cfpb_complaints.json", redact_sensitive(raw))
+    return records, {"status": status, "record_count": len(records), "fields": fields_present(raw)}
 
 
 def _collect_github_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -4843,6 +4871,7 @@ def load_provider_routing() -> dict[str, Any]:
 PROVIDER_ROUTING_FAMILY = {
     "reddit": "reddit",
     "apify_reddit": "reddit",
+    "cfpb_complaints": "customer_reviews",
     "serpapi_google_trends": "google_trends",
     "youtube": "youtube",
     "firecrawl": "web_search",
@@ -5212,6 +5241,7 @@ def main() -> int:
     provider_funcs = {
         "reddit": collect_reddit,
         "apify_reddit": collect_apify_reddit,
+        "cfpb_complaints": collect_cfpb_complaints,
         "serpapi_google_trends": collect_serpapi_google_trends,
         "serper_search": collect_serper_search,
         "youtube": collect_youtube,

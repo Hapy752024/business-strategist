@@ -1,0 +1,138 @@
+{
+ "took": 28,
+ "timed_out": false,
+ "_shards": {
+  "total": 5,
+  "successful": 5,
+  "skipped": 0,
+  "failed": 0
+ },
+ "hits": {
+  "total": {
+   "value": 22098,
+   "relation": "eq"
+  },
+  "max_score": null,
+  "hits": [
+   {
+    "_index": "complaint-public-v1",
+    "_id": "31196072",
+    "_score": null,
+    "_source": {
+     "product": "Checking or savings account",
+     "date_sent_to_company": "2026-10-28T03:18:09.000Z",
+     "issue": "Problem caused by your funds being low",
+     "sub_product": "Checking account",
+     "zip_code": "33770",
+     "tags": null,
+     "complaint_id": "31196072",
+     "timely": "Yes",
+     "company_response": "In progress",
+     "submitted_via": "Web",
+     "company": "PNC Bank N.A.",
+     "date_received": "2026-10-28T03:12:18.000Z",
+     "state": "FL",
+     "company_public_response": null,
+     "sub_issue": "Overdrafts and overdraft fees"
+    },
+    "highlight": {
+     "sub_issue": [
+      "Overdrafts and <em>overdraft</em> fees"
+     ]
+    }
+   },
+   {
+    "_index": "complaint-public-v1",
+    "_id": "31144380",
+    "_score": null,
+    "_source": {
+     "product": "Checking or savings account",
+     "date_sent_to_company": "2026-10-27T16:16:02.000Z",
+     "issue": "Problem caused by your funds being low",
+     "sub_product": "Checking account",
+     "zip_code": "11510",
+     "tags": null,
+     "complaint_id": "31144380",
+     "timely": "Yes",
+     "company_response": "In progress",
+     "submitted_via": "Web",
+     "company": "SANTANDER HOLDINGS USA, INC.",
+     "date_received": "2026-10-27T16:03:47.000Z",
+     "state": "NY",
+     "company_public_response": null,
+     "sub_issue": "Overdrafts and overdraft fees"
+    },
+    "highlight": {
+     "sub_issue": [
+      "Overdrafts and <em>overdraft</em> fees"
+     ]
+    }
+   },
+   {
+    "_index": "complaint-public-v1",
+    "_id": "31073848",
+    "_score": null,
+    "_source": {
+     "product": "Checking or savings account",
+     "date_sent_to_company": "2026-10-26T22:14:29.000Z",
+     "issue": "Problem caused by your funds being low",
+     "sub_product": "Checking account",
+     "zip_code": "78613",
+     "tags": null,
+     "complaint_id": "31073848",
+     "timely": "Yes",
+     "company_response": "In progress",
+     "submitted_via": "Web",
+     "company": "NAVY FEDERAL CREDIT UNION",
+     "date_received": "2026-10-26T22:07:48.000Z",
+     "state": "TX",
+     "company_public_response": null,
+     "sub_issue": "Overdrafts and overdraft fees"
+    },
+    "highlight": {
+     "sub_issue": [
+      "Overdrafts and <em>overdraft</em> fees"
+     ]
+    }
+   }
+  ]
+ },
+ "_meta": {
+  "license": "CC0",
+  "last_updated": "2026-10-30T12:00:00-05:00",
+  "last_indexed": "2026-10-30T12:00:00-05:00",
+  "total_record_count": 18792616,
+  "is_data_stale": false,
+  "has_data_issue": false,
+  "break_points": {
+   "2": [
+    1792505276000,
+    "30496047"
+   ],
+   "3": [
+    1792093689000,
+    "30094337"
+   ],
+   "4": [
+    1791917561000,
+    "29887926"
+   ],
+   "5": [
+    1791580579000,
+    "29568792"
+   ],
+   "6": [
+    1791473588000,
+    "29441963"
+   ],
+   "7": [
+    1791303366000,
+    "29245245"
+   ],
+   "8": [
+    1790954189000,
+    "28885662"
+   ]
+  }
+ }
+}

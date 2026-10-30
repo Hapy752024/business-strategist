@@ -175,6 +175,35 @@
       "caveat": "Third-party scraper of public Reddit pages: terms-of-service risk sits with the actor, availability can break without notice, and completeness is unknown. It is a fallback, never the only source of record. Records stay unreviewed; comments are separate records linked to their post. Item spend is capped by --apify-item-cap (default 300)."
     },
     {
+      "id": "cfpb_complaints",
+      "family": "customer_reviews",
+      "label": "CFPB consumer complaints (free)",
+      "description": "Public CFPB Consumer Complaint Database: product, issue, company complained about, date and state for U.S. financial-services complaints; narrative text when the API returns it.",
+      "use_when": [
+        "financial services complaints",
+        "bank complaints",
+        "lending pain",
+        "fintech pain",
+        "entity-led complaint evidence",
+        "regulatory complaints"
+      ],
+      "avoid_when": [
+        "non-financial markets",
+        "non-U.S. markets",
+        "representative prevalence or market sizing"
+      ],
+      "evidence_strength": "medium_when_narrative_and_repeated_otherwise_weak",
+      "collector_provider": "cfpb_complaints",
+      "provider_aliases": [],
+      "validation_providers": [
+        "cfpb_complaints"
+      ],
+      "requires_env": [],
+      "status_check": "python3 scripts/validate_apis/validate_cfpb_complaints.py && python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --providers cfpb_complaints --limit 20",
+      "caveat": "Verified 2026-10-30: the CFPB edge returned HTTP 403 (permission_denied) to this repo's HTTP client, and the public search API documentation lists no narrative field (field=complaint_what_happened is rejected; hits carry metadata only). The collector therefore yields zero records live until access and narratives are confirmed; it never fabricates text. Complainants self-select, narratives (when present) are consent-published and keep CFPB's XXXX redactions, the named company is the subject not the speaker, and only state-level geography is kept."
+    },
+    {
       "id": "google_trends",
       "family": "search_demand",
       "label": "Google Trends via SerpAPI/DataForSEO",

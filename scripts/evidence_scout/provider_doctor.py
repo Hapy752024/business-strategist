@@ -294,6 +294,11 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
         "customer_reviews": [
             _env_backend("trustpilot_reviews", ["TRUSTPILOT_API_KEY"], risk="paid_or_account_module"),
             _env_backend("google_places_reviews", ["GOOGLE_PLACES_API_KEY"], risk="paid_credits"),
+            _public_http_backend(
+                "cfpb_complaints",
+                "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/",
+                {"search_term": "overdraft", "field": "all", "size": 1, "no_aggs": "true"},
+            ),
             _env_backend("scrapecreators_social", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
         ],
         "founder_community": [
