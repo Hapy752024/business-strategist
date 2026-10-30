@@ -223,3 +223,60 @@ def test_malformed_json_envelope_is_denied_not_treated_as_text():
     from scripts import enforce_skill_route as hook
     with pytest.raises(ValueError, match="Malformed JSON route envelope"):
         hook.check_dispatch(_skill_event("idea-grill", '{"route": {"request": "x", "project": "foo"'))
+
+
+# --- Stop hook: delivery claims -------------------------------------------
+
+import sys as _sys
+_sys.path.insert(0, str(ROOT / ".claude/hooks"))
+import stop_delivery_check as stop_hook  # noqa: E402
+import compaction_state  # noqa: E402
+
+
+def _transcript(tmp_path, text):
+    path = tmp_path / "t.jsonl"
+    path.write_text(json.dumps({"type": "user", "message": {"role": "user", "content": "go"}}) + "\n"
+                    + json.dumps({"type": "assistant", "message": {"role": "assistant",
+                                  "content": [{"type": "text", "text": text}]}}) + "\n")
+    return str(path)
+
+
+def _case_checkpoint(root, session="s1"):
+    case_root = root / "projects/p/business-analysis/cases/c1"
+    (case_root / "market_research/pain_points/runs/r1").mkdir(parents=True)
+    manifest = case_root / "market_research/manifest.json"
+    manifest.write_text("{}")
+    compaction_state.write_state(compaction_state.resume_path(root, session), {
+        "session_id": session, "active_selection": {"project": "p", "case": "c1"},
+        "workspace": {"case_id": "c1", "run_id": "r1", "manifest_path": manifest.relative_to(root).as_posix()}})
+
+
+def test_stop_hook_ignores_non_delivery_turn(tmp_path):
+    _case_checkpoint(tmp_path)
+    for text in ("Here is a progress snapshot of the research.", "The case is not yet delivered.",
+                 "Research is not complete."):
+        event = {"session_id": "s1", "transcript_path": _transcript(tmp_path, text)}
+        assert stop_hook.stop_delivery_check(event, tmp_path) == {}
+
+
+def test_stop_hook_blocks_unvalidated_delivery_claim(tmp_path):
+    for name in ("scripts",):
+        (tmp_path / name).symlink_to(ROOT / name)
+    _case_checkpoint(tmp_path)
+    event = {"session_id": "s1", "transcript_path": _transcript(tmp_path, "The case was fully delivered.")}
+    out = stop_hook.stop_delivery_check(event, tmp_path)
+    assert out["decision"] == "block"
+    assert len(out["reason"]) <= 600 + 100 and "progress snapshot" in out["reason"]
+    # Same event through the real hook entry point.
+    assert run_hook(ROOT / ".claude/hooks/stop_delivery_check.py", tmp_path, event)["decision"] == "block"
+    # No loop, and no block when the case cannot be resolved.
+    assert stop_hook.stop_delivery_check({**event, "stop_hook_active": True}, tmp_path) == {}
+    assert stop_hook.stop_delivery_check({**event, "session_id": "other"}, tmp_path) == {}
+    assert stop_hook.stop_delivery_check({**event, "transcript_path": "/nonexistent"}, tmp_path) == {}
+
+
+def test_stop_hook_registered_without_onfailure():
+    settings = json.loads((ROOT / ".claude/settings.json").read_text())
+    entry = settings["hooks"]["Stop"][0]["hooks"][0]
+    assert entry["command"].endswith(".claude/hooks/stop_delivery_check.py\"") and entry["timeout"] == 60
+

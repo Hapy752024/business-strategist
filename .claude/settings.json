@@ -133,6 +133,18 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop_delivery_check.py\"",
+            "timeout": 60
+          }
+        ]
+      }
     ]
   }
 }
