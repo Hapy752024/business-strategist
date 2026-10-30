@@ -3,7 +3,9 @@
 from __future__ import annotations
 import argparse
 import json
+import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,10 +29,19 @@ def score(case: dict, answer: str) -> dict:
 
 def run_case(skill: str, case: dict) -> str:
     prompt = f"Use the {skill} skill. {case['prompt']}"
-    # cwd=ROOT so project hooks, CLAUDE.md and skills load (a temp cwd + --add-dir loads none of them).
-    # Scratch output goes to --out, never into tracked files.
-    out = subprocess.run(['claude', '-p', prompt, '--output-format', 'json'],
-                         cwd=ROOT, text=True, capture_output=True, timeout=600)
+    # Run in a disposable detached worktree of HEAD: a full checkout, so project hooks, CLAUDE.md and
+    # skills load, but anything the run writes (e.g. projects/ workspaces) never touches the real repo.
+    # `claude -p` has no --max-turns flag in the installed CLI, so the 600s timeout is the only cap.
+    parent = tempfile.mkdtemp(prefix='live-eval-')
+    wt = Path(parent) / 'wt'
+    try:
+        subprocess.run(['git', 'worktree', 'add', '--detach', str(wt), 'HEAD'],
+                       cwd=ROOT, check=True, capture_output=True, text=True)
+        out = subprocess.run(['claude', '-p', prompt, '--output-format', 'json'],
+                             cwd=wt, text=True, capture_output=True, timeout=600)
+    finally:
+        subprocess.run(['git', 'worktree', 'remove', '--force', str(wt)], cwd=ROOT, capture_output=True, text=True)
+        shutil.rmtree(parent, ignore_errors=True)
     if out.returncode != 0:
         raise RuntimeError(out.stderr[-2000:])
     payload = json.loads(out.stdout)

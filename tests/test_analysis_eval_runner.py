@@ -101,22 +101,39 @@ def test_non_video_baseline_is_working_tree_snapshot_and_digest_checked(tmp_path
     with pytest.raises(ValueError,match='escapes'):module.frozen_baseline('file',fixture,tmp_path)
 
 
-def test_live_runner_uses_repo_cwd(monkeypatch):
-    """Live runs must start in the repo so project hooks, CLAUDE.md and skills load."""
-    from scripts import run_live_evals as live
-    seen = {}
-
+def _fake_runner(live, calls, claude_raises=False):
     def fake_run(cmd, **kwargs):
-        seen['cwd'] = kwargs.get('cwd')
-        seen['cmd'] = cmd
+        calls.append((list(cmd), kwargs.get('cwd')))
+        if claude_raises and cmd[0] == 'claude':
+            raise RuntimeError('boom')
 
         class R:
             returncode = 0
             stdout = '{"result": "ok", "is_error": false}'
             stderr = ''
         return R()
+    return fake_run
 
-    monkeypatch.setattr(live.subprocess, 'run', fake_run)
+
+def test_live_runner_uses_disposable_worktree(monkeypatch):
+    """Live runs use a throwaway worktree of HEAD outside the repo, so hooks/skills load but nothing leaks."""
+    from scripts import run_live_evals as live
+    calls = []
+    monkeypatch.setattr(live.subprocess, 'run', _fake_runner(live, calls))
     assert live.run_case('idea-grill', {'prompt': 'x'}) == 'ok'
-    assert Path(seen['cwd']) == live.ROOT
-    assert '--add-dir' not in seen['cmd']
+    add = next(c for c in calls if c[0][:3] == ['git', 'worktree', 'add'])
+    claude = next(c for c in calls if c[0][0] == 'claude')
+    assert '--detach' in add[0] and add[0][-1] == 'HEAD' and add[1] == live.ROOT
+    wt = Path(add[0][-2])
+    assert claude[1] == wt and live.ROOT not in wt.parents and wt != live.ROOT
+    assert any(c[0][:4] == ['git', 'worktree', 'remove', '--force'] and c[0][-1] == str(wt) for c in calls)
+
+
+def test_live_runner_cleans_worktree_when_claude_raises(monkeypatch):
+    from scripts import run_live_evals as live
+    import pytest
+    calls = []
+    monkeypatch.setattr(live.subprocess, 'run', _fake_runner(live, calls, claude_raises=True))
+    with pytest.raises(RuntimeError):
+        live.run_case('idea-grill', {'prompt': 'x'})
+    assert any(c[0][:4] == ['git', 'worktree', 'remove', '--force'] for c in calls)

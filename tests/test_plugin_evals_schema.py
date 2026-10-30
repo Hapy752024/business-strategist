@@ -50,12 +50,20 @@ def test_prompts_do_not_name_skills():
         assert not [s for s in skills if s in text], case.name
 
 
+def test_no_trigger_graders_are_pinned():
+    for name in NO_TRIGGER:
+        fms = [frontmatter(g) for g in (SUITE / name / 'graders').glob('*.md')]
+        assert any(f.get('type') == 'tool_used' and f.get('tool') == 'Skill'
+                   and f.get('min') == 0 and f.get('max') == 0 and f.get('arm') == 'both' for f in fms), name
+
+
 def test_expected_skills_exist():
     for case in cases():
         for g in (case / 'graders').glob('*.md'):
             fm = frontmatter(g)
             if fm.get('type') != 'tool_used' or fm.get('tool') != 'Skill' or fm.get('max') == 0:
                 continue
+            # parse the expected skill name out of the grader's input_match regex text
             m = re.search(r'\[\\w-\]\+:\)\?([a-z0-9-]+)"', fm['input_match'])
             assert m, f'{g}: cannot read expected skill'
             assert (SKILLS / m.group(1) / 'SKILL.md').is_file(), m.group(1)
