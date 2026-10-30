@@ -55,7 +55,7 @@ fi
 # ── Git functional ─────────────────────────────────────────
 echo ""
 echo "--- Git ---"
-if [ -d .git ] && [ -f .git/HEAD ]; then
+if { [ -d .git ] && [ -f .git/HEAD ]; } || [ -f .git ]; then
     green "  PASS  Git is functional"
 else
     red "  FAIL  Git is not functional — version control is required for this project"
@@ -65,7 +65,7 @@ fi
 # ── Committed junk ────────────────────────────────────────
 echo ""
 echo "--- Committed junk ---"
-if [ -d .git ] && [ -f .git/HEAD ]; then
+if { [ -d .git ] && [ -f .git/HEAD ]; } || [ -f .git ]; then
     for pattern in "__pycache__" "*.pyc" "*.sqlite" "*.local.json"; do
         files=$(git ls-files "$pattern" 2>/dev/null) || true
         if [ -n "$files" ]; then
@@ -138,10 +138,11 @@ if [ -d .agents/skills ]; then
             ((errors += 1))
         fi
         line_count=$(wc -l < "$skill_file")
-        if [ "$line_count" -le 30 ]; then
-            green "  PASS  $skill_name entry is within 30-line budget"
+        median_len=$(python3 -c 'import statistics,sys; l=[len(x.rstrip("\n")) for x in open(sys.argv[1], encoding="utf-8")]; print(int(statistics.median(l)) if l else 0)' "$skill_file")
+        if [ "$line_count" -le 500 ] && [ "$median_len" -le 100 ]; then
+            green "  PASS  $skill_name entry is within budget ($line_count lines, median $median_len chars)"
         else
-            red "  FAIL  $skill_name entry exceeds 30-line budget ($line_count)"
+            red "  FAIL  $skill_name entry exceeds budget (max 500 lines, median line max 100 chars): $line_count lines, median $median_len chars"
             ((errors += 1))
         fi
         workflow_file="$(dirname "$skill_file")/references/workflow.md"

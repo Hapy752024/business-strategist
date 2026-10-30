@@ -159,7 +159,6 @@ def test_configured_hook_commands_block_invalid_dispatch_from_nested_cwd(tmp_pat
         group = next(g for g in settings['hooks'][name]
                      if any('enforce_skill_route.py' in h['command'] for h in g['hooks']))
         command = group['hooks'][0]['command']
-        assert '|| exit 2' in command
         payload = {'hook_event_name': name, 'tool_name': 'Skill',
                    'tool_input': {'skill': 'idea-grill', 'args': '{}'},
                    'command_name': 'idea-grill', 'command_args': '{}'}

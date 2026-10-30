@@ -12,7 +12,7 @@ description: Validate a content, social, or channel idea before production inves
 ## Workflow
 
 1. Read `references/workflow.md` for the six validation gates and evidence instruments.
-2. Read `references/founder-playbooks.md` for the practitioner evidence base (SaaS, fintech/insurtech, professional services).
+2. Read `../business-archetype-playbook-researcher/references/workflow.md` for the practitioner playbook research method (sourced founder and operator patterns for the business archetype).
 3. Restate the idea as a testable claim: audience, platform, format, promise, conversion event.
 4. Run the gates in order: audience presence → demand evidence → founder-format fit → economic entry/customer relationship → route economics/learning window → sustainability. Stop early on a hard KILL.
 5. Return the verdict with evidence, confidence, and a bounded low-cost test with separate access, relationship and commercial thresholds.

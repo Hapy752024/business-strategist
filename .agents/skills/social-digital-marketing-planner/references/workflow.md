@@ -8,7 +8,7 @@ Before creating a substantial plan, read:
 
 - `references/social-digital-marketing-research.md`
 - The channel jobs, founder prerequisites, loop gates, community operating model, and incrementality rules in `references/evidence-registry.md` at repo root.
-- If the user arrives with an untested channel/content idea, validate it first with `social-media-idea-validator`; its `references/founder-playbooks.md` holds the practitioner evidence base (SaaS, insurtech, professional services) for what actually works.
+- If the user arrives with an untested channel/content idea, validate it first with `social-media-idea-validator`; practitioner evidence on what actually works comes from `../../business-archetype-playbook-researcher/references/workflow.md`.
 
 If the user asks for latest platform-specific specs, ad formats, targeting features, algorithm changes, or benchmarks, search current official platform documentation before giving precise advice.
 

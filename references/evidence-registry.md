@@ -2,7 +2,7 @@
 
 Distilled, sourced findings that apply across multiple skills. Skills should cite this registry instead of maintaining private copies of the same findings. Last researched: 2026-08-28.
 
-**Full detail:** the detailed source tables for these findings were not migrated into the project-centric layout — the former workspaces `founder-gtm-playbooks` and `european-german-us-service-customer-psychology` are unavailable (do not cite paths under `projects/research/topics/`; they no longer exist). The GTM-specific summary remains in `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`; the full per-geography treatment lives in `.agents/skills/service-customer-perspective-challenger/references/`. A separate practitioner evidence base for social/content idea validation (first-customer levers, Pain-Point SEO, broker-channel reality) lives in `.agents/skills/social-media-idea-validator/references/founder-playbooks.md`.
+**Full detail:** the detailed source tables for these findings were not migrated into the project-centric layout — the former workspaces `founder-gtm-playbooks` and `european-german-us-service-customer-psychology` are unavailable (do not cite paths under `projects/research/topics/`; they no longer exist). The GTM-specific summary remains in `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`; the full per-geography treatment lives in `.agents/skills/service-customer-perspective-challenger/references/`. A separate practitioner evidence base for social/content idea validation (first-customer levers, Pain-Point SEO, broker-channel reality) is gathered with `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`.
 
 ## The Sequencing Rule
 
@@ -141,5 +141,5 @@ Europe requires country-level validation: customer language, trust, licensing, a
 - `archetype-gtm-strategist` — full evidence base and stage gates.
 - `social-digital-marketing-planner` — sequencing gate for paid-scale requests; channel/loop recommendation protocol; service-customer trust checks in the risk review.
 - `marketing-strategy-builder` — weak-evidence check for traction claims; channel/loop recommendation protocol; service-customer challenge pass on positioning, offer, and messaging.
-- `social-media-idea-validator` — channel-role, founder-fit, and channel-economics validation; holds a complementary practitioner evidence base in its own `references/founder-playbooks.md`.
+- `social-media-idea-validator` — channel-role, founder-fit, and channel-economics validation; holds a complementary practitioner evidence base through `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`.
 - `service-customer-perspective-challenger` — full regional lenses and challenge protocol behind the Service-Customer Decision and Trust section.

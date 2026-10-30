@@ -58,7 +58,7 @@ agent-skill/<brand-slug>/
 - Overview.
 - When to use.
 - Required behavior.
-- Link to `references/DESIGN.md`.
+- Note that `DESIGN.md` is produced in the brand workspace export directory (there is no repo-level DESIGN.md).
 - Link to CSS/tokens.
 
 `DESIGN.md` should follow the richer local `awesome-design` style:

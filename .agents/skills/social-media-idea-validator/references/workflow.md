@@ -25,7 +25,7 @@ Instruments:
 - `python3 scripts/capability_lookup.py --question "where does <segment> discuss <topic> online" --compact` to route to the right provider.
 - Serper/Brave search for community evidence: subreddits, Facebook groups, LinkedIn hashtags, YouTube channels, podcasts serving the segment; note sizes and activity.
 - Reddit/forum reading (default provider) for the exact language the segment uses — needed later for hooks.
-- For regulated local professions (insurance agents, loan officers), check where *peers* say business actually comes from before believing platform hype (see founder-playbooks: r/loanoriginators patterns).
+- For regulated local professions (insurance agents, loan officers), check where *peers* say business actually comes from before believing platform hype (see the archetype playbook workflow: r/loanoriginators patterns).
 
 KILL when: the segment demonstrably is not on the platform, or is there only in a mindset hostile to the offer (e.g. consumers shopping mortgages on TikTok for entertainment).
 
@@ -38,7 +38,7 @@ Instruments:
 - Google Trends via SerpAPI and Serper keyword probes for the 5-10 core questions the idea would answer; record direction, not just level.
 - YouTube/podcast/competitor content scan: do comparable formats get real engagement (comments from the target segment, not just views)?
 - Question mining: Reddit, Quora, Facebook groups, "People Also Ask" for recurring pain questions the idea would answer.
-- Pain-Point SEO check (see founder-playbooks): for search-driven ideas, prefer bottom-funnel high-intent topics (category, comparison/alternatives, jobs-to-be-done) over high-volume top-funnel topics.
+- Pain-Point SEO check (see the archetype playbook workflow): for search-driven ideas, prefer bottom-funnel high-intent topics (category, comparison/alternatives, jobs-to-be-done) over high-volume top-funnel topics.
 
 If no question demand or working comparable format is found, return INSUFFICIENT EVIDENCE and describe checked coverage and the cheapest way to resolve it. A failed or empty retrieval cannot establish rejection. Mark `[DATA UNAVAILABLE]` per instrument that could not be checked. Reject only when relevant observed behaviour or a demonstrated constraint supports rejection.
 
@@ -105,7 +105,7 @@ Record results in the topic workspace; a GO verdict without a scheduled test is 
 - [ ] Idea restated as one testable claim (audience, platform, format, promise, conversion event)
 - [ ] All six gates evaluated in order, or stopped early at a documented hard KILL
 - [ ] Every GO verdict cites at least one demand signal and one audience-presence signal with source and date
-- [ ] Practitioner patterns from `founder-playbooks.md` applied (named in the verdict reasoning)
+- [ ] Practitioner patterns from `../../business-archetype-playbook-researcher/references/workflow.md` applied (named in the verdict reasoning)
 - [ ] GO-as-assist used when the channel cannot be the primary conversion driver (brokers, loan officers, local services)
 - [ ] A bounded test has separate access, relationship and commercial thresholds; no GO verdict without them
 - [ ] `[DATA UNAVAILABLE]` used for unchecked instruments; no memory-filled gaps

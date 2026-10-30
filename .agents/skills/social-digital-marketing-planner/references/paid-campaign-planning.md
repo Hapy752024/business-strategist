@@ -10,7 +10,7 @@ Apply repo-root `references/journey-activation-and-measurement.md`: source-backe
 
 ## Channel selection
 
-Select by evidenced customer behavior, buying context, creative capacity and economics. Search may capture demonstrated query intent; social/video may reach people through a relevant demonstration or explanation. Retargeting requires eligible audiences and incremental-value scrutiny. Automated cross-channel campaigns need reliable signals and suitable assets. These are conditional hypotheses, not a universal ranking.
+Select by evidenced customer behavior, buying context, creative capacity and economics. Search may capture demonstrated query intent; social/video may reach people through a relevant demonstration or explanation. Retargeting requires eligible audiences and incremental-value scrutiny. Automated cross-channel campaigns (for example Google Performance Max) need reliable signals and suitable assets. These are conditional hypotheses, not a universal ranking.
 
 Use one primary and at most one supporting channel unless the selected scope and learning budget justify more. Capability on Meta, Google and TikTok does not require spending on all three.
 
@@ -32,6 +32,6 @@ Put the event contract and sales-stage ownership in campaign context. For Meta, 
 
 Record total learning budget, platform pacing setting, duration, maximum exposure, owner and decision in the existing budget approval artifact. A Google average daily budget is not a hard daily cap. Document alert/stop ownership and any implementation limits; the current local operator cannot automatically stop spend. Require owner authorization before launch.
 
-Review comparable, sufficiently mature cohorts. Set stop/continue/scale rules from affordable qualified-customer acquisition, contribution and minimum useful evidence; health failures can require immediate action while commercial results may remain immature. Low exposure is an access finding, not absent demand. Report unknowns and request the missing breakdown/CRM aggregate instead of inventing it. Never add providers' attributed conversions as unique sales.
+Review comparable, sufficiently mature cohorts. Set a stop rule plus continue/scale rules from affordable qualified-customer acquisition, contribution and minimum useful evidence; health failures can require immediate action while commercial results may remain immature. Low exposure is an access finding, not absent demand. Report unknowns and request the missing breakdown/CRM aggregate instead of inventing it. Never add providers' attributed conversions as unique sales.
 
 Before proposing further changes, apply the intervention review in repo-root `references/marketing-campaign-operations.md`. Record what actually changed and when, allow an appropriate observation window, and retain a justified no-change decision. Apply the attribution-composition check in `references/ad-platform-connections.md`; matched column names or successful event deduplication do not establish comparable attribution or causal lift.

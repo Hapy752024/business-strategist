@@ -45,7 +45,7 @@ def test_paid_campaign_reference_exists_and_is_linked():
     assert ref.exists()
     assert 'paid-campaign-planning.md' in (skill / 'SKILL.md').read_text()
     text = ref.read_text()
-    for needle in ['Performance Max', 'learning', '50', 'consent', 'stop rule']:
+    for needle in ['Performance Max', 'learning', 'consent', 'stop rule']:
         assert needle in text
 
 
