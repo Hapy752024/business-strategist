@@ -111,3 +111,58 @@ def test_output_has_no_secrets_or_row_data(tmp_path):
     out = vt.verify(plan(tmp_path, event("page_view")), "ga4", export=export(tmp_path, ["page_view,3"]), metadata=META)
     text = json.dumps(out)
     assert "Bearer" not in text and "@" not in text
+
+
+def _page(rows, **extra):
+    return {"rows": [{"dimensionValues": [{"value": n}], "metricValues": [{"value": str(c)}]} for n, c in rows]} | extra
+
+
+def test_ga4_thresholded_truncated_or_other_row_report_is_unknown_not_zero(tmp_path):
+    p = plan(tmp_path, event("page_view"), event("generate_lead"))
+    cases = {
+        "ga4_thresholded": _page([("page_view", 9)], rowCount=1, metadata={"subjectToThresholding": True}),
+        "ga4_other_row": _page([("page_view", 9)], rowCount=1, metadata={"dataLossFromOtherRow": True}),
+    }
+    for reason, page in cases.items():
+        data = vt._ga4_events(lambda body, page=page: page, [], [])
+        assert data[1] == reason
+        out = vt.verify(p, "ga4", fetcher=lambda *a, d=data, **k: d)
+        by = {e["name"]: e for e in out["events"]}
+        assert by["page_view"]["status"] == "observed"
+        assert by["generate_lead"]["status"] == "unknown" and by["generate_lead"]["reason"] == reason
+        assert out["verdict"] == "not_ready" and any(reason in r for r in out["reasons"])
+
+
+def test_ga4_truncated_when_rows_below_row_count_and_paginates_when_cheap():
+    # rowCount larger than what pagination can retrieve (page returns nothing more) -> truncated
+    pages = iter([_page([("a", 1)], rowCount=3), _page([])])
+    events, reason = vt._ga4_events(lambda body: next(pages), [], [])
+    assert reason == "ga4_truncated" and set(events) == {"a"}
+    # pagination reaches rowCount -> complete
+    pages = iter([_page([("a", 1), ("b", 2)], rowCount=3), _page([("c", 3)], rowCount=3)])
+    seen = []
+    def run(body): seen.append(body.get("offset")); return next(pages)
+    events, reason = vt._ga4_events(run, [], [])
+    assert reason is None and set(events) == {"a", "b", "c"} and seen == [0, 2]
+
+
+def test_ga4_complete_report_still_reports_absent_event_as_not_observed(tmp_path):
+    data = vt._ga4_events(lambda body: _page([("page_view", 9)], rowCount=1), [], [])
+    out = vt.verify(plan(tmp_path, event("page_view"), event("generate_lead")), "ga4", fetcher=lambda *a, **k: data)
+    assert {e["name"]: e["status"] for e in out["events"]}["generate_lead"] == "not_observed"
+
+
+def test_posthog_exactly_limit_rows_is_possibly_truncated(tmp_path, monkeypatch):
+    monkeypatch.setattr(vt, "posthog_settings", lambda: ("k", "1", "https://h.example"))
+    rows = [[f"e{i}", 1] for i in range(vt.POSTHOG_LIMIT)]
+    monkeypatch.setattr(vt, "_posthog_query", lambda *a, **k: {"results": rows})
+    data = vt._posthog_live([], 7)
+    assert data[1] == "posthog_limit"
+    out = vt.verify(plan(tmp_path, event("page_view")), "posthog", fetcher=lambda *a, **k: data)
+    assert out["events"][0]["status"] == "unknown" and out["events"][0]["reason"] == "posthog_limit"
+
+
+def test_export_property_reason_is_explicit(tmp_path):
+    p = plan(tmp_path, event("generate_lead", required_properties=["form_id"]))
+    out = vt.verify(p, "ga4", export=export(tmp_path, ["generate_lead,5"]), metadata=META)
+    assert any("properties cannot be confirmed from an export: verify live or drop the property requirement" in r for r in out["reasons"])

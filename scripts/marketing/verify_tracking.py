@@ -19,7 +19,9 @@ from scripts.marketing.import_presets import import_export
 from common import get_secret
 
 PRESETS = {'ga4': 'ga4-events-v1', 'posthog': 'posthog-events-v1'}
-NAME = re.compile(r'^[A-Za-z][A-Za-z0-9_$.-]{0,99}$')
+NAME = re.compile(r'[A-Za-z][A-Za-z0-9_$.-]{0,99}')
+NAME_PROP = re.compile(r'[A-Za-z][A-Za-z0-9_]{0,99}')
+POSTHOG_LIMIT = 10000
 POSTHOG_STEPS = [
     'In PostHog create a personal API key with only the query:read scope (Settings > Personal API keys); this is the account owner\'s action.',
     'Export POSTHOG_PERSONAL_API_KEY and POSTHOG_PROJECT_ID, and POSTHOG_HOST if not on https://us.posthog.com (use https://eu.posthog.com for EU Cloud). Keep them out of the repository.',
@@ -60,6 +62,39 @@ def probe_posthog(*, query=None):
     return {'provider': 'posthog', 'status': status, 'checked_at': _stamp(), 'owner_steps': steps}
 
 
+GA4_PAGE = 10000
+GA4_MAX_PAGES = 5
+
+
+def _ga4_events(run, rng, plan_events):
+    """Read the event list via `run(body)`; returns (events, incomplete_reason). Thresholded, truncated or other-row data is not a complete list."""
+    out = {}; problems = []; offset = 0; total = None
+    for _ in range(GA4_MAX_PAGES):
+        page = run({'dateRanges': rng, 'dimensions': [{'name': 'eventName'}], 'metrics': [{'name': 'eventCount'}], 'limit': GA4_PAGE, 'offset': offset})
+        meta = page.get('metadata') or {}
+        if meta.get('subjectToThresholding'): problems.append('ga4_thresholded')
+        if meta.get('dataLossFromOtherRow'): problems.append('ga4_other_row')
+        rows = page.get('rows', [])
+        for row in rows:
+            out[row['dimensionValues'][0]['value']] = {'count': int(row['metricValues'][0]['value']), 'props': {}}
+        offset += len(rows)
+        if 'rowCount' in page: total = int(page['rowCount'])
+        elif total is None: total = offset
+        if not rows or offset >= total: break
+    if total is not None and offset < total: problems.append('ga4_truncated')
+    for e in plan_events:
+        if e['name'] not in out: continue
+        for prop_name in e['required_properties']:
+            try:  # needs a registered event-scoped custom dimension; otherwise stays unknown
+                rows = run({'dateRanges': rng, 'dimensions': [{'name': f'customEvent:{prop_name}'}], 'metrics': [{'name': 'eventCount'}],
+                            'dimensionFilter': {'filter': {'fieldName': 'eventName', 'stringFilter': {'value': e['name']}}}, 'limit': 100}).get('rows', [])
+                out[e['name']]['props'][prop_name] = any(r['dimensionValues'][0]['value'] not in ('(not set)', '') and int(r['metricValues'][0]['value']) > 0 for r in rows)
+            except Exception:
+                pass
+    order = ['ga4_thresholded', 'ga4_truncated', 'ga4_other_row']
+    return out, next((r for r in order if r in problems), None)
+
+
 def _ga4_live(plan_events, days, request=None):
     from google.auth.transport.requests import AuthorizedSession
     import google.auth
@@ -71,36 +106,26 @@ def _ga4_live(plan_events, days, request=None):
         r = session.post(url, json=body, timeout=30)
         if r.status_code != 200: raise RuntimeError('GA4 report failed')
         return r.json()
-    rng = [{'startDate': f'{days}daysAgo', 'endDate': 'yesterday'}]
-    out = {}
-    for row in run({'dateRanges': rng, 'dimensions': [{'name': 'eventName'}], 'metrics': [{'name': 'eventCount'}], 'limit': 10000}).get('rows', []):
-        out[row['dimensionValues'][0]['value']] = {'count': int(row['metricValues'][0]['value']), 'props': {}}
-    for e in plan_events:
-        if e['name'] not in out: continue
-        for prop_name in e['required_properties']:
-            try:  # needs a registered event-scoped custom dimension; otherwise stays unknown
-                rows = run({'dateRanges': rng, 'dimensions': [{'name': f'customEvent:{prop_name}'}], 'metrics': [{'name': 'eventCount'}],
-                            'dimensionFilter': {'filter': {'fieldName': 'eventName', 'stringFilter': {'value': e['name']}}}, 'limit': 100}).get('rows', [])
-                out[e['name']]['props'][prop_name] = any(r['dimensionValues'][0]['value'] not in ('(not set)', '') and int(r['metricValues'][0]['value']) > 0 for r in rows)
-            except Exception:
-                pass
-    return out
+    return _ga4_events(run, [{'startDate': f'{days}daysAgo', 'endDate': 'yesterday'}], plan_events)
 
 
 def _posthog_live(plan_events, days):
     key, project, host = posthog_settings()
     def q(sql): return _posthog_query(host, project, key, sql).get('results', [])
     out = {}
-    for name, count in q(f'SELECT event, count() FROM events WHERE timestamp > now() - INTERVAL {int(days)} DAY GROUP BY event LIMIT 10000'):
+    results = q(f'SELECT event, count() FROM events WHERE timestamp > now() - INTERVAL {int(days)} DAY GROUP BY event LIMIT {POSTHOG_LIMIT}')
+    for name, count in results:
         out[name] = {'count': int(count), 'props': {}}
+    reason = 'posthog_limit' if len(results) >= POSTHOG_LIMIT else None  # exactly LIMIT rows may be a truncated list
     for e in plan_events:
         if e['name'] not in out or not e['required_properties']: continue
+        assert all(NAME_PROP.fullmatch(p) for p in e['required_properties']) and NAME.fullmatch(e['name']), 'unsafe name in HogQL'
         cols = ', '.join(f"countIf(isNotNull(properties.{p}))" for p in e['required_properties'])  # names validated by schema regex
         name = e['name'].replace("'", "''")
         rows = q(f"SELECT {cols} FROM events WHERE event = '{name}' AND timestamp > now() - INTERVAL {int(days)} DAY")
         if rows:
             for p, n in zip(e['required_properties'], rows[0]): out[e['name']]['props'][p] = int(n) > 0
-    return out
+    return out, reason
 
 
 def _from_export(path, source, metadata, days):
@@ -141,7 +166,9 @@ def verify(plan: Path, source: str, *, export: Path | None = None, days: int = 7
         if connection['status'] == 'connected':
             try:
                 live = fetcher or (_ga4_live if source == 'ga4' else _posthog_live)
-                data = live(events, days); origin = {'kind': 'live', 'window_days': days, 'complete': True}
+                result = live(events, days)
+                data, why = result if isinstance(result, tuple) else (result, None)
+                origin = {'kind': 'live', 'window_days': days, 'complete': True, 'incomplete_reason': why}
             except Exception:  # never echo exception text: it may carry token material
                 connection = connection | {'status': 'error', 'owner_steps': ['The event query failed; no event was judged.']}
     if data is None:
@@ -152,7 +179,10 @@ def verify(plan: Path, source: str, *, export: Path | None = None, days: int = 7
         gated = e.get('consent_gated', e['consent_category'] != 'necessary')
         seen = (data or {}).get(e['name'])
         row = {'name': e['name'], 'required_for_launch': e['required_for_launch'], 'consent_category': e['consent_category'], 'count': None, 'properties': {}}
+        incomplete = origin.get('incomplete_reason')
         if data is None or not complete: row['status'] = 'unknown'
+        elif not (seen and seen['count'] > 0) and incomplete:
+            row['status'] = 'unknown'; row['reason'] = incomplete  # absent from a partial report is not zero
         elif seen and seen['count'] > 0:
             row['status'] = 'observed'; row['count'] = seen['count']
             for p in e['required_properties']:
@@ -164,10 +194,12 @@ def verify(plan: Path, source: str, *, export: Path | None = None, days: int = 7
         rows.append(row)
         if e['required_for_launch']:
             if row['status'] != 'observed':
-                if data is not None and complete: reasons.append(f"{e['name']}: {row['status']}")
+                if data is not None and complete: reasons.append(f"{e['name']}: {row['status']}" + (f" ({row['reason']})" if row.get('reason') else ''))
             else:
                 bad = [f'{p} {s}' for p, s in row['properties'].items() if s != 'present']
-                if bad: reasons.append(f"{e['name']}: required properties not confirmed ({', '.join(bad)})")
+                if bad:
+                    why = 'properties cannot be confirmed from an export: verify live or drop the property requirement' if origin['kind'] == 'export' else 'required properties not confirmed'
+                    reasons.append(f"{e['name']}: {why} ({', '.join(bad)})")
     launch = [r for r in rows if r['required_for_launch']]
     ready = bool(launch) and not reasons and all(r['status'] == 'observed' and all(s == 'present' for s in r['properties'].values()) for r in launch)
     if not launch and not reasons: reasons.append('plan has no launch-required event for this source')
