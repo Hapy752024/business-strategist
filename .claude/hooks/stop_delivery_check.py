@@ -18,7 +18,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from compaction_state import load_state, project_root, resume_path  # noqa: E402
 
-CLAIM = re.compile(r"\b(?:(?:case|research) (?:is|was) (?:fully )?(?:delivered|complete|rerun)|final delivery)\b", re.I)
+CLAIM = re.compile(r"\b(?:(?:case|research) (?:is|was) (?:fully )?(?:delivered|complete|rerun)|final delivery"
+                   r"|delivered the (?:case|research)|(?:(?:case|research) )?rerun (?:is|was) (?:fully )?complete)\b", re.I)
 SUFFIX = " Either complete the missing items or restate the result as a progress snapshot."
 
 
@@ -51,12 +52,27 @@ def resolve_paths(state: dict, root: Path):
     case_id = ws.get("case_id") or selection.get("case")
     run_id = ws.get("run_id") or selection.get("run")
     manifest = ws.get("manifest_path")
-    if not (case_id and run_id and manifest):
+    if not (case_id and manifest):
         return None
-    case_root = (root / manifest).parent.parent  # <business>/cases/<id>/market_research/manifest.json
+    manifest_path = root / manifest
+    case_root = manifest_path.parent.parent  # <business>/cases/<id>/market_research/manifest.json
     business_root = case_root.parent.parent
-    run_dir = case_root / "market_research" / "pain_points" / "runs" / run_id
-    if case_root.name != case_id or not run_dir.is_dir():
+    if case_root.name != case_id:
+        return None
+    if run_id:
+        run_dir = case_root / "market_research" / "pain_points" / "runs" / run_id
+    else:
+        # The route hook records no run; use the case's registered parent run.
+        try:
+            parent = json.loads(manifest_path.read_text(encoding="utf-8"))["research_assignment"]["parent_run"]
+        except (OSError, ValueError, KeyError, TypeError):
+            return None
+        if not isinstance(parent, str) or not parent:
+            return None
+        run_dir = (business_root / parent).resolve()
+        if not run_dir.is_relative_to(business_root.resolve()):
+            return None
+    if not run_dir.is_dir():
         return None
     return business_root, run_dir
 

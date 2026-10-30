@@ -267,7 +267,7 @@ def test_stop_hook_blocks_unvalidated_delivery_claim(tmp_path):
     event = {"session_id": "s1", "transcript_path": _transcript(tmp_path, "The case was fully delivered.")}
     out = stop_hook.stop_delivery_check(event, tmp_path)
     assert out["decision"] == "block"
-    assert len(out["reason"]) <= 600 + 100 and "progress snapshot" in out["reason"]
+    assert len(out["reason"]) <= 600 + len(stop_hook.SUFFIX) + 1 and "progress snapshot" in out["reason"]
     # Same event through the real hook entry point.
     assert run_hook(ROOT / ".claude/hooks/stop_delivery_check.py", tmp_path, event)["decision"] == "block"
     # No loop, and no block when the case cannot be resolved.
@@ -306,3 +306,34 @@ def test_session_start_invariants_block_le_12_lines_with_checkpoint(tmp_path):
     start = context.index("Standing rules")
     assert len(context[start:].splitlines()) <= 12
     assert "Restored this session's checkpoint" in context
+
+
+import pytest  # noqa: E402
+
+
+@pytest.mark.parametrize("text,claims", [
+    ("The case is not yet delivered.", False), ("Research is not complete yet.", False),
+    ("We delivered the logo.", False), ("I delivered the case to the founder.", True),
+    ("The rerun is complete.", True), ("The research rerun was fully complete.", True),
+    ("The case was fully delivered.", True), ("This is the final delivery.", True),
+])
+def test_stop_hook_claim_regex(text, claims):
+    assert bool(stop_hook.CLAIM.search(text)) is claims
+
+
+def test_stop_hook_falls_back_to_case_parent_run(tmp_path):
+    (tmp_path / "scripts").symlink_to(ROOT / "scripts")
+    case_root = tmp_path / "projects/p/business-analysis/cases/c1"
+    run = case_root / "market_research/pain_points/runs/r1"
+    run.mkdir(parents=True)
+    manifest = case_root / "market_research/manifest.json"
+    manifest.write_text(json.dumps({"research_assignment": {
+        "parent_run": "cases/c1/market_research/pain_points/runs/r1"}}))
+    rel = manifest.relative_to(tmp_path).as_posix()
+    compaction_state.write_state(compaction_state.resume_path(tmp_path, "s2"), {
+        "session_id": "s2", "active_selection": {"project": "p", "case": "c1", "run": None},
+        "workspace": {"case_id": "c1", "run_id": None, "manifest_path": rel}})
+    event = {"session_id": "s2", "transcript_path": _transcript(tmp_path, "The research is complete.")}
+    assert stop_hook.stop_delivery_check(event, tmp_path)["decision"] == "block"
+    manifest.write_text("{}")  # no registered parent run -> cannot check
+    assert stop_hook.stop_delivery_check(event, tmp_path) == {}
