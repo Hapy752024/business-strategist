@@ -28,6 +28,7 @@ def authorization_digest(action: dict) -> str:
     payload = {key: action.get(key) for key in ('action_kind', 'recipient', 'destination',
                'intended_result', 'prepared_materials', 'authorization_basis')}
     if 'context_sha256' in action: payload['context_sha256'] = action['context_sha256']
+    if 'provider_request' in action: payload['provider_request'] = action['provider_request']
     return hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
@@ -38,7 +39,7 @@ def invalidate_changed_action(old: dict, action: dict) -> None:
         changed = any(old.get(k) != action.get(k) for k in ('source_url', 'target_url', 'action_kind'))
     else:
         changed = old.get('context_sha256') != action.get('context_sha256') or old.get('prepared_materials', []) != action.get('prepared_materials', []) or any(
-            old.get(k) != action.get(k) for k in ('recipient', 'destination', 'intended_result', 'action_kind', 'authorization_basis'))
+            old.get(k) != action.get(k) for k in ('recipient', 'destination', 'intended_result', 'action_kind', 'authorization_basis', 'provider_request'))
     if changed:
         for key in ('verification', 'result', 'outcome_review'):
             action[key] = None

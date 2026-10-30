@@ -188,8 +188,15 @@
             "prepare_packet",
             "submit_listing",
             "send_pitch",
-            "verify_placement"
+            "verify_placement",
+            "schedule_post",
+            "create_campaign",
+            "send_broadcast",
+            "create_experiment"
           ]
+        },
+        "provider_request": {
+          "type": "object"
         },
         "intended_result": {
           "type": "string",
