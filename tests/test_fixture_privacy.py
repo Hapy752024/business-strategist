@@ -19,6 +19,10 @@ HOST_EXEMPT = {
     "bluesky_sample.json": {"docs.bsky.app"},
     "producthunt_sample.json": {"api.producthunt.com", "www.producthunt.com"},
 }
+# A real SERP sample necessarily lists public business domains (advertisers, publishers, insurers) and Google/SerpApi
+# links. These are public commercial results, not private persons, so only this file may keep any host. The name-key,
+# profile-URL and denylist rules still apply to it.
+SERP_HOST_EXEMPT = {"serpapi_google_sample.json"}
 # Synthetic reddit thread URLs for the hydrate route parse as reddit URLs, so example.com is not usable.
 # Exempt only r/example_sub thread/subreddit URLs and the redacted_user user page.
 SYNTHETIC_REDDIT_FIXTURE = "reddit_hydrate_search_results.json"
@@ -59,8 +63,9 @@ class FixturePrivacyTests(unittest.TestCase):
                         base = url.split("?")[0]
                         self.assertRegex(base, SYNTHETIC_REDDIT_URL, f"{path.name}: non-synthetic reddit URL {url}")
                         continue
-                    allowed = SAFE_HOSTS | (exempt or set())
-                    self.assertIn(host, allowed, f"{path.name}: live URL host {host}")
+                    if path.name not in SERP_HOST_EXEMPT:
+                        allowed = SAFE_HOSTS | (exempt or set())
+                        self.assertIn(host, allowed, f"{path.name}: live URL host {host}")
                     self.assertIsNone(re.search(r"/(profile|people|user|users)/[^/]", url), f"{path.name}: profile URL {url}")
 
 

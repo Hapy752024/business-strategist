@@ -1,0 +1,14 @@
+{
+  "_fixture_note": "Synthetic Serper.dev /search payload in the raw response shape (searchParameters, organic, peopleAlsoAsk, relatedSearches). Hosts are example domains. Serper returned no ads block in live checks (WF-029), so the parser must mark ads unobserved.",
+  "searchParameters": {"q": "example insurance comparison", "gl": "de", "hl": "de", "type": "search", "engine": "google"},
+  "organic": [
+    {"title": "Example insurance comparison portal", "link": "https://www.example.com/compare", "displayedLink": "https://www.example.com › compare", "snippet": "Compare 30 example providers.", "position": 1},
+    {"title": "Example guide: what to check", "link": "/goto?url=opaque-redirect", "displayedLink": "https://example.org › ratgeber › check", "snippet": "A guide to the main policy terms.", "position": 2},
+    {"title": "Which example policy did you pick?", "link": "https://www.example.org/forum/t/123", "displayedLink": "https://www.example.org › forum › t › 123", "snippet": "Thread with 40 replies.", "position": 3}
+  ],
+  "peopleAlsoAsk": [
+    {"question": "Which example policy is best?", "snippet": "It depends on the occupation.", "title": "Example answer", "link": "https://www.example.com/faq"}
+  ],
+  "relatedSearches": [{"query": "example insurance cost"}, {"query": "example insurance test"}],
+  "credits": 1
+}

@@ -89,6 +89,9 @@ def request_json(endpoint: str, payload: dict[str, Any], timeout: int = 45) -> d
 
 
 def compact_result(payload: dict[str, Any]) -> dict[str, Any]:
+    # Serper does not reliably return sponsored results (WF-029). Keep ads when present; otherwise mark
+    # them unobserved so no consumer reads an empty list as "no advertisers". Use SerpApi for ads.
+    ads = payload.get("ads") or []
     return {
         "search_parameters": payload.get("searchParameters"),
         "organic_results": payload.get("organic", []),
@@ -96,6 +99,8 @@ def compact_result(payload: dict[str, Any]) -> dict[str, Any]:
         "top_stories": payload.get("topStories", []),
         "people_also_ask": payload.get("peopleAlsoAsk", []),
         "related_searches": payload.get("relatedSearches", []),
+        "ads": ads,
+        "ads_status": "observed" if ads else "unobserved",
         "credits": payload.get("credits"),
     }
 

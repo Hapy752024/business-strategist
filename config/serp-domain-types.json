@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "purpose": "Curated, growable domain-to-result_type hints for the customer search-journey SERP study (scripts/evidence_scout/search_journey.py). A match is a classification hint, never a verified fact about the site.",
+  "match_rules": "Exact host or any subdomain of an entry matches. A trailing '.*' matches any public suffix (amazon.* -> amazon.de, amazon.co.uk). Entries with a path match by URL prefix. suffixes match the end of the host. known_competitors from a landscape file are checked first.",
+  "types": {
+    "publisher": [
+      "handelsblatt.com",
+      "wiwo.de",
+      "t-online.de",
+      "test.de",
+      "finanztip.de",
+      "finanzfluss.de",
+      "spiegel.de",
+      "faz.net",
+      "sueddeutsche.de",
+      "zeit.de",
+      "focus.de"
+    ],
+    "forum_community": [
+      "reddit.com",
+      "gutefrage.net",
+      "finanzfrage.net",
+      "quora.com",
+      "finanztip.de/community",
+      "stackexchange.com",
+      "stackoverflow.com",
+      "facebook.com",
+      "linkedin.com",
+      "instagram.com",
+      "x.com",
+      "twitter.com"
+    ],
+    "marketplace_aggregator": [
+      "check24.de",
+      "verivox.de",
+      "idealo.*",
+      "amazon.*",
+      "ebay.*"
+    ],
+    "directory_review": [
+      "trustpilot.*",
+      "provenexpert.com",
+      "yelp.*",
+      "gelbeseiten.de"
+    ],
+    "government_institution": [
+      "bafin.de",
+      "verbraucherzentrale.de",
+      "gdv.de",
+      "europa.eu",
+      "deutsche-rentenversicherung.de"
+    ],
+    "video": [
+      "youtube.com",
+      "youtu.be",
+      "vimeo.com",
+      "tiktok.com"
+    ]
+  },
+  "suffixes": {
+    "government_institution": [
+      ".gov",
+      ".bund.de",
+      ".gov.uk",
+      ".gv.at",
+      ".admin.ch"
+    ]
+  },
+  "publisher_hints": {
+    "path_tokens": [
+      "ratgeber",
+      "magazin",
+      "blog",
+      "news",
+      "artikel",
+      "wissen",
+      "guide",
+      "guides",
+      "article",
+      "articles",
+      "lexikon",
+      "test"
+    ],
+    "host_tokens": [
+      "magazin",
+      "news",
+      "zeitung",
+      "blog",
+      "ratgeber",
+      "finanztip",
+      "finanzfluss",
+      "test"
+    ]
+  },
+  "notes": "Social platforms sit under forum_community because their organic results are user-generated posts; reclassify a row when the page is a company page."
+}

@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "content-opportunities.schema.json",
+  "title": "Content opportunities from a customer search-journey SERP study",
+  "description": "One input to content and SEO planning, alongside the competitor content inventory, customer questions from reviewed voice and social discussion topics. Gaps are hypotheses from SERP shape, not demand findings. Volumes stay null until a volume provider fills them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source",
+    "caveats",
+    "rows"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "source": {
+      "const": "search_journey_serp_study"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "caveats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cluster_id",
+          "queries",
+          "journey_stage",
+          "intent",
+          "searcher_role",
+          "locale",
+          "questions",
+          "serp_features",
+          "ranking_by_type",
+          "content_gap",
+          "recommended_page_type",
+          "conversion_bridge",
+          "evidence_refs",
+          "evidence_status",
+          "volume"
+        ],
+        "properties": {
+          "cluster_id": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "queries": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "query_id",
+                "query",
+                "seed_origin"
+              ],
+              "properties": {
+                "query_id": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "seed_origin": {
+                  "enum": [
+                    "brainstorm",
+                    "autocomplete",
+                    "paa",
+                    "related_search",
+                    "customer_quote"
+                  ]
+                }
+              }
+            }
+          },
+          "journey_stage": {
+            "enum": [
+              "problem_aware",
+              "solution_aware",
+              "comparison",
+              "purchase",
+              "local",
+              "post_purchase"
+            ]
+          },
+          "intent": {
+            "enum": [
+              "informational",
+              "commercial",
+              "transactional",
+              "navigational"
+            ]
+          },
+          "searcher_role": {
+            "enum": [
+              "user",
+              "buyer",
+              "influencer"
+            ]
+          },
+          "locale": {
+            "type": "string"
+          },
+          "questions": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "paa",
+              "related_searches",
+              "ai_overview_prompts"
+            ],
+            "properties": {
+              "paa": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "related_searches": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ai_overview_prompts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "serp_features": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ads",
+              "ai_overview",
+              "paa",
+              "video",
+              "forum",
+              "local_pack",
+              "shopping"
+            ],
+            "properties": {
+              "ads": {
+                "enum": [
+                  "observed",
+                  "observed_none",
+                  "unobserved",
+                  "mixed"
+                ]
+              },
+              "ai_overview": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "paa": {
+                "type": "boolean"
+              },
+              "video": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "forum": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "local_pack": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "shopping": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          },
+          "ranking_by_type": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "content_gap": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "hypothesis",
+              "evidence_refs",
+              "needs_review"
+            ],
+            "properties": {
+              "status": {
+                "const": "hypothesis"
+              },
+              "hypothesis": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "evidence_refs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "needs_review": {
+                "const": true
+              }
+            }
+          },
+          "recommended_page_type": {
+            "enum": [
+              "guide",
+              "comparison",
+              "calculator",
+              "faq",
+              "landing",
+              "local_page"
+            ]
+          },
+          "conversion_bridge": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_status": {
+            "enum": [
+              "brainstorm_hypothesis_only",
+              "includes_observed_seed"
+            ]
+          },
+          "volume": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    "uncaptured_clusters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Plan clusters with no capture; they produce no row because no evidence binds them."
+    }
+  }
+}

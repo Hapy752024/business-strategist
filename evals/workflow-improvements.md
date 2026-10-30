@@ -16,6 +16,15 @@ Single shared record for failures, problems and improvement candidates across th
 
 ## Review queue
 
+### WF-029 — Default Serper search hides ads and most SERP features
+
+- Date: 2026-10-30. Area: SEO/SERP research (`scripts/serper_fetch.py`). Priority: P3. Status: resolved by the commit `feat(research): customer search-journey SERP study with sponsored vs organic` (2026-10-30).
+- Observed: 20 US queries for retiree-to-Italy searches through Serper `--full` returned only `organic`, `peopleAlsoAsk` and `relatedSearches`, with most organic links wrapped as `google.com/goto` redirects. The same 20 queries through SerpAPI's `google` engine returned ads on 4 queries, an AI Overview on all 20, plus video, forum, perspectives and local-pack blocks. Organic order also differed between the two providers.
+- Impact: a sponsored-versus-organic or SERP-feature analysis built on the default search script silently reports "no ads" and misses the blocks that push organic results down.
+- Next action: add a SerpAPI-backed `serp` mode (or document SerpAPI as the required route for SERP-feature/ads questions) and label one-shot ad snapshots as point-in-time, unpersonalized samples.
+- Evidence: one-off script and outputs in the session scratchpad; no repository code changed.
+- Closure evidence: `scripts/evidence_scout/search_journey.py` adds a SerpApi `engine=google` route that keeps ads separate from organic results, with `ads_status` observed/observed_none/unobserved; `scripts/serper_fetch.py` `compact_result` keeps ads when present and otherwise marks them `unobserved`; `serp_landscape` is registered in `config/source-capabilities.json` with Serper as the organic-only fallback and the point-in-time, unpersonalised caveat. Tests: `scripts/evidence_scout/test_search_journey.py` (Serper unobserved never zero, SerpApi observed versus observed_none, AI-overview presence without citations) pass. Live run 2026-10-30: 9 de-DE SerpApi queries returned AI Overviews on 9 of 9 and ads on 0 of 9; a separate de-DE car-insurance query returned 2 bottom-block ads (now the fixture `fixtures/evidence_scout/serpapi_google_sample.json`).
+
 ### WF-028 — Reddit public Data API sunset breaks reddit + Dialog MCP lanes
 
 - Priority/status: P1/open.

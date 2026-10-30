@@ -10,6 +10,13 @@ description: Discover sourced customer problems, workarounds, segments, and cand
 2. Ask the user to choose one candidate, change the scope, extend the research, or stop.
 3. Once the user selects a candidate, use `idea-grill` to fill remaining hypothesis gaps, then continue with its core validation sequence.
 
+**Customer search-journey SERP study.**
+After a segment is named and before competitor discovery, optionally run the evidence-scout search-journey study
+(`scripts/evidence_scout/search_journey.py`; method rules in `.agents/skills/evidence-scout/SKILL.md`).
+Brainstormed queries are hypotheses; ads are supplier spend, not demand; `unobserved` ads are never zero.
+Forum or aggregator dominance is a hypothesis for the next test, not a discovery finding.
+It runs before the pain gate and does not authorize ads or content publication.
+
 When a selected candidate becomes a registered Business case, pass material findings and answered founder questions to the case-insights owner under repo-root `references/case-insights.md`. Keep discovery artifacts in their normal research location.
 
 The user’s requested outcome governs the study. For a topic or segment pain-point question, explain customer experiences and uncertainty without inventing a product or business. For a supplied idea, route to idea validation and challenge that idea; relevant similar companies are optional evidence, not a prompt to import one. Use the complementary methods in `references/opportunity-research-approaches.md` only when they contribute distinct evidence.

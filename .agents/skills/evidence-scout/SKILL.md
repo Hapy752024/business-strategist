@@ -31,6 +31,23 @@ Evidence-scout owns customer voice; competitor-marketing-analyzer owns supplier 
 Read the `required_references` from your route packet.
 Reuse current evidence; focused factual lookups do not trigger a full study.
 
+**Customer search-journey SERP study.**
+Stage: after the segment is named, before competitor discovery; desk research that runs before the pain gate.
+Brainstorm 4–8 queries per journey stage per searcher role, in the customers' language and locale, typed the way a customer would.
+Brainstormed rows are hypotheses (`seed_origin: brainstorm`).
+Expand with autocomplete, PAA and related searches, mark those origins, and prefer non-brainstorm rows when ranking.
+Validate the plan against `schemas/search-journey-plan.schema.json`, then run
+`python3 scripts/evidence_scout/search_journey.py --plan <plan> --providers serpapi --run-dir <run> --max-searches <n>`.
+Ads are a supplier-spend signal for that intent, not customer demand.
+No ads observed is not evidence of no demand; `unobserved` (Serper fallback cannot see ads) is never reported as zero.
+Ads vary by time, location and device: record all three and use `--repeat` with a gap to separate stable from occasional advertisers.
+Forums in the top 10 for problem-aware queries suggest an unmet information need.
+Aggregators dominating purchase queries signal a hard entry.
+Both are hypotheses for the case appraisal, not findings.
+Hand advertisers and unclassified ranking domains to competitor-scout as unverified candidates.
+`content-opportunities.json` is one input to content planning; its gaps are hypotheses and volumes stay null.
+The study does not authorize ads or content publication.
+
 **Concurrent approaches.**
 Research approaches may run concurrently when they examine different source frames or competing explanations.
 The coordinator owns the shared scope and final synthesis; workers use isolated work packets, retain provenance and counterevidence, deduplicate shared sources/incidents, and do not count agreement as independent evidence.

@@ -15,7 +15,7 @@ For substantive query design and refinement, apply repo-root `references/researc
 
 1. Read `references/workflow.md` completely.
 2. Use the canonical repository discovery command documented in the workflow.
-3. Preserve supplied competitors and use the active topic workspace.
+3. Preserve supplied competitors and use the active topic workspace. When a search-journey study exists, consume its `serp-landscape.json` advertisers and unclassified ranking domains as unverified candidates; advertising is not proof of competition or demand.
 4. Classify entity and source-page type separately.
 5. Rate evidence quality before competitive strength.
 

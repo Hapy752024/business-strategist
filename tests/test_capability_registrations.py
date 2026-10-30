@@ -42,3 +42,11 @@ def test_reddit_archive_and_scrapecreators_capabilities():
     assert sc['collector_provider'] == 'scrapecreators_reddit' and sc['requires_env'] == ['SCRAPE_CREATORS_API_KEY']
     ar = capability('arctic_shift')
     assert ar['collector_provider'] == 'arctic_shift' and 'subreddit' in ar['caveat'] and 'volunteer' in ar['caveat'].lower()
+
+
+def test_serp_landscape_registered_with_unobserved_serper_fallback():
+    cap = capability('serp_landscape')
+    assert cap['family'] == 'demand_proxy' and cap['requires_env'] == ['SERPAPI_API_KEY']
+    roles = {p['id']: p for p in cap['providers']}
+    assert roles['serpapi']['role'] == 'primary' and roles['serper_search']['ads_status'] == 'unobserved'
+    assert 'not customer demand' in cap['caveat'] and 'unpersonalised' in cap['caveat']

@@ -649,6 +649,70 @@
       "caveat": "Google-only. Use SerpApi/DataForSEO only when engine variety, edge-case parsing, Trends, SEO-depth, app, or e-commerce datasets are needed."
     },
     {
+      "id": "serp_landscape",
+      "family": "demand_proxy",
+      "label": "Customer search-journey SERP study (sponsored vs organic)",
+      "description": "Brainstormed customer queries per journey stage and searcher role, run on Google with ads, organic results, AI overview, PAA, video, forum, local-pack and shopping blocks kept separate. Produces serp-landscape.md/json and content-opportunities.json (one input to content/SEO planning).",
+      "use_when": [
+        "search journey",
+        "sponsored vs organic",
+        "who advertises",
+        "serp features",
+        "ai overview",
+        "content opportunities",
+        "seo planning input",
+        "what customers search"
+      ],
+      "avoid_when": [
+        "customer pain proof",
+        "search volume or market size",
+        "willingness to pay",
+        "authorizing ads or content publication"
+      ],
+      "evidence_strength": "weak_demand_proxy_point_in_time",
+      "collector_provider": "scripts/evidence_scout/search_journey.py",
+      "provider_aliases": [],
+      "providers": [
+        {
+          "id": "serpapi",
+          "role": "primary",
+          "requires_env": [
+            "SERPAPI_API_KEY"
+          ],
+          "ads_status": "observed_or_observed_none"
+        },
+        {
+          "id": "dataforseo_serp",
+          "role": "planned",
+          "status": "not_implemented",
+          "note": "Add once the DataForSEO SERP lane lands."
+        },
+        {
+          "id": "serper_search",
+          "role": "organic_only_fallback",
+          "requires_env": [
+            "SERPER_DEV_API_KEY"
+          ],
+          "ads_status": "unobserved"
+        }
+      ],
+      "validation_providers": [
+        "serpapi",
+        "serper"
+      ],
+      "requires_env": [
+        "SERPAPI_API_KEY"
+      ],
+      "fallbacks": [
+        "serper_search"
+      ],
+      "approval_required": false,
+      "authorization_policy": "Desk research before the pain gate; SerpApi bills per search on a monthly plan, so bound each run with --max-searches. It does not authorize ads or content publication.",
+      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
+      "example": "python3 scripts/evidence_scout/search_journey.py --plan '<run>/search-journey-plan.json' --providers serpapi --run-dir '<run>' [--competitors '<landscape.json>'] [--repeat 2 --repeat-gap-minutes 120] --max-searches 30",
+      "caveat": "Ads are a supplier-spend signal for an intent, not customer demand; no ads observed is not evidence of no demand, and unobserved (Serper fallback) is never zero. Point-in-time, unpersonalised sample that varies by time, location and device. Brainstormed queries are hypotheses. Volumes stay null."
+    },
+    {
       "id": "firecrawl",
       "family": "web_discovery_extraction",
       "label": "Firecrawl search/scrape",
