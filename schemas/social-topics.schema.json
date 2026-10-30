@@ -75,9 +75,118 @@
               "minimum": 0
             },
             "description": "Share or count of speaker types, e.g. customers, suppliers, influencers"
+          },
+          "topic_id": {
+            "type": "string"
+          },
+          "cluster_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "search_check": {
+            "enum": [
+              "matched_search_cluster",
+              "candidate_to_check_in_search"
+            ]
+          },
+          "single_platform": {
+            "type": "boolean"
+          },
+          "supplier_only": {
+            "type": "boolean"
+          },
+          "record_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "record_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "phrases": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "required": [
+                "text",
+                "record_id"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "record_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "engagement": {
+            "type": "object",
+            "description": "Per platform only; never compared or summed across platforms."
+          },
+          "formats": {
+            "type": "object"
+          },
+          "first_seen": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_seen": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "date_basis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "label": {
+            "type": "string"
+          },
+          "platform_counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
           }
         }
       }
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "method": {
+      "type": "object"
+    },
+    "records_considered": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "records_skipped": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer"
+      }
+    },
+    "records_assigned": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "records_unassigned": {
+      "type": "integer",
+      "minimum": 0
     }
   }
 }
