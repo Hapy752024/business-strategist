@@ -27,4 +27,4 @@ Return the kit paths, accepted evidence items, recruitment plan and unresolved d
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
 
-Also read as the stage needs: `references/evidence-registry.md`, `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`, `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`, `references/research-query-calibration.md`.
+Also read as the stage needs: `references/evidence-registry.md`.

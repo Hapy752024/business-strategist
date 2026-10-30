@@ -21,6 +21,5 @@ Run the relevant validators before delivery; never promote unapproved artifacts.
 
 For the voice stage, read [verbal identity](references/verbal-identity.md).
 
-Also read when the stage needs it (referenced by the workflow):
+Also read when the stage needs it:
 - `references/territory-template.md`
-- `references/strategic-positioning.md`

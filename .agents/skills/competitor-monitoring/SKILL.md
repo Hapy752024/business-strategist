@@ -21,8 +21,3 @@ description: Monitor competitor changes, own-brand mentions, and recorded AI-ans
 ## Output
 
 Produce monitoring scope, source registry, schedule, snapshot paths, material changes, confidence, and recommended response.
-
-Also read when the stage needs it (referenced by the workflow):
-- `references/customer-voice.md`
-- `references/owner-actions.md`
-- `references/task-scope.md`

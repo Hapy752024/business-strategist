@@ -36,9 +36,8 @@ For substantive Business research, read repo-root `references/research-data-and-
 
 For customer-journey analysis, read repo-root `references/journey-activation-and-measurement.md`, section 1 (shared repository dependency). Record sourced touchpoints and candidate ad/tool/partner hooks with access, next action and measurement; keep intervention hypotheses separate from observed pain. Research does not select a campaign or bypass the pain-first gate.
 
-Also read when the stage needs it (referenced by the workflow):
+Also read when the stage needs it:
 - `.agents/skills/evidence-scout/references/workflow.md`
 - `references/institutional-and-university-sources.md`
-- `references/strategic-positioning.md`
-- `references/task-scope.md`
 - `references/modules/source-worker-packet.md`
+- `references/task-scope.md`

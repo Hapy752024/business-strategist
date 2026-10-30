@@ -111,10 +111,7 @@ Record sourced touchpoints and candidate ad/tool/partner hooks with access, next
 keep intervention hypotheses separate from observed pain.
 Research does not select a campaign or bypass the pain-first gate.
 
-Also read when the stage needs it (referenced by the workflow):
-- `references/ai-answer-recordings.md`
+Also read when the stage needs it:
 - `references/institutional-and-university-sources.md`
 - `references/modules/source-worker-packet.md`
 - `references/task-scope.md`
-- `references/search-visibility-decisions.md`
-- `references/owner-actions.md`

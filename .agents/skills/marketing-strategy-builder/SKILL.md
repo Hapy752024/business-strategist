@@ -24,15 +24,10 @@ For selected multi-step work, read repo-root `references/marketing-execution.md`
 
 For funnel, growth-tool or campaign design, read repo-root `references/journey-activation-and-measurement.md`. Carry sourced placement hooks into an explicit sales path and event contract. Use `references/ad-platform-connections.md` for selected Meta/Google/TikTok setup and monitoring; these shared dependencies do not authorize connections or spend.
 
-Also read when the stage needs it (referenced by the workflow):
-- `.agents/skills/brand-website-designer-builder/references/campaign-tracking.md`
-- `.agents/skills/brand-website-designer-builder/references/experimentation.md`
-- `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`
-- `references/ai-answer-recordings.md`
-- `references/customer-question-tracking.md`
-- `references/evidence-registry.md`
-- `references/owner-actions.md`
-- `references/search-visibility-decisions.md`
-- `references/strategic-positioning.md`
-- `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`
-- `references/research-query-calibration.md`
+Also read when the stage needs it:
+- `references/ai-answer-recordings.md` (recorded AI-answer visibility)
+- `references/customer-question-tracking.md` (tracking customer questions)
+- `references/evidence-registry.md` (sequencing rule and weak-evidence list)
+- `references/owner-actions.md` (owner-only actions)
+- `references/search-visibility-decisions.md` (search and AI visibility choices)
+- `references/strategic-positioning.md` (served-vs-entrant check before channel choice)

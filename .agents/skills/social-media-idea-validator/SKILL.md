@@ -21,7 +21,6 @@ description: Validate a content, social, or channel idea before production inves
 
 Produce: idea restatement, gate-by-gate evidence table, GO / GO-as-assist / PIVOT / KILL / INSUFFICIENT EVIDENCE verdict with confidence, the cheapest test that would change the verdict, access/relationship/commercial thresholds, and source list with dates. Mark missing evidence `[DATA UNAVAILABLE]` instead of filling gaps from memory.
 
-Also read when the stage needs it (referenced by the workflow):
+Also read when the stage needs it:
 - `references/evidence-registry.md`
 - `references/research-query-calibration.md`
-- `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`

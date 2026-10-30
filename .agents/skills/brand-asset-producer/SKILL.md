@@ -23,5 +23,5 @@ Run the relevant validators before delivery; never promote unapproved artifacts.
 
 For website favicons read [favicon handoff](references/favicon-handoff.md). Branding owns the set; website consumes the approved handoff.
 
-Also read when the stage needs it (referenced by the workflow):
+Also read when the stage needs it:
 - `references/asset-rules.md`

@@ -22,10 +22,3 @@ For a registered Business case, pass material verified supplier claims and their
 ## Output
 
 Produce sourced comparisons, service/price and channel-usage evidence, category patterns, differentiation hypotheses, weak claims to avoid, and evidence gaps. Keep analog/reference findings separate from competitor conclusions.
-
-Also read when the stage needs it (referenced by the workflow):
-- `references/evidence-registry.md`
-- `references/strategic-positioning.md`
-- `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`
-- `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`
-- `references/research-query-calibration.md`

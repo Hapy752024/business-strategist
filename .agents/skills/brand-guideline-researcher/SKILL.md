@@ -19,7 +19,5 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 
 Run the relevant validators before delivery; never promote unapproved artifacts.
 
-Also read when the stage needs it (referenced by the workflow):
+Also read when the stage needs it:
 - `references/research-method.md`
-- `.agents/skills/brand-website-designer-builder/references/reference-sites.md`
-- `.agents/skills/brand-asset-producer/references/image-sourcing.md`

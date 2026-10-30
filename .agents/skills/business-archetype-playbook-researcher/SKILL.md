@@ -34,5 +34,5 @@ Produce sourced patterns for segment choice, validation, first customers, low-co
 
 For substantive Business research, read repo-root `references/research-data-and-precedents.md`. Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals. Metadata is discovery until original findings are reviewed.
 
-Also read when the stage needs it (referenced by the workflow):
+Also read when the stage needs it:
 - `references/institutional-and-university-sources.md`

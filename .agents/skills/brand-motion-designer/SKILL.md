@@ -19,11 +19,11 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 
 Run the relevant validators before delivery; never promote unapproved artifacts.
 
-Also read when the stage needs it (referenced by the workflow):
-- `references/benchmarks.md`
-- `references/coherence-review.md`
-- `references/concept.md`
-- `references/element-taxonomy.md`
-- `references/iteration-loop.md`
-- `references/pillars.md`
-- `references/subagent-dispatch.md`
+Also read when the stage needs it:
+- `references/benchmarks.md` (motion benchmarks)
+- `references/coherence-review.md` (checking motion coherence)
+- `references/concept.md` (motion concept)
+- `references/element-taxonomy.md` (element categories)
+- `references/iteration-loop.md` (revision loop)
+- `references/pillars.md` (motion pillars)
+- `references/subagent-dispatch.md` (splitting work)

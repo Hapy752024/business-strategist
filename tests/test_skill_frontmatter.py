@@ -25,6 +25,14 @@ def _frontmatter(path):
     return data
 
 
+def test_only_expected_skills_hidden():
+    hidden = {
+        md.parent.name for md in SKILLS.glob('*/SKILL.md')
+        if _frontmatter(md).get('disable-model-invocation') == 'true'
+    }
+    assert hidden == set(HIDDEN)
+
+
 def test_side_effect_skills_hidden_from_model():
     bad = [
         name for name in HIDDEN

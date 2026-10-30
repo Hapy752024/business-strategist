@@ -1,0 +1,228 @@
+{
+  "archetype-gtm-strategist": [
+    {
+      "reason": "research-query-calibration.md is mentioned by a linked file but is outside archetype-gtm-strategist's own stage; open it only when a task needs it",
+      "target": "references/research-query-calibration.md"
+    }
+  ],
+  "brand-designer": [
+    {
+      "reason": "strategic-positioning.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "target": "references/strategic-positioning.md"
+    },
+    {
+      "reason": "imagery-art-direction.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-asset-producer/references/imagery-art-direction.md"
+    },
+    {
+      "reason": "concept.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-motion-designer/references/concept.md"
+    },
+    {
+      "reason": "image-sourcing.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-asset-producer/references/image-sourcing.md"
+    },
+    {
+      "reason": "naming-and-checks.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-strategy-director/references/naming-and-checks.md"
+    },
+    {
+      "reason": "verbal-identity.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-strategy-director/references/verbal-identity.md"
+    },
+    {
+      "reason": "trusted-mcps.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-frontend-app-designer/references/trusted-mcps.md"
+    }
+  ],
+  "brand-discovery-interviewer": [
+    {
+      "reason": "reference-sites.md is mentioned by a linked file but is outside brand-discovery-interviewer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/reference-sites.md"
+    }
+  ],
+  "brand-guideline-researcher": [
+    {
+      "reason": "reference-sites.md is mentioned by a linked file but is outside brand-guideline-researcher's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/reference-sites.md"
+    }
+  ],
+  "brand-quality-reviewer": [
+    {
+      "reason": "strategic-positioning.md is mentioned by a linked file but is outside brand-quality-reviewer's own stage; open it only when a task needs it",
+      "target": "references/strategic-positioning.md"
+    }
+  ],
+  "brand-strategy-director": [
+    {
+      "reason": "strategic-positioning.md is mentioned by a linked file but is outside brand-strategy-director's own stage; open it only when a task needs it",
+      "target": "references/strategic-positioning.md"
+    }
+  ],
+  "brand-website-designer-builder": [
+    {
+      "reason": "ad-platform-connections.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
+      "target": "references/ad-platform-connections.md"
+    },
+    {
+      "reason": "ai-answer-recordings.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
+      "target": "references/ai-answer-recordings.md"
+    },
+    {
+      "reason": "task-scope.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
+      "target": "references/task-scope.md"
+    },
+    {
+      "reason": "research-method.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-guideline-researcher/references/research-method.md"
+    },
+    {
+      "reason": "marketing-campaign-operations.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
+      "target": "references/marketing-campaign-operations.md"
+    },
+    {
+      "reason": "interview-recruitment.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
+      "target": "references/interview-recruitment.md"
+    }
+  ],
+  "business-strategist": [
+    {
+      "reason": "strategic-positioning.md is mentioned by a linked file but is outside business-strategist's own stage; open it only when a task needs it",
+      "target": "references/strategic-positioning.md"
+    },
+    {
+      "reason": "customer-voice.md is mentioned by a linked file but is outside business-strategist's own stage; open it only when a task needs it",
+      "target": "references/customer-voice.md"
+    }
+  ],
+  "competitive-landscape-builder": [
+    {
+      "reason": "workspace-lifecycle.md is mentioned by a linked file but is outside competitive-landscape-builder's own stage; open it only when a task needs it",
+      "target": "references/workspace-lifecycle.md"
+    },
+    {
+      "reason": "institutional-and-university-sources.md is mentioned by a linked file but is outside competitive-landscape-builder's own stage; open it only when a task needs it",
+      "target": "references/institutional-and-university-sources.md"
+    }
+  ],
+  "competitor-marketing-analyzer": [
+    {
+      "reason": "strategic-positioning.md is mentioned by a linked file but is outside competitor-marketing-analyzer's own stage; open it only when a task needs it",
+      "target": "references/strategic-positioning.md"
+    },
+    {
+      "reason": "evidence-registry.md is mentioned by a linked file but is outside competitor-marketing-analyzer's own stage; open it only when a task needs it",
+      "target": "references/evidence-registry.md"
+    }
+  ],
+  "competitor-monitoring": [
+    {
+      "reason": "customer-voice.md is mentioned by a linked file but is outside competitor-monitoring's own stage; open it only when a task needs it",
+      "target": "references/customer-voice.md"
+    },
+    {
+      "reason": "owner-actions.md is mentioned by a linked file but is outside competitor-monitoring's own stage; open it only when a task needs it",
+      "target": "references/owner-actions.md"
+    }
+  ],
+  "evidence-scout": [
+    {
+      "reason": "ai-answer-recordings.md is mentioned by a linked file but is outside evidence-scout's own stage; open it only when a task needs it",
+      "target": "references/ai-answer-recordings.md"
+    }
+  ],
+  "idea-grill": [
+    {
+      "reason": "research-query-calibration.md is mentioned by a linked file but is outside idea-grill's own stage; open it only when a task needs it",
+      "target": "references/research-query-calibration.md"
+    }
+  ],
+  "interview-bridge": [
+    {
+      "reason": "evidence-base.md is mentioned by a linked file but is outside interview-bridge's own stage; open it only when a task needs it",
+      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+    },
+    {
+      "reason": "workflow.md is mentioned by a linked file but is outside interview-bridge's own stage; open it only when a task needs it",
+      "target": ".agents/skills/business-archetype-playbook-researcher/references/workflow.md"
+    }
+  ],
+  "market-problem-discovery": [
+    {
+      "reason": "strategic-positioning.md is mentioned by a linked file but is outside market-problem-discovery's own stage; open it only when a task needs it",
+      "target": "references/strategic-positioning.md"
+    }
+  ],
+  "marketing-strategy-builder": [
+    {
+      "reason": "experimentation.md is mentioned by a linked file but is outside marketing-strategy-builder's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/experimentation.md"
+    },
+    {
+      "reason": "campaign-tracking.md is mentioned by a linked file but is outside marketing-strategy-builder's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/campaign-tracking.md"
+    },
+    {
+      "reason": "workflow.md is mentioned by a linked file but is outside marketing-strategy-builder's own stage; open it only when a task needs it",
+      "target": ".agents/skills/business-archetype-playbook-researcher/references/workflow.md"
+    },
+    {
+      "reason": "evidence-base.md is mentioned by a linked file but is outside marketing-strategy-builder's own stage; open it only when a task needs it",
+      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+    }
+  ],
+  "opportunity-risk-designer": [
+    {
+      "reason": "evidence-base.md is mentioned by a linked file but is outside opportunity-risk-designer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+    },
+    {
+      "reason": "workflow.md is mentioned by a linked file but is outside opportunity-risk-designer's own stage; open it only when a task needs it",
+      "target": ".agents/skills/business-archetype-playbook-researcher/references/workflow.md"
+    }
+  ],
+  "social-digital-marketing-planner": [
+    {
+      "reason": "social-digital-marketing-research.md is mentioned by a linked file but is outside social-digital-marketing-planner's own stage; open it only when a task needs it",
+      "target": ".agents/skills/social-digital-marketing-planner/references/social-digital-marketing-research.md"
+    },
+    {
+      "reason": "evidence-registry.md is mentioned by a linked file but is outside social-digital-marketing-planner's own stage; open it only when a task needs it",
+      "target": "references/evidence-registry.md"
+    },
+    {
+      "reason": "strategic-positioning.md is mentioned by a linked file but is outside social-digital-marketing-planner's own stage; open it only when a task needs it",
+      "target": "references/strategic-positioning.md"
+    },
+    {
+      "reason": "workflow.md is mentioned by a linked file but is outside social-digital-marketing-planner's own stage; open it only when a task needs it",
+      "target": ".agents/skills/business-archetype-playbook-researcher/references/workflow.md"
+    }
+  ],
+  "social-media-idea-validator": [
+    {
+      "reason": "evidence-base.md is mentioned by a linked file but is outside social-media-idea-validator's own stage; open it only when a task needs it",
+      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+    }
+  ],
+  "startup-challenge-panel": [
+    {
+      "reason": "evidence-base.md is mentioned by a linked file but is outside startup-challenge-panel's own stage; open it only when a task needs it",
+      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+    },
+    {
+      "reason": "workflow.md is mentioned by a linked file but is outside startup-challenge-panel's own stage; open it only when a task needs it",
+      "target": ".agents/skills/business-archetype-playbook-researcher/references/workflow.md"
+    }
+  ],
+  "strategy-draft-tournament": [
+    {
+      "reason": "evidence-base.md is mentioned by a linked file but is outside strategy-draft-tournament's own stage; open it only when a task needs it",
+      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+    },
+    {
+      "reason": "workflow.md is mentioned by a linked file but is outside strategy-draft-tournament's own stage; open it only when a task needs it",
+      "target": ".agents/skills/business-archetype-playbook-researcher/references/workflow.md"
+    }
+  ]
+}

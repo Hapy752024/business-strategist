@@ -19,9 +19,9 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 
 Run the relevant validators before delivery; never promote unapproved artifacts.
 
-Also read when the stage needs it (referenced by the workflow):
-- `references/component-taxonomy.md`
-- `references/subagent-dispatch.md`
-- `references/tdd-workflow.md`
-- `references/shadcn-mapping.md`
-- `references/token-application.md`
+Also read when the stage needs it:
+- `references/component-taxonomy.md` (component categories)
+- `references/shadcn-mapping.md` (shadcn component mapping)
+- `references/subagent-dispatch.md` (splitting work)
+- `references/tdd-workflow.md` (test-first build)
+- `references/token-application.md` (applying tokens)
