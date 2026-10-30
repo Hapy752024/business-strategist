@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import hashlib
 import json
 import re
 import sys
@@ -38,6 +39,7 @@ PLAN_SCHEMA = ROOT / "schemas" / "search-journey-plan.schema.json"
 OPPORTUNITY_SCHEMA = ROOT / "schemas" / "content-opportunities.schema.json"
 DOMAIN_TYPES = ROOT / "config" / "serp-domain-types.json"
 SERPAPI_ENDPOINT = "https://serpapi.com/search.json"
+NO_RESULTS_TEXT = "hasn't returned any results"
 STAGES = ["problem_aware", "solution_aware", "comparison", "purchase", "local", "post_purchase"]
 RESULT_TYPES = ["competitor", "publisher", "forum_community", "marketplace_aggregator", "directory_review",
                 "government_institution", "video", "unknown"]
@@ -185,9 +187,16 @@ def _organic(rows: list[dict], known: Iterable[str], link_key: str, displayed_ke
 
 
 def parse_serpapi(payload: dict, known_competitors: Iterable[str] = ()) -> dict:
-    """Normalise a SerpApi engine=google payload. SerpApi sees ads, so absence is observed_none."""
+    """Normalise a SerpApi engine=google payload. SerpApi sees ads, so absence is observed_none.
+
+    A top-level ``error`` (quota, auth, bad request) or a non-Success status is a coverage gap: every
+    observable is unobserved/None and the error is returned. SerpApi's "Google hasn't returned any results"
+    (status Success) is the explicit ``no_results`` state, not ``observed_none``.
+    """
     meta = payload.get("search_metadata") or {}
-    failed = bool(meta.get("status")) and meta.get("status") != "Success"
+    status, error = meta.get("status"), payload.get("error")
+    no_results = bool(error) and status == "Success" and NO_RESULTS_TEXT in str(error).lower()
+    failed = (bool(error) and not no_results) or (bool(status) and status != "Success")
     ads = []
     for i, ad in enumerate(payload.get("ads") or [], 1):
         block = ad.get("block_position")
@@ -195,7 +204,7 @@ def parse_serpapi(payload: dict, known_competitors: Iterable[str] = ()) -> dict:
                     "advertiser_domain": _domain_from(ad.get("link"), ad.get("displayed_link"), ad.get("source")),
                     "advertiser_name": ad.get("source"), "headline": ad.get("title"),
                     "description": ad.get("description"), "display_url": ad.get("displayed_link")})
-    ads_status = "unobserved" if failed else ("observed" if ads else "observed_none")
+    ads_status = "unobserved" if failed else "no_results" if no_results else ("observed" if ads else "observed_none")
     organic = _organic(payload.get("organic_results") or [], known_competitors, "link", "displayed_link")
     ao = payload.get("ai_overview")
     if failed:
@@ -223,18 +232,21 @@ def parse_serpapi(payload: dict, known_competitors: Iterable[str] = ()) -> dict:
     features = {
         "ads": None if failed else bool(ads),
         "ai_overview": ai["present"],
-        "paa": bool(payload.get("related_questions")),
+        "paa": None if failed else bool(payload.get("related_questions")),
         "video": seen("inline_videos", "video_results", "short_videos"),
         "forum": None if failed else bool(payload.get("discussions_and_forums")) or any(o["result_type"] == "forum_community" for o in top10),
         "local_pack": None if failed else bool(local_pack),
         "shopping": None if failed else bool(shopping),
         "perspectives": seen("perspectives"),
     }
-    return {"ads_status": ads_status, "ads": ads, "organic": organic, "shopping": shopping, "local_pack": local_pack,
-            "ai_overview": ai, "ai_overview_headings": ai_headings,
-            "paa": [q.get("question") for q in payload.get("related_questions") or [] if q.get("question")],
-            "related": [r.get("query") for r in payload.get("related_searches") or [] if r.get("query")],
-            "features": features}
+    out = {"ads_status": ads_status, "ads": ads, "organic": organic, "shopping": shopping, "local_pack": local_pack,
+           "ai_overview": ai, "ai_overview_headings": ai_headings,
+           "paa": [q.get("question") for q in payload.get("related_questions") or [] if q.get("question")],
+           "related": [r.get("query") for r in payload.get("related_searches") or [] if r.get("query")],
+           "features": features, "serp_state": "failed" if failed else "no_results" if no_results else "ok"}
+    if failed:
+        out["error"] = f"PROVIDER_ERROR: {error or f'search_metadata.status={status}'}"
+    return out
 
 
 def parse_serper(payload: dict, known_competitors: Iterable[str] = ()) -> dict:
@@ -265,13 +277,37 @@ def parse_serper(payload: dict, known_competitors: Iterable[str] = ()) -> dict:
             "related": [r.get("query") for r in related or [] if r.get("query")], "features": features}
 
 
+DROP_LINK_KEYS = {"tracking_link", "serpapi_link", "about_page_serpapi_link", "serpapi_ai_overview_link", "serpapi_pagination"}
+GOOGLE_CLICK = re.compile(r"^https?://(www\.)?google\.[a-z.]+/(aclk|goto|url)\b", re.I)
+
+
+def _strip_links(node: Any, landing: str | None = None) -> Any:
+    if isinstance(node, dict):
+        return {k: _strip_links(v, landing) for k, v in node.items() if k not in DROP_LINK_KEYS}
+    if isinstance(node, list):
+        return [_strip_links(v, landing) for v in node]
+    if isinstance(node, str) and GOOGLE_CLICK.match(node) and (landing is not None or "/aclk" in node):
+        return landing or "redacted_ad_click"
+    return node
+
+
 def redact_serpapi(payload: dict) -> dict:
-    """Drop per-search identifiers and account-bound endpoints before saving a payload."""
+    """Drop per-search identifiers, SerpApi follow-up links and ad-click redirects before saving a payload.
+
+    Ad click links (google.*/aclk, /goto, /url) are replaced with the advertiser's landing domain so no
+    agent follows a real, billable ad click; SerpApi follow-up links would spend searches.
+    """
     out = json.loads(json.dumps(payload))
     meta = out.get("search_metadata") or {}
     for key in ("id", "json_endpoint", "markdown_endpoint", "pixel_position_endpoint", "raw_html_file"):
         meta.pop(key, None)
-    return out
+    ads = []
+    for ad in out.get("ads") or []:
+        domain = _domain_from(None, ad.get("displayed_link"), ad.get("source"))
+        ads.append(_strip_links(ad, f"https://{domain}/" if domain else "redacted_ad_click"))
+    if "ads" in out:
+        out["ads"] = ads
+    return {k: (v if k == "ads" else _strip_links(v)) for k, v in out.items() if k not in DROP_LINK_KEYS}
 
 
 # ------------------------------------------------------------------------------------------ fetching
@@ -314,11 +350,16 @@ def capture(row: dict, provider: str, run_dir: Path, *, repeat_index: int = 1,
     """Fetch one SERP for a plan row, save the raw payload and return a normalised capture."""
     params = _row_params(row)
     run_dir = Path(run_dir)
-    raw_rel = f"raw/{row['query_id']}__{provider}__{repeat_index}.json"
-    base = {"query_id": row["query_id"], "query": row["query"], "provider": provider, "locale": row["locale"],
-            "device": params["device"], "location": params.get("location"), "google_domain": params["google_domain"],
-            "repeat_index": repeat_index,
-            "captured_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+    now = datetime.now(timezone.utc)
+    stamp = now.strftime("%Y%m%dT%H%M%SZ")
+    digest = hashlib.sha256("|".join(str(x) for x in (row["query"], row["locale"], params["device"],
+                                                       params.get("location"), stamp)).encode()).hexdigest()[:8]
+    capture_id = f"{row['query_id']}__{provider}__{repeat_index}__{stamp}__{digest}"
+    raw_rel = f"raw/{capture_id}.json"
+    base = {"capture_id": capture_id, "query_id": row["query_id"], "query": row["query"], "provider": provider,
+            "locale": row["locale"], "device": params["device"], "location": params.get("location"),
+            "google_domain": params["google_domain"], "repeat_index": repeat_index,
+            "captured_at": now.strftime("%Y-%m-%dT%H:%M:%SZ")}
     try:
         if provider == "serpapi":
             payload = redact_serpapi(fetch_serpapi(params))
@@ -388,7 +429,7 @@ def _stage_stats(caps: list[dict], known: set[str]) -> dict:
     return {
         "queries": sorted({c["query_id"] for c in caps}),
         "captures": len(caps),
-        "ads_status_counts": {k: status_counts.get(k, 0) for k in ("observed", "observed_none", "unobserved")},
+        "ads_status_counts": {k: status_counts.get(k, 0) for k in ("observed", "observed_none", "no_results", "unobserved")},
         "queries_observed_for_ads": len({c["query_id"] for c in observed}),
         "queries_with_ads": len({c["query_id"] for c in observed if c.get("ads")}) if observed else None,
         "advertiser_count": len(adv_caps) if observed else None,
@@ -415,16 +456,21 @@ def build_report(captures: list[dict], plan: dict, run_dir: Path | None = None) 
         stage = rows.get(cap["query_id"], {}).get("journey_stage", "unassigned")
         grouped[stage].append(cap)
     stages = {s: _stage_stats(grouped[s], known) for s in STAGES + ["unassigned"] if grouped.get(s)}
+    for stage, st in stages.items():
+        origins_here = [rows.get(q, {}).get("seed_origin", "brainstorm") for q in st["queries"]]
+        st["observed_seed_fraction"] = _observed_fraction(origins_here)
+        st["brainstorm_only"] = st["observed_seed_fraction"] == 0
     hypotheses = []
     for stage, st in stages.items():
+        label = f"{stage}) (brainstorm-only stage" if st["brainstorm_only"] else stage
         if stage == "problem_aware" and (st["forum_share_top10"] or 0) >= 0.1:
-            hypotheses.append(f"Hypothesis ({stage}): forum/community pages hold {st['forum_share_top10']:.0%} of top-10 slots; "
+            hypotheses.append(f"Hypothesis ({label}): forum/community pages hold {st['forum_share_top10']:.0%} of top-10 slots; "
                               "searchers may lack an authoritative answer. Check the threads before the case appraisal uses it.")
         if stage in ("purchase", "comparison") and (st["aggregator_share_top10"] or 0) >= 0.3:
-            hypotheses.append(f"Hypothesis ({stage}): aggregators/marketplaces hold {st['aggregator_share_top10']:.0%} of top-10 slots; "
-                              "organic entry may be hard and paid or partner routes costly. Not a finding until tested.")
+            hypotheses.append(f"Hypothesis ({label}): aggregators/marketplaces hold {st['aggregator_share_top10']:.0%} of top-10 slots; "
+                              "an independent page may compete with them for organic and paid attention. Not a finding until tested.")
         if st["queries_observed_for_ads"] and st["queries_with_ads"] and st["queries_with_ads"] / st["queries_observed_for_ads"] >= 0.5:
-            hypotheses.append(f"Hypothesis ({stage}): suppliers bid on most observed queries; paid acquisition at this intent "
+            hypotheses.append(f"Hypothesis ({label}): suppliers bid on most observed queries; paid acquisition at this intent "
                               "is contested. Ads show supplier spend, not customer demand.")
     origins = Counter(r.get("seed_origin") for r in rows.values())
     report = {
@@ -450,11 +496,19 @@ def build_report(captures: list[dict], plan: dict, run_dir: Path | None = None) 
     return report
 
 
+def _observed_fraction(origins: list[str]) -> float:
+    return round(sum(o != "brainstorm" for o in origins) / len(origins), 3) if origins else 0.0
+
+
 def _ads_line(st: dict) -> str:
     counts = st["ads_status_counts"]
+    if counts.get("no_results") == st["captures"]:
+        return f"- Ads: Google returned no results on all {st['captures']} captures (no_results; not observed_none)."
     if st["advertiser_count"] is None:
         return (f"- Ads: **unobserved** on all {st['captures']} captures (provider cannot see ads; not zero, not absence).")
     tail = f"; unobserved on {counts['unobserved']} captures" if counts["unobserved"] else ""
+    if counts.get("no_results"):
+        tail += f"; no results on {counts['no_results']} captures"
     if not st["queries_with_ads"]:
         return (f"- Ads: none observed on {st['queries_observed_for_ads']} queries checked{tail} "
                 "(no ads is not evidence of no demand).")
@@ -470,7 +524,8 @@ def render_markdown(report: dict, plan: dict | None = None) -> str:
              f"Captured: {report['captured_window'][0]} to {report['captured_window'][1]}. Searches: {report['searches']}.",
              f"Seed origins: {report['seed_origin_mix']} (brainstorm rows are hypotheses).", ""]
     for stage, st in report["stages"].items():
-        lines += [f"## {stage}", ""]
+        lines += [f"## {stage}" + (" (brainstorm-only stage)" if st.get("brainstorm_only") else ""), "",
+                  f"Observed-seed fraction: {st.get('observed_seed_fraction', 0):.0%} of this stage's queries came from a non-brainstorm origin."]
         for qid in st["queries"]:
             r = rows.get(qid, {})
             lines.append(f"- `{qid}` {r.get('query', '')} ({r.get('intent', '?')}, {r.get('searcher_role', '?')}, {r.get('seed_origin', '?')})")
@@ -534,6 +589,9 @@ def _tri(values: list) -> bool | None:
 
 
 def _ads_feature(statuses: set[str]) -> str:
+    if statuses == {"no_results"}:
+        return "no_results"
+    statuses = statuses - {"no_results"}
     if "observed" in statuses:
         return "observed"
     if statuses == {"observed_none"}:
@@ -596,7 +654,7 @@ def build_content_opportunities(captures: list[dict], plan: dict) -> dict:
         if forum:
             parts.append(f"Forum/community pages rank in the top 10 ({', '.join(forum[:4])}); searchers may not find an authoritative answer.")
         if agg_slots >= 3:
-            parts.append(f"Aggregators hold {agg_slots} top-10 slots across these SERPs; an independent page competes with comparison portals.")
+            parts.append(f"Aggregators hold {agg_slots} top-10 slots across these SERPs; an independent page may compete with comparison portals.")
         if paa:
             parts.append(f"{len(paa)} People-also-ask questions show sub-questions the ranking pages may or may not answer.")
         if not parts:
@@ -626,6 +684,7 @@ def build_content_opportunities(captures: list[dict], plan: dict) -> dict:
             "recommended_page_type": page,
             "conversion_bridge": BRIDGES[page],
             "evidence_refs": refs,
+            "observed_seed_fraction": _observed_fraction([r["seed_origin"] for r in rows]),
             "evidence_status": "includes_observed_seed" if any(r["seed_origin"] != "brainstorm" for r in rows) else "brainstorm_hypothesis_only",
             "volume": None,
         })
@@ -664,18 +723,42 @@ def load_competitor_domains(path: Path) -> set[str]:
     return found
 
 
+def _capture_key(cap_or_row: dict, provider: str | None = None, repeat_index: int | None = None) -> tuple:
+    params = cap_or_row if "device" in cap_or_row and "captured_at" in cap_or_row else _row_params(cap_or_row)
+    return (cap_or_row["query_id"], cap_or_row["query"], cap_or_row["locale"], params.get("device", "desktop"),
+            params.get("location"), provider or cap_or_row.get("provider"),
+            repeat_index if repeat_index is not None else cap_or_row.get("repeat_index", 1))
+
+
+def load_captures(run_dir: Path) -> list[dict]:
+    path = Path(run_dir) / "captures.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+
+
 def _reusable(run_dir: Path, row: dict, provider: str, repeat_index: int) -> dict | None:
-    """Reuse a capture of the same query text, locale, provider and repeat made within REUSE_DAYS."""
-    path = run_dir / "captures.json"
-    if not path.exists():
-        return None
+    """Reuse a current capture of the same query, locale, device, location, provider and repeat within REUSE_DAYS."""
     cutoff = datetime.now(timezone.utc) - timedelta(days=REUSE_DAYS)
-    for cap in json.loads(path.read_text(encoding="utf-8")):
-        if (cap.get("query_id"), cap.get("query"), cap.get("locale"), cap.get("provider"), cap.get("repeat_index", 1)) == \
-                (row["query_id"], row["query"], row["locale"], provider, repeat_index) \
-                and not cap.get("error") and datetime.fromisoformat(cap["captured_at"].replace("Z", "+00:00")) >= cutoff:
+    key = _capture_key(row, provider, repeat_index)
+    for cap in reversed(load_captures(run_dir)):
+        if _capture_key(cap) == key and not cap.get("error") and not cap.get("superseded_by") \
+                and datetime.fromisoformat(cap["captured_at"].replace("Z", "+00:00")) >= cutoff:
             return cap
     return None
+
+
+def merge_captures(existing: list[dict], new: list[dict]) -> list[dict]:
+    """Append new captures; earlier rows with the same key are kept and marked superseded, never rewritten away."""
+    merged = [dict(c) for c in existing]
+    ids = {c.get("capture_id") for c in merged}
+    for cap in new:
+        if cap.get("capture_id") in ids:
+            continue
+        for old in merged:
+            if _capture_key(old) == _capture_key(cap) and not old.get("superseded_by"):
+                old["superseded_by"] = cap["capture_id"]
+        merged.append(cap)
+        ids.add(cap.get("capture_id"))
+    return merged
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -717,7 +800,8 @@ def main(argv: list[str] | None = None) -> int:
                     cap = capture(row, provider, run_dir, repeat_index=rep, known_competitors=known)
                     fetched += 1
                 captures.append(cap)
-    (run_dir / "captures.json").write_text(json.dumps(captures, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    merged = merge_captures(load_captures(run_dir), captures)
+    (run_dir / "captures.json").write_text(json.dumps(merged, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     build_report(captures, plan, run_dir)
     opportunities = build_content_opportunities(captures, plan)
     problems = validate_content_opportunities(opportunities)

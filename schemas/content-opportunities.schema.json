@@ -47,6 +47,7 @@
           "recommended_page_type",
           "conversion_bridge",
           "evidence_refs",
+          "observed_seed_fraction",
           "evidence_status",
           "volume"
         ],
@@ -159,6 +160,7 @@
                 "enum": [
                   "observed",
                   "observed_none",
+                  "no_results",
                   "unobserved",
                   "mixed"
                 ]
@@ -170,7 +172,10 @@
                 ]
               },
               "paa": {
-                "type": "boolean"
+                "type": [
+                  "boolean",
+                  "null"
+                ]
               },
               "video": {
                 "type": [
@@ -265,6 +270,12 @@
           },
           "volume": {
             "type": "null"
+          },
+          "observed_seed_fraction": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Share of the cluster's queries with a non-brainstorm seed_origin."
           }
         }
       }

@@ -186,3 +186,71 @@ def test_cli_reuses_recent_capture_and_refetches_changed_query():
             assert sj.main(["--plan", str(plan_path), "--run-dir", str(run)]) == 0
             assert fetch.call_count == 2
         assert (run / "serp-landscape.md").exists() and (run / "content-opportunities.json").exists()
+
+
+# --- fix round 1 ---------------------------------------------------------------------------------------------
+
+def test_serpapi_error_body_is_unobserved_coverage_gap():
+    cap = parse_serpapi({"error": "Your account has run out of searches."})
+    assert cap["ads_status"] == "unobserved" and cap["ai_overview"]["present"] is None
+    assert cap["serp_state"] == "failed" and "run out of searches" in cap["error"]
+    assert all(v is None for v in cap["features"].values())
+    rep = build_report([dict(cap_a, **cap)], plan)
+    st = rep["stages"]["purchase"]
+    assert st["advertiser_count"] is None and st["errors"]
+    assert build_content_opportunities([dict(cap_a, **cap)], plan)["rows"] == []
+
+
+def test_serpapi_google_no_results_is_explicit_state():
+    payload = {"search_metadata": {"status": "Success"}, "error": "Google hasn't returned any results for this query."}
+    cap = parse_serpapi(payload)
+    assert cap["ads_status"] == "no_results" and cap["serp_state"] == "no_results" and "error" not in cap
+    rep = build_report([dict(cap_a, **cap)], plan)
+    st = rep["stages"]["purchase"]
+    assert st["ads_status_counts"]["no_results"] == 1 and "no results" in sj.render_markdown(rep, plan).lower()
+
+
+def test_redaction_removes_ad_clicks_and_serpapi_followups():
+    payload = {"ads": [{"link": "https://www.google.de/aclk?sa=L&ai=x", "tracking_link": "https://www.google.de/aclk?sa=L",
+                        "displayed_link": "https://www.example.com", "sitelinks": [{"link": "https://www.google.com/aclk?x=1"}]}],
+               "related_searches": [{"query": "q", "serpapi_link": "https://serpapi.com/search.json?q=q"}],
+               "organic_results": [{"link": "https://www.example.org/a", "about_page_serpapi_link": "https://serpapi.com/x"}],
+               "serpapi_pagination": {"next": "https://serpapi.com/next"}}
+    out = sj.redact_serpapi(payload)
+    text = json.dumps(out)
+    assert "aclk" not in text and "serpapi.com" not in text
+    assert out["ads"][0]["link"] == "https://example.com/" and out["ads"][0]["sitelinks"][0]["link"] == "https://example.com/"
+    fixture = (FIX / "serpapi_google_sample.json").read_text(encoding="utf-8")
+    assert "/aclk" not in fixture and "tracking_link" not in fixture and "serpapi_link" not in fixture
+
+
+def test_refetch_never_overwrites_and_marks_superseded():
+    row = dict(_row("q1", "invoicing app pricing", "purchase"), location="United States")
+    with tempfile.TemporaryDirectory() as tmp, \
+            mock.patch.object(sj, "fetch_serpapi", return_value=load("serpapi_google_sample.json")):
+        run = Path(tmp)
+        first = sj.capture(row, "serpapi", run)
+        older = dict(first, captured_at="2026-01-01T00:00:00Z")  # stale: outside the reuse window
+        (run / "captures.json").write_text(json.dumps([older]))
+        assert sj._reusable(run, row, "serpapi", 1) is None
+        assert sj._reusable(run, dict(row, device="mobile"), "serpapi", 1) is None
+        with mock.patch.object(sj, "datetime", wraps=sj.datetime) as dt:
+            dt.now.return_value = sj.datetime(2026, 10, 31, 9, 0, 0, tzinfo=sj.timezone.utc)
+            second = sj.capture(row, "serpapi", run)
+        assert first["raw_path"] != second["raw_path"] and (run / first["raw_path"]).exists() and (run / second["raw_path"]).exists()
+        merged = sj.merge_captures([older], [second])
+        assert len(merged) == 2 and merged[0]["superseded_by"] == second["capture_id"] and "superseded_by" not in merged[1]
+
+
+def test_brainstorm_only_stage_is_tagged_and_cluster_has_seed_fraction():
+    rep = build_report([cap_a, cap_b], plan)
+    assert rep["stages"]["purchase"]["brainstorm_only"] is True
+    assert "(brainstorm-only stage)" in sj.render_markdown(rep, plan)
+    rows = build_content_opportunities([cap_a, cap_b], plan)["rows"]
+    assert rows[0]["observed_seed_fraction"] == 0.0
+
+
+def test_test_token_no_longer_marks_publishers():
+    assert sj.classify_domain("contest-example.com", set()) == "unknown"
+    assert sj.classify_url("https://www.example.net/test/page", set()) == ("unknown", "none")
+    assert sj.classify_domain("test.de", set()) == "publisher"

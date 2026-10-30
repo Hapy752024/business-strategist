@@ -14,7 +14,8 @@
       "faz.net",
       "sueddeutsche.de",
       "zeit.de",
-      "focus.de"
+      "focus.de",
+      "stiftung-warentest.de"
     ],
     "forum_community": [
       "reddit.com",
@@ -78,8 +79,7 @@
       "guides",
       "article",
       "articles",
-      "lexikon",
-      "test"
+      "lexikon"
     ],
     "host_tokens": [
       "magazin",
@@ -89,7 +89,7 @@
       "ratgeber",
       "finanztip",
       "finanzfluss",
-      "test"
+      "stiftung-warentest"
     ]
   },
   "notes": "Social platforms sit under forum_community because their organic results are user-generated posts; reclassify a row when the page is a company page."
