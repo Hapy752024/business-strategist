@@ -102,6 +102,9 @@ def validate(root: Path = ROOT) -> list[str]:
     for name in sorted(catalog.keys() - skills):
         errors.append(f'Catalog skill missing from disk: {name}')
     seen = set()
+    route_counts: dict[str, int] = {}
+    for route in routes:
+        route_counts[route['skill']] = route_counts.get(route['skill'], 0) + 1
     reached = {'business-strategist'}  # Router's explicit clarification fallback.
     for route in routes:
         route_id = route['id']
@@ -117,6 +120,8 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.append(f'Route {route_id} forbids unknown skill: {forbidden}')
         if name in route.get('forbidden', []):
             errors.append(f'Route {route_id} forbids its own skill')
+        if bool(route.get('single_mode', False)) != (route_counts[name] == 1):
+            errors.append(f'Route {route_id}: single_mode flag disagrees with {route_counts[name]} route(s) for {name}')
     for name in sorted(skills - reached):
         errors.append(f'Orphan skill has no explicit route: {name}')
     return errors

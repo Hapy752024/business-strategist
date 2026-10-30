@@ -12,7 +12,8 @@
       "forbidden": [
         "idea-grill",
         "brand-website-designer-builder"
-      ]
+      ],
+      "single_mode": true
     },
     {
       "id": "idea-validation",
@@ -26,7 +27,8 @@
       "skill": "idea-grill",
       "forbidden": [
         "market-problem-discovery"
-      ]
+      ],
+      "single_mode": true
     },
     {
       "id": "standalone-brand",
@@ -42,7 +44,8 @@
         "market-problem-discovery",
         "idea-grill"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "website-build",
@@ -112,7 +115,8 @@
       "forbidden": [
         "brand-website-designer-builder"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "competitor-discovery",
@@ -126,7 +130,8 @@
       "forbidden": [
         "competitive-landscape-builder",
         "competitor-marketing-analyzer"
-      ]
+      ],
+      "single_mode": true
     },
     {
       "id": "competitive-landscape",
@@ -147,7 +152,8 @@
       "skill": "competitive-landscape-builder",
       "forbidden": [
         "brand-website-designer-builder"
-      ]
+      ],
+      "single_mode": true
     },
     {
       "id": "competitor-analysis",
@@ -161,7 +167,8 @@
       "skill": "competitor-marketing-analyzer",
       "forbidden": [
         "brand-website-designer-builder"
-      ]
+      ],
+      "single_mode": true
     },
     {
       "id": "competitor-monitoring",
@@ -179,7 +186,8 @@
       "skill": "competitor-monitoring",
       "forbidden": [
         "competitor-marketing-analyzer"
-      ]
+      ],
+      "single_mode": true
     },
     {
       "id": "gtm-strategy",
@@ -227,7 +235,8 @@
       "forbidden": [
         "marketing-strategy-builder"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "company-operations",
@@ -243,7 +252,8 @@
       "requires_pain_gate": true,
       "forbidden": [
         "archetype-gtm-strategist"
-      ]
+      ],
+      "single_mode": true
     },
     {
       "id": "opportunity-prioritization",
@@ -270,7 +280,8 @@
       "forbidden": [
         "market-problem-discovery",
         "evidence-scout"
-      ]
+      ],
+      "single_mode": true
     },
     {
       "id": "brand-asset",
@@ -294,7 +305,8 @@
       "forbidden": [
         "brand-website-designer-builder"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "business-positioning",
@@ -318,42 +330,48 @@
       "id": "brand-discovery-interviewer",
       "match": [],
       "skill": "brand-discovery-interviewer",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "brand-exporter",
       "match": [],
       "skill": "brand-exporter",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "brand-guidelines-writer",
       "match": [],
       "skill": "brand-guidelines-writer",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "brand-motion-designer",
       "match": [],
       "skill": "brand-motion-designer",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "brand-quality-reviewer",
       "match": [],
       "skill": "brand-quality-reviewer",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "brand-strategy-director",
       "match": [],
       "skill": "brand-strategy-director",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "brand-typography-researcher",
@@ -363,27 +381,31 @@
         "font license"
       ],
       "skill": "brand-typography-researcher",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "brand-ui-component-producer",
       "match": [],
       "skill": "brand-ui-component-producer",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "brand-ui-kit-producer",
       "match": [],
       "skill": "brand-ui-kit-producer",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "brand-workspace-manager",
       "match": [],
       "skill": "brand-workspace-manager",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "business-archetype-playbook-researcher",
@@ -392,7 +414,8 @@
         "operator playbooks"
       ],
       "skill": "business-archetype-playbook-researcher",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "evidence-scout",
@@ -406,7 +429,8 @@
         "solution requirements from reviews"
       ],
       "skill": "evidence-scout",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "growth-case-analyzer",
@@ -415,7 +439,8 @@
         "analyze a company failure"
       ],
       "skill": "growth-case-analyzer",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "interview-bridge",
@@ -424,7 +449,8 @@
         "interview screener"
       ],
       "skill": "interview-bridge",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "saas-fintech-pilot-designer",
@@ -434,7 +460,8 @@
       ],
       "skill": "saas-fintech-pilot-designer",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "service-customer-perspective-challenger",
@@ -442,7 +469,8 @@
         "customer perspective review"
       ],
       "skill": "service-customer-perspective-challenger",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "setup-multiharness-project",
@@ -451,7 +479,8 @@
         "repair agent wiring"
       ],
       "skill": "setup-multiharness-project",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "social-media-idea-validator",
@@ -460,7 +489,8 @@
         "validate a content idea"
       ],
       "skill": "social-media-idea-validator",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "startup-business-builder",
@@ -477,7 +507,8 @@
         "startup challenge panel"
       ],
       "skill": "startup-challenge-panel",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "strategy-draft-tournament",
@@ -486,7 +517,8 @@
       ],
       "skill": "strategy-draft-tournament",
       "forbidden": [],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "single_mode": true
     },
     {
       "id": "case-insights",
@@ -618,25 +650,29 @@
       "id": "stripe-best-practices",
       "match": [],
       "skill": "stripe-best-practices",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "security-review",
       "match": [],
       "skill": "security-review",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "webapp-testing",
       "match": [],
       "skill": "webapp-testing",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "pre-release-regression",
       "match": [],
       "skill": "pre-release-regression",
-      "forbidden": []
+      "forbidden": [],
+      "single_mode": true
     },
     {
       "id": "marketing-campaign-setup",

@@ -44,6 +44,10 @@ Catalog-bound `required_references` appear in route packets and the Claude hook'
 
 Hook contract source: [Claude Code hooks reference](https://code.claude.com/docs/en/hooks), checked 2026-09-11. Local CLI version checked: 2.1.233. Live model dispatch has not been benchmarked.
 
+## Bare dispatch
+
+A skill that exactly one route targets (`"single_mode": true` in `config/workflow-routes.json`, checked against the route count by `validate_skill_routes.py`) accepts plain-text `args`: the hook synthesizes a focused route (the skill's route ID; standalone, or the current business workspace from `cwd`) and the pain-first gate applies as usual. Multi-mode skills still need the JSON envelope with an explicit route ID. Plain text never bypasses the gate.
+
 ## Versioned cases
 
 For a known case add `case` to the checked route envelope and use `--case <id>` in CLI dispatch. The packet includes the registered output root, reviewed assessment revision, source bindings and selected execution binding where required. `case-appraisal` is the bounded opportunity-risk-designer mode; its bare skill alias is now ambiguous. Initial segment/journey/pain research is required, but no passed pain gate or execution selection. Full startup/GTM/pilot and explicitly business-linked design retain their own prerequisites. Standalone design requires no research or migration. See [subprojects.md](subprojects.md) for new paths and optional handoffs.

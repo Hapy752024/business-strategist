@@ -168,3 +168,43 @@ def test_subagent_stop_docstring_matches_behavior():
     commands = [h["command"] for groups in settings["hooks"].values()
                 for g in groups for h in g["hooks"]]
     assert commands and not [c for c in commands if "|| exit 2" in c]
+
+
+def _skill_event(skill, args, cwd=None):
+    return {"hook_event_name": "PreToolUse", "tool_name": "Skill", "session_id": "s1", "tool_use_id": "t1",
+            "cwd": str(cwd or ROOT), "tool_input": {"skill": skill, "args": args}}
+
+
+def test_bare_single_mode_skill_passes():
+    from scripts import enforce_skill_route as hook
+    out = hook.check_dispatch(_skill_event("idea-grill", "Pressure test my dog-walking app"))
+    hso = out["hookSpecificOutput"]
+    assert hso.get("permissionDecision") != "deny"
+    assert hso["updatedInput"]["args"] == "Pressure test my dog-walking app"
+
+
+def test_bare_multi_mode_skill_still_requires_envelope():
+    import pytest
+    from scripts import enforce_skill_route as hook
+    with pytest.raises(ValueError, match="JSON route envelope"):
+        hook.check_dispatch(_skill_event("opportunity-risk-designer", "rank my risks"))
+
+
+def test_bare_single_mode_skill_still_gated(tmp_path, monkeypatch):
+    import pytest
+    from scripts import enforce_skill_route as hook, route_workflow
+    from test_workspace_gates import _write_manifest
+    monkeypatch.setattr(route_workflow, "ROOT", tmp_path)
+    monkeypatch.setattr(hook, "ROOT", tmp_path)
+    _write_manifest(tmp_path, "gated", "not_run", monkeypatch)
+    cwd = tmp_path / "projects" / "gated"
+    with pytest.raises(ValueError, match="pain-first"):
+        hook.check_dispatch(_skill_event("social-digital-marketing-planner", "Create paid social", cwd))
+    # The same text run through main() surfaces as a deny decision, not a pass.
+    out = hook.check_dispatch(_skill_event("idea-grill", "Pressure test my idea", cwd))
+    assert out["hookSpecificOutput"].get("permissionDecision") != "deny"
+
+
+def test_single_mode_flag_matches_derived_route_count():
+    from scripts import validate_skill_routes
+    assert validate_skill_routes.validate() == []

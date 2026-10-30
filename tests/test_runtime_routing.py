@@ -126,7 +126,7 @@ def test_every_skill_has_one_checked_module_or_specialist_owner():
 
 
 def test_hook_malformed_input_is_denied_not_a_nonblocking_error():
-    for raw in ['{invalid', '[]', json.dumps({'tool_name': 'Skill', 'tool_input': {'skill': 'idea-grill', 'args': 'plain task'}})]:
+    for raw in ['{invalid', '[]', json.dumps({'tool_name': 'Skill', 'tool_input': {'skill': 'opportunity-risk-designer', 'args': 'plain task'}})]:
         result = subprocess.run(['python3', str(ROOT / 'scripts/enforce_skill_route.py')], input=raw,
                                 text=True, capture_output=True, check=True)
         assert json.loads(result.stdout)['hookSpecificOutput']['permissionDecision'] == 'deny'
@@ -140,13 +140,13 @@ def test_unrelated_tools_and_foreign_skills_are_not_hijacked():
 def test_plain_text_args_get_an_actionable_envelope_hint():
     hook_path = ROOT / 'scripts/enforce_skill_route.py'
     event = {"hook_event_name": "PreToolUse", "tool_name": "Skill",
-             "tool_input": {"skill": "idea-grill", "args": "validate my dog grooming idea"}}
+             "tool_input": {"skill": "opportunity-risk-designer", "args": "rank my dog grooming risks"}}
     out = subprocess.run(["python3", str(hook_path)], input=json.dumps(event), text=True, capture_output=True, check=True)
     decision = json.loads(out.stdout)["hookSpecificOutput"]
     assert decision["permissionDecision"] == "deny"
     reason = decision["permissionDecisionReason"]
     assert "JSON route envelope" in reason
-    assert '"intent": "idea-grill"' in reason
+    assert '"intent": "opportunity-risk-designer"' in reason
     assert "references/runtime-routing.md" in reason
     assert "JSONDecodeError" not in reason
 

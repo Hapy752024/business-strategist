@@ -11,9 +11,9 @@ import sys
 from pathlib import Path
 
 try:
-    from scripts.route_workflow import load_catalog, route_request
+    from scripts.route_workflow import load_catalog, load_routes, route_request
 except ModuleNotFoundError:
-    from route_workflow import load_catalog, route_request
+    from route_workflow import load_catalog, load_routes, route_request
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -37,6 +37,9 @@ def check_dispatch(event: dict) -> dict:
     except json.JSONDecodeError:
         envelope = None
     if not isinstance(envelope, dict) or not isinstance(envelope.get('route'), dict):
+        # Parsed-but-malformed JSON stays an error; only non-JSON text is bare input.
+        envelope = bare_envelope(name, args, event) if envelope is None else None
+    if envelope is None:
         raise ValueError(envelope_hint(name, args if isinstance(args, str) else ''))
     route = envelope['route']
     for key in ('request', 'intent', 'task_scope'):
@@ -110,6 +113,38 @@ def check_dispatch(event: dict) -> dict:
     output['hookSpecificOutput']['updatedInput'] = {**tool_input, 'args': task}
     # No permissionDecision=allow: normal permission checks still run.
     return output
+
+
+def single_mode_routes() -> dict[str, str]:
+    """Map skill -> route ID for skills that exactly one route targets."""
+    routes = load_routes()
+    counts: dict[str, int] = {}
+    for route in routes:
+        counts[route['skill']] = counts.get(route['skill'], 0) + 1
+    return {route['skill']: route['id'] for route in routes if counts[route['skill']] == 1}
+
+
+def bare_envelope(skill: str, args: object, event: dict) -> dict | None:
+    """Synthesize a route envelope for plain-text calls to single-mode skills.
+
+    Multi-mode skills return None (envelope required). The synthesized route still
+    goes through route_request, so pain-first gating applies. Inside a business
+    workspace the project is taken from cwd so the gate cannot be skipped.
+    """
+    route_id = single_mode_routes().get(skill)
+    if route_id is None or not isinstance(args, str) or not args.strip():
+        return None
+    route = {'request': args, 'intent': route_id, 'task_scope': 'focused'}
+    try:
+        parts = Path(event.get('cwd', str(ROOT))).resolve().relative_to(ROOT / 'projects').parts
+    except ValueError:
+        parts = ()
+    if parts and ((ROOT / 'projects' / parts[0] / 'market_research/manifest.json').is_file()
+                  or (ROOT / 'projects' / parts[0] / 'project-manifest.json').is_file()):
+        route['project'] = parts[0]
+    else:
+        route['standalone'] = True
+    return {'route': route, 'input': args}
 
 
 def envelope_hint(skill: str, raw_args: str) -> str:
