@@ -24,3 +24,5 @@ For focused positioning, return the decision and requested implications. For a f
 
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
+
+Also read as the stage needs: `references/evidence-registry.md`, `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`, `references/research-query-calibration.md`.

@@ -1,5 +1,15 @@
 # Customer voice from competitors and similar services
 
+Contents:
+- [Two complementary analyses, with topic-led discovery mandatory](#two-complementary-analyses-with-topic-led-discovery-mandatory)
+- [Ownership and sequence](#ownership-and-sequence)
+- [Review the source and the claim separately](#review-the-source-and-the-claim-separately)
+- [Separate the reasons, allow multiple motives](#separate-the-reasons-allow-multiple-motives)
+- [Separate customer needs from solution-use requirements](#separate-customer-needs-from-solution-use-requirements)
+- [Build both maps, then assess each item for our case](#build-both-maps-then-assess-each-item-for-our-case)
+- [Hand off to pilot scope, smoke testing and GTM](#hand-off-to-pilot-scope-smoke-testing-and-gtm)
+- [Execution boundary](#execution-boundary)
+
 Apply when interpreting customer needs, motivations, praise or complaints about an existing service, or using those inputs to refine a venture's segment, journey, risks or requirements. A narrow factual competitor lookup does not require a full study. Reuse current reviewed evidence when its entity, audience, product, geography and date fit; record gaps rather than manufacture coverage.
 
 ## Two complementary analyses, with topic-led discovery mandatory

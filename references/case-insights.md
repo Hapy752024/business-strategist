@@ -1,5 +1,11 @@
 # Consolidated case insights
 
+Contents:
+- [Before drafting](#before-drafting)
+- [Draft and review](#draft-and-review)
+- [Enriched research and downstream case plans](#enriched-research-and-downstream-case-plans)
+- [Contract version 3: assumption register](#contract-version-3-assumption-register)
+
 For a registered Business case, `cases/<id>/case_insights.md` is the one current
 reader-facing assessment. The project README navigates cases; supporting
 feasibility, economics and research files remain source material. Do not create

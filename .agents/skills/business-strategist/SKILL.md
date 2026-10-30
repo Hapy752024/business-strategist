@@ -54,3 +54,7 @@ Return the route packet and next action.
 ## Quality Checklist
 
 No unrelated skill or research workflow was loaded; approvals and state ownership are explicit. For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/customer-voice.md`
+- `references/strategic-positioning.md`

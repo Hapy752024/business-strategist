@@ -48,3 +48,11 @@ After each authorized deploy, run the production host probe and hand the owner t
 
 For selected advertising-event implementation or repair, read repo-root `references/journey-activation-and-measurement.md` (shared repository dependency).
 Bind the canonical business occurrence and per-platform mapping to campaign context; verify Meta Pixel eventID/CAPI event_id, Google goal duplication and TikTok Pixel/Events API alignment in the actual selected destinations.
+
+Also read when the stage needs it (referenced by the workflow):
+- `.agents/skills/brand-guideline-researcher/references/research-method.md`
+- `references/ad-platform-connections.md`
+- `references/ai-answer-recordings.md`
+- `references/interview-recruitment.md`
+- `references/marketing-campaign-operations.md`
+- `references/task-scope.md`

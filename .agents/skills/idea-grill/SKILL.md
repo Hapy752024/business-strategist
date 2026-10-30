@@ -57,3 +57,9 @@ For a topic without a chosen idea, route to market-problem-discovery.
 ## Output
 
 Open every output with a `## Strongest reason this fails` section tied to a cited claim, an `{{assumption.<id>}}` or a named unknown with its test; never open with what is promising, and hold correct findings under pushback (repo-root `references/research-coaching.md`, truthful stance). Produce a core hypothesis, assumptions, counter-hypotheses, customer-language search terms, riskiest assumption, and next evidence command.
+
+Also read when the stage needs it (referenced by the workflow):
+- `.agents/skills/evidence-scout/references/pain-query-calibration.md`
+- `references/customer-voice.md`
+- `references/research-query-calibration.md`
+- `references/voc-research-method.md`

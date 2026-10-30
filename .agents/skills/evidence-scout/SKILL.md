@@ -110,3 +110,11 @@ For customer-journey analysis, read repo-root `references/journey-activation-and
 Record sourced touchpoints and candidate ad/tool/partner hooks with access, next action and measurement;
 keep intervention hypotheses separate from observed pain.
 Research does not select a campaign or bypass the pain-first gate.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/ai-answer-recordings.md`
+- `references/institutional-and-university-sources.md`
+- `references/modules/source-worker-packet.md`
+- `references/task-scope.md`
+- `references/search-visibility-decisions.md`
+- `references/owner-actions.md`

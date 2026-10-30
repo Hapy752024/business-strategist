@@ -24,3 +24,10 @@ Treat discovery lane observations as provenance, not classification. Verify offi
 Return the route packet, lane-aware entity landscape, service/price matrix, social-presence table, positioning hypotheses, inspiration library, coverage gaps and next validation test.
 
 For substantive chosen-idea validation, apply repo-root `references/research-data-and-precedents.md`: select informative comparison markets, search in their language, inspect independent customers and failed outcomes, and assess local transfer conditions. Funding remains a separate capital signal.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/institutional-and-university-sources.md`
+- `references/strategic-positioning.md`
+- `references/workspace-lifecycle.md`
+- `references/owner-actions.md`
+- `references/task-scope.md`

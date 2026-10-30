@@ -1,5 +1,17 @@
 # Workspace Lifecycle — Resume, Replay, and Run-Manifest
 
+Contents:
+- [Legacy layout and stage → folder map](#legacy-layout-and-stage--folder-map)
+- [Purpose](#purpose)
+- [Checking for Existing Workspaces](#checking-for-existing-workspaces)
+- [Presenting Options](#presenting-options)
+- [Resuming a Workspace](#resuming-a-workspace)
+- [Current executive document](#current-executive-document)
+- [Per-Run Manifest](#per-run-manifest)
+- [Replay from Last Passed Gate](#replay-from-last-passed-gate)
+- [Project Workspace Cleanup](#project-workspace-cleanup)
+- [Project Subagents](#project-subagents)
+
 New projects use the independent subproject layout in [subprojects.md](subprojects.md): `business-analysis/`, `branding/`, `digital-assets/website/`, and `digital-assets/others/`. The umbrella has layout version 3; Business reuses case layout version 2. In the case contract below, root means the Business root for new projects and the existing project root for older version-2 projects. Read [case-assessment.md](case-assessment.md) for its authoritative outputs, selection, publication and recovery contract. Root `project-manifest.json` is the explicit version switch. Versioned Business `README.md` is current comparison/navigation; investigated cases have `case_insights.md` as their reader assessment and separate research stage manifests. The root `strategy/` belongs to the single selected execution target. Case changes do not select an idea. Detect versioned projects even before a root research manifest exists.
 
 Before writes, check `history/pending.json`. Recover through `python3 scripts/case_workspace.py recover --workspace <project>`; do not bypass unresolved or outside-edit conflicts. Case collectors use `--workspace <project> --case <id>` and unique immutable run destinations. The allocator saves the reviewed assessment revision in `.case-context.json`; stage writers require that run context or an explicit `expected_assessment_revision`. A stale run may remain historical evidence but cannot close the current case checkpoint. Direct builders require a fresh path under the case's `market_research/.../runs/`.

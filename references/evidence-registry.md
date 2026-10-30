@@ -1,5 +1,21 @@
 # Cross-Skill Evidence Registry
 
+Contents:
+- [The Sequencing Rule](#the-sequencing-rule)
+- [The Weak-Evidence List](#the-weak-evidence-list)
+- [Channel Jobs, Not Channel Checklists](#channel-jobs-not-channel-checklists)
+- [Channel and Loop Recommendation Protocol](#channel-and-loop-recommendation-protocol)
+- [Product and Referral Loop Gates](#product-and-referral-loop-gates)
+- [Community Operating Model](#community-operating-model)
+- [Low-Cost Growth Versus “Hacks”](#low-cost-growth-versus-hacks)
+- [Marketing Measurement Guardrails](#marketing-measurement-guardrails)
+- [Service-Customer Decision and Trust](#service-customer-decision-and-trust)
+- [Pull Signals and Pivots](#pull-signals-and-pivots)
+- [Community Before Commerce (China)](#community-before-commerce-china)
+- [Regional Expansion](#regional-expansion)
+- [Interpretation Limits](#interpretation-limits)
+- [Which Skills Use This](#which-skills-use-this)
+
 Distilled, sourced findings that apply across multiple skills. Skills should cite this registry instead of maintaining private copies of the same findings. Last researched: 2026-08-28.
 
 **Full detail:** the detailed source tables for these findings were not migrated into the project-centric layout — the former workspaces `founder-gtm-playbooks` and `european-german-us-service-customer-psychology` are unavailable (do not cite paths under `projects/research/topics/`; they no longer exist). The GTM-specific summary remains in `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`; the full per-geography treatment lives in `.agents/skills/service-customer-perspective-challenger/references/`. A separate practitioner evidence base for social/content idea validation (first-customer levers, Pain-Point SEO, broker-channel reality) is gathered with `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`.

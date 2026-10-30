@@ -1,5 +1,12 @@
 # Customer-needs research method
 
+Contents:
+- [1. Questions and coverage before themes](#1-questions-and-coverage-before-themes)
+- [2. Documents → speaker experiences → source review](#2-documents--speaker-experiences--source-review)
+- [3. Code and compare before making a needs map](#3-code-and-compare-before-making-a-needs-map)
+- [4. Partial findings and the next learning step](#4-partial-findings-and-the-next-learning-step)
+- [Method and implementation sources](#method-and-implementation-sources)
+
 Use for substantive market discovery, customer/problem validation and competitor
 feedback, not a narrow factual lookup. This is the shared research contract;
 `customer-voice.md` owns source planning and U/R distinctions. Countries,

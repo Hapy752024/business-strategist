@@ -35,3 +35,10 @@ Return the report path, source coverage, 3–7 candidate problem-segment pockets
 For substantive Business research, read repo-root `references/research-data-and-precedents.md`. Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals. Metadata is discovery until original findings are reviewed.
 
 For customer-journey analysis, read repo-root `references/journey-activation-and-measurement.md`, section 1 (shared repository dependency). Record sourced touchpoints and candidate ad/tool/partner hooks with access, next action and measurement; keep intervention hypotheses separate from observed pain. Research does not select a campaign or bypass the pain-first gate.
+
+Also read when the stage needs it (referenced by the workflow):
+- `.agents/skills/evidence-scout/references/workflow.md`
+- `references/institutional-and-university-sources.md`
+- `references/strategic-positioning.md`
+- `references/task-scope.md`
+- `references/modules/source-worker-packet.md`

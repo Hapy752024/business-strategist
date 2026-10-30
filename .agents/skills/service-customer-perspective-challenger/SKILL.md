@@ -26,3 +26,5 @@ Produce an evidence ledger, primary and skeptical customer contexts, first-perso
 ## Quality Checklist
 
 Separate observed evidence, inference, and hypothesis; never present a regional average as an individual's personality or simulated dialogue as customer research.
+
+Also read as the stage needs: `references/strategic-positioning.md`.

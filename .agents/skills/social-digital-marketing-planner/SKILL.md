@@ -21,3 +21,16 @@ For channel choice, budget sizing, structure and stop rules read [paid campaign 
 For selected multi-step execution, read repo-root `references/marketing-execution.md`; prepare owner and third-party steps with exact destinations, ready materials and verification criteria.
 
 For paid plans and journey-based growth interventions, read repo-root `references/journey-activation-and-measurement.md` and `references/ad-platform-connections.md` (shared repository dependencies). Specify placement, useful hook/tool, accessible distribution, sales destination, event mappings and mature customer outcomes; prepare platform-specific campaign structure and monitoring without inferring live authority.
+
+Also read when the stage needs it (referenced by the workflow):
+- `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`
+- `references/social-digital-marketing-research.md`
+- `references/ai-answer-recordings.md`
+- `references/comparative-creative-analysis.md`
+- `references/evidence-registry.md`
+- `references/marketing-campaign-operations.md`
+- `references/owner-actions.md`
+- `references/search-visibility-decisions.md`
+- `references/strategic-positioning.md`
+- `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`
+- `references/research-query-calibration.md`

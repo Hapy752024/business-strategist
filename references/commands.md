@@ -1,5 +1,18 @@
 # Full Command Reference
 
+Contents:
+- [Evidence Scout](#evidence-scout)
+- [Competitor Ads Intelligence](#competitor-ads-intelligence)
+- [Market Problem Discovery](#market-problem-discovery)
+- [Competitor Discovery](#competitor-discovery)
+- [Competitor Marketing Analysis](#competitor-marketing-analysis)
+- [Lane-aware landscape artifacts](#lane-aware-landscape-artifacts)
+- [Founder/Operator Playbooks](#founderoperator-playbooks)
+- [Interview Kit (interview-bridge)](#interview-kit-interview-bridge)
+- [Whitespace Matrix](#whitespace-matrix)
+- [Infrastructure](#infrastructure)
+- [Bounded evidence collection](#bounded-evidence-collection)
+
 Extended CLI command variants for each skill. Prefer the AGENTS.md shorthand for common use; load this reference when the full variant set is needed.
 
 ## Evidence Scout

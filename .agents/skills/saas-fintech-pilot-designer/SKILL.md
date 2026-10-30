@@ -20,3 +20,6 @@ description: Design SaaS, fintech, and insurtech prototypes, POCs, MVPs, paid pi
 ## Output
 
 Produce test type, participant map, scope, data controls, timeline, metrics, evidence log, risks, and conversion decision.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/mvp-pilot-research.md`

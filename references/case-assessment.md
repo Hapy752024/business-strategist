@@ -1,5 +1,17 @@
 # Case assessment and selected-plan contract
 
+Contents:
+- [Resolve before writing](#resolve-before-writing)
+- [Research content](#research-content)
+- [Publication and ownership](#publication-and-ownership)
+- [One selected business](#one-selected-business)
+- [Current, history and recovery](#current-history-and-recovery)
+- [Numerical prose and derived-input corrections](#numerical-prose-and-derived-input-corrections)
+- [Viability verdict](#viability-verdict)
+- [Commit decision review](#commit-decision-review)
+- [Economics charts](#economics-charts)
+- [Per-case business plan extension](#per-case-business-plan-extension)
+
 For new projects, this contract lives inside `business-analysis/`; see [subprojects.md](subprojects.md) for independent Branding and Digital Assets. Older version-2 projects retain their existing root.
 
 Use for version-2 case appraisal and selected business-plan assembly. Reuse strategic-positioning.md for entrant fit, evidence definitions and economics. This is the shared output contract, not an additional stage machine.

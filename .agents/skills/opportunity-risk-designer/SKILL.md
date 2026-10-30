@@ -56,3 +56,9 @@ For chosen-idea or strategic continuation work, apply repo-root `references/rese
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
 
 For the checked `smoke-test-design` route, read repo-root `references/smoke-test.md`. Take the assumption ids from the case `assumptions.json` riskiest list, generate the draft with `python3 scripts/evidence_scout/build_smoke_test_kit.py --run-dir <evidence-run> --experiment-id E-<slug> --assumption-id <A-id> --offer ... --segment ... --out-dir <run>/experiments/<slug>`, then commit it with `case_workspace.py experiment-plan --input <out>/experiment-card.json`. Use this as the default next test when the riskiest assumption is demand or message and the founder has no customer panel; interviews recruit from responders. Ad spend needs the recorded approval before `experiment-approve`.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/evidence-registry.md`
+- `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`
+- `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`
+- `references/research-query-calibration.md`

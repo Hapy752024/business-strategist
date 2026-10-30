@@ -20,3 +20,9 @@ description: Challenge a startup thesis with evidence memos, red-team cross-exam
 ## Output
 
 Write role memos, disagreement matrix, unsupported claims, decisive tests, arbiter verdict, confidence, and manifest next action under `reviews/`.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/evidence-registry.md`
+- `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`
+- `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`
+- `references/research-query-calibration.md`

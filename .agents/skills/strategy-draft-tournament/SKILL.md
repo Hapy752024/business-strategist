@@ -25,3 +25,9 @@ Drafts differ in mechanism, not tone; every judge score cites a lens or named as
 ## Output
 
 Produce the decision frame, the draft set with one-line mechanisms, the judge scorecard, the feedback-round diff (if run), the selected or synthesized recommendation, its evidence gaps, and the cheapest test that would change the pick.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/evidence-registry.md`
+- `.agents/skills/archetype-gtm-strategist/references/evidence-base.md`
+- `.agents/skills/business-archetype-playbook-researcher/references/workflow.md`
+- `references/research-query-calibration.md`

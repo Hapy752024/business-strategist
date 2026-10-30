@@ -18,3 +18,12 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 ## Quality Checklist
 
 Run the relevant validators before delivery; never promote unapproved artifacts.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/benchmarks.md`
+- `references/coherence-review.md`
+- `references/concept.md`
+- `references/element-taxonomy.md`
+- `references/iteration-loop.md`
+- `references/pillars.md`
+- `references/subagent-dispatch.md`

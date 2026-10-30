@@ -33,3 +33,6 @@ For substantive query design and refinement, apply repo-root `references/researc
 Produce sourced patterns for segment choice, validation, first customers, low-cost marketing, pricing, launch, retention, scaling, anti-patterns, and applicability limits.
 
 For substantive Business research, read repo-root `references/research-data-and-precedents.md`. Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals. Metadata is discovery until original findings are reviewed.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/institutional-and-university-sources.md`

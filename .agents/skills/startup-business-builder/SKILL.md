@@ -35,3 +35,6 @@ Produce thesis, assumptions, discovery and MVP plans, first-ten-customer plan, m
 
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
+
+Also read when the stage needs it (referenced by the workflow):
+- `references/strategic-positioning.md`
