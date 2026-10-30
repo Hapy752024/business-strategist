@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
-"""SubagentStop hook: gate subagent output before it enters the lead's context.
+"""SubagentStop hook: reject empty subagent output.
 
-Validates that subagent output:
-- Is not empty
-- Contains required artifact paths or structured data
-- Does not contain fabricated claims without sources
-
-Can force a re-run instead of accepting incomplete or fabricated output.
+Behavior: blocks a subagent result only when the output is empty or shorter
+than 20 characters, forcing a re-run. It does not check artifact paths,
+structure, sources or factual accuracy; judging content is the coordinator's job.
 """
 
 import json

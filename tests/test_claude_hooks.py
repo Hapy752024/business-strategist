@@ -158,3 +158,13 @@ def test_enabled_mcp_servers_are_defined():
     defined = json.loads((ROOT / ".mcp.json").read_text())["mcpServers"]
     assert [name for name in enabled if name not in defined] == []
     assert "apify" in defined and defined["apify"]["type"] == "http"
+
+
+def test_subagent_stop_docstring_matches_behavior():
+    import ast
+    doc = ast.get_docstring(ast.parse((ROOT / ".claude/hooks/subagent_stop.py").read_text()))
+    assert "fabricat" not in doc.lower()
+    settings = json.loads((ROOT / ".claude/settings.json").read_text())
+    commands = [h["command"] for groups in settings["hooks"].values()
+                for g in groups for h in g["hooks"]]
+    assert commands and not [c for c in commands if "|| exit 2" in c]
