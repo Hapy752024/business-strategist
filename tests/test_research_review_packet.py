@@ -41,9 +41,10 @@ def test_review_packet_has_methodology():
     m = out["methodology"]
     assert out["methodology_markdown"].startswith("## Methodology")
     reddit = m["providers"]["reddit"]
-    assert reddit["outcome"] == "attempted" and reddit["access"] == "keyed"
+    assert reddit["outcome"] == "attempted" and reddit["access"] == "key recorded"
     assert reddit["queries"] == [{"query": "steuer chaos", "locale": "de-DE", "status": "ok"}]
-    assert m["providers"]["hn"]["access"] == "keyless"
+    assert m["providers"]["hn"]["access"] == "no key recorded"
+    assert "Access reflects what the collector recorded, not provider requirements." in out["methodology_markdown"]
     assert m["sampling_frames"] == {"entity_led_feedback": 1, "topic_led_voc": 1}
     assert m["date_range"] == {"lookback_days": 90, "earliest": "2026-08-01", "latest": "2026-10-02"}
     assert "de-DE" in out["methodology_markdown"] and "steuer chaos" in out["methodology_markdown"]
@@ -66,3 +67,20 @@ def test_methodology_without_summary_says_not_recorded():
     out = module.build({"input_plan": {"queries": []}}, EVIDENCE, [], [], {})
     assert out["methodology"]["providers"] == {}
     assert "not recorded" in out["methodology_markdown"]
+
+
+def test_scheduled_keyed_provider_keeps_key_name_and_shows_key_recorded(tmp_path, monkeypatch):
+    import argparse, sys
+    sys.path.insert(0, str(ROOT / "scripts/evidence_scout"))
+    import collect as c
+    def fake_query(local_args, queries, run_dir):
+        c.write_json(run_dir / "raw/youtube.json", {})
+        return [], {"status": "ok", "credential_source": "YOUTUBE_API_KEY"}
+    monkeypatch.setattr(c, "_collect_youtube_query", fake_query)
+    args = argparse.Namespace(topic="t", customer_segment="s", hypothesis_id="T1", geo="DE", language="de",
+                              limit=5, query_limit=1, results_per_query=2)
+    _, summary = c.collect_scheduled_provider(args, ["seed"], tmp_path, "youtube")
+    assert summary["credential_source"] == "YOUTUBE_API_KEY"
+    out = module.build({"input_plan": {"queries": []}}, [], [], [], {},
+                       run_summary={"providers": {"youtube": summary}})
+    assert out["methodology"]["providers"]["youtube"]["access"] == "key recorded"

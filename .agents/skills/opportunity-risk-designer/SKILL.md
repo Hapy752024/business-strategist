@@ -17,6 +17,9 @@ A new deep dive makes downstream plan use pending until the selected insights ar
 For a registered Business case, maintain `cases/<id>/case_insights.md` as its one current reader-facing assessment.
 Publish coherent reviewed findings progressively, then consolidate material findings across research runs, deep dives and answered founder questions.
 Check source coverage, numeric context, freshness and conflicting conclusions before each publication; distinguish a current progress snapshot from final delivery.
+Before publishing or updating case insights, run `python3 scripts/evidence_scout/build_decision_memo.py ...`
+(see repo-root `references/case-insights.md`, Decision memo) and carry its verdict, caps and riskiest-assumption test
+into Executive assessment and Recommended next decisions.
 New cases have no case-level README; project-level READMEs remain navigation and comparison.
 Apply repo-root `references/case-insights.md` throughout substantive case research;
 existing legacy case narratives require reviewed conversion, not automatic migration.

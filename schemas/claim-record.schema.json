@@ -63,6 +63,7 @@
     "confidence_rationale": {"type": "string", "minLength": 1},
     "missing_critical_sources": {"type": "array", "items": {"type": "string"}},
     "decision_affected": {"type": "string"},
+    "factor_mapping_reviewed": {"type": "boolean", "description": "A reviewer confirmed this claim's decision-memo factor assignment (build_decision_memo.py); analyst-only assignments are capped at 50."},
     "none_found_scope": {"type": ["object", "null"]}
   }
 }

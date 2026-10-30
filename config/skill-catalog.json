@@ -351,7 +351,8 @@
             "references/case-insights.md"
           ],
           "artifacts": [
-            "case_insights.md"
+            "case_insights.md",
+            "decision_memo/decision_memo.md + scores.json"
           ],
           "inputs": [
             "case_context",
@@ -378,6 +379,14 @@
                 "cases/{case}/case_insights.md"
               ],
               "freshness": "revision"
+            },
+            {
+              "artifact": "decision-memo",
+              "schema": "schemas/decision-memo-scores.schema.json",
+              "path_patterns": [
+                "cases/{case}/market_research/decision_memo/scores.json"
+              ],
+              "freshness": "digest"
             }
           ]
         },
@@ -395,7 +404,8 @@
             "case_insights.md after consolidation",
             "feasibility.md",
             "business-case.md",
-            "economics.json when needed"
+            "economics.json when needed",
+            "decision_memo/decision_memo.md + scores.json"
           ],
           "inputs": [
             "case_context",
@@ -431,6 +441,14 @@
                 "cases/{case}/case_insights.md"
               ],
               "freshness": "revision"
+            },
+            {
+              "artifact": "decision-memo",
+              "schema": "schemas/decision-memo-scores.schema.json",
+              "path_patterns": [
+                "cases/{case}/market_research/decision_memo/scores.json"
+              ],
+              "freshness": "digest"
             }
           ]
         },

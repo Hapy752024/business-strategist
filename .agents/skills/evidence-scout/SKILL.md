@@ -16,6 +16,9 @@ Update that case's single `case_insights.md` progressively after each coherent b
 Keep it a concise business recap, qualify provisional findings and label remaining questions in plain language.
 Do not call a progress snapshot final delivery.
 Bind the exact reviewed run and its claim ledger into the current insight publication.
+Before publishing or updating case insights, run `python3 scripts/evidence_scout/build_decision_memo.py ...`
+(see repo-root `references/case-insights.md`, Decision memo) and carry its verdict, caps and riskiest-assumption test
+into Executive assessment and Recommended next decisions.
 Render material VOC claims with direct original-source markers under repo-root `references/case-insights.md`;
 preserve source limitations and private-source references.
 Completed delivery also requires a separate review of the exact final document and consumed inputs.

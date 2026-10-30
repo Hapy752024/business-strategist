@@ -1887,7 +1887,9 @@ def collect_scheduled_provider(args: argparse.Namespace, queries: list[str], run
         local_args.youtube_transcript_budget_max = max(0, getattr(args, "youtube_transcript_max", 5))
         capture_dir = run_dir / "raw" / f"{provider}-queries" / hashlib.sha256(row["query_id"].encode()).hexdigest()[:16]
         found, summary = globals()[f"_collect_{provider}_query"](local_args, [row["query"]], capture_dir)
-        provider_details.update({key: summary[key] for key in ("required_env", "top_up_url") if key in summary})
+        # credential_source is the env var NAME of the key used (never its value).
+        provider_details.update({key: summary[key] for key in ("required_env", "top_up_url", "credential_source")
+                                 if summary.get(key)})
         capture_path = capture_dir / "raw" / f"{provider}.json"
         capture = read_json(capture_path, {})
         raw["query_captures"].append({"query_id": row["query_id"], "path": str(capture_path), "summary": summary})

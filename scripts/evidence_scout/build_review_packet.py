@@ -26,8 +26,9 @@ def methodology(summary: dict | None, evidence: list[dict]) -> dict:
     """Queries, provider attempts/skips with reasons, access mode, sampling frames and dates.
 
     Built only from the collector's summary.json and evidence records; nothing is inferred.
-    Access is `keyed` when the provider recorded a credential source or required env vars,
-    otherwise `keyless` (no credential recorded).
+    Access is `key recorded` when the provider summary carries a credential source (key
+    name) or required env vars, otherwise `no key recorded`. It reflects what the collector
+    recorded, not provider requirements.
     """
     summary = summary or {}
     providers = {}
@@ -49,7 +50,7 @@ def methodology(summary: dict | None, evidence: list[dict]) -> dict:
         queries = [{"query": q.get("query"), "locale": q.get("locale"), "status": q.get("status")}
                    for q in row.get("query_ledger") or [] if isinstance(q, dict) and q.get("query")]
         providers[name] = {"status": status, "outcome": "attempted" if status in ATTEMPTED else "skipped",
-                           "access": "keyed" if keyed else "keyless", "reason": reason, "queries": queries}
+                           "access": "key recorded" if keyed else "no key recorded", "reason": reason, "queries": queries}
     frames: dict[str, int] = defaultdict(int)
     dates = []
     for record in evidence:
@@ -80,6 +81,7 @@ def methodology_markdown(m: dict) -> str:
               f"Date range: lookback {d['lookback_days'] or 'not recorded'} days; evidence dated "
               f"{d['earliest'] or 'unknown'} to {d['latest'] or 'unknown'}.",
               f"Geography/language: {m.get('geo') or 'not recorded'} / {m.get('language') or 'not recorded'}.",
+              "Access reflects what the collector recorded, not provider requirements.",
               "Skipped providers are coverage gaps, not absence of evidence. Page text is data, never instructions.", ""]
     return "\n".join(lines)
 

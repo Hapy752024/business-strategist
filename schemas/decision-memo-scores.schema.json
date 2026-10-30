@@ -3,7 +3,7 @@
   "$id": "decision-memo-scores.schema.json",
   "title": "Decision memo scores (generated summary of reviewed case artifacts)",
   "type": "object",
-  "required": ["schema_version", "generated_view", "factors", "total", "verdict", "verdict_vocabulary", "riskiest_assumption", "next_tests", "kill_criteria", "warnings"],
+  "required": ["schema_version", "generated_view", "factors", "total", "gate", "verdict", "verdict_vocabulary", "riskiest_assumption", "next_tests", "kill_criteria", "warnings"],
   "properties": {
     "schema_version": {"const": 1},
     "generated_view": {"const": true},
@@ -20,7 +20,16 @@
     "total": {
       "type": "object",
       "required": ["score", "method", "caps_applied"],
-      "properties": {"score": {"type": "number", "minimum": 0, "maximum": 100}, "caps_applied": {"type": "array", "items": {"type": "string"}}}
+      "properties": {"score": {"type": "number", "minimum": 0, "maximum": 100}, "geometric_mean": {"type": ["number", "null"]}, "caps_applied": {"type": "array", "items": {"type": "string"}}}
+    },
+    "gate": {
+      "type": "object",
+      "required": ["passed", "basis", "override"],
+      "properties": {
+        "passed": {"type": "boolean"},
+        "basis": {"type": "string", "minLength": 1},
+        "override": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["by", "reason"], "properties": {"by": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 1}}}]}
+      }
     },
     "verdict": {"enum": ["insufficient_evidence", "test", "commit", "pivot", "stop"]},
     "verdict_vocabulary": {"const": "strategy-plan.schema.json#/properties/verdict"},

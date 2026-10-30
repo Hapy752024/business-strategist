@@ -12,10 +12,30 @@ Inputs (all optional; a missing input leaves its factors `unknown`):
 - problem-validation-assessment.json (pain gate receipt).
 - voc-table.json from build_voc_table.py.
 - economics.json from scripts/case_economics.py (results are read, never recomputed).
+- evidence.jsonl of the same run: needed to check the evidence type/frame of claims
+  assigned to reachability or competition (without it those claims are not scored).
 - factor-claims.json: analyst-declared claim -> factor assignments for claims whose
   type does not imply a factor, e.g. {"reachability": [{"claim_id": "c3",
   "direction": "supports"}], "competition": [{"claim_id": "c5", "direction": "against"}]}.
   The assignment is listed in the basis; the score still comes only from the rubric.
+- Pain-first gate proof: --project/--case (read through route_workflow.pain_gate_state,
+  the router's own check), or an assessment with status `supported`, or a recorded
+  --override-gate with --override-by/--override-reason.
+
+Factor-claims compatibility (claim-record `claim_type`/`claim_scope_type`, evidence record
+`evidence_type`/`sampling_frame`/`source_role`/`collection_source_lane`):
+- pain: occurrence|pattern|unmetness|prevalence.   buyer: willingness_to_pay.
+- reachability: observation, with at least one supporting evidence record whose
+  evidence_type is `community`, source_role `community_context` or collection_source_lane
+  `external_forums_communities`.
+- competition: observation, with at least one supporting evidence record in the
+  `entity_led_feedback` frame, evidence_type `competitor_gap`/`switching_cost` or
+  source_role `competitor_context`.
+- A claim that already scores pain or buyer (by type or assessment claim_ids) cannot be
+  assigned to another factor; an incompatible claim type is rejected (exit 2); a
+  compatible claim whose evidence cannot be checked or does not qualify is not scored.
+- Analyst-only assignments to reachability/competition are capped at 50 unless the claim
+  record carries `factor_mapping_reviewed: true` (a reviewer confirmed the mapping).
 
 Rubric (score 0-100 per factor; higher = more favourable to this entrant; `unknown`
 when no eligible evidence exists). Every score is traceable to an artifact field.
@@ -28,7 +48,8 @@ falsification and `independence_count` (n):
 - 0-20:   evidence against the factor: a claim declared `against`, or a supporting
           claim whose verification.support_assessment is `contradicted`. Against
           claims cap the factor: high -> 10, medium -> 20, low -> 50; contradicted -> 20.
-- not scored: confidence `unresolved`, or verification `unsupported`/`unresolved`.
+- not scored: confidence `unresolved`, or verification `unsupported`/`unresolved`; an
+          `against` claim counts only when verification.support_assessment is `supported`.
 Factor score = min(best supporting claim score, lowest against cap); against-only
 evidence scores the cap. Claims count toward a factor when:
 - pain: claim_type/claim_scope_type in occurrence|pattern|unmetness|prevalence, or listed
@@ -38,7 +59,7 @@ evidence scores the cap. Claims count toward a factor when:
   Assessment status caps pain: insufficient_evidence -> 50, scoped -> 80, supported -> none.
 - buyer: claim_type/claim_scope_type willingness_to_pay, or declared for buyer. A buyer
   claim without `price_bearing_behavior_evidence` (stated intent only) is capped at 50.
-- reachability, competition: declared in factor-claims only.
+- reachability, competition: declared in factor-claims only (compatibility above).
 Economics score, from case_economics results:
 - unknown: no file, or results.status `unresolved`.
 - 0-20:   contribution_per_unit <= 0 -> 10; viability.status `fail` or
@@ -49,7 +70,8 @@ Economics score, from case_economics results:
 
 Total = 100 x product(score/100) over known factors, rounded to 0.1. Caps: any factor
 <= 20 caps the total at 20 (one fatal weakness is never averaged away); any unknown
-factor caps it at 40 and becomes the first next test.
+factor caps it at 40 and becomes the first next test. The memo also prints the
+geometric mean (total ** (1/k)) for readability; all five factors at 80 give 32.8.
 
 Verdict uses the existing strategy-plan vocabulary (schemas/strategy-plan.schema.json
 verdict enum); the idea-validation pattern maps pursue->commit, test->test,
@@ -57,8 +79,10 @@ pivot->pivot, drop->stop:
 - stop: pain <= 20, or two or more factors <= 20.
 - pivot: exactly one non-pain factor <= 20.
 - insufficient_evidence: three or more factors unknown.
-- commit: all factors known, none <= 50, total >= 40. A memo `commit` only means the case
-  may prepare a commit decision_review; it is not a commitment.
+- commit: all factors known, none <= 50, total >= 40 (geometric mean about 83), AND the
+  pain-first gate passed or an override is recorded; otherwise the verdict tops out at
+  `test` with the cap note "pain-first gate not passed". A memo `commit` only means the
+  case may prepare a commit decision_review; it is not a commitment.
 - test: everything else.
 Base rate: published idea-validation tools report roughly 17% "go" outcomes, so verdicts
 above `test` should be rare. A warning is emitted when every factor is >= 80.
@@ -77,6 +101,8 @@ SCHEMA = ROOT / "schemas/decision-memo-scores.schema.json"
 FACTORS = ("pain", "buyer", "reachability", "economics", "competition")
 PAIN_TYPES = {"occurrence", "pattern", "unmetness", "prevalence"}
 BUYER_TYPES = {"willingness_to_pay"}
+ASSIGNABLE = {"pain": PAIN_TYPES, "buyer": BUYER_TYPES, "reachability": {"observation"}, "competition": {"observation"}}
+GATE_CAP = "pain-first gate not passed: verdict limited to test"
 BANDS = {"high": (81, 4), "medium": (51, 6), "low": (21, 6)}
 AGAINST_CAP = {"high": 10, "medium": 20, "low": 50}
 CONTRADICTED_CAP = 20
@@ -175,7 +201,40 @@ def _types(row: dict) -> set:
     return {row.get("claim_type"), row.get("claim_scope_type")}
 
 
-def _claim_factor(name: str, rows: list[tuple[dict, str, str]], quarantined: set, artifact: str) -> dict:
+def _evidence_qualifies(factor: str, row: dict, evidence: dict | None) -> bool | None:
+    """None when evidence records were not supplied; else whether any supporting record fits."""
+    if factor not in {"reachability", "competition"}:
+        return True
+    if evidence is None:
+        return None
+    for eid in row.get("supporting_evidence", []) or []:
+        rec = evidence.get(str(eid)) or {}
+        if factor == "reachability" and (rec.get("evidence_type") == "community" or rec.get("source_role") == "community_context"
+                                          or rec.get("collection_source_lane") == "external_forums_communities"):
+            return True
+        if factor == "competition" and (rec.get("sampling_frame") == "entity_led_feedback" or rec.get("source_role") == "competitor_context"
+                                         or rec.get("evidence_type") in {"competitor_gap", "switching_cost"}):
+            return True
+    return False
+
+
+def _pain_gate_state(project: str, case: str):
+    try:
+        from scripts.route_workflow import pain_gate_state
+    except ModuleNotFoundError:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from route_workflow import pain_gate_state
+    return pain_gate_state(project, case)
+
+
+def gate_from_project(project: str, case: str = "") -> dict:
+    """Pain-first gate state through the router's own check (manifest receipt)."""
+    passed, manifest = _pain_gate_state(project, case)
+    return {"passed": bool(passed), "basis": f"route_workflow.pain_gate_state: {manifest or 'no research manifest'}"}
+
+
+def _claim_factor(name: str, rows: list[tuple[dict, str, str]], quarantined: set, artifact: str,
+                  evidence: dict | None = None) -> dict:
     """Score one claim-based factor from (row, direction, why_assigned) tuples."""
     basis, ignored, excluded, supports, caps = [], [], [], [], []
     seen = set()
@@ -191,8 +250,15 @@ def _claim_factor(name: str, rows: list[tuple[dict, str, str]], quarantined: set
         conf = row.get("confidence")
         entry = {"artifact": artifact, "field": f"claim_id={cid}.confidence", "claim_id": cid,
                  "confidence": conf, "direction": direction, "assigned_by": why}
+        analyst = why == "factor-claims.json" and name in {"reachability", "competition"}
+        if analyst:
+            if not _evidence_qualifies(name, row, evidence):
+                ignored.append(cid)
+                continue
+            entry["assigned_by"] = "factor-claims.json (analyst-assigned" + (
+                ", mapping reviewed)" if row.get("factor_mapping_reviewed") is True else ", unreviewed)")
         if direction == "against":
-            if conf not in AGAINST_CAP:
+            if conf not in AGAINST_CAP or state != "supported":
                 ignored.append(cid)
                 continue
             caps.append(AGAINST_CAP[conf]); entry["cap"] = AGAINST_CAP[conf]
@@ -206,6 +272,9 @@ def _claim_factor(name: str, rows: list[tuple[dict, str, str]], quarantined: set
             if name == "buyer" and score > 50 and not row.get("price_bearing_behavior_evidence"):
                 score = 50
                 entry["note"] = "stated intent only (no price_bearing_behavior_evidence): capped at 50"
+            if analyst and score > 50 and row.get("factor_mapping_reviewed") is not True:
+                score = 50
+                entry["note"] = "analyst-assigned mapping not reviewed: capped at 50"
             supports.append(score); entry["score"] = score
         basis.append(entry)
     return {"supports": supports, "caps": caps, "basis": basis, "ignored": ignored, "excluded": excluded}
@@ -258,7 +327,8 @@ def _economics(economics: dict | None) -> dict:
 def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = None,
           assessment: dict | None = None, voc_table: dict | None = None, economics: dict | None = None,
           factor_claims: dict | None = None, cost_cap: float = 100, currency: str = "EUR",
-          warnings: list[str] | None = None) -> dict:
+          warnings: list[str] | None = None, evidence: list[dict] | None = None,
+          gate: dict | None = None) -> dict:
     ledger, factor_claims = ledger or [], factor_claims or {}
     unknown_factors = set(factor_claims) - set(FACTORS)
     if unknown_factors:
@@ -278,6 +348,7 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
     for cid in (assessment or {}).get("claim_ids", []) or []:
         if str(cid) in by_id:
             assigned["pain"].append((by_id[str(cid)], "supports", "problem-validation-assessment.claim_ids"))
+    owned = {str(row.get("claim_id")): f for f in ("pain", "buyer") for row, _, _ in assigned[f]}
     for factor, entries in factor_claims.items():
         if factor == "economics":
             raise ValueError("economics is scored from case_economics results, not claims")
@@ -287,7 +358,13 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
                 raise ValueError(f"{factor}/{cid}: direction must be supports or against")
             if cid not in by_id:
                 raise ValueError(f"{factor}: claim {cid} is not in the ledger")
+            if owned.get(cid) and owned[cid] != factor:
+                raise ValueError(f"{factor}: claim {cid} already scores {owned[cid]} and cannot be reused")
+            if not _types(by_id[cid]) & ASSIGNABLE[factor]:
+                raise ValueError(f"{factor}: claim {cid} type {by_id[cid].get('claim_type')} is not compatible "
+                                 f"(allowed: {', '.join(sorted(ASSIGNABLE[factor]))})")
             assigned[factor].append((by_id[cid], direction, "factor-claims.json"))
+    ev_index = {str(r.get("evidence_id")): r for r in evidence if isinstance(r, dict)} if evidence is not None else None
 
     factors = {}
     for name in FACTORS:
@@ -296,7 +373,7 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
             factors[name] = {"score": e["score"], "band": band(e["score"]), "basis": e["basis"],
                              "reason": e["reason"], "excluded_quarantined": [], "ignored": []}
             continue
-        part = _claim_factor(name, assigned[name], q_ids, "claim-ledger.json")
+        part = _claim_factor(name, assigned[name], q_ids, "claim-ledger.json", ev_index)
         reasons = []
         if name == "pain" and voc_table:
             voc = _voc_pain(voc_table, q_findings)
@@ -315,6 +392,9 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
                 reasons.append(f"assessment status {status} caps pain at {limit}")
         if score is None:
             reasons.append("no eligible reviewed evidence")
+        if any("analyst-assigned" in b.get("assigned_by", "") for b in part["basis"]):
+            reasons.append(next(b["assigned_by"].split("(", 1)[1].rstrip(")") for b in part["basis"]
+                                if "analyst-assigned" in b.get("assigned_by", "")))
         factors[name] = {"score": score, "band": band(score), "basis": part["basis"], "reason": "; ".join(reasons),
                          "excluded_quarantined": sorted(set(part["excluded"])), "ignored": sorted(set(part["ignored"]))}
 
@@ -342,6 +422,13 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
         verdict = "commit"
     else:
         verdict = "test"
+    gate = dict(gate or {"passed": False, "basis": "no gate proof supplied"})
+    gate.setdefault("override", None)
+    if not gate.get("passed") and (assessment or {}).get("status") == "supported":
+        gate.update(passed=True, basis="problem-validation-assessment.json status=supported")
+    if verdict == "commit" and not gate.get("passed") and not gate.get("override"):
+        verdict = "test"
+        caps.append(GATE_CAP)
     if len(known) == len(FACTORS) and min(known) >= 80:
         warnings.append(BASE_RATE_WARNING)
 
@@ -359,7 +446,9 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
     return {
         "schema_version": 1, "generated_view": True,
         "factors": factors,
-        "total": {"score": total, "method": "100 x product(score/100) over known factors", "caps_applied": caps},
+        "total": {"score": total, "method": "100 x product(score/100) over known factors", "caps_applied": caps,
+                  "geometric_mean": round(100 * (product / 100) ** (1 / len(known)), 1) if known else None},
+        "gate": gate,
         "verdict": verdict, "verdict_vocabulary": VERDICT_VOCABULARY,
         "riskiest_assumption": {"factor": riskiest, "statement": ASSUMPTIONS[riskiest], "score": factors[riskiest]["score"],
                                 "test": test_for(riskiest)},
@@ -374,6 +463,14 @@ def render(result: dict) -> str:
     lines = ["# Decision memo", "",
              f"**Verdict:** {result['verdict']} (strategy-plan verdict vocabulary). "
              f"**Total:** {result['total']['score']} / 100 (multiplicative).", ""]
+    g = result["gate"]
+    if g.get("override"):
+        lines += [f"Pain-first gate: overridden by {g['override']['by']} ({g['override']['reason']}).", ""]
+    else:
+        lines += [f"Pain-first gate: {'passed' if g.get('passed') else 'not passed'} ({g.get('basis')}).", ""]
+    lines += [f"Geometric mean of known factors: {result['total']['geometric_mean']}. Commit needs every factor "
+              "known and > 50, total >= 40 (geometric mean about 83) and the gate passed or overridden; "
+              "all factors at 80 give 32.8.", ""]
     if result.get("segment"):
         lines += [f"Segment: {result['segment']}", ""]
     for cap in result["total"]["caps_applied"]:
@@ -408,6 +505,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--voc-table", type=Path, help="voc-table.json from build_voc_table.py")
     p.add_argument("--economics", type=Path, help="case_economics.py output JSON")
     p.add_argument("--factor-claims", type=Path, help="analyst-declared claim->factor assignments")
+    p.add_argument("--evidence", type=Path, help="evidence.jsonl for checking assigned claims' evidence types")
+    p.add_argument("--project", help="project slug: read the pain-first gate through the router check")
+    p.add_argument("--case", default="", help="case id for --project")
+    p.add_argument("--override-gate", action="store_true", help="record an explicit pain-first gate override")
+    p.add_argument("--override-by", help="who authorized the override (required with --override-gate)")
+    p.add_argument("--override-reason", help="why (required with --override-gate)")
     p.add_argument("--cost-cap", type=float, default=100.0)
     p.add_argument("--currency", default="EUR")
     p.add_argument("--out", type=Path, required=True, help="output directory")
@@ -415,7 +518,16 @@ def main(argv: list[str] | None = None) -> int:
     load = lambda path: json.loads(path.read_text(encoding="utf-8")) if path else None
     try:
         claims = load_claims(a.ledger, a.falsified) if a.ledger else {"claims": [], "quarantined": [], "warnings": []}
-        result = build(ledger=claims["claims"], quarantined=claims["quarantined"], warnings=claims["warnings"],
+        if a.override_gate and not (a.override_by and a.override_reason):
+            raise ValueError("--override-gate needs --override-by and --override-reason")
+        gate = gate_from_project(a.project, a.case) if a.project else None
+        if a.override_gate:
+            gate = dict(gate or {"passed": False, "basis": "no gate proof supplied"},
+                        override={"by": a.override_by, "reason": a.override_reason})
+        evidence = None
+        if a.evidence:
+            evidence = [json.loads(l) for l in a.evidence.read_text(encoding="utf-8").splitlines() if l.strip()]
+        result = build(evidence=evidence, gate=gate, ledger=claims["claims"], quarantined=claims["quarantined"], warnings=claims["warnings"],
                        assessment=load(a.assessment), voc_table=load(a.voc_table), economics=load(a.economics),
                        factor_claims=load(a.factor_claims), cost_cap=a.cost_cap, currency=a.currency)
         from jsonschema import Draft202012Validator
