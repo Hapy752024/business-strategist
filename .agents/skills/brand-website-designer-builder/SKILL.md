@@ -28,6 +28,7 @@ Minimize collection and use layered, timely information; distinguish notices fro
 Include the runnable checker, reports and owner handoff; instructions alone are incomplete delivery.
 Preserve an explicit user opt-out or an existing equivalent CI provider.
 - SEO checks (hreflang, drift, programmatic pages, schema, llms.txt): apply repo-root `references/seo-rule-pack.md`.
+- Content that earns links and AI citations (statistics pages, calculators, checklists per journey stage): apply repo-root `references/linkable-assets.md` and build only from a reviewed public-resource brief.
 - Repairs/audits: use [maintenance](references/maintenance.md), preserving design and unrelated work.
 Visibility work also loads [AEO/GEO](references/aeo-geo-visibility.md), repo-root `references/search-visibility-decisions.md` and `references/owner-actions.md`; [DEO](references/deo-agent-readiness.md) only when applicable.
 - Campaign-driven pages and result-led revisions: apply [campaign review handoff](references/campaign-review-handoff.md), binding audience, offer, claims, CTA and measurement to the selected Marketing artifacts.

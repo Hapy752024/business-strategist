@@ -19,7 +19,7 @@ Focused/execution: the requested answer or deliverable, with material assumption
 For chosen-idea or strategic continuation work, apply repo-root `references/research-coaching.md` (shared repository dependency).
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
 
-For keyword research, SEO content planning, the `seo-page-planning` route and public-resource briefs read [keyword research](references/keyword-research.md). Use earned-media-builder for selected external opportunity work.
+For keyword research, SEO content planning, the `seo-page-planning` route and public-resource briefs read [keyword research](references/keyword-research.md). Use earned-media-builder for selected external opportunity work. For the statistics pages, calculators and checklists a journey needs, and how to brief them, read repo-root `references/linkable-assets.md`.
 Stage tools: `scripts/evidence_scout/search_journey.py` (search journey), `scripts/marketing/keyword_map.py merge` (content inputs), `python3 -m scripts.brand.site_gate` (page launch gate) and `scripts/marketing/verify_tracking.py` (tracking before launch spend).
 For selected multi-step work, read repo-root `references/marketing-execution.md`; prepare the agent work, exact owner/platform handoffs and observable completion checks.
 
