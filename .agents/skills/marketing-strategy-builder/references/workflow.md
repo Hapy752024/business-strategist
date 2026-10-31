@@ -6,7 +6,7 @@ Use this skill when the user wants a marketing strategy, go-to-market plan, posi
 
 Marketing is not decoration. Treat it as the link between customer pain, offer design, distribution, proof, and revenue. Do not produce generic channel lists. Do not copy competitor claims without checking whether real customers care.
 
-For social/content and digital-acquisition bets, ground recommendations in the practitioner evidence base gathered with `../../business-archetype-playbook-researcher/references/workflow.md` (Pain-Point SEO intent tiers, considered-purchase content economics, niche-first entry, broker/loan-officer channel reality), and validate untested channel ideas with `social-media-idea-validator` before committing them to the plan.
+For social/content and digital-acquisition bets, ground recommendations in the practitioner evidence base gathered with `../../precedent-research/references/playbook.md` (Pain-Point SEO intent tiers, considered-purchase content economics, niche-first entry, broker/loan-officer channel reality), and validate untested channel ideas with `social-media-idea-validator` before committing them to the plan.
 
 Separate observed customer behavior, interpretation, hypotheses and proposed actions. Consume the selected promise, sacrifices and per-claim uncertainty: need, customer choice, delivery fit and defensibility remain separate. Do not turn a hypothetical moat into proven superiority. Return material contradictions to the positioning owner; narrow copy work does not restart strategy.
 

@@ -472,9 +472,9 @@
         "founder playbooks",
         "operator playbooks"
       ],
-      "skill": "business-archetype-playbook-researcher",
+      "skill": "precedent-research",
       "forbidden": [],
-      "single_mode": true
+      "mode": "playbook"
     },
     {
       "id": "evidence-scout",
@@ -499,9 +499,9 @@
         "company growth case",
         "analyze a company failure"
       ],
-      "skill": "growth-case-analyzer",
+      "skill": "precedent-research",
       "forbidden": [],
-      "single_mode": true
+      "mode": "case"
     },
     {
       "id": "interview-bridge",

@@ -18,7 +18,7 @@ Select the smallest set that can address the question. Methods can run in parall
 | Approach | Research question it serves | Existing owners |
 | --- | --- | --- |
 | Customer workflow | What happens in the customer's actual situation? What outcome, pain, workaround, success or vocabulary do they describe without prompting them with a vendor name? | `market-problem-discovery`, `evidence-scout`, `interview-bridge` |
-| Alternatives and comparable cases | What does this segment actually use, including manual labor, existing software, services and no change? When companies in other markets address a relevant similar problem, what is comparable and what differs? | `competitor-research` (scout, landscape), `business-archetype-playbook-researcher` when founder history can inform the question |
+| Alternatives and comparable cases | What does this segment actually use, including manual labor, existing software, services and no change? When companies in other markets address a relevant similar problem, what is comparable and what differs? | `competitor-research` (scout, landscape), `precedent-research` (playbook mode) when founder history can inform the question |
 | Switching and change events | What triggered a search or change? What did users and buyers do after a price/package/product change, integration failure or shutdown? Why did others stay? | `competitor-monitoring`, `evidence-scout`, `interview-bridge` |
 | Ecosystem and implementation | Which connected tools, integrations, marketplace tasks or repeated implementation jobs illuminate the customer workflow? Is the evidence from an end customer, supplier or intermediary? | `competitor-research` (landscape), `evidence-scout`, pilot/design owners when a feasibility test is needed |
 

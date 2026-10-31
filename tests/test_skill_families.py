@@ -23,6 +23,7 @@ FAMILIES = {
     ],
     'competitor-research': ['competitor-scout', 'competitive-landscape-builder', 'competitor-marketing-analyzer'],
     'challenge-review': ['startup-challenge-panel', 'strategy-draft-tournament', 'service-customer-perspective-challenger'],
+    'precedent-research': ['business-archetype-playbook-researcher', 'growth-case-analyzer'],
 }
 FORMER = [(merged, former) for merged, formers in FAMILIES.items() for former in formers]
 # Paths stay in git history; docs/ and .superpowers/ are dated records of that history. The research-business-plan
@@ -200,3 +201,25 @@ def test_challenge_protocols_are_separate_and_complete():
         assert marker in customer, marker
     assert 'Judge Round' not in panel + customer and 'Decision Arbiter' not in tournament + customer
     assert (refs / 'regional-lenses.md').is_file()
+
+
+def test_precedent_modes_state_operator_lessons_are_not_demand_evidence():
+    refs = SKILLS / 'precedent-research' / 'references'
+    for mode in ('playbook', 'case'):
+        text = (refs / f'{mode}.md').read_text(encoding='utf-8').lower()
+        assert 'lessons are not demand evidence' in text, mode
+
+
+# Plain-text requests near the precedent family's boundary, unchanged against 935f5fc (no match phrases changed).
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Find founder playbooks for B2B SaaS in Europe', 'business-archetype-playbook-researcher'),
+    ('operator playbooks for local cleaning services', 'business-archetype-playbook-researcher'),
+    ('Analyze a company growth case: Airbnb', 'growth-case-analyzer'),
+    ('analyze a company failure like Homejoy', 'growth-case-analyzer'),
+    ('How did similar startups get their first customers?', 'gtm-strategy'),
+    ('Build a go-to-market strategy to get our first customers', 'gtm-strategy'),
+    ('Find customer problems in independent elder care', 'market-discovery'),
+    ('Research comparable businesses abroad', 'clarify'),
+])
+def test_precedent_boundary_routes_unchanged(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route

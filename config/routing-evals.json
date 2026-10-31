@@ -95,29 +95,27 @@
       ]
     },
     {
-      "pair": "growth-case-analyzer vs business-archetype-playbook-researcher",
+      "pair": "precedent-research case vs playbook modes",
       "evals": [
         {
           "id": "route-lessons-1",
           "prompt": "What can I learn from how Airbnb and Uber grew their marketplaces in the early days?",
-          "expected_output": "Routes to growth-case-analyzer for named-company case studies on Airbnb and Uber marketplace growth.",
-          "expected_skill": "growth-case-analyzer",
-          "forbidden_skills": [
-            "business-archetype-playbook-researcher"
-          ],
+          "expected_output": "Routes to precedent-research case mode for named-company case studies on Airbnb and Uber marketplace growth.",
+          "expected_skill": "precedent-research",
+          "expected_route": "growth-case-analyzer",
+          "forbidden_skills": [],
           "files": [],
-          "rationale": "Request for case studies on specific named companies — growth-case-analyzer does company case studies. business-archetype-playbook-researcher does anonymous founder/operator lessons by business archetype."
+          "rationale": "Request for case studies on specific named companies — precedent-research case mode does company case studies. precedent-research playbook mode does anonymous founder/operator lessons by business archetype."
         },
         {
           "id": "route-lessons-2",
           "prompt": "What do successful founders say about building a B2B SaaS company in Europe — specifically about pricing, first customers, and avoiding common mistakes?",
-          "expected_output": "Routes to business-archetype-playbook-researcher for anonymous founder/operator lessons by B2B SaaS archetype.",
-          "expected_skill": "business-archetype-playbook-researcher",
-          "forbidden_skills": [
-            "growth-case-analyzer"
-          ],
+          "expected_output": "Routes to precedent-research playbook mode for anonymous founder/operator lessons by B2B SaaS archetype.",
+          "expected_skill": "precedent-research",
+          "expected_route": "business-archetype-playbook-researcher",
+          "forbidden_skills": [],
           "files": [],
-          "rationale": "Request for anonymous founder/operator lessons by archetype (B2B SaaS, Europe) — business-archetype-playbook-researcher owns this. growth-case-analyzer does named-company case studies."
+          "rationale": "Request for anonymous founder/operator lessons by archetype (B2B SaaS, Europe) — precedent-research playbook mode owns this. precedent-research case mode does named-company case studies."
         }
       ]
     },

@@ -50,6 +50,8 @@ SKILL_ALIASES: dict[str, str] = {
     "startup-challenge-panel": "startup-challenge-panel",
     "strategy-draft-tournament": "strategy-draft-tournament",
     "service-customer-perspective-challenger": "service-customer-perspective-challenger",
+    "business-archetype-playbook-researcher": "business-archetype-playbook-researcher",
+    "growth-case-analyzer": "growth-case-analyzer",
 }
 
 
@@ -570,7 +572,7 @@ def _route_request(
                 "intake": "idea-grill", "segment_selection": "idea-grill",
                 "customer_profile": "idea-grill", "problem_validation": "evidence-scout",
                 "opportunity_risk": "opportunity-risk-designer",
-                "operator_playbook": "business-archetype-playbook-researcher",
+                "operator_playbook": "precedent-research",
             }[missing[0]])
             packet["reason"] += "; incomplete strategy prerequisites: " + ", ".join(missing)
             if override_gate:

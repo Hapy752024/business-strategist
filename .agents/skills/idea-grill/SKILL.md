@@ -12,7 +12,7 @@ description: Pressure-test a chosen business idea's segment, buyer, painful job,
 4. `competitor-research` (landscape mode) separates same-market competitors, similar companies and capability references.
 5. `opportunity-risk-designer` ranks risks and designs low-cost tests. Only the competitive-market lane may support whitespace claims.
 
-When industry, business model and target customer are clear, run `business-archetype-playbook-researcher` before strategic or launch recommendations.
+When industry, business model and target customer are clear, run `precedent-research` (playbook mode) before strategic or launch recommendations.
 Substantive validation includes an international commercial-precedent pass (repo-root `references/opportunity-research-approaches.md`) or states why it does not apply.
 Intake rules are in [workflow](references/workflow.md): repo-root `references/strategic-positioning.md`, repo-root `references/interview-recruitment.md`, repo-root `references/case-insights.md`.
 Founder constraints and preferences are inputs, not market evidence.

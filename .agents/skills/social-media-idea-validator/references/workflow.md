@@ -105,7 +105,7 @@ Record results in the topic workspace; a GO verdict without a scheduled test is 
 - [ ] Idea restated as one testable claim (audience, platform, format, promise, conversion event)
 - [ ] All six gates evaluated in order, or stopped early at a documented hard KILL
 - [ ] Every GO verdict cites at least one demand signal and one audience-presence signal with source and date
-- [ ] Practitioner patterns from `../../business-archetype-playbook-researcher/references/workflow.md` applied (named in the verdict reasoning)
+- [ ] Practitioner patterns from `../../precedent-research/references/playbook.md` applied (named in the verdict reasoning)
 - [ ] GO-as-assist used when the channel cannot be the primary conversion driver (brokers, loan officers, local services)
 - [ ] A bounded test has separate access, relationship and commercial thresholds; no GO verdict without them
 - [ ] `[DATA UNAVAILABLE]` used for unchecked instruments; no memory-filled gaps

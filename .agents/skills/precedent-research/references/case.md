@@ -1,26 +1,18 @@
-# Growth Case Analyzer Workflow
+# Case mode (route `growth-case-analyzer`)
 
-Use this skill when the user asks for analysis of companies that succeeded, failed, scaled, declined, pivoted, or created strong marketing and management systems.
+Operator and company lessons are not demand evidence: a case explains what happened to that company in its context, not whether the user's customers have the problem or will pay. Keep case lessons separate from customer evidence.
+
+Success: chronology, causal evidence, hypotheses and hindsight judgment are separated; what should NOT be copied is stated; transferability limits are explicit.
+
+Use this mode when the user asks for analysis of companies that succeeded, failed, scaled, declined, pivoted, or created strong marketing and management systems.
 
 ## Stance
 
-Avoid hero worship and hindsight certainty. A case study is useful only when it produces testable lessons for the user's context.
-
-Separate:
-
-- What the company did.
-- What evidence supports it.
-- What likely caused the outcome.
-- What is only a popular narrative.
-- What may not transfer to the user's company.
-
-Do not reduce success to one factor such as "great marketing" or failure to one mistake unless the evidence is unusually clear.
+A case study is useful only when it produces testable lessons for the user's context. Do not reduce success to one factor such as "great marketing" or failure to one mistake unless the evidence is unusually clear.
 
 ## When To Search
 
 If the user asks for current, recent, latest, financial, legal, leadership, market-share, pricing, or company-status facts, search the web before answering. Prefer primary sources: annual reports, shareholder letters, official company pages, filings, bankruptcy documents, court records, credible journalism, HBR, McKinsey, BLS, and academic sources.
-
-When using secondary articles, label them as interpretation, not primary evidence.
 
 ## Ambiguity and Unknowns
 
@@ -93,11 +85,8 @@ Avoid claiming a failure was obvious at the time unless contemporary evidence sh
 
 Before finalizing, check:
 
-- Sources are named when factual claims matter.
 - Success or failure is not reduced to one simplistic cause.
 - The analysis distinguishes management, marketing, operations, timing, and capital factors.
-- Hindsight bias is called out where relevant.
-- Transferability limits are explicit.
 - Failed-company lessons do not become generic fearmongering.
 - Successful-company lessons are scaled down for the user's likely resources.
 - The output includes practical actions or questions, not just history.

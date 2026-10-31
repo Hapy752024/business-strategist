@@ -1,4 +1,12 @@
-# Business Archetype Playbook Researcher Workflow
+# Playbook mode (route `business-archetype-playbook-researcher`)
+
+Sourced founder and operator playbooks for a specific business archetype: validation, first customers, launch, pricing, retention and scale lessons.
+
+**Operator lessons are not demand evidence.** A founder or operator story shows what worked for that business in its context; it never proves that the current topic has customers, pain or willingness to pay. Keep playbook findings out of evidence records and the customer-voice ledger, and test any transferred tactic locally.
+
+**Trigger.** When the idea is clear enough to identify its industry, business model and target customer, run this mode before strategic or launch recommendations. Reuse current research; narrow factual or execution requests do not trigger a full playbook study.
+
+For founder/SaaS discovery use [founder source candidates](founder-source-candidates.md) selectively; listed communities are not pre-approved promotion channels or verified audience sizes.
 
 ## Procedure
 
@@ -6,7 +14,7 @@
 2. Record stage, geography, buyer, founder resources, price level, sales cycle, and regulatory constraints.
 3. Reuse the active topic's existing playbook if current and applicable. Put new supporting narratives in `deep-dives/operator-playbook.md`, link them from README, and summarize the decision-relevant lessons there. Preserve legacy playbook paths and machine-generated run artifacts.
 4. When the industry, business model and target customer are clear, search both the web and relevant social media for named founders/operators who built comparable successful businesses when founder lessons would help answer the user's selected question. Relevant examples from other countries may be included alongside local ones; separate company headquarters, markets served and evidenced customer locations. Use those companies as comparison evidence for validating/challenging the user's idea or explaining a customer's pain. Do not redirect the study into finding an idea to import or copy unless the user explicitly asks for idea generation/adaptation. Prefer the same industry and comparable models, and state transfer limits for cross-industry analogs. Include company evidence, founder interviews/blogs, YouTube interviews/transcripts, podcasts, LinkedIn/X posts, Reddit and specialist communities as appropriate. Use the source-capability lookup and applicable provider permissions; record inaccessible social coverage rather than inventing findings. Prefer cases matching the founder's scale and capital constraints, not only famous venture-funded outliers. Consult curricula or regulators when needed to assess a proposed action.
-5. Apply repo-root `references/customer-voice.md`: brainstorm and review local operator vocabulary and source locations, then preview exact provider queries before broad collection. Pass a short local `--topic-keywords` or `--query-plan` to `research_founder_playbooks.py`; use `--operator-keywords` where built-in vocabulary is absent. Search countries/languages separately and review source-derived refinements against fresh results. Query for concrete actions: validation, first 10 customers, founder-led sales, pricing, launch, churn, failed channels, unit economics, hiring, and scale gates.
+5. Apply repo-root `references/customer-voice.md` (keep each workflow's evidence type and source-review requirements distinct): brainstorm and review local operator vocabulary and source locations, then preview exact provider queries before broad collection. Pass a short local `--topic-keywords` or `--query-plan` to `research_founder_playbooks.py`; use `--operator-keywords` where built-in vocabulary is absent. Search countries/languages separately and review source-derived refinements against fresh results. Query for concrete actions: validation, first 10 customers, founder-led sales, pricing, launch, churn, failed channels, unit economics, hiring, and scale gates.
 6. Capture operator identity, business context, date, outcome, tactic, prerequisite, and failure condition. Reconstruct how consequential operating choices enabled/constrained the promise, who captured value, and any evidenced imitation barrier. Include failed analogues and entry-scale/transition costs; successful company stories are neither demand nor causal proof. Anonymous posts remain anecdotal.
    Reconstruct the first 12–24 months (or the founder's specified horizon): initial segment/need, positioning, pre-existing audience/book/network, first customers, acquisition, sales, service and retention, capital and founder workload. Distinguish entrants starting from zero from established businesses changing legal form. Seek another country where the same customer job is served and a failed/contrasting attempt; explain absent evidence. Current success cannot fill missing early-period economics. Consult the conditional founder-source reference for SaaS; do not confuse launch attention with retained revenue.
    Define success in terms relevant to the decision: profitability, durable revenue, owner income, survival or another explicit outcome. Record each claim's source/date and whether independently supported, company-reported, founder-reported or unverified. Followers, funding and publicity alone do not establish a successful business; current scale does not explain how first customers were acquired.
@@ -35,7 +43,8 @@ Use one compact lessons table where helpful: `Pattern | Cases and dated sources 
 ## Quality Checklist
 
 - Advice is tied to a named context and source.
-- Anecdotes are labeled and not counted as demand proof.
 - Failures and counterexamples are represented.
 - Regulated archetypes include current authoritative sources.
 - Recommendations fit the founder's actual resources and stage.
+
+Update the topic playbook artifact and manifest gaps.

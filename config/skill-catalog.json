@@ -11,8 +11,7 @@
         "competitor-research",
         "competitor-monitoring",
         "challenge-review",
-        "business-archetype-playbook-researcher",
-        "growth-case-analyzer",
+        "precedent-research",
         "interview-bridge"
       ]
     },
@@ -1084,34 +1083,6 @@
         "opportunity_risk"
       ]
     },
-    "business-archetype-playbook-researcher": {
-      "intent": [
-        "research founder/operator playbooks"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "business archetype"
-      ],
-      "artifacts": [
-        "playbook report"
-      ],
-      "side_effect": "research",
-      "cost": "medium"
-    },
-    "growth-case-analyzer": {
-      "intent": [
-        "analyze successful or failed company cases"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "company case"
-      ],
-      "artifacts": [
-        "case analysis"
-      ],
-      "side_effect": "research",
-      "cost": "medium"
-    },
     "interview-bridge": {
       "intent": [
         "turn weak evidence into interview kit"
@@ -1650,6 +1621,61 @@
             ".agents/skills/challenge-review/references/customer-perspective.md"
           ],
           "output_owner": "challenge-review"
+        }
+      }
+    },
+    "precedent-research": {
+      "intent": [
+        "research founder/operator playbooks",
+        "analyze successful or failed company cases"
+      ],
+      "excludes": [
+        "customer demand evidence"
+      ],
+      "prerequisites": [
+        "business archetype or company case"
+      ],
+      "artifacts": [
+        "playbook report",
+        "case analysis"
+      ],
+      "side_effect": "research",
+      "cost": "medium",
+      "required_references": [],
+      "modes": {
+        "playbook": {
+          "inputs": [
+            "business archetype"
+          ],
+          "prerequisites": [
+            "business archetype"
+          ],
+          "artifacts": [
+            "playbook report"
+          ],
+          "side_effect": "research",
+          "cost": "medium",
+          "required_references": [
+            ".agents/skills/precedent-research/references/playbook.md"
+          ],
+          "output_owner": "precedent-research"
+        },
+        "case": {
+          "inputs": [
+            "company case"
+          ],
+          "prerequisites": [
+            "company case"
+          ],
+          "artifacts": [
+            "case analysis"
+          ],
+          "side_effect": "research",
+          "cost": "medium",
+          "required_references": [
+            ".agents/skills/precedent-research/references/case.md"
+          ],
+          "output_owner": "precedent-research"
         }
       }
     }
