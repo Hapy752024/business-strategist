@@ -107,6 +107,47 @@ def _stat(path):
     return os.stat(path)
 
 
+def _fstat(fd: int, name: str):
+    """Owner/mode of an already opened file (tests replace this; `name` is the file's base name)."""
+    return os.fstat(fd)
+
+
+def read_trusted_signers(path: Path, *, resolve: bool = True) -> tuple[bytes | None, list[str]]:
+    """Open allowed_signers once and judge the descriptor, not the path.
+
+    The founder owns ~/.config, so code running as that user can rename the root-owned directory away and put a
+    user-owned copy in its place between the path check and ssh-keygen reading it. Checking owner and mode with
+    fstat on the opened descriptor, then handing ssh-keygen those bytes through a pipe (never a re-openable path), closes that race."""
+    target = path.resolve() if resolve else path
+    try:
+        fd = os.open(target, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0))
+    except OSError as exc:
+        return None, [f"cannot open allowed_signers {path} ({type(exc).__name__}); refusing"]
+    try:
+        info = _fstat(fd, path.name)
+        problems = []
+        if not stat.S_ISREG(info.st_mode):
+            problems.append("is not a regular file")
+        if info.st_uid != 0:
+            problems.append("is not owned by root")
+        if info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
+            problems.append("is group- or world-writable")
+        if problems:
+            return None, [f"opened allowed_signers {path} {p}; refusing" for p in problems]
+        chunks, size = [], 0
+        while size <= 1 << 15:
+            chunk = os.read(fd, 65536)
+            if not chunk:
+                break
+            chunks.append(chunk)
+            size += len(chunk)
+        if size > 1 << 15:
+            return None, [f"allowed_signers {path} is larger than 32 KiB; refusing"]
+        return b"".join(chunks), []
+    finally:
+        os.close(fd)
+
+
 def _owner_mode_problems(candidate: Path, allowed_uids: set[int]) -> list[str]:
     try:
         info = _stat(candidate)
@@ -173,15 +214,26 @@ def verify_signature(approval: dict, *, allowed_signers=None) -> list[str]:
     verifier, problems = verifier_path()
     if verifier is None:
         return problems
+    trusted, problems = read_trusted_signers(signers)
+    if trusted is None:
+        return problems
     with tempfile.TemporaryDirectory() as folder:
         sig = Path(folder) / "approval.sig"
         sig.write_text(signature, encoding="utf-8")
+        read_end, write_end = os.pipe()
         try:
-            proc = subprocess.run([str(verifier), "-Y", "verify", "-f", str(signers), "-I", approval["granted_by"],
+            os.write(write_end, trusted)  # at most 32 KiB, below the pipe buffer, so this never blocks
+            os.close(write_end)
+            write_end = -1
+            proc = subprocess.run([str(verifier), "-Y", "verify", "-f", f"/dev/fd/{read_end}", "-I", approval["granted_by"],
                                    "-n", NAMESPACE, "-s", str(sig)], input=message.encode(), capture_output=True,
-                                  timeout=30, env={"PATH": "/usr/bin:/bin", "LC_ALL": "C"})
+                                  timeout=30, env={"PATH": "/usr/bin:/bin", "LC_ALL": "C"}, pass_fds=(read_end,))
         except (OSError, subprocess.TimeoutExpired) as exc:
             return [f"signature verification unavailable ({type(exc).__name__}); refusing"]
+        finally:
+            os.close(read_end)
+            if write_end >= 0:
+                os.close(write_end)
     if proc.returncode != 0:
         return ["approval signature is invalid for this signer, namespace or exact approval message"]
     return []

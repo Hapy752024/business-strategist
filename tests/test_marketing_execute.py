@@ -105,6 +105,17 @@ SIGNERS = {}
 def _signers(keys, monkeypatch):
     SIGNERS["path"] = keys["signers"]
     monkeypatch.setattr(ex, "_stat", _root_owned_signers_stat())
+    monkeypatch.setattr(ex, "_fstat", _root_owned_signers_fstat())
+
+
+def _root_owned_signers_fstat():
+    """Same fake for the opened descriptor: a test signers file the user owns is reported as root-owned."""
+    def fake(fd, name):
+        info = os.fstat(fd)
+        if name == "allowed_signers" and info.st_uid == os.getuid():
+            return types.SimpleNamespace(st_uid=0, st_mode=info.st_mode)
+        return info
+    return fake
 
 
 def _root_owned_signers_stat():
@@ -741,3 +752,20 @@ def test_cli_refusal_prints_no_verified_signer(tmp_path, keys, approval_for, mon
                     "--marketing-root", str(tmp_path)])
     out = json.loads(capsys.readouterr().out)
     assert code == 1 and "verified_signer" not in out
+
+
+def test_signers_swapped_after_the_path_check_is_refused(monkeypatch, tmp_path):
+    """Race: the path check passes, but the file actually opened is user-owned (directory swapped in between)."""
+    monkeypatch.setattr(ex, "_fstat", lambda fd, name: os.fstat(fd))
+    reasons = ex.verify_signature({"signature": "-----BEGIN SSH SIGNATURE-----\nx\n-----END SSH SIGNATURE-----",
+                                   "granted_by": "founder@example.test"}, allowed_signers=SIGNERS["path"])
+    assert any("opened allowed_signers" in r and "not owned by root" in r for r in reasons), reasons
+
+
+def test_signers_symlink_final_component_is_not_followed_at_open(tmp_path):
+    target = tmp_path / "real_signers"
+    target.write_text("x")
+    link = tmp_path / "allowed_signers"
+    link.symlink_to(target)
+    data, problems = ex.read_trusted_signers(link, resolve=False)
+    assert data is None and any("cannot open" in p for p in problems), problems
