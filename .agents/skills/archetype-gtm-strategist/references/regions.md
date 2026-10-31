@@ -31,7 +31,7 @@ Apply region only after choosing the archetype and stage. These are starting hyp
 
 - A larger shared-language market can support narrower vertical ICPs and faster channel experiments, but competition and paid acquisition can be expensive.
 - Founder-led outbound, vertical communities, integrations, app ecosystems, high-intent search, and creator/expert distribution remain stage-dependent.
-- State-level licensing, insurance, travel-seller, privacy, tax, and professional-service rules can fragment a seemingly national launch.
+- State-level licensing, insurance, travel-seller, advertising, privacy, tax, and professional-service rules can fragment a seemingly national launch.
 - Treat accelerators, Product Hunt, press, and launch events as awareness tests, not validation.
 
 ### Transfer rules

@@ -71,7 +71,7 @@ DELETED_REFERENCES = (
 
 
 def test_no_pointer_to_deleted_reference():
-    roots = [ROOT / '.agents', ROOT / 'references', ROOT / 'config', ROOT / 'scripts', ROOT / 'AGENTS.md', ROOT / 'CLAUDE.md', ROOT / '.claude']
+    roots = [ROOT / '.agents', ROOT / 'references', ROOT / 'config', ROOT / 'scripts', ROOT / 'AGENTS.md', ROOT / 'CLAUDE.md', ROOT / '.claude', ROOT / 'instructions-to-owners.md']
     offenders = []
     for base in roots:
         files = [base] if base.is_file() else [p for p in base.rglob('*') if p.is_file() and '__pycache__' not in p.parts and 'worktrees' not in p.relative_to(ROOT).parts[:2]]

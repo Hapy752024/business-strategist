@@ -53,7 +53,7 @@ git commit -m "seo: sitemap home URL, noindex placeholder updates page, add llms
 
 ## 3. Website: content that earns links
 
-Agents now plan this by default (`references/linkable-assets.md`): for each stage of the customer journey, one statistics page, calculator or checklist, built from official sources with dates and a refresh owner. Your decisions:
+Agents now plan this by default (`references/seo-rule-pack.md`): for each stage of the customer journey, one statistics page, calculator or checklist, built from official sources with dates and a refresh owner. Your decisions:
 
 - **Statistics page** "Retiring in Italy: the numbers (2026)": costs by region, visa income bar, pension taxation, healthcare, expat counts, each with source and date. Agent drafts the public-resource brief; you approve before it is built.
 - **Second calculator**: "Does my town qualify for the 7% pensioner regime?" (the existing `/check` covers the visa income bar). Same path: brief, approval, build, tests.

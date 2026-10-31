@@ -51,7 +51,7 @@ Structured data is valid markup for rich-result eligibility and parse clarity. I
 | Rule | What to check | How | Evidence |
 |---|---|---|---|
 | S1 | Markup matches visible content and uses types Google documents for rich results (Organization, Product, Article, LocalBusiness, FAQ only where policy allows). | Google Rich Results Test; manual comparison with the page. | G |
-| S2 | JSON-LD parses, has no placeholder values and no fields the page does not show. | Manual validation; no repo script validates schema content. | G |
+| S2 | JSON-LD parses, has no placeholder values and no fields the page does not show. Never fabricate ratings, reviews or FAQs; validate supported markup without promising rich results. | Manual validation; no repo script validates schema content. | G |
 | S3 | Do not report schema work as a GEO or AI-citation improvement. | Reports use the observation wording of `references/ai-answer-recordings.md`. | O |
 
 Evidence for S3 (retrieved 2026-10-31, via secondary write-ups; Ahrefs' own report was not opened): an Ahrefs controlled study published May 2026 compared pages that added JSON-LD with control pages and found citation changes in Google AI Overviews, AI Mode and ChatGPT within noise. The reported counts (about 1,885 treated pages, about 4,000 controls) and percentages are **U** until checked against the primary report. A limit reported by the same write-ups: it measured pages already being cited. Google's documentation says structured data is not required for generative AI search and no special markup is needed (quoted by the same secondary sources; check Search Central directly).
