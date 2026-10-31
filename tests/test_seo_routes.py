@@ -22,8 +22,10 @@ def test_negation_and_near_miss():
     assert route('Analyze competitor landing pages, do not plan backlink acquisition')['skill']=='competitor-marketing-analyzer'
     assert route('Create a logo only; do not run a technical SEO audit')['skill']=='brand-designer'
     assert route('What is SEO?')['ask_question']
-    with pytest.raises(ValueError,match='Unknown route intent'):
+    with pytest.raises(ValueError,match='earned-media-discovery, earned-media-preparation, earned-media-verification'):
         route('Prepare a packet',intent='earned-media-builder')
+    with pytest.raises(ValueError,match='Unknown route intent'):
+        route('Prepare a packet',intent='no-such-skill')
 
 
 @pytest.mark.parametrize('intent', ['seo-page-planning', 'earned-media-discovery',

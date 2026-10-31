@@ -271,6 +271,9 @@ def _route_request(
         if len(aliases) == 1:
             requested_intent = aliases[0]["id"].casefold()
     if requested_intent and not any(route["id"].casefold() == requested_intent for route in routes):
+        modes = [route["id"] for route in routes if route["skill"].casefold() == requested_intent]
+        if modes:
+            raise ValueError(f"Skill {intent} has several routes; use one route ID as the intent: {', '.join(modes)}")
         raise ValueError(f"Unknown route intent: {intent}")
     candidates: list[tuple[int, int, dict[str, Any]]] = []
     for index, route in enumerate(routes):

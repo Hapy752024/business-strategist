@@ -28,7 +28,7 @@ def pain_validation_artifacts(ws, monkeypatch):
 
 def test_explicit_specialist_alias_and_ambiguous_modes():
     assert route_workflow.route_request('grill', intent='idea-grill')['skill'] == 'idea-grill'
-    with pytest.raises(ValueError, match='Unknown route intent'):
+    with pytest.raises(ValueError, match='several routes; use one route ID'):
         route_workflow.route_request('website', intent='brand-website-designer-builder')
 
 

@@ -4,6 +4,8 @@ A candidate passes only when a specific passage supports audience fit and the ag
 
 For software listings check actual product/public availability, geography/language, category, account and review rules. For local profiles check genuine eligibility, duplicates and included website fields. For partnerships retain audience, cost, renewals, disclosures and expected customer benefit; do not make ranking-credit links a purchasing condition. For journalist requests use real expertise and supported claims, and check current platform rules.
 
+An AI-answer citation is a prospecting clue: it shows neither audience fit nor ranking value, and the roundup still needs its own qualifying passage. A visual offer qualifies only when a named section lacks the explanation the visual gives and every figure in it is traceable to the author's page or a cited primary source; never produce it before the author shows interest.
+
 Record fee and renewal terms as unknown until checked. Record link inclusion separately from observed rel attributes; a business citation may have no anchor. Catalogue authority scores, traffic estimates and followed-link labels are unverified inputs. A competitor link is a prospecting clue, not a reason a publisher owes inclusion.
 
 Broken-resource replacements require evidence distinguishing persistent 404/410 from temporary errors, rate limiting and access blocks. No outreach claim follows from a timeout. Preserve contrary evidence and a rejection reason. Keep source date distinct from retrieval date.

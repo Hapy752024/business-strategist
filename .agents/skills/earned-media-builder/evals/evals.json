@@ -42,6 +42,20 @@
       "expected_output": "Prepare only scoped packets; no mass sender exists or authorization follows from discovery.",
       "files": [],
       "assertions": []
+    },
+    {
+      "id": 7,
+      "prompt": "Which roundups do AI answers cite for 'how to retire in Italy', and could our guide be added to any of them?",
+      "expected_output": "Uses recorded AI-answer captures (surface, prompt, date); treats each cited roundup as a candidate that still needs its own audience-fit passage and a specific missing reader need; proposes exact entry text; claims no ranking value from the citation.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 8,
+      "prompt": "Find articles where we could offer a chart to earn a credited link for our cost-of-living data.",
+      "expected_output": "Picks text-heavy pages with one named section that a chart would clarify; uses only the page's own facts or cited primary sources; proposes asking the author before producing anything; notes paid asset generation needs approval; prepares image, alt text and credit wording only after interest.",
+      "files": [],
+      "assertions": []
     }
   ]
 }
