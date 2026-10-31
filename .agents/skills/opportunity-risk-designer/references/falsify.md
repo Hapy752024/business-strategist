@@ -6,6 +6,7 @@ Checked route: `claim-falsification`. A fresh agent with no access to the findin
 
 - Before any final recommendation: final case delivery (v2 `case_insights.md` final review, appraisal or case plan) or a decision memo built with `--final`. The delivery check (`validate_research_completion.py --check delivery`) and `build_decision_memo.py --final` refuse without a falsification output of either basis.
 - Use the reviewed `claim-ledger.json` when it exists. Otherwise use the draft basis below; never skip the challenge.
+- The challenge must be current (`scripts/claim_challenge.py`): a reviewed report counts only when its `source_ledger_sha256` matches every bound reviewed ledger, and a draft report only when no ledger is bound and its digest matches the draft-claims file it names. Final appraisal, final plan, final v2 insights and final delivery all use this one check; rerun after the claims change.
 - On material claims only: claims with a non-empty `decision_affected`, or `claim_type`/`claim_scope_type` in `willingness_to_pay`, `prevalence`, `unmetness`, `pattern` or `transfer` (demand, willingness to pay and transfer claims). Competition and regulation claims count as material when you record them through `decision_affected`.
 - Rerun after a deep dive changes a material claim. Do not run it on progress snapshots that nobody will act on yet.
 

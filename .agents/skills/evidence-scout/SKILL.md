@@ -35,13 +35,15 @@ Valid empty research can end as insufficient evidence; inaccessible sources rema
 Once idea-grill is done or skipped, run these in parallel with customer-voice collection.
 None waits for review, synthesis, a claim ledger, the pain-first gate or a GTM stage:
 1. Search journey: brainstorm customer searches at >=4 stages (inform, compare, buy, after-purchase)
-   in the market's language, write the plan (method below), then run
+   in the market's language, write the plan (method below) to `market_research/search_journey/<YYYY-MM-DD>/plan.json`, then run
    `python3 scripts/evidence_scout/search_journey.py --plan <plan> --providers serpapi --run-dir <run> --max-searches <n>`.
 2. Competitor content: `python3 scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory
    --landscape <competitors.json> --include-unverified [--clusters <content-opportunities.json>] --out <dir>`
-   on >=3 competitors found so far; state fewer as a gap.
+   on >=3 competitors found so far; state fewer as a gap. If no candidates exist yet, run
+   `python3 scripts/evidence_scout/discover_competitors.py` first to produce `competitors.json`.
 3. Keyword volumes: `python3 scripts/marketing/keyword_volume.py --keyword <phrase> [--keyword ...]
-   --location-code <n> --language-code <xx>` on the top brainstormed phrases; no keyword map needed.
+   --location-code <n> --language-code <xx> --out <run>/keyword-volumes.json` on the top brainstormed phrases;
+   no keyword map needed.
 4. Social topics: `python3 scripts/marketing/social_topics.py --records <evidence.jsonl or dir>
    [--clusters <content-opportunities.json>] --out <dir>` on records collected for the same phrases.
 A failed provider is a stated gap, not a reason to skip.

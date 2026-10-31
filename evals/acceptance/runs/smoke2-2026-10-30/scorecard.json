@@ -244,13 +244,13 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: falsification (falsification: none matched (falsification (basis: draft): 0 file(s) match **/draft-falsification-report.json; falsification (basis: reviewed ledger): 0 file(s) match **/claim-ledger.falsified.json; falsification (basis: unlabelled artifact): 0 file(s) match **/*falsif*; falsification (call only; basis not recorded): 0 matching call(s), need 1)); decision_memo (decision_memo: 0 file(s) match **/decision_memo.md); scores (scores: 0 file(s) match **/scores.json); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))",
+      "detail": "missing: falsification (falsification: none matched (falsification (basis: draft): 0 file(s) match **/draft-falsification-report.json; falsification (basis: reviewed ledger): 0 file(s) match **/falsification-report.json)); decision_memo (decision_memo: 0 file(s) match **/decision_memo.md); scores (scores: 0 file(s) match **/scores.json); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))",
       "sub_checks": [
         {
           "label": "falsification",
           "passed": false,
           "evidence_path": null,
-          "detail": "falsification: none matched (falsification (basis: draft): 0 file(s) match **/draft-falsification-report.json; falsification (basis: reviewed ledger): 0 file(s) match **/claim-ledger.falsified.json; falsification (basis: unlabelled artifact): 0 file(s) match **/*falsif*; falsification (call only; basis not recorded): 0 matching call(s), need 1)"
+          "detail": "falsification: none matched (falsification (basis: draft): 0 file(s) match **/draft-falsification-report.json; falsification (basis: reviewed ledger): 0 file(s) match **/falsification-report.json)"
         },
         {
           "label": "decision_memo",

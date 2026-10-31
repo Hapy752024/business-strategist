@@ -126,6 +126,7 @@ def main() -> int:
     ap.add_argument('--language-code', required=True)
     ap.add_argument('--max-keywords', type=int, default=DEFAULT_CAP)
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--out', type=Path, help='also write the result JSON here (e.g. <run>/keyword-volumes.json)')
     args = ap.parse_args()
     doc = json.loads(args.map.read_text()) if args.map else None
     terms = args.keyword + ([r['primary_term'] for r in doc['rows']] if doc else [])
@@ -143,7 +144,11 @@ def main() -> int:
         apply_to_map(doc, rows)
         args.map.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + '\n')
     costs = {r['task_cost'] for r in rows if r['task_cost'] is not None}
-    print(json.dumps({'status': 'ok', 'rows': rows, 'returned_task_cost_usd': sorted(costs)}, ensure_ascii=False, indent=2))
+    result = json.dumps({'status': 'ok', 'rows': rows, 'returned_task_cost_usd': sorted(costs)}, ensure_ascii=False, indent=2)
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(result + '\n', encoding='utf-8')
+    print(result)
     return 0
 
 

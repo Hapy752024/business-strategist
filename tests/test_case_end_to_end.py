@@ -13,6 +13,7 @@ from test_case_economics import inputs
 from test_strategy_review import plan, position
 from problem_assessment_fixtures import prepare as prepare_problem_assessment
 from appraisal_gate_fixture import install as isolate_research_gate
+from claim_challenge_fixture import install as install_claim_challenge
 
 
 @pytest.fixture(autouse=True)
@@ -71,6 +72,9 @@ def test_v2_appraisal_covers_nine_sections_and_rechecks_separate_review(tmp_path
                                                    locator='whole review', applicability='case a final appraisal')
     changed = json.loads(json.dumps(draft))
     changed['business_plan_sections']['business']['text'] += ' Changed recommendation.'
+    with pytest.raises(ValueError, match='final publication refused: no claim challenge'):
+        c.publish_assessment(root, 'a', draft, 'unchallenged-final', 'No claim challenge yet')
+    install_claim_challenge(root, 'a')
     with pytest.raises(ValueError, match='exact rendered publication'):
         c.publish_assessment(root, 'a', changed, 'stale-final', 'Changed after review')
     c.publish_assessment(root, 'a', draft, 'reviewed-final', 'Publish reviewed conditional appraisal')
@@ -153,6 +157,9 @@ def test_v2_selected_plan_requires_fresh_separate_review(tmp_path, monkeypatch):
                                                    locator='whole review', applicability='case a selected plan')
     changed = json.loads(json.dumps(draft))
     changed['business_plan_sections']['business']['text'] += ' Changed conclusion.'
+    with pytest.raises(ValueError, match='final publication refused: no claim challenge'):
+        c.publish_business_plan(root, 'a', draft, 'unchallenged-plan', 'No claim challenge yet')
+    install_claim_challenge(root, 'a')
     with pytest.raises(ValueError, match='exact rendered publication'):
         c.publish_business_plan(root, 'a', changed, 'stale-plan-v2', 'Changed after review')
     c.publish_business_plan(root, 'a', draft, 'reviewed-plan-v2', 'Publish exact reviewed plan')

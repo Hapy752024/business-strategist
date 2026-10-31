@@ -1195,26 +1195,6 @@ def validate_assignment(workspace: Path, run_dir: Path) -> dict:
         return _result("assignment", "invalid", missing=[str(exc)])
 
 
-CLAIM_CHALLENGE_REPORTS = (("falsification-report.json", "reviewed_ledger"),
-                           ("draft-falsification-report.json", "draft"))
-
-
-def claim_challenge(*dirs: Path) -> dict | None:
-    """The newest falsification report (reviewed-ledger or draft basis) under the given directories."""
-    found = []
-    for base in dirs:
-        for name, default_basis in CLAIM_CHALLENGE_REPORTS:
-            for path in Path(base).rglob(name) if Path(base).is_dir() else ():
-                try:
-                    data = json.loads(path.read_text(encoding="utf-8"))
-                except (OSError, json.JSONDecodeError):
-                    continue
-                if isinstance(data, dict):
-                    found.append((path.stat().st_mtime, {"basis": data.get("basis") or default_basis,
-                                                         "path": str(path), "counts": data.get("counts", {})}))
-    return max(found, key=lambda item: item[0])[1] if found else None
-
-
 def validate_delivery(workspace: Path, run_dir: Path) -> dict:
     workspace = Path(workspace).resolve()
     run_dir = Path(run_dir).resolve()
@@ -1283,13 +1263,19 @@ def validate_delivery(workspace: Path, run_dir: Path) -> dict:
                            actions=["Review and incorporate this run in case_insights.md"], inputs=research["inputs"])
     except (OSError, ValueError, KeyError) as exc:
         return _result("delivery", "invalid", missing=[str(exc)], inputs=research["inputs"])
-    # Hard rule: no final recommendation without a claim challenge (falsification of either basis).
-    challenge = claim_challenge(root / "cases" / case_id, run_dir)
-    if challenge is None:
-        return _result("delivery", "partial", missing=["no claim challenge: final delivery needs a falsification "
-                                                       "output (reviewed ledger or draft basis)"],
-                       actions=["Run claim-falsification on the reviewed claim ledger, or with --draft-claims "
-                                "when no ledger exists (references/falsify.md)"], inputs=research["inputs"])
+    # Hard rule: no final recommendation without a current claim challenge (shared, digest-bound check).
+    try:
+        from scripts.claim_challenge import status as challenge_status
+    except ModuleNotFoundError:
+        from claim_challenge import status as challenge_status
+    challenge = challenge_status(root, case_id, sorted(r for r in required if r.endswith("/claim-ledger.json")),
+                                 extra_dirs=[run_dir])
+    if challenge["status"] != "current":
+        return _result("delivery", "partial", missing=[challenge["reason"]],
+                       actions=["Run claim-falsification on the bound reviewed claim ledger, or with --draft-claims "
+                                "when no ledger exists (.agents/skills/opportunity-risk-designer/references/falsify.md)"],
+                       inputs=research["inputs"])
+    challenge = {k: v for k, v in challenge.items() if k != "status"}
     if case_manifest(root, case_id).get('case_plan_contract_version') == 1:
         try:
             from scripts.case_business_plan import current as current_case_plan

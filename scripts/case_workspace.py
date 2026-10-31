@@ -576,6 +576,24 @@ def insights_bindings(root, manifest):
     return packet.get('source_bindings', [])
 
 
+def require_claim_challenge(root, case_id, bindings=()):
+    """Final publications share one digest-bound claim-challenge check (scripts/claim_challenge.py)."""
+    try:
+        from scripts.claim_challenge import bound_ledgers, require_current
+    except ModuleNotFoundError:
+        from claim_challenge import bound_ledgers, require_current
+    ledgers = bound_ledgers(bindings)
+    if not ledgers:
+        try:
+            ledgers = bound_ledgers(insights_bindings(root, case_manifest(root, case_id)))
+        except (ValueError, OSError, KeyError):
+            ledgers = []
+    try:
+        return require_current(root, case_id, ledgers)
+    except ValueError as exc:
+        raise ValueError(f'final publication refused: {exc}') from exc
+
+
 def binding(root, case_id):
     m = read_project(root)
     selection = m.get('selection')
@@ -1223,6 +1241,8 @@ def publish_insights(root, case_id, packet, decision_id, reason):
         project = read_project(root)
         cm = case_manifest(root, case_id)
         text, _, _ = insights.validate_packet(root, case_id, packet, manifest=cm)
+        if (packet.get('publication_contract_version') or 1) >= 2 and packet.get('scope_status', 'complete') == 'complete':
+            require_claim_challenge(root, case_id, packet.get('source_bindings', []))
         scope = resolve(root, case_id)
         review_path = f'cases/{case_id}/market_research/case_insights/reviews/{decision_id}.json'
         if safe(root, review_path).exists():
@@ -1477,6 +1497,7 @@ def _publish_assessment(root, case_id, packet, decision_id, reason, *, preview=F
             return {'bundle_digest': review_hash, 'outputs': reviewed_outputs,
                     'reviewed_sources': sorted(b['path'] + '#' + b['digest'] for b in bindings)}
         if packet.get('publication_status', 'progress') == 'final':
+            require_claim_challenge(root, case_id, bindings)
             check_separate_review(root, case_id, packet.get('independent_review'), review_hash, bindings,
                                   f'cases/{case_id}/market_research/appraisal/reviews/')
             updated['appraisal_review'] = packet['independent_review']
@@ -1590,6 +1611,7 @@ def _publish_business_plan(root, case_id, plan, decision_id, reason, *, preview=
             return {'bundle_digest': review_hash, 'document': rendered_plan,
                     'reviewed_sources': sorted(b['path'] + '#' + b['digest'] for b in all_bindings)}
         if plan.get('publication_status', 'progress') == 'final':
+            require_claim_challenge(root, case_id, all_bindings)
             check_separate_review(root, case_id, plan.get('independent_review'), review_hash, all_bindings,
                                   f'strategy/reviews/{case_id}/')
         elif plan.get('publication_status', 'progress') != 'progress':

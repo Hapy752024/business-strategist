@@ -121,6 +121,7 @@ def publish(root, case_id, packet, decision_id, reason, *, preview=False):
         if preview:
             return {'outputs': content, 'bundle_digest': review_hash, 'reviewed_sources': sorted(b['path'] + '#' + b['digest'] for b in bindings)}
         if packet['publication_status'] == 'final':
+            cases.require_claim_challenge(root, case_id, bindings)
             check_separate_review(root, case_id, packet.get('independent_review'), review_hash, bindings, f'cases/{case_id}/plan-reviews/')
         content.pop(f'cases/{case_id}/business-plan.inputs.json')
         record = {**authored, 'state': 'current', 'source_bindings': bindings,

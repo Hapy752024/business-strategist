@@ -9,6 +9,7 @@ from scripts import validate_case_insights as insights
 from scripts.business_plan_render import financial_tables
 from scripts.case_economics import calculate
 from appraisal_gate_fixture import install
+from claim_challenge_fixture import install as install_claim_challenge
 from test_case_insights import setup_case, packet as insights_packet
 from test_case_end_to_end import inputs
 
@@ -63,6 +64,9 @@ def test_final_review_binds_exact_case_plan_and_survives_its_publication(prepare
     plan['independent_review'] = cases.source_binding(root, str(review.relative_to(root)), locator='whole review', applicability='a final plan review')
     changed = copy.deepcopy(plan)
     changed['business_plan_sections']['business']['text'] += ' Changed conclusion.'
+    with pytest.raises(ValueError, match='final publication refused: no claim challenge'):
+        plans.publish(root, 'a', plan, 'unchallenged', 'No claim challenge yet')
+    install_claim_challenge(root, 'a')
     with pytest.raises(ValueError, match='exact rendered publication'):
         plans.publish(root, 'a', changed, 'bad', 'Changed after review')
     plans.publish(root, 'a', plan, 'final', 'Publish reviewed final document')

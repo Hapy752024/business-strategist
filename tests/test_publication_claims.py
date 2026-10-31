@@ -134,6 +134,12 @@ def test_complete_insights_v2_renders_source_and_requires_fresh_separate_review(
         'source_url': 'https://example.org/review/1', 'status': 'accepted'}]}))
     bindings = [cases.source_binding(root, str(path.relative_to(root)), locator='e1',
                               applicability='case a reviewed customer experience') for path in pack.iterdir()]
+    # Final v2 insights need a current claim challenge on the bound reviewed ledger (Task 8 hard rule).
+    ledger_sha = hashlib.sha256((pack / 'claim-ledger.json').read_bytes()).hexdigest()
+    (pack / 'claim-ledger.falsified.json').write_text(json.dumps({'basis': 'reviewed_ledger', 'source_ledger_sha256': ledger_sha,
+        'claims': json.loads((pack / 'claim-ledger.json').read_text()), 'quarantined': []}))
+    (pack / 'falsification-report.json').write_text(json.dumps({'basis': 'reviewed_ledger',
+        'source_ledger_sha256': ledger_sha, 'counts': {'survived': 1}}))
     draft['source_bindings'].extend(bindings)
     rows = insights.inventory(root, 'a', source_bindings=draft['source_bindings'])
     old = {row['path']: row for row in draft['coverage']}
@@ -234,3 +240,15 @@ def test_no_falsification_run_still_publishes(tmp_path):
     root, pack, bindings, ref = reviewed_claim(tmp_path)
     rendered = render(root, {'case_insights.md': 'Wait {{evidence_claim.wait_source}}.'}, [ref], bindings)['case_insights.md']
     assert '[Source: e1]' in rendered
+
+
+def test_complete_v2_insights_refused_without_current_claim_challenge(tmp_path, monkeypatch):
+    root, case = setup_case(tmp_path)
+    monkeypatch.setattr(insights, 'validate_packet', lambda *a, **k: ('text', [], 'x'))
+    with pytest.raises(ValueError, match='final publication refused: no claim challenge'):
+        cases.publish_insights(root, 'a', {'publication_contract_version': 2, 'scope_status': 'complete',
+                                           'source_bindings': []}, 'no-challenge', 'Final without challenge')
+    with pytest.raises(Exception) as progress:  # progress snapshots skip the rule (fail later on the stub packet)
+        cases.publish_insights(root, 'a', {'publication_contract_version': 2, 'scope_status': 'progress',
+                                           'source_bindings': []}, 'progress', 'Progress')
+    assert 'claim challenge' not in str(progress.value)

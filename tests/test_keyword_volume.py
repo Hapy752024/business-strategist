@@ -97,3 +97,15 @@ def test_post_maps_http_error(monkeypatch):
     with pytest.raises(kv.ProviderError) as exc:
         kv._post('https://x', [], ('a', 'b'))
     assert exc.value.status == 'rate_limited'
+
+
+def test_out_writes_result_json_without_a_map(creds, monkeypatch, tmp_path):
+    """Early desk step: volumes for brainstormed phrases go to a file; no keyword map needed."""
+    monkeypatch.setattr(kv, 'fetch_volumes',
+                        lambda terms, *a, **k: [{'keyword': t, 'volume': 10, 'task_cost': 0.075} for t in terms])
+    out = tmp_path / 'run/keyword-volumes.json'
+    monkeypatch.setattr('sys.argv', ['keyword_volume.py', '--keyword', 'bu vergleich', '--location-code', '2276',
+                                     '--language-code', 'de', '--out', str(out)])
+    assert kv.main() == 0
+    data = json.loads(out.read_text())
+    assert data['status'] == 'ok' and data['rows'][0]['keyword'] == 'bu vergleich'

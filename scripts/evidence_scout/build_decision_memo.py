@@ -192,6 +192,8 @@ def load_claims(ledger_path: Path, falsified_path: Path | None = None) -> dict:
     data = json.loads(falsified_path.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or not isinstance(data.get("quarantined"), list) or not isinstance(data.get("claims"), list):
         raise ValueError(f"{falsified_path}: malformed; re-run apply_falsification.py")
+    if data.get("basis", "reviewed_ledger") != "reviewed_ledger":
+        raise ValueError(f"{falsified_path}: falsification basis {data.get('basis')!r} does not match the reviewed ledger")
     quarantined = [q.get("claim", {}) for q in data["quarantined"] if isinstance(q, dict)]
     downgraded = {str(r.get("claim_id")): r for r in data["claims"] if isinstance(r, dict)}
     order = list(BANDS)[::-1]  # low, medium, high
@@ -203,11 +205,12 @@ def load_claims(ledger_path: Path, falsified_path: Path | None = None) -> dict:
             row = dict(row, confidence=other.get("confidence"))
         merged.append(row)
     digest = hashlib.sha256(ledger_path.read_bytes()).hexdigest()
+    current = data.get("source_ledger_sha256") == digest
     if data.get("source_ledger_sha256") not in (None, digest):
         out["warnings"].append("falsification was run on an earlier ledger revision; quarantine and downgrades "
                                "still applied, rerun apply_falsification.py")
     out.update(claims=merged, quarantined=quarantined,
-               falsification={"path": str(falsified_path), "quarantined": len(quarantined)})
+               falsification={"path": str(falsified_path), "quarantined": len(quarantined), "current": current})
     return out
 
 
@@ -219,11 +222,14 @@ def load_draft(path: Path, falsified_path: Path | None = None) -> dict:
         raise ValueError(f"{path}: draft claims must be a JSON array of records with claim_id")
     falsified_path = Path(falsified_path) if falsified_path else path.parent / DRAFT_FALSIFIED_NAME
     status = {str(r["claim_id"]): "not_challenged" for r in rows}
+    warnings: list[str] = []
     challenge = None
     if falsified_path.is_file():
         data = json.loads(falsified_path.read_text(encoding="utf-8"))
         if not isinstance(data, dict) or not isinstance(data.get("quarantined"), list) or not isinstance(data.get("claims"), list):
             raise ValueError(f"{falsified_path}: malformed; re-run apply_falsification.py --draft-claims")
+        if data.get("basis") != "draft":
+            raise ValueError(f"{falsified_path}: falsification basis {data.get('basis')!r} does not match draft claims")
         for r in data["claims"]:
             if isinstance(r, dict) and str(r.get("claim_id")) in status:
                 status[str(r["claim_id"])] = r.get("falsification_status") or "kept"
@@ -231,10 +237,14 @@ def load_draft(path: Path, falsified_path: Path | None = None) -> dict:
             cid = str((q.get("claim") or {}).get("claim_id")) if isinstance(q, dict) else None
             if cid in status:
                 status[cid] = "quarantined"
-        challenge = {"basis": "draft", "path": str(falsified_path), "quarantined": len(data["quarantined"])}
+        current = data.get("source_ledger_sha256") == hashlib.sha256(path.read_bytes()).hexdigest()
+        challenge = {"basis": "draft", "path": str(falsified_path), "quarantined": len(data["quarantined"]),
+                     "current": current}
+        if not current:
+            warnings.append("draft falsification was run on an earlier draft-claims revision; rerun apply_falsification.py --draft-claims")
     listed = [{"claim_id": str(r["claim_id"]), "section": r.get("section"), "status": status[str(r["claim_id"])]}
               for r in rows]
-    return {"claims": listed, "challenge": challenge}
+    return {"claims": listed, "challenge": challenge, "warnings": warnings}
 
 
 def _types(row: dict) -> set:
@@ -486,6 +496,9 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
             for n in dict.fromkeys([riskiest] + weak)]
     if final and not claim_challenge:
         raise ValueError(FINAL_NEEDS_CHALLENGE)
+    if final and claim_challenge.get("current") is False:
+        raise ValueError("claim challenge stale or unrelated to current claims: rerun the falsification on the "
+                         "current " + ("draft claims" if claim_challenge.get("basis") == "draft" else "reviewed ledger"))
     return {
         "schema_version": 1, "generated_view": True,
         "basis": basis or ("reviewed_ledger" if ledger else "none"),
@@ -577,6 +590,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         claims = load_claims(a.ledger, a.falsified) if a.ledger else {"claims": [], "quarantined": [], "warnings": []}
         draft = load_draft(a.draft_claims, a.falsified) if a.draft_claims else None
+        if draft:
+            claims["warnings"] = list(claims.get("warnings", [])) + draft["warnings"]
         challenge = (draft["challenge"] if draft else
                      dict(basis="reviewed_ledger", **claims["falsification"]) if claims.get("falsification") else None)
         a.override_by, a.override_reason = (a.override_by or "").strip(), (a.override_reason or "").strip()

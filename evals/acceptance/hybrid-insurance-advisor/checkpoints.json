@@ -95,13 +95,11 @@
       "stage": "appraisal",
       "title": "A claim challenge (falsification on the reviewed ledger or on draft claims) runs; decision memo and scores exist; delivery validation passes or the gap is stated",
       "proxy": false,
-      "pass_rule": "A falsification artifact or apply_falsification call of either basis (reviewed ledger or draft claims; the falsification sub-check detail names the basis), a decision_memo.md and a scores.json in the eval project, and either a successful validate_research_completion.py --check delivery call or a stated delivery gap.",
+      "pass_rule": "An applied falsification report of either basis (falsification-report.json on the reviewed ledger or draft-falsification-report.json on draft claims; the falsification sub-check detail names the basis), a decision_memo.md and a scores.json in the eval project, and either a successful validate_research_completion.py --check delivery call or a stated delivery gap.",
       "check": {"type": "all", "checks": [
         {"type": "any", "label": "falsification", "checks": [
           {"type": "artifact", "glob": "**/draft-falsification-report.json", "label": "falsification (basis: draft)", "min": 1},
-          {"type": "artifact", "glob": "**/claim-ledger.falsified.json", "label": "falsification (basis: reviewed ledger)", "min": 1},
-          {"type": "artifact", "glob": "**/*falsif*", "label": "falsification (basis: unlabelled artifact)", "min": 1},
-          {"type": "tool_use", "name": ".*", "input": "(apply_falsification\\.py|claim-falsification|claim-falsifier)", "exclude_denied": true, "label": "falsification (call only; basis not recorded)", "min": 1}
+          {"type": "artifact", "glob": "**/falsification-report.json", "label": "falsification (basis: reviewed ledger)", "min": 1}
         ]},
         {"type": "artifact", "glob": "**/decision_memo.md", "label": "decision_memo", "min": 1},
         {"type": "artifact", "glob": "**/scores.json", "label": "scores", "min": 1},

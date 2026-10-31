@@ -152,7 +152,7 @@ def apply(ledger: Path, verdicts: Path, out_dir: Path | None = None, checked_at:
 def apply_draft(draft: Path, verdicts: Path, out_dir: Path | None = None, checked_at: str | None = None,
                 claims_export: Path | None = None) -> dict[str, Any]:
     """Fallback without a reviewed ledger: same rules on draft claims, outputs labelled basis: draft."""
-    draft = Path(draft)
+    draft = Path(draft).resolve()  # the report names the exact draft file its digest binds
     rows = [{"claim_id": r["claim_id"], "claim": r["text"], **{k: v for k, v in r.items() if k not in {"claim_id", "text"}}}
             for r in load_draft_claims(draft)]
     exported = ({str(r["claim_id"]) for r in rows} if claims_export is None

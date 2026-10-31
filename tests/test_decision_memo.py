@@ -252,6 +252,7 @@ def _draft(tmp_path, falsified=True):
     if falsified:
         (d / "draft-claims.falsified.json").write_text(json.dumps({
             "schema_version": 1, "basis": "draft", "claims": [rows[1]],
+            "source_ledger_sha256": hashlib.sha256((d / "draft-claims.json").read_bytes()).hexdigest(),
             "quarantined": [{"claim": rows[0], "reason": "falsified", "evidence": []}]}))
     return d / "draft-claims.json"
 
@@ -289,3 +290,40 @@ def test_provisional_memo_without_challenge_says_so(tmp_path):
     scores = json.loads((tmp_path / "m" / "scores.json").read_text())
     assert scores["status"] == "provisional" and scores["claim_challenge"] is None
     assert "Claim challenge: not run" in (tmp_path / "m" / "decision_memo.md").read_text()
+
+
+def _sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def test_final_refuses_stale_challenge_and_passes_current(tmp_path):
+    d = _draft(tmp_path)
+    fals = d.parent / "draft-claims.falsified.json"
+    data = json.loads(fals.read_text()); data["source_ledger_sha256"] = "0" * 64; fals.write_text(json.dumps(data))
+    stale = _run("--draft-claims", d, "--final", "--out", tmp_path / "s")
+    assert stale.returncode == 2 and "stale or unrelated to current claims" in stale.stderr
+    assert _run("--draft-claims", d, "--out", tmp_path / "p").returncode == 0  # non-final: warning only
+    data["source_ledger_sha256"] = _sha(d); fals.write_text(json.dumps(data))
+    assert _run("--draft-claims", d, "--final", "--out", tmp_path / "f").returncode == 0
+    ledger = tmp_path / "rv" / "claim-ledger.json"
+    ledger.parent.mkdir()
+    ledger.write_text(json.dumps([claim("p1", "unmetness", "high")]))
+    sib = {"schema_version": 1, "basis": "reviewed_ledger", "claims": [], "quarantined": [], "source_ledger_sha256": "1" * 64}
+    (ledger.parent / "claim-ledger.falsified.json").write_text(json.dumps(sib))
+    stale = _run("--ledger", ledger, "--final", "--out", tmp_path / "r1")
+    assert stale.returncode == 2 and "stale" in stale.stderr
+    sib["source_ledger_sha256"] = _sha(ledger)
+    (ledger.parent / "claim-ledger.falsified.json").write_text(json.dumps(sib))
+    assert _run("--ledger", ledger, "--final", "--out", tmp_path / "r2").returncode == 0
+
+
+def test_falsified_basis_must_match_claims_basis(tmp_path):
+    d = _draft(tmp_path)
+    reviewed = tmp_path / "reviewed.falsified.json"
+    reviewed.write_text(json.dumps({"basis": "reviewed_ledger", "claims": [], "quarantined": []}))
+    bad = _run("--draft-claims", d, "--falsified", reviewed, "--out", tmp_path / "x")
+    assert bad.returncode == 2 and "does not match draft claims" in bad.stderr
+    ledger = tmp_path / "claim-ledger.json"
+    ledger.write_text(json.dumps([claim("p1", "unmetness", "high")]))
+    bad = _run("--ledger", ledger, "--falsified", d.parent / "draft-claims.falsified.json", "--out", tmp_path / "y")
+    assert bad.returncode == 2 and "does not match the reviewed ledger" in bad.stderr

@@ -715,18 +715,32 @@ def test_final_delivery_refused_without_claim_challenge(tmp_path, monkeypatch):
     assert any("claim challenge" in m for m in result["missing_requirements"])
 
 
-@pytest.mark.parametrize("name,basis", [("falsification-report.json", "reviewed_ledger"),
-                                        ("draft-falsification-report.json", "draft")])
-def test_final_delivery_accepts_claim_challenge_of_either_basis(tmp_path, monkeypatch, name, basis):
+def _ledger(run):
+    path = run / "customer-feedback/claim-ledger.json"
+    write(path, [{"claim_id": "C1"}])
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_final_delivery_accepts_current_reviewed_challenge(tmp_path, monkeypatch):
     root, run = _final_ready_case(tmp_path, monkeypatch)
-    write(run / "customer-feedback" / name, {"schema_version": 1, "basis": basis, "counts": {"survived": 1}})
+    write(run / "customer-feedback/falsification-report.json",
+          {"basis": "reviewed_ledger", "source_ledger_sha256": _ledger(run), "counts": {}})
     result = checks.validate_delivery(root, run)
     assert result["status"] == "complete", result
-    assert result["claim_challenge"]["basis"] == basis
+    assert result["claim_challenge"]["basis"] == "reviewed_ledger"
 
 
-def test_claim_challenge_lookup_reports_basis(tmp_path):
-    case = tmp_path / "cases/a"
-    assert checks.claim_challenge(case) is None
-    write(case / "market_research/case_insights/draft-falsification-report.json", {"basis": "draft"})
-    assert checks.claim_challenge(case)["basis"] == "draft"
+def test_final_delivery_refuses_stale_or_draft_challenge_when_ledger_bound(tmp_path, monkeypatch):
+    root, run = _final_ready_case(tmp_path, monkeypatch)
+    _ledger(run)
+    write(run / "customer-feedback/falsification-report.json",
+          {"basis": "reviewed_ledger", "source_ledger_sha256": "0" * 64, "counts": {}})
+    result = checks.validate_delivery(root, run)
+    assert result["status"] == "partial"
+    assert any("stale or unrelated to current claims" in m for m in result["missing_requirements"])
+    (run / "customer-feedback/falsification-report.json").unlink()
+    draft = run / "draft/draft-claims.json"
+    write(draft, [])
+    write(draft.parent / "draft-falsification-report.json",
+          {"basis": "draft", "source_ledger": str(draft), "source_ledger_sha256": hashlib.sha256(draft.read_bytes()).hexdigest()})
+    assert checks.validate_delivery(root, run)["status"] == "partial"

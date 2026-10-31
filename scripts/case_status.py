@@ -91,6 +91,9 @@ def case_status(root: Path, case_id: str) -> list[dict]:
                 stale.append(item['artifact'])
         state = 'not_adopted' if not_adopted else 'blocked' if missing else 'stale' if stale else 'runnable'
         notes = ''
+        if route['id'] == 'case-appraisal' and 'claim-ledger' in optional_missing:
+            notes = ('provisional appraisal and decision memo can run on draft claims; final appraisal publication '
+                     'still needs a bound reviewed claim ledger and a current claim challenge')
         if route['skill'] == 'interview-bridge':
             responders = _booked_responders(root, case_id)
             if responders:
