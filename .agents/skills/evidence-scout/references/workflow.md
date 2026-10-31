@@ -366,7 +366,7 @@ Choose the next method from the unanswered question, not the aggregate weak/medi
 When improving this skill or the collector, run:
 
 ```bash
-python3 scripts/evidence_scout/test_classification.py
+python3 -m pytest -q tests/evidence_scout/test_classification.py
 ```
 
 The fixture tests cover German PKV/BU decision uncertainty, social source intent, comment intent, quality flags, known-competitor lookup noise, and marketing extraction edge cases.

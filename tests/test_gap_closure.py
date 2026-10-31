@@ -10,7 +10,7 @@ from scripts import case_workspace as c, subprojects, route_workflow as routing
 from scripts.case_outputs import run_staged, asset_operation
 from scripts.case_economics import calculate, input_digest
 from scripts.evidence_scout import workspace as w
-from scripts.evidence_scout.test_landscape_artifacts import LandscapeArtifactTests
+from tests.evidence_scout.test_landscape_artifacts import LandscapeArtifactTests
 from test_case_end_to_end import setup, appraisal, selected_plan
 from test_case_economics import inputs
 from appraisal_gate_fixture import install as isolate_research_gate

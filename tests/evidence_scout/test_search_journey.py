@@ -10,7 +10,7 @@ from unittest import mock
 
 import pytest
 
-import sys; sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import sys; sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "evidence_scout"))
 import search_journey as sj
 from search_journey import build_content_opportunities, build_report, parse_serpapi, parse_serper, validate_plan
 

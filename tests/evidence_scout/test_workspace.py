@@ -12,7 +12,7 @@ import unittest
 from pathlib import Path
 
 
-HERE = Path(__file__).resolve().parent
+HERE = Path(__file__).resolve().parents[2] / "scripts" / "evidence_scout"
 VALIDATORS = HERE.parent / "validate_apis"
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(VALIDATORS))

@@ -125,7 +125,7 @@ When Firecrawl returns HTTP 402 / `billing_required`, state that landing-page ma
 When changing CTA, pricing, or page-type extraction, run:
 
 ```bash
-python3 scripts/evidence_scout/test_classification.py
+python3 -m pytest -q tests/evidence_scout/test_classification.py
 ```
 
 The tests include structured insurance price tokens, normalized price tokens, `pricing_language_only`, and page-type classification.

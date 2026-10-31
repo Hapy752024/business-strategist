@@ -10,8 +10,8 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator
 
-HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[1]
+HERE = Path(__file__).resolve().parents[2] / "scripts" / "evidence_scout"
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT))
 

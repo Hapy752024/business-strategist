@@ -79,7 +79,7 @@ Keep entity classification separate from source-page classification. `entity_typ
 When changing competitor classification logic, run:
 
 ```bash
-python3 scripts/evidence_scout/test_classification.py
+python3 -m pytest -q tests/evidence_scout/test_classification.py
 ```
 
 The tests include known-competitor noise rejection, entity/page separation, and broad insurance-app classification.
