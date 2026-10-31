@@ -26,4 +26,4 @@ Return the route packet, lane-aware entity landscape, service/price matrix, soci
 For substantive chosen-idea validation, apply repo-root `references/research-data-and-precedents.md`: select informative comparison markets, search in their language, inspect independent customers and failed outcomes, and assess local transfer conditions. Funding remains a separate capital signal.
 
 Also read when the stage needs it:
-- `references/strategic-positioning.md`
+- repo-root `references/strategic-positioning.md`

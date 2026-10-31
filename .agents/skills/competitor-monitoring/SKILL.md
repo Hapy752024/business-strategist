@@ -12,7 +12,7 @@ description: Monitor competitor changes, own-brand mentions, and recorded AI-ans
 ## Workflow
 
 1. Read `references/workflow.md` completely.
-2. For AI-answer recordings load repo-root `references/ai-answer-recordings.md`; consume results with `references/search-visibility-decisions.md`.
+2. For AI-answer recordings load repo-root `references/ai-answer-recordings.md`; consume results with repo-root `references/search-visibility-decisions.md`.
 3. Define entities, fields, cadence, baseline, and alert thresholds.
 4. Obtain approval before paid traffic or local-location actors.
 5. Diff like-for-like snapshots and suppress mechanical noise.

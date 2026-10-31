@@ -60,5 +60,5 @@ Open every output with a `## Strongest reason this fails` section tied to a cite
 
 Also read when the stage needs it:
 - `.agents/skills/evidence-scout/references/pain-query-calibration.md`
-- `references/customer-voice.md`
-- `references/voc-research-method.md`
+- repo-root `references/customer-voice.md`
+- repo-root `references/voc-research-method.md`

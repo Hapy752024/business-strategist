@@ -1,7 +1,7 @@
 ---
 name: social-digital-marketing-planner
 description: Create organic and paid social plans with content systems, creative tests, platform roles, calendars, and measurement. Use when planning social or digital acquisition.
-compatibility: Requires the business-strategist repository and its shared references/task-scope.md contract.
+compatibility: Requires the business-strategist repository and its shared repo-root `references/task-scope.md` contract.
 ---
 
 # Social / Digital Marketing Planner
@@ -20,12 +20,12 @@ Return only the requested answer, calendar, creative or campaign plan. Full stra
 For channel choice, budget sizing, structure and stop rules read [paid campaign planning](references/paid-campaign-planning.md) first.
 For selected multi-step execution, read repo-root `references/marketing-execution.md`; prepare owner and third-party steps with exact destinations, ready materials and verification criteria.
 
-For paid plans and journey-based growth interventions, read repo-root `references/journey-activation-and-measurement.md` and `references/ad-platform-connections.md` (shared repository dependencies). Specify placement, useful hook/tool, accessible distribution, sales destination, event mappings and mature customer outcomes; prepare platform-specific campaign structure and monitoring without inferring live authority.
+For paid plans and journey-based growth interventions, read repo-root `references/journey-activation-and-measurement.md` and repo-root `references/ad-platform-connections.md` (shared repository dependencies). Specify placement, useful hook/tool, accessible distribution, sales destination, event mappings and mature customer outcomes; prepare platform-specific campaign structure and monitoring without inferring live authority.
 
 Also read when the stage needs it:
-- `references/ai-answer-recordings.md` (recorded AI-answer visibility)
-- `references/comparative-creative-analysis.md` (comparing competitor creative)
-- `references/marketing-campaign-operations.md` (recurring campaign reporting)
-- `references/owner-actions.md` (owner-only actions)
+- repo-root `references/ai-answer-recordings.md` (recorded AI-answer visibility)
+- repo-root `references/comparative-creative-analysis.md` (comparing competitor creative)
+- repo-root `references/marketing-campaign-operations.md` (recurring campaign reporting)
+- repo-root `references/owner-actions.md` (owner-only actions)
 - `../marketing-strategy-builder/references/product-marketing-context.md` (shared context, read first if filled)
-- `references/search-visibility-decisions.md` (search and AI visibility choices)
+- repo-root `references/search-visibility-decisions.md` (search and AI visibility choices)

@@ -1,7 +1,7 @@
 ---
 name: marketing-strategy-builder
 description: Build evidence-grounded segmentation, positioning, messaging, offers, funnels, channels, launch plans, campaigns, and growth metrics. Use whenever the user asks how to market, position, launch, or acquire demand.
-compatibility: Requires the business-strategist repository and its shared references/task-scope.md contract.
+compatibility: Requires the business-strategist repository and its shared repo-root `references/task-scope.md` contract.
 ---
 
 # Marketing Strategy Builder
@@ -23,14 +23,14 @@ For keyword research, SEO content planning, the `seo-page-planning` route and pu
 Stage tools: `scripts/evidence_scout/search_journey.py` (search journey), `scripts/marketing/keyword_map.py merge` (content inputs), `python3 -m scripts.brand.site_gate` (page launch gate) and `scripts/marketing/verify_tracking.py` (tracking before launch spend).
 For selected multi-step work, read repo-root `references/marketing-execution.md`; prepare the agent work, exact owner/platform handoffs and observable completion checks.
 
-For funnel, growth-tool or campaign design, read repo-root `references/journey-activation-and-measurement.md`. Carry sourced placement hooks into an explicit sales path and event contract. Use `references/ad-platform-connections.md` for selected Meta/Google/TikTok setup and monitoring; these shared dependencies do not authorize connections or spend.
+For funnel, growth-tool or campaign design, read repo-root `references/journey-activation-and-measurement.md`. Carry sourced placement hooks into an explicit sales path and event contract. Use repo-root `references/ad-platform-connections.md` for selected Meta/Google/TikTok setup and monitoring; these shared dependencies do not authorize connections or spend.
 
 Also read when the stage needs it:
-- `references/ai-answer-recordings.md` (recorded AI-answer visibility)
-- `references/customer-question-tracking.md` (tracking customer questions)
-- `references/evidence-registry.md` (sequencing rule and weak-evidence list)
-- `references/owner-actions.md` (owner-only actions)
+- repo-root `references/ai-answer-recordings.md` (recorded AI-answer visibility)
+- repo-root `references/customer-question-tracking.md` (tracking customer questions)
+- repo-root `references/evidence-registry.md` (sequencing rule and weak-evidence list)
+- repo-root `references/owner-actions.md` (owner-only actions)
 - `references/product-marketing-context.md` (shared context to fill and read first)
 - repo-root `references/seo-rule-pack.md` (SEO hygiene rules and evidence classes)
-- `references/search-visibility-decisions.md` (search and AI visibility choices)
-- `references/strategic-positioning.md` (served-vs-entrant check before channel choice)
+- repo-root `references/search-visibility-decisions.md` (search and AI visibility choices)
+- repo-root `references/strategic-positioning.md` (served-vs-entrant check before channel choice)

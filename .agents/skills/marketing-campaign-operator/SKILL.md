@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Marketing Campaign Operator
 
 Use the checked setup, import, review or connections mode.
-For a first campaign, follow `references/first-campaign-runbook.md`; external writes need a signed founder approval (`references/marketing-execution.md`).
+For a first campaign, follow `references/first-campaign-runbook.md`; external writes need a signed founder approval (repo-root `references/marketing-execution.md`).
 Read repo-root `references/marketing-campaign-operations.md` before executing it; this is a shared repository dependency.
 
 1.
@@ -47,7 +47,7 @@ Declared claim checks require separate editorial review for unmarked claims and 
 Do not claim legal compliance or causal uplift from a report.
 
 For setup/connections, read repo-root `references/ad-platform-connections.md`; inventory actual assets and prepare project/account-scoped enrollment.
-For setup/reviews, apply `references/journey-activation-and-measurement.md`: inspect campaign-context hooks, sales stages, selected optimization event and provider mappings.
+For setup/reviews, apply repo-root `references/journey-activation-and-measurement.md`: inspect campaign-context hooks, sales stages, selected optimization event and provider mappings.
 Missing event/CRM evidence stays a visible gap; local exports never certify tracking.
 TikTok uses its explicit aggregate preset, with ambiguous Results/conversions left uninterpreted.
 These are shared repository dependencies.

@@ -27,4 +27,4 @@ Drafts differ in mechanism, not tone; every judge score cites a lens or named as
 Produce the decision frame, the draft set with one-line mechanisms, the judge scorecard, the feedback-round diff (if run), the selected or synthesized recommendation, its evidence gaps, and the cheapest test that would change the pick.
 
 Also read when the stage needs it:
-- `references/evidence-registry.md`
+- repo-root `references/evidence-registry.md`

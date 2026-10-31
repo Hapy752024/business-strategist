@@ -27,4 +27,4 @@ Produce an evidence ledger, primary and skeptical customer contexts, first-perso
 
 Separate observed evidence, inference, and hypothesis; never present a regional average as an individual's personality or simulated dialogue as customer research.
 
-Also read as the stage needs: `references/strategic-positioning.md`.
+Also read as the stage needs: repo-root `references/strategic-positioning.md`.

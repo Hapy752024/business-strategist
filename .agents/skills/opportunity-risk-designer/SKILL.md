@@ -8,7 +8,7 @@ description: Convert customer, workaround, demand, and competitor evidence into 
 **Case appraisal and v2 publication contract.**
 For researched case appraisal, route and publisher require the same eligible reviewed case run and a bound claim ledger;
 authored segment/journey/pain summaries alone do not qualify.
-Use the v2 publication contract in repo-root `references/case-assessment.md` and `references/case-insights.md` for direct reviewed-source citations, nine decision sections, progressive publication and separate final review.
+Use the v2 publication contract in repo-root `references/case-assessment.md` and repo-root `references/case-insights.md` for direct reviewed-source citations, nine decision sections, progressive publication and separate final review.
 A legacy output remains readable but cannot close v2 research delivery.
 Integrate substantive deep-dive answers into current insights, then refresh affected appraisal/economics, per-case business plan and selected plan.
 A new deep dive makes downstream plan use pending until the selected insights are current again.
@@ -69,4 +69,4 @@ For interview recruitment or strategic acquisition planning, apply repo-root `re
 For the checked `smoke-test-design` route, read repo-root `references/smoke-test.md`. Take the assumption ids from the case `assumptions.json` riskiest list, generate the draft with `python3 scripts/evidence_scout/build_smoke_test_kit.py --run-dir <evidence-run> --experiment-id E-<slug> --assumption-id <A-id> --offer ... --segment ... --out-dir <run>/experiments/<slug>`, then commit it with `case_workspace.py experiment-plan --input <out>/experiment-card.json`. Use this as the default next test when the riskiest assumption is demand or message and the founder has no customer panel; interviews recruit from responders. Ad spend needs the recorded approval before `experiment-approve`.
 
 Also read when the stage needs it:
-- `references/evidence-registry.md`
+- repo-root `references/evidence-registry.md`

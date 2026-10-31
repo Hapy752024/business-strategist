@@ -158,6 +158,6 @@ keep intervention hypotheses separate from observed pain.
 Research does not select a campaign or bypass the pain-first gate.
 
 Also read when the stage needs it:
-- `references/institutional-and-university-sources.md`
+- repo-root `references/institutional-and-university-sources.md`
 - `references/modules/source-worker-packet.md`
-- `references/task-scope.md`
+- repo-root `references/task-scope.md`

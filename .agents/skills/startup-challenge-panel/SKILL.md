@@ -22,4 +22,4 @@ description: Challenge a startup thesis with evidence memos, red-team cross-exam
 Write role memos, disagreement matrix, unsupported claims, decisive tests, arbiter verdict, confidence, and manifest next action under `reviews/`.
 
 Also read when the stage needs it:
-- `references/evidence-registry.md`
+- repo-root `references/evidence-registry.md`

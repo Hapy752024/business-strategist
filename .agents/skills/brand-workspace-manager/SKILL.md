@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Read `references/workflow.md` for the complete procedure. Load only the additional references needed for the requested stage.
 
-Apply the shared `references/subprojects.md` contract. New work belongs to umbrella `branding/`, independent of Business research. Use explicit business-linked entry only when consuming a selected Business handoff. Current outputs stay separate from dated decisions and archived versions.
+Apply the shared repo-root `references/subprojects.md` contract. New work belongs to umbrella `branding/`, independent of Business research. Use explicit business-linked entry only when consuming a selected Business handoff. Current outputs stay separate from dated decisions and archived versions.
 
 ## Procedure
 
