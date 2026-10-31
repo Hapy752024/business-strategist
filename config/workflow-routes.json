@@ -438,7 +438,8 @@
       "match": [
         "component library",
         "branded components",
-        "React components"
+        "React component library",
+        "branded React components"
       ],
       "skill": "brand-ui-system",
       "forbidden": [],
@@ -449,8 +450,8 @@
       "id": "brand-ui-kit-producer",
       "match": [
         "UI kit",
-        "design tokens",
-        "UI tokens"
+        "brand design tokens",
+        "UI token kit"
       ],
       "skill": "brand-ui-system",
       "forbidden": [],

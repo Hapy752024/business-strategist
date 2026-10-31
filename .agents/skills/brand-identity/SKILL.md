@@ -32,7 +32,7 @@ Sibling skills: `brand-asset-producer` owns logos, favicons, imagery and every p
 - Paid asset generation needs the user's explicit approval and runs only through `brand-asset-producer`.
 - Never promote an unapproved artifact: `scripts/brand/promote_artifact.py` and `workspace_cli.py promote` stay dry runs until `--confirm` after approval; a conflicting destination needs separate replacement approval.
 - Never delete old iterations; archive them to `old/<stage>/<timestamp>/`.
-- Export and workspace modes write files: run them only on explicit request.
+- Export and workspace modes write files: run them only on explicit request or as an orchestration step.
 - Review mode dispatches the independent `brand-critic` agent (`.claude/agents/brand-critic.md`) without the creator's rationale.
 
 ## Output

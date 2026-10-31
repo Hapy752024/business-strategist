@@ -111,9 +111,30 @@ BRAND_ROUTE_IDS = [
 ]
 
 
+# requires_pain_gate per brand route as frozen at 74e72de (before the merge).
+BRAND_PAIN_GATE = {
+    'standalone-brand': True, 'brand-research': False, 'app-ui': True, 'brand-discovery-interviewer': False,
+    'brand-exporter': True, 'brand-guidelines-writer': True, 'brand-motion-designer': True,
+    'brand-quality-reviewer': True, 'brand-strategy-director': True, 'brand-typography-researcher': False,
+    'brand-ui-component-producer': True, 'brand-ui-kit-producer': True, 'brand-workspace-manager': False,
+}
+
+
 def test_brand_route_ids_unchanged():
     routes = _routes()
-    assert len(BRAND_ROUTE_IDS) == 13
+    assert len(BRAND_ROUTE_IDS) == 13 and set(BRAND_PAIN_GATE) == set(BRAND_ROUTE_IDS)
     for route_id in BRAND_ROUTE_IDS:
         assert route_id in routes, route_id
         assert routes[route_id]['skill'] in FAMILIES
+        assert bool(routes[route_id].get('requires_pain_gate', False)) is BRAND_PAIN_GATE[route_id], route_id
+
+
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Build React components for my Next.js landing page', 'website-build'),
+    ('Add React components to my website hero section', 'clarify'),
+    ('fix the design tokens on my website', 'clarify'),
+])
+def test_website_requests_do_not_route_to_brand_ui_system(request_text, expected_route):
+    packet = route_workflow.route_request(request_text)
+    assert packet['skill'] != 'brand-ui-system'
+    assert packet['route_id'] == expected_route
