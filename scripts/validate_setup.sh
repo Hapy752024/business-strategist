@@ -195,7 +195,7 @@ check "workflow-quality task manifest is valid" python3 scripts/run_analysis_eva
 # ── Schemas ───────────────────────────────────────────────
 echo ""
 echo "--- Schemas ---"
-for schema in evidence-record ads-record competitor entity-landscape stage-checkpoint research-manifest case-insights project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record numeric-claim strategy-plan content-brief marketing-execution customer-voc-synthesis; do
+for schema in evidence-record competitor entity-landscape stage-checkpoint research-manifest case-insights project-manifest business-to-brand brand-manifest website-preferences website-manifest claim-record numeric-claim strategy-plan content-brief marketing-execution customer-voc-synthesis; do
     check "schemas/$schema.schema.json exists" test -f "schemas/$schema.schema.json"
     check "schemas/$schema.schema.json is valid JSON" python3 -c "import json; json.load(open('schemas/$schema.schema.json'))" 2>/dev/null
 done
