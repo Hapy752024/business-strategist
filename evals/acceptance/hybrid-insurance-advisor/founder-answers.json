@@ -23,7 +23,7 @@
         "existing workspace",
         "resume"
       ],
-      "answer": "Start new research. Keep everything for this session under {eval_dir}/ and leave the existing german-insurance-opportunity workspace untouched. If a script only accepts a top-level project slug, use the slug {alt_slug}.",
+      "answer": "Start new research in a new project at {eval_dir}/ and leave the existing german-insurance-opportunity workspace untouched. Its project slug is {alt_slug}; use that slug wherever a script takes a project.",
       "source": "scenario rule",
       "persist_markers": []
     },
@@ -36,7 +36,7 @@
         "problem validation",
         "gate"
       ],
-      "answer": "Yes. Record an explicit gate override to continue to GTM so we can test the downstream steps. I understand the override is not evidence that the problem is validated; label everything downstream as provisional.",
+      "answer": "Yes. Record an explicit gate override to continue to GTM so we can test the downstream steps. I understand the override is not evidence that the problem is validated; label everything downstream as provisional. If routing first needs the case you are investigating to be selected, select it: that is my explicit choice for this session, not a validation.",
       "source": "scenario rule",
       "persist_markers": []
     },

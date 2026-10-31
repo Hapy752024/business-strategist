@@ -14,6 +14,6 @@ Ground rules for this whole session:
 
 - No ad spend at all. Do not deploy, publish or go live with anything. Do not send any emails, messages, posts, comments or interview invitations, and do not contact anyone. Do not connect or log into any accounts.
 - Paid research data from evidence providers is fine up to a total of {budget_usd} USD for this whole session. Stay under that, and if you hit the limit, tell me what you couldn't check instead of guessing.
-- If you find existing research workspaces, show them to me first. For this session I want you to start new research under projects/_eval ({eval_dir}) and leave existing workspaces untouched.
+- If you find existing research workspaces, show them to me first. For this session I want you to start new research in a new project at {eval_dir} (project slug {alt_slug}) and leave existing workspaces untouched.
 - If a step has to wait until the customer problem is validated, tell me plainly. For this session I will then ask you to record an explicit gate override so we can test the downstream steps; I understand an override is not evidence.
 - If you ask me something and I can't answer it, proceed under a stated assumption and label it as an assumption.

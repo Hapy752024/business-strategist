@@ -86,7 +86,7 @@ def make_out_dir(tmp_path: Path, with_memo: bool = True) -> Path:
         'dry_run': False}))
     _write(out / 'provider-spend.json', json.dumps({'before': {}, 'after': {}, 'delta': {
         'apify_usd': 1.25, 'dataforseo_usd': None, 'serpapi_searches': 12, 'serpapi_usd': None}}))
-    art = out / 'artifacts/projects/_eval' / SLUG / 'business'
+    art = out / 'artifacts/projects' / ('eval-' + SLUG) / 'business-analysis'
     _write(art / 'strategy/intake/founder-context.md', 'A small, profitable practice; no external financing.\n')
     _write(art / 'market_research/pain_points/runs/r1/summary.json', json.dumps({'providers': {
         'brave_search': {'attempts': [{'status': 'ok'}]}, 'reddit': {'attempts': [{'status': 'missing_credentials'}]}}}))
@@ -190,7 +190,8 @@ def test_runner_never_writes_outside_eval_slug(tmp_path, monkeypatch, capsys):
     out = tmp_path / 'out'
     plan = acc.run_acceptance(SCENARIO, out, dry_run=True, reference_project=ref, now='20261030-120000')
     wt = tmp_path / 'tmp/wt'
-    eval_dir = wt / 'projects/_eval' / SLUG
+    eval_dir = wt / 'projects' / ('eval-' + SLUG)
+    assert plan['eval_dirs'] == [str(eval_dir)]
     assert plan['writes'], 'dry run lists planned writes'
     for w in plan['writes']:
         p = Path(w['path'])
@@ -227,11 +228,11 @@ def test_worktree_removed_after_run(tmp_path, monkeypatch):
 
 
 def test_feeder_answers_from_fixture():
-    feeder = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='projects/_eval/' + SLUG,
+    feeder = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='projects/eval-' + SLUG,
                              alt_slug='eval-' + SLUG, budget_usd=25.0)
     kind, text, ids = feeder.reply('I found existing research workspaces:\n1. projects/german-insurance-opportunity/\n'
                                    'Which path: continue [1], or start new research?')
-    assert kind == 'answer' and 'workspace_choice' in ids and 'projects/_eval/' + SLUG in text and 'eval-' + SLUG in text
+    assert kind == 'answer' and 'workspace_choice' in ids and 'projects/eval-' + SLUG + '/' in text
     kind, text, ids = feeder.reply('The pain-first gate blocks GTM. Do you want me to record an explicit gate override?')
     assert 'gate_override' in ids and 'override' in text.lower()
     kind, text, ids = feeder.reply('Roughly how many hours per week can you put into this?')
@@ -270,7 +271,7 @@ def test_private_answers_not_tracked():
 def test_feeder_merges_private_answers(tmp_path):
     tracked = tmp_path / 'founder-answers.json'
     tracked.write_text((SCENARIO / 'founder-answers.json').read_text(encoding='utf-8'), encoding='utf-8')
-    kwargs = dict(eval_dir='projects/_eval/x', alt_slug='eval-x', budget_usd=25.0)
+    kwargs = dict(eval_dir='projects/eval-x', alt_slug='eval-x', budget_usd=25.0)
     question = 'How much capital can you put into this?'
     kind, text, ids = acc.Feeder.load(tracked, **kwargs).reply(question)
     assert ids[0] == 'capital_budget' and 'proceed under a stated assumption' in text.lower()
@@ -287,7 +288,7 @@ def test_scenario_copy_excludes_private_answers(tmp_path):
     for name in ('scenario.md', 'founder-answers.json', 'checkpoints.json', acc.PRIVATE_ANSWERS, '.gitignore'):
         _write(scen / name, '{}')
     wt = tmp_path / 'wt'
-    writes = acc.stage_inputs(scen, wt, wt / 'projects/_eval/s', None)
+    writes = acc.stage_inputs(scen, wt, wt / 'projects/eval-s', None)
     assert {Path(w['path']).name for w in writes} == {'scenario.md'}
 
 
@@ -431,7 +432,7 @@ def test_host_projects_audit(tmp_path):
     (wt / 'projects').mkdir(parents=True)
     before_host = {host: acc.snapshot(host / 'projects')}
     _write(host / 'projects/real/new.md', 'agent wrote here')
-    changed = acc.writes_outside_eval(wt, [wt / 'projects/_eval/s'], acc.snapshot(wt / 'projects'), before_host)
+    changed = acc.writes_outside_eval(wt, [wt / 'projects/eval-s'], acc.snapshot(wt / 'projects'), before_host)
     assert any(c.startswith('host:') and c.endswith('real/new.md') for c in changed)
     assert 'Bash(git rev-parse*)' in acc.DISALLOWED_TOOLS and 'Bash(git rev-parse*)' not in acc.ALLOWED_TOOLS
 
@@ -439,7 +440,7 @@ def test_host_projects_audit(tmp_path):
 def test_cp01_counts_script_created_workspaces(tmp_path):
     out = make_out_dir(tmp_path)
     lines = (out / 'transcript.jsonl').read_text().splitlines(keepends=True)
-    write = _assistant('', [_tool('w0', 'Bash', {'command': 'python3 scripts/evidence_scout/workspace.py --workspace projects/_eval/x'})])
+    write = _assistant('', [_tool('w0', 'Bash', {'command': 'python3 scripts/evidence_scout/workspace.py --workspace projects/eval-x'})])
     (out / 'transcript.jsonl').write_text(''.join(lines[:1] + [write, _result('w0', 'ok')] + lines[1:]))
     by_id = {c['id']: c for c in acc.score(out, CHECKPOINTS)['checkpoints']}
     assert by_id['cp01']['passed'] is False
@@ -545,3 +546,66 @@ def test_hook_denial_counted_once(tmp_path):
     res = _result('d1', 'PreToolUse:Skill hook error: Skill route rejected', is_error=True)
     _write(out / 'transcript.jsonl', call + hook + res)
     assert acc.hook_denials(acc.parse_transcript(out))['count'] == 1
+
+
+def _route_gtm(routing, project, case_id, **kw):
+    return routing.route_request('GTM plan for the venture', intent='gtm-strategy', task_scope='strategy',
+                                 check_skill='archetype-gtm-strategist', project=project, case_id=case_id, **kw)
+
+
+def test_acceptance_workspace_is_routed_and_gated_like_a_real_project(tmp_path, monkeypatch, capsys):
+    """The harness's eval project must be a top-level project slug the router accepts unchanged (Task 7.2a)."""
+    from scripts import case_workspace as cases, route_workflow as routing
+    from scripts.evidence_scout import workspace
+    git = FakeGit()
+    monkeypatch.setattr(acc.subprocess, 'run', git)
+    monkeypatch.setattr(acc.tempfile, 'mkdtemp', lambda prefix='': str(tmp_path / 'tmp'))
+    (tmp_path / 'tmp').mkdir()
+    plan = acc.run_acceptance(SCENARIO, tmp_path / 'out', dry_run=True, reference_project=_reference(tmp_path),
+                              now='20261030-120000')
+    capsys.readouterr()
+    wt = tmp_path / 'tmp/wt'
+    assert len(plan['eval_dirs']) == 1, 'one eval project, no second fallback directory'
+    rel = Path(plan['eval_dirs'][0]).relative_to(wt / 'projects').as_posix()
+    assert rel == plan['project_slug'] and rel.startswith('eval-')
+    prompt = acc.load_prompt(SCENARIO, budget_usd=25.0, eval_dir=f'projects/{rel}', alt_slug=rel)
+    assert f'projects/{rel}' in prompt and '_eval' not in prompt
+    # Same repository root for both: the eval project and an ordinary project, created the documented way.
+    root = tmp_path / 'repo'
+    monkeypatch.setattr(routing, 'ROOT', root)
+    monkeypatch.setattr(workspace, 'ROOT', root)
+    packets = {}
+    for slug in (rel, 'ordinary-topic'):
+        business = workspace.create_project_workspace('Hybrid insurance advisor', f'projects/{slug}', 'Private clients')
+        cases.add_case(business, 'hybrid-advisor', 'Private clients')
+        cases.select(business, 'hybrid-advisor', 'Germany, private clients', 'founder-choice-1', 'founder chose this case')
+        packets[slug] = _route_gtm(routing, slug, 'hybrid-advisor')
+    keys = ('gate_blocked', 'gate', 'first_skill', 'missing_stages')
+    assert {k: packets[rel].get(k) for k in keys} == {k: packets['ordinary-topic'].get(k) for k in keys}
+    assert packets[rel]['gate_blocked'] is True and packets[rel]['gate'] == 'pain_first'
+    with pytest.raises(ValueError, match='--override-stage problem_validation'):
+        _route_gtm(routing, rel, 'hybrid-advisor', override_gate=True)
+    stages = packets[rel]['missing_stages']
+    after = _route_gtm(routing, rel, 'hybrid-advisor', override_gate=True, override_stages=stages,
+                       override_id='founder-override-1')
+    assert after['gate_blocked'] is False and after['gate_override'] is True
+    manifest = cases.resolve(root / 'projects' / rel / 'business-analysis', 'hybrid-advisor') / 'market_research/manifest.json'
+    events = [e for e in json.loads(manifest.read_text())['events'] if e['event'] == 'routing_gate_override:gtm-strategy']
+    assert events and events[0]['override_id'] == 'founder-override-1' and 'problem_validation' in events[0]['stages']
+
+
+def test_eval_project_footprint_is_audited_and_copied_precisely(tmp_path, monkeypatch):
+    """The eval project's own migration lock is its footprint; other projects/ and _infra writes are flagged."""
+    monkeypatch.setattr(acc.subprocess, 'run', lambda *a, **k: subprocess.CompletedProcess(a, 0, '', ''))
+    wt = tmp_path / 'wt'
+    eval_dir = wt / 'projects/eval-s'
+    _write(eval_dir / 'scenario/scenario.md', 'staged input')
+    before = acc.snapshot(wt / 'projects')
+    _write(eval_dir / 'business-analysis/project-manifest.json', '{}')
+    _write(wt / 'projects/_infra/layout-migrations/eval-s/migration.lock', '')
+    _write(wt / 'projects/_infra/layout-migrations/real-topic/migration.lock', '')
+    _write(wt / 'projects/real-topic/notes.md', 'outside')
+    changed = acc.writes_outside_eval(wt, [eval_dir], before)
+    assert changed == ['projects/_infra/layout-migrations/real-topic/migration.lock', 'projects/real-topic/notes.md']
+    assert acc.copy_artifacts(wt, [eval_dir], tmp_path / 'art') == 1
+    assert (tmp_path / 'art/projects/eval-s/business-analysis/project-manifest.json').is_file()

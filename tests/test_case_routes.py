@@ -103,3 +103,28 @@ def test_whitespace_default_follows_evidence_case_not_topic_label(tmp_path, monk
     output = Path(json.loads(capsys.readouterr().out)['output'])
     assert output.is_relative_to(scope / 'market_research/solution_alternatives/runs')
     assert output.is_file()
+
+
+def test_router_errors_name_the_documented_fix(tmp_path, monkeypatch):
+    """Task 7.2a: the acceptance agent could not tell from the errors what to run."""
+    monkeypatch.setattr(routing, 'ROOT', tmp_path)
+    monkeypatch.setattr(workspace, 'ROOT', tmp_path)
+    gtm = dict(intent='gtm-strategy', task_scope='strategy', check_skill='archetype-gtm-strategist')
+    # A nested path is still rejected, and the error says what --project takes.
+    for bad in ('_eval/topic', 'projects/topic', 'Topic'):
+        with pytest.raises(ValueError, match=r'top-level directory name under projects/'):
+            routing.route_request('GTM', project=bad, case_id='a', **gtm)
+    # --case on a project that does not exist is not a migration problem.
+    with pytest.raises(ValueError, match=r'no project at projects/missing-topic.*init_project\.py --project .* --workspace projects/missing-topic --case a'):
+        routing.route_request('GTM', project='missing-topic', case_id='a', **gtm)
+    # A registered but unselected case names the selection command.
+    business = workspace.create_project_workspace('Topic', 'projects/topic', 'Seg')
+    c.add_case(business, 'a', 'A')
+    with pytest.raises(ValueError, match=r'case is not selected for execution.*case_workspace\.py select --workspace projects/topic --case a'):
+        routing.route_request('GTM', project='topic', case_id='a', **gtm)
+    # A legacy (unversioned) project keeps the migration error.
+    legacy = tmp_path / 'projects/legacy-topic/market_research'
+    legacy.mkdir(parents=True)
+    (legacy / 'manifest.json').write_text('{"stages": {}}')
+    with pytest.raises(ValueError, match='migrat'):
+        routing.route_request('GTM', project='legacy-topic', case_id='a', intent='idea-validation', task_scope='focused')

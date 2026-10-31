@@ -2,7 +2,8 @@
 """End-to-end acceptance run: a founder scenario driven headlessly through `claude -p`, then scored.
 
 The run happens in a disposable detached git worktree of --ref (default HEAD; the baseline uses
-486a7ae). The scenario is copied to projects/_eval/<slug>-<timestamp>/scenario/ inside that worktree,
+486a7ae). The eval project is an ordinary top-level project, projects/eval-<scenario>-<timestamp>/, so the
+router and the pain-first gate treat it exactly like a real project; the scenario is copied to its scenario/ inside that worktree,
 plus a read-only copy of the reference project's manifests so the workspace check has something to
 offer. Intake questions are answered from founder-answers.json by resuming the session. Produced files
 are copied from the eval project directories only; the worktree is always removed.
@@ -49,6 +50,8 @@ ROUND_TIMEOUT_S = 45 * 60
 WALL_CAP_S = 4 * 60 * 60
 MIN_ROUND_BUDGET_USD = 0.5
 REFERENCE_PROJECT_SLUG = 'german-insurance-opportunity'
+EVAL_PROJECT_PREFIX = 'eval-'  # eval projects are ordinary top-level projects: projects/eval-<scenario>-<timestamp>/
+MIGRATION_COORDINATION = '_infra/layout-migrations'  # relative to projects/; see scripts/layout_migration.py
 REFERENCE_SEED_FILES = (
     'project-manifest.json',
     'business-analysis/project-manifest.json',
@@ -949,6 +952,11 @@ def _inside(path: Path, base: Path) -> bool:
         return False
 
 
+def eval_project_slug(slug: str) -> str:
+    """Top-level project slug for a run: the same slug rules as a real project, so routing and gates apply."""
+    return f'{EVAL_PROJECT_PREFIX}{slug}'
+
+
 def stage_inputs(scenario_dir: Path, wt: Path, eval_dir: Path, reference_project: Path | None) -> list[dict]:
     """Copy the scenario and the read-only reference seed into the disposable worktree."""
     writes = []
@@ -1006,7 +1014,8 @@ def copy_artifacts(wt: Path, eval_dirs: list[Path], dest: Path) -> int:
             continue
         for src in d.rglob('*'):
             rel_parts = src.relative_to(d).parts
-            if not src.is_file() or COPY_SKIP_DIRS & set(rel_parts) or (d.parent.name == '_eval' and rel_parts[:1] == ('scenario',)):
+            # scenario/ holds the runner's staged input, not agent output.
+            if not src.is_file() or COPY_SKIP_DIRS & set(rel_parts) or rel_parts[:1] == ('scenario',):
                 continue
             target = dest / src.relative_to(wt)
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -1121,7 +1130,7 @@ def run_acceptance(scenario_dir: Path = DEFAULT_SCENARIO, out_dir: Path | None =
     scenario_dir = Path(scenario_dir)
     stamp = now or datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')
     slug = f'{scenario_dir.name}-{stamp}'
-    alt_slug = f'eval-{slug}'
+    alt_slug = eval_project_slug(slug)
     out_dir = Path(out_dir) if out_dir else ROOT / 'evals/acceptance/runs' / f'{ref.replace("/", "-")}-{stamp}'
     reference_project = Path(reference_project) if reference_project else default_reference_project()
     sha = resolve_ref(ref)
@@ -1135,14 +1144,15 @@ def _run_in_worktree(scenario_dir, out_dir, sha, slug, alt_slug, ref, budget_usd
                      reference_project, model, serpapi_usd_per_search, max_rounds, tools_blocked):
     parent, wt = create_worktree(sha)
     try:
-        eval_dir = wt / 'projects/_eval' / slug
-        eval_dirs = [eval_dir, wt / 'projects' / alt_slug]
+        eval_dir = wt / 'projects' / alt_slug  # a top-level slug: route_workflow --project accepts it unchanged
+        eval_dirs = [eval_dir]
         removed = hide_scoring_files(wt)
         writes = stage_inputs(scenario_dir, wt, eval_dir, reference_project)
-        eval_rel = f'projects/_eval/{slug}'
+        eval_rel = f'projects/{alt_slug}'
         prompt = load_prompt(scenario_dir, budget_usd=budget_usd, eval_dir=eval_rel, alt_slug=alt_slug)
         if dry_run:
             plan = {'ref': ref, 'ref_sha': sha, 'worktree': str(wt), 'eval_dirs': [str(d) for d in eval_dirs],
+                    'project_slug': alt_slug,
                     'out_dir': str(out_dir), 'writes': writes + out_dir_writes(out_dir),
                     'reference_seeded': any(w['kind'] == 'reference_seed' for w in writes),
                     'removed_from_worktree': removed,
@@ -1223,6 +1233,8 @@ def _live(scenario_dir, out_dir, wt, eval_dirs, writes, prompt, slug, alt_slug, 
 def writes_outside_eval(wt: Path, eval_dirs: list[Path], before: dict, before_host: dict | None = None) -> list[str]:
     after = snapshot(wt / 'projects')
     prefixes = [d.relative_to(wt / 'projects').as_posix() + '/' for d in eval_dirs]
+    # Guarded project APIs keep a per-project migration lock under _infra; it belongs to the eval project.
+    prefixes += [f'{MIGRATION_COORDINATION}/{d.name}/' for d in eval_dirs if d.parent == wt / 'projects']
     changed = [f'projects/{rel}' for rel, meta in after.items()
                if before.get(rel) != meta and not any(rel.startswith(p) for p in prefixes)]
     status = subprocess.run(['git', 'status', '--porcelain'], cwd=wt, capture_output=True, text=True, check=False).stdout

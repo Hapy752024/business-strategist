@@ -108,14 +108,23 @@ def missing_strategy_stages(manifest_path: Path | None, required: list[str]) -> 
     return missing
 
 
+PROJECT_SLUG_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+
+
+def check_project_slug(project_slug: str) -> None:
+    """Reject anything but a top-level project directory name; real and eval projects follow one rule."""
+    if not PROJECT_SLUG_RE.fullmatch(project_slug):
+        raise ValueError(f"Project must be a lowercase project slug, not a path: pass the top-level directory name "
+                         f"under projects/ (for projects/my-topic/ use --project my-topic); got {project_slug!r}")
+
+
 def pain_gate_state(project_slug: str, case_id: str = "") -> tuple[bool, Path | None]:
     """Return (passed, manifest_path) for a project's pain-first gate.
 
     A missing or unreadable research manifest means the gate has not passed:
     no evidence-backed segment/journey/pain analysis exists yet.
     """
-    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", project_slug):
-        raise ValueError("Project must be a lowercase project slug, not a path")
+    check_project_slug(project_slug)
     projects_root = ROOT / "projects"
     project_root = subprojects.business(projects_root / project_slug)
     manifest_path = project_root / PAIN_GATE_MANIFEST_REL
@@ -414,13 +423,24 @@ def _route_request(
     if selected.get('mode') in {'appraisal', 'insights', 'case_plan'} and not project:
         packet.update(gate_blocked=True, gate='case_scope_required', first_skill=skill)
     if case_id and not modern:
+        if project and not umbrella.exists():
+            raise ValueError(f'no project at projects/{project}: create it and register the case first with '
+                             f'`python3 scripts/evidence_scout/init_project.py --project "<name>" '
+                             f'--workspace projects/{project} --case {case_id}`')
         raise ValueError('case mode requires explicit migration')
     if modern:
         project_state = cases.read_project(project_root)
         if commitment and not case_id:
             case_id = (project_state.get('selection') or {}).get('case_id', '')
         if commitment:
-            execution = cases.binding(project_root, case_id)
+            try:
+                execution = cases.binding(project_root, case_id)
+            except ValueError as exc:
+                if 'not selected' not in str(exc):
+                    raise
+                raise ValueError(f'{exc}: only on an explicit founder choice, run `python3 scripts/case_workspace.py '
+                                 f'select --workspace projects/{project} --case {case_id or "<id>"} --configuration '
+                                 f'"<chosen scope>" --decision-id <id> --reason "<founder decision>"`, then route again') from exc
             if design:
                 cases.check_plan(project_root, cases.load(project_root / 'strategy/strategy-plan.json'))
         else:
@@ -484,7 +504,8 @@ def _route_request(
                 if manifest_path is None:
                     raise ValueError("Cannot audit gate override: research manifest is missing")
                 if modern and not set(missing).issubset(override_stages or []):
-                    raise ValueError('Override must explicitly name every missing evidence stage')
+                    raise ValueError('Override must explicitly name every missing evidence stage: pass '
+                                     + ' '.join(f'--override-stage {m}' for m in missing))
                 record_gate_override(manifest_path, selected["id"], override_id, override_stages or [])
                 packet.update(gate_blocked=False, gate_override=True)
     if project and selected.get("requires_pain_gate"):
@@ -515,8 +536,7 @@ def _route_request(
 def route_request(request: str, **kwargs) -> dict[str, Any]:
     project = kwargs.get('project', '')
     if project:
-        if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', project):
-            raise ValueError('Project must be a lowercase project slug, not a path')
+        check_project_slug(project)
         root = ROOT / 'projects' / project
         if (root / cases.PENDING).exists():
             raise ValueError('pending publication: recover before dispatch')
