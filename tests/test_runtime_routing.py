@@ -74,12 +74,39 @@ def test_gate_rechecked_on_each_call_and_override_is_replay_safe(tmp_path, monke
     args = json.loads(payload['tool_input']['args'])
     args['route']['override_gate'] = True
     args['route']['override_stages'] = ['problem_validation']
+    args['route']['override_reason'] = 'Founder: "skip validation, I accept the risk"'
     payload['tool_input']['args'] = json.dumps(args)
     hook.check_dispatch(payload)
     before = path.read_bytes()
     hook.check_dispatch(payload)
     assert path.read_bytes() == before
-    assert len(json.loads(before)['events']) == 1
+    events = json.loads(before)['events']
+    assert len(events) == 1
+    assert events[0]['source'] == 'agent_envelope'
+    assert events[0]['override_reason'] == 'Founder: "skip validation, I accept the risk"'
+
+
+@pytest.mark.parametrize('reason', [None, '', '   ', 7])
+def test_envelope_override_requires_nonempty_reason(tmp_path, monkeypatch, reason):
+    """I2: an agent-authored override_gate needs the user's words; otherwise it is refused, nothing is recorded."""
+    monkeypatch.setattr(router, 'ROOT', tmp_path)
+    monkeypatch.setattr(hook, 'ROOT', tmp_path)
+    root = tmp_path / 'projects/venture'
+    cases.initialize(root, 'Venture')
+    scope = cases.add_case(root, 'a', 'A')
+    cases.select(root, 'a', 'Test', 'select-fixture', 'Explicit fixture selection')
+    path = scope / 'market_research/manifest.json'
+    payload = event('venture', False)
+    packet = json.loads(payload['tool_input']['args'])
+    packet['route'].update(request='Create a social media plan', intent='social-marketing', override_gate=True,
+                           override_stages=['problem_validation'])
+    if reason is not None:
+        packet['route']['override_reason'] = reason
+    payload['tool_input'].update(skill='social-digital-marketing-planner', args=json.dumps(packet))
+    before = path.read_bytes()
+    with pytest.raises(ValueError, match='override_reason'):
+        hook.check_dispatch(payload)
+    assert path.read_bytes() == before
 
 
 def test_cwd_prevents_silent_standalone_bypass(tmp_path, monkeypatch):

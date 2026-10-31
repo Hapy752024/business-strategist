@@ -34,7 +34,7 @@ Supply a `project` destination or `"standalone": true` when there is no project 
 
 Direct repository slash invocations currently need the same envelope; if absent they stop with a routing explanation. Users can use the `business-strategist` entrypoint with natural language to have the agent prepare the envelope. Foreign plugin slash commands are unaffected.
 
-`override_gate: true` is only for an explicit user override already given in the conversation. It uses the existing manifest audit writer. Session/call identity makes redelivery of an override idempotent. An audit record is not proof of user authorization or that the specialist subsequently executed.
+`override_gate: true` is only for an explicit user override already given in the conversation and is refused without a nonempty `override_reason` quoting the user's words. It uses the existing manifest audit writer; the event records `source: "agent_envelope"` and the reason, while a founder's CLI `--override-gate` records `source: "cli"`. Session/call identity makes redelivery of an override idempotent. An audit record is not proof of user authorization or that the specialist subsequently executed.
 
 The host wrapper turns script/import errors into blocking exit 2. Hook output tests and configured-command subprocess tests cover both invocation paths. This is **skill-dispatch enforcement**, not complete tool mediation: shell commands, direct file reads/writes, disabled hooks, other hosts and foreign skills remain outside this boundary. Do not claim it prevents a hostile agent with filesystem access from bypassing policy. Specialist prerequisites and paid-provider permissions remain separately applicable.
 

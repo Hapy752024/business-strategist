@@ -131,6 +131,7 @@ def test_routing_gate_passes_after_gate_and_override_is_audited(tmp_path, monkey
     assert packet["gate_override"] is True
     events = json.loads(manifest_path.read_text(encoding="utf-8"))["events"]
     assert any(event["event"] == "routing_gate_override:social-marketing" for event in events)
+    assert all(event.get("source") == "cli" for event in events if event["event"].startswith("routing_gate_override:"))
 
 
 @pytest.mark.parametrize('slug', ['../escape', '/tmp/escape', 'one/two', '_archive'])

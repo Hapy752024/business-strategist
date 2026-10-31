@@ -595,6 +595,7 @@ def test_acceptance_workspace_is_routed_and_gated_like_a_real_project(tmp_path, 
     manifest = cases.resolve(root / 'projects' / rel / 'business-analysis', 'hybrid-advisor') / 'market_research/manifest.json'
     events = [e for e in json.loads(manifest.read_text())['events'] if e['event'] == 'routing_gate_override:gtm-strategy']
     assert events and events[0]['override_id'] == 'founder-override-1' and 'problem_validation' in events[0]['stages']
+    assert events[0]['source'] == 'cli'
 
 
 def test_eval_project_footprint_is_audited_and_copied_precisely(tmp_path, monkeypatch):

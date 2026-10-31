@@ -162,8 +162,15 @@ def pain_gate_state(project_slug: str, case_id: str = "") -> tuple[bool, Path | 
     return passed, manifest_path
 
 
-def record_gate_override(manifest_path: Path, route_id: str, override_id: str = "", stages=()) -> None:
-    """Append an auditable override event to the research manifest."""
+def record_gate_override(manifest_path: Path, route_id: str, override_id: str = "", stages=(),
+                         source: str = "cli", reason: str = "") -> None:
+    """Append an auditable override event to the research manifest.
+
+    ``source`` is ``cli`` for a founder's ``--override-gate`` and ``agent_envelope`` for the Skill hook, so audits can
+    tell a terminal decision from an agent-authored one; ``reason`` carries the quoted user words when given."""
+    if source not in {"cli", "agent_envelope"}:
+        raise ValueError("override source must be cli or agent_envelope")
+    provenance = {"source": source, **({"override_reason": reason} if reason else {})}
     modern = cases.locate(manifest_path)
     if modern:
         data = cases.load(manifest_path)
@@ -173,7 +180,8 @@ def record_gate_override(manifest_path: Path, route_id: str, override_id: str = 
         previous = next((e for e in data['events'] if e.get('event') == event_name
                          and ((override_id and e.get('override_id') == override_id)
                               or (e.get('stages') == list(stages) and e.get('assessment_revision') == data.get('assessment_revision')
-                                  and e.get('selection_generation') == generation))), None)
+                                  and e.get('selection_generation') == generation
+                                  and e.get('source', 'cli') == source))), None)
         if previous:
             if (previous.get('assessment_revision') != data.get('assessment_revision') or previous.get('stages') != list(stages)
                     or previous.get('selection_generation') != cases.read_project(modern)['selection_generation']):
@@ -181,7 +189,8 @@ def record_gate_override(manifest_path: Path, route_id: str, override_id: str = 
             return
         data['events'].append({'ts': cases.now(), 'event': event_name, 'override_id': override_id,
                                'assessment_revision': data.get('assessment_revision'), 'stages': list(stages),
-                               'selection_generation': cases.read_project(modern)['selection_generation']})
+                               'selection_generation': cases.read_project(modern)['selection_generation'],
+                               **provenance})
         m = cases.read_project(modern)
         import uuid
         cases.publish_locked(modern, {str(manifest_path.relative_to(modern)): cases.encoded(data)}, expected_revision=m['manifest_revision'],
@@ -202,6 +211,7 @@ def record_gate_override(manifest_path: Path, route_id: str, override_id: str = 
             **({"override_id": override_id} if override_id else {}),
             "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "event": f"routing_gate_override:{route_id}",
+            **provenance,
         })
         data["manifest_revision"] = int(data.get("manifest_revision", 0)) + 1
         data["updated_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
@@ -221,6 +231,8 @@ def _route_request(
     check_skill: str = "",
     override_id: str = "",
     override_stages: list[str] | None = None,
+    override_source: str = "cli",
+    override_reason: str = "",
     entry_mode: str | None = None,
     standalone_brief: str = '',
     subproject: str = '',
@@ -518,7 +530,8 @@ def _route_request(
                 if modern and not set(missing).issubset(override_stages or []):
                     raise ValueError('Override must explicitly name every missing evidence stage: pass '
                                      + ' '.join(f'--override-stage {m}' for m in missing))
-                record_gate_override(manifest_path, selected["id"], override_id, override_stages or [])
+                record_gate_override(manifest_path, selected["id"], override_id, override_stages or [],
+                                     source=override_source, reason=override_reason)
                 packet.update(gate_blocked=False, gate_override=True)
     if project and selected.get("requires_pain_gate"):
         passed, manifest_path = pain_gate_state(project, case_id)
@@ -539,7 +552,8 @@ def _route_request(
                 if manifest_path is None:
                     raise ValueError("Cannot audit gate override: research manifest is missing")
                 if not packet.get("gate_override"):
-                    record_gate_override(manifest_path, selected["id"], override_id, override_stages or [])
+                    record_gate_override(manifest_path, selected["id"], override_id, override_stages or [],
+                                     source=override_source, reason=override_reason)
                 packet["gate_blocked"] = False
                 packet["gate_override"] = True
     return packet

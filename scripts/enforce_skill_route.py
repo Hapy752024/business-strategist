@@ -80,7 +80,14 @@ def check_dispatch(event: dict) -> dict:
     if not isinstance(task, str):
         raise ValueError('Specialist input must be text')
     override_id = ''
+    override_reason = ''
     if route.get('override_gate'):
+        # The envelope is agent-authored: an override is honoured only with the user's own words as the reason,
+        # and it is recorded as source=agent_envelope so audits can tell it from a founder's CLI --override-gate.
+        reason = route.get('override_reason')
+        if not isinstance(reason, str) or not reason.strip():
+            raise ValueError("override_gate requires a nonempty override_reason quoting the user's explicit override")
+        override_reason = reason.strip()
         if not isinstance(event.get('session_id'), str) or not event['session_id']:
             raise ValueError('Audited override requires a session ID')
         override_id = hashlib.sha256((event['session_id'] + ':' + str(event.get('tool_use_id', args))).encode()).hexdigest()
@@ -88,7 +95,8 @@ def check_dispatch(event: dict) -> dict:
     if entry_mode is None and 'standalone' in route:
         entry_mode = 'standalone' if route['standalone'] else 'business_linked'
     packet = route_request(route['request'], intent=route['intent'], task_scope=route['task_scope'],
-                           project=project, case_id=case_id, entry_mode=entry_mode, standalone_brief=route.get('standalone_brief', ''), subproject=route.get('subproject', ''), override_gate=route.get('override_gate', False), override_stages=route.get('override_stages', []), check_skill=name, override_id=override_id)
+                           project=project, case_id=case_id, entry_mode=entry_mode, standalone_brief=route.get('standalone_brief', ''), subproject=route.get('subproject', ''), override_gate=route.get('override_gate', False), override_stages=route.get('override_stages', []), check_skill=name, override_id=override_id,
+                           override_source='agent_envelope', override_reason=override_reason)
     if packet.get('gate_blocked'):
         raise ValueError(packet['reason'])
     if isinstance(event.get('session_id'), str) and event['session_id'] and project:
