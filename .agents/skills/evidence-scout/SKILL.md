@@ -23,7 +23,6 @@ Keep the two sampling frames separate and assess each before segment, journey, p
 Once idea-grill is done or skipped, run these in parallel with customer-voice collection: search journey (`scripts/evidence_scout/search_journey.py`), competitor content (`analyze_competitor_marketing.py --content-inventory`), keyword volumes (`scripts/marketing/keyword_volume.py`) and social topics (`scripts/marketing/social_topics.py`).
 None waits for review, synthesis, a claim ledger, the pain-first gate or a GTM stage.
 Commands, flags and the SERP-study method: [workflow](references/workflow.md).
-A failed provider is a stated gap.
 
 **Completion and delivery.**
 For substantive research and case reruns, follow repo-root `references/research-execution.md` and check collection, reviewed research and delivery separately with `scripts/evidence_scout/validate_research_completion.py`.
@@ -45,4 +44,5 @@ Read [workflow](references/workflow.md), [provider policy](references/provider-p
 ## Output
 
 Return artifact paths, provider status, evidence and counter-evidence, confidence, gaps and next test.
+Separate observed evidence from interpretation; keep the `Unreviewed` label on fallbacks.
 Also read when the stage needs it: repo-root `references/research-coaching.md`, repo-root `references/journey-activation-and-measurement.md` (section 1), repo-root `references/research-data-and-precedents.md`, repo-root `references/institutional-and-university-sources.md`, `references/modules/source-worker-packet.md`, repo-root `references/task-scope.md`.

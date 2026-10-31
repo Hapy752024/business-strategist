@@ -1,231 +1,51 @@
 # Consolidated case insights
 
-Contents:
-- [Before drafting](#before-drafting)
-- [Draft and review](#draft-and-review)
-- [Enriched research and downstream case plans](#enriched-research-and-downstream-case-plans)
-- [Contract version 3: assumption register](#contract-version-3-assumption-register)
-- [Decision memo](#decision-memo)
+For a registered Business case, `cases/<id>/case_insights.md` is the one current reader-facing assessment. The project README navigates cases; feasibility, economics and research files remain source material. Do not create a case-level README for new cases; older README cases convert only through the case publisher, which refuses while a stage, question or plan still consumes the old README (refresh that consumer from reviewed original sources first).
 
-For a registered Business case, `cases/<id>/case_insights.md` is the one current
-reader-facing assessment. The project README navigates cases; supporting
-feasibility, economics and research files remain source material. Do not create
-a case-level README for new cases. Older cases with a README stay in legacy
-presentation until explicitly converted through the case publisher.
-
-Conversion first checks whether a case, stage, answered question or current
-Business plan still consumes the old README. If so, validation identifies the
-consumer and publication changes nothing. Refresh that consumer through its
-own workflow using the reviewed original sources, then retry conversion. Do
-not silently redirect its evidence binding to the new narrative. Once those
-references are cleared, conversion archives the README and retires its obsolete
-artifact registration while preserving unrelated stage passes.
-
-Use `templates/project/case_insights.md` as the section pattern. Update the
-current synthesis after each coherent batch of reviewed research, deep dives, a
-founder question that was answered, corrected evidence or changed assumptions;
-do not wait for the whole workflow to finish. Retain valid earlier findings.
-Integrate each answer where it changes the analysis. A link to a report
-does not substitute for the answer or its business implication. State unknown
-market size, demand, prevalence or willingness to pay plainly when evidence does
-not establish them. Keep process logs, run IDs, validation hashes, skill coverage
-and provider mechanics out of the client text.
+Use `templates/project/case_insights.md` as the section pattern. Update the synthesis after each coherent batch of reviewed research, deep dives, answered founder questions, corrected evidence or changed assumptions; do not wait for the whole workflow. Integrate each answer where it changes the analysis; a link to a report does not substitute for the answer or its implication. State unknown market size, demand, prevalence or willingness to pay plainly. Keep process logs, run IDs, hashes, skill coverage and provider mechanics out of the client text.
 
 ## Before drafting
 
-1. Resume the case and inspect `case_insights.md`, the case manifest and current
-   input inventory. The current document is orientation, not evidence for itself.
-2. Capture a material user research question through
-   `case_workspace.py record-question` in existing coaching state. Founder
-   preferences remain `known_answers`, not customer evidence. Bind an answered
-   question to its reviewed analysis/source file.
-3. Run `python3 scripts/validate_case_insights.py --workspace <business-root>
-   --case <id> --inventory --json`. Reconcile all runs, deep dives, stage
-   artifacts, old conclusions and explicit shared inputs. Judge each candidate
-   output as incorporated, superseded, duplicate, no material finding or out of
-   scope; give a reason. During an interim publication, inputs awaiting review
-   may be marked pending only when `scope_status` is `progress` and
-   `pending_summary` describes what remains in plain language. A complete
-   publication cannot contain pending inputs. Run-level machine derivatives may
-   appear as grouped rows; inspect their generated member list when a finding or
-   source binding requires it. Do not treat newer files as automatically more correct.
-   The inventory includes explicitly applicable shared sources from the case,
-   stages, answered questions and the previous insights packet. Shared sources
-   newly added to the draft appear in `--prepare` output too: reconcile that
-   complete inventory before review. Do not import unrelated shared directories.
-   Bindings retain their locator and applicability; inspect changed evidence and
-   refresh its binding before incorporating it. Missing inputs need an explicit
-   coverage limitation or reasoned exclusion, never an invented finding.
-4. Check cited findings against original passages and existing claim reviews.
-   Keep customer experience separate from supplier statements. Repeated copies
-   of one incident count once.
+1. Resume the case and inspect `case_insights.md`, the manifest and inputs. The current document is orientation, not evidence for itself.
+2. Capture a material user research question with `case_workspace.py record-question`. Founder preferences remain `known_answers`, not customer evidence.
+3. Run `python3 scripts/validate_case_insights.py --workspace <business-root> --case <id> --inventory --json` and give every candidate input a disposition with a reason (incorporated, superseded, duplicate, no material finding, out of scope; pending only in a progress publication with a plain-language `pending_summary`). Newer files are not automatically more correct. Missing inputs need an explicit coverage limitation, never an invented finding.
+4. Check cited findings against original passages and claim reviews. Keep customer experience separate from supplier statements; repeated copies of one incident count once.
 
 ## Draft and review
 
-Write one concise, cohesive assessment with the sections in the template. Cover
-the current customer and problem, market and demand, alternatives, feasibility,
-material risks, recommendation, unanswered questions and sources. Use the
-existing numeric claim marker for source-attributed decision figures and the
-economics marker for model results. Checked numeric context still needs semantic
-source inspection; unmarked prose is not automatically verified.
+Write one concise assessment with the template's sections: customer and problem, market and demand, alternatives, feasibility, risks, recommendation, unanswered questions and sources. Use numeric claim markers for source-attributed figures and economics markers for model results; unmarked prose is not verified.
 
-For renewed publications, set `publication_contract_version: 2` and put
-`{{evidence_claim.<id>}}` next to each material reviewed VOC statement. Supply
-`publication_claims` referencing the existing verified claim ID, supporting
-evidence ID and current ledger binding. Bind the ledger, evidence JSONL and
-source review; the renderer inserts the original URL from the accepted evidence
-record. For official/contextual sources use a bound manual-capture receipt,
-capture index and exact retained supporting passage; the renderer checks the
-raw capture hash and inserts its original URL and date. Mark inspected secondary
-accounts beside the affected claim with a visible limitation; keep legitimate
-private interviews as protected local references. The semantic reviewer judges
-whether each passage actually supports the statement. A source-list link alone
-does not establish claim support. Founder inputs, assumptions and model outputs
-must be labeled for what they are.
+Renewed publications use contract version 2: put `{{evidence_claim.<id>}}` next to each material reviewed statement; the renderer inserts original URLs from accepted evidence or bound manual captures. Mark inspected secondary accounts with a visible limitation. A source-list link alone does not establish claim support. Label founder inputs, assumptions and model outputs for what they are.
 
-Prepare the exact rendered document with
-`validate_case_insights.py --packet <draft.json> --prepare --out <fresh-dir>`.
-Review that rendered text with the input inventory and underlying passages.
-Compare conclusions across runs for the same segment, period and definition;
-also check different scope, changed dates and unequal evidence strength.
-Record each material conflict's source pair, scope, resolution and location in
-the document. An unresolved factual disagreement may remain only if the text
-discloses it and the recommendation reflects it. Check missing earlier findings,
-answered questions, unsupported confidence, inconsistent recommendations and
-whether the document can be read without opening an annex. Record reviewer type
-and mode honestly; an inline review is not independent.
+Prepare the rendered document with `validate_case_insights.py --packet <draft.json> --prepare --out <fresh-dir>` and review that text against the inventory and underlying passages. Compare conclusions across runs for the same segment, period and definition; record each material conflict and its resolution, and disclose any unresolved disagreement in the text and the recommendation. Record reviewer type and mode honestly; an inline review is not independent. Publication requires review outcome `pass`, every check passed and no blocking findings (the validator enforces this; it does not infer approval from prose). Disclosed real-world uncertainty is not an unresolved review defect.
 
-Record `review.outcome` as `pass` or `revise`. Each check has `status`
-(`pass`, `fail`, or `not_reviewed`) and an evidence-bearing `rationale`.
-List unresolved defects in `blocking_findings`, even when the rest of the brief
-is good. Publication requires outcome `pass`, every check passed and an empty
-blocking list. Fix the draft and review the newly rendered text before clearing
-defects. Real-world uncertainty disclosed in the text is distinct from an
-unresolved defect in the review. The validator enforces these explicit outcomes;
-it does not infer approval from prose. Older packets without outcomes need a
-fresh review and cannot establish a current reviewed brief.
+An interim (`progress`) publication states that research continues and names the decision-relevant open question; newly captured material cannot support a claim until reviewed. `complete` under v2 needs a separate reviewer record bound as `independent_review`; inline review is valid only for progress snapshots. Local identities are inspectable records, not proof against dishonest authorship.
 
-Publish after each substantive review batch through the same validator and
-publisher. An interim document must state that research continues and identify
-the decision-relevant open question or coverage limit; it remains a useful
-current snapshot, not a completed investigation. Newly captured material must
-not support a claim until reviewed. Changes to evidence already supporting a
-finding stale the publication until it is revised. Final delivery still requires
-the requested scope and all pending dispositions to be resolved or honestly
-closed.
+If a current comparison exists, a presentation-only refresh retains it verbatim; change assessed conclusions through `case-appraisal` first. Packet shape: `validate_case_insights.py --help` and the existing case's last packet; never copy example values into a case.
 
-For `scope_status: complete` under v2, store an actual separate reviewer record
-under `cases/<id>/market_research/case_insights/reviews/` and bind it as
-`independent_review`. The record identifies author, reviewer and task; binds the
-exact rendered and inventory digests plus every reviewed source path/digest; and
-states outcome and material findings. Review the original case concept, source
-passages and roles, country/period, numeric context, answered deep dives,
-counterevidence, founder fit and the recommendation. Resolve material errors or
-make uncertainties visible before `pass`. Inline review remains valid for
-progress snapshots, never for completed v2 delivery. Local identities are
-inspectable records, not proof against dishonest authorship. A completed run
-must itself be bound into the current insight snapshot; a different current
-snapshot cannot close its delivery check.
-
-The packet uses the case's current assessment and manifest revisions,
-`document`, `source_bindings`, complete `coverage`, `question_coverage`,
-`conflicts`, `numeric_claims` when relevant, an `impact` classification and a
-`review` bound to rendered text and inventory digests. Set `scope_status` to
-`progress` and provide `pending_summary` for an interim publication; use
-`complete` only after final reconciliation. Run the validator on the
-reviewed packet. It checks structure, coverage declarations, figures and
-freshness; the reviewer owns semantic accuracy and materiality judgments.
-For a case with no comparison yet, supply `comparison` with plain-language
-`summary`, `principal_uncertainty` and `next_action`. If a current comparison
-exists, retain those fields verbatim in a presentation-only insights refresh;
-change assessed conclusions through `case-appraisal` first.
-
-The packet is JSON. The shape below is illustrative: use the current inventory,
-actual bindings and digest outputs; never copy its example values into a case.
-
-```json
-{
-  "assessment_revision": 1,
-  "manifest_revision": 2,
-  "impact": "presentation_only",
-  "comparison": {"summary": "Current scoped conclusion", "principal_uncertainty": "What remains unverified", "next_action": "The next decision-changing test"},
-  "document": "# Actual case title\nLast updated: ...\n...",
-  "source_bindings": [],
-  "coverage": [
-    {"path": "cases/example/market_research/.../report.md", "digest": "...", "disposition": "incorporated", "reason": "Explain the substantive use.", "section": "Customer and problem"}
-  ],
-  "question_coverage": [
-    {"id": "market-size", "section": "Market and demand", "reason": "Explain how the answer was integrated."}
-  ],
-  "conflicts": [
-    {"left": "source path", "right": "other source path", "scope": "same buyer and period", "resolution": "unresolved_disclosed", "rationale": "Explain both readings and the decision consequence.", "section": "Risks, conflicting evidence and open questions"}
-  ],
-  "review": {
-    "reviewer_type": "analyst",
-    "review_mode": "inline",
-    "outcome": "pass",
-    "blocking_findings": [],
-    "summary": "State what was actually inspected.",
-    "checks": {
-      "accuracy": {"status": "pass", "rationale": "Source-to-claim review rationale."},
-      "completeness": {"status": "pass", "rationale": "Input and question coverage rationale."},
-      "contradictions": {"status": "pass", "rationale": "Cross-run comparison rationale."},
-      "clarity": {"status": "pass", "rationale": "Standalone reader review rationale."}
-    },
-    "rendered_digest": "<from prepare>",
-    "inventory_digest": "<from inventory>"
-  }
-}
-```
-
-Publish with `python3 scripts/case_workspace.py insights --workspace
-<business-root> --case <id> --input <reviewed-packet.json> --decision-id <id>
---reason <reason>`. This uses the existing recoverable transaction. A mere
-presentation rewrite does not revalidate a research stage. Changed concept,
-economics or established recommendation uses `case-appraisal` or correction,
-with existing invalidation; then refresh the insights. Research may continue
-while consolidation is pending, but do not describe the old brief as current.
-
-When source correction withdraws a supporting document, its numeric claims are
-retired in the same transaction and preserved in history with the earlier text.
-Claims in unchanged documents remain checked; a stale claim cannot be bypassed
-by simply omitting its source from a new insights packet.
-
-Before closing a substantive case task, check the published document with
-`validate_case_insights.py --workspace <business-root> --case <id> --json` and
-link it to the user. For focused answers outside a registered case, apply the
-task-scope rules; do not create a case just to answer the question.
-
-Source links are relative to `case_insights.md`. A shared source under the
-Business root can be cited as `../../market_research/<source>.md`. Parent
-segments are allowed while the target stays within that Business workspace;
-missing files, filesystem escapes and symlink traversal are rejected.
+Publish with `python3 scripts/case_workspace.py insights --workspace <business-root> --case <id> --input <reviewed-packet.json> --decision-id <id> --reason <reason>`. A presentation rewrite does not revalidate a research stage. While consolidation is pending, do not describe the old brief as current. Before closing a substantive case task, check with `validate_case_insights.py --workspace <business-root> --case <id> --json` and link the document to the user. For focused answers outside a registered case, apply the task-scope rules; do not create a case just to answer the question. Source links are relative to `case_insights.md` and must stay inside the Business workspace.
 
 ## Enriched research and downstream case plans
 
-Apply [research-data-and-precedents.md](research-data-and-precedents.md) for decision-led statistics/studies, international commercial precedents and investor signals. Preserve the separate VOC/review contracts. After consolidating material findings, refresh the current case business plan using [case-assessment.md](case-assessment.md). A provisional appraisal plan or stale plan does not establish full case delivery.
+Apply [research-data-and-precedents.md](research-data-and-precedents.md) for statistics/studies, international commercial precedents and investor signals. After consolidating material findings, refresh the case business plan using [case-assessment.md](case-assessment.md); a provisional or stale plan does not establish full case delivery.
 
 Vocabulary: prefer "Not checked" and "I don't know for sure" to hedged affirmatives ("likely", "should", "clearly", "obviously"); semantic review flags them unless a cited source supports that strength. See `research-coaching.md` for the challenging stance.
 
 ## Contract version 3: assumption register
 
-A case with `assumptions.json` (every case registered since 2026-10-21) is held to the version 3 content rules below whatever version the packet declares; declaring `publication_contract_version: 3` also applies every version 2 publication rule. Version 3 adds:
+A case with `assumptions.json` (every case registered since 2026-10-21) is held to version 3 whatever the packet declares; version 3 includes every version 2 rule and adds:
 
-- Two required sections before `## Sources`: `## What would change this recommendation`, containing at least one `{{assumption.<id>}}` marker, and `## What we could not check`, with at least one `- ` bullet naming a gap and why. "Not checked" is a valid finding.
-- `{{assumption.<id>}}` renders the entry's current status and statement, for example `**[contested]** Owners pay for monthly bookkeeping help.` Unknown ids stop publication.
-- The publisher inserts "Top unknowns from the assumption register" before `## Recommended next decisions` and a "Closed experiments" list before the change-trigger section. Do not author these blocks.
-- Assumption status changes only through `case_workspace.py assumptions` or `experiment-close`; both mark current insights pending.
-
-- Every paragraph in `## Executive assessment` and `## Recommended next decisions` must contain an `{{evidence_claim.<id>}}`, `{{source_numeric.<id>}}` or `{{assumption.<id>}}` marker, or open with one of the status phrases `Not checked`, `Unknown`, `Insufficient evidence` or `Refuted` (bold allowed). Other sections are unaffected. A blunt recommendation must point at evidence or say plainly what is not known.
+- Two required sections before `## Sources`: `## What would change this recommendation` (at least one `{{assumption.<id>}}` marker) and `## What we could not check` (at least one `- ` bullet naming a gap and why). "Not checked" is a valid finding.
+- The publisher inserts the top unknowns and closed experiments blocks; do not author them. Assumption status changes only through `case_workspace.py assumptions` or `experiment-close`.
+- Every paragraph in `## Executive assessment` and `## Recommended next decisions` carries an evidence, numeric or assumption marker, or opens with `Not checked`, `Unknown`, `Insufficient evidence` or `Refuted`. A blunt recommendation must point at evidence or say plainly what is not known.
 
 Legacy cases without a register keep contracts 1 and 2 and cannot close version 3 delivery.
 
 ## Decision memo
 
-`python3 scripts/evidence_scout/build_decision_memo.py --ledger <claim-ledger.json> | --draft-claims <draft-claims.json> [--final] [--assessment <problem-validation-assessment.json>] [--voc-table <voc-table.json>] [--economics <economics.json>] [--factor-claims <factor-claims.json>] [--cost-cap 100 --currency EUR] --out cases/<id>/market_research/decision_memo/` writes `decision_memo.md` and `scores.json` (schema `schemas/decision-memo-scores.schema.json`). It is a read-only summary of reviewed artifacts, not a publication route.
+`python3 scripts/evidence_scout/build_decision_memo.py` writes `decision_memo.md` and `scores.json` from the reviewed ledger or `--draft-claims`; it is a read-only summary, not a publication route. Scoring rules, caps, gate handling and factor-claim limits are in its `--help` and docstring.
 
-- Scoring: pain, buyer, reachability, economics and competition, each 0–100 from the rubric in the script docstring, traceable to an artifact field, or `unknown`. The total is multiplicative; any factor ≤ 20 caps it at 20 and any `unknown` caps it at 40 and becomes the first next test. A `claim-ledger.falsified.json` sibling is applied: falsified claims never score, weakened claims score at their downgraded confidence.
-- Verdict words are the strategy-plan `verdict` enum (`insufficient_evidence`, `test`, `commit`, `pivot`, `stop`); a memo `commit` only permits preparing the commit decision review and requires the pain-first gate passed (`--project/--case` reads the router's gate check, or an assessment with status `supported`) or a recorded `--override-gate --override-by --override-reason`; otherwise the verdict tops out at `test`. Claims assigned in `factor-claims.json` must be type-compatible, cannot reuse a pain/buyer claim, need `--evidence` to check their frame, and are capped at 50 unless the claim carries `factor_mapping_reviewed: true`. Every factor ≥ 80 prints a grade-inflation warning: verdicts above `test` should be rare.
-- Basis: use the reviewed ledger when it exists; otherwise `--draft-claims` (memo opens "Basis: draft claims, not ledger-bound"; draft claims never score). Without a source review, an `Unreviewed` VOC table may be passed; its rows never score. Use reviewed inputs when they exist, otherwise the labelled fallback; never skip the memo.
+- Verdict words are the strategy-plan `verdict` enum; a memo `commit` requires the pain-first gate passed or a recorded override, otherwise it tops out at `test`. Verdicts above `test` should be rare.
+- Basis: use the reviewed ledger when it exists; otherwise `--draft-claims` (memo opens "Basis: draft claims, not ledger-bound"; draft claims never score). An `Unreviewed` VOC table may be passed without a source review; its rows never score. Use reviewed inputs when they exist, otherwise the labelled fallback; never skip the memo.
 - Final: `--final` is refused without a claim challenge (falsification output of either basis). No final recommendation, final delivery or final case insights without one; progress snapshots are allowed.
-- Placement: the memo is not an extra insights section, because the version 2/3 section contract is fixed. Carry its verdict, riskiest assumption, ≤ 2-week test with cost cap and kill criteria into `## Executive assessment` and `## Recommended next decisions` with the usual evidence or status markers, and link `decision_memo.md` under `## Sources`. Rerun the memo after any ledger, falsification, VOC table or economics change.
+- Placement: carry the memo's verdict, riskiest assumption, ≤ 2-week test with cost cap and kill criteria into `## Executive assessment` and `## Recommended next decisions` with the usual markers, and link `decision_memo.md` under `## Sources`. Rerun after any ledger, falsification, VOC table or economics change.

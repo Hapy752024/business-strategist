@@ -64,17 +64,9 @@ Reuse existing experiments and KPIs: a customer-outcome measure plus relevant de
 
 ## Saved decision and handoff
 
-For an execution-ready plan, reuse the active workspace's `strategy-plan.json`; marketing and operations update that selected record rather than creating competing copies. Its optional `positioning` object contains:
+For an execution-ready plan, reuse the active workspace's `strategy-plan.json`; marketing and operations update that selected record rather than creating competing copies. Its optional `positioning` object (fields: `schemas/strategy-plan.schema.json`) records decision status, statement, exclusions, rejected alternatives, per-row provenance and evidence refs, activities and their relations, linked experiment IDs and KPI names (never duplicated definitions), reviewed need refs, value proposition and defensibility hypotheses. Selection and evidential support are separate; a parent decision never upgrades a child claim; supported defensibility requires evidence-backed benefit, barrier and value-capture claims.
 
-- `decision_status`: `proposed`, `selected`, or `revisit`; `statement`; `exclusions`; optionally `alternatives` with rejection reasons.
-- `provenance`: `evidence_backed`, `user_confirmed`, `inference`, `assumption`, or `unresolved`; `evidence_refs` contains source/claim locators. Selection and evidential support are separate.
-- `activities`: consequential rows with `customer_priority`, `promise`, `choice`, `consequences`, `implications`, `provenance`, and `evidence_refs`. Preserve mixed evidence labels per row; use optional `experiment_ids`/`kpi_names` to link specific rows.
-- `experiment_ids` and `kpi_names`: references to existing experiment IDs and KPI names testing the position; do not duplicate their definitions.
-- Optional `need_refs`: reviewed need locators (for example, a synthesis path plus U-need ID). Optional `value_proposition`: segment, situation, outcome, alternative, mechanism, boundaries and sacrifices, each a claim with `statement`, `provenance`, `evidence_refs`. A parent decision never upgrades a child claim.
-- Optional activity `id` and `relations` (`type`: `requires`, `reinforces`, `conflicts_with`; `target`: activity ID). IDs are needed for referenced activities and relation sources, not legacy rows. Cycles alone are not errors.
-- Optional `defensibility`: `status`, `rationale`, `scope`, `assessed_at`, `hypotheses`. Each hypothesis has claim objects for `economic_benefit`, `imitation_barrier`, `value_capture`; text for `formation`, `incumbent_response`, `entrant_response`, `erosion_conditions`; and `activity_ids`, `experiment_ids`, optional `kpi_names`. `none_identified` and `not_assessed` use an empty hypothesis list with an explanation. Supported assessments require evidence-backed benefit/barrier/value-capture claims; this checks declared support, not strategic truth. Keep numerical economics and test definitions in their existing owners.
-
-Validate with `python3 scripts/strategy_review.py validate --plan <strategy-plan.json>`. The validator checks structure/references, not strategic truth. Markdown presents the same saved decision. A short advisory answer need not create an execution plan; legacy plans can omit positioning.
+Validate with `python3 scripts/strategy_review.py validate --plan <strategy-plan.json>`; it checks structure and references, not strategic truth. A short advisory answer need not create an execution plan.
 
 Only for explicitly business-linked branding, build an immutable snapshot with:
 
@@ -85,6 +77,6 @@ python3 scripts/brand/validate_business_to_brand_handoff.py <new-snapshot.json> 
 
 Run the source check before downstream generation/review. If a source changed or cannot be checked, report the affected work and refresh through the existing handoff workflow; do not overwrite the old snapshot. Missing provenance remains unresolved. Explicitly provisional work may proceed with its limitations, but cannot be called validated positioning.
 
-Method extensions checked 17 September 2026: [Speedwell operating choices](https://www.speedwellmemos.com/p/meta-optimizations-knowing-when-a), [Operating Model Canvas](https://operatingmodelcanvas.com/), [Helmer](https://7powers.com/). These inform the questions above, not universal laws or company-specific proof. No framework package or additional default deliverable is required.
+Method extensions checked 17 September 2026: [Speedwell operating choices](https://www.speedwellmemos.com/p/meta-optimizations-knowing-when-a), [Operating Model Canvas](https://operatingmodelcanvas.com/), [Helmer](https://7powers.com/); they inform the questions above, not universal laws.
 
 Sources (accessed 6 September 2026; undated): [HBS distinctive value chain](https://www.isc.hbs.edu/strategy/creating-a-successful-strategy/Pages/distinctive-value-chain.aspx) connects customer value to differentiated activities; [HBS activity fit](https://www.isc.hbs.edu/strategy/creating-a-successful-strategy/Pages/fit-across-the-value-chain.aspx) explains reinforcement among activities. The workflow and record conventions here are project design decisions.

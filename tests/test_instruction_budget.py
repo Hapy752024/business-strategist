@@ -2,8 +2,6 @@
 import re
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parents[1]
 AGENTS = ROOT / "AGENTS.md"
 
@@ -38,7 +36,6 @@ def test_skill_reference_word_total_phase1():
     assert _words(ROOT / ".agents/skills", "*/references/**/*.md") <= 90_000
 
 
-@pytest.mark.xfail(strict=True, reason="Task 5b")
 def test_root_reference_word_total_phase1():
     assert _words(ROOT / "references", "**/*.md") <= 30_000
 
