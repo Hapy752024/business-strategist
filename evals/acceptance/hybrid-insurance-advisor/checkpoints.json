@@ -14,8 +14,8 @@
         "first": {"type": "text", "scope": "assistant", "patterns": ["german-insurance-opportunity"]},
         "then": {"type": "any", "checks": [
           {"type": "tool_use", "name": "^(Write|Edit|NotebookEdit|MultiEdit)$", "input": "projects/"},
-          {"type": "tool_use", "name": "^Bash$", "exclude_input": ["(?:--help\\b|\\s-h(?![\\w-]))"], "input": "(init_project\\.py|project_workspace\\.py\\s+create|case_workspace\\.py|subprojects\\.py|mkdir[^\\n]*projects/|cp [^\\n]*projects/)"},
-          {"type": "tool_use", "name": "^Bash$", "exclude_input": ["(?:--help\\b|\\s-h(?![\\w-]))"], "input": "python3 scripts/(?!route_workflow\\.py|capability_lookup\\.py|validate_)[^\\n]*projects/"}
+          {"type": "tool_use", "name": "^Bash$", "exclude_input": ["scripts/[\\w/.-]+\\.py\\b.*(?:--help\\b|\\s-h(?![\\w-]))"], "input": "(init_project\\.py|project_workspace\\.py\\s+create|case_workspace\\.py|subprojects\\.py|mkdir[^\\n]*projects/|cp [^\\n]*projects/)"},
+          {"type": "tool_use", "name": "^Bash$", "exclude_input": ["scripts/[\\w/.-]+\\.py\\b.*(?:--help\\b|\\s-h(?![\\w-]))"], "input": "python3 scripts/(?!route_workflow\\.py|capability_lookup\\.py|validate_)[^\\n]*projects/"}
         ]}
       }
     },

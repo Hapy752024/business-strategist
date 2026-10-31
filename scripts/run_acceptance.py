@@ -633,6 +633,18 @@ Result = tuple[bool | None, str | None, str]  # passed (None = not exercised), e
 ANSWER_KINDS = ('answer', 'generic', 'intake_cap')
 
 
+COMMAND_SPLIT_RE = re.compile(r'&&|\|\||[;|\n]')
+
+
+def command_parts(ev: dict) -> list[str]:
+    """A Bash command split into its simple commands, so `a --help && a create x` is judged part by part."""
+    inp = ev.get('input')
+    command = inp.get('command') if isinstance(inp, dict) else (inp if isinstance(inp, str) else None)
+    if not isinstance(command, str):
+        return [ev['input_text']]
+    return [p.strip() for p in COMMAND_SPLIT_RE.split(command) if p.strip()]
+
+
 def _tool_matches(ctx: Ctx, check: dict) -> list[dict]:
     name_re, input_re = re.compile(check.get('name', '.*')), re.compile(check.get('input', '.*'))
     result_re = re.compile(check['result']) if check.get('result') else None
@@ -640,8 +652,10 @@ def _tool_matches(ctx: Ctx, check: dict) -> list[dict]:
     for ev in ctx.events:
         if ev['kind'] != 'tool_use' or not name_re.search(ev['name']) or not input_re.search(ev['input_text']):
             continue
-        if any(re.search(x, ev['input_text']) for x in check.get('exclude_input', [])):
-            continue  # e.g. `--help` runs of a write-capable script are read-only invocations
+        if check.get('exclude_input') and not any(
+                input_re.search(part) and not any(re.search(x, part) for x in check['exclude_input'])
+                for part in command_parts(ev)):
+            continue  # every matching part is a read-only invocation, e.g. `scripts/x.py --help`
         res = ev.get('result')
         if check.get('exclude_denied') and (ev['denied'] or (res and res['is_error'])):
             continue  # denied or failed calls do not count as reaching the tool
@@ -701,13 +715,14 @@ def run_check(ctx: Ctx, check: dict) -> Result:
                 if all(p.search(chunk) for p in pats) and not any(x.search(chunk) for x in excludes):
                     return True, ref, f'{label}: all patterns in one {unit}'
         detail = f'{label}: no single {unit} matched all {len(pats)} patterns'
+        near_excl = [re.compile(p) for p in check.get('exclude', [])]
         near = [re.compile(p) for p in (check.get('near_miss_patterns') or (check['patterns'][:2] if check.get('near_miss_label') else []))]
         if near:
             for ref, text in ctx.documents(check.get('scope', 'both')):
                 for chunk in text.splitlines():
-                    if all(p.search(chunk) for p in near):
+                    if all(p.search(chunk) for p in near) and not any(x.search(chunk) for x in near_excl):
                         return False, None, (f"{detail}; near miss: {check.get('near_miss_label', 'partial match')} "
-                                             f"at {ref}: {chunk.strip()[:140]!r}")
+                                             f"at {ref}: {chunk.strip()[:80]!r}")
         return False, None, detail
     if kind == 'tool_use':
         hits = _tool_matches(ctx, check)
@@ -935,10 +950,11 @@ def quota_events(ctx: Ctx) -> list[dict]:
         if ev['name'].startswith('mcp__'):
             provider = ev['name'].split('__')[1]
         else:
-            script = re.search(r'scripts/[\w/.-]+\.py', ev['input_text'])
-            if script and HELPER_SCRIPT_RE.search(script.group(0)):
-                continue  # a repository helper (catalog lookup, router, validator) is not a provider; its text may mention credits
-            provider = script.group(0) if script else ev['name']
+            scripts = re.findall(r'scripts/[\w/.-]+\.py', ev['input_text'])
+            providers = [x for x in scripts if not HELPER_SCRIPT_RE.search(x)]
+            if scripts and not providers:
+                continue  # only repository helpers (catalog lookup, router, validator) ran; their text may mention credits
+            provider = providers[0] if providers else ev['name']
         out.append({'line': ev['line'] + 1, 'provider': provider})
     return out
 
@@ -1124,7 +1140,7 @@ def classify_host_writes(ctx: Ctx, entries: list[str]) -> dict:
     return out
 
 
-HOME_PATH_RE = re.compile(r'/{1,2}home/[^/\s"\')*:]+')
+HOME_PATH_RE = re.compile(r'(?<![\w.-])/{1,2}home/[^/\s"\')*:]+')
 
 
 def relativize_paths(node: Any) -> Any:

@@ -1099,3 +1099,77 @@ def test_scorecard_paths_are_relativized_to_home(tmp_path):
     text = path.read_text()
     assert '/home/' not in text and 'someone' not in text
     assert 'Edit(~/work/repo/**)' in text
+
+
+@pytest.mark.parametrize('command', [
+    'python3 scripts/project_workspace.py create --help && python3 scripts/project_workspace.py create eval-x',
+    'mkdir -p projects/x && du -h projects/x',
+    'python3 scripts/project_workspace.py create --help\npython3 scripts/project_workspace.py create eval-x',
+    'du -h projects/x; mkdir -p projects/x',
+])
+def test_cp01_compound_commands_are_judged_per_part(tmp_path, command):
+    lines = [_assistant('', [_tool('w1', 'Bash', {'command': command})]), _result('w1', 'ok'),
+             _assistant('Existing workspaces: german-insurance-opportunity.')]
+    cp = _cp(_run(tmp_path, lines), 'cp01')
+    assert not cp['passed'] and cp['evidence_path'] == 'transcript.jsonl#L1'
+
+
+@pytest.mark.parametrize('command', ['python3 scripts/project_workspace.py create -h'])
+def test_cp01_script_help_is_read_only(tmp_path, command):
+    lines = [_assistant('', [_tool('w1', 'Bash', {'command': command})]), _result('w1', 'ok'),
+             _assistant('Existing workspaces: german-insurance-opportunity.')]
+    cp = _cp(_run(tmp_path, lines), 'cp01')
+    assert cp['passed']
+
+
+def test_cp11_provider_quota_after_a_helper_in_one_command_is_attributed_to_the_provider(tmp_path):
+    lines = [_assistant('', [_tool('c1', 'Bash', {'command': 'python3 scripts/capability_lookup.py serp && python3 scripts/serper_fetch.py q'})]),
+             _result('c1', '{"status": 402, "error": "payment required"}')]
+    ctx = acc.Ctx(_run(tmp_path, lines))
+    assert [q['provider'] for q in acc.quota_events(ctx)] == ['scripts/serper_fetch.py']
+
+
+def test_modern_override_is_not_deduped_across_revision_or_stages(tmp_path, monkeypatch):
+    routing, business = _selected_project(tmp_path, monkeypatch)
+    manifest = routing.cases.resolve(business, 'probe-case') / 'market_research/manifest.json'
+    routing.record_gate_override(manifest, 'gtm-strategy', '', ['problem_validation'])
+    routing.record_gate_override(manifest, 'gtm-strategy', '', ['problem_validation', 'intake'])
+    data = json.loads(manifest.read_text())
+    data['assessment_revision'] = int(data.get('assessment_revision') or 1) + 1
+    manifest.write_text(json.dumps(data))
+    routing.record_gate_override(manifest, 'gtm-strategy', '', ['problem_validation'])
+    events = [e for e in json.loads(manifest.read_text())['events'] if e['event'] == 'routing_gate_override:gtm-strategy']
+    assert len(events) == 3
+
+
+def test_legacy_override_dedupes_on_exact_id_only(tmp_path):
+    from scripts import route_workflow as routing
+    manifest = tmp_path / 'p' / 'market_research' / 'manifest.json'
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text(json.dumps({'events': [], 'manifest_revision': 0}))
+    for oid in ('', 'a', 'a', 'b', ''):
+        routing.record_gate_override(manifest, 'gtm-strategy', oid, [])
+    events = json.loads(manifest.read_text())['events']
+    assert [e.get('override_id', '') for e in events] == ['', 'a', 'b', '']
+
+
+def test_cli_exit_code_2_for_missing_strategy_plan_block(tmp_path, monkeypatch, capsys):
+    routing, business = _selected_project(tmp_path, monkeypatch)
+    monkeypatch.setattr('sys.argv', ['route_workflow.py', '--intent', 'website-experiment', '--task-scope', 'strategy',
+                                     '--check-skill', 'brand-website-designer-builder', '--project', 'probe', '--case', 'probe-case',
+                                     '--entry-mode', 'business_linked', 'Build the website'])
+    assert routing.main() == 2
+    assert 'strategy_plan_required' in capsys.readouterr().out
+
+
+def test_scorecard_relativization_leaves_urls_alone():
+    assert acc.relativize_paths('see https://example.com/home/page and /home/me/x') == 'see https://example.com/home/page and ~/x'
+
+
+def test_cp07_near_miss_skips_gap_lines_and_caps_quote(tmp_path):
+    gap = 'International analog in the US, outcome unknown, not checked.\n'
+    cp = _cp(_run(tmp_path, [], files={'projects/eval-x/n.md': gap}), 'cp07')
+    assert 'near miss' not in cp['detail']
+    long = 'An international analog in the US: ' + 'x' * 300 + '\n'
+    cp = _cp(_run(tmp_path / 'l', [], files={'projects/eval-x/n.md': long}), 'cp07')
+    assert 'near miss' in cp['detail'] and 'x' * 80 not in cp['detail']

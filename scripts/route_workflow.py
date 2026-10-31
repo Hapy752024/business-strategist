@@ -195,7 +195,7 @@ def record_gate_override(manifest_path: Path, route_id: str, override_id: str = 
         if not isinstance(data, dict) or not isinstance(data.get("events"), list):
             raise ValueError("Cannot audit gate override: manifest requires an events list")
         if any(isinstance(event, dict) and event.get("event") == f"routing_gate_override:{route_id}"
-               and (not override_id or not event.get("override_id") or event.get("override_id") == override_id)
+               and override_id and event.get("override_id") == override_id
                for event in data["events"]):
             return
         data["events"].append({
