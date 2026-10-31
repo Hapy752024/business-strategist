@@ -128,3 +128,29 @@ Before finalizing, check:
 - Search terms use language customers would actually type or say.
 - The recommended command does not use broad segment prose as keywords.
 - The next evidence step tests the riskiest assumption, not the easiest one.
+
+## Intake rules (moved from SKILL.md)
+
+**Preserve the selected outcome.**
+Validate/challenge the founder's stated idea, or explain a customer segment's pain points about a topic, as the user chose.
+For substantive chosen-idea validation, include a targeted international commercial-precedent pass or explain its inapplicability; narrow factual and pure customer-problem questions remain proportionate.
+Similar companies, including companies in other countries, can support scoped purchase, repeat-value and economics findings;
+do not redirect the task into finding businesses to import or copy.
+Read repo-root `references/opportunity-research-approaches.md` for substantive work that benefits from distinct evidence approaches.
+
+**Strategic-positioning intake.**
+Before material opportunity ranking, apply repo-root `references/strategic-positioning.md`:
+reuse supplied founder context, ask only decision-changing gaps, and compare viable alternatives with comparable initial evidence coverage.
+Narrow factual and execution requests bypass this intake.
+Founder constraints and preferences are inputs, not market evidence.
+
+**Research coaching.**
+For chosen-idea and strategic continuation work, follow repo-root `references/research-coaching.md`:
+persist known answers, ask one decision-changing question early, apply or explicitly reuse the required skill elements in order, and retain unresolved choices while independent desk work proceeds.
+Interview/GTM/risk planning must apply repo-root `references/interview-recruitment.md` and provide researched, idea-specific routes to the first interviewees, including zero-network access.
+Recruitment planning is allowed before the pain gate; launches remain gated.
+
+When contributing to a registered Business case, keep source-grounded findings in your normal artifact and pass material conclusions or answered founder questions to the case-insights owner under repo-root `references/case-insights.md` before the case task closes.
+Use this skill to validate or challenge the founder’s idea by testing its customer and problem assumptions.
+For a topic without a chosen idea, route to market-problem-discovery.
+

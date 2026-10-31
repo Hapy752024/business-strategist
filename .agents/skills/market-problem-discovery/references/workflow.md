@@ -115,3 +115,13 @@ Closing-question rule: end the response with exactly one question — the first 
 - Learning priorities show consequence, unmetness, decision relevance and uncertainty with auditable evidence and contrasts, not attention or raw mention volume.
 - The report offers a user-controlled choice, not an automatic handoff to product building.
 - The selected next step reduces uncertainty rather than merely producing more content.
+
+## Handoff and research rules (moved from SKILL.md)
+
+When a selected candidate becomes a registered Business case, pass material findings and answered founder questions to the case-insights owner under repo-root `references/case-insights.md`. Keep discovery artifacts in their normal research location.
+
+The user’s requested outcome governs the study. For a topic or segment pain-point question, explain customer experiences and uncertainty without inventing a product or business. For a supplied idea, route to idea validation and challenge that idea; relevant similar companies are optional evidence, not a prompt to import one. Use the complementary methods in repo-root `references/opportunity-research-approaches.md` only when they contribute distinct evidence.
+
+For substantive Business research, read repo-root `references/research-data-and-precedents.md`. Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals. Metadata is discovery until original findings are reviewed.
+
+For customer-journey analysis, read repo-root `references/journey-activation-and-measurement.md`, section 1 (shared repository dependency). Record sourced touchpoints and candidate ad/tool/partner hooks with access, next action and measurement; keep intervention hypotheses separate from observed pain. Research does not select a campaign.

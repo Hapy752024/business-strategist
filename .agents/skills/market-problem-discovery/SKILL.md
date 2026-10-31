@@ -11,16 +11,11 @@ description: Discover sourced customer problems, workarounds, segments, and cand
 3. Once the user selects a candidate, use `idea-grill` to fill remaining hypothesis gaps, then continue with its core validation sequence.
 
 **Customer search-journey SERP study.**
-Once a segment is named, run the evidence-scout early parallel desk steps by default: search journey
-(`scripts/evidence_scout/search_journey.py`), competitor content, keyword volumes and social topics
-(method and commands in `.agents/skills/evidence-scout/SKILL.md`); none waits for review or a gate.
-Brainstormed queries are hypotheses; ads are supplier spend, not demand; `unobserved` ads are never zero.
-Forum or aggregator dominance is a hypothesis for the next test, not a discovery finding.
-It runs before the pain gate and does not authorize ads or content publication.
+Once a segment is named, run the evidence-scout early parallel desk steps by default (search journey, competitor content, keyword volumes, social topics; method in `.agents/skills/evidence-scout/SKILL.md`).
+Brainstormed queries are hypotheses; ads are supplier spend, not demand. It runs before the pain gate and does not authorize ads or content publication.
 
-When a selected candidate becomes a registered Business case, pass material findings and answered founder questions to the case-insights owner under repo-root `references/case-insights.md`. Keep discovery artifacts in their normal research location.
-
-The user’s requested outcome governs the study. For a topic or segment pain-point question, explain customer experiences and uncertainty without inventing a product or business. For a supplied idea, route to idea validation and challenge that idea; relevant similar companies are optional evidence, not a prompt to import one. Use the complementary methods in repo-root `references/opportunity-research-approaches.md` only when they contribute distinct evidence.
+The requested outcome governs the study: explain customer experiences and uncertainty without inventing a product; route a supplied idea to idea validation.
+Case-insights handoff and research-approach rules: [workflow](references/workflow.md), with repo-root `references/case-insights.md`, repo-root `references/opportunity-research-approaches.md` and repo-root `references/research-coaching.md`; claim challenge: `.agents/skills/opportunity-risk-designer/references/falsify.md`.
 
 ## Success Criteria
 - **Research quality:** source-linked customer experiences and outcome/context distinctions survive synthesis; positive/contrary cases and missing markets remain visible. Candidate counts, headings and tool-call quotas do not establish research quality.
@@ -28,21 +23,17 @@ The user’s requested outcome governs the study. For a topic or segment pain-po
 
 ## Workflow
 
-For substantive query design and refinement, apply repo-root `references/customer-voice.md` (shared repository dependency) before broad collection. Keep each workflow's evidence type and source-review requirements distinct.
-
 1. Read `references/workflow.md`, repo-root `references/customer-voice.md` and repo-root `references/research-execution.md` completely. Always run topic-led discovery; add entity feedback when alternatives are verified, without requiring a preselected segment.
 2. Infer discovery mode when explicit; otherwise ask the one routing question before collecting.
 3. Create a durable discovery run, validate source routes, and collect public evidence before proposing candidates.
 4. Write source-linked outcome shortfalls, competing explanations and next tests in the existing report; distinguish candidate underserved needs, adequate service and insufficient evidence.
-5. For a selected candidate with explicit venture-scale or VC-financing relevance, optionally assess topic funding activity under repo-root `references/vc-investment-signals.md`; do not treat it as customer evidence or use it to rank customer pain.
+5. For a candidate with venture-scale relevance, optionally assess funding activity under repo-root `references/vc-investment-signals.md`; it is not customer evidence.
 6. Stop for the user's choice (sequence step 2); do not automatically convert a discovery candidate into a startup thesis.
 
 ## Output
 
 Return the report path, source coverage, 3–7 candidate problem-segment pockets or a clear no-opportunity finding, the strongest counter-evidence, and one user decision question.
-For substantive Business research, read repo-root `references/research-data-and-precedents.md`. Select official statistics and studies by the decision, combine them with separately reviewed customer voice, and retain international applicability and relevant investor signals. Metadata is discovery until original findings are reviewed.
-
-For customer-journey analysis, read repo-root `references/journey-activation-and-measurement.md`, section 1 (shared repository dependency). Record sourced touchpoints and candidate ad/tool/partner hooks with access, next action and measurement; keep intervention hypotheses separate from observed pain. Research does not select a campaign.
+For substantive Business research read repo-root `references/research-data-and-precedents.md`; for customer-journey analysis, repo-root `references/journey-activation-and-measurement.md` section 1. Metadata is discovery until original findings are reviewed.
 
 Also read when the stage needs it:
 - `.agents/skills/evidence-scout/references/workflow.md`

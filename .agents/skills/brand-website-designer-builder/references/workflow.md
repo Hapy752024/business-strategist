@@ -22,3 +22,13 @@ The reference fixture at `fixtures/website/stellar-repair/` is the executable mi
 ## Output
 
 Return the manifest path, selected direction/signature device, stack versions, asset provenance, QA status, Preview URL (if authorized), experiment status, open gaps, and next action.
+
+## Conditional rules (moved from SKILL.md)
+
+- For forms, wizards, accounts, embeds, analytics or changes to personal-data use, apply [privacy by design](privacy-design.md) before implementation.
+Minimize collection and use layered, timely information; distinguish notices from consent and test actual data handling.
+- For sites with external resources, apply [external-link maintenance](external-link-maintenance.md): derive the inventory from published content, retain referring pages, classify uncertain checks and automatically create or update GitHub Actions CI with a weekly schedule and manual trigger.
+Include the runnable checker, reports and owner handoff; instructions alone are incomplete delivery.
+Preserve an explicit user opt-out or an existing equivalent CI provider.
+For selected advertising-event implementation or repair, read repo-root `references/journey-activation-and-measurement.md` (shared repository dependency).
+Bind the canonical business occurrence and per-platform mapping to campaign context; verify Meta Pixel eventID/CAPI event_id, Google goal duplication and TikTok Pixel/Events API alignment in the actual selected destinations.

@@ -125,3 +125,39 @@ Before finalizing, check:
 - The test plan challenges competitive durability when it is material to the next decision.
 - The decision gate factors in competitive durability, not just demand evidence.
 - When a claimed competitor gap matters, a coverage matrix was scaffolded and its cells rated from citable evidence; otherwise entry/customer-choice evidence was assessed directly.
+
+## Case appraisal, case insights and smoke-test detail (moved from SKILL.md)
+
+**Case appraisal and v2 publication contract.**
+For researched case appraisal, route and publisher require the same eligible reviewed case run and a bound claim ledger;
+authored segment/journey/pain summaries alone do not qualify.
+Use the v2 publication contract in repo-root `references/case-assessment.md` and repo-root `references/case-insights.md` for direct reviewed-source citations, nine decision sections, progressive publication and separate final review.
+A legacy output remains readable but cannot close v2 research delivery.
+Integrate substantive deep-dive answers into current insights, then refresh affected appraisal/economics, per-case business plan and selected plan.
+A new deep dive makes downstream plan use pending until the selected insights are current again.
+
+**Case insights.**
+For a registered Business case, maintain `cases/<id>/case_insights.md` as its one current reader-facing assessment.
+Publish coherent reviewed findings progressively, then consolidate material findings across research runs, deep dives and answered founder questions.
+Check source coverage, numeric context, freshness and conflicting conclusions before each publication; distinguish a current progress snapshot from final delivery.
+Build the cross-source VOC table first:
+`python3 scripts/evidence_scout/build_voc_table.py --evidence <evidence.jsonl> --synthesis <synthesis.json>
+--source-review <source-review.json> --out-dir <dir>`; pass its `voc-table.json` to the memo as `--voc-table`.
+Without review/synthesis, run it with `--evidence` only and keep its `Unreviewed` label.
+Before final delivery, put material claims through the `claim-falsification` route (see Workflow);
+no final recommendation without it. Without a reviewed ledger, challenge draft claims (`basis: draft`).
+Use reviewed inputs when they exist, otherwise the labelled fallback; never skip a step.
+Before publishing or updating case insights, run `python3 scripts/evidence_scout/build_decision_memo.py ...`
+(see repo-root `references/case-insights.md`, Decision memo) and carry its verdict, caps and riskiest-assumption test
+into Executive assessment and Recommended next decisions.
+New cases have no case-level README; project-level READMEs remain navigation and comparison.
+Apply repo-root `references/case-insights.md` throughout substantive case research;
+existing legacy case narratives require reviewed conversion, not automatic migration.
+
+**VC signals.**
+For idea assessments where the founder intends venture-scale growth, seeks VC, explicitly requests investor activity, or this input could change financing assumptions, inspect capital-market activity separately from customer evidence.
+Use repo-root `references/vc-investment-signals.md`; when available, run the Parsers VC topic scan, compare equal-length current and prior periods, and verify material rounds from primary sources.
+Do not use investor attention as demand, success, market-size, or fundraising-fit proof.
+State when VC fit is immaterial for a smaller business.
+
+For the checked `smoke-test-design` route, read repo-root `references/smoke-test.md`. Take the assumption ids from the case `assumptions.json` riskiest list, generate the draft with `python3 scripts/evidence_scout/build_smoke_test_kit.py --run-dir <evidence-run> --experiment-id E-<slug> --assumption-id <A-id> --offer ... --segment ... --out-dir <run>/experiments/<slug>`, then commit it with `case_workspace.py experiment-plan --input <out>/experiment-card.json`. Use this as the default next test when the riskiest assumption is demand or message and the founder has no customer panel; interviews recruit from responders. Ad spend needs the recorded approval before `experiment-approve`.

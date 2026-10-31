@@ -2,6 +2,8 @@
 import re
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 AGENTS = ROOT / "AGENTS.md"
 
@@ -13,7 +15,32 @@ def _normalized(text: str) -> str:
 def test_agents_md_under_budget():
     text = AGENTS.read_text(encoding="utf-8")
     assert len(text.splitlines()) <= 150
-    assert len(text.split()) <= 1200
+
+
+def test_agents_md_word_budget():
+    assert len(AGENTS.read_text(encoding="utf-8").split()) <= 600
+
+
+def test_each_skill_md_word_budget():
+    over = {
+        str(p.relative_to(ROOT)): len(p.read_text(encoding="utf-8").split())
+        for p in sorted((ROOT / ".agents/skills").glob("*/SKILL.md"))
+        if len(p.read_text(encoding="utf-8").split()) > 450
+    }
+    assert not over, over
+
+
+def _words(root: Path, pattern: str) -> int:
+    return sum(len(p.read_text(encoding="utf-8").split()) for p in root.glob(pattern) if p.is_file())
+
+
+def test_skill_reference_word_total_phase1():
+    assert _words(ROOT / ".agents/skills", "*/references/**/*.md") <= 90_000
+
+
+@pytest.mark.xfail(strict=True, reason="Task 5b")
+def test_root_reference_word_total_phase1():
+    assert _words(ROOT / "references", "**/*.md") <= 30_000
 
 
 def test_no_rule_duplicated_more_than_once():
