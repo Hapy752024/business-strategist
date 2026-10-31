@@ -13,7 +13,7 @@ For a registered Business case, pass reviewed interview learnings and still-open
 
 ## Workflow
 
-1. Read `references/workflow.md` and repo-root `references/voc-research-method.md` completely. Choose interviews for the unresolved question, not an aggregate evidence-strength label.
+1. Read `references/workflow.md` and repo-root `references/customer-voice.md` completely. Choose interviews for the unresolved question, not an aggregate evidence-strength label.
 2. Review source meaning and provenance, then run `python3 scripts/evidence_scout/build_interview_kit.py --run-dir <evidence or discovery run dir>`.
 3. Supply a digest-bound `source-review.json` per the workflow; unreviewed records cannot generate probes. Research recruitment routes before recruiting.
 4. For smoke-test responders, pass the card's `responders_ref` path as `--responders` together with the evidence `--run-dir`; `scripts/route_workflow.py status` reports this skill runnable once a card has bookings. Screen segment fit and a recent incident before counting an interview.

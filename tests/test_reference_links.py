@@ -53,3 +53,28 @@ def test_skill_reference_paths_are_unambiguous():
                 line = text.count('\n', 0, m.start()) + 1
                 failures.append(f'{rel}:{line}: ambiguous {target}')
     assert failures == [], '\n'.join(failures)
+
+
+DELETED_REFERENCES = (
+    'voc-research-method.md',
+    'research-query-calibration.md',
+    'pain-query-calibration.md',
+    'commands.md',
+    'case-business-plan.md',
+    'business-strategist/references/routing.md',
+    'business-strategist/references/workflow.md',
+)
+
+
+def test_no_pointer_to_deleted_reference():
+    roots = [ROOT / '.agents', ROOT / 'references', ROOT / 'config', ROOT / 'scripts', ROOT / 'AGENTS.md', ROOT / 'CLAUDE.md']
+    offenders = []
+    for base in roots:
+        files = [base] if base.is_file() else [p for p in base.rglob('*') if p.is_file() and '__pycache__' not in p.parts]
+        for path in files:
+            try:
+                text = path.read_text(encoding='utf-8')
+            except UnicodeDecodeError:
+                continue
+            offenders += [f'{path.relative_to(ROOT)}: {name}' for name in DELETED_REFERENCES if name in text]
+    assert offenders == [], '\n'.join(offenders)

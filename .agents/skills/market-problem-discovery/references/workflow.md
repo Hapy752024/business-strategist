@@ -23,7 +23,7 @@ When the request also asks which opportunity the founder should pursue, apply re
 ## Procedure
 
 1. Restate the user’s requested outcome, market/domain, any rough hunch, and source scope. Treat the hunch as a search seed, not a claim. A pain-point study may finish with customer findings, counter-evidence and unknowns; it need not produce an idea. If the user supplied a specific idea to validate, use idea-grill. Similar companies at home or abroad are optional comparables, not an idea-import objective.
-2. Brainstorm local job/trigger vocabulary, alternative explanations and source locations; review candidate queries using repo-root `references/research-query-calibration.md`. Select complementary approaches from repo-root `references/opportunity-research-approaches.md` only where they investigate a different explanation or evidence frame. Preview `--query-plan` with explicit locale/providers and result allocations before broad collection. Then initialize a discovery run with the reviewed plan. Use the repository-root command:
+2. Brainstorm local job/trigger vocabulary, alternative explanations and source locations; review candidate queries using repo-root `references/customer-voice.md`. Select complementary approaches from repo-root `references/opportunity-research-approaches.md` only where they investigate a different explanation or evidence frame. Preview `--query-plan` with explicit locale/providers and result allocations before broad collection. Then initialize a discovery run with the reviewed plan. Use the repository-root command:
 
    ```bash
    python3 scripts/evidence_scout/discover_market_problems.py --topic "<market or domain>" --focus "<optional hunch>" --geo <AUTO|country> --language <language> --topic-keywords "<short local phrase>" --query-plan "<reviewed plan.json>" --providers "<plan providers>" --limit <allocated total> --results-per-query <depth> --collect
@@ -39,7 +39,7 @@ When the request also asks which opportunity the founder should pursue, apply re
 
    Use suitable default and paid sources; customer-evidence API spending is standing-authorized without a monetary cap. Disclose credit/access gaps and use valid fallbacks. This does not authorize deceptive/private access, recruitment or advertising.
 
-4. Inspect `<run>/evidence/research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, `irrelevant.jsonl`, and provider alerts. Apply repo-root `references/customer-voice.md` and `references/voc-research-method.md`: review source-linked experiences, always cover topic-led discovery, and add entity feedback as verified alternatives emerge. Unknown segments remain explicit hypotheses.
+4. Inspect `<run>/evidence/research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, `irrelevant.jsonl`, and provider alerts. Apply repo-root `references/customer-voice.md`: review source-linked experiences, always cover topic-led discovery, and add entity feedback as verified alternatives emerge. Unknown segments remain explicit hypotheses.
 5. Inspect original speakers and rejected leads. Refine vocabulary/source choices with located evidence, preserve the initial run and parent plan digest, and count fresh useful sources separately from rediscoveries. Synthesize the sources into `<run>/market-discovery-report.md`. Replace every template placeholder. Cite the evidence IDs or source URLs for material claims.
 6. Build 3–7 candidates only when the evidence supports them. A candidate needs a plausible segment, trigger/job, recurring pain or decision uncertainty, current workaround or alternative, and a named uncertainty. If evidence is thin, report fewer candidates or none.
    For each candidate, outline the journey in which the need arises using the customer-journey contract in `evidence-scout/references/workflow.md` (sibling skill). Existing providers do not exclude a candidate: assess potential customer choice and access, with unknowns, before calling a segment saturated.
@@ -84,7 +84,7 @@ Counts describe the sample, not importance or prevalence. Preserve rare high-con
 - Treat competitor, provider, and editorial content as context about alternatives; do not treat it as customer demand.
 - Call an area a **candidate** opportunity by default. Use “potentially underserved” only when the report shows a recurring job, a consequential workaround or dissatisfaction pattern, and a concrete gap in current alternatives. State the uncertainty beside the claim.
 - Do not use demographic stereotypes to invent segments. Segment by trigger, job, consequence of failure, decision role, current workaround, and reachable community.
-- Apply the latent-outcome comparison in repo-root `references/voc-research-method.md` within existing candidate findings: shortfall, consequence, competing explanation and disconfirming test. Distinguish adequate service from insufficient evidence; neither requires a manufactured opportunity.
+- Apply the latent-outcome comparison in repo-root `references/customer-voice.md` within existing candidate findings: shortfall, consequence, competing explanation and disconfirming test. Distinguish adequate service from insufficient evidence; neither requires a manufactured opportunity.
 - Do not ask the founder to choose a solution, price, or business model until they choose a candidate.
 
 ## Report Contract

@@ -94,7 +94,7 @@ Claude skill-tool and slash dispatch use the checked envelope; details in `refer
 
 ## Where things live
 
-- Skills: `.agents/skills/` (router: `.agents/skills/business-strategist/`; ownership: `.agents/skills/business-strategist/references/routing.md`)
+- Skills: `.agents/skills/` (router: `.agents/skills/business-strategist/`; ownership: `references/runtime-routing.md`)
 - Shared references: `references/` (request scope: `references/task-scope.md`)
 - Catalog and routes: `config/` (`config/skill-catalog.json`, `config/workflow-routes.json`)
 - Procedures, commands and providers: `references/operating-guide.md`

@@ -111,7 +111,6 @@
       "required_references": [
         "references/research-execution.md",
         "references/customer-voice.md",
-        "references/voc-research-method.md",
         "references/opportunity-research-approaches.md"
       ]
     },
@@ -970,8 +969,7 @@
             "cases/<id>/business-plan.json"
           ],
           "required_references": [
-            "references/case-assessment.md",
-            "references/case-business-plan.md"
+            "references/case-assessment.md"
           ],
           "inputs": [
             "Current insights, reviewed claim ledger, case sources and economics"

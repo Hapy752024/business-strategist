@@ -101,13 +101,12 @@ provider failures are surfaced before evidence interpretation;
 evidence, interpretation, counter-evidence, and missing evidence are separated in every output.
 ## Workflow
 1.
-For substantive query design, apply repo-root `references/research-query-calibration.md` (shared repository dependency).
-Read `references/workflow.md`, `references/provider-policy.md`, repo-root `references/voc-research-method.md`, and repo-root `references/research-execution.md` for substantive customer-needs work.
+Read `references/workflow.md`, `references/provider-policy.md`, repo-root `references/customer-voice.md` (including its query design and refinement section), and repo-root `references/research-execution.md` for substantive customer-needs work.
 2. Initialize or reuse `projects/<topic-slug>/market_research/`.
 3. Run capability lookup and provider doctor when routing matters, then use repository-root scripts.
 4.
 Run the topic-led VOC pass (top of file).
-For inferred vocabulary, new locales or poor retrieval, apply [pain-query calibration](references/pain-query-calibration.md): brainstorm wording and source locations → review the plan → execute exact candidate probes → review source experiences → refine and check fresh searches.
+For inferred vocabulary, new locales or poor retrieval, apply repo-root `references/customer-voice.md` Pain-query calibration section: brainstorm wording and source locations → review the plan → execute exact candidate probes → review source experiences → refine and check fresh searches.
 Use short `--topic-keywords` for generated searches and `--query-plan` for exact probes.
 When forums or Facebook plausibly contain the target audience, use systematic community discovery with explicit locale pairs and per-seed forum/Group/Page lanes, signed metadata provenance, separate source-shape and fit checks, and evidence-bound promotion.
    For a registered case spanning several runs, register the entire decision, locales and capture set in the case manifest before final delivery.

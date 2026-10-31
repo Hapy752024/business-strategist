@@ -26,7 +26,7 @@ Keep simple requests simple: apply repo-root `references/task-scope.md` before d
 Explicit user intent and exclusions override phrase matching and unrelated workspace state.
 Focused answers and execution do not automatically initiate research workspaces or full strategy outputs.
 Verify new market/platform claims when needed; rewriting supplied copy and synthetic code tests do not require market research.
-Select situational capabilities from the installed skill descriptions and `config/workflow-routes.json`; use `references/routing.md` only when ownership is unclear.
+Select situational capabilities from the installed skill descriptions and `config/workflow-routes.json`; use the Routing boundaries section of repo-root `references/runtime-routing.md` only when ownership is unclear.
 Load the selected specialist, not the entire catalog of workflows.
 `config/skill-catalog.json` lists prerequisites, outputs and side-effect boundaries.
 Brand, website, marketing, operations and monitoring requests retain their own scope; they do not automatically start business validation.
@@ -45,7 +45,7 @@ Rules:
 
 ## Procedure
 
-Read `references/workflow.md` and dispatch only the selected specialist.
+Follow the Router procedure in repo-root `references/runtime-routing.md` and dispatch only the selected specialist.
 
 ## Output
 

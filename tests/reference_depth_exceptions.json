@@ -1,8 +1,8 @@
 {
   "archetype-gtm-strategist": [
     {
-      "reason": "research-query-calibration.md is mentioned by a linked file but is outside archetype-gtm-strategist's own stage; open it only when a task needs it",
-      "target": "references/research-query-calibration.md"
+      "reason": "customer-voice.md is mentioned by a linked file but is outside archetype-gtm-strategist's own stage; open it only when a task needs it",
+      "target": "references/customer-voice.md"
     },
     {
       "reason": "the first-campaign runbook belongs to the founder-invoked marketing-campaign-operator; references/handoffs.md names it so the agent can prepare action files and approval requests, not run it from this stage",
@@ -137,8 +137,8 @@
   ],
   "idea-grill": [
     {
-      "reason": "research-query-calibration.md is mentioned by a linked file but is outside idea-grill's own stage; open it only when a task needs it",
-      "target": "references/research-query-calibration.md"
+      "reason": "customer-voice.md is mentioned by a linked file but is outside idea-grill's own stage; open it only when a task needs it",
+      "target": "references/customer-voice.md"
     }
   ],
   "interview-bridge": [

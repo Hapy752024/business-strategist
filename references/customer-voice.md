@@ -101,7 +101,7 @@ unscoped. Missing/failed locales or platforms remain explicit gaps while useful
 scoped findings from accepted sources may be synthesized. Invalid denominators,
 unreviewed captures or supplier voice still block. Zero accepted voice yields
 insufficient_evidence, not an empty successful study. Apply
-`voc-research-method.md` for the version-2 research contract. After
+the Customer-needs research method section below for the version-2 research contract. After
 building separate U and R objects, validate them and their sampling-frame links:
 
 ```bash
@@ -260,3 +260,479 @@ Preparing a scoped test brief is distinct from launching it. Publishing, outreac
 ## Execution boundary
 
 The catalog and route packet bind this reference to relevant specialists; route validation rejects missing or invalid bound files. The caller reads applicable references before dispatch. These checks establish availability and routing, not that an LLM correctly interprets every source or obeys the research method. The existing source-review and stage gates remain authoritative; this reference does not automatically pass them. Live semantic quality needs review of actual research outputs.
+
+## Customer-needs research method
+
+
+Use for substantive market discovery, customer/problem validation and competitor
+feedback, not a narrow factual lookup. This is the shared research contract;
+the sections above own source planning and U/R distinctions. Countries,
+languages, roles, companies and job vocabulary are runtime inputs.
+
+### 1. Questions and coverage before themes
+
+Record the decision, research questions, requested locales and plausible roles:
+user, buyer, payer, decision-maker, intermediary or supporting person. Unknown
+roles/segments are discovery questions, not reasons to demand a founder thesis.
+Always run topic-led discovery. Discover entities/substitutes through customer
+accounts; verify identity, then add entity feedback. Do not search only for
+competitor complaints.
+
+Use `plan_customer_feedback.py` for both passes, including when no entity is
+known. Extend its locale cells with `--topic-cells-json`: each object contains
+`locale`, `job`, `role`, `source_family` and `query_intent` where decision-relevant.
+Include routine/successful journeys, painful episodes, workarounds, non-adoption,
+switching and exit. Translate actual customer vocabulary; do not mechanically
+use English phrases in every market. Forum/Facebook discovery and locally
+relevant review sites must be considered. Inapplicability needs a reason;
+missing locators are discovery work. Do not make every Cartesian combination
+mandatory: explain the relevant sampling cells for this study.
+
+Record executed queries separately from proposed queries. Review unattempted
+cells after each batch; widen or change searches using customer vocabulary,
+unexpected alternatives and missing perspectives. Firecrawl/Serper balance the
+early query intents; other provider schedules require explicit inspection.
+Provider success does not establish usable voice. Paid customer-evidence APIs
+are authorized without a monetary cap; failed credits require notification,
+fallback and a preserved gap, never an absence-of-demand conclusion.
+
+Within each source record sort order, rating/text filters, time window,
+product/version, pagination, returned/accessibly available totals and provider
+subset restrictions. Unknown is valid. Compare contrasting relevant slices
+when a recent outage or platform ranking dominates, or bound conclusions to
+that slice. Do not impose equal star quotas or claim representativeness.
+Storefront/query locale is not the author's location or language.
+
+Apple RSS has a country storefront, not a language filter. Multiple requested
+languages in one country produce a country:und capture and explicit unresolved
+language coverage. To use a review in one requested language cell, source review
+adds `language_review` with language, exact supporting_passage and rationale.
+The validator resolves that scoped membership without rewriting the original
+capture; unsupported other language cells remain gaps.
+
+### 2. Documents → speaker experiences → source review
+
+Search snippets identify destinations; hydrate before accepting testimony.
+Full extracted pages are documents, not one customer's voice. Preserve raw
+content. Split by speaker and episode, including separate supplier replies and
+quoted third-party statements. Do not infer authorship from sentiment or “I”.
+
+Use the existing collector for reviewed targeted sources. Generic independent
+review/forum entity pages use:
+
+```bash
+python3 scripts/evidence_scout/collect.py \
+  --topic '<job>' --customer-segment '<segment>' \
+  --sampling-frame entity_led_feedback --subject-entity-id '<id>' \
+  --customer-feedback-source-plan '<plan.json>' \
+  --entity-source-url '<exact reviewed URL>' \
+  --entity-source-lane external_forums_communities \
+  --geo '<CC>' --language '<language>' --providers firecrawl
+```
+
+For documents, propose an annotations JSON array containing `document_id`, exact
+`start`/`end` character offsets, `quote`, source-local `speaker_id` (or unknown),
+`speaker_basis`, and `speaker_role` (`customer_candidate`, `supplier`,
+`quoted_other`, `unresolved`). Optional `observations` identify triggers,
+actions, alternatives, outcomes and consequences: each records `attribution`
+(`observed`, `inferred`, `unknown`); observed fields need `supporting_quote`,
+inferences need `rationale`. Keep chronology, conditions and negation intact.
+
+```bash
+python3 scripts/evidence_scout/build_experience_ledger.py \
+  --documents '<capture/evidence.jsonl>' --annotations '<episodes.json>' \
+  --out '<analysis/evidence.jsonl>'
+```
+
+The helper validates exact spans, not semantic accuracy or episode recall.
+Inspect the whole document for missed voices/rare consequential episodes.
+Translations retain `original_quote`; inferred geography requires an explicit
+basis. Unknown independence stays unknown. Count documents, experiences,
+incidents and independently attributable people separately. Do not merge
+cross-site identities speculatively. The same observation reached through both
+sampling frames is one observation with multiple discovery memberships.
+
+Write the digest-bound source-review sidecar against the *experience* evidence
+file. `reviewed_voice.py` is shared by synthesis, claims and interview consumers.
+Keep original classifications intact. Correct heuristic editorial/competitor
+labels only with a reviewed local source kind, rationale, exact
+`supporting_passage` and `author_context_basis`; correcting an irrelevant label
+also needs `relevance_correction_rationale`. Explicit supplier attribution
+cannot be overridden. Known creator/quoted-other material is not customer voice.
+Reviewer proposals, unresolved entries and accepted firsthand voice stay distinct.
+
+### 3. Code and compare before making a needs map
+
+Maintain a versioned codebook with each code's definition, inclusion/exclusion
+criteria, source-linked quoted instances and revision notes. Start from research
+questions, then add unexpected codes. One experience may have several motives;
+unexplained motivation remains unknown. Inspect outliers and compare context,
+role, journey moment, alternative and outcome before combining themes.
+
+New studies use `customer-voc-synthesis.json` schema_version 2 with status
+`supported`, `scoped`, `provisional` or `insufficient_evidence`, the existing
+topic/entity ID lists and U/R arrays, plus `codebook` and `next_investigations`.
+Each U/R retains existing fields and adds:
+
+- `context`: U uses role, trigger, current_alternative, observed_behavior,
+  consequence; R uses role, use_episode, acceptable_outcome, actual_performance.
+  Use the string `unknown` when unsupported.
+- `scope`: collection_locales, segment_relations, applicability_limits. These
+  bind the actual sources; target-country transfer is a separate claim.
+- `assessment`: unmetness, confidence_rationale, disposition, next_question.
+  Assess occurrence, importance, current satisfaction, alternatives and payment
+  separately. A rare consequential need must not disappear under “convenience”.
+- `inference_rationale`, `counter_evidence_ids` (or counter_search_scope), and
+  `code_ids`. Review recommendation-changing contrary cases explicitly.
+
+`codebook` contains version, revision_notes and codes; each code has id,
+definition, include_when, exclude_when, instances (`evidence_id`, `quote`).
+`next_investigations` contain question, method, reason and decision_change.
+Retain unresolved/excluded critical concepts with reasons in the narrative;
+do not quietly discard them to improve a neat map.
+
+Finalize coverage, then run `validate_customer_voc_synthesis.py`. Structural
+validation checks provenance and scoped fields; an analyst must still judge
+whether each claim follows from the source. Legacy maps report
+`legacy_unassessed`; never silently upgrade their review quality.
+
+For commercial/population/transfer claims use the existing claim ledger,
+`validate_synthesis.py --source-review <review.json> --customer-segment '<scope>'`.
+Specify claim_type and scope, with confidence_assessment explaining provenance,
+target_fit, independence, context, recency, counterevidence and coverage.
+One located account can establish occurrence, not prevalence. Prevalence needs
+a sampling_basis; unmetness needs alternatives_assessment; willingness_to_pay
+needs price_bearing_behavior_evidence; transfer needs applicability_basis.
+Mention counts and strong-sounding prose cannot supply these missing facts.
+
+#### Underserved and latent outcomes
+
+Within existing U-need assessments distinguish dissatisfied users, nonconsumers blocked by cost/access/time/skill, overserved customers who may accept less complexity, and adequately served customers. Apply only relevant sampling lenses. Link situation, desired outcome, actual alternative (including doing nothing/informal help), shortfall and consequence to reviewed experiences.
+
+For a latent need retain observation → interpretation → competing explanation → disconfirming test in the existing `inference_rationale`, assessment and next-investigation fields. Silence or adaptation can conceal a consequential shortfall or reflect low urgency; a workaround does not establish switching/payment intent. Compare importance and satisfaction separately. Never derive opportunity scores or population prevalence from mention counts or invented survey ratings. `insufficient_evidence` differs from supported adequate service. Preserve rare consequential cases and negative findings.
+
+Method sources checked 17 September 2026: [Strategyn](https://strategyn.com/outcome-driven-innovation/), [Christensen Institute](https://www.christenseninstitute.org/blog/to-build-a-new-market-overcome-these-4-barriers/), [interview-to-jtbd](https://github.com/lowwwbank/interview-to-jtbd). Use the local evidence ledger rather than adding another extraction tool.
+
+### 4. Partial findings and the next learning step
+
+Execution completeness, coverage and claim readiness are separate. A missing
+market/platform is a visible gap, not a reason to suppress all useful findings.
+Report scoped findings without implying the unobserved market is covered.
+Zero accepted voice yields insufficient_evidence and named next questions,
+not manufactured U/R objects or “no demand”. Invalid attribution still blocks.
+
+Select the method for the missing knowledge:
+
+| Unanswered question | Suitable next investigation |
+| --- | --- |
+| Missing local/community sources or accessible perspectives | More targeted discovery or a different retrieval route |
+| Trigger, motive, decision roles, real sequence or handoff | Non-leading incident interviews or contextual observation |
+| Whether a solution works acceptably | Observed task/usability test with an R criterion |
+| Switching/payment behavior | Separately authorized behavioral/price-bearing test |
+| Current provider/legal/operational fact | Verify the relevant primary source |
+
+Interview selection keeps all reviewed material_counterexample cases and then
+adds distinct perspectives, stages, jobs, alternatives and outcome_statuses.
+Inspect `interview-selection.json`; a numeric limit is not a justification for
+silently omitting a decision-changing contrast. Incorporate interview episodes
+in the same evidence/review/codebook process. No fixed number of confirmations
+validates a need and one refutation does not erase other contexts.
+
+Stop with an explicit reason: scoped questions answered, mostly duplicates,
+unresolved access, or a more informative next method. Keep study limits visible.
+Unpaid recruitment and launch/outreach authorization remain unchanged.
+
+### Method and implementation sources
+
+Checked 2026-09-16: [GOV.UK analysis of research sessions](https://www.gov.uk/service-manual/user-research/analyse-a-research-session),
+[question-driven research planning](https://www.gov.uk/service-manual/user-research/plan-user-research-for-your-service),
+[LangExtract source grounding](https://github.com/google/langextract),
+[QualCoder](https://github.com/ccbogel/QualCoder),
+[Argilla](https://github.com/argilla-io/argilla).
+These inform the located-span, codebook and suggestion/review patterns; no
+third-party package is required and their performance is not claimed here.
+
+## Query design and refinement across research workflows
+
+Use for substantive market, operator, competitor and community discovery. A focused factual lookup does not require a full calibration experiment. Reuse current sources and reviewed vocabulary before collecting again.
+
+### Before collection
+
+1. Separate the research brief from short search phrases. Record target country, search language, original source language and intended audience independently. A translated result or English-language author does not establish residence or native language.
+2. Brainstorm both vocabulary and source locations: local category names, acronyms, customer/operator situations, substitutes, counterexamples, and places where the relevant people or organizations publish. Disambiguate terms that name unrelated industries. Do not translate one long English sentence and call it coverage.
+3. Review the candidate set for distinct questions, native terminology, source fit, missing lanes and confirmation bias. This is an analyst review, not another user permission gate. Preserve rationale and unresolved language judgments; do not label inline review independent.
+4. Preview the executable schedule. Give each selected candidate an allocation; retain skipped and failed queries. Keep geography, provider, depth and period comparable when comparing strategies. An expanded source set is a changed sampling frame, not a language-only improvement.
+
+### Evidence questions differ by workflow
+
+| Workflow | What to search and review | What counts as useful evidence |
+|---|---|---|
+| Market problems | Jobs, triggers, workarounds, satisfactory outcomes and non-adoption; independent topic discovery before known-company feedback | Located original customer experiences, with situation, outcome and speaker boundaries |
+| Founder/operator | First customers, decisions, economics, retention, failed channels and early-stage constraints; named operators and local interview/podcast vocabulary | Attributed operator actions and dated outcomes; corroborate success claims and preserve survivorship bias |
+| Competitors | Same-market providers, non-software substitutes, explicit cross-market analogs and named capability references | Verified entity/job/segment fit from source pages; supplier claims remain supplier claims |
+| Communities | Local member vocabulary and source names, separately for forums, Facebook groups and pages | Verified source shape, audience, activity, locale and access route; indexed URLs alone are leads |
+
+### Execution controls
+
+- `collect.py`, `discover_market_problems.py`, and `research_founder_playbooks.py` support `--topic-keywords`, `--segment-keywords`, `--query-plan`, `--query-limit`, `--results-per-query`, `--max-http-requests`, and `--query-preview`. A preview performs no provider calls or project writes.
+- Exact plans use `schemas/pain-query-plan.schema.json` (shared for customer, operator and competitor searches). Each query binds provider, locale, candidate ID, intent and seed origin. Run locales separately. Source-derived seeds require locators; use `previous_plan_digest` and revision notes for a follow-up round.
+- Collector allocations apply per provider. Set `--limit` high enough for every selected exact query's allocation. HN, GitHub, autocomplete, YouTube, X and ScrapeCreators accept these plans. Query caps retain unexecuted rows. GitHub appends issue/date filters; X appends language/retweet filters. These transformations are retained in raw requests. YouTube allocations cap retained records including metadata/comments/transcripts; raw captures preserve the larger response. Optional ScrapeCreators comments have a separate cap, and requested entity/community captures retain their own controls.
+- xAI receives one seed per prompt; its underlying searches are not observable exact-query execution. Its output remains model-mediated discovery requiring inspection of cited posts.
+- Operator defaults use separate source-language situations in English, German, French, Spanish and Italian. For another language supply `--operator-keywords` and a local `--topic-keywords`, or an exact plan. Non-English automatic runs require local topic keywords. The default provider set is `serper_search,youtube,hn`; choose alternatives explicitly. Seed translation and query quality still need review.
+- Competitor discovery supports the same exact plan format with mandatory `lane_scope` (`competitive_market`, `similar_company`, `capability_reference`) and `scope_value` on each row. Providers are `brave_search` and `firecrawl`. Its `--query-limit` applies per provider per lane; `--results-per-query` is search depth. Existing lane limits control the final shortlist, not which queries run. All discovered candidates and query outcomes remain in the raw audit. Firecrawl requests country, but does not enforce original language.
+- Community discovery keeps its locale-specific seed/source-term controls and complete lane coverage check. Use `--query-preview` before execution. Optional `--query-review` binds analyst notes and source-derived vocabulary to the signed discovery audit; it does not authorize capture or replace direct source review.
+
+Community review JSON shape:
+
+```json
+{
+  "revision": "round-2",
+  "previous_plan_digest": "<SHA256 from prior query_plan.json>",
+  "review_notes": "Why these vocabulary/source changes address observed misses",
+  "seeds": [{
+    "locale": "<COUNTRY:language>",
+    "seed": "<exact locale seed passed on the CLI>",
+    "seed_origin": "source_derived",
+    "seed_locators": ["<source URL plus post/paragraph locator>"]
+  }]
+}
+```
+
+### After a probe
+
+Inspect relevant and rejected leads, actual outbound requests, failures, duplicates and source content. Separate query-result slots, unique URLs, original speakers and verified entities. Successful extraction may contain only navigation, supplier replies, AI summaries or copied quotations. Check original pages/API units before accepting an experience or operator account.
+
+Refine with vocabulary and locations observed in reviewed sources. Keep the original run immutable, bind the new revision to its parent digest, and compare newly useful sources against rediscovered seed pages. Record negative and satisfactory outcomes. Refinement may worsen results; retain the failure rather than implying improvement from more queries. Stop when the decision has sufficient coverage or name the unresolved gap. None of these mechanics proves prevalence, demand, competitor strength or a successful business.
+
+## Pain-query calibration: plan, challenge, probe, review, refine
+
+Use before substantive customer-problem collection when vocabulary is inferred,
+when researching a new locale/source, or when prior results are mostly suppliers,
+editorial material, duplicates or unrelated posts. Reuse current reviewed work.
+A poor search can reflect wording, source/index coverage, access, extraction or
+classification; it does not establish absence of pain.
+
+### 1. Plan what and where to search
+
+Reuse the source plan from `plan_customer_feedback.py --topic-cells-json` and
+the Customer-needs research method above. Identify relevant locale, job,
+role, journey moment, source family and query-intent cells; avoid a compulsory
+Cartesian grid. Begin with supplied experiences, reviewed prior evidence, or a
+small neutral discovery pass when local vocabulary/source locations are unknown.
+
+Brainstorm distinct query families covering triggers/decisions, consequences,
+workarounds, successful outcomes, non-adoption and switching. Include indirect
+accounts of a problem, not only explicit complaints. As a starting point, try
+3–6 complementary families; expand when a decision-relevant perspective is missing.
+For each family record:
+
+- Source-language phrases, local acronyms, everyday/technical terms, spelling
+  variants and relevant dialect/code-switching. Translation can propose terms;
+  do not depend solely on untested literal translation. Preserve source-derived
+  phrases with locators and label invented/translated wording as hypotheses.
+- Where those episodes may appear and why: candidate local forums, communities,
+  Q&A, public comments, or verified entity-feedback sources. Check audience and
+  access rather than treating a platform name or a `forum` suffix as coverage.
+- A mixture of audience-anchored and unanchored searches. Source review establishes
+  target membership; people need not name their audience category in every post.
+- Expected useful evidence and likely false positives. Keep shared baselines
+  separate from candidate comparisons, and keep topic/entity sampling frames separate.
+
+Use existing community discovery and capture review where applicable. Indexed
+community candidates are not automatically authorized or accessible capture targets.
+Web indexes are retrieval routes; two indexes finding one post are one observation.
+
+Treat geography, search language, original post language and displayed translation
+as separate fields. A translated search result is not a new source-language
+experience. Retrieve the original post where possible; retain useful local
+acronyms/code-switching, and label unsupported-language or translation-only
+coverage. Do not compare languages as if they necessarily sampled the same people.
+
+Check ambiguity before adding emotion words: a local term may name several jobs
+or industries. Use a concrete product, event or action to disambiguate it. Split
+combined category phrases into separate customer episodes. For the actual first
+scheduled queries, check distinct situations and sources, not only different
+intent suffixes on the same broad topic. Generic positive wording can retrieve
+supplier testimonials; seek successful episodes in discussion sources as well.
+
+### 2. Review the plan before collection
+
+For substantive studies, use a fresh independent reviewer when delegation is
+available and authorized. Give it the research question, roles/locales, sampling
+cells, query families, source candidates and known evidence, without telling it
+which formulation should win. Ask for specific omissions and edits:
+
+- Is local wording plausible? Are concepts and journey moments missing?
+- Are audience constraints too restrictive, or phrases overly supplier-oriented?
+- Does the plan cover consequences, workarounds and successful/contrary cases?
+- Are source locations plausible for the audience, and provider syntax supported?
+- Are apparently diverse candidates only paraphrases of one idea?
+
+Resolve concrete defects, retain exploratory searches where uncertainty remains,
+and record rationale. If delegation is unavailable, perform a separate inline
+review and label it honestly; do not claim independence. Review checks plan quality,
+not expected search performance. It does not require new user approval.
+
+### 3. Execute exact, comparable probes
+
+Use `collect.py --query-plan` for attributable calibration. The input follows
+`schemas/pain-query-plan.schema.json`. Its exact queries replace generated queries;
+no topic baseline, automatic suffix or audience term is added. Each row specifies
+one provider. The selected provider set must exactly match the file, and all rows
+must match explicit `--geo`/`--language`; run different locales separately.
+
+Illustrative French relocation probe, not verified customer wording or a required
+provider choice:
+
+```json
+{
+  "schema_version": 1,
+  "revision": "round-1",
+  "review": {"mode": "inline", "notes": "Illustration only; complete substantive review for the actual study."},
+  "queries": [
+    {"query_id": "q1", "candidate_id": "deposit-delay", "query": "caution non rendue déménagement forum", "provider": "serper_search", "locale": "FR:fr", "intent": "pain", "source_family": "local_forums", "seed_origin": "generated"},
+    {"query_id": "q2", "candidate_id": "successful-resolution", "query": "récupéré ma caution après déménagement", "provider": "serper_search", "locale": "FR:fr", "intent": "successful_alternative", "source_family": "local_forums", "seed_origin": "generated"}
+  ]
+}
+```
+
+Link rows to existing sampling cells with optional `cell_id`; record source-derived
+vocabulary with `seed_origin: source_derived` and nonempty `seed_locators`.
+Use provider-specific query rows when syntax differs. Query IDs and provider/query
+pairs must be unique. `review` is analyst notes, not authenticated approval.
+`source_family` and `intent` describe the planned search; inspect returned sources
+before assigning their actual type, audience or experience.
+
+Preview first (offline, no credentials, collection or workspace writes):
+
+```bash
+python3 scripts/evidence_scout/collect.py \
+  --topic '<research question>' --customer-segment '<target segment>' \
+  --query-plan '<query-plan.json>' --geo FR --language fr \
+  --providers serper_search --query-limit 2 --results-per-query 5 --limit 10 \
+  --query-preview
+```
+
+To collect, use the same arguments without `--query-preview`, add the actual
+`--workspace`/`--case` or a unique `--out-dir`, and choose an appropriate `--days`
+for recency-aware providers. Keep each round's artifacts separate.
+
+Explicit plans support Reddit, Brave, Serper, Firecrawl, HN, GitHub, autocomplete,
+YouTube, X, xAI discovery and ScrapeCreators keyword searches. Other routes retain
+their existing workflows. xAI receives a seed prompt, not a verifiable exact
+underlying search. See Query design and refinement above for
+provider allocation units and wrapper controls.
+`--query-limit` selects the first N declared rows **per provider**. Every selected
+query gets `--results-per-query` (1–10). `--limit` remains the per-provider record
+cap and must cover all selected allowances; insufficient allocations fail before
+collection. These bounds are reproducible sample allocations, not spending caps.
+
+Compare candidates within the same provider/locale/source lane at the same depth
+and relevant time window. Then compare source strategies separately. Do not pool
+baseline results into each candidate's score. A query-limit omission or failed
+provider is untested coverage, not a zero-quality candidate.
+
+For a before/after test, freeze the current automatic schedule as well as any
+historical baseline before inspecting results. Replay them with the same provider,
+locale and depth; record actual search times. Separate the effects of wording,
+source restrictions, extraction routes and classification changes. A later
+source-derived round is a refinement check, not an independent causal benchmark.
+
+The preview and saved `query_plan.json` contain provider schedules, allocations,
+locale limitations, the input plan and its digest. `summary.json` contains the
+actual per-provider `query_ledger`: query/candidate IDs, attempted/status,
+returned/inspected counts, result URLs and record IDs. Evidence memberships retain
+multiple discovery paths for a repeated record. `new_record_count` is marginal
+within that provider's execution order, not independent-person or customer count.
+The run snapshot is an output wrapper; pass its `input_plan` as a new input only
+after intentional revision, not the entire wrapper.
+
+For generated full-pass searches, use short `--topic-keywords`, review the mixed
+anchored/unanchored schedule, and inspect any unsupported-language warning. Generic
+preview explicitly lists providers outside its scheduling support. Exact plans
+can include a short or long expression deliberately; the collector never rewrites it.
+
+### 4. Review source evidence before scoring
+
+Hydrate promising snippets, inspect complete pages and speakers, and apply the
+existing experience ledger and source-review process. Classify reviewed firsthand
+target/adjacent experiences, supplier/editorial material, unrelated results and
+unresolved fit. Check a sample of rejected items for multilingual false negatives.
+Automated relevance and `user_pain` labels are provisional.
+
+Audit rejected leads in every language: a specialist keyword list may recognize
+one language or acronym spelling and silently discard another. Preserve original
+labels, record corrections with the shared source-review contract, and test the
+exact failure before changing the classifier. Missing vocabulary is not negative
+customer evidence. Retrieval quality and classifier retention are separate scores.
+
+Check that extraction retained author/post boundaries and substantive text. HTTP
+success can return only navigation; a forum can contain supplier replies, quoted
+other speakers, or an AI-generated summary. None is automatically firsthand voice.
+Use an available source API if the extractor explicitly does not support that site;
+keep each attempt and the final capture provenance. Do not repeatedly retry a known
+unsupported route. Thread pagination and API comment subsets remain coverage limits.
+
+In the research plan's calibration notes record per candidate:
+
+- Planned, attempted, fetched, unavailable, reviewed and unresolved counts.
+- Reviewed target-experience precision with an explicit denominator; display
+  unavailable/unreviewed counts separately rather than hiding them as negatives.
+- Deduplicated useful experiences, marginal discoveries and source/role/journey
+  coverage, including rare consequential episodes and contrary cases.
+- Evidence IDs, source locators and existing review decisions supporting the counts.
+
+Do not rank near-tied candidates confidently from five results or select solely
+for precision. Retain complementary searches. Cross-provider duplicates and
+unknown speaker independence require review; no automatic person deduplication
+or convenience-sample prevalence estimate is justified.
+Also report confirmed episode-bearing documents over all returned unique URLs as
+a lower bound when review is partial, separately from precision among reviewed
+documents. Retain query-result slots, unique documents and distinct speaker
+episodes as different denominators. Old experiences may establish occurrence or
+teach wording; record their dates and avoid treating them as current product facts.
+
+### 5. Refine and validate on fresh searches
+
+After each probe batch diagnose gaps: ambiguous wording, excessive constraints,
+wrong source, unfamiliar local vocabulary, access failure, extraction loss,
+unsupported locale, duplicates or unresolved target fit. Use reviewed material to
+learn phrases, events, alternatives and source locations with their provenance.
+Supplier pages may supply vocabulary but remain supplier context.
+
+Write a revised query plan with stable candidate IDs for the same hypothesis,
+new query IDs for changed searches, a new `revision`, `revision_notes`, and the
+prior `input_plan_digest` as `previous_plan_digest`. Record dropped/retained/added
+families and why in the research plan. Preserve original scope and contrary cases.
+Try at least one evidence-driven revision when gaps remain; include fresh queries
+or sources beyond those used to tune the plan. If no revision is useful, record why.
+Record which reviewed documents are new to the study. Finding the seed thread again
+does not validate the revised query; inspect off-topic returns and newly found
+experiences, including successful and non-adoption cases. A refined query can be
+worse or merely complementary; retain the evidence instead of declaring a winner.
+
+Stop with an explicit reason: scoped questions sufficiently answered, mainly
+repeat evidence, unresolved access, or a more informative next method. Do not
+claim full-web recall or saturation. Carry the refined queries and source cells
+into the broader topic-led pass; do not regenerate solely from the original brief.
+Run the separate entity-led pass when verified alternatives exist. Reconcile
+both with the source plan via `finalize_customer_feedback.py`; a provider selection
+or successful capture cannot complete semantic feedback analysis.
+
+Choose the next search from reviewed yield, not provider volume. Compare distinct
+reviewed episodes and independent origins by customer role, locale, journey
+moment, source family and outcome. Keep unknown independence visible. Search
+snippets and creator/supplier material do not satisfy a customer-episode gap.
+For each unresolved material question, state what observation would distinguish
+the plausible explanations, then add a small linked refinement using customer
+wording or an applicable source locator.
+
+For partial manual review, the result row must name the exact population, selected
+and sampled-out IDs, exclusion reasons, strata, review method, reviewed items,
+rejection audit and limitations. Counts alone cannot establish a sample. Claims
+may use only reviewed accepted items; sampled-out material cannot support
+prevalence. Stop expanding a cell only when its decision-relevant questions have
+reviewed support or explicit limits, applicable source families have honest
+outcomes, and recent inspected sources add no new distinction. This is a bounded
+conclusion for the declared scope, never proof of market saturation or absence of
+pain.

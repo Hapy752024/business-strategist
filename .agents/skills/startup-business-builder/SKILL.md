@@ -7,7 +7,7 @@ description: Build provisional per-case business plans or a selected startup exe
 
 **Per-case business plans.**
 V2 appraisal generates a provisional case plan automatically as its initial draft.
-For a versioned case project, read repo-root `references/case-assessment.md` and repo-root `references/case-business-plan.md`.
+For a versioned case project, read repo-root `references/case-assessment.md`.
 Publish each substantively researched case's complete provisional plan through the explicit `case-business-plan` route and `case_workspace.py case-plan`.
 This conditional document requires current reviewed insights and source bindings, but no selection or passed pain gate.
 Provisional plans do not select execution or waive the pain-first gate.

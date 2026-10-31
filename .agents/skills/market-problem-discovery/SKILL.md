@@ -28,9 +28,9 @@ The user’s requested outcome governs the study. For a topic or segment pain-po
 
 ## Workflow
 
-For substantive query design and refinement, apply repo-root `references/research-query-calibration.md` (shared repository dependency) before broad collection. Keep each workflow's evidence type and source-review requirements distinct.
+For substantive query design and refinement, apply repo-root `references/customer-voice.md` (shared repository dependency) before broad collection. Keep each workflow's evidence type and source-review requirements distinct.
 
-1. Read `references/workflow.md`, repo-root `references/customer-voice.md`, repo-root `references/voc-research-method.md` and repo-root `references/research-execution.md` completely. Always run topic-led discovery; add entity feedback when alternatives are verified, without requiring a preselected segment.
+1. Read `references/workflow.md`, repo-root `references/customer-voice.md` and repo-root `references/research-execution.md` completely. Always run topic-led discovery; add entity feedback when alternatives are verified, without requiring a preselected segment.
 2. Infer discovery mode when explicit; otherwise ask the one routing question before collecting.
 3. Create a durable discovery run, validate source routes, and collect public evidence before proposing candidates.
 4. Write source-linked outcome shortfalls, competing explanations and next tests in the existing report; distinguish candidate underserved needs, adequate service and insufficient evidence.

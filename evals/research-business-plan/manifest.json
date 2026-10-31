@@ -21,12 +21,10 @@
         ".agents/skills/competitive-landscape-builder/SKILL.md",
         "references/case-assessment.md",
         "references/vc-investment-signals.md",
-        "references/research-data-and-precedents.md",
-        "references/case-business-plan.md"
+        "references/research-data-and-precedents.md"
       ],
       "baseline_optional_snapshot_paths": [
-        "references/research-data-and-precedents.md",
-        "references/case-business-plan.md"
+        "references/research-data-and-precedents.md"
       ]
     },
     {
@@ -40,12 +38,10 @@
         ".agents/skills/competitive-landscape-builder/SKILL.md",
         "references/case-assessment.md",
         "references/vc-investment-signals.md",
-        "references/research-data-and-precedents.md",
-        "references/case-business-plan.md"
+        "references/research-data-and-precedents.md"
       ],
       "baseline_optional_snapshot_paths": [
-        "references/research-data-and-precedents.md",
-        "references/case-business-plan.md"
+        "references/research-data-and-precedents.md"
       ]
     },
     {
@@ -59,12 +55,10 @@
         ".agents/skills/competitive-landscape-builder/SKILL.md",
         "references/case-assessment.md",
         "references/vc-investment-signals.md",
-        "references/research-data-and-precedents.md",
-        "references/case-business-plan.md"
+        "references/research-data-and-precedents.md"
       ],
       "baseline_optional_snapshot_paths": [
-        "references/research-data-and-precedents.md",
-        "references/case-business-plan.md"
+        "references/research-data-and-precedents.md"
       ]
     }
   ],

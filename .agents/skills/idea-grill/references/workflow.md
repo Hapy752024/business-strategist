@@ -111,7 +111,7 @@ Before the full run, calibrate inferred pain terms and new locales: brainstorm
 source-language phrases and source locations, review the plan, execute exact
 `--query-plan` probes, review actual customer experiences, and refine using observed
 vocabulary and missing perspectives. Apply the repo-root
-`.agents/skills/evidence-scout/references/pain-query-calibration.md`. Poor retrieval can reflect query, source,
+repo-root `references/customer-voice.md` (Pain-query calibration section). Poor retrieval can reflect query, source,
 access, extraction or classification gaps; it does not prove absence of pain.
 
 Use `--providers default,social` only when TikTok, Instagram, Threads, or X evidence is likely to matter enough to spend paid credits.

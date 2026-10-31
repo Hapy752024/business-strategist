@@ -23,4 +23,4 @@ Produce: idea restatement, gate-by-gate evidence table, GO / GO-as-assist / PIVO
 
 Also read when the stage needs it:
 - repo-root `references/evidence-registry.md`
-- repo-root `references/research-query-calibration.md`
+- repo-root `references/customer-voice.md`

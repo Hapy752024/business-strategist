@@ -19,7 +19,7 @@ For a registered Business case, pass applicable operator lessons, transfer limit
 
 ## Workflow
 
-For substantive query design and refinement, apply repo-root `references/research-query-calibration.md` (shared repository dependency) before broad collection. Keep each workflow's evidence type and source-review requirements distinct.
+For substantive query design and refinement, apply repo-root `references/customer-voice.md` (shared repository dependency) before broad collection. Keep each workflow's evidence type and source-review requirements distinct.
 
 1. Read `references/workflow.md` completely.
 2. Reuse the active topic workspace and identify archetype, stage, geography, and constraints.
