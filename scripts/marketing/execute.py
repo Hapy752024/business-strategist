@@ -36,6 +36,8 @@ from scripts.validate_apis.common import get_secret, redact_sensitive  # noqa: E
 ADAPTERS = {"schedule_post": postiz, "create_campaign": meta_ads, "send_broadcast": resend,
             "create_experiment": posthog}
 DEFAULT_VALIDITY = timedelta(days=7)
+MAX_VALIDITY = timedelta(days=14)
+VERIFIER_CANDIDATES = (Path("/usr/bin/ssh-keygen"), Path("/bin/ssh-keygen"))
 CLOCK_SKEW = timedelta(minutes=5)
 AGENT_IDENTITIES = {"claude", "agent", "assistant", "subagent", "tool", "bot", "llm", "model", "system",
                     "codex", "gpt", "chatgpt", "gemini", "copilot", "automation", "script"}
@@ -50,6 +52,8 @@ SETUP_STEPS = (
     "2) mkdir -p ~/.config/business-strategist && "
     "echo \"<your-principal> namespaces=\\\"marketing-approval\\\" $(cat ~/.ssh/marketing_approval.pub)\" "
     ">> ~/.config/business-strategist/allowed_signers ; "
+    "3) recommended, because the agent runs as your OS user: sudo chown root:root ~/.config/business-strategist/allowed_signers "
+    "&& sudo chmod 0644 ~/.config/business-strategist/allowed_signers (or sudo chattr +i it); "
     "<your-principal> is the --by value you will use (letters, digits, . _ @ + -).")
 
 
@@ -74,8 +78,8 @@ def canonical_root(marketing_root) -> str:
 
 
 def signed_message(approval: dict) -> str:
-    """digest|scope|granted_at|action_id|granted_by|marketing_root|founder_email — the exact bytes the founder signs."""
-    fields = [approval.get(k) or "" for k in ("digest", "scope", "granted_at", "action_id", "granted_by",
+    """digest|scope|granted_at|valid_until|action_id|granted_by|marketing_root|founder_email — the signed bytes."""
+    fields = [approval.get(k) or "" for k in ("digest", "scope", "granted_at", "valid_until", "action_id", "granted_by",
                                               "marketing_root", "founder_email")]
     for value in fields:
         if not isinstance(value, str) or "|" in value or "\n" in value or "\r" in value:
@@ -98,27 +102,54 @@ def _untrusted_locations() -> list[Path]:
     return [p.resolve() for p in places if p.exists()]
 
 
+def _stat(path):
+    return os.stat(path)
+
+
+def _owner_mode_problems(candidate: Path, allowed_uids: set[int]) -> list[str]:
+    try:
+        info = _stat(candidate)
+    except OSError:
+        return [f"cannot stat {candidate}"]
+    problems = []
+    if info.st_uid not in allowed_uids:
+        problems.append(f"{candidate} is not owned by " + ("root" if allowed_uids == {0} else "the current user or root"))
+    if info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
+        problems.append(f"{candidate} is group- or world-writable")
+    return problems
+
+
+def _inside_untrusted(target: Path) -> bool:
+    return any(target == place or place in target.parents for place in _untrusted_locations())
+
+
 def signers_file_problems(path: Path) -> list[str]:
-    """StrictModes-like checks: owned by the current user, not group/world-writable, no symlink into repo/temp."""
-    if path.is_symlink():
-        target = path.resolve()
-        if any(target == place or place in target.parents for place in _untrusted_locations()):
-            return [f"allowed_signers {path} is a symlink into the repository or a temp directory; refusing"]
+    """StrictModes-like checks: owned by the current user or root, not group/world-writable, and neither the file
+    nor its directory is a symlink into the repository or a temp directory."""
+    if (path.is_symlink() or path.parent.is_symlink()) and _inside_untrusted(path.resolve()):
+        return [f"allowed_signers {path} (or its directory) is a symlink into the repository or a temp directory; refusing"]
     if not path.is_file():
         return [f"no allowed_signers file at {path}; every execution is refused until the founder sets it up. {SETUP_STEPS}"]
     problems = []
     for candidate in dict.fromkeys([path, path.resolve(), path.parent, path.resolve().parent]):
-        try:
-            info = os.stat(candidate)
-        except OSError:
-            problems.append(f"cannot stat {candidate}")
+        problems.extend(_owner_mode_problems(candidate, {os.getuid(), 0}))
+    return [f"allowed_signers permissions are unsafe: {p}; use a root-owned file (sudo chown root:root, "
+            "sudo chmod 0644) or a user-owned read-only one (chmod 0444, directory 0700)" for p in problems]
+
+
+def verifier_path() -> tuple[Path | None, list[str]]:
+    """Pinned ssh-keygen: fixed system locations only, root-owned and not group/world-writable. $PATH is never used."""
+    problems = []
+    for candidate in VERIFIER_CANDIDATES:
+        if not candidate.exists():
             continue
-        if info.st_uid != os.getuid():
-            problems.append(f"{candidate} is not owned by the current user")
-        if info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
-            problems.append(f"{candidate} is group- or world-writable")
-    return [f"allowed_signers permissions are unsafe: {p}; fix ownership/permissions (file chmod 0444, directory 0700)"
-            for p in problems]
+        real = candidate.resolve()
+        found = [p for c in dict.fromkeys([real, real.parent]) for p in _owner_mode_problems(c, {0})]
+        if not found:
+            return real, []
+        problems.extend(found)
+    return None, [f"no trusted ssh-keygen verifier ({', '.join(map(str, VERIFIER_CANDIDATES))}); refusing"
+                  + (f": {'; '.join(problems)}" if problems else "")]
 
 
 def verify_signature(approval: dict, *, allowed_signers=None) -> list[str]:
@@ -135,13 +166,16 @@ def verify_signature(approval: dict, *, allowed_signers=None) -> list[str]:
         message = signed_message(approval)
     except ValueError as exc:
         return [str(exc)]
+    verifier, problems = verifier_path()
+    if verifier is None:
+        return problems
     with tempfile.TemporaryDirectory() as folder:
         sig = Path(folder) / "approval.sig"
         sig.write_text(signature, encoding="utf-8")
         try:
-            proc = subprocess.run(["ssh-keygen", "-Y", "verify", "-f", str(signers), "-I", approval["granted_by"],
+            proc = subprocess.run([str(verifier), "-Y", "verify", "-f", str(signers), "-I", approval["granted_by"],
                                    "-n", NAMESPACE, "-s", str(sig)], input=message.encode(), capture_output=True,
-                                  timeout=30)
+                                  timeout=30, env={"PATH": "/usr/bin:/bin", "LC_ALL": "C"})
         except (OSError, subprocess.TimeoutExpired) as exc:
             return [f"signature verification unavailable ({type(exc).__name__}); refusing"]
     if proc.returncode != 0:
@@ -155,7 +189,7 @@ def bound_request(action: dict) -> dict:
     return json.loads(json.dumps(request)) if isinstance(request, dict) else {}
 
 
-def check_approval(action: dict, approval: dict, *, now: datetime, validity: timedelta, marketing_root=None,
+def check_approval(action: dict, approval: dict, *, now: datetime, marketing_root=None,
                    allowed_signers=None) -> list[str]:
     reasons = []
     if not isinstance(approval, dict):
@@ -177,8 +211,13 @@ def check_approval(action: dict, approval: dict, *, now: datetime, validity: tim
         reasons.append("approval granted_at is missing or invalid")
     elif granted > now + CLOCK_SKEW:
         reasons.append("approval granted_at is in the future")
-    elif now - granted > validity:
-        reasons.append(f"approval expired (older than {validity.days} days)")
+    valid_until = _parse_time(approval.get("valid_until")) if approval.get("valid_until") else None
+    if valid_until is None:
+        reasons.append("approval valid_until is missing or invalid")
+    elif granted is not None and not (granted < valid_until <= granted + MAX_VALIDITY):
+        reasons.append(f"approval validity window must be positive and at most {MAX_VALIDITY.days} days")
+    elif now > valid_until:
+        reasons.append("approval expired (past its signed valid_until)")
     if approval.get("scope") != action.get("action_kind"):
         reasons.append(f"approval scope {approval.get('scope')!r} does not match action_kind {action.get('action_kind')!r}")
     if action.get("execution_status") in {"submitted", "verified"}:
@@ -263,7 +302,7 @@ def _existing_claim(marketing_root, action_id: str):
 
 
 def execute(action: dict, approval: dict, *, dry_run: bool = True, adapters=None, marketing_root=None, http=None,
-            secret=None, now: datetime | None = None, validity: timedelta = DEFAULT_VALIDITY,
+            secret=None, now: datetime | None = None,
             allowed_signers=None) -> dict:
     """Validate the signed approval and either describe (dry run) or perform the single approved provider action."""
     now = now or datetime.now(timezone.utc)
@@ -274,7 +313,7 @@ def execute(action: dict, approval: dict, *, dry_run: bool = True, adapters=None
     adapter = registry.get(kind)
     request = bound_request(action)
     approval = approval if isinstance(approval, dict) else {}
-    reasons = check_approval(action, approval, now=now, validity=validity, marketing_root=marketing_root,
+    reasons = check_approval(action, approval, now=now, marketing_root=marketing_root,
                              allowed_signers=allowed_signers)
     if adapter is None:
         reasons.append(f"no execution adapter for action_kind {kind!r}")
@@ -374,8 +413,13 @@ def cmd_approval_request(args) -> int:
     """Prepare (not grant) an approval: the founder signs the written message in their own terminal."""
     action_path = Path(args.action)
     action = json.loads(action_path.read_text(encoding="utf-8"))
+    if not 1 <= args.valid_days <= MAX_VALIDITY.days:
+        print(f"refused: --valid-days must be between 1 and {MAX_VALIDITY.days}", file=sys.stderr)
+        return 2
+    granted = datetime.now(timezone.utc)
     request = {"action_id": action.get("id"), "digest": authorization_digest(action), "scope": action.get("action_kind"),
-               "granted_by": args.by.strip(), "granted_at": datetime.now(timezone.utc).isoformat(),
+               "granted_by": args.by.strip(), "granted_at": granted.isoformat(),
+               "valid_until": (granted + timedelta(days=args.valid_days)).isoformat(),
                "marketing_root": canonical_root(args.marketing_root), "founder_email": args.founder_email or ""}
     problems = _validate_for_request(action, request)
     try:
@@ -390,7 +434,8 @@ def cmd_approval_request(args) -> int:
     request_path.write_text(json.dumps(request, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     message_path.write_text(message, encoding="utf-8")
     print(describe_plainly(action))
-    print(f"\nApproval message (exact bytes in {message_path}):\n{message}\n")
+    print(f"\nApproval valid until {request['valid_until']} (signed; cannot be extended after signing).")
+    print(f"Approval message (exact bytes in {message_path}):\n{message}\n")
     print("Founder: review the action above, then run in YOUR OWN terminal (never through an agent):")
     print(f"  ssh-keygen -Y sign -f ~/.ssh/marketing_approval -n {NAMESPACE} {message_path}")
     print(f"then: python3 scripts/marketing/execute.py attach-signature {action_path} {message_path}.sig")
@@ -421,8 +466,7 @@ def cmd_attach_signature(args) -> int:
 def cmd_run(args) -> int:
     action = json.loads(Path(args.action).read_text(encoding="utf-8"))
     approval = json.loads(Path(args.approval).read_text(encoding="utf-8"))
-    result = execute(action, approval, dry_run=not args.execute, marketing_root=Path(args.marketing_root),
-                     validity=timedelta(days=args.validity_days))
+    result = execute(action, approval, dry_run=not args.execute, marketing_root=Path(args.marketing_root))
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["outcome"] in {"dry_run", "executed"} else 1
 
@@ -435,6 +479,8 @@ def main(argv=None) -> int:
     prepare.add_argument("--by", required=True, help="the founder's allowed_signers principal")
     prepare.add_argument("--marketing-root", required=True, help="receipt store bound into the approval")
     prepare.add_argument("--founder-email", help="founder's own address for Resend test sends")
+    prepare.add_argument("--valid-days", type=int, default=DEFAULT_VALIDITY.days,
+                         help=f"approval validity the founder signs (1-{MAX_VALIDITY.days} days)")
     attach = sub.add_parser("attach-signature", help="build the approval from the founder's SSH signature")
     attach.add_argument("action")
     attach.add_argument("signature")
@@ -445,7 +491,6 @@ def main(argv=None) -> int:
     run.add_argument("--approval", required=True)
     run.add_argument("--marketing-root", required=True)
     run.add_argument("--execute", action="store_true", help="perform the external write")
-    run.add_argument("--validity-days", type=int, default=DEFAULT_VALIDITY.days)
     args = parser.parse_args(argv)
     return {"approval-request": cmd_approval_request, "attach-signature": cmd_attach_signature,
             "run": cmd_run}[args.command](args)

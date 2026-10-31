@@ -1,6 +1,8 @@
 """Approval-bound marketing execution: no external write without a matching human approval."""
 import json
 import os
+import stat
+import types
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -72,6 +74,7 @@ def approval_for(keys, tmp_path):
     def build(action, *, key="founder", root=None, signed=True, **overrides):
         approval = {"action_id": action["id"], "digest": authorization_digest(action), "scope": action["action_kind"],
                     "granted_by": PRINCIPAL, "granted_at": (NOW - timedelta(hours=1)).isoformat(),
+                    "valid_until": (NOW - timedelta(hours=1) + timedelta(days=7)).isoformat(),
                     "marketing_root": ex.canonical_root(root or tmp_path), "founder_email": "founder@example.test"}
         approval.update(overrides)
         if signed:
@@ -186,12 +189,41 @@ def test_agent_identity_granted_by_rejected(tmp_path, who, approval_for):
 
 def test_expired_approval_rejected(tmp_path, approval_for):
     action = base_action()
-    old = (NOW - timedelta(days=8)).isoformat()
-    result, http = run(action, approval_for(action, granted_at=old), tmp_path)
+    granted = NOW - timedelta(days=8)
+    expired = approval_for(action, granted_at=granted.isoformat(), valid_until=(granted + timedelta(days=7)).isoformat())
+    result, http = run(action, expired, tmp_path)
     assert result["outcome"] == "refused" and any("expired" in r for r in result["reasons"])
     assert http.calls == []
-    result, _ = run(action, approval_for(action, granted_at=old), tmp_path, validity=timedelta(days=10))
+    longer = approval_for(action, granted_at=granted.isoformat(), valid_until=(granted + timedelta(days=10)).isoformat())
+    result, _ = run(action, longer, tmp_path)
     assert result["outcome"] == "executed"
+
+
+def test_validity_window_over_14_days_or_missing_refused(tmp_path, approval_for):
+    action = base_action()
+    granted = NOW - timedelta(hours=1)
+    for valid_until in ((granted + timedelta(days=15)).isoformat(), None, (granted - timedelta(days=1)).isoformat()):
+        result, http = run(action, approval_for(action, valid_until=valid_until), tmp_path)
+        assert result["outcome"] == "refused" and any("valid" in r for r in result["reasons"]) and http.calls == []
+
+
+def test_valid_until_is_signed(tmp_path, approval_for):
+    action = base_action()
+    approval = approval_for(action)
+    extended = dict(approval, valid_until=(NOW + timedelta(days=10)).isoformat())
+    result, http = run(action, extended, tmp_path, dry_run=True)
+    assert result["outcome"] == "refused" and any("signature is invalid" in r for r in result["reasons"])
+
+
+def test_canonical_message_field_order():
+    message = ex.signed_message({"digest": "d", "scope": "s", "granted_at": "g", "valid_until": "v", "action_id": "a",
+                                 "granted_by": "b", "marketing_root": "/m", "founder_email": "e@x"})
+    assert message == "d|s|g|v|a|b|/m|e@x"
+
+
+def test_run_has_no_validity_override():
+    with pytest.raises(SystemExit):
+        ex.main(["run", "a.json", "--approval", "b.json", "--marketing-root", "x", "--validity-days", "99"])
 
 
 def test_missing_or_future_granted_at_rejected(tmp_path, approval_for):
@@ -555,3 +587,70 @@ def test_settings_deny_self_approval_paths():
     for rule in required:
         assert rule in perms["deny"], rule
     assert not any("execute.py" in rule or "ssh-keygen" in rule for rule in perms["allow"])
+
+
+# --------------------------------------------------------------------------- pinned verifier and ownership
+
+def test_hostile_path_ssh_keygen_is_ignored(tmp_path, approval_for, monkeypatch):
+    fake_dir = tmp_path / "evil-bin"
+    fake_dir.mkdir()
+    fake = fake_dir / "ssh-keygen"
+    fake.write_text("#!/bin/sh\nexit 0\n")
+    fake.chmod(0o755)
+    action = base_action()
+    forged = approval_for(action, key="mallory")  # signed before the hostile PATH is installed
+    monkeypatch.setenv("PATH", f"{fake_dir}:{os.environ.get('PATH', '')}")
+    result, http = run(action, forged, tmp_path, dry_run=True)
+    assert result["outcome"] == "refused" and any("signature is invalid" in r for r in result["reasons"])
+
+
+def test_untrusted_verifier_location_refused(tmp_path, approval_for, monkeypatch):
+    fake = tmp_path / "ssh-keygen"
+    fake.write_text("#!/bin/sh\nexit 0\n")
+    fake.chmod(0o755)
+    monkeypatch.setattr(ex, "VERIFIER_CANDIDATES", (fake,))  # user-owned, not root-owned
+    action = base_action()
+    result, http = run(action, approval_for(action, key="mallory"), tmp_path, dry_run=True)
+    assert result["outcome"] == "refused" and any("no trusted ssh-keygen" in r for r in result["reasons"])
+
+
+def test_verifier_is_root_owned_system_binary():
+    path, problems = ex.verifier_path()
+    assert path is not None and str(path).startswith(("/usr/bin/", "/bin/")) and not problems
+
+
+def _fake_stat(uid, extra_mode=0):
+    real = os.stat
+
+    def fake(path):
+        info = real(path)
+        return types.SimpleNamespace(st_uid=uid, st_mode=info.st_mode | extra_mode)
+    return fake
+
+
+def test_root_owned_signers_file_accepted(tmp_path, keys, approval_for, monkeypatch):
+    monkeypatch.setattr(ex, "_stat", _fake_stat(0))
+    assert ex.signers_file_problems(keys["signers"]) == []
+    action = base_action()
+    result, http = run(action, approval_for(action), tmp_path, dry_run=True)
+    assert result["outcome"] == "dry_run", result
+
+
+def test_group_writable_root_owned_signers_refused(keys, monkeypatch):
+    monkeypatch.setattr(ex, "_stat", _fake_stat(0, stat.S_IWGRP))
+    problems = ex.signers_file_problems(keys["signers"])
+    assert problems and all("group- or world-writable" in p for p in problems)
+
+
+def test_signers_owned_by_other_user_refused(keys, monkeypatch):
+    monkeypatch.setattr(ex, "_stat", _fake_stat(os.getuid() + 12345))
+    assert any("not owned" in p for p in ex.signers_file_problems(keys["signers"]))
+
+
+def test_signers_directory_symlink_into_temp_refused(tmp_path, keys, approval_for):
+    link_dir = tmp_path / "cfg-link"
+    link_dir.symlink_to(keys["signers"].parent, target_is_directory=True)
+    action = base_action()
+    result, http = run(action, approval_for(action), tmp_path, dry_run=True,
+                       allowed_signers=link_dir / "allowed_signers")
+    assert result["outcome"] == "refused" and any("symlink" in r for r in result["reasons"])
