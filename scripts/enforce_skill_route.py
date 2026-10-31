@@ -11,9 +11,9 @@ import sys
 from pathlib import Path
 
 try:
-    from scripts.route_workflow import load_catalog, load_routes, route_request
+    from scripts.route_workflow import infer_mode, load_catalog, load_routes, route_request
 except ModuleNotFoundError:
-    from route_workflow import load_catalog, load_routes, route_request
+    from route_workflow import infer_mode, load_catalog, load_routes, route_request
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -148,14 +148,17 @@ def single_mode_routes() -> dict[str, str]:
 
 
 def bare_envelope(skill: str, args: object, event: dict) -> dict | None:
-    """Synthesize a route envelope for plain-text calls to single-mode skills.
+    """Synthesize a route envelope for plain-text calls.
 
-    Multi-mode skills return None (envelope required). The synthesized route still
-    goes through route_request, so pain-first gating applies. Inside a business
-    workspace the project is taken from cwd so the gate cannot be skipped.
+    The route is the skill's only route, or the one infer_mode picks from the text;
+    otherwise None (envelope required). The synthesized route still goes through
+    route_request, so pain-first gating applies. Inside a business workspace the
+    project is taken from cwd so the gate cannot be skipped.
     """
-    route_id = single_mode_routes().get(skill)
-    if route_id is None or not isinstance(args, str) or not args.strip():
+    if not isinstance(args, str) or not args.strip():
+        return None
+    route_id = single_mode_routes().get(skill) or infer_mode(skill, args)[0]
+    if route_id is None:
         return None
     route = {'request': args, 'intent': route_id, 'task_scope': 'focused'}
     slug = cwd_workspace(event)
@@ -174,8 +177,13 @@ def envelope_hint(skill: str, raw_args: str) -> str:
     request = raw_args.strip().replace('"', "'")[:160] or '<one-sentence request>'
     template = ('{"route": {"request": "%s", "intent": "%s", "task_scope": "focused|execution|strategy", '
                 '"project": "<slug>" | "standalone": true}, "input": "<specialist brief>"}') % (request, skill)
-    return ('Repository skill dispatch requires a JSON route envelope in args. Re-invoke the skill with: '
-            + template + ' . See references/runtime-routing.md. Plain text was received.')
+    _, candidates = infer_mode(skill, raw_args)
+    routes = {r['id']: r for r in load_routes()}
+    options = '; '.join(f"{rid}: {(routes[rid].get('match') or ['no match phrase'])[0]}" for rid in candidates)
+    modes = f' Mode not inferred from the text; candidate route IDs (use one as intent): {options}.' if len(candidates) > 1 else ''
+    return ('Repository skill dispatch needs a JSON route envelope in args here (plain text works only when one mode '
+            'is inferred, and gated routes need a project workspace as cwd).' + modes
+            + ' Re-invoke the skill with: ' + template + ' . See references/runtime-routing.md.')
 
 
 def main() -> int:

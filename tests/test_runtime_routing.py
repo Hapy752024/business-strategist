@@ -201,3 +201,50 @@ def test_configured_hook_commands_block_invalid_dispatch_from_nested_cwd(tmp_pat
                                 env={**env, 'CLAUDE_PROJECT_DIR': str(tmp_path)},
                                 input='{}', text=True, capture_output=True)
         assert broken.returncode == 2
+
+
+def _plain_event(text, cwd, skill='earned-media-builder'):
+    return {'hook_event_name': 'PreToolUse', 'tool_name': 'Skill', 'session_id': 's1', 'tool_use_id': 't1',
+            'cwd': str(cwd), 'tool_input': {'skill': skill, 'args': text}}
+
+
+def _gated_workspace(tmp_path, monkeypatch, gate_result):
+    from test_workspace_gates import _write_manifest
+    monkeypatch.setattr(router, 'ROOT', tmp_path)
+    monkeypatch.setattr(hook, 'ROOT', tmp_path)
+    _write_manifest(tmp_path, 'venture', gate_result, monkeypatch)
+    return tmp_path / 'projects' / 'venture'
+
+
+def test_plain_text_multi_mode_infers_route(tmp_path, monkeypatch):
+    cwd = _gated_workspace(tmp_path, monkeypatch, 'pass')
+    text = 'discover backlink opportunities for my site'
+    out = hook.check_dispatch(_plain_event(text, cwd))['hookSpecificOutput']
+    assert out['updatedInput']['args'] == text
+    assert '"route_id": "earned-media-discovery"' in out['additionalContext']
+    assert 'permissionDecision' not in out
+
+
+def test_plain_text_ambiguous_lists_route_ids(tmp_path, monkeypatch):
+    cwd = _gated_workspace(tmp_path, monkeypatch, 'pass')
+    with pytest.raises(ValueError) as excinfo:
+        hook.check_dispatch(_plain_event('discover backlinks and verify backlinks', cwd))
+    for route_id in ('earned-media-discovery', 'earned-media-verification'):
+        assert route_id in str(excinfo.value)
+
+
+def test_plain_text_gated_route_outside_workspace_still_blocked(tmp_path):
+    with pytest.raises(ValueError, match='JSON route envelope'):
+        hook.check_dispatch(_plain_event('discover backlink opportunities for my site', tmp_path))
+
+
+def test_gate_still_blocks_plain_text(tmp_path, monkeypatch):
+    cwd = _gated_workspace(tmp_path, monkeypatch, 'not_run')
+    with pytest.raises(ValueError, match='pain-first'):
+        hook.check_dispatch(_plain_event('discover backlink opportunities for my site', cwd))
+
+
+def test_infer_mode_scores_match_phrases():
+    assert router.infer_mode('earned-media-builder', 'Verify backlinks please') == ('earned-media-verification', [])
+    mode, candidates = router.infer_mode('earned-media-builder', 'something unrelated')
+    assert mode is None and 'earned-media-preparation' in candidates

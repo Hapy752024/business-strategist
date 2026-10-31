@@ -34,6 +34,19 @@ def load_routes() -> list[dict[str, Any]]:
     return json.loads(ROUTES_PATH.read_text(encoding="utf-8"))["routes"]
 
 
+def infer_mode(skill: str, request: str) -> tuple[str | None, list[str]]:
+    """Pick a skill's route from plain text: (route_id, []) when one route uniquely scores highest on its
+    `match` phrases (case-insensitive substring count), else (None, candidate route IDs)."""
+    text = request.lower()
+    scores = {r["id"]: sum(1 for phrase in r.get("match", []) if phrase.lower() in text)
+              for r in load_routes() if r["skill"] == skill}
+    best = max(scores.values(), default=0)
+    top = [rid for rid, score in scores.items() if score == best]
+    if best > 0 and len(top) == 1:
+        return top[0], []
+    return None, (top if best > 0 else list(scores))
+
+
 def load_catalog() -> dict[str, dict[str, Any]]:
     return json.loads(CATALOG_PATH.read_text(encoding="utf-8"))["skills"]
 

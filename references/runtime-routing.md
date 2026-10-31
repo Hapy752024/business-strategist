@@ -32,7 +32,7 @@ For agent-driven specialist invocation, pass routing metadata in the skill's arg
 
 Supply a `project` destination or `"standalone": true`; Brand/Website `entry_mode` defaults to `standalone` (set `business_linked` only for explicitly requested selected-business consumption). The calling agent fills this from the user's scope; never ask the user for technical JSON. Independent Branding/Website work inside a project needs no Business research; this does not let Business/GTM tasks bypass their gates. Unknown route IDs, mismatched skills, malformed metadata and blocked gates deny dispatch.
 
-Direct repository slash invocations currently need the same envelope; if absent they stop with a routing explanation. Users can use the `business-strategist` entrypoint with natural language to have the agent prepare the envelope. Foreign plugin slash commands are unaffected.
+Direct repository slash invocations follow the same plain-text rule below; when no route can be inferred they stop with a routing explanation. Users can use the `business-strategist` entrypoint with natural language to have the agent prepare the envelope. Foreign plugin slash commands are unaffected.
 
 `override_gate: true` is only for an explicit user override already given in the conversation and is refused without a nonempty `override_reason` quoting the user's words; the manifest audit records it. An audit record is not proof of user authorization.
 
@@ -46,7 +46,7 @@ Hook contract source: [Claude Code hooks reference](https://code.claude.com/docs
 
 ## Bare dispatch
 
-A skill that exactly one route targets (`"single_mode": true` in `config/workflow-routes.json`, checked against the route count by `validate_skill_routes.py`) accepts plain-text `args`: the hook synthesizes a focused route (the skill's route ID; standalone, or the current business workspace from `cwd`) and the pain-first gate applies as usual. Routes that are pain-gated or have strategy prerequisites accept bare text only when `cwd` is inside a business workspace (the project then comes from `cwd`); elsewhere they need an explicit envelope. Multi-mode skills always need the JSON envelope with an explicit route ID. Malformed JSON is rejected, never treated as plain text.
+The JSON envelope is optional for every skill. Plain-text `args` work when the hook can pick the route: the skill's only route (`"single_mode": true` in `config/workflow-routes.json`, checked against the route count by `validate_skill_routes.py`), or for a multi-mode skill the one route whose `match` phrases score highest in the text (`route_workflow.infer_mode`; a tie or no match lists candidate route IDs in the error). The hook synthesizes a focused route (standalone, or the current business workspace from `cwd`) and the pain-first gate applies as usual. The envelope is still needed to choose a mode explicitly, to override the gate, and for pain-gated routes or routes with strategy prerequisites outside a business workspace (inside one, the project comes from `cwd`). Malformed JSON is rejected, never treated as plain text.
 
 ## Versioned cases
 
