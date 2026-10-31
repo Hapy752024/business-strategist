@@ -10,7 +10,7 @@ Paths use `<mkt>` for the project's Marketing root. Run commands from the repo r
 - Goal: a signing key the agent cannot use, plus provider accounts.
 - Do: `ssh-keygen -t ed25519 -f ~/.ssh/marketing_approval` (passphrase, never in ssh-agent). Add `<principal> namespaces="marketing-approval" <public key>` to `~/.config/business-strategist/allowed_signers`, then `sudo chown root:root` and `sudo chmod 0644` it and its directory (see `references/marketing-execution.md`).
 - Accounts: Postiz (self-hosted; set `POSTIZ_BASE_URL`, `POSTIZ_API_KEY`); GA4 or PostHog with a read connection; Meta: the current `META_ACCESS_TOKEN` is expired, so renew it with write permission only when step 7 is approaching (`references/ad-platform-connections.md`).
-- Done when: `python3 scripts/marketing/connections.py probe ga4` (or `gsc`) reports `connected`, and execution dry-runs stop complaining about the signers file.
+- Done when: `python3 scripts/marketing/connections.py probe ga4` (or `gsc`) reports `connected`; for PostHog (no probe exists) `verify_tracking.py <plan> --source posthog` reports a status other than `unconnected`; and a step-6 dry-run `execute.py run <action.json> --approval <approval.json> --marketing-root <mkt>` exits 0 and prints the verified signer.
 - Blocked by: no root access (a user-owned 0444 file is accepted but weaker; say so), missing credentials.
 
 ## 1. Pain-first gate (agent)
@@ -43,13 +43,14 @@ Paths use `<mkt>` for the project's Marketing root. Run commands from the repo r
 ## 6. First organic post (agent prepares, founder signs)
 - Agent writes `<mkt>/actions/post-1.json` (`action_kind: schedule_post`, exact `provider_request`, unique `id`) and runs `python3 scripts/marketing/execute.py approval-request <action.json> --by <principal> --marketing-root <mkt>`.
 - Founder reviews the printed text, runs the printed `ssh-keygen -Y sign -n marketing-approval` command in their own terminal.
-- Agent: `python3 scripts/marketing/execute.py attach-signature <action.json> <message>.sig`, then `python3 scripts/marketing/execute.py run <action.json> --approval <approval.json> --marketing-root <mkt>` (dry run). Only after the founder says go: add `--execute`.
+- Agent: `python3 scripts/marketing/execute.py attach-signature <action.json> <message>.sig`, then `python3 scripts/marketing/execute.py run <action.json> --approval <approval.json> --marketing-root <mkt>` (dry run). Only after the founder says go, recorded in a note file `<mkt>/actions/<id>.go-ahead.txt` (the action file has no field for it, and editing it would change the digest): add `--execute`.
 - Done when: a receipt exists under `<mkt>/receipts/` with the Postiz post id and the founder sees the scheduled post in Postiz.
 - Blocked by: no signature, expired approval (7 days default), changed request (new digest, new approval), an `uncertain` receipt (check Postiz, use a new action id).
 
 ## 7. First paid test, created PAUSED (agent prepares, founder activates)
 - Prerequisites: steps 4 and 5 done, a renewed write-capable `META_ACCESS_TOKEN`, a founder-set test budget.
 - Same flow as step 6 with `action_kind: create_campaign`, a positive `spend_cap` (Meta minimum is about 100 USD or local equivalent), created PAUSED.
+- Record the founder's go-ahead for `--execute` in a note file as in step 6.
 - Founder reviews the campaign in Ads Manager and activates it there. The agent never activates, raises caps or edits it; any change needs a new action and approval.
 - Done when: the receipt shows the paused campaign id and the founder recorded the activation date or a decision not to activate.
 
