@@ -20,7 +20,7 @@
           "source_domain": {"type": "string", "minLength": 1},
           "target_url": {"type": ["string", "null"]},
           "stage": {"enum": ["prospect", "pitched", "promised", "live", "lost", "rejected", "declined"]},
-          "origin": {"enum": ["competitor_backlinks", "search_console", "catalogue", "manual", "observation"]},
+          "origin": {"enum": ["competitor_backlinks", "search_console", "catalogue", "manual", "observation", "unlinked_mention"]},
           "opportunity_id": {"type": ["string", "null"]},
           "first_seen": {"type": "string", "format": "date"},
           "last_checked_at": {"type": ["string", "null"], "format": "date"},
