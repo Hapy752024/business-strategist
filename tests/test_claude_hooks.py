@@ -149,6 +149,26 @@ def test_project_subagents_exist_with_restricted_tools():
     assert not (ROOT / "agent-modes").exists(), "agent-modes/ is superseded by .claude/agents/"
 
 
+def test_script_running_subagents_carry_shell_command_rules():
+    """Headless runs deny compound shell forms (cd ...;, VAR=..., heredocs); script-running agents avoid them."""
+    import re
+    checked = []
+    for path in sorted((ROOT / ".claude/agents").glob("*.md")):
+        text = path.read_text()
+        front, body = text.split("---")[1], text.split("---", 2)[2]
+        tools = re.search(r"^tools:\s*(.+)$", front, re.M).group(1)
+        if "Bash" not in tools and "scripts/" not in body:
+            continue
+        checked.append(path.stem)
+        block = re.search(r"^Shell commands:.*?(?=\n\n)", body, re.M | re.S)
+        assert block, f"{path.name}: missing 'Shell commands:' block"
+        lines = block.group(0).splitlines()
+        assert len(lines) <= 6, f"{path.name}: block has {len(lines)} lines"
+        for phrase in ("one command per Bash call", "repo-relative", "never `cd`", "heredoc", "VAR=value", "--out"):
+            assert phrase in block.group(0), f"{path.name}: block lacks {phrase!r}"
+    assert {"evidence-researcher", "competitor-researcher"} <= set(checked)
+
+
 def test_enabled_mcp_servers_are_defined():
     local = ROOT / ".claude/settings.local.json"
     if not local.exists():  # gitignored, per-machine file
