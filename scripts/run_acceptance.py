@@ -382,8 +382,12 @@ class Feeder:
 
     def match(self, text: str) -> list[dict]:
         tail = text[-1500:]
-        whole = offers_options(tail) or GATE_CUE.search(tail) is not None
         questions = question_sentences(text)[-2:]  # only the closing question(s) of the final message
+        # The gate counts as asked only when the closing question(s) (or, without one, the last 400 characters)
+        # raise it: an earlier mention of "override" must not hijack an intake question.
+        closing = ' '.join(questions) or text[-400:]
+        gate_asked = GATE_CUE.search(closing) is not None
+        whole = offers_options(tail) or gate_asked
         # Options lists and gate requests are often not phrased as questions: match the whole final message then.
         context = text if whole else (' '.join(questions) if questions else text[-600:])
         context = context.lower()
@@ -393,11 +397,11 @@ class Feeder:
             if hits:
                 scored.append((-hits, order, entry))
         ranked = [e for _, _, e in sorted(scored, key=lambda t: (t[0], t[1]))]
-        if whole:
-            gate = [e for e in ranked if e.get('id') == 'gate_override']
-            # The gate decision is the decision-changing one; otherwise keep the two strongest matches.
-            return gate if gate and GATE_CUE.search(tail) else ranked[:2]
-        return ranked
+        gate = [e for e in ranked if e.get('id') == 'gate_override']
+        if gate and gate_asked:
+            return gate  # the gate decision is the decision-changing one
+        ranked = [e for e in ranked if e.get('id') != 'gate_override']
+        return ranked[:2] if whole else ranked
 
     def text_for(self, entry: dict) -> str:
         if entry.get('answer'):
@@ -532,6 +536,17 @@ def hook_denials(parsed: dict) -> dict:
     return {'count': len(unique), 'by_tool': by_tool, 'events': unique}
 
 
+HOOK_INPUT_MAX = 80
+
+
+def scorecard_hook_denials(parsed: dict) -> dict:
+    """hook_denials() for the committed scorecard: tool inputs truncated so private founder answers quoted in
+    Skill args cannot leak."""
+    data = hook_denials(parsed)
+    data['events'] = [{**e, 'input': e['input'][:HOOK_INPUT_MAX]} for e in data['events']]
+    return data
+
+
 # --------------------------------------------------------------------------- checks
 
 CHECK_TYPES = {'all', 'any', 'not', 'text', 'tool_use', 'artifact', 'json_len', 'jsonl_distinct', 'order',
@@ -544,7 +559,7 @@ def validate_check(check: dict) -> None:
         raise ValueError(f'unknown check: {check!r}')
     for child in check.get('checks', []):
         validate_check(child)
-    for key in ('check', 'first', 'then'):
+    for key in ('check', 'first', 'then', 'near_miss_check'):
         if key in check:
             validate_check(check[key])
 
@@ -685,16 +700,29 @@ def _line_ref(ctx: Ctx, idx: int) -> str:
 
 
 def run_check(ctx: Ctx, check: dict) -> Result:
+    ok, evidence, detail = _run_check(ctx, check)
+    if ok is False and check.get('near_miss_check'):  # report a partial attempt; it never passes the check
+        n_ok, n_ev, n_detail = _run_check(ctx, check['near_miss_check'])
+        if n_ok is True:
+            detail += f"; near miss: {check.get('near_miss_label', 'partial attempt')} ({n_ev or n_detail})"
+    return ok, evidence, detail
+
+
+def _run_check(ctx: Ctx, check: dict) -> Result:
+    """None = not exercised (nothing to check), True = pass, False = fail."""
     kind = check['type']
     label = check.get('label') or kind
     if kind in ('all', 'any'):
         results = [(c, run_check(ctx, c)) for c in check['checks']]
         oks = [r for _, r in results if r[0] is True]
         if kind == 'all':
-            failed = [(c.get('label') or c['type'], r[2]) for c, r in results if r[0] is not True]
+            failed = [(c.get('label') or c['type'], r[2]) for c, r in results if r[0] is False]
+            unexercised = [(c.get('label') or c['type'], r[2]) for c, r in results if r[0] is None]
             evidence = next((r[1] for _, r in results if r[1]), None)
             if failed:
                 return False, evidence, 'missing: ' + '; '.join(f'{l} ({d})' for l, d in failed)
+            if unexercised:
+                return None, evidence, 'not exercised: ' + '; '.join(f'{l} ({d})' for l, d in unexercised)
             return True, evidence, 'all sub-checks passed'
         if oks:
             return True, oks[0][1], oks[0][2]
@@ -734,7 +762,8 @@ def run_check(ctx: Ctx, check: dict) -> Result:
         pats = [re.compile(p) for p in check.get('contains', [])]
         hits = [p for p in files if all(r.search(ctx.read(p)) for r in pats)]
         need = int(check.get('min', 1))
-        return len(hits) >= need, (ctx.rel(hits[0]) if hits else None), f"{label}: {len(hits)} file(s) match {check['glob']}"
+        return len(hits) >= need, (ctx.rel(hits[0]) if hits else None), \
+            f"{label}: {len(hits)} of {len(files)} file(s) matching {check['glob']} contain all patterns"
     if kind == 'json_len':
         best, best_path = 0, None
         for p in ctx.glob(check['glob']):
@@ -783,14 +812,14 @@ def run_check(ctx: Ctx, check: dict) -> Result:
                 worst, worst_ref = n, f"rounds.jsonl#round{r['round']}"
         limit = int(check.get('max', 1))
         if not checked:
-            return False, None, 'proxy: no answered intake turns to measure'
+            return None, None, 'proxy: no answered intake turns to measure (not exercised)'
         return worst <= limit, worst_ref, f'proxy: max {worst} question block(s) over {checked} answered turn(s), limit {limit}'
     if kind == 'answers_persisted':
         feeder_data = _founder_answers(ctx)
         fed = [i for r in ctx.rounds if r.get('kind') in ANSWER_KINDS for i in r.get('matched_ids', [])]
         with_markers = [e for e in feeder_data.get('answers', []) if e.get('id') in set(fed) and e.get('persist_markers')]
         if not with_markers:
-            return False, None, 'answers_persisted: no fed answer carried persist markers (not exercised)'
+            return None, None, 'answers_persisted: no fed answer carried persist markers (not exercised)'
         corpus = [(p, ctx.read(p).lower()) for p in ctx.files() if p.suffix.lower() in TEXT_SUFFIXES]
         found, first = 0, None
         for entry in with_markers:
@@ -1117,7 +1146,7 @@ def score(out_dir: Path, checkpoints: Path, scenario_dir: Path | None = None) ->
                  'budget_usd': budget, 'provider_spend': provider_spend, 'over_budget': over, 'spend_enforced': False},
         'wall_time_s': _num(manifest.get('wall_time_s')),
         'tokens': tokens,
-        'hook_denials': hook_denials(ctx.parsed),
+        'hook_denials': scorecard_hook_denials(ctx.parsed),
         'permission_denials': perm,
         'writes_outside_eval': list(manifest.get('writes_outside_eval', [])),
         'host_writes': host,

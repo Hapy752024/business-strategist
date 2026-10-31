@@ -100,7 +100,10 @@
         {"type": "any", "label": "falsification", "checks": [
           {"type": "artifact", "glob": "**/draft-falsification-report.json", "label": "falsification (basis: draft)", "min": 1},
           {"type": "artifact", "glob": "**/falsification-report.json", "label": "falsification (basis: reviewed ledger)", "min": 1}
-        ]},
+        ], "near_miss_label": "claim challenge ran but no applied falsification report", "near_miss_check": {"type": "any", "checks": [
+          {"type": "artifact", "glob": "**/*claim-challenge*", "min": 1},
+          {"type": "tool_use", "name": "^(Agent|Task)$", "input": "claim-falsifier", "min": 1}
+        ]}},
         {"type": "artifact", "glob": "**/decision_memo.md", "label": "decision_memo", "min": 1},
         {"type": "artifact", "glob": "**/scores.json", "label": "scores", "min": 1},
         {"type": "any", "label": "delivery_check", "checks": [
@@ -130,13 +133,17 @@
       "stage": "gtm",
       "title": "GTM, keyword map with volumes, a locally built validation page passing the site gate, and a first-campaign runbook with a paused, unsent campaign draft",
       "proxy": false,
-      "pass_rule": "All of: a GTM artifact, a keyword map with numeric volume, a local website build, a passing site-gate result, a runbook, a campaign JSON with status paused, and no send/publish/deploy tool call.",
+      "pass_rule": "All of: a GTM artifact (or strategy/strategy-plan.json), a keyword map or keyword-volumes file with numeric volume, a local website build, a passing site-gate result, a runbook, a campaign JSON with status paused, and no send/publish/deploy tool call.",
       "check": {"type": "all", "checks": [
         {"type": "any", "label": "gtm", "checks": [
           {"type": "artifact", "glob": "**/*gtm*", "min": 1},
-          {"type": "artifact", "glob": "**/*go-to-market*", "min": 1}
+          {"type": "artifact", "glob": "**/*go-to-market*", "min": 1},
+          {"type": "artifact", "glob": "**/strategy/strategy-plan.json", "min": 1}
         ]},
-        {"type": "artifact", "glob": "**/keyword-map*.json", "label": "keyword_volumes", "contains": ["\"volume\"\\s*:\\s*\\d"], "min": 1},
+        {"type": "any", "label": "keyword_volumes", "checks": [
+          {"type": "artifact", "glob": "**/keyword-map*.json", "contains": ["\"volume\"\\s*:\\s*\\d"], "min": 1},
+          {"type": "artifact", "glob": "**/keyword-volumes*.json", "contains": ["\"volume\"\\s*:\\s*\\d"], "min": 1}
+        ]},
         {"type": "any", "label": "local_site", "checks": [
           {"type": "artifact", "glob": "**/website/**/package.json", "min": 1},
           {"type": "artifact", "glob": "**/website/**/index.html", "min": 1},

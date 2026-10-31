@@ -136,13 +136,13 @@
           "label": "artifact",
           "passed": true,
           "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-021801/business-analysis/market_research/pain_points/runs/20261031-022334-entscheidung-pkv-oder-gkv-und-absicherung-bu-risikoleben-pflege-unfall-ee6185060501/evidence.jsonl",
-          "detail": "artifact: 26 file(s) match **/*.jsonl"
+          "detail": "artifact: 26 of 42 file(s) matching **/*.jsonl contain all patterns"
         },
         {
           "label": "artifact",
           "passed": true,
           "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-021801/business-analysis/market_research/pain_points/runs/20261031-022800-beratung-und-vertrauen-bei-personenversicherungen-579af3e063f1/evidence.jsonl",
-          "detail": "artifact: 5 file(s) match **/*.jsonl"
+          "detail": "artifact: 5 of 42 file(s) matching **/*.jsonl contain all patterns"
         },
         {
           "label": "jsonl_distinct",
@@ -160,7 +160,7 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 file(s) match **/*.json); artifact (artifact: 0 file(s) match **/*.json)",
+      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 of 167 file(s) matching **/*.json contain all patterns); artifact (artifact: 0 of 167 file(s) matching **/*.json contain all patterns)",
       "sub_checks": [
         {
           "label": "json_len",
@@ -172,13 +172,13 @@
           "label": "artifact",
           "passed": false,
           "evidence_path": null,
-          "detail": "artifact: 0 file(s) match **/*.json"
+          "detail": "artifact: 0 of 167 file(s) matching **/*.json contain all patterns"
         },
         {
           "label": "artifact",
           "passed": false,
           "evidence_path": null,
-          "detail": "artifact: 0 file(s) match **/*.json"
+          "detail": "artifact: 0 of 167 file(s) matching **/*.json contain all patterns"
         }
       ]
     },
@@ -244,25 +244,25 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: falsification (falsification: none matched (falsification (basis: draft): 0 file(s) match **/draft-falsification-report.json; falsification (basis: reviewed ledger): 0 file(s) match **/falsification-report.json)); decision_memo (decision_memo: 0 file(s) match **/decision_memo.md); scores (scores: 0 file(s) match **/scores.json); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))",
+      "detail": "missing: falsification (falsification: none matched (falsification (basis: draft): 0 of 0 file(s) matching **/draft-falsification-report.json contain all patterns; falsification (basis: reviewed ledger): 0 of 0 file(s) matching **/falsification-report.json contain all patterns)); decision_memo (decision_memo: 0 of 0 file(s) matching **/decision_memo.md contain all patterns); scores (scores: 0 of 0 file(s) matching **/scores.json contain all patterns); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))",
       "sub_checks": [
         {
           "label": "falsification",
           "passed": false,
           "evidence_path": null,
-          "detail": "falsification: none matched (falsification (basis: draft): 0 file(s) match **/draft-falsification-report.json; falsification (basis: reviewed ledger): 0 file(s) match **/falsification-report.json)"
+          "detail": "falsification: none matched (falsification (basis: draft): 0 of 0 file(s) matching **/draft-falsification-report.json contain all patterns; falsification (basis: reviewed ledger): 0 of 0 file(s) matching **/falsification-report.json contain all patterns)"
         },
         {
           "label": "decision_memo",
           "passed": false,
           "evidence_path": null,
-          "detail": "decision_memo: 0 file(s) match **/decision_memo.md"
+          "detail": "decision_memo: 0 of 0 file(s) matching **/decision_memo.md contain all patterns"
         },
         {
           "label": "scores",
           "passed": false,
           "evidence_path": null,
-          "detail": "scores: 0 file(s) match **/scores.json"
+          "detail": "scores: 0 of 0 file(s) matching **/scores.json contain all patterns"
         },
         {
           "label": "delivery_check",
@@ -290,43 +290,43 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-021801/business-analysis/cases/hybrid-advisory/gtm-plan-provisional.md",
-      "detail": "missing: keyword_volumes (keyword_volumes: 0 file(s) match **/keyword-map*.json); site_gate (site_gate: 0 file(s) match **/site-gate*.json); runbook (runbook: 0 file(s) match **/*runbook*); paused_campaign (paused_campaign: 0 file(s) match **/*campaign*.json)",
+      "detail": "missing: keyword_volumes (keyword_volumes: none matched (artifact: 0 of 0 file(s) matching **/keyword-map*.json contain all patterns; artifact: 0 of 0 file(s) matching **/keyword-volumes*.json contain all patterns)); site_gate (site_gate: 0 of 0 file(s) matching **/site-gate*.json contain all patterns); runbook (runbook: 0 of 0 file(s) matching **/*runbook* contain all patterns); paused_campaign (paused_campaign: 0 of 0 file(s) matching **/*campaign*.json contain all patterns)",
       "sub_checks": [
         {
           "label": "gtm",
           "passed": true,
           "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-021801/business-analysis/cases/hybrid-advisory/gtm-plan-provisional.md",
-          "detail": "artifact: 1 file(s) match **/*gtm*"
+          "detail": "artifact: 1 of 1 file(s) matching **/*gtm* contain all patterns"
         },
         {
           "label": "keyword_volumes",
           "passed": false,
           "evidence_path": null,
-          "detail": "keyword_volumes: 0 file(s) match **/keyword-map*.json"
+          "detail": "keyword_volumes: none matched (artifact: 0 of 0 file(s) matching **/keyword-map*.json contain all patterns; artifact: 0 of 0 file(s) matching **/keyword-volumes*.json contain all patterns)"
         },
         {
           "label": "local_site",
           "passed": true,
           "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-021801/digital-assets/website/site/anfrage/index.html",
-          "detail": "artifact: 7 file(s) match **/website/**/index.html"
+          "detail": "artifact: 7 of 7 file(s) matching **/website/**/index.html contain all patterns"
         },
         {
           "label": "site_gate",
           "passed": false,
           "evidence_path": null,
-          "detail": "site_gate: 0 file(s) match **/site-gate*.json"
+          "detail": "site_gate: 0 of 0 file(s) matching **/site-gate*.json contain all patterns"
         },
         {
           "label": "runbook",
           "passed": false,
           "evidence_path": null,
-          "detail": "runbook: 0 file(s) match **/*runbook*"
+          "detail": "runbook: 0 of 0 file(s) matching **/*runbook* contain all patterns"
         },
         {
           "label": "paused_campaign",
           "passed": false,
           "evidence_path": null,
-          "detail": "paused_campaign: 0 file(s) match **/*campaign*.json"
+          "detail": "paused_campaign: 0 of 0 file(s) matching **/*campaign*.json contain all patterns"
         },
         {
           "label": "nothing_sent",

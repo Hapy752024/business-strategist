@@ -103,10 +103,10 @@
       "stage": "intake",
       "title": "Intake asks at most one decision-changing question per turn and persists answers",
       "passed": false,
-      "status": "fail",
+      "status": "not_exercised",
       "proxy": true,
       "evidence_path": "rounds.jsonl#round0",
-      "detail": "missing: answers_persisted (answers_persisted: no fed answer carried persist markers (not exercised))",
+      "detail": "not exercised: answers_persisted (answers_persisted: no fed answer carried persist markers (not exercised))",
       "sub_checks": [
         {
           "label": "max_questions_per_turn",
@@ -130,19 +130,19 @@
       "status": "fail",
       "proxy": true,
       "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/cases/hybrid-advisor/market_research/pain_points/runs/20261031-091513-hybrid-digital-plus-human-insurance-advice-decisions-in-germany-pkv-gkv-bu-risik-ad9540e731d8/evidence.jsonl",
-      "detail": "missing: artifact (artifact: 0 file(s) match **/*.jsonl); jsonl_distinct (jsonl_distinct: 0 distinct subject_entity_id, need 3)",
+      "detail": "missing: artifact (artifact: 0 of 4 file(s) matching **/*.jsonl contain all patterns); jsonl_distinct (jsonl_distinct: 0 distinct subject_entity_id, need 3)",
       "sub_checks": [
         {
           "label": "artifact",
           "passed": true,
           "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/cases/hybrid-advisor/market_research/pain_points/runs/20261031-091513-hybrid-digital-plus-human-insurance-advice-decisions-in-germany-pkv-gkv-bu-risik-ad9540e731d8/evidence.jsonl",
-          "detail": "artifact: 4 file(s) match **/*.jsonl"
+          "detail": "artifact: 4 of 4 file(s) matching **/*.jsonl contain all patterns"
         },
         {
           "label": "artifact",
           "passed": false,
           "evidence_path": null,
-          "detail": "artifact: 0 file(s) match **/*.jsonl"
+          "detail": "artifact: 0 of 4 file(s) matching **/*.jsonl contain all patterns"
         },
         {
           "label": "jsonl_distinct",
@@ -160,7 +160,7 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 file(s) match **/*.json); artifact (artifact: 0 file(s) match **/*.json)",
+      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 of 31 file(s) matching **/*.json contain all patterns); artifact (artifact: 0 of 31 file(s) matching **/*.json contain all patterns)",
       "sub_checks": [
         {
           "label": "json_len",
@@ -172,13 +172,13 @@
           "label": "artifact",
           "passed": false,
           "evidence_path": null,
-          "detail": "artifact: 0 file(s) match **/*.json"
+          "detail": "artifact: 0 of 31 file(s) matching **/*.json contain all patterns"
         },
         {
           "label": "artifact",
           "passed": false,
           "evidence_path": null,
-          "detail": "artifact: 0 file(s) match **/*.json"
+          "detail": "artifact: 0 of 31 file(s) matching **/*.json contain all patterns"
         }
       ]
     },
@@ -244,25 +244,25 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/cases/hybrid-advisor/market_research/decision_memo/decision_memo.md",
-      "detail": "missing: falsification (falsification: none matched (falsification (basis: draft): 0 file(s) match **/draft-falsification-report.json; falsification (basis: reviewed ledger): 0 file(s) match **/falsification-report.json)); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))",
+      "detail": "missing: falsification (falsification: none matched (falsification (basis: draft): 0 of 0 file(s) matching **/draft-falsification-report.json contain all patterns; falsification (basis: reviewed ledger): 0 of 0 file(s) matching **/falsification-report.json contain all patterns); near miss: claim challenge ran but no applied falsification report (artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/cases/hybrid-advisor/market_research/decision_memo/claim-challenge-draft-basis.md)); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))",
       "sub_checks": [
         {
           "label": "falsification",
           "passed": false,
           "evidence_path": null,
-          "detail": "falsification: none matched (falsification (basis: draft): 0 file(s) match **/draft-falsification-report.json; falsification (basis: reviewed ledger): 0 file(s) match **/falsification-report.json)"
+          "detail": "falsification: none matched (falsification (basis: draft): 0 of 0 file(s) matching **/draft-falsification-report.json contain all patterns; falsification (basis: reviewed ledger): 0 of 0 file(s) matching **/falsification-report.json contain all patterns); near miss: claim challenge ran but no applied falsification report (artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/cases/hybrid-advisor/market_research/decision_memo/claim-challenge-draft-basis.md)"
         },
         {
           "label": "decision_memo",
           "passed": true,
           "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/cases/hybrid-advisor/market_research/decision_memo/decision_memo.md",
-          "detail": "decision_memo: 1 file(s) match **/decision_memo.md"
+          "detail": "decision_memo: 1 of 1 file(s) matching **/decision_memo.md contain all patterns"
         },
         {
           "label": "scores",
           "passed": true,
           "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/cases/hybrid-advisor/market_research/decision_memo/scores.json",
-          "detail": "scores: 1 file(s) match **/scores.json"
+          "detail": "scores: 1 of 1 file(s) matching **/scores.json contain all patterns"
         },
         {
           "label": "delivery_check",
@@ -289,44 +289,44 @@
       "passed": false,
       "status": "fail",
       "proxy": false,
-      "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/digital-assets/website/dist/index.html",
-      "detail": "missing: gtm (gtm: none matched (artifact: 0 file(s) match **/*gtm*; artifact: 0 file(s) match **/*go-to-market*)); keyword_volumes (keyword_volumes: 0 file(s) match **/keyword-map*.json); site_gate (site_gate: 0 file(s) match **/site-gate*.json); runbook (runbook: 0 file(s) match **/*runbook*); paused_campaign (paused_campaign: 0 file(s) match **/*campaign*.json)",
+      "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/strategy/strategy-plan.json",
+      "detail": "missing: site_gate (site_gate: 0 of 0 file(s) matching **/site-gate*.json contain all patterns); runbook (runbook: 0 of 0 file(s) matching **/*runbook* contain all patterns); paused_campaign (paused_campaign: 0 of 0 file(s) matching **/*campaign*.json contain all patterns)",
       "sub_checks": [
         {
           "label": "gtm",
-          "passed": false,
-          "evidence_path": null,
-          "detail": "gtm: none matched (artifact: 0 file(s) match **/*gtm*; artifact: 0 file(s) match **/*go-to-market*)"
+          "passed": true,
+          "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/strategy/strategy-plan.json",
+          "detail": "artifact: 1 of 1 file(s) matching **/strategy/strategy-plan.json contain all patterns"
         },
         {
           "label": "keyword_volumes",
-          "passed": false,
-          "evidence_path": null,
-          "detail": "keyword_volumes: 0 file(s) match **/keyword-map*.json"
+          "passed": true,
+          "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/business-analysis/cases/hybrid-advisor/market_research/search_journey/2026-10-31/keyword-volumes.json",
+          "detail": "artifact: 1 of 1 file(s) matching **/keyword-volumes*.json contain all patterns"
         },
         {
           "label": "local_site",
           "passed": true,
           "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-091150/digital-assets/website/dist/index.html",
-          "detail": "artifact: 1 file(s) match **/website/**/index.html"
+          "detail": "artifact: 1 of 1 file(s) matching **/website/**/index.html contain all patterns"
         },
         {
           "label": "site_gate",
           "passed": false,
           "evidence_path": null,
-          "detail": "site_gate: 0 file(s) match **/site-gate*.json"
+          "detail": "site_gate: 0 of 0 file(s) matching **/site-gate*.json contain all patterns"
         },
         {
           "label": "runbook",
           "passed": false,
           "evidence_path": null,
-          "detail": "runbook: 0 file(s) match **/*runbook*"
+          "detail": "runbook: 0 of 0 file(s) matching **/*runbook* contain all patterns"
         },
         {
           "label": "paused_campaign",
           "passed": false,
           "evidence_path": null,
-          "detail": "paused_campaign: 0 file(s) match **/*campaign*.json"
+          "detail": "paused_campaign: 0 of 0 file(s) matching **/*campaign*.json contain all patterns"
         },
         {
           "label": "nothing_sent",
@@ -350,8 +350,9 @@
   "summary": {
     "total": 11,
     "passed": 2,
-    "failed": 8,
+    "failed": 7,
     "not_exercised": [
+      "cp03",
       "cp11"
     ],
     "proxy": 5
@@ -400,7 +401,7 @@
       {
         "line": 827,
         "tool": "Skill",
-        "input": "{\"skill\": \"archetype-gtm-strategist\", \"args\": \"Project eval-hybrid-insurance-advisor-20261031-091150, case hybrid-advisor. Gate override recorded (all outputs PROVISIONAL, not validated). Need: provis",
+        "input": "{\"skill\": \"archetype-gtm-strategist\", \"args\": \"Project eval-hybrid-insurance-adv",
         "reason": "PreToolUse:Skill hook error: Skill route rejected: ValueError: Repository skill dispatch requires a JSON route envelope in args. Re-invoke the skill with: {\"route\": {\"request\": \"Project eval-hybrid-insurance-advisor-20261031-091150, case hybrid-advisor. Gate override recorded (all outputs PROVISIONA"
       }
     ]

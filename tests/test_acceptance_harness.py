@@ -1194,3 +1194,60 @@ def test_cp07_near_miss_skips_gap_lines_and_caps_quote(tmp_path):
     long = 'An international analog in the US: ' + 'x' * 300 + '\n'
     cp = _cp(_run(tmp_path / 'l', [], files={'projects/eval-x/n.md': long}), 'cp07')
     assert 'near miss' in cp['detail'] and 'x' * 80 not in cp['detail']
+
+
+def test_feeder_answers_closing_intake_question_not_an_earlier_override_mention():
+    feeder = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='e', alt_slug='a', budget_usd=25.0)
+    message = ('I checked the workspace and started the intake.\n\n'
+               'The pain-first gate will block GTM work later; if you want it skipped you can ask me to record an '
+               'explicit override, but that is not needed now. ' + 'Desk notes follow. ' * 30 + '\n\n'
+               'One question first: do you already hold a §34d or §34e licence, or would you still need to register?')
+    kind, text, ids = feeder.reply(message)
+    assert kind == 'answer' and 'gate_override' not in ids and ids[0] == 'licence_status'
+
+
+def test_cp03_not_exercised_when_no_answer_carried_persist_markers(tmp_path):
+    lines = [_assistant('Which path: continue [1], or start new research?')]
+    rounds = [{'round': 0, 'kind': 'initial', 'line_start': 0, 'line_end': 1, 'session_id': 's', 'matched_ids': []},
+              {'round': 1, 'kind': 'answer', 'line_start': 1, 'line_end': 1, 'session_id': 's', 'matched_ids': ['gate_override']}]
+    cp03 = _cp(_run(tmp_path, lines, rounds), 'cp03')
+    assert cp03['status'] == 'not_exercised' and cp03['detail'].startswith('not exercised:')
+
+
+def test_all_check_fails_when_any_sub_check_fails_even_if_another_is_not_exercised(tmp_path):
+    out = _run(tmp_path, [_assistant('Hello')])
+    ctx = acc.Ctx(out)
+    check = {'type': 'all', 'checks': [{'type': 'answers_persisted'}, {'type': 'artifact', 'glob': '**/x.md'}]}
+    assert acc.run_check(ctx, check)[0] is False
+    check = {'type': 'all', 'checks': [{'type': 'answers_persisted'}, {'type': 'max_questions_per_turn'}]}
+    assert acc.run_check(ctx, check)[0] is None
+
+
+def test_artifact_detail_counts_matching_and_containing_files(tmp_path):
+    out = _run(tmp_path, [], files={'p/a.jsonl': '{"sampling_frame": "topic_led_voc"}', 'p/b.jsonl': '{}'})
+    ok, _, detail = acc.run_check(acc.Ctx(out), {'type': 'artifact', 'glob': '**/*.jsonl', 'contains': ['entity_led'], 'label': 'v'})
+    assert ok is False and detail == 'v: 0 of 2 file(s) matching **/*.jsonl contain all patterns'
+
+
+def test_cp08_near_miss_when_claim_challenge_exists_without_applied_report(tmp_path):
+    out = make_out_dir(tmp_path)
+    art = out / 'artifacts/projects' / ('eval-' + SLUG) / 'business-analysis'
+    _write(art / 'cases/c1/decision_memo/claim-challenge-draft-basis.md', '# Progress challenge\n')
+    cp08 = _cp(out, 'cp08')
+    assert not cp08['passed'] and 'near miss: claim challenge ran but no applied falsification report' in cp08['detail']
+
+
+def test_cp10_accepts_keyword_volumes_and_strategy_plan(tmp_path):
+    out = _run(tmp_path, [], files={'projects/e/m/search_journey/d/keyword-volumes.json': '[{"keyword": "x", "volume": 390}]',
+                                    'projects/e/strategy/strategy-plan.json': '{}'})
+    subs = {s['label']: s for s in _cp(out, 'cp10')['sub_checks']}
+    assert subs['keyword_volumes']['passed'] and subs['gtm']['passed']
+
+
+def test_scorecard_hook_denial_input_is_truncated(tmp_path):
+    out = tmp_path / 'o'
+    call = _assistant('', [_tool('d1', 'Skill', {'skill': 'idea-grill', 'args': 'private capital ' * 40})])
+    _write(out / 'transcript.jsonl', call + _result('d1', 'PreToolUse:Skill hook error: Skill route rejected', is_error=True))
+    card = acc.score(out, CHECKPOINTS)
+    assert card['hook_denials']['count'] == 1
+    assert all(len(e['input']) <= 80 for e in card['hook_denials']['events'])
