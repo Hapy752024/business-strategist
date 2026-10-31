@@ -32,12 +32,12 @@ def _words(root: Path, pattern: str) -> int:
     return sum(len(p.read_text(encoding="utf-8").split()) for p in root.glob(pattern) if p.is_file())
 
 
-def test_skill_reference_word_total_phase1():
-    assert _words(ROOT / ".agents/skills", "*/references/**/*.md") <= 90_000
+def test_skill_reference_word_ceiling():
+    assert _words(ROOT / ".agents/skills", "*/references/**/*.md") <= 87_000
 
 
-def test_root_reference_word_total_phase1():
-    assert _words(ROOT / "references", "**/*.md") <= 30_000
+def test_root_reference_word_ceiling():
+    assert _words(ROOT / "references", "**/*.md") <= 29_500
 
 
 def test_no_rule_duplicated_more_than_once():
