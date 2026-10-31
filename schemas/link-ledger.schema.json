@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "property", "updated_at", "rows"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "property": {"type": "string", "minLength": 1},
+    "updated_at": {"type": "string", "format": "date"},
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source_url", "source_domain", "target_url", "stage", "origin", "opportunity_id",
+                     "first_seen", "last_checked_at", "last_observation", "history", "provenance"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-f0-9]{12}$"},
+          "source_url": {"type": "string", "minLength": 1},
+          "source_domain": {"type": "string", "minLength": 1},
+          "target_url": {"type": ["string", "null"]},
+          "stage": {"enum": ["prospect", "pitched", "promised", "live", "lost", "rejected", "declined"]},
+          "origin": {"enum": ["competitor_backlinks", "search_console", "catalogue", "manual", "observation"]},
+          "opportunity_id": {"type": ["string", "null"]},
+          "first_seen": {"type": "string", "format": "date"},
+          "last_checked_at": {"type": ["string", "null"], "format": "date"},
+          "last_observation": {
+            "type": ["object", "null"],
+            "additionalProperties": false,
+            "required": ["path", "sha256", "outcome", "checked_at", "rel"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+              "outcome": {"enum": ["present", "absent", "access_limited", "fetch_error"]},
+              "checked_at": {"type": "string", "minLength": 1},
+              "rel": {"type": ["string", "null"]}
+            }
+          },
+          "history": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["stage", "at", "note", "source"],
+              "properties": {
+                "stage": {"enum": ["prospect", "pitched", "promised", "live", "lost", "rejected", "declined"]},
+                "at": {"type": "string", "format": "date"},
+                "note": {"type": ["string", "null"]},
+                "source": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          "provenance": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": {"type": "string", "minLength": 1},
+                "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
