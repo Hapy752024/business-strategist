@@ -392,3 +392,31 @@ def test_stop_hook_reports_missing_early_steps_without_blocking(tmp_path):
     (biz / "cases/other").mkdir()
     (biz / "cases/c1/v/voc-table.json").rename(biz / "cases/other/voc-table.json")  # another case's output does not count
     assert stop_hook.stop_delivery_check(event, tmp_path)["systemMessage"].startswith("missing early steps: VOC table")
+
+
+def test_stop_hook_early_steps_note_silent_without_case_or_when_unchanged(tmp_path):
+    # No case in the session state: no note.
+    compaction_state.write_state(compaction_state.resume_path(tmp_path, "s9"), {"session_id": "s9"})
+    event = {"session_id": "s9", "transcript_path": _transcript(tmp_path, "Progress snapshot.")}
+    assert stop_hook.stop_delivery_check(event, tmp_path) == {}
+    # Unchanged missing set: the second stop is silent; a change emits again.
+    _case_checkpoint(tmp_path)
+    event = {"session_id": "s1", "transcript_path": _transcript(tmp_path, "Progress snapshot.")}
+    assert "missing early steps" in stop_hook.stop_delivery_check(event, tmp_path)["systemMessage"]
+    assert stop_hook.stop_delivery_check(event, tmp_path) == {}
+    marker = compaction_state.resume_path(tmp_path, "s1")
+    assert marker.with_name(marker.stem + ".early-steps.json").is_file()
+    voc = tmp_path / "projects/p/business-analysis/cases/c1/v/voc-table.json"
+    voc.parent.mkdir(parents=True)
+    voc.write_text("{}")
+    assert "VOC table" not in stop_hook.stop_delivery_check(event, tmp_path)["systemMessage"]
+
+
+def test_stop_hook_early_steps_ignore_other_cases_and_raw_trees(tmp_path):
+    _case_checkpoint(tmp_path)
+    biz = tmp_path / "projects/p/business-analysis"
+    for rel in ("cases/other/voc-table.json", "cases/c1/market_research/pain_points/runs/r1/raw/voc-table.json"):
+        (biz / rel).parent.mkdir(parents=True, exist_ok=True)
+        (biz / rel).write_text("{}")
+    event = {"session_id": "s1", "transcript_path": _transcript(tmp_path, "Progress snapshot.")}
+    assert "VOC table" in stop_hook.stop_delivery_check(event, tmp_path)["systemMessage"]

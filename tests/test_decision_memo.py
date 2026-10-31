@@ -349,3 +349,18 @@ def test_memo_warns_on_claim_challenge_order(tmp_path):
     os.utime(verdicts, (applied.stat().st_mtime + 60,) * 2)
     stale = _run("--draft-claims", d, "--out", tmp_path / "cur")
     assert stale.returncode == 0 and "newer than the applied challenge (falsification-verdicts.draft.json)" in stale.stderr
+
+
+def test_memo_order_warning_branches_on_ledger_basis(tmp_path):
+    run = tmp_path / "customer-feedback"
+    run.mkdir()
+    ledger = run / "claim-ledger.json"
+    ledger.write_text(json.dumps([claim("p1", "unmetness", "high")]))
+    (run / "falsification-claims.json").write_text("{}")  # export output only: precedes the challenge, no warning
+    clean = _run("--ledger", ledger, "--out", tmp_path / "m")
+    assert clean.returncode == 0 and "claim-challenge file" not in clean.stderr
+    assert "no claim challenge while draft claims exist" not in clean.stderr  # no draft claims given
+    (run / "falsification-verdicts.json").write_text("[]")  # verdicts saved, apply never run
+    unapplied = _run("--ledger", ledger, "--out", tmp_path / "m")
+    assert unapplied.returncode == 0
+    assert "none was applied to this memo (falsification-verdicts.json)" in unapplied.stderr

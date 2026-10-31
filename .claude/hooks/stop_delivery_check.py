@@ -9,7 +9,8 @@ it allows the stop (the claim cannot be checked; never fail closed).
 
 Report only: when the session names a case that has an evidence run, every stop
 also lists early desk steps with no output ("missing early steps: ...") as a
-systemMessage. That note never blocks.
+systemMessage, only when that list changed since the last note in this
+session (state in the gitignored .claude/plans/resume/). That note never blocks.
 """
 from __future__ import annotations
 
@@ -111,7 +112,17 @@ def early_steps_note(event: dict, root: Path) -> str:
             sys.path.insert(0, str(repo))
         from scripts.case_status import early_steps_line
         line = early_steps_line(case_root.parent.parent, case_id)
-        return line if line.startswith("missing") else ""
+        line = line if line.startswith("missing") else ""
+        # Emit only when the missing set changed since the last note in this session (gitignored state file).
+        marker = resume_path(root, session_id)
+        marker = marker.with_name(marker.stem + ".early-steps.json")
+        previous = json.loads(marker.read_text(encoding="utf-8")) if marker.is_file() else None
+        current = {"case": case_id, "line": line}
+        if previous == current:
+            return ""
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text(json.dumps(current), encoding="utf-8")
+        return line
     except Exception:
         return ""
 

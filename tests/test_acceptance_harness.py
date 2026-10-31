@@ -1270,3 +1270,17 @@ def test_tooling_symlink_is_not_an_agent_write(tmp_path, monkeypatch):
     monkeypatch.setattr(acc.subprocess, 'run', lambda *a, **k: subprocess.CompletedProcess(a, 0, porcelain, ''))
     (tmp_path / 'wt/projects').mkdir(parents=True)
     assert acc.writes_outside_eval(tmp_path / 'wt', [], {}) == ['repo:?? scripts/agent-made.py']
+
+
+def test_feeder_gate_option_line_with_generic_closing_question():
+    feeder = acc.Feeder.load(SCENARIO / 'founder-answers.json', eval_dir='e', alt_slug='a', budget_usd=25.0)
+    message = ('Desk research is drafted; the problem is not yet validated.\n\n'
+               '1. Run interviews first.\n2. Record an override of the gate and continue to GTM.\n\n'
+               'Which do you prefer?')
+    assert feeder.reply(message)[2] == ['gate_override']
+
+
+def test_blocked_tools_forbid_npm_installs():
+    blocked = acc.blocked_tools([])
+    for rule in ('Bash(npm ci*)', 'Bash(npm install*)', 'Bash(npm i *)', 'Bash(npm update*)', 'Bash(npm uninstall*)'):
+        assert rule in blocked

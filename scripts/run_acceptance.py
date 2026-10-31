@@ -90,6 +90,8 @@ DISALLOWED_TOOLS = [
     'Bash(git push*)', 'Bash(git commit*)', 'Bash(git remote*)', 'Bash(git rev-parse*)', 'Bash(gh *)', 'Bash(curl*)', 'Bash(wget*)',
     'Bash(vercel*)', 'Bash(npx vercel*)', 'Bash(netlify*)', 'Bash(npx netlify*)', 'Bash(wrangler*)',
     'Bash(npx wrangler*)', 'Bash(firebase*)', 'Bash(npx firebase*)', 'Bash(npm publish*)',
+    # scripts/brand/node_modules may be a symlink to the host checkout: never modify it from the worktree.
+    'Bash(npm ci*)', 'Bash(npm install*)', 'Bash(npm i *)', 'Bash(npm update*)', 'Bash(npm uninstall*)',
     'Bash(python3 scripts/fal_assets.py*)', 'Bash(python3 scripts/brand/finalize_fal_assets.py*)',
     'Bash(python3 scripts/brand/indexnow_ping.py*)', 'Bash(python3 scripts/marketing/execute.py*)',
 ]
@@ -346,6 +348,7 @@ def _kw_hit(keyword: str, text: str) -> bool:
 
 GATE_CUE = re.compile(r'(?i)(override|pain[- ]first|problem_validation)')
 OPTIONS_LIST = re.compile(r'(?m)^\s*\d+[.)]\s+\S')
+OPTIONS_LIST_LINE = re.compile(r'(?m)^\s*\d+[.)]\s+\S.*$')
 OPTIONS_CUE = re.compile(r"(?i)(your call|option|choose|which|tell me|what i need from you|say:|decide|decision)")
 
 
@@ -386,8 +389,12 @@ class Feeder:
         # The gate counts as asked only when the closing question(s) (or, without one, the last 400 characters)
         # raise it: an earlier mention of "override" must not hijack an intake question.
         closing = ' '.join(questions) or text[-400:]
-        gate_asked = GATE_CUE.search(closing) is not None
-        whole = offers_options(tail) or gate_asked
+        options = offers_options(tail)
+        # An options list closed by a generic question ("Which do you prefer?") asks the gate when one of its
+        # option lines (within the last 600 characters) raises it.
+        option_lines = OPTIONS_LIST_LINE.findall(text[-600:]) if options else []
+        gate_asked = GATE_CUE.search(closing) is not None or any(GATE_CUE.search(l) for l in option_lines)
+        whole = options or gate_asked
         # Options lists and gate requests are often not phrased as questions: match the whole final message then.
         context = text if whole else (' '.join(questions) if questions else text[-600:])
         context = context.lower()

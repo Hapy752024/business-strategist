@@ -65,7 +65,7 @@ def _booked_responders(root: Path, case_id: str) -> list[str]:
     return notes
 
 
-# Early desk outputs (evidence-scout "Early parallel desk steps"): label -> accepted file names / globs.
+# Early desk outputs (evidence-scout "Early parallel desk steps"): label -> accepted file names or globs.
 EARLY_STEPS = {
     'search-journey plan': ('search-journey-plan.json', 'search_journey/*/plan.json'),
     'search-journey results': ('serp-landscape.json',),
@@ -74,29 +74,33 @@ EARLY_STEPS = {
     'social topics': ('social-topics.json',),
     'VOC table': ('voc-table.json',),
 }
+WALK_SKIP_DIRS = {'raw', 'node_modules', '.git', 'provider-checkpoints', 'inventory'}
 
 
 def missing_early_steps(root: Path, case_id: str) -> list[str] | None:
     """Early desk steps with no output in the business root or this case; None before any evidence run.
 
-    Report-only: it never blocks a route. Other cases' folders are ignored."""
+    One directory walk (raw evidence, node_modules and other cases' folders are skipped). Report-only:
+    it never blocks a route."""
+    import fnmatch
+    import os
     root = Path(root)
-    other_cases = root / 'cases'
-
-    def own(path: Path) -> bool:
-        try:
-            rel = path.relative_to(other_cases)
-        except ValueError:
-            return True
-        return rel.parts[:1] == (case_id,)
-
-    if not any(own(p) for p in root.glob('**/pain_points/runs/*') if p.is_dir()):
+    has_run, found = False, set()
+    for dirpath, dirnames, filenames in os.walk(root):
+        rel = Path(dirpath).relative_to(root).parts
+        if rel[:1] == ('cases',) and len(rel) == 1:
+            dirnames[:] = [d for d in dirnames if d == case_id]
+        dirnames[:] = [d for d in dirnames if d not in WALK_SKIP_DIRS]
+        if rel[-2:] == ('pain_points', 'runs') and dirnames:
+            has_run = True
+        for name in filenames:
+            tail = '/'.join((*rel[-2:], name))
+            for label, patterns in EARLY_STEPS.items():
+                if label not in found and any(fnmatch.fnmatch(name if '/' not in pat else tail, pat) for pat in patterns):
+                    found.add(label)
+    if not has_run:
         return None
-    missing = []
-    for label, patterns in EARLY_STEPS.items():
-        if not any(own(p) for pattern in patterns for p in root.glob('**/' + pattern) if p.is_file()):
-            missing.append(label)
-    return missing
+    return [label for label in EARLY_STEPS if label not in found]
 
 
 def early_steps_line(root: Path, case_id: str) -> str:
