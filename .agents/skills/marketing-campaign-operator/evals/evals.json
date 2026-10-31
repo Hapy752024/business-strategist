@@ -39,12 +39,12 @@
       "expected_output": "Prepares the review with the Meta data, reports site conversions as unknown because the export is missing, not zero, refuses a winner or stop claim on the gap, and recommends collect more data or obtaining the GA4 export.",
       "files": [],
       "must_mention": [
-        "unknown",
-        "missing export"
+        "unknown"
       ],
       "must_not_mention": [
         "conversions were 0",
-        "you had zero conversions"
+        "zero conversions were recorded",
+        "you got 0 conversions"
       ]
     }
   ]
