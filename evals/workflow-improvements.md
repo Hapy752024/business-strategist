@@ -16,6 +16,166 @@ Single shared record for failures, problems and improvement candidates across th
 
 ## Review queue
 
+### WF-045 — Plugin trigger suite misses its own gate for two routes
+
+- Priority/status: P3/open. Area: skill descriptions / `evals/plugin-triggers/`.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: The description-only plugin trigger suite added on this branch scores case-appraisal 0/3 and competitor-discovery 1/3 and fails its own 0.8 gate (recorded in the Task 2.7 review).
+- Expected behavior and impact: Those two skills may not be selected from natural requests when routing relies on descriptions alone. The sandbox skips CLAUDE.md and the route hook, so this measures description triggering only.
+- Cause: Unverified; prompts may echo description wording, which would inflate other cases rather than explain these misses.
+- Next action: Rewrite the two descriptions and rerun the suite; do not lower the gate.
+- Resolution/history: 2026-10-31 logged; no fix attempted.
+
+### WF-044 — Background-subagent re-wake roughly doubled model cost
+
+- Priority/status: P3/open. Area: acceptance run cost.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: Model cost (maximum session `total_cost_usd`) was 2.01 USD for the after run and 5.11 USD for the verify run; wall time 642 s versus 1280 s (`evals/acceptance/runs/after-2026-10-31/scorecard.json`, `evals/acceptance/runs/verify-2026-10-31/scorecard.json`). The verify run used asynchronous research subagents whose completion re-woke the main session.
+- Expected behavior and impact: Cost per run is not comparable across arms unless subagent mode is held constant. n=1 each, so the size of the effect is uncertain.
+- Cause: Hypothesis: each re-wake re-reads the cached context. Not isolated.
+- Next action: Measure with matched arms before changing any subagent policy.
+- Resolution/history: 2026-10-31 observed.
+
+### WF-043 — Required references in route packets are mostly not read
+
+- Priority/status: P2/open. Area: route packets (`scripts/enforce_skill_route.py`).
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: In the verify run the injected `required_references` for idea-grill (`references/opportunity-research-approaches.md`, `references/strategic-positioning.md`) and `references/research-data-and-precedents.md` were never read; customer-voice and launch-contract were. Evidence: `evals/acceptance/runs/verify-2026-10-31/scorecard.json` (cp06, cp07 fails) and the Task 7.4 audit summary.
+- Expected behavior and impact: Rules that live only in required references (official statistics, international precedent) are skipped, which shows up as cp06/cp07 failures.
+- Cause: Observed: nothing forces a read. Hypothesis: the packet lists paths without a reason tied to the next step.
+- Next action: Either inline the decision-relevant rules in the packet or add a checked read receipt.
+- Resolution/history: 2026-10-31 observed in one run.
+
+### WF-042 — Main agent hit Bash denials on compound commands and PDF extraction
+
+- Priority/status: P2/open. Area: agent Bash policy.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: Permission denials: 13 baseline, 8 after, 5 verify (`evals/acceptance/runs/verify-2026-10-31/scorecard.json`). Denied shapes included `for` loops, `awk`, `curl`, and `pdftotext`; in the verify run the register-statistics PDF could not be decoded, so official register counts were reported as not checked. Subagent Bash had 0 denials after `233cb09`.
+- Expected behavior and impact: Official-statistics evidence in PDF form is a coverage gap; the agent reported it as such (no absence-of-demand claim).
+- Cause: Observed: harness policy denies those shapes for the main agent. The subagent command allowlist fix (`c3b7f15`, `233cb09`) did not extend to the main agent.
+- Next action: Provide an allowed PDF extraction route (for example the repository parse script) and tell the main agent about it.
+- Resolution/history: 2026-10-31 observed; open.
+
+### WF-041 — Entity-led worker could not set itself up and had no Write tool
+
+- Priority/status: P2/in_progress (implemented; live unverified). Area: evidence-scout workers.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: In the verify run the entity-led reviews worker returned nothing; only one of five planned entities was collected afterwards by the main agent (`evals/acceptance/runs/verify-2026-10-31/scorecard.json`, cp04).
+- Expected behavior and impact: Entity-led feedback frame stays incomplete, so cp04 cannot pass.
+- Cause: Confirmed in the diff: the output directory was restricted to the allowed root and workers cannot write, so the plan step had to be run by the coordinator.
+- Next action: Run one live check that the coordinator creates the plan and the worker collects at least three entities.
+- Resolution/history: 2026-10-31 fixed in `4384169`: `resolve_run_dir` error names the allowed root; `references/modules/source-worker-packet.md` and the evidence-scout skill state that the coordinator runs `scripts/evidence_scout/plan_customer_feedback.py`. Covered by `tests/test_acceptance_harness.py`. No live run since the fix.
+
+### WF-040 — Duplicate gate-override audit records
+
+- Priority/status: P3/resolved. Area: `scripts/route_workflow.py` override recording.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: CLI call followed by the hook recorded the same override twice (observed in the Task 7.4 audit).
+- Expected behavior and impact: Audit trail overstated overrides.
+- Cause: Confirmed: dedupe did not match CLI (no id) against hook (derived id).
+- Next action: None.
+- Resolution/history: 2026-10-31 fixed in `4384169`: `record_gate_override` matches by override id or route+stages+revision+generation. Test: CLI then hook yields one event (`tests/test_acceptance_harness.py`).
+
+### WF-039 — Router crashed on a missing strategy-plan.json
+
+- Priority/status: P2/resolved. Area: `scripts/route_workflow.py`.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: The design branch raised when `strategy/strategy-plan.json` did not exist (Task 7.4 audit).
+- Expected behavior and impact: A router crash gives no actionable stop instruction.
+- Cause: Confirmed in the code path.
+- Next action: None.
+- Resolution/history: 2026-10-31 fixed in `4384169`: returns `gate_blocked` with `gate: strategy_plan_required`, `first_skill: archetype-gtm-strategist`, exit 2. Test added; `python3 scripts/evaluate.py check` PASS.
+
+### WF-038 — Pre-plan tree emits only markdown deliverables
+
+- Priority/status: P3/open. Area: baseline behavior (`486a7ae`).
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: Baseline produced business case, GTM and campaign guidance as markdown but none of the structured artifacts (entity jsonl, assumptions stages, decision memo, keyword map, site gate, runbook) (`evals/acceptance/runs/baseline-2026-10-31/scorecard.json`, cp04/cp05/cp08/cp10 fail).
+- Expected behavior and impact: Expected gap for the old tree; it is the reference point, not a defect of the branch. The branch did not close it either (see WF-037).
+- Cause: Expected: the old tree had no such instructions.
+- Next action: Track under WF-037.
+- Resolution/history: 2026-10-31 recorded from the Task 7.2 baseline.
+
+### WF-037 — New capabilities never exercised in live runs
+
+- Priority/status: P1/open. Area: search_journey, VOC table, decision memo, falsification, keyword_map, site_gate.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: None of these ran in the after or verify runs (`evals/acceptance/runs/after-2026-10-31/scorecard.json`, `evals/acceptance/runs/verify-2026-10-31/scorecard.json`: cp05, cp08, cp10 fail in both). In the verify run the instructions were in context at the point of use and the agent read and acknowledged them but did not execute them; the artifacts state that scripts were not run. The VOC table, decision memo and falsification need upstream artifacts (source review, synthesis, claim ledger) that the flow never produced, and nothing blocks writing downstream documents without them. `case_insights.md` was the empty template in both baseline and after runs.
+- Expected behavior and impact: The branch ships capabilities with passing unit tests and no live evidence they change research outcomes. The 7.3 blind grade preferred the baseline.
+- Cause: Observed: prerequisites not produced. Hypothesis: the agent takes the shortest path to the five requested deliverables.
+- Next action: Next live run: check whether the agent creates a source review and claim ledger before the business case, and whether the router or skill gates downstream writing on them.
+- Resolution/history: 2026-10-31 opened. No closure; deterministic tests do not count.
+
+### WF-036 — Large MCP search results exceed the Read token limit
+
+- Priority/status: P3/open. Area: agent workflow.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: Baseline had 12 Read errors on tool-result files above 25000 tokens and delegated to 7 subagents to read them (Task 7.2 audit).
+- Expected behavior and impact: Cost and delay; risk of dropped evidence.
+- Cause: Observed limit; no instruction on how to page large results.
+- Next action: Add guidance to read in line ranges or request smaller result sets.
+- Resolution/history: 2026-10-31 observed in one baseline run.
+
+### WF-035 — route_workflow rejects nested eval slugs and the agent bypassed the CLI
+
+- Priority/status: P2/open. Area: `scripts/route_workflow.py` usage.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: In smoke and baseline runs `--project` with a nested slug and `--case` were rejected; in one baseline re-run the agent then called the override function from Python, so no blocked-gate event was visible. Routing and gate checks are scored at cp02/cp09 (`evals/acceptance/runs/baseline-2026-10-31/scorecard.json`). The after and verify runs did call the router (cp09 pass).
+- Expected behavior and impact: Eval and nested workspaces make the router look unusable, which invites bypass.
+- Cause: Observed rejection; the usage message is not specific enough (hypothesis).
+- Next action: Make the error name the accepted slug form and flags.
+- Resolution/history: 2026-10-31 observed; partly improved in later runs, not closed.
+
+### WF-034 — First Skill call lacks the route envelope
+
+- Priority/status: P3/open (recurred). Area: hook `scripts/enforce_skill_route.py`.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: Baseline (line 12) and verify (line 41) each lost one call: the first `idea-grill` Skill call had no envelope and the PreToolUse hook denied it; the agent retried and succeeded. The after run had 0 hook denials (`evals/acceptance/runs/baseline-2026-10-31/scorecard.json`, `evals/acceptance/runs/after-2026-10-31/scorecard.json`, `evals/acceptance/runs/verify-2026-10-31/scorecard.json`). Verify is the scorer's cp02 fail.
+- Expected behavior and impact: A denied call per run and a cp02 failure.
+- Cause: Observed. The agent does not know the envelope shape before the first call.
+- Next action: Put the envelope shape in the first-skill cue, or accept the one-denial recovery and change cp02.
+- Resolution/history: 2026-10-31 marked resolved on branch by `f058f00` after the after run showed no denial; reopened because the verify run (`233cb09`) denied it again.
+
+### WF-033 — Brave Search monthly quota exhausted (402)
+
+- Priority/status: P2/open. Area: provider (Brave).
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: Baseline and after runs: Brave returned 402, usage 15.01 of 15 monthly. After-run provider failures also included firecrawl, google_autocomplete, serper_search and youtube. Verify run stated Brave `billing_required`.
+- Expected behavior and impact: Coverage gap, not absence of demand; the agents said so.
+- Cause: Provider plan limit.
+- Next action: Owner raises the plan or the router degrades to another search provider. Resume condition: quota renewed.
+- Resolution/history: 2026-10-31 observed in three runs.
+
+### WF-032 — Host-write audit flagged concurrent-session writes
+
+- Priority/status: P3/resolved. Area: acceptance harness.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: Smoke and baseline runs flagged files in another project's website directory that the transcripts never touched (Task 7.2 audit).
+- Expected behavior and impact: False host-write warnings.
+- Cause: Shared tree used by a concurrent session.
+- Next action: None.
+- Resolution/history: 2026-10-31 fixed in `cdf3768` (writes attributed to the run).
+
+### WF-031 — Feeder ignored gate-override requests phrased as option lists
+
+- Priority/status: P2/resolved. Area: acceptance harness feeder.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: The first baseline stalled at the pain-first gate for four rounds because the feeder only matched question sentences; cp08 and cp10 were unmeasured.
+- Expected behavior and impact: That baseline measured nothing downstream.
+- Cause: Confirmed in the Task 7.2 audit.
+- Next action: None.
+- Resolution/history: 2026-10-31 fixed in `cdf3768`; the re-run matched gate_override in 5 replies.
+
+### WF-030 — Acceptance harness summed cumulative session cost
+
+- Priority/status: P2/resolved. Area: acceptance harness.
+- First/last observed: 2026-10-31. Owner: Acceptance harness / workflow maintenance.
+- Observed behavior and evidence: Baseline reported 35.52 USD where the true session total was 4.29 USD; each result event repeats the cumulative figure.
+- Expected behavior and impact: Cost comparisons across runs were wrong.
+- Cause: Confirmed.
+- Next action: None.
+- Resolution/history: 2026-10-31 fixed in `cdf3768` (maximum per session); earlier scorecards rescored.
+
 ### WF-029 — Default Serper search hides ads and most SERP features
 
 - Date: 2026-10-30. Area: SEO/SERP research (`scripts/serper_fetch.py`, `scripts/evidence_scout/search_journey.py`). Priority: P3. Status: resolved (2026-10-30) for the deterministic route; the live ad-visibility quality of individual SERP samples remains point-in-time.
@@ -36,6 +196,7 @@ Single shared record for failures, problems and improvement candidates across th
 - Cause: upstream platform policy change; confirmed only as far as the brief states it.
 - Next action: owner registers the app at https://www.reddit.com/prefs/apps with the Developer Platform (https://developers.reddit.com) before 2027-01-12 and applies to the migration program by 2026-11-30. Fallback order is recorded as `apify_reddit`, `scrapecreators_reddit`, `arctic_shift`; those providers are not yet registered as capabilities or collectors.
 - Resolution/history: 2026-10-30 sunset dates and fallback order recorded in the capability file; fallback collectors still to be built.
+- 2026-10-31 addendum: `firecrawl_scrape` refuses `reddit.com` URLs (baseline acceptance run); the Dialog MCP Reddit lane could not read content in the same run. This is a source-access gap now, ahead of the API sunset, and Reddit-only evidence is capped accordingly.
 - Provider audit evidence (2026-10-30, names and statuses only): `scripts/validate_apis/key_audit.py` reports 21 of 29 required env vars present (process env, then `~/.secrets`, via `get_secret`); absent: COMMUNITY_DISCOVERY_*/COMMUNITY_REVIEW_* key pairs, GOOGLE_PLACES_API_KEY, TRUSTPILOT_API_KEY, SCRAPE_CREATORS_API_KEY, SERPER_DEV_API_KEY. SERPER_DEV_API_KEY shows absent although `validate_serper` returned `ok`, because the validator also accepts the alias SERPER_API_KEY, which `key_audit` does not check (it checks only the declared name). `run_all.py` per-provider results: 26 ok; failed: brightdata, ecb, fred, bis, world_bank, companies_house; missing_credentials: tiktok, app_reviews; missing_cli: crawl4ai, markitdown, scrapling; billing_required: brave_search; token_expired: meta. `provider_doctor.py` family status: official_statistics ok (eurostat); company_registers ok (france_register); studies ok (openalex); capital_market_signals ok (parsersvc); reddit ok (reddit_api); google_trends ok (serpapi_google_trends); web_search ok (serper_search); local_extraction optional_unavailable (none); youtube ok (youtube_data_api); social ok (x_api); app_store ok (sonar); customer_reviews ok (scrapecreators_social); founder_community ok (hn_algolia); github_issues ok (github_search_anonymous); china_public_native ok (v2ex_public_hot); china_public_search ok (serper_bilibili_v2ex_site_search); china_social ok (scrapecreators_china_social); china_web ok (serper_china_web). The Reddit family is currently `ok`; the sunset risk above is future, not yet observed.
 
 ### WF-027 — Website SEO launch misses production host canonicals and owner indexing handoff
@@ -124,6 +285,22 @@ Single shared record for failures, problems and improvement candidates across th
 
 | ID | Priority | Status | Area | Issue |
 | --- | --- | --- | --- | --- |
+| WF-045 | P3 | open | Plugin triggers | Plugin trigger suite misses its own gate for two routes |
+| WF-044 | P3 | open | Run cost | Background-subagent re-wake roughly doubled model cost |
+| WF-043 | P2 | open | Route packets | Required references in route packets are mostly not read |
+| WF-042 | P2 | open | Agent Bash | Main agent hit Bash denials on compound commands and PDF extraction |
+| WF-041 | P2 | in_progress | Evidence workers | Entity-led worker could not set itself up and had no Write tool |
+| WF-040 | P3 | resolved | Router overrides | Duplicate gate-override audit records |
+| WF-039 | P2 | resolved | Router | Router crashed on a missing strategy-plan.json |
+| WF-038 | P3 | open | Baseline gap | Pre-plan tree emits only markdown deliverables |
+| WF-037 | P1 | open | New capabilities | New capabilities never exercised in live runs |
+| WF-036 | P3 | open | Tool results | Large MCP search results exceed the Read token limit |
+| WF-035 | P2 | open | Router usability | route_workflow rejects nested eval slugs and the agent bypassed the CLI |
+| WF-034 | P3 | open | Route envelope | First Skill call lacks the route envelope |
+| WF-033 | P2 | open | Provider quota | Brave Search monthly quota exhausted (402) |
+| WF-032 | P3 | resolved | Harness | Host-write audit flagged concurrent-session writes |
+| WF-031 | P2 | resolved | Harness | Feeder ignored gate-override requests phrased as option lists |
+| WF-030 | P2 | resolved | Harness | Acceptance harness summed cumulative session cost |
 | WF-028 | P1 | open | Reddit API | Public Data API sunset breaks reddit and Dialog MCP lanes |
 | WF-027 | P2 | resolved | Website SEO launch | Production host canonicals unverified; no Search Console owner handoff |
 | WF-023 | P2 | in_progress | Visa-check email | Raw JSON email and unclear successful-send state |
