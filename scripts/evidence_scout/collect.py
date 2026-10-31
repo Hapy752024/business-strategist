@@ -478,7 +478,7 @@ def balanced_queries(queries: list[str]) -> list[str]:
 
 
 QUERY_PLAN_PROVIDERS = {"reddit", "brave_search", "serper_search", "firecrawl", "hn", "github",
-                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "scrapecreators_reddit", "arctic_shift", "cfpb_complaints", "stackexchange", "producthunt", "bluesky"}
+                        "google_autocomplete", "youtube", "x", "xai_x_search", "scrapecreators", "apify_reddit", "scrapecreators_reddit", "arctic_shift", "cfpb_complaints", "stackexchange", "producthunt"}
 RESUME_TERMINAL_PROVIDER_STATUSES = {"ok", "unsupported", "capture_gate_blocked", "not_applicable"}
 
 
@@ -1308,10 +1308,8 @@ def normalize_local_extraction_records(
 def selected_providers(value: str) -> list[str]:
     defaults = ["reddit", "serpapi_google_trends", "youtube", "serper_search", "firecrawl", "brave_search", "google_autocomplete"]
     social = ["x", "scrapecreators"]
-    entity_reviews = ["trustpilot_reviews", "google_places_reviews", "itunes_reviews", "sonar"]
+    entity_reviews = ["google_places_reviews", "itunes_reviews", "sonar"]
     local_web = ["crawl4ai"]
-    china_public = ["china_bilibili", "china_v2ex", "china_web"]
-    china_social = ["china_xiaohongshu"]
     if not value or value == "default":
         return defaults
     providers: list[str] = []
@@ -1326,12 +1324,6 @@ def selected_providers(value: str) -> list[str]:
             providers.extend(local_web)
         elif part == "free_community":
             providers.extend(["hn", "github", "google_autocomplete", "stackexchange"])
-        elif part == "china_public":
-            providers.extend(china_public)
-        elif part == "china_social":
-            providers.extend(china_social)
-        elif part == "china":
-            providers.extend([*china_public, *china_social])
         elif part == "all":
             providers.extend([*defaults, *social])
         else:
@@ -2123,10 +2115,6 @@ def collect_producthunt(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "producthunt")
 
 
-def collect_bluesky(args, queries, run_dir):
-    return collect_scheduled_provider(args, queries, run_dir, "bluesky")
-
-
 def collect_x(args, queries, run_dir):
     return collect_scheduled_provider(args, queries, run_dir, "x")
 
@@ -2534,55 +2522,6 @@ def _collect_producthunt_query(args: argparse.Namespace, queries: list[str], run
     return records, {"status": status, "record_count": len(records), "credential_source": key_name, "fields": fields_present(raw)}
 
 
-def _collect_bluesky_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Bluesky post search with an app-password session. Login traffic is never captured."""
-    from providers import bluesky as bsky
-    raw: dict[str, Any] = {"searches": []}
-    handle_name, handle = get_secret("BLUESKY_HANDLE")
-    _, password = get_secret("BLUESKY_APP_PASSWORD")
-    if not handle or not password:
-        write_json(run_dir / "raw" / "bluesky.json", raw)
-        return [], {"status": "missing_credentials", "record_count": 0, "required_env": ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"]}
-    jwt, login_status = bsky.get_session(handle, password)
-    raw["login"] = {"status": login_status}
-    if not jwt:
-        write_json(run_dir / "raw" / "bluesky.json", raw)
-        return [], {"status": login_status, "record_count": 0, "credential_source": handle_name}
-    lang = str(getattr(args, "language", "") or "").strip().casefold()
-    lang = lang if re.fullmatch(r"[a-z]{2}", lang) else ""
-    frame = getattr(args, "sampling_frame", "topic_led_voc") or "topic_led_voc"
-    entity = str(getattr(args, "subject_entity_id", "") or "").strip()
-    limit = max(1, int(args.limit))
-    records: list[dict[str, Any]] = []
-    status = "ok"
-    relogged = False
-    for query in queries:
-        body, meta = bsky.search(jwt, query, limit, getattr(args, "days", None), lang)
-        if meta["status"] == "session_expired" and not relogged:
-            relogged = True
-            bsky.clear_session()
-            jwt, login_status = bsky.login(handle, password)
-            raw["login"] = {"status": login_status, "relogin": True}
-            if not jwt:
-                status = login_status
-                break
-            body, meta = bsky.search(jwt, query, limit, getattr(args, "days", None), lang)
-        raw["searches"].append({"query": query, "response": meta["response"]})
-        if meta["status"] != "ok":
-            status = "permission_denied" if meta["status"] == "session_expired" else meta["status"]
-            break
-        found = bsky.to_records(body, query, now_iso(), build=normalize_record, customer_segment=args.customer_segment,
-                                hypothesis=args.hypothesis_id, sampling_frame=frame, subject_entity_id=entity)
-        for record in found[:limit]:
-            relevance, notes, score = assess_relevance(record["text"], args, record["query"], record["source_url"], record["author_context"])
-            record.update({"relevance": relevance, "relevance_notes": notes, "relevance_score": score})
-            if relevance == "irrelevant":
-                record.update({"evidence_type": "irrelevant", "strength": "irrelevant"})
-            records.append(record)
-    write_json(run_dir / "raw" / "bluesky.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "credential_source": handle_name, "fields": fields_present(raw)}
-
-
 def _collect_github_query(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """GitHub issue search via the free REST API. Optional GITHUB_TOKEN raises rate limits."""
     key_name, token = get_secret("GITHUB_TOKEN", "GH_TOKEN")
@@ -2844,64 +2783,6 @@ def parse_entity_store_apps(value: str, flag: str) -> list[tuple[str, str, str]]
             raise ValueError(f"{flag} entries must use entity_id=ios:app_id or entity_id=android:package")
         triples.append((entity_id, store, app_id.strip()))
     return triples
-
-
-def collect_trustpilot_reviews(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Collect public reviews bound to an exact Trustpilot business unit domain."""
-    pairs = parse_entity_locator_pairs(getattr(args, "trustpilot_domains", ""), "--trustpilot-domains")
-    raw: dict[str, Any] = {"entities": []}
-    if not pairs:
-        write_json(run_dir / "raw" / "trustpilot_reviews.json", raw)
-        return [], {"status": "not_run", "required_arg": "--trustpilot-domains"}
-    allowed, reason = validate_entity_pairs_in_plan(args, pairs, "independent_review_platforms", "--trustpilot-domains")
-    if not allowed:
-        return [], {"status": "capture_gate_blocked", "reason": reason, "record_count": 0}
-    key_name, api_key = get_secret("TRUSTPILOT_API_KEY")
-    if not api_key:
-        return [], {"status": "missing_credentials", "required_env": ["TRUSTPILOT_API_KEY"]}
-    records: list[dict[str, Any]] = []; failures: list[dict[str, Any]] = []
-    for entity_id, domain in pairs:
-        find = http_get(with_query("https://api.trustpilot.com/v1/business-units/find", {"name": domain}), headers={"apikey": api_key})
-        business = find.get("body") if isinstance(find.get("body"), dict) else {}
-        business_id = str(business.get("id") or "")
-        ledger = {"entity_id": entity_id, "domain": domain, "business_unit_id": business_id or None, "find_http_status": find.get("status_code"), "pages": [], "retrieved_count": 0}
-        raw["entities"].append(ledger)
-        if not find.get("ok") or not business_id:
-            failures.append({"entity_id": entity_id, "stage": "find_business_unit", "status": status_from_response(find)})
-            continue
-        token: str | None = None
-        for _page in range(max(1, getattr(args, "trustpilot_max_pages", 2))):
-            response = http_get(with_query(f"https://api.trustpilot.com/v1/business-units/{business_id}/all-reviews", {"pageToken": token} if token else {}), headers={"apikey": api_key})
-            body = response.get("body") if isinstance(response.get("body"), dict) else {}
-            reviews = body.get("reviews") if isinstance(body.get("reviews"), list) else []
-            ledger["pages"].append({"http_status": response.get("status_code"), "retrieved": len(reviews), "page_token_used": bool(token)})
-            if not response.get("ok"):
-                failures.append({"entity_id": entity_id, "stage": "reviews", "status": status_from_response(response)})
-                break
-            for review in reviews:
-                text_value = "\n\n".join(str(review.get(key) or "").strip() for key in ("title", "text") if str(review.get(key) or "").strip())
-                if not text_value: continue
-                review_id = str(review.get("id") or hashlib.sha256(text_value.encode()).hexdigest())
-                consumer = review.get("consumer") if isinstance(review.get("consumer"), dict) else {}
-                record = normalize_record(source="trustpilot_review", source_url=f"https://www.trustpilot.com/review/{domain}", query=f"entity:{entity_id}", customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text_value, author_context=f"rating={review.get('stars')}; platform_verified={bool(review.get('isVerified'))}; reviewer={consumer.get('displayName') or 'unresolved'}", raw_id=review_id, published_at=normalized_published_at(review.get("createdAt")), source_language=str(review.get("language") or ""), confidence_notes="Public Trustpilot review for an entity-bound business unit. Platform verification does not establish target-segment fit; companyReply is supplier context and is not normalized as customer voice.", sampling_frame="entity_led_feedback", subject_entity_id=entity_id)
-                record["subject_entity_id"] = entity_id; record["subject_entity_domain"] = domain; record["review_rating"] = review.get("stars"); record["platform_verified"] = bool(review.get("isVerified"))
-                record["collection_source_lane"] = "independent_review_platforms"; record["collection_locator"] = domain
-                record["sampling_metadata"].update({"page_number": _page + 1, "requested_max_pages": getattr(args, "trustpilot_max_pages", 2), "record_limit": args.limit, "returned_on_page": len(reviews), "platform_verified": bool(review.get("isVerified")), "review_provenance": review.get("source"), "subset_limitations": "API token-pagination slice; sort and solicitation provenance unknown unless supplied by platform."})
-                records.append(record); ledger["retrieved_count"] += 1
-                reply = review.get("companyReply") if isinstance(review.get("companyReply"), dict) else {}
-                if str(reply.get("text") or "").strip():
-                    supplier_record = normalize_record(source="trustpilot_review", source_url=f"https://www.trustpilot.com/review/{domain}", query=f"entity:{entity_id}", customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=str(reply["text"]), author_context=f"company reply to review {review_id}", raw_id=f"{review_id}:company-reply", published_at=normalized_published_at(reply.get("createdAt")), source_role_override="competitor_context", source_intent_override="competitor_content", confidence_notes="Supplier reply attached to a Trustpilot review; retain as service-response context, never customer voice.", sampling_frame="entity_led_feedback", author_voice_status="supplier_context", subject_entity_id=entity_id)
-                    supplier_record["subject_entity_id"] = entity_id; supplier_record["subject_entity_domain"] = domain; supplier_record["responds_to_review_id"] = review_id
-                    supplier_record["collection_source_lane"] = "independent_review_platforms"; supplier_record["collection_locator"] = domain
-                    records.append(supplier_record)
-                if ledger["retrieved_count"] >= args.limit: break
-            if ledger["retrieved_count"] >= args.limit: break
-            token = str(body.get("nextPageToken") or "") or None
-            if not token: break
-    status = "partial" if failures and records else status_from_response({"ok": False, "status_code": None, "body": failures}) if failures else "ok" if records else "empty"
-    if failures and not records: status = failures[0]["status"]
-    write_json(run_dir / "raw" / "trustpilot_reviews.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "credential_source": key_name, "entity_ledger": [{key: value for key, value in item.items() if key != "pages"} | {"pages": item["pages"]} for item in raw["entities"]], "failures": failures}
 
 
 def collect_google_places_reviews(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -4048,491 +3929,8 @@ def collect_scrapecreators(args: argparse.Namespace, queries: list[str], run_dir
     return records, summary
 
 
-def china_query_terms(args: argparse.Namespace, queries: list[str]) -> list[str]:
-    terms = social_terms(args.topic, args.problem_keywords, args.workaround_keywords, args.geo, args.language)
-    terms.extend(trend_terms(args.topic, args.problem_keywords, args.workaround_keywords, args.geo, args.language))
-    terms.extend(queries[:3])
-    deduped: list[str] = []
-    for term in terms:
-        clean = " ".join(term.split())
-        if clean and clean not in deduped:
-            deduped.append(clean)
-    return deduped[:6] or [args.topic]
-
-
 def strip_html(value: str) -> str:
     return re.sub(r"<[^>]+>", "", value or "").strip()
-
-
-def china_source_from_url(url: str) -> str:
-    lower = url.lower()
-    if "zhihu.com" in lower:
-        return "zhihu"
-    if "weibo.com" in lower:
-        return "weibo"
-    if "douban.com" in lower:
-        return "douban"
-    if "tieba.baidu.com" in lower:
-        return "tieba"
-    if "bilibili.com" in lower:
-        return "bilibili"
-    if "xiaohongshu.com" in lower:
-        return "xiaohongshu"
-    if "v2ex.com" in lower:
-        return "v2ex"
-    return "web_search"
-
-
-def collect_china_bilibili(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    raw: dict[str, Any] = {"backend": "bilibili_public_search", "searches": [], "fallback_calls": []}
-    records: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    first_response: dict[str, Any] = {}
-    for query in china_query_terms(args, queries)[:3]:
-        response = http_get(
-            with_query(
-                "https://api.bilibili.com/x/web-interface/search/type",
-                {"search_type": "video", "keyword": query, "page": 1, "page_size": min(max(args.limit, 1), 10)},
-            ),
-            headers={
-                "User-Agent": "Mozilla/5.0 evidence-scout/0.1",
-                "Referer": "https://www.bilibili.com/",
-            },
-        )
-        if not first_response:
-            first_response = response
-        raw["searches"].append({"query": query, "response": response})
-        body = response.get("body") if isinstance(response.get("body"), dict) else {}
-        data = body.get("data") if isinstance(body, dict) else {}
-        for item in (data.get("result") or []) if isinstance(data, dict) else []:
-            if not isinstance(item, dict):
-                continue
-            raw_id = str(item.get("id") or item.get("bvid") or item.get("arcurl") or "")
-            if not raw_id or raw_id in seen:
-                continue
-            seen.add(raw_id)
-            url = item.get("arcurl") or (f"https://www.bilibili.com/video/{item.get('bvid')}" if item.get("bvid") else "")
-            title = strip_html(item.get("title") or "")
-            description = strip_html(item.get("description") or "")
-            tags = strip_html(item.get("tag") or "")
-            text = "\n\n".join(part for part in [title, description, tags] if part).strip()
-            if not text:
-                continue
-            author = item.get("author") or item.get("mid") or "Bilibili"
-            relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, str(author))
-            records.append(
-                normalize_record(
-                    source="bilibili",
-                    source_url=url,
-                    query=query,
-                    customer_segment=args.customer_segment,
-                    hypothesis=args.hypothesis_id,
-                    text=text,
-                    author_context=str(author),
-                    engagement={
-                        "views": item.get("play"),
-                        "comments": item.get("video_review") or item.get("review"),
-                        "likes": item.get("like"),
-                    },
-                    raw_id=raw_id,
-                    evidence_type="irrelevant" if relevance == "irrelevant" else None,
-                    strength="irrelevant" if relevance == "irrelevant" else None,
-                    relevance=relevance,
-                    relevance_notes=relevance_notes,
-                    relevance_score=relevance_score,
-                    confidence_notes="Collected from Bilibili public search. Treat video metadata and engagement as weak context unless paired with repeated user comments or complaints.",
-                )
-            )
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
-    active_backend = "bilibili_public_search"
-    if not records:
-        serper_key_name, serper_key = get_secret("SERPER_DEV_API_KEY", "SERPER_API_KEY")
-        key_name, brave_key = get_secret("BRAVE_SEARCH_API_KEY")
-        firecrawl_key_name, firecrawl_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
-        raw["fallback_credential_source"] = serper_key_name or key_name or firecrawl_key_name
-        if serper_key:
-            active_backend = "bilibili_site_search_serper"
-            for term in china_query_terms(args, queries)[:3]:
-                query = f"site:bilibili.com/video {term}"
-                response = http_post(
-                    "https://google.serper.dev/search",
-                    headers={"X-API-KEY": serper_key, "Content-Type": "application/json"},
-                    data={"q": query, "num": min(max(args.limit, 1), 10), "gl": "cn", "hl": args.language},
-                )
-                raw["fallback_calls"].append({"backend": active_backend, "query": query, "response": response})
-                body = response.get("body") if isinstance(response.get("body"), dict) else {}
-                for item in body.get("organic", []) if isinstance(body, dict) else []:
-                    url = item.get("link") or ""
-                    if not url or url in seen:
-                        continue
-                    seen.add(url)
-                    text = "\n\n".join(part for part in [item.get("title", ""), item.get("snippet", "")] if part).strip()
-                    if not text:
-                        continue
-                    relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "Bilibili via Serper")
-                    records.append(normalize_record(source="bilibili", source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context="Bilibili via Serper.dev", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score, confidence_notes="Collected from Bilibili site-search fallback via Serper.dev. Treat as weak source discovery unless enriched with comments or direct user-pain text."))
-                    if len(records) >= args.limit:
-                        break
-                if len(records) >= args.limit:
-                    break
-        elif brave_key:
-            active_backend = "bilibili_site_search_brave"
-            for term in china_query_terms(args, queries)[:3]:
-                query = f"site:bilibili.com/video {term}"
-                response = http_get(
-                    with_query("https://api.search.brave.com/res/v1/web/search", {"q": query, "count": min(max(args.limit, 1), 10), "country": "CN", "search_lang": args.language}),
-                    headers={"X-Subscription-Token": brave_key, "Accept": "application/json"},
-                )
-                raw["fallback_calls"].append({"backend": active_backend, "query": query, "response": response})
-                body = response.get("body") if isinstance(response.get("body"), dict) else {}
-                web = body.get("web", {}) if isinstance(body, dict) else {}
-                for item in web.get("results", []) if isinstance(web, dict) else []:
-                    url = item.get("url") or ""
-                    if not url or url in seen:
-                        continue
-                    seen.add(url)
-                    text = "\n\n".join(part for part in [item.get("title", ""), item.get("description", "")] if part).strip()
-                    if not text:
-                        continue
-                    relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "Bilibili via Brave")
-                    records.append(normalize_record(source="bilibili", source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context="Bilibili via Brave", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score, confidence_notes="Collected from Bilibili site-search fallback. Treat as weak source discovery unless enriched with comments or direct user-pain text."))
-                    if len(records) >= args.limit:
-                        break
-                if len(records) >= args.limit:
-                    break
-        elif firecrawl_key:
-            active_backend = "bilibili_site_search_firecrawl"
-            for term in china_query_terms(args, queries)[:3]:
-                query = f"site:bilibili.com/video {term}"
-                response = http_post(
-                    "https://api.firecrawl.dev/v1/search",
-                    headers={"Authorization": f"Bearer {firecrawl_key}"},
-                    data={"query": query, "limit": min(max(args.limit, 1), 10), "scrapeOptions": {"formats": ["markdown"]}},
-                )
-                raw["fallback_calls"].append({"backend": active_backend, "query": query, "response": response})
-                body = response.get("body") if isinstance(response.get("body"), dict) else {}
-                for item in body.get("data") or []:
-                    url = item.get("url") or item.get("sourceURL") or ""
-                    if not url or url in seen:
-                        continue
-                    seen.add(url)
-                    text = "\n\n".join(part for part in [item.get("title", ""), item.get("description", ""), (item.get("markdown") or "")[:1200]] if part).strip()
-                    if not text:
-                        continue
-                    relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "Bilibili via Firecrawl")
-                    records.append(normalize_record(source="bilibili", source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context="Bilibili via Firecrawl", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score, confidence_notes="Collected from Bilibili site-search fallback. Treat as weak source discovery unless enriched with comments or direct user-pain text."))
-                    if len(records) >= args.limit:
-                        break
-                if len(records) >= args.limit:
-                    break
-        else:
-            active_backend = "none"
-
-    if records:
-        status = "ok"
-    elif first_response.get("status_code") == 412:
-        status = "permission_denied"
-    else:
-        status = status_from_response(first_response) if first_response else "missing_credentials"
-    write_json(run_dir / "raw" / "china_bilibili.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "active_backend": active_backend, "fields": fields_present(raw)}
-
-
-def collect_china_bilibili_comments(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    raw: dict[str, Any] = {"backend": "bilibili_public_search_plus_comments", "searches": [], "comments": []}
-    records: list[dict[str, Any]] = []
-    seen_comments: set[str] = set()
-    video_limit = max(1, min(args.china_comment_video_limit, 3))
-    comment_limit = max(1, min(args.china_comment_limit, 20))
-    videos: list[dict[str, Any]] = []
-    first_response: dict[str, Any] = {}
-
-    for query in china_query_terms(args, queries)[:3]:
-        response = http_get(
-            with_query(
-                "https://api.bilibili.com/x/web-interface/search/type",
-                {"search_type": "video", "keyword": query, "page": 1, "page_size": video_limit},
-            ),
-            headers={
-                "User-Agent": "Mozilla/5.0 evidence-scout/0.1",
-                "Referer": "https://www.bilibili.com/",
-            },
-        )
-        if not first_response:
-            first_response = response
-        raw["searches"].append({"query": query, "response": response})
-        body = response.get("body") if isinstance(response.get("body"), dict) else {}
-        data = body.get("data") if isinstance(body, dict) else {}
-        for item in (data.get("result") or []) if isinstance(data, dict) else []:
-            if isinstance(item, dict) and item.get("id"):
-                videos.append({"query": query, "aid": item.get("id"), "bvid": item.get("bvid"), "url": item.get("arcurl") or f"https://www.bilibili.com/video/{item.get('bvid', '')}", "title": strip_html(item.get("title") or "")})
-            if len(videos) >= video_limit:
-                break
-        if len(videos) >= video_limit:
-            break
-
-    for video in videos[:video_limit]:
-        response = http_get(
-            with_query(
-                "https://api.bilibili.com/x/v2/reply",
-                {"type": 1, "oid": video["aid"], "pn": 1, "ps": comment_limit, "sort": 2},
-            ),
-            headers={
-                "User-Agent": "Mozilla/5.0 evidence-scout/0.1",
-                "Referer": video["url"],
-            },
-        )
-        raw["comments"].append({"video": video, "response": response})
-        body = response.get("body") if isinstance(response.get("body"), dict) else {}
-        data = body.get("data") if isinstance(body, dict) else {}
-        for reply in (data.get("replies") or []) if isinstance(data, dict) else []:
-            if not isinstance(reply, dict):
-                continue
-            raw_id = str(reply.get("rpid") or reply.get("oid") or "")
-            if not raw_id or raw_id in seen_comments:
-                continue
-            seen_comments.add(raw_id)
-            content = reply.get("content") if isinstance(reply.get("content"), dict) else {}
-            text = content.get("message") or ""
-            if not text:
-                continue
-            member = reply.get("member") if isinstance(reply.get("member"), dict) else {}
-            relevance, relevance_notes, relevance_score = assess_relevance(text, args, video["query"], video["url"], member.get("uname", ""))
-            records.append(
-                normalize_record(
-                    source="bilibili_comment",
-                    source_url=video["url"],
-                    query=video["query"],
-                    customer_segment=args.customer_segment,
-                    hypothesis=args.hypothesis_id,
-                    text=text,
-                    author_context=member.get("uname", ""),
-                    engagement={"likes": reply.get("like"), "comments": reply.get("rcount")},
-                    raw_id=raw_id,
-                    evidence_type="irrelevant" if relevance == "irrelevant" else None,
-                    strength="irrelevant" if relevance == "irrelevant" else None,
-                    relevance=relevance,
-                    relevance_notes=relevance_notes,
-                    relevance_score=relevance_score,
-                    confidence_notes="Collected from Bilibili public comments for a capped set of videos. Treat as user-comment leads, not proof of demand.",
-                )
-            )
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
-
-    if records:
-        status = "ok"
-    elif first_response.get("status_code") == 412:
-        status = "permission_denied"
-    else:
-        status = status_from_response(first_response) if first_response else "failed"
-    write_json(run_dir / "raw" / "china_bilibili_comments.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "active_backend": "bilibili_public_comments", "video_count": len(videos), "fields": fields_present(raw)}
-
-
-def collect_china_v2ex(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    serper_key_name, serper_key = get_secret("SERPER_DEV_API_KEY", "SERPER_API_KEY")
-    key_name, brave_key = get_secret("BRAVE_SEARCH_API_KEY")
-    firecrawl_key_name, firecrawl_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
-    raw: dict[str, Any] = {"credential_source": serper_key_name or key_name or firecrawl_key_name, "calls": []}
-    records: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    terms = china_query_terms(args, queries)
-    active_backend = ""
-
-    if serper_key:
-        active_backend = "serper_site_search"
-        for term in terms[:3]:
-            query = f"site:v2ex.com/t {term}"
-            response = http_post(
-                "https://google.serper.dev/search",
-                headers={"X-API-KEY": serper_key, "Content-Type": "application/json"},
-                data={"q": query, "num": min(max(args.limit, 1), 10), "gl": "cn", "hl": args.language},
-            )
-            raw["calls"].append({"backend": active_backend, "query": query, "response": response})
-            body = response.get("body") if isinstance(response.get("body"), dict) else {}
-            for item in body.get("organic", []) if isinstance(body, dict) else []:
-                url = item.get("link") or ""
-                if not url or url in seen:
-                    continue
-                seen.add(url)
-                text = "\n\n".join(part for part in [item.get("title", ""), item.get("snippet", "")] if part).strip()
-                if not text:
-                    continue
-                relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "V2EX via Serper")
-                records.append(normalize_record(source="v2ex", source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context="V2EX via Serper.dev", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score))
-                if len(records) >= args.limit:
-                    break
-            if len(records) >= args.limit:
-                break
-    elif brave_key:
-        active_backend = "brave_site_search"
-        for term in terms[:3]:
-            query = f"site:v2ex.com/t {term}"
-            response = http_get(
-                with_query("https://api.search.brave.com/res/v1/web/search", {"q": query, "count": min(max(args.limit, 1), 10), "country": "CN", "search_lang": args.language}),
-                headers={"X-Subscription-Token": brave_key, "Accept": "application/json"},
-            )
-            raw["calls"].append({"backend": active_backend, "query": query, "response": response})
-            body = response.get("body") if isinstance(response.get("body"), dict) else {}
-            web = body.get("web", {}) if isinstance(body, dict) else {}
-            for item in web.get("results", []) if isinstance(web, dict) else []:
-                url = item.get("url") or ""
-                if not url or url in seen:
-                    continue
-                seen.add(url)
-                text = "\n\n".join(part for part in [item.get("title", ""), item.get("description", "")] if part).strip()
-                if not text:
-                    continue
-                relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "V2EX via Brave")
-                records.append(normalize_record(source="v2ex", source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context="V2EX via Brave", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score))
-                if len(records) >= args.limit:
-                    break
-            if len(records) >= args.limit:
-                break
-    elif firecrawl_key:
-        active_backend = "firecrawl_site_search"
-        for term in terms[:3]:
-            query = f"site:v2ex.com/t {term}"
-            response = http_post(
-                "https://api.firecrawl.dev/v1/search",
-                headers={"Authorization": f"Bearer {firecrawl_key}"},
-                data={"query": query, "limit": min(max(args.limit, 1), 10), "scrapeOptions": {"formats": ["markdown"]}},
-            )
-            raw["calls"].append({"backend": active_backend, "query": query, "response": response})
-            body = response.get("body") if isinstance(response.get("body"), dict) else {}
-            for item in body.get("data") or []:
-                url = item.get("url") or item.get("sourceURL") or ""
-                if not url or url in seen:
-                    continue
-                seen.add(url)
-                text = "\n\n".join(part for part in [item.get("title", ""), item.get("description", ""), (item.get("markdown") or "")[:1200]] if part).strip()
-                if not text:
-                    continue
-                relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "V2EX via Firecrawl")
-                records.append(normalize_record(source="v2ex", source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context="V2EX via Firecrawl", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score))
-                if len(records) >= args.limit:
-                    break
-            if len(records) >= args.limit:
-                break
-    else:
-        active_backend = "v2ex_public_hot"
-        response = http_get("https://www.v2ex.com/api/topics/hot.json", headers={"User-Agent": "evidence-scout/0.1"})
-        raw["calls"].append({"backend": active_backend, "query": "hot topics", "response": response})
-        if response.get("ok"):
-            items = response.get("body") if isinstance(response.get("body"), list) else []
-            for item in items[: max(args.limit, 20)]:
-                if not isinstance(item, dict):
-                    continue
-                url = item.get("url") or ""
-                title = item.get("title") or ""
-                content = item.get("content") or ""
-                text = "\n\n".join(part for part in [title, content] if part).strip()
-                if not text:
-                    continue
-                relevance, relevance_notes, relevance_score = assess_relevance(text, args, "V2EX hot topics", url, "V2EX public hot")
-                records.append(normalize_record(source="v2ex", source_url=url, query="V2EX hot topics", customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context="V2EX public hot", engagement={"comments": item.get("replies")}, raw_id=str(item.get("id") or url), evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score, confidence_notes="Collected from V2EX public hot topics because no search backend was configured. Treat zero relevant records as limited coverage, not absence of developer pain."))
-    first_response = (raw["calls"][0] or {}).get("response", {}) if raw["calls"] else {}
-    status = "ok" if first_response.get("ok") else status_from_response(first_response)
-    if active_backend == "v2ex_public_hot" and status == "ok":
-        status = "warn"
-    write_json(run_dir / "raw" / "china_v2ex.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "active_backend": active_backend, "fields": fields_present(raw)}
-
-
-def collect_china_web(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    serper_key_name, serper_key = get_secret("SERPER_DEV_API_KEY", "SERPER_API_KEY")
-    firecrawl_key_name, firecrawl_key = get_secret("FIRECRAWL_API_KEY_HGINVESTOR")
-    brave_key_name, brave_key = get_secret("BRAVE_SEARCH_API_KEY")
-    raw: dict[str, Any] = {"credential_source": serper_key_name or firecrawl_key_name or brave_key_name, "calls": []}
-    if not serper_key and not firecrawl_key and not brave_key:
-        write_json(run_dir / "raw" / "china_web.json", raw)
-        return [], {"status": "missing_credentials", "required_env": ["SERPER_DEV_API_KEY", "FIRECRAWL_API_KEY_HGINVESTOR", "BRAVE_SEARCH_API_KEY"]}
-
-    domains = ["zhihu.com", "weibo.com", "douban.com", "tieba.baidu.com", "36kr.com", "huxiu.com", "xiaohongshu.com"]
-    terms = china_query_terms(args, queries)[:3]
-    records: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    active_backend = "serper_china_web" if serper_key else "firecrawl_china_web" if firecrawl_key else "brave_china_web"
-
-    for term in terms:
-        for domain in domains:
-            query = f"{term} site:{domain}"
-            if serper_key:
-                response = http_post(
-                    "https://google.serper.dev/search",
-                    headers={"X-API-KEY": serper_key, "Content-Type": "application/json"},
-                    data={"q": query, "num": 3, "gl": "cn", "hl": args.language},
-                )
-                raw["calls"].append({"backend": active_backend, "query": query, "response": response})
-                body = response.get("body") if isinstance(response.get("body"), dict) else {}
-                for item in body.get("organic", []) if isinstance(body, dict) else []:
-                    url = item.get("link") or ""
-                    if not url or url in seen:
-                        continue
-                    seen.add(url)
-                    text = "\n\n".join(part for part in [item.get("title", ""), item.get("snippet", "")] if part).strip()
-                    if not text:
-                        continue
-                    relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, domain)
-                    records.append(normalize_record(source=china_source_from_url(url), source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context=f"China web via Serper.dev ({domain})", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score, confidence_notes="Collected from Chinese web/domain search via Serper.dev. Treat as source discovery unless it contains direct user complaint, workaround, or decision language."))
-                    if len(records) >= args.limit:
-                        break
-            elif firecrawl_key:
-                response = http_post(
-                    "https://api.firecrawl.dev/v1/search",
-                    headers={"Authorization": f"Bearer {firecrawl_key}"},
-                    data={"query": query, "limit": 3, "scrapeOptions": {"formats": ["markdown"]}},
-                )
-                raw["calls"].append({"backend": active_backend, "query": query, "response": response})
-                body = response.get("body") if isinstance(response.get("body"), dict) else {}
-                items = body.get("data") or []
-                for item in items:
-                    url = item.get("url") or item.get("sourceURL") or ""
-                    if not url or url in seen:
-                        continue
-                    seen.add(url)
-                    text = "\n\n".join(part for part in [item.get("title", ""), item.get("description", ""), (item.get("markdown") or "")[:1200]] if part).strip()
-                    if not text:
-                        continue
-                    relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, domain)
-                    records.append(normalize_record(source=china_source_from_url(url), source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context=f"China web via Firecrawl ({domain})", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score, confidence_notes="Collected from Chinese web/domain search. Treat as source discovery unless it contains direct user complaint, workaround, or decision language."))
-                    if len(records) >= args.limit:
-                        break
-            else:
-                response = http_get(
-                    with_query("https://api.search.brave.com/res/v1/web/search", {"q": query, "count": 3, "country": "CN", "search_lang": args.language}),
-                    headers={"X-Subscription-Token": brave_key, "Accept": "application/json"},
-                )
-                raw["calls"].append({"backend": active_backend, "query": query, "response": response})
-                body = response.get("body") if isinstance(response.get("body"), dict) else {}
-                web = body.get("web", {}) if isinstance(body, dict) else {}
-                for item in web.get("results", []) if isinstance(web, dict) else []:
-                    url = item.get("url") or ""
-                    if not url or url in seen:
-                        continue
-                    seen.add(url)
-                    text = "\n\n".join(part for part in [item.get("title", ""), item.get("description", "")] if part).strip()
-                    if not text:
-                        continue
-                    relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, domain)
-                    records.append(normalize_record(source=china_source_from_url(url), source_url=url, query=query, customer_segment=args.customer_segment, hypothesis=args.hypothesis_id, text=text, author_context=f"China web via Brave ({domain})", engagement={}, raw_id=url, evidence_type="irrelevant" if relevance == "irrelevant" else None, strength="irrelevant" if relevance == "irrelevant" else None, relevance=relevance, relevance_notes=relevance_notes, relevance_score=relevance_score, confidence_notes="Collected from Chinese web/domain search. Treat as source discovery unless it contains direct user complaint, workaround, or decision language."))
-                    if len(records) >= args.limit:
-                        break
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
-
-    first_response = (raw["calls"][0] or {}).get("response", {}) if raw["calls"] else {}
-    status = "ok" if first_response.get("ok") else status_from_response(first_response)
-    write_json(run_dir / "raw" / "china_web.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "active_backend": active_backend, "fields": fields_present(raw)}
 
 
 def parse_cli_items(output: str) -> list[dict[str, Any]]:
@@ -4545,74 +3943,6 @@ def parse_cli_items(output: str) -> list[dict[str, Any]]:
     if isinstance(data, dict):
         return [item for item in list_candidates(data) if isinstance(item, dict)]
     return []
-
-
-def collect_china_xiaohongshu(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    opencli = shutil.which("opencli")
-    raw: dict[str, Any] = {"backend": "opencli_xiaohongshu", "calls": []}
-    if not opencli:
-        write_json(run_dir / "raw" / "china_xiaohongshu.json", raw)
-        return [], {"status": "missing_cli", "required_cli": ["opencli"], "account_risk": "login_or_cookie_backed"}
-
-    records: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    for query in china_query_terms(args, queries)[:3]:
-        try:
-            proc = subprocess.run(
-                [opencli, "xiaohongshu", "search", query, "-f", "json"],
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                timeout=45,
-            )
-        except subprocess.TimeoutExpired:
-            raw["calls"].append({"query": query, "status": "timeout"})
-            continue
-        except OSError as exc:
-            raw["calls"].append({"query": query, "status": "failed", "error": str(exc)})
-            continue
-        raw["calls"].append({"query": query, "exit_code": proc.returncode, "stdout": proc.stdout[:20000], "stderr": proc.stderr[-4000:]})
-        if proc.returncode != 0:
-            continue
-        items = parse_cli_items(proc.stdout)
-        if not items and proc.stdout.strip():
-            items = [{"text": proc.stdout.strip(), "url": ""}]
-        for item in items:
-            text, url, engagement, raw_id = stringify_social_item(item)
-            if not text:
-                text = "\n\n".join(str(item.get(key, "")) for key in ["title", "desc", "content", "text"] if item.get(key)).strip()
-            identity = raw_id or url or text[:80]
-            if not text or identity in seen:
-                continue
-            seen.add(identity)
-            relevance, relevance_notes, relevance_score = assess_relevance(text, args, query, url, "XiaoHongShu via OpenCLI")
-            records.append(
-                normalize_record(
-                    source="xiaohongshu",
-                    source_url=url,
-                    query=query,
-                    customer_segment=args.customer_segment,
-                    hypothesis=args.hypothesis_id,
-                    text=text,
-                    author_context="XiaoHongShu via OpenCLI",
-                    engagement=engagement,
-                    raw_id=identity,
-                    evidence_type="irrelevant" if relevance == "irrelevant" else None,
-                    strength="irrelevant" if relevance == "irrelevant" else None,
-                    relevance=relevance,
-                    relevance_notes=relevance_notes,
-                    relevance_score=relevance_score,
-                    confidence_notes="Collected from XiaoHongShu through OpenCLI/browser-session access. Use a non-primary account and treat account/cookie-backed scraping as fragile.",
-                )
-            )
-            if len(records) >= args.limit:
-                break
-        if len(records) >= args.limit:
-            break
-    status = "ok" if records else "login_required_or_failed"
-    write_json(run_dir / "raw" / "china_xiaohongshu.json", redact_sensitive(raw))
-    return records, {"status": status, "record_count": len(records), "active_backend": "opencli_xiaohongshu", "account_risk": "login_or_cookie_backed", "fields": fields_present(raw)}
 
 
 def collect_sonar(args: argparse.Namespace, queries: list[str], run_dir: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
@@ -4972,8 +4302,6 @@ def provider_alerts(provider_summaries: dict[str, Any]) -> list[str]:
         elif status == "no_input":
             required = summary.get("required_arg") or "required input"
             alerts.append(f"`{provider}` did not run because no input was provided. Supply {required} when requesting this provider.")
-        elif status == "login_required_or_failed":
-            alerts.append(f"`{provider}` did not return usable records. This source is login/cookie-backed; check the browser session, account restrictions, and raw output before relying on China social coverage.")
         elif status == "warn":
             alerts.append(f"`{provider}` ran through a limited fallback route. Inspect `active_backend` and raw output before treating zero records as absence of evidence.")
         else:
@@ -5353,7 +4681,6 @@ PROVIDER_ROUTING_FAMILY = {
     "cfpb_complaints": "customer_reviews",
     "stackexchange": "founder_community",
     "producthunt": "customer_reviews",
-    "bluesky": "social",
     "apify_software_reviews": "customer_reviews",
     "apify_g2_reviews": "customer_reviews",
     "apify_shopify_app_reviews": "customer_reviews",
@@ -5369,15 +4696,10 @@ PROVIDER_ROUTING_FAMILY = {
     "scrapecreators": "social",
     "sonar": "app_store",
     "itunes_reviews": "app_store",
-    "trustpilot_reviews": "customer_reviews",
     "google_places_reviews": "customer_reviews",
     "hn": "founder_community",
     "google_autocomplete": "founder_community",
     "github": "github_issues",
-    "china_bilibili": "china_public_native",
-    "china_v2ex": "china_public_native",
-    "china_web": "china_web",
-    "china_xiaohongshu": "china_social",
 }
 
 
@@ -5430,7 +4752,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--providers",
         default="default",
-        help="Comma-separated providers. Use default, social, entity_reviews, local_web, free_community, china_public, china_social, china, all, or explicit names including trustpilot_reviews and google_places_reviews.",
+        help="Comma-separated providers. Use default, social, entity_reviews, local_web, free_community, all, or explicit names including google_places_reviews.",
     )
     parser.add_argument(
         "--local-extract-url-limit",
@@ -5460,18 +4782,6 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=5,
         help="Maximum documents to convert with MarkItDown in one run.",
-    )
-    parser.add_argument(
-        "--china-comment-video-limit",
-        type=int,
-        default=3,
-        help="Maximum videos to enrich with comments for explicit China comment providers.",
-    )
-    parser.add_argument(
-        "--china-comment-limit",
-        type=int,
-        default=10,
-        help="Maximum comments to fetch per video for explicit China comment providers.",
     )
     parser.add_argument(
         "--sonar-apps",
@@ -5608,8 +4918,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--itunes-locales", default="", help="Comma-separated COUNTRY:language storefront locales required with --itunes-entity-apps, e.g. DE:de,FR:fr.")
     parser.add_argument("--itunes-countries", default="", help="Comma-separated storefronts for itunes_reviews. Defaults to --geo.")
     parser.add_argument("--itunes-max-pages", type=int, default=2, help="Maximum RSS pages per app/country for itunes_reviews (~50 reviews/page).")
-    parser.add_argument("--trustpilot-domains", default="", help="Comma-separated exact entity_id=domain mappings for public Trustpilot business-unit reviews.")
-    parser.add_argument("--trustpilot-max-pages", type=int, default=2, help="Maximum public Trustpilot review pages per entity.")
     parser.add_argument("--google-place-ids", default="", help="Comma-separated exact entity_id=place_id mappings for Google Places review subsets.")
     parser.add_argument("--xai-model", default="grok-4.3", help="xAI/Grok model for xai_x_search provider.")
     parser.add_argument("--xai-prompt", help="Override prompt for xai_x_search provider.")
@@ -5634,11 +4942,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--results-per-query must be between 1 and 10")
     if args.sampling_frame == "entity_led_feedback" and not args.subject_entity_id.strip():
         parser.error("--sampling-frame entity_led_feedback requires --subject-entity-id")
-    if args.trustpilot_max_pages < 1:
-        parser.error("--trustpilot-max-pages must be positive")
     try:
         args.query_plan_data = load_query_plan(args)
-        parse_entity_locator_pairs(args.trustpilot_domains, "--trustpilot-domains")
         parse_entity_locator_pairs(args.google_place_ids, "--google-place-ids")
         parse_entity_locator_pairs(args.apify_review_targets, "--apify-review-targets")
         parse_entity_locator_pairs(args.itunes_entity_apps, "--itunes-entity-apps")
@@ -5745,7 +5050,6 @@ def main() -> int:
         "cfpb_complaints": collect_cfpb_complaints,
         "stackexchange": collect_stackexchange,
         "producthunt": collect_producthunt,
-        "bluesky": collect_bluesky,
         "apify_software_reviews": collect_apify_software_reviews,
         "apify_g2_reviews": collect_apify_g2_reviews,
         "apify_shopify_app_reviews": collect_apify_shopify_app_reviews,
@@ -5760,7 +5064,6 @@ def main() -> int:
         "github": collect_github,
         "google_autocomplete": collect_google_autocomplete,
         "itunes_reviews": collect_itunes_reviews,
-        "trustpilot_reviews": collect_trustpilot_reviews,
         "google_places_reviews": collect_google_places_reviews,
         "crawl4ai": collect_crawl4ai,
         "markitdown": collect_markitdown,
@@ -5769,11 +5072,6 @@ def main() -> int:
         "xai_x_search": collect_xai_x_search,
         "scrapecreators": collect_scrapecreators,
         "sonar": collect_sonar,
-        "china_bilibili": collect_china_bilibili,
-        "china_bilibili_comments": collect_china_bilibili_comments,
-        "china_v2ex": collect_china_v2ex,
-        "china_web": collect_china_web,
-        "china_xiaohongshu": collect_china_xiaohongshu,
     }
     records: list[dict[str, Any]] = []
     provider_summaries: dict[str, Any] = {}
@@ -5809,7 +5107,7 @@ def main() -> int:
             locator_search = (provider in {"serper_search", "brave_search"} and bool(args.query_plan_data)
                               and all(row.get("intent") == "entity_locator_discovery"
                                       for row in args.query_plan_data.get("queries", [])))
-            if args.sampling_frame == "entity_led_feedback" and not locator_search and provider not in {"firecrawl", "itunes_reviews", "trustpilot_reviews", "google_places_reviews", "scrapecreators", "sonar", "reddit"} | APIFY_ENTITY_PROVIDERS:
+            if args.sampling_frame == "entity_led_feedback" and not locator_search and provider not in {"firecrawl", "itunes_reviews", "google_places_reviews", "scrapecreators", "sonar", "reddit"} | APIFY_ENTITY_PROVIDERS:
                 provider_summaries[provider] = {"status": "capture_gate_blocked", "record_count": 0, "reason": "Generic entity capture requires firecrawl and an exact reviewed URL; broad search remains topic-led discovery."}
                 continue
             func = ((lambda a, _q, d: collect_reviewed_reddit_target(a, d))

@@ -222,11 +222,8 @@ Provider sets:
 - `default`: Reddit, SerpAPI Google Trends, YouTube Data API, Serper.dev Google SERP, Firecrawl, Brave Search, HN Algolia, GitHub issues, and Google autocomplete.
 - `social`: direct X API and ScrapeCreators. Grok/xAI X Search is explicit only via `xai_x_search`.
 - `local_web`: crawl4ai local page extraction after lightweight URL discovery.
-- `china_public`: Bilibili public search with Serper/Brave/Firecrawl site-search fallback, V2EX topic search/public fallback, and China web/domain search.
-- `china_social`: XiaoHongShu through OpenCLI/browser-session access. Requires explicit approval because it is login/cookie-backed.
-- `china`: `china_public` plus `china_social`.
 - `all`: default plus social.
-- Explicit: comma-separated provider names such as `reddit,youtube,crawl4ai,markitdown,scrapling,x,xai_x_search,scrapecreators,sonar,china_bilibili,china_bilibili_comments,china_v2ex,china_web,china_xiaohongshu`.
+- Explicit: comma-separated provider names such as `reddit,youtube,crawl4ai,markitdown,scrapling,x,xai_x_search,scrapecreators,sonar`.
 
 Use `default` first. Add `social` only when consumer, creator, trend, local community, or brand-comment evidence is material enough to spend paid credits.
 
@@ -239,16 +236,6 @@ Use local extraction only when it adds concrete coverage:
 - `crawl4ai`: use as the first local fallback when Firecrawl scrape credits are constrained or when richer page Markdown is needed from a small discovered URL set. Keep `--local-extract-url-limit` low.
 - `markitdown`: use only with explicit `--document-paths` for PDFs, Office files, CSV/JSON/XML, local HTML, images/OCR-capable installs, or other supplied evidence documents.
 - `scrapling`: use only as an explicit hard-page fallback when normal HTTP/API/Firecrawl/crawl4ai extraction cannot reach or parse a page. Do not include it in default runs.
-
-For China-market, Chinese-language, or Chinese-platform evidence, add `china_public` only when the target segment plausibly uses Chinese platforms or the user requested China coverage. Use `--geo CN --language zh` unless the market is explicitly overseas Chinese or bilingual. Treat Bilibili metadata, V2EX hot topics, and China web/domain search as discovery/context unless the record contains direct complaint, decision uncertainty, workaround, or spend language. For Google-indexed site-search, prefer Serper.dev first; use SerpApi/DataForSEO only when Serper's Google-only coverage is not enough.
-
-Use `china_bilibili_comments` only as explicit enrichment after Bilibili video results look relevant. It fetches a capped set of public comments from selected videos. Treat comments as interview leads unless repeated independent comments show pain, urgency, workaround, or spend language.
-
-Ask the user exactly one question before running `china_social`:
-
-`Do you want login-backed China social enrichment via XiaoHongShu/OpenCLI? It may require browser session/cookies and should use a non-primary account.`
-
-If the user says yes, run with explicit `--providers china_social` or `--providers default,china_public,china_social`. If the source fails with `missing_cli` or `login_required_or_failed`, report that China social coverage is missing before interpreting the evidence.
 
 For app-store or mobile-app markets, use paid Sonar enrichment when it is methodologically relevant; customer-evidence API spend is pre-authorized. Run or extend collection with explicit `--providers default,sonar`. Bind known competitor apps with `--sonar-entity-apps entity_id=ios:<app_id>,entity_id=android:<package_name>`; use `--itunes-entity-apps entity_id=<app_id>` for Apple RSS review collection. Legacy unbound `--sonar-apps` and `--itunes-app-ids` are rejected because a named app is an entity locator, not topic-led VOC. The default includes all review ratings rather than filtering to complaints. Treat Sonar keyword metrics as weak search-demand context and Sonar revenue estimates as weak monetization context. Treat app reviews as feedback from store users, report every entity/storefront attempt and denominator, and do not let successful keyword records hide a failed review lane.
 
@@ -291,10 +278,8 @@ Prefer sources in this order:
 - Scrapling for explicit hard-page extraction fallback; avoid by default because browser/stealth scraping is heavier and more fragile.
 - Direct X API for recent public text evidence when the query is likely to match.
 - Grok/xAI X Search for cited discovery over X when investor/operator/customer discussion is likely but direct keyword search may miss threads, handles, or multimedia posts. Treat output as model-mediated leads; inspect cited posts before using claims.
-- ScrapeCreators for public TikTok, Instagram, Threads, YouTube, Facebook, X/Twitter profile/user-tweet fallback, Reddit, LinkedIn, Pinterest, and Bluesky fallback evidence.
+- ScrapeCreators for public TikTok, Instagram, Threads, YouTube, Facebook, X/Twitter profile/user-tweet fallback, Reddit, LinkedIn, and Pinterest fallback evidence.
 - Sonar for app-store keyword demand, app reviews, competitor app context, and revenue estimates when the user approves app-market enrichment.
-- China public sources for China-specific markets: Bilibili for video/creator discussion, optional Bilibili comments for direct user-comment leads, V2EX for developer/tech community signals, and Chinese web/domain search across Zhihu, Weibo, Douban, Tieba, 36Kr, Huxiu, and XiaoHongShu public pages.
-- China social sources such as XiaoHongShu only after explicit approval, because browser-session/cookie-backed collection is fragile and can risk account restriction.
 - Apify for actor-specific fallback after choosing an actor/schema. For local/physical-location enrichment, use `compass/crawler-google-places` through `competitor-monitoring` after user approval. For recurring competitor monitoring and traffic estimates such as `tri_angle/fast-similarweb-scraper`, use the separate `competitor-monitoring` skill rather than this evidence collection flow.
 - Bright Data only for high-volume or hard-source work after permission issues are resolved.
 
@@ -307,13 +292,10 @@ Before interpreting the run, check:
 - `summary.json.needs_user_attention`.
 - `scripts/capability_lookup.py --question "<research need>" --compact` output for the selected source route.
 - Provider Alerts in `report.md`.
-- Provider doctor `needs_user_attention` when run, especially `china_public_search`, `china_web`, and `china_social`. `china_public_native` can be unavailable while site-search fallbacks still provide limited public-source discovery.
 - Whether Germany-specific runs used `geo=DE` and German/Germany-specific language.
-- Whether China-specific runs used `geo=CN` and `language=zh`, unless the user explicitly requested overseas/bilingual evidence.
 - Whether `irrelevant.jsonl` exists when irrelevant results were found.
 - Whether the strongest records are genuinely relevant, not merely high engagement.
 - Whether provider status means only API success or actually usable evidence.
-- Whether `active_backend` indicates a full topic-search route or a limited fallback such as V2EX public hot.
 - Whether the run has direct user-pain records, not only provider/editorial/competitor content.
 - Whether `summary.json.quality_flags` warns about zero Reddit/forum pain, weak Trends signals, or mostly competitor/editorial evidence.
 - Whether `summary.json.quality_flags` warns about mostly weak records, low direct user-pain share, or many `unknown` source-intent records.

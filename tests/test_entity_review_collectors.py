@@ -8,7 +8,7 @@ collector = importlib.util.module_from_spec(SPEC); assert SPEC.loader; SPEC.load
 
 
 def args(**extra):
-    base = dict(customer_segment="families", hypothesis_id="H1", limit=10, days=365, language="de", geo="DE", trustpilot_domains="", trustpilot_max_pages=2, google_place_ids="", segment_keywords="families", problem_keywords="paperwork", workaround_keywords="help", topic="support")
+    base = dict(customer_segment="families", hypothesis_id="H1", limit=10, days=365, language="de", geo="DE", google_place_ids="", segment_keywords="families", problem_keywords="paperwork", workaround_keywords="help", topic="support")
     base.update(extra); return argparse.Namespace(**base)
 
 
@@ -20,19 +20,6 @@ def accepted_plan(tmp_path, entries):
         rows.append({"entity_id": entity_id, "locale": locale, "source_lane": lane, "applicable": True, "reviewed_locators": [{"locator": locator, "review_reason": "verified fixture"}]})
     path = tmp_path / "source-plan.json"; path.write_text(__import__("json").dumps({"source_matrix": rows}))
     return str(path)
-
-
-def test_trustpilot_keeps_customer_review_and_company_reply_roles_separate(tmp_path, monkeypatch):
-    monkeypatch.setattr(collector, "get_secret", lambda *names: (names[0], "key"))
-    def fake_get(url, **_kwargs):
-        if "/find?" in url: return {"ok": True, "status_code": 200, "body": {"id": "bu1"}}
-        return {"ok": True, "status_code": 200, "body": {"reviews": [{"id": "r1", "stars": 2, "title": "Slow", "text": "I needed help and waited", "language": "en", "createdAt": "2026-09-01T12:00:00Z", "isVerified": True, "consumer": {"displayName": "A"}, "companyReply": {"text": "Please contact support", "createdAt": "2026-09-02T12:00:00Z"}}]}}
-    monkeypatch.setattr(collector, "http_get", fake_get)
-    plan = accepted_plan(tmp_path, [("e1", "independent_review_platforms", "example.test")])
-    records, summary = collector.collect_trustpilot_reviews(args(trustpilot_domains="e1=example.test", customer_feedback_source_plan=plan), [], tmp_path)
-    assert summary["status"] == "ok" and summary["entity_ledger"][0]["retrieved_count"] == 1
-    assert [row["source_role"] for row in records] == ["customer_review", "competitor_context"]
-    assert not collector.accepted_records(records)[1]
 
 
 def test_favorable_established_reviews_are_customer_feedback_not_editorial():
@@ -202,7 +189,7 @@ def test_supplier_page_context_route_also_keeps_owner_comments_supplier(tmp_path
 def test_entity_review_collectors_block_unreviewed_locator_before_http(tmp_path, monkeypatch):
     calls = []
     monkeypatch.setattr(collector, "http_get", lambda *a, **k: calls.append(a) or {"ok": True, "body": {}})
-    _records, summary = collector.collect_trustpilot_reviews(args(trustpilot_domains="e1=example.test", customer_feedback_source_plan=""), [], tmp_path)
+    _records, summary = collector.collect_google_places_reviews(args(google_place_ids="e1=ChIJ123", customer_feedback_source_plan=""), [], tmp_path)
     assert summary["status"] == "capture_gate_blocked" and not calls
 
 

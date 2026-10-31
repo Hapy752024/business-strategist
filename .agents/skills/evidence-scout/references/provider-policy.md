@@ -29,9 +29,9 @@ Use `--providers free_community` to run just the zero-credential collectors (`hn
 
 ## Agent Reach (optional capability layer)
 
-[Agent Reach](https://github.com/Panniantong/Agent-Reach) is an external CLI that maintains live-probed backend routes per platform (YouTube transcripts via yt-dlp, web reading via Jina Reader, Bilibili, XHS, Twitter/X, Reddit via login state). `provider_doctor.py` already probes `agent-reach doctor --json` as candidate backends for `reddit`, `china_public_native` (bilibili), and `china_social` (xiaohongshu) — installing it lights those routes up automatically.
+[Agent Reach](https://github.com/Panniantong/Agent-Reach) is an external CLI that maintains live-probed backend routes per platform (YouTube transcripts via yt-dlp, web reading via Jina Reader, Twitter/X, Reddit via login state). `provider_doctor.py` already probes `agent-reach doctor --json` as a candidate backend for `reddit` — installing it lights that route up automatically.
 
-Install (user-initiated): `pip install agent-reach && agent-reach install --env=auto` then `agent-reach doctor --json`. Cookie/login-state channels carry account-ban risk — treat them like `china_social`: use burner accounts and get explicit user approval before any collection run through them. Never route a default run through a cookie-backed channel.
+Install (user-initiated): `pip install agent-reach && agent-reach install --env=auto` then `agent-reach doctor --json`. Cookie/login-state channels carry account-ban risk — use burner accounts and get explicit user approval before any collection run through them. Never route a default run through a cookie-backed channel.
 
 ## Social Providers
 
@@ -52,7 +52,7 @@ entry, or advertising/distribution spend.
 
 Use direct X API as the default source-of-record route for recent public X/Twitter posts. Use Grok/xAI X Search only as cited discovery/synthesis and verify cited post URLs before treating claims as evidence. Use ScrapeCreators X profile/user-tweet pulls only for named-handle enrichment or fallback; use Apify only for capped bulk/historical actor-backed gaps after actor/schema review.
 
-ScrapeCreators is valuable for public TikTok, Instagram, Threads, Facebook, X/Twitter, Reddit, YouTube, LinkedIn, Pinterest, and Bluesky evidence, but it spends credits (1 credit per call observed).
+ScrapeCreators is valuable for public TikTok, Instagram, Threads, Facebook, X/Twitter, Reddit, YouTube, LinkedIn, and Pinterest evidence, but it spends credits (1 credit per call observed).
 
 ScrapeCreators Facebook/Instagram routes (verified 2026-07-21):
 
@@ -111,9 +111,6 @@ Competitor paid-ads evidence uses `scripts/evidence_scout/collect_ads.py`, not `
 - `free_community`: only the zero-credential collectors — `hn`, `github`, `google_autocomplete`, `stackexchange`. Zero cost; use for cheap first passes.
 - `social`: direct X API and ScrapeCreators. Grok/xAI X Search is explicit only via `xai_x_search`.
 - `local_web`: crawl4ai local page extraction after lightweight URL discovery.
-- `china_public`: Bilibili public search with Serper/Brave/Firecrawl site-search fallback, V2EX topic search/public fallback, and China web/domain search.
-- `china_social`: XiaoHongShu through OpenCLI/browser-session access. Requires explicit approval because it is login/cookie-backed.
-- `china`: `china_public` plus `china_social`.
 - `all`: default plus social.
 - Explicit: comma-separated provider names.
 
@@ -126,18 +123,6 @@ Use `default` first. Add `social` only when consumer, creator, trend, local comm
 - Use `markitdown` only with explicit `--document-paths`; it is for supplied PDFs, Office files, local HTML, CSV/JSON/XML, and other documents, not broad web discovery.
 - Use `scrapling` only after normal providers or crawl4ai are insufficient for a concrete source; do not add it to default runs.
 - Treat `scripts/validate_apis/run_all.py` as runtime truth for whether a provider currently works. `provider_doctor.py` may route families, but environment variables alone are not proof that an API endpoint is usable.
-
-## China Coverage
-
-China public providers: Bilibili public search with Serper/Brave/Firecrawl site-search fallback, explicit Bilibili comment enrichment, V2EX public/search fallback, and Chinese web/domain search across Zhihu, Weibo, Douban, Tieba, 36Kr, Huxiu, and XiaoHongShu public pages via Serper/Firecrawl/Brave when available.
-
-China social providers: XiaoHongShu via OpenCLI/browser-session access. This is login/cookie-backed and must be explicitly approved before running.
-
-Do not treat China-source zero results as absence of demand unless the provider doctor shows a topic-search backend was actually available. `china_public_native` is optional native coverage; `china_public_search` is the practical fallback for Bilibili/V2EX topic discovery. V2EX public hot is a limited fallback, not a topic-complete search.
-
-Use `china_bilibili_comments` only as explicit enrichment after relevant Bilibili videos are found. Treat comments as interview leads unless repeated independent comments show pain, urgency, workaround, or spend language.
-
-Chinese platform likes, views, saves, danmu/comment counts, and reposts are weak engagement context unless paired with repeated pain, decision uncertainty, workaround, or spend language.
 
 ## Sonar / App-Store Enrichment
 
@@ -205,10 +190,8 @@ Prefer sources in this order:
 9. Grok/xAI X Search for cited discovery over X (model-mediated; verify cited posts).
 10. ScrapeCreators for public social platform fallback evidence.
 11. Sonar for app-store enrichment when relevant (customer-evidence API spend pre-authorized).
-12. China public sources for China-specific markets.
-13. China social sources (XiaoHongShu) only after explicit approval.
-14. Apify for actor-specific fallback after actor/schema review.
-15. Bright Data only for high-volume or hard-source work after permission issues are resolved.
+12. Apify for actor-specific fallback after actor/schema review.
+13. Bright Data only for high-volume or hard-source work after permission issues are resolved.
 
 ## Reddit Fallback Order
 

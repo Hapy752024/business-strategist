@@ -38,7 +38,6 @@ SCRIPTS = [
     "validate_cfpb_complaints.py",
     "validate_stackexchange.py",
     "validate_producthunt.py",
-    "validate_bluesky.py",
     "validate_brightdata.py",
     "validate_parsersvc.py",
     "validate_eurostat.py",

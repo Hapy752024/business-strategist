@@ -101,53 +101,6 @@
       ],
       "required_for_tier_1": false
     },
-    "china_public": {
-      "preferred": [
-        "bilibili_public_search",
-        "bilibili_site_search_brave",
-        "bilibili_site_search_firecrawl",
-        "v2ex_brave_site_search",
-        "v2ex_firecrawl_site_search",
-        "v2ex_public_hot",
-        "agent_reach_bilibili"
-      ],
-      "required_for_tier_1": false,
-      "note": "Use for China-market or Chinese-language evidence. Native routes are best-effort; Brave/Firecrawl site search is the practical topic-search fallback. Public routes are useful for discovery but are not complete social coverage."
-    },
-    "china_bilibili_comments": {
-      "preferred": [
-        "bilibili_public_comments"
-      ],
-      "required_for_tier_1": false,
-      "approval_required": false,
-      "note": "Explicit enrichment only. Fetches capped public comments for selected Bilibili videos and treats them as interview leads unless repeated pain/workaround language appears."
-    },
-    "china_social": {
-      "preferred": [
-        "agent_reach_xiaohongshu",
-        "opencli_xiaohongshu",
-        "scrapecreators_china_social"
-      ],
-      "required_for_tier_1": false,
-      "approval_required": true,
-      "note": "Login/cookie-backed sources can be fragile and may risk account restriction. Ask before running."
-    },
-    "china_web": {
-      "preferred": [
-        "firecrawl_china_web",
-        "brave_china_web"
-      ],
-      "required_for_tier_1": false,
-      "domains": [
-        "zhihu.com",
-        "weibo.com",
-        "douban.com",
-        "tieba.baidu.com",
-        "36kr.com",
-        "huxiu.com",
-        "xiaohongshu.com"
-      ]
-    },
     "competitor_web_traffic": {
       "preferred": [
         "apify:tri_angle/fast-similarweb-scraper"

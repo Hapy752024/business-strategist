@@ -199,7 +199,7 @@ def test_short_generated_lists_do_not_crash_and_honor_query_limit(provider, tmp_
 
 def test_entity_gap_depends_on_capture_not_provider_name():
     for status in ("missing_credentials", "ok", "empty", "insufficient_credits"):
-        flags = c.quality_summary([], {"trustpilot_reviews": {"status": status}})
+        flags = c.quality_summary([], {"google_places_reviews": {"status": status}})
         assert any("No entity-bound records" in flag for flag in flags)
     flags = c.quality_summary([{"sampling_frame": "entity_led_feedback", "subject_entity_id": "e1"}], {"firecrawl": {"status": "ok"}})
     assert any("Entity-led capture" in flag and "pending" in flag for flag in flags)

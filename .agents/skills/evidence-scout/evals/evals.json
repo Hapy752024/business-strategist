@@ -59,25 +59,6 @@
       "files": []
     },
     {
-      "id": 4,
-      "prompt": "Run evidence collection for a China-market consumer app. Target: young professionals in Shanghai who want better personal finance tools. Use China public sources.",
-      "expected_output": "Evidence report with China public providers (Bilibili, V2EX, Chinese web search), geo=CN, language=zh. Must note that china_social (XiaoHongShu) was not run and flag it as a gap. Must state whether china_public_native or china_public_search was the active backend.",
-      "must_mention": [
-        "China",
-        "geo=CN",
-        "language=zh",
-        "gap",
-        "china_social"
-      ],
-      "must_not_mention": [],
-      "required_artifacts": [
-        "evidence.jsonl",
-        "summary.json",
-        "report.md"
-      ],
-      "files": []
-    },
-    {
       "id": 5,
       "prompt": "Our broad Reddit search found nothing useful, but this audience probably asks in local forums and Facebook groups. Systematically discover and verify suitable communities before collecting posts.",
       "expected_output": "A two-stage community workflow: metadata-only discovery uses explicit country-language pairs, source-language lexicons (with explicit runtime source terms for unsupported languages), separate per-seed forum/Facebook Group/Facebook Page queries, per-seed result counts, lane-specific qualification, full typed observation provenance, and a discovery receipt signed with a distinct discovery key; then an evidence-bound promotion command verifies audience, segment, geography, language, activity, entity type and access before producing verified_communities.json plus a review-key-signed, authoritative-current-generation, endpoint-bound, maximum-30-day public-only capture_authorization.json and community_review_current.json receipt. A failed re-review revokes prior authorization, including replayed complete old bundles and alternate output directories. Packet-authored rechecks cannot authorize public API capture. This is an internal allowlist, not platform permission or terms compliance. User-supplied private material stays in a non-API artifact. Paid customer-evidence APIs have standing no-cap spend authorization. Current private exploratory research requires no GDPR or formal ethics dossier, while credential theft/sharing, technical bypass and deceptive private-group entry remain prohibited.",

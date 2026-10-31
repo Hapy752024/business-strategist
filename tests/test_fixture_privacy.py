@@ -16,7 +16,6 @@ PARENT_NAME_KEYS = {"user", "author", "owner", "collaborators", "makers"}
 HOST_EXEMPT = {
     "cfpb_sample.json": set(),
     "stackexchange_sample.json": {"stackoverflow.com", "i.sstatic.net", "docs.stripe.com"},
-    "bluesky_sample.json": {"docs.bsky.app"},
     "producthunt_sample.json": {"api.producthunt.com", "www.producthunt.com"},
 }
 # A real SERP sample necessarily lists public business domains (advertisers, publishers, insurers) and Google/SerpApi

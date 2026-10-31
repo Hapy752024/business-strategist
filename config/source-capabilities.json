@@ -506,37 +506,6 @@
       "caveat": "Create a developer token at https://www.producthunt.com/v2/oauth/applications. The v2 API has no free-text post search, so queries resolve to topic slugs first. Rate limit is 6,250 complexity points per 15 minutes; the collector stops with rate_limited instead of waiting. Launch copy and maker comments are tagged supplier_context, never customer voice; with --sampling-frame entity_led_feedback --subject-entity-id the records are entity-led, otherwise topic-led. Records stay unreviewed."
     },
     {
-      "id": "bluesky",
-      "family": "social_public",
-      "label": "Bluesky post search (free app password)",
-      "description": "Authenticated AT Protocol search over public Bluesky posts. Tech, media and early-adopter conversation; recent public complaints and workarounds.",
-      "use_when": [
-        "bluesky",
-        "social listening",
-        "public complaints",
-        "early adopter conversation",
-        "tech or media audience pain"
-      ],
-      "avoid_when": [
-        "mainstream consumer or older demographics",
-        "representative prevalence or market sizing",
-        "proof of willingness to pay from one post"
-      ],
-      "evidence_strength": "weak_to_medium_when_repeated_user_pain",
-      "collector_provider": "bluesky",
-      "provider_aliases": [],
-      "validation_providers": [
-        "bluesky"
-      ],
-      "requires_env": [
-        "BLUESKY_HANDLE",
-        "BLUESKY_APP_PASSWORD"
-      ],
-      "status_check": "python3 scripts/validate_apis/validate_bluesky.py && python3 scripts/evidence_scout/provider_doctor.py --json",
-      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --hypothesis-id H1 --providers bluesky --limit 20",
-      "caveat": "Create an app password in Bluesky Settings -> Privacy and security -> App passwords (never the main password). The access JWT is cached in gitignored .research-infra/bluesky-session.json; the password and the login exchange are never written to captures. About 3,000 requests per 5 minutes; the collector stops with rate_limited rather than waiting. Posts are public, self-selected and skew early adopters; author handles are not retained (DID-based URLs). Records stay unreviewed."
-    },
-    {
       "id": "google_trends",
       "family": "search_demand",
       "label": "Google Trends via SerpAPI/DataForSEO",
@@ -1135,78 +1104,6 @@
       "caveat": "Heavier and more fragile. Use only for a concrete source gap."
     },
     {
-      "id": "china_public",
-      "family": "china_sources",
-      "label": "China public-source route",
-      "description": "Bilibili public/search fallback, V2EX, and Chinese web/domain search for China-specific market evidence.",
-      "use_when": [
-        "china",
-        "chinese",
-        "bilibili",
-        "v2ex",
-        "zhihu",
-        "weibo",
-        "douban",
-        "xiaohongshu",
-        "CN"
-      ],
-      "avoid_when": [
-        "non-China markets",
-        "absence-of-demand claims from limited fallback only"
-      ],
-      "evidence_strength": "weak_until_direct_user_pain_or_comments_repeat",
-      "collector_provider": "china_public",
-      "provider_aliases": [
-        "china_public",
-        "china"
-      ],
-      "validation_providers": [
-        "serper",
-        "firecrawl",
-        "brave_search"
-      ],
-      "fallbacks": [
-        "serper_search",
-        "brave_search",
-        "firecrawl",
-        "v2ex_public_hot"
-      ],
-      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
-      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers default,china_public --geo CN --language zh",
-      "caveat": "Native Bilibili may fail. Site-search fallbacks are useful but incomplete."
-    },
-    {
-      "id": "china_social",
-      "family": "china_sources",
-      "label": "China social enrichment",
-      "description": "Login/cookie-backed China social enrichment, with ScrapeCreators fallback where available.",
-      "use_when": [
-        "xiaohongshu",
-        "china social",
-        "little red book",
-        "consumer china",
-        "chinese social"
-      ],
-      "avoid_when": [
-        "no explicit approval",
-        "primary personal account",
-        "non-China market"
-      ],
-      "evidence_strength": "weak_to_medium_when_repeated_user_pain",
-      "collector_provider": "china_social",
-      "provider_aliases": [
-        "china_social",
-        "china"
-      ],
-      "validation_providers": [
-        "scrapecreators"
-      ],
-      "approval_required": true,
-      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
-      "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --customer-segment '<segment>' --providers china_social --geo CN --language zh",
-      "caveat": "Ask first. Login-backed sources are fragile and can risk account restrictions."
-    },
-    {
       "id": "apify_brightdata",
       "family": "paid_fallbacks",
       "label": "Apify and Bright Data fallback layer",
@@ -1367,42 +1264,6 @@
       "status_check": "python3 scripts/validate_apis/validate_google_autocomplete.py",
       "example": "python3 scripts/evidence_scout/collect.py --topic '<topic>' --problem-keywords '<pain>' --providers google_autocomplete --limit 15",
       "caveat": "Unofficial endpoint. Suggestions show attention/language, never volume or intent strength."
-    },
-    {
-      "id": "trustpilot_reviews",
-      "family": "customer_reviews",
-      "label": "Trustpilot public business-unit reviews",
-      "description": "Entity-bound public Trustpilot review text, ratings, verification labels, dates, and separately retained company replies.",
-      "use_when": [
-        "Trustpilot",
-        "competitor customer reviews",
-        "service reviews",
-        "entity-led feedback"
-      ],
-      "avoid_when": [
-        "topic-led VOC without an identified entity",
-        "star average as demand proof"
-      ],
-      "evidence_strength": "medium_when_firsthand_and_repeated_otherwise_weak",
-      "collector_provider": "trustpilot_reviews",
-      "provider_aliases": [
-        "entity_reviews"
-      ],
-      "validation_providers": [
-        "trustpilot_reviews"
-      ],
-      "requires_env": [
-        "TRUSTPILOT_API_KEY"
-      ],
-      "authorization_policy": "standing_authorized_no_cap_for_customer_evidence",
-      "arg_requirements": "--trustpilot-domains <entity-id=domain,...>",
-      "fallbacks": [
-        "serper_search",
-        "firecrawl"
-      ],
-      "status_check": "python3 scripts/evidence_scout/provider_doctor.py --json",
-      "example": "python3 scripts/evidence_scout/collect.py --topic '<job>' --customer-segment '<segment>' --providers trustpilot_reviews --trustpilot-domains '<entity-id=domain>'",
-      "caveat": "A Trustpilot business-unit match must be exact. Platform verification is not target-segment verification; company replies are supplier context and review counts describe the retrieved sample only."
     },
     {
       "id": "google_places_reviews",

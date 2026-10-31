@@ -73,12 +73,6 @@ VALIDATION_PROVIDER_ALIASES = {
     "firecrawl_search": "firecrawl",
     "serper_search": "serper",
     "brave_search": "brave_search",
-    "serper_bilibili_v2ex_site_search": "serper",
-    "firecrawl_bilibili_v2ex_site_search": "firecrawl",
-    "brave_bilibili_v2ex_site_search": "brave_search",
-    "serper_china_web": "serper",
-    "firecrawl_china_web": "firecrawl",
-    "brave_china_web": "brave_search",
     "crawl4ai_cli": "crawl4ai",
     "markitdown_cli": "markitdown",
     "scrapling_cli": "scrapling",
@@ -87,7 +81,6 @@ VALIDATION_PROVIDER_ALIASES = {
     "x_api": "x",
     "xai_x_search": "xai_x_search",
     "scrapecreators_social": "scrapecreators",
-    "scrapecreators_china_social": "scrapecreators",
     "sonar": "sonar",
     "itunes_reviews_rss": "itunes_reviews",
     "hn_algolia": "hn",
@@ -304,7 +297,6 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
         ],
         "social": [
             _env_backend("x_api", ["X_BEARER_TOKEN"], risk="paid_or_quota_limited"),
-            _env_backend("bluesky_search", ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"], risk="free_app_password"),
             _env_backend("xai_x_search", ["GROK_API_KEY"], risk="model_tool_costs"),
             _env_backend("scrapecreators_social", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
         ],
@@ -317,7 +309,6 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
             ),
         ],
         "customer_reviews": [
-            _env_backend("trustpilot_reviews", ["TRUSTPILOT_API_KEY"], risk="paid_or_account_module"),
             _env_backend("google_places_reviews", ["GOOGLE_PLACES_API_KEY"], risk="paid_credits"),
             _cfpb_backend(),
             _env_backend("apify_review_lanes", ["APIFY_TOKEN"], risk="paid_credits"),
@@ -352,29 +343,6 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
             ),
             _env_backend("github_search_token", ["GITHUB_TOKEN"], risk="free_optional_higher_rate"),
         ],
-        "china_public_native": [
-            _public_http_backend(
-                "bilibili_public_search",
-                "https://api.bilibili.com/x/web-interface/search/type",
-                {"search_type": "video", "keyword": "AI", "page": 1, "page_size": 1},
-            ),
-            _public_http_backend("v2ex_public_hot", "https://www.v2ex.com/api/topics/hot.json"),
-            _agent_reach_channel("bilibili"),
-        ],
-        "china_public_search": [
-            _env_backend("serper_bilibili_v2ex_site_search", [SERPER_KEYS], risk="paid_credits_google_only"),
-            _env_backend("brave_bilibili_v2ex_site_search", ["BRAVE_SEARCH_API_KEY"], risk="paid_or_quota_limited"),
-            _env_backend("firecrawl_bilibili_v2ex_site_search", ["FIRECRAWL_API_KEY_HGINVESTOR"], risk="paid_or_quota_limited"),
-        ],
-        "china_social": [
-            _agent_reach_channel("xiaohongshu"),
-            _env_backend("scrapecreators_china_social", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
-        ],
-        "china_web": [
-            _env_backend("serper_china_web", [SERPER_KEYS], risk="paid_credits_google_only"),
-            _env_backend("firecrawl_china_web", ["FIRECRAWL_API_KEY_HGINVESTOR"], risk="paid_or_quota_limited"),
-            _env_backend("brave_china_web", ["BRAVE_SEARCH_API_KEY"], risk="paid_or_quota_limited"),
-        ],
     }
 
 
@@ -404,7 +372,7 @@ def summarize(groups: dict[str, list[BackendStatus]]) -> dict[str, Any]:
         candidates = [apply_live_validation(candidate, latest) for candidate in candidates]
         active = next((candidate for candidate in candidates if candidate.usable), None)
         statuses = [asdict(candidate) for candidate in candidates]
-        optional_family = family in {"local_extraction", "china_public_native", "capital_market_signals", "official_statistics", "studies", "company_registers"}
+        optional_family = family in {"local_extraction", "capital_market_signals", "official_statistics", "studies", "company_registers"}
         family_summary = {
             "status": "ok" if active else "optional_unavailable" if optional_family else "unavailable",
             "active_backend": active.name if active else None,

@@ -97,15 +97,6 @@ class EvidenceClassificationTests(unittest.TestCase):
             "user_pain",
         )
 
-    def test_china_provider_aliases_expand(self) -> None:
-        self.assertEqual(
-            selected_providers("china_public"),
-            ["china_bilibili", "china_v2ex", "china_web"],
-        )
-        self.assertEqual(
-            selected_providers("china_social"),
-            ["china_xiaohongshu"],
-        )
 
 
 class CompetitorClassificationTests(unittest.TestCase):
