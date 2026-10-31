@@ -17,6 +17,8 @@ import argparse
 import hmac
 import json
 import os
+import pwd
+import stat
 import re
 import subprocess
 import sys
@@ -41,8 +43,7 @@ ACTION_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 PRINCIPAL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._@+-]{0,127}$")
 FINAL_OUTCOMES = {"executed", "uncertain", "failed"}
 NAMESPACE = "marketing-approval"
-SIGNERS_ENV = "MARKETING_ALLOWED_SIGNERS"
-DEFAULT_SIGNERS = Path("~/.config/business-strategist/allowed_signers")
+SIGNERS_RELATIVE = Path(".config/business-strategist/allowed_signers")
 SETUP_STEPS = (
     "Founder setup (run in your own terminal, never via an agent): "
     "1) ssh-keygen -t ed25519 -f ~/.ssh/marketing_approval -C marketing-approval  (set a passphrase; do NOT ssh-add it); "
@@ -82,14 +83,49 @@ def signed_message(approval: dict) -> str:
     return "|".join(fields)
 
 
+def default_signers_path() -> Path:
+    """Fixed location under the real home directory (passwd entry, not $HOME); no environment override."""
+    return Path(pwd.getpwuid(os.getuid()).pw_dir) / SIGNERS_RELATIVE
+
+
 def allowed_signers_path(override=None) -> Path:
-    return Path(override or os.environ.get(SIGNERS_ENV) or DEFAULT_SIGNERS).expanduser()
+    """``override`` exists only for in-process tests; the CLI never exposes it."""
+    return Path(override) if override is not None else default_signers_path()
 
 
-def verify_signature(approval: dict, allowed_signers=None) -> list[str]:
+def _untrusted_locations() -> list[Path]:
+    places = [ROOT, Path(tempfile.gettempdir()), Path("/tmp"), Path("/var/tmp"), Path("/dev/shm")]
+    return [p.resolve() for p in places if p.exists()]
+
+
+def signers_file_problems(path: Path) -> list[str]:
+    """StrictModes-like checks: owned by the current user, not group/world-writable, no symlink into repo/temp."""
+    if path.is_symlink():
+        target = path.resolve()
+        if any(target == place or place in target.parents for place in _untrusted_locations()):
+            return [f"allowed_signers {path} is a symlink into the repository or a temp directory; refusing"]
+    if not path.is_file():
+        return [f"no allowed_signers file at {path}; every execution is refused until the founder sets it up. {SETUP_STEPS}"]
+    problems = []
+    for candidate in dict.fromkeys([path, path.resolve(), path.parent, path.resolve().parent]):
+        try:
+            info = os.stat(candidate)
+        except OSError:
+            problems.append(f"cannot stat {candidate}")
+            continue
+        if info.st_uid != os.getuid():
+            problems.append(f"{candidate} is not owned by the current user")
+        if info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
+            problems.append(f"{candidate} is group- or world-writable")
+    return [f"allowed_signers permissions are unsafe: {p}; fix ownership/permissions (file chmod 0444, directory 0700)"
+            for p in problems]
+
+
+def verify_signature(approval: dict, *, allowed_signers=None) -> list[str]:
     signers = allowed_signers_path(allowed_signers)
-    if not signers.is_file():
-        return [f"no allowed_signers file at {signers}; every execution is refused until the founder sets it up. {SETUP_STEPS}"]
+    unsafe = signers_file_problems(signers)
+    if unsafe:
+        return unsafe
     signature = approval.get("signature")
     if not isinstance(signature, str) or "BEGIN SSH SIGNATURE" not in signature:
         return ["approval is not signed (an SSH signature from the founder's approval key is required)"]
@@ -147,7 +183,7 @@ def check_approval(action: dict, approval: dict, *, now: datetime, validity: tim
         reasons.append(f"approval scope {approval.get('scope')!r} does not match action_kind {action.get('action_kind')!r}")
     if action.get("execution_status") in {"submitted", "verified"}:
         reasons.append("action is already executed according to its execution_status")
-    reasons.extend(verify_signature(approval, allowed_signers))
+    reasons.extend(verify_signature(approval, allowed_signers=allowed_signers))
     return reasons
 
 

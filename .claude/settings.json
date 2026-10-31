@@ -60,6 +60,7 @@
       "Read(.env.*)",
       "Read(**/*secret*)",
       "Bash(*MARKETING_APPROVAL_PIN*)",
+      "Bash(*MARKETING_ALLOWED_SIGNERS*)",
       "Bash(*ssh-keygen*-Y sign*)",
       "Write(**/*.approval.json)",
       "Edit(**/*.approval.json)",

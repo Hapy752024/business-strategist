@@ -442,51 +442,104 @@ def test_ai_token_not_treated_as_agent():
 
 # --------------------------------------------------------------------------- CLI
 
-def _cli(args, signers, cwd):
-    env = {k: v for k, v in os.environ.items() if k != "MARKETING_ALLOWED_SIGNERS"}
-    env["MARKETING_ALLOWED_SIGNERS"] = str(signers)
-    return subprocess.run([sys.executable, str(ROOT / "scripts/marketing/execute.py"), *args], capture_output=True,
-                          text=True, stdin=subprocess.DEVNULL, env=env, cwd=cwd)
+@pytest.fixture
+def cli(keys, monkeypatch, capsys):
+    """In-process CLI with the fixed signers path patched for the test; the CLI exposes no override."""
+    monkeypatch.setattr(ex, "default_signers_path", lambda: keys["signers"])
+
+    def call(args):
+        code = ex.main(args)
+        out = capsys.readouterr()
+        return code, out.out, out.err
+    return call
 
 
-def test_cli_request_sign_attach_and_dry_run(tmp_path, keys):
+def test_cli_request_sign_attach_and_dry_run(tmp_path, keys, cli):
     action = base_action()
     path = tmp_path / "action.json"
     path.write_text(json.dumps(action))
     root = tmp_path / "mk"
-    proc = _cli(["approval-request", str(path), "--by", PRINCIPAL, "--marketing-root", str(root)], keys["signers"], tmp_path)
-    assert proc.returncode == 0, proc.stderr
-    assert "ssh-keygen -Y sign" in proc.stdout and "PAUSED" in proc.stdout
+    code, out, err = cli(["approval-request", str(path), "--by", PRINCIPAL, "--marketing-root", str(root)])
+    assert code == 0, err
+    assert "ssh-keygen -Y sign" in out and "PAUSED" in out
     message = tmp_path / "action.approval-message.txt"
     assert message.read_text().startswith(authorization_digest(action) + "|create_campaign|")
     # the founder signs in their own terminal; simulated here with a throwaway test key
     subprocess.run(["ssh-keygen", "-Y", "sign", "-f", str(keys["founder"]), "-n", "marketing-approval", str(message)],
                    check=True, capture_output=True)
-    proc = _cli(["attach-signature", str(path), f"{message}.sig"], keys["signers"], tmp_path)
-    assert proc.returncode == 0, proc.stderr
-    proc = _cli(["run", str(path), "--approval", str(tmp_path / "action.approval.json"), "--marketing-root", str(root)],
-                keys["signers"], tmp_path)
-    assert proc.returncode == 0, proc.stderr
-    assert json.loads(proc.stdout)["outcome"] == "dry_run"
+    code, out, err = cli(["attach-signature", str(path), f"{message}.sig"])
+    assert code == 0, err
+    code, out, err = cli(["run", str(path), "--approval", str(tmp_path / "action.approval.json"), "--marketing-root", str(root)])
+    assert code == 0, err
+    assert json.loads(out)["outcome"] == "dry_run"
 
 
-def test_cli_attach_refuses_wrong_signer(tmp_path, keys):
+def test_cli_attach_refuses_wrong_signer(tmp_path, keys, cli):
     path = tmp_path / "action.json"
     path.write_text(json.dumps(base_action()))
-    assert _cli(["approval-request", str(path), "--by", PRINCIPAL, "--marketing-root", str(tmp_path)],
-                keys["signers"], tmp_path).returncode == 0
+    assert cli(["approval-request", str(path), "--by", PRINCIPAL, "--marketing-root", str(tmp_path)])[0] == 0
     message = tmp_path / "action.approval-message.txt"
     subprocess.run(["ssh-keygen", "-Y", "sign", "-f", str(keys["mallory"]), "-n", "marketing-approval", str(message)],
                    check=True, capture_output=True)
-    proc = _cli(["attach-signature", str(path), f"{message}.sig"], keys["signers"], tmp_path)
-    assert proc.returncode != 0 and not (tmp_path / "action.approval.json").exists()
+    code, _, _ = cli(["attach-signature", str(path), f"{message}.sig"])
+    assert code != 0 and not (tmp_path / "action.approval.json").exists()
 
 
-def test_cli_request_refuses_agent_principal(tmp_path, keys):
+def test_cli_request_refuses_agent_principal(tmp_path, cli):
     path = tmp_path / "action.json"
     path.write_text(json.dumps(base_action()))
-    proc = _cli(["approval-request", str(path), "--by", "claude", "--marketing-root", str(tmp_path)], keys["signers"], tmp_path)
-    assert proc.returncode != 0
+    assert cli(["approval-request", str(path), "--by", "claude", "--marketing-root", str(tmp_path)])[0] != 0
+
+
+def test_cli_exposes_no_signers_override():
+    with pytest.raises(SystemExit):
+        ex.main(["run", "a.json", "--approval", "b.json", "--marketing-root", "x", "--allowed-signers", "s"])
+
+
+# --------------------------------------------------------------------------- fixed signers path
+
+def test_signers_env_var_is_ignored(tmp_path, keys, approval_for, monkeypatch):
+    monkeypatch.setenv("MARKETING_ALLOWED_SIGNERS", str(keys["signers"]))
+    monkeypatch.setattr(ex, "default_signers_path", lambda: tmp_path / "absent" / "allowed_signers")
+    action = base_action()
+    result = ex.execute(action, approval_for(action), marketing_root=tmp_path, secret=secrets, now=NOW)
+    assert result["outcome"] == "refused" and any("no allowed_signers file" in r for r in result["reasons"])
+
+
+def test_default_signers_path_uses_real_home_not_env(monkeypatch, tmp_path):
+    import pwd
+    monkeypatch.setenv("HOME", str(tmp_path))
+    assert ex.default_signers_path() == Path(pwd.getpwuid(os.getuid()).pw_dir) / ".config/business-strategist/allowed_signers"
+
+
+def test_explicit_test_signers_path_works(tmp_path, keys, approval_for):
+    action = base_action()
+    result = ex.execute(action, approval_for(action), marketing_root=tmp_path, secret=secrets, now=NOW,
+                        allowed_signers=keys["signers"])
+    assert result["outcome"] == "dry_run", result
+
+
+@pytest.mark.parametrize("target", ["file", "dir"])
+def test_group_writable_signers_refused(tmp_path, keys, approval_for, target):
+    folder = tmp_path / "cfg"
+    folder.mkdir(mode=0o700)
+    signers = folder / "allowed_signers"
+    signers.write_text(keys["signers"].read_text())
+    (signers if target == "file" else folder).chmod(0o664 if target == "file" else 0o770)
+    action = base_action()
+    result = ex.execute(action, approval_for(action), marketing_root=tmp_path, secret=secrets, now=NOW,
+                        allowed_signers=signers)
+    assert result["outcome"] == "refused" and any("group- or world-writable" in r for r in result["reasons"])
+
+
+@pytest.mark.parametrize("where", ["repo", "temp"])
+def test_signers_symlink_into_repo_or_temp_refused(tmp_path, keys, approval_for, where):
+    link = tmp_path / "allowed_signers-link"
+    link.symlink_to(ROOT / "AGENTS.md" if where == "repo" else keys["signers"])
+    action = base_action()
+    result = ex.execute(action, approval_for(action), marketing_root=tmp_path, secret=secrets, now=NOW,
+                        allowed_signers=link)
+    assert result["outcome"] == "refused" and any("symlink" in r for r in result["reasons"])
 
 
 def test_cli_has_no_pin_or_self_approve_path():
@@ -496,7 +549,7 @@ def test_cli_has_no_pin_or_self_approve_path():
 
 def test_settings_deny_self_approval_paths():
     perms = json.loads((ROOT / ".claude/settings.json").read_text())["permissions"]
-    required = ["Bash(*MARKETING_APPROVAL_PIN*)", "Bash(*ssh-keygen*-Y sign*)", "Write(**/*.approval.json)",
+    required = ["Bash(*MARKETING_APPROVAL_PIN*)", "Bash(*MARKETING_ALLOWED_SIGNERS*)", "Bash(*ssh-keygen*-Y sign*)", "Write(**/*.approval.json)",
                 "Edit(**/*.approval.json)", "Write(**/receipts/**)", "Edit(**/receipts/**)",
                 "Write(~/.config/business-strategist/**)", "Edit(~/.config/business-strategist/**)"]
     for rule in required:
