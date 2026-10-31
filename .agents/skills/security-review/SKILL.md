@@ -6,7 +6,7 @@ description: Review website or application code, plans and diffs for exploitable
 # Security Review
 
 1. Identify the target application, review mode (plan, diff or bounded baseline), assets and trust boundaries. This repository hosts multiple projects; discover the selected project's stack and rules rather than assuming a shared backend.
-2. Read [core checklist](references/core-checklist.md) for every review and [project discovery](references/project-context.md) to establish context. For Stripe changes, also read [Stripe checks](references/libraries/stripe.md) and use `stripe-best-practices` for integration decisions.
+2. Read [core checklist](references/core-checklist.md) for every review and [project discovery](references/project-context.md) to establish context. For Stripe changes, also read [Stripe checks](references/libraries/stripe.md) and use the `brand-website-designer-builder` Stripe mode (route `stripe-best-practices`) for integration decisions.
 3. Trace relevant attacker inputs through authorization, validation, storage, external services and side effects. Cite concrete code paths; distinguish verified findings from questions.
 4. Inspect existing tests and scans. Run proportionate authorized verification; use synthetic data and avoid exposing credentials or customer information to tools.
 5. Report severity, file/line or plan section, exploit path, impact, proposed fix and verification for each finding. State inspected scope, missing evidence and residual risk even when no findings are found.

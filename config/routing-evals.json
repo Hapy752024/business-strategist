@@ -512,27 +512,28 @@
       ]
     },
     {
-      "pair": "geo-audit vs brand-website-designer-builder vs competitor-monitoring",
+      "pair": "geo-audit mode vs website build vs competitor-monitoring",
       "evals": [
         {
           "id": "route-geo-1",
           "prompt": "Run an AI citability audit on https://www.example.com before we launch.",
-          "expected_output": "Routes to geo-audit for a read-only audit of a public URL with the pinned GEO Optimizer CLI; fixes go back to the website workflow.",
-          "expected_skill": "geo-audit",
+          "expected_output": "Routes to brand-website-designer-builder geo-audit mode for a read-only audit of a public URL with the pinned GEO Optimizer CLI; fixes go back to the website workflow.",
+          "expected_skill": "brand-website-designer-builder",
           "forbidden_skills": [
             "competitor-monitoring",
             "competitor-research"
           ],
           "files": [],
-          "rationale": "A tool-backed citability audit of our own public site is geo-audit's scope. Broad AEO/GEO content and schema work stays with brand-website-designer-builder; recorded AI-answer visibility stays with competitor-monitoring."
+          "rationale": "A tool-backed citability audit of our own public site is the geo-audit mode's scope. Broad AEO/GEO content and schema work stays with brand-website-designer-builder; recorded AI-answer visibility stays with competitor-monitoring.",
+          "expected_route": "geo-audit"
         },
         {
           "id": "route-geo-2",
           "prompt": "Set up AI citation tracking for our brand across ChatGPT and Gemini answers.",
-          "expected_output": "Routes to competitor-monitoring for an AI-answer panel, not to the site audit.",
+          "expected_output": "Routes to competitor-monitoring for an AI-answer panel, not to the geo-audit mode.",
           "expected_skill": "competitor-monitoring",
           "forbidden_skills": [
-            "geo-audit"
+            "brand-website-designer-builder"
           ],
           "files": [],
           "rationale": "Observing what engines answer is measurement of answers, not an audit of the site's markup and access."
@@ -540,24 +541,24 @@
         {
           "id": "route-geo-3",
           "prompt": "Run a GEO audit on https://www.example.com",
-          "expected_output": "Routes to geo-audit for a read-only tool-backed audit of the public URL.",
-          "expected_skill": "geo-audit",
+          "expected_output": "Routes to brand-website-designer-builder geo-audit mode for a read-only tool-backed audit of the public URL.",
+          "expected_skill": "brand-website-designer-builder",
           "forbidden_skills": [
             "competitor-monitoring"
           ],
           "files": [],
-          "rationale": "An audit of a named public URL is geo-audit's scope; website content changes come afterwards through the website builder."
+          "rationale": "An audit of a named public URL is the geo-audit mode's scope; website content changes come afterwards through the website builder.",
+          "expected_route": "geo-audit"
         },
         {
           "id": "route-geo-4",
           "prompt": "Fix my website for AEO/GEO so answer engines can use our content.",
           "expected_output": "Routes to brand-website-designer-builder for AEO/GEO content, schema and access work on the site.",
           "expected_skill": "brand-website-designer-builder",
-          "forbidden_skills": [
-            "geo-audit"
-          ],
+          "forbidden_skills": [],
           "files": [],
-          "rationale": "Changing the site is website delivery work; geo-audit is read-only measurement."
+          "rationale": "Changing the site is website delivery work; the geo-audit mode is read-only measurement.",
+          "expected_route": "website-build"
         },
         {
           "id": "route-geo-5",
@@ -565,7 +566,7 @@
           "expected_output": "Routes to competitor-monitoring for a declared AI-answer panel (offline recordings or the capped live collector), not a markup audit.",
           "expected_skill": "competitor-monitoring",
           "forbidden_skills": [
-            "geo-audit"
+            "brand-website-designer-builder"
           ],
           "files": [],
           "rationale": "Whether an engine names or cites the site is an answer observation owned by competitor-monitoring's AI-answer visibility capability."
@@ -918,6 +919,31 @@
           "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
           "files": [],
           "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        }
+      ]
+    },
+    {
+      "pair": "brand-website-designer-builder stripe mode vs website build",
+      "evals": [
+        {
+          "id": "stripe-1",
+          "prompt": "Integrate Stripe checkout into our Next.js app.",
+          "expected_skill": "brand-website-designer-builder",
+          "expected_route": "stripe-best-practices",
+          "forbidden_skills": [],
+          "expected_output": "Routes to the website skill stripe mode (ungated, test mode, security-review pairing).",
+          "files": [],
+          "rationale": "Before the merge (3943842) this fell to clarification; the single 'Stripe' phrase now reaches the stripe mode."
+        },
+        {
+          "id": "stripe-2",
+          "prompt": "Add Stripe checkout to my landing page.",
+          "expected_skill": "brand-website-designer-builder",
+          "expected_route": "website-build",
+          "forbidden_skills": [],
+          "expected_output": "Stays on the pain-gated website-build route; the website skill reads the Stripe reference inside the build.",
+          "files": [],
+          "rationale": "Unchanged against 3943842: the 6-character 'Stripe' phrase never outranks a website-build phrase such as 'landing page', so a gated build is not pulled into the ungated stripe mode."
         }
       ]
     }

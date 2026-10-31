@@ -37,11 +37,9 @@
       "quality_reference": "references/modules/quality/website.md",
       "skills": [
         "brand-website-designer-builder",
-        "stripe-best-practices",
         "security-review",
         "webapp-testing",
-        "pre-release-regression",
-        "geo-audit"
+        "pre-release-regression"
       ]
     }
   },
@@ -874,7 +872,9 @@
         "technical SEO and LLM-EO",
         "responsive and load performance fixes",
         "optional consent-aware campaign tracking and account integration",
-        "audit and improve AEO/GEO answer-engine visibility and agent readiness of websites"
+        "audit and improve AEO/GEO answer-engine visibility and agent readiness of websites",
+        "read-only GEO audit of a public URL with the pinned GEO Optimizer CLI",
+        "design or review Stripe integration"
       ],
       "excludes": [
         "product dashboard",
@@ -933,6 +933,68 @@
           ],
           "side_effect": "workspace",
           "cost": "medium"
+        },
+        "geo-audit": {
+          "intent": [
+            "audit a public site or deployed build for AI-search citability issues"
+          ],
+          "excludes": [
+            "applying fixes to a site",
+            "ranking or citation-rate claims",
+            "local build directories without a public URL"
+          ],
+          "prerequisites": [
+            "public URL or deployed preview URL of the site"
+          ],
+          "artifacts": [
+            "GEO audit JSON with tool version and pinned commit",
+            "issue list for the website workflow"
+          ],
+          "side_effect": "local_files",
+          "cost": "low",
+          "required_references": [
+            ".agents/skills/brand-website-designer-builder/geo/VENDOR.md",
+            ".agents/skills/brand-website-designer-builder/references/aeo-geo-visibility.md"
+          ],
+          "consumes": [
+            {
+              "artifact": "website_build",
+              "schema": null,
+              "path_patterns": [
+                "website/website-manifest.json",
+                "website/**/website-manifest.json"
+              ],
+              "freshness": "none",
+              "external": true
+            }
+          ],
+          "inputs": [
+            "public URL or deployed preview URL"
+          ],
+          "output_owner": "brand-website-designer-builder"
+        },
+        "stripe": {
+          "intent": [
+            "design or review Stripe integration"
+          ],
+          "excludes": [
+            "customer research",
+            "production deployment"
+          ],
+          "prerequisites": [
+            "selected target application and bounded task"
+          ],
+          "artifacts": [
+            "scoped findings and verification evidence"
+          ],
+          "side_effect": "local_files",
+          "cost": "low",
+          "required_references": [],
+          "inputs": [
+            "selected target application",
+            "bounded Stripe task"
+          ],
+          "output_owner": "brand-website-designer-builder"
         }
       }
     },
@@ -1101,24 +1163,6 @@
         }
       }
     },
-    "stripe-best-practices": {
-      "intent": [
-        "design or review Stripe integration"
-      ],
-      "excludes": [
-        "customer research",
-        "production deployment"
-      ],
-      "prerequisites": [
-        "selected target application and bounded task"
-      ],
-      "artifacts": [
-        "scoped findings and verification evidence"
-      ],
-      "side_effect": "local_files",
-      "cost": "low",
-      "required_references": []
-    },
     "security-review": {
       "intent": [
         "review application security"
@@ -1254,41 +1298,6 @@
           ]
         }
       }
-    },
-    "geo-audit": {
-      "intent": [
-        "audit a public site or deployed build for AI-search citability issues"
-      ],
-      "excludes": [
-        "applying fixes to a site",
-        "ranking or citation-rate claims",
-        "local build directories without a public URL"
-      ],
-      "prerequisites": [
-        "public URL or deployed preview URL of the site"
-      ],
-      "artifacts": [
-        "GEO audit JSON with tool version and pinned commit",
-        "issue list for the website workflow"
-      ],
-      "side_effect": "local_files",
-      "cost": "low",
-      "required_references": [
-        ".agents/skills/geo-audit/VENDOR.md",
-        ".agents/skills/brand-website-designer-builder/references/aeo-geo-visibility.md"
-      ],
-      "consumes": [
-        {
-          "artifact": "website_build",
-          "schema": null,
-          "path_patterns": [
-            "website/website-manifest.json",
-            "website/**/website-manifest.json"
-          ],
-          "freshness": "none",
-          "external": true
-        }
-      ]
     },
     "competitor-research": {
       "intent": [

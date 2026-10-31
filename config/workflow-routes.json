@@ -115,11 +115,11 @@
         "AEO audit",
         "AI search visibility audit"
       ],
-      "skill": "geo-audit",
+      "skill": "brand-website-designer-builder",
       "forbidden": [
         "competitor-research"
       ],
-      "single_mode": true
+      "mode": "geo-audit"
     },
     {
       "id": "app-ui",
@@ -739,10 +739,12 @@
     },
     {
       "id": "stripe-best-practices",
-      "match": [],
-      "skill": "stripe-best-practices",
+      "match": [
+        "Stripe"
+      ],
+      "skill": "brand-website-designer-builder",
       "forbidden": [],
-      "single_mode": true
+      "mode": "stripe"
     },
     {
       "id": "security-review",

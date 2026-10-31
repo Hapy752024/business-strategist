@@ -107,8 +107,8 @@ def test_scope_boundaries(prompt, expected):
 
 
 @pytest.mark.parametrize('prompt,expected', [
-    ('Run an AEO audit', 'geo-audit'),
-    ('Run a GEO audit', 'geo-audit'),
+    ('Run an AEO audit', 'brand-website-designer-builder'),
+    ('Run a GEO audit', 'brand-website-designer-builder'),
     ('Is my site visible in ChatGPT?', 'competitor-monitoring'),
     ('Structured data audit', 'brand-website-designer-builder'),
     ('Track brand mentions', 'competitor-monitoring'),

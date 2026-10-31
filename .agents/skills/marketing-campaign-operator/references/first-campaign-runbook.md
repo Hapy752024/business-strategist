@@ -30,7 +30,7 @@ Paths use `<mkt>` for the project's Marketing root. Run commands from the repo r
 - Done when: the map validates, each target page has one intent, and the founder accepted or rejected each proposal. Volumes are a demand proxy, not pain; null stays unknown.
 
 ## 4. Page built and site gate passes (agent)
-- Skill: `brand-website-designer-builder` (and the `geo-audit` skill for answer-engine readiness).
+- Skill: `brand-website-designer-builder` (its `geo-audit` mode for answer-engine readiness).
 - Run: `python3 -m scripts.brand.site_gate <served-origin> --site-dir <site-dir>`.
 - Done when: the gate exits 0 with its evidence files written; a skipped check needs a stated reason.
 - Deploy is a separate founder-authorized action. Only after it, `python3 scripts/brand/indexnow_ping.py <host> --key <key> --confirm-deployed`.

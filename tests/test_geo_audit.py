@@ -1,4 +1,4 @@
-"""GEO audit skill: vendored provenance, thin wrapper behaviour and route reachability."""
+"""GEO audit mode of the website skill: vendored provenance, thin wrapper behaviour and route reachability."""
 import json
 import os
 import re
@@ -12,8 +12,10 @@ import pytest
 from scripts.route_workflow import route_request
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / '.agents/skills/geo-audit'
-WRAPPER = SKILL / 'scripts/geo_audit.py'
+SKILL = ROOT / '.agents/skills/brand-website-designer-builder'
+VENDOR = SKILL / 'geo'
+WRAPPER = VENDOR / 'geo_audit.py'
+MODE = SKILL / 'references/geo-audit.md'
 PIN = '7ecec864690ee430e954a95352130cf47e2c92cc'
 
 
@@ -24,29 +26,27 @@ def run(tmp_path, *args, env=None):
     return result.returncode, json.loads(result.stdout)
 
 
-def test_skill_entry_budget_and_description():
-    text = (SKILL / 'SKILL.md').read_text(encoding='utf-8')
+def test_mode_reference_budget_and_skill_pointer():
+    text = MODE.read_text(encoding='utf-8')
     lines = text.splitlines()
     assert len(lines) <= 500
     assert statistics.median(len(line) for line in lines) <= 100
-    description = re.search(r'^description: (.+)$', text, re.M).group(1)
-    assert len(description) <= 1024 and description.startswith(('Audits', 'Runs'))
-    assert 'Use when' in description
-    assert re.search(r'^name: geo-audit$', text, re.M)
+    assert 'references/geo-audit.md' in (SKILL / 'SKILL.md').read_text(encoding='utf-8')
+    assert '.agents/skills/brand-website-designer-builder/geo/geo_audit.py' in text
 
 
 def test_vendored_license_and_pinned_commit():
-    license_text = (SKILL / 'LICENSE').read_text(encoding='utf-8')
+    license_text = (VENDOR / 'LICENSE').read_text(encoding='utf-8')
     assert 'MIT License' in license_text and 'Juan Camilo Auriti' in license_text
-    provenance = (SKILL / 'VENDOR.md').read_text(encoding='utf-8')
+    provenance = (VENDOR / 'VENDOR.md').read_text(encoding='utf-8')
     assert PIN in provenance and 'Auriti-Labs/geo-optimizer-skill' in provenance
     assert PIN in WRAPPER.read_text(encoding='utf-8')
-    skill = (SKILL / 'SKILL.md').read_text(encoding='utf-8')
+    skill = MODE.read_text(encoding='utf-8')
     assert 'Auriti' in skill and 'MIT' in skill
 
 
 def test_skill_treats_llms_txt_and_schema_as_hygiene():
-    skill = (SKILL / 'SKILL.md').read_text(encoding='utf-8').lower()
+    skill = MODE.read_text(encoding='utf-8').lower()
     assert 'hygiene' in skill and 'llms.txt' in skill
     assert 'ahrefs' in skill and 'google' in skill
     assert '--apply' not in skill.replace('never run `geo fix --apply`', '')
@@ -108,14 +108,15 @@ def test_tool_failure_is_reported_not_scored(tmp_path):
                                     'Do an AEO audit of our website',
                                     'Run an AI search visibility audit for our site'])
 def test_geo_audit_route_reachable(prompt):
-    assert route_request(prompt)['skill'] == 'geo-audit'
+    assert route_request(prompt)['route_id'] == 'geo-audit'
 
 
 def test_geo_audit_explicit_intent_and_contract():
     packet = route_request('audit https://example.com', intent='geo-audit')
-    assert packet['skill'] == 'geo-audit' and packet['route_id'] == 'geo-audit'
-    catalog = json.loads((ROOT / 'config/skill-catalog.json').read_text())['skills']['geo-audit']
-    assert [c['artifact'] for c in catalog['consumes']] == ['website_build']
+    assert packet['skill'] == 'brand-website-designer-builder' and packet['route_id'] == 'geo-audit'
+    assert packet['mode'] == 'geo-audit'
+    catalog = json.loads((ROOT / 'config/skill-catalog.json').read_text())['skills']['brand-website-designer-builder']
+    assert [c['artifact'] for c in catalog['modes']['geo-audit']['consumes']] == ['website_build']
 
 
 @pytest.mark.parametrize('prompt', ['Build my website for AEO/GEO', 'Fix my website for AEO/GEO', 'Improve LLM-EO on our landing page'])
@@ -125,9 +126,11 @@ def test_aeo_geo_content_work_stays_with_website_builder(prompt):
 
 def test_routing_evals_cover_geo_cases():
     pairs = json.loads((ROOT / 'config/routing-evals.json').read_text())['pairs']
-    cases = {e['prompt']: e['expected_skill'] for p in pairs if p['pair'].startswith('geo-audit') for e in p['evals']}
-    assert cases['Run a GEO audit on https://www.example.com'] == 'geo-audit'
-    assert cases['Fix my website for AEO/GEO so answer engines can use our content.'] == 'brand-website-designer-builder'
-    assert cases['Is my site visible in ChatGPT?'] == 'competitor-monitoring'
-    for prompt, skill in cases.items():
-        assert route_request(prompt)['skill'] == skill, prompt
+    cases = {e['prompt']: (e['expected_skill'], e.get('expected_route'))
+             for p in pairs if p['pair'].startswith('geo-audit') for e in p['evals']}
+    assert cases['Run a GEO audit on https://www.example.com'] == ('brand-website-designer-builder', 'geo-audit')
+    assert cases['Fix my website for AEO/GEO so answer engines can use our content.'][1] == 'website-build'
+    assert cases['Is my site visible in ChatGPT?'][0] == 'competitor-monitoring'
+    for prompt, (skill, route_id) in cases.items():
+        packet = route_request(prompt)
+        assert packet['skill'] == skill and packet['route_id'] == (route_id or packet['route_id']), prompt

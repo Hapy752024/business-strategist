@@ -28,10 +28,11 @@ FAMILIES = {
     'positioning-gtm': ['archetype-gtm-strategist', 'company-operating-system'],
     'evidence-scout': ['interview-bridge'],
     'opportunity-risk-designer': ['saas-fintech-pilot-designer'],
+    'brand-website-designer-builder': ['geo-audit', 'stripe-best-practices'],
 }
 # Hosts that absorbed a former skill keep their own pre-existing routes as they were (route ID, mode or no mode);
 # only the absorbed skills' routes gain a mode and a references/<mode>.md.
-ABSORBING_HOSTS = {'evidence-scout', 'opportunity-risk-designer'}
+ABSORBING_HOSTS = {'evidence-scout', 'opportunity-risk-designer', 'brand-website-designer-builder'}
 FORMER = [(merged, former) for merged, formers in FAMILIES.items() for former in formers]
 # Paths stay in git history; docs/ and .superpowers/ are dated records of that history. The research-business-plan
 # eval is a completed recorded comparison: its manifest snapshot paths are pinned to its baseline revision and results.
@@ -101,7 +102,12 @@ def test_bare_merged_skill_intent_lists_its_route_ids(merged):
 
 def test_catalog_lists_only_merged_skills():
     catalog = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))
-    text = json.dumps(catalog)
+    # A mode may keep its former skill's name (geo-audit); only its own merged skill may carry that mode key.
+    skills = {name: {**meta, 'modes': list(meta.get('modes', {}).values())} for name, meta in catalog['skills'].items()}
+    text = json.dumps({**catalog, 'skills': skills})
+    for name, meta in catalog['skills'].items():
+        for mode in meta.get('modes', {}):
+            assert mode not in route_workflow.SKILL_ALIASES or (name, mode) in FORMER, (name, mode)
     for merged, former in FORMER:
         assert former not in catalog['skills']
         assert f'"{former}"' not in text, former
@@ -494,6 +500,7 @@ TWO_WORKFLOW_REQUESTS = [
     'Write a marketing strategy, then build a content calendar',
     'Reposition the business; also design the delivery model',
     'Validate customer pain, then build an interview screener',
+    'Run a GEO audit, then build a landing page',
 ]
 
 
@@ -533,3 +540,73 @@ def test_skill_call_with_a_former_name_is_denied_with_its_replacement(former):
     merged = _routes()[route_id]['skill']
     with pytest.raises(ValueError, match=f'{former} was merged into {merged}; dispatch {merged} with route {route_id}'):
         hook.check_dispatch(event)
+
+
+WEBSITE = 'brand-website-designer-builder'
+
+
+def test_website_absorbed_modes_keep_their_gates_and_packets():
+    """Gate and packet fields as frozen at 3943842: geo-audit and stripe-best-practices stay ungated, keep their own
+    prerequisites, cost and references, and stay outside the website design branch (no entry_mode/subproject)."""
+    routes = _routes()
+    modes = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))['skills'][WEBSITE]['modes']
+    expected = {
+        'geo-audit': ('geo-audit', ['public URL or deployed preview URL of the site'],
+                      ['.agents/skills/brand-website-designer-builder/geo/VENDOR.md',
+                       '.agents/skills/brand-website-designer-builder/references/aeo-geo-visibility.md']),
+        'stripe-best-practices': ('stripe', ['selected target application and bounded task'], []),
+    }
+    for route_id, (mode, prerequisites, references) in expected.items():
+        route = routes[route_id]
+        assert route['skill'] == WEBSITE and route['mode'] == mode and not route.get('requires_pain_gate')
+        assert not modes[mode].get('strategy_stage_prerequisites')
+        packet = route_workflow.route_request('explicit specialist task', intent=route_id, check_skill=WEBSITE)
+        assert packet['prerequisites'] == prerequisites and packet['estimated_cost'] == 'low'
+        assert packet['side_effect'] == 'local_files' and packet['required_references'] == references
+        assert 'entry_mode' not in packet and 'subproject' not in packet and not packet.get('gate_blocked')
+    assert [c['artifact'] for c in modes['geo-audit']['consumes']] == ['website_build']
+    for route_id in ('website-build', 'website-experiment', 'validation-page', 'seo-technical-audit'):
+        assert routes[route_id]['requires_pain_gate'] is True, route_id
+    assert 'mode' not in routes['website-build']
+
+
+def test_website_geo_and_stripe_references_are_reachable_from_the_skill():
+    skill = (SKILLS / WEBSITE / 'SKILL.md').read_text(encoding='utf-8')
+    assert 'references/geo-audit.md' in skill and 'references/stripe.md' in skill
+    stripe = (SKILLS / WEBSITE / 'references' / 'stripe.md').read_text(encoding='utf-8')
+    for name in ('payments', 'billing', 'connect', 'treasury'):
+        assert f'references/stripe-{name}.md' in stripe and (SKILLS / WEBSITE / 'references' / f'stripe-{name}.md').is_file()
+    assert 'security-review' in stripe and 'test mode' in stripe
+
+
+# Plain-text requests near the website/GEO/Stripe boundary. Frozen from the router at 3943842 (before the merge);
+# the row marked "new" moved from clarification to the stripe mode through the single "Stripe" phrase added, and
+# the row marked "changed" is the one request that moved between routes.
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Run a GEO audit on https://www.example.com', 'geo-audit'),
+    ('Do an AEO audit of our website', 'geo-audit'),
+    ('Fix my website for AEO/GEO', 'website-build'),
+    ('Structured data audit', 'website-build'),
+    ('Is my site visible in ChatGPT?', 'competitor-monitoring'),
+    ('Run a technical SEO audit of our site', 'seo-technical-audit'),
+    ('Integrate Stripe checkout into our Next.js app', 'stripe-best-practices'),  # new
+    ('Add Stripe checkout to my landing page', 'website-build'),
+    ('Build a landing page and integrate Stripe payments', 'website-build'),
+    ('Deploy the Stripe checkout to Vercel', 'website-build'),
+    # changed: was standalone-brand through its 4-character "logo" phrase; any Stripe phrase outranks it.
+    ('Add the Stripe logo to the checkout page', 'stripe-best-practices'),
+    ('Review the payment flow security of our checkout', 'clarify'),
+    ('Create a pricing strategy for our subscription plans', 'clarify'),
+    ('Run a GEO audit, then build a landing page', 'clarify'),
+])
+def test_website_geo_stripe_boundary_routes(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Run a GEO audit on the preview URL', 'geo-audit'),
+    ('Review our Stripe subscription code', 'stripe-best-practices'),
+    ('Build a landing page for the launch', 'website-build'),
+])
+def test_website_plain_text_infers_its_mode(request_text, expected_route):
+    assert route_workflow.infer_mode(WEBSITE, request_text)[0] == expected_route

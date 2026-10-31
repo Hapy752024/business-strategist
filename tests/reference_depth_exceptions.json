@@ -63,6 +63,22 @@
     {
       "reason": "interview-recruitment.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
       "target": "references/interview-recruitment.md"
+    },
+    {
+      "reason": "stripe-payments.md is per-domain detail of the Stripe mode, listed in the routing table of references/stripe.md; open only the one domain the Stripe task needs",
+      "target": ".agents/skills/brand-website-designer-builder/references/stripe-payments.md"
+    },
+    {
+      "reason": "stripe-billing.md is per-domain detail of the Stripe mode, listed in the routing table of references/stripe.md; open only the one domain the Stripe task needs",
+      "target": ".agents/skills/brand-website-designer-builder/references/stripe-billing.md"
+    },
+    {
+      "reason": "stripe-connect.md is per-domain detail of the Stripe mode, listed in the routing table of references/stripe.md; open only the one domain the Stripe task needs",
+      "target": ".agents/skills/brand-website-designer-builder/references/stripe-connect.md"
+    },
+    {
+      "reason": "stripe-treasury.md is per-domain detail of the Stripe mode, listed in the routing table of references/stripe.md; open only the one domain the Stripe task needs",
+      "target": ".agents/skills/brand-website-designer-builder/references/stripe-treasury.md"
     }
   ],
   "business-strategist": [

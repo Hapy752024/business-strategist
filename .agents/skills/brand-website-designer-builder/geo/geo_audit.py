@@ -61,7 +61,7 @@ def main() -> int:
         return emit('needs_public_url', 2, message='Upstream audits public URLs only; deploy a preview or use production.')
     tool = find_tool()
     if not tool:
-        return emit('tool_unavailable', 2, message='geo CLI not found; see .agents/skills/geo-audit/VENDOR.md. Nothing was audited.')
+        return emit('tool_unavailable', 2, message='geo CLI not found; see .agents/skills/brand-website-designer-builder/geo/VENDOR.md. Nothing was audited.')
     if args.out.exists() or args.out.is_symlink():
         return emit('fail', 1, message='--out exists; choose a new path')
     command = [tool, 'audit', '--url', args.url, '--format', 'json', '--no-plugins']
