@@ -12,7 +12,7 @@ The European Commission's 2025 scoreboard reports extensive concern about online
 - accessible human support for complex or consequential services;
 - evidence for environmental claims rather than unsupported “green” positioning.
 
-Do not treat Europe as one market. Language, trust institutions, consumer rights, payment behavior, regulation, and preferred channels vary by country.
+Language, trust institutions, consumer rights, payment behavior, regulation, and preferred channels vary by country.
 
 ## Germany
 
@@ -37,8 +37,7 @@ US regulator guidance emphasizes authentic reviews and endorsements, honest tota
 - total price or credible range, mandatory fees, recurring terms, and cancellation before payment;
 - recent, specific, authentic reviews with disclosed incentives or relationships;
 - proof tied to the customer's service category, location, and problem;
-- availability, speed, channel convenience, guarantee/redress, and responsive support;
-- state, profession, licensing, advertising, and privacy requirements before launch.
+- availability, speed, channel convenience, guarantee/redress, and responsive support.
 
 Do not assume “US customers buy faster.” Purchase speed should be modeled from urgency, alternatives, price, failure consequence, and reversibility.
 

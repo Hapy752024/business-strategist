@@ -43,7 +43,7 @@ For substantive chosen-idea validation, run a targeted international commercial-
 Once the idea/segment is clear, run the evidence-scout early desk steps (search journey, competitor content, keyword volumes, social topics) in parallel with customer voice; they wait for no review, ledger or gate.
 Dependent steps (VOC table, claim challenge, decision memo) use reviewed inputs when they exist, otherwise their labelled fallback; never skip them.
 For substantive Business research, use official statistics and studies for market, population and regulatory claims, or name them as unchecked (`references/research-data-and-precedents.md`).
-When planning website content, SEO pages or earned media, propose the statistics pages, calculators and checklists the customer journey calls for, built from the wired statistics sources (`references/linkable-assets.md`).
+When planning website content, SEO pages or earned media, propose the statistics pages, calculators and checklists the customer journey calls for, built from the wired statistics sources (`references/seo-rule-pack.md`).
 
 ## Workspace check: always first
 

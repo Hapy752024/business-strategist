@@ -81,8 +81,8 @@
       "target": ".agents/skills/brand-guideline-researcher/references/research-method.md"
     },
     {
-      "reason": "marketing-campaign-operations.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
-      "target": "references/marketing-campaign-operations.md"
+      "reason": "marketing-execution.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
+      "target": "references/marketing-execution.md"
     },
     {
       "reason": "interview-recruitment.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
@@ -125,8 +125,8 @@
       "target": "references/customer-voice.md"
     },
     {
-      "reason": "owner-actions.md is mentioned by a linked file but is outside competitor-monitoring's own stage; open it only when a task needs it",
-      "target": "references/owner-actions.md"
+      "reason": "marketing-execution.md is mentioned by a linked file but is outside competitor-monitoring's own stage; open it only when a task needs it",
+      "target": "references/marketing-execution.md"
     }
   ],
   "evidence-scout": [
@@ -227,6 +227,18 @@
     {
       "reason": "workflow.md is mentioned by a linked file but is outside strategy-draft-tournament's own stage; open it only when a task needs it",
       "target": ".agents/skills/business-archetype-playbook-researcher/references/workflow.md"
+    }
+  ],
+  "earned-media-builder": [
+    {
+      "reason": "ad-platform-connections.md is mentioned by a linked file but is outside earned-media-builder's own stage; open it only when a task needs it",
+      "target": "references/ad-platform-connections.md"
+    }
+  ],
+  "marketing-campaign-operator": [
+    {
+      "reason": "task-scope.md is mentioned by a linked file but is outside marketing-campaign-operator's own stage; open it only when a task needs it",
+      "target": "references/task-scope.md"
     }
   ]
 }

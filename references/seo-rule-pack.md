@@ -9,6 +9,8 @@ Checkable hygiene rules for German/English sites. Rules are checks, not ranking 
 - [Schema as hygiene](#schema-as-hygiene)
 - [llms.txt and agent access](#llmstxt-and-agent-access)
 - [Earned media and AI citations](#earned-media-and-ai-citations)
+- [Search-visibility improvement decisions](#search-visibility-improvement-decisions)
+- [Linkable assets: statistics, calculators and checklists](#linkable-assets-statistics-calculators-and-checklists)
 - [Sources, attribution and licenses](#sources-attribution-and-licenses)
 
 ## Hreflang and locale variants
@@ -68,11 +70,50 @@ Evidence (retrieved 2026-10-31, secondary coverage; U for details): Google's gui
 
 | Rule | What to check | How | Evidence |
 |---|---|---|---|
-| E1 | For a visibility goal, plan third-party coverage (press, directories, communities, reviews) before more on-site markup. | `earned-media-builder` route; `references/search-visibility-decisions.md`. | O |
+| E1 | For a visibility goal, plan third-party coverage (press, directories, communities, reviews) before more on-site markup. | `earned-media-builder` route; the "Search-visibility improvement decisions" section below. | O |
 | E2 | Measure with recorded AI answers over time and report observations, not causes. | `geo-audit` route and `references/ai-answer-recordings.md`. | D |
 | E3 | Treat paid placement and advertorial as a separate category; do not count it as earned. | Keep the source type per placement. | O |
 
 Evidence (retrieved 2026-10-31, secondary coverage; Muck Rack's primary report not opened): Muck Rack's "What Is AI Reading?" series is reported to attribute about 84% of ChatGPT, Claude and Gemini citations to earned sources in a May 2026 edition (over 25 million links), with paid content near 0.3%. Muck Rack's "earned" category is broad (academic, government, encyclopedic, social and third-party corporate sources as well as journalism), and the sample measures source composition, not that earned media causes a given brand to be cited. A later October 2026 edition (journalism share about 22%) appeared in one source only: **U**.
+
+## Search-visibility improvement decisions
+
+Use inside the existing scoped audit/strategy deliverable, after loading the relevant website or monitoring procedure. No new research workspace, strategy or recurring program for a focused technical task or supplied-copy rewrite.
+
+1. Name the observed problem, affected customer task/page and intended outcome. If visibility, audience behavior or attribution is unknown, say so. A visible broken route, conflicting offer or inaccessible answer can justify a bounded fix without a market-wide demand claim.
+2. Inventory available evidence: rendered site/content, authorized Search Console/Bing data, referral/conversion records or server logs if available, recorded answer panels, and existing approved owner facts. Do not connect accounts or activate tracking implicitly. For commercial facts, current explicit owner corrections override repository values. Existing code/constants show what is implemented; they do not by themselves prove approval. Reconcile conflicts before improving offer copy; omit disputed prices and ask only about unresolved deliverable scope. Keep each metric's surface and denominator separate. Export placeholders converted to zeros must retain an availability flag.
+3. Select the few changes supported by evidence, prioritizing user-facing obstruction and inaccurate/misleading information. Check existing assets first. Clear answers, reliable claims, accessible navigation and a usable conversion path may be enough; schema, posting, feeds and API monitoring are conditional. No action warranted is a valid finding.
+4. For each selected change produce: **page/customer task | dated observation + uncertainty/source | change | expected customer benefit/outcome | agent work | owner-only dependency | effort/priority | acceptance check | review date/stop rule**. A statement about likely benefit is a hypothesis until observed.
+5. Prepare reviewable local changes, run applicable QA, and record source revision, routes and limitations. Keep launch blockers intact. Owner publication/connection decisions remain governed by the existing authorization, not repeated approval requests.
+6. Apply `references/marketing-execution.md` (owner-action contract). On resume read the active track manifest, reconcile accepted owner rows and their linked details, and continue agent-verifiable work independently. Do not turn optional recommendations into blockers.
+7. At the agreed review point compare like-for-like measurements and record continue/change/stop. If no live baseline or authorized launch exists, report local acceptance separately and the outcome as pending. Expand automation only when the manual workflow repeatedly changes a decision or saves demonstrated effort.
+
+For a quote-based service, preserve the commercial model; explain scope and the path to an estimate. For e-commerce, reconcile authoritative prices/stock before markup/feed work. For a site with no analytics, use authorized logs/first-party exports if available; otherwise retain the measurement gap. A two-heading rewrite returns two headings, not this full queue.
+
+For content priorities consume the versioned keyword/page map: inspect existing pages before creation and choose retain/improve/create/consolidate/retire with evidence and a conversion path. Research-backed public resources retain original-versus-compiled contribution, source limitations, public-use review and maintenance ownership. A resource's publication does not automatically start external promotion.
+
+For off-site references use the earned-media discovery/preparation/verification routes. Measure prepared pitches, sent receipts, responses, live placements, referrals and qualified outcomes separately. Keep rel attributes, provider observations, indexing and ranking changes distinct. Use the existing `decision_record()` for matched aggregate windows and continue/change/stop decisions; no default cadence or allocation is imposed.
+
+## Linkable assets: statistics, calculators and checklists
+
+Read when planning website content, SEO pages or earned media for a chosen idea. Technical SEO (speed, security, mobile, indexability) is hygiene; what earns links, citations in AI answers and return visits is original, checkable, useful material. Plan it from the customer journey, not from keyword lists alone.
+
+### What to propose, per journey stage
+
+For each stage of the customer journey already recorded (awareness, consideration, decision, onboarding/after purchase), name the one question the customer must answer there and the smallest asset that answers it:
+
+- **Statistics page**: the numbers the customer and the writers covering the topic keep looking up. Prefer official sources already wired in `config/source-capabilities.json` (Eurostat, Istat and national statistics, census, BLS, ECB, FRED, World Bank, company registers). Each figure carries source, date and retrieval date; one complete sentence per finding so it can be quoted; a stable URL; a visible "last checked" date and a refresh owner. Compiled statistics from other sources are allowed when labelled compiled, not original.
+- **Calculator or checker**: a calculation the customer repeats by hand (income against a visa bar, eligibility for a tax regime, a cost comparison between two places). Inputs the customer actually has, a result with its rule and source, and the cases the tool cannot decide said plainly. Test normal and odd inputs; give it a permanent page.
+- **Checklist or order of operations**: the steps in the order that avoids rework, with the document, authority and typical duration per step, and the failure that step prevents.
+- **Comparison table**: the few alternatives the customer actually weighs, on the criteria they use, with the trade-off stated rather than a winner declared.
+
+### Rules
+
+- Evidence first: a statistic without a dated primary source is a draft, not a page. Unknown stays "not checked", never zero.
+- One asset per journey question; say why that question and what evidence (search journey, customer voice, competitor content inventory) shows people ask it.
+- State the maintenance cost: who refreshes which number, when, and what the page says when it is stale.
+- Promotion (earned-media-builder) is a separate task; building the asset does not authorize outreach or publication.
+- Record proposed assets as public-resource briefs (marketing-strategy-builder keyword research) so the website build consumes a reviewed brief, not a chat idea.
 
 ## Sources, attribution and licenses
 

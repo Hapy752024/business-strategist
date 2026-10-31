@@ -6,7 +6,7 @@ Follow-up 2026-10-18: a broader review found five local compatibility/lifecycle 
 
 ## Entry points
 
-- Usage and exact supported layouts: `references/marketing-campaign-operations.md`.
+- Usage and exact supported layouts: `references/marketing-execution.md`.
 - Campaign setup/task decisions: `python3 scripts/marketing/campaign.py --help`.
 - Prepare/finalize: `python3 scripts/marketing/review_cycle.py --help`.
 - Secret-free configuration status: `python3 scripts/marketing/connections.py --project <slug>`.

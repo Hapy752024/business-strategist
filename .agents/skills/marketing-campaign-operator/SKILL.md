@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Use the checked setup, import, review or connections mode.
 For a first campaign, follow `references/first-campaign-runbook.md`; external writes need a signed founder approval (repo-root `references/marketing-execution.md`).
-Read repo-root `references/marketing-campaign-operations.md` before executing it; this is a shared repository dependency.
+Read repo-root `references/marketing-execution.md` before executing it; this is a shared repository dependency.
 
 1.
 Resolve the explicit project and campaign.

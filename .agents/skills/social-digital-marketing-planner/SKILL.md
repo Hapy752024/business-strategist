@@ -25,7 +25,6 @@ For paid plans and journey-based growth interventions, read repo-root `reference
 Also read when the stage needs it:
 - repo-root `references/ai-answer-recordings.md` (recorded AI-answer visibility)
 - repo-root `references/comparative-creative-analysis.md` (comparing competitor creative)
-- repo-root `references/marketing-campaign-operations.md` (recurring campaign reporting)
-- repo-root `references/owner-actions.md` (owner-only actions)
+- repo-root `references/marketing-execution.md` (recurring campaign reporting and owner-only actions)
 - `../marketing-strategy-builder/references/product-marketing-context.md` (shared context, read first if filled)
-- repo-root `references/search-visibility-decisions.md` (search and AI visibility choices)
+- repo-root `references/seo-rule-pack.md` (search and AI visibility choices)

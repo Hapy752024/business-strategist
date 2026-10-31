@@ -1435,7 +1435,7 @@
       "side_effect": "local_files_only",
       "cost": "low",
       "required_references": [
-        "references/marketing-campaign-operations.md"
+        "references/marketing-execution.md"
       ],
       "modes": {
         "setup": {
@@ -1449,7 +1449,7 @@
           ],
           "side_effect": "local_files_only",
           "required_references": [
-            "references/marketing-campaign-operations.md"
+            "references/marketing-execution.md"
           ]
         },
         "import": {
@@ -1463,7 +1463,7 @@
           ],
           "side_effect": "local_files_only",
           "required_references": [
-            "references/marketing-campaign-operations.md"
+            "references/marketing-execution.md"
           ]
         },
         "review": {
@@ -1477,7 +1477,7 @@
           ],
           "side_effect": "local_files_only",
           "required_references": [
-            "references/marketing-campaign-operations.md"
+            "references/marketing-execution.md"
           ]
         },
         "connections": {
@@ -1491,7 +1491,7 @@
           ],
           "side_effect": "local_files_only",
           "required_references": [
-            "references/marketing-campaign-operations.md"
+            "references/marketing-execution.md"
           ]
         }
       }

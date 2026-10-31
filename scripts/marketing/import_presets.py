@@ -19,7 +19,7 @@ PRIVATE=re.compile(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|\b(?:Bearer\s+\S+|sk-[A-Za-z
 def preset(name):
     identifier(name)
     path=ROOT/'config/marketing/export-presets'/ (name+'.json')
-    if not path.is_file(): raise ValueError('unknown export preset; see references/marketing-campaign-operations.md')
+    if not path.is_file(): raise ValueError('unknown export preset; see references/marketing-execution.md')
     return read_json(path)
 
 

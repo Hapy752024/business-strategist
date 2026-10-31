@@ -1,6 +1,6 @@
 # Campaign review handoff
 
-Apply when a selected campaign supplies a reviewed website brief or report. Resolve the registered Marketing root and read the campaign configuration, context, claims registry, website brief and latest reviewed report. Recheck their hashes/applicability; a private data-only preview is not an approved strategy decision. See repo-root `references/marketing-campaign-operations.md` for the local artifact contract.
+Apply when a selected campaign supplies a reviewed website brief or report. Resolve the registered Marketing root and read the campaign configuration, context, claims registry, website brief and latest reviewed report. Recheck their hashes/applicability; a private data-only preview is not an approved strategy decision. See repo-root `references/marketing-execution.md` for the local artifact contract.
 
 Before page work, connect the audience and buying trigger to intent, offer, evidence, destination, CTA and confirmed customer outcome. State the visitor decision the page helps make. Use original useful material and preserve calculators, comparisons and other interactive value. Avoid producing keyword variants without distinct intent.
 

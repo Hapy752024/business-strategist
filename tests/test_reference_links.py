@@ -56,21 +56,25 @@ def test_skill_reference_paths_are_unambiguous():
 
 
 DELETED_REFERENCES = (
-    'voc-research-method.md',
-    'research-query-calibration.md',
-    'pain-query-calibration.md',
-    'commands.md',
-    'case-business-plan.md',
+    'references/voc-research-method.md',
+    'references/research-query-calibration.md',
+    'references/pain-query-calibration.md',
+    'references/commands.md',
+    'references/case-business-plan.md',
     'business-strategist/references/routing.md',
     'business-strategist/references/workflow.md',
+    'references/search-visibility-decisions.md',
+    'references/linkable-assets.md',
+    'references/marketing-campaign-operations.md',
+    'references/owner-actions.md',
 )
 
 
 def test_no_pointer_to_deleted_reference():
-    roots = [ROOT / '.agents', ROOT / 'references', ROOT / 'config', ROOT / 'scripts', ROOT / 'AGENTS.md', ROOT / 'CLAUDE.md']
+    roots = [ROOT / '.agents', ROOT / 'references', ROOT / 'config', ROOT / 'scripts', ROOT / 'AGENTS.md', ROOT / 'CLAUDE.md', ROOT / '.claude']
     offenders = []
     for base in roots:
-        files = [base] if base.is_file() else [p for p in base.rglob('*') if p.is_file() and '__pycache__' not in p.parts]
+        files = [base] if base.is_file() else [p for p in base.rglob('*') if p.is_file() and '__pycache__' not in p.parts and 'worktrees' not in p.relative_to(ROOT).parts[:2]]
         for path in files:
             try:
                 text = path.read_text(encoding='utf-8')

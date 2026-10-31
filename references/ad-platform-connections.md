@@ -1,6 +1,6 @@
 # Meta, Google and TikTok campaign operations
 
-This is the onboarding and operating contract for selected campaigns, not an installed live connector. Read with `marketing-campaign-operations.md` and `journey-activation-and-measurement.md`. Recheck the primary sources below at onboarding: permissions, supported objectives, API versions and product access can change.
+This is the onboarding and operating contract for selected campaigns, not an installed live connector. Read with `marketing-execution.md` and `journey-activation-and-measurement.md`. Recheck the primary sources below at onboarding: permissions, supported objectives, API versions and product access can change.
 
 ## Asset and access inventory
 

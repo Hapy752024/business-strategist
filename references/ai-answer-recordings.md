@@ -33,4 +33,4 @@ The example is synthetic and cannot establish real visibility. Replace the outpu
 
 Coverage is per declared prompt/target/repetition. Off-panel rows are diagnostics only. Trends require complete successful coverage, identical semantic panel content/context and strictly later nonoverlapping windows. Changed question text under reused version labels is incompatible. Rates are descriptive; repetition indices do not create paired subjects or prove causal/significant improvement.
 
-Read the source answers, then consume the report through `references/search-visibility-decisions.md`. Missing collection, identity or account evidence is unknown, never absence. No scheduler, publication or outreach is started by this procedure.
+Read the source answers, then consume the report through `references/seo-rule-pack.md`. Missing collection, identity or account evidence is unknown, never absence. No scheduler, publication or outreach is started by this procedure.
