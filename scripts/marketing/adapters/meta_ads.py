@@ -6,6 +6,9 @@ this adapter only ever sends PAUSED). ``spend_cap`` is in currency subunits. Wit
 explicit ``is_adset_budget_sharing_enabled`` (the documented example sends ``0``); the adapter defaults it to ``False``.
 Graph API v26.0 is the latest version (introduced 2026-07-29, checked 2026-10-31 on the Graph API changelog).
 Reporting goes through the read-only ``meta-ads`` MCP; this adapter is the only campaign write path.
+Meta documents a minimum ``spend_cap`` of about 100 USD or the local equivalent (campaign reference above); the adapter
+cannot see the ad account's currency, so a cap below 10000 subunits produces a dry-run note instead of a refusal.
+Sending ``is_adset_budget_sharing_enabled`` together with a campaign-level budget is unverified and refused.
 """
 from __future__ import annotations
 
@@ -14,6 +17,7 @@ from . import first_id, require_secret
 REQUIRES_ENV = ("META_ACCESS_TOKEN",)
 GRAPH = "https://graph.facebook.com"
 VERSION = "v26.0"
+MIN_SPEND_CAP_HINT = 10000  # 100.00 in a two-decimal currency; Meta: "minimum value of $100 USD (or approximate local equivalent)"
 ALLOWED = {"ad_account_id", "name", "objective", "special_ad_categories", "spend_cap", "daily_budget",
            "lifetime_budget", "status", "buying_type", "bid_strategy", "is_adset_budget_sharing_enabled"}
 
@@ -31,6 +35,9 @@ def validate(request: dict, approval: dict, now=None) -> list[str]:
     sharing = request.get("is_adset_budget_sharing_enabled", False)
     if not isinstance(sharing, bool):
         errors.append("meta is_adset_budget_sharing_enabled must be true or false")
+    if "is_adset_budget_sharing_enabled" in request and ("daily_budget" in request or "lifetime_budget" in request):
+        errors.append("meta is_adset_budget_sharing_enabled with a campaign-level daily_budget/lifetime_budget is unverified; "
+                      "send one or the other")
     if request.get("status", "PAUSED") != "PAUSED":
         errors.append("meta campaigns are only ever created PAUSED; activation is a manual founder step")
     unknown = set(request) - ALLOWED
@@ -53,8 +60,19 @@ def _url(request: dict) -> str:
     return f"{GRAPH}/{VERSION}/act_{account}/campaigns"
 
 
+def notes(request: dict) -> list[str]:
+    cap = request.get("spend_cap")
+    if isinstance(cap, int) and not isinstance(cap, bool) and cap < MIN_SPEND_CAP_HINT:
+        return [f"spend_cap {cap} subunits may be below Meta's documented minimum (about 100 USD or local equivalent); "
+                "Meta rejects a lower cap. Check the ad account currency before approving."]
+    return []
+
+
 def describe(request: dict, approval: dict) -> list[dict]:
-    return [{"method": "POST", "url": _url(request), "body": _body(request)}]
+    call = {"method": "POST", "url": _url(request), "body": _body(request)}
+    if notes(request):
+        call["notes"] = notes(request)
+    return [call]
 
 
 def run(request: dict, approval: dict, *, http, secret) -> dict:

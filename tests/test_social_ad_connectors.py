@@ -125,3 +125,25 @@ def test_postiz_adapter_targets_backend_public_api():
     [call] = postiz.describe({'date': '2026-11-05T10:00:00Z', 'posts': []}, {})
     assert call['url'] == '{POSTIZ_BASE_URL}/public/v1/posts'
     assert 'backend' in (postiz.__doc__ or '') and '/api/public/v1' in (postiz.__doc__ or '')
+
+
+def test_env_coverage_extractor_sees_defaulted_variables():
+    import subprocess
+    script = (ROOT / 'scripts/validate_setup.sh').read_text()
+    func = re.search(r'^mcp_env_vars\(\) \{\n.*?\n\}\n', script, re.M | re.S).group(0)
+    sample = '{"url": "${POSTIZ_BASE_URL:-http://localhost:4007/api}/mcp", "h": "Bearer ${POSTIZ_API_KEY:-}", "e": "${APIFY_TOKEN}"}'
+    out = subprocess.run(['bash', '-c', func + 'mcp_env_vars'], input=sample, capture_output=True, text=True, check=True)
+    assert out.stdout.split() == ['APIFY_TOKEN', 'POSTIZ_API_KEY', 'POSTIZ_BASE_URL']
+    assert 'mcp_env_vars < .mcp.json' in script
+
+
+def test_meta_spend_cap_minimum_note_and_budget_sharing_conflict():
+    request = {'ad_account_id': '1234', 'name': 'Pilot', 'objective': 'OUTCOME_TRAFFIC', 'spend_cap': 5000}
+    [call] = meta_ads.describe(request, {})
+    assert call['notes'] and '100 USD' in call['notes'][0]
+    assert 'notes' not in meta_ads.describe(dict(request, spend_cap=10000), {})[0]
+    from scripts.marketing.execute import describe_plainly
+    text = describe_plainly({'id': 'a', 'action_kind': 'create_campaign', 'provider_request': request})
+    assert 'Note: spend_cap 5000' in text
+    conflict = dict(request, spend_cap=10000, daily_budget=2000, is_adset_budget_sharing_enabled=False)
+    assert any('unverified' in e for e in meta_ads.validate(conflict, {}))

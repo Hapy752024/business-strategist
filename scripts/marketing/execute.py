@@ -381,6 +381,7 @@ def describe_plainly(action: dict) -> str:
     if kind == "create_campaign":
         lines.append(f"Creates Meta campaign '{request.get('name')}' in ad account {request.get('ad_account_id')} with status "
                      f"PAUSED (never active) and spend cap {request.get('spend_cap')} (currency subunits).")
+        lines.extend(f"Note: {note}" for note in meta_ads.notes(request))
     elif kind == "schedule_post":
         channels = [(p.get("integration") or {}).get("id") for p in request.get("posts", []) if isinstance(p, dict)]
         lines.append(f"Schedules a Postiz post for {request.get('date')} on channels {channels}.")

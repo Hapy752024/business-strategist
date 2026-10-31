@@ -45,11 +45,16 @@ echo ""
 echo "--- .env.example ---"
 check ".env.example exists" test -f .env.example
 
-# Extract ${VAR} references from .mcp.json and check .env.example covers them
+# Extract ${VAR} and ${VAR:-default} names from .mcp.json and check .env.example covers them
+mcp_env_vars() {
+    grep -oP '\$\{\K[A-Z_][A-Z0-9_]*(?=(:-[^}]*)?\})' | sort -u || true
+}
+check "env-var extractor sees the \${NAME:-default} form" \
+    test "$(printf '%s' 'a ${SELF_CHECK_VAR:-} b ${OTHER_VAR:-x/y} ${PLAIN_VAR}' | mcp_env_vars | tr '\n' ' ')" = "OTHER_VAR PLAIN_VAR SELF_CHECK_VAR "
 if [ -f .mcp.json ]; then
     while IFS= read -r var; do
         check ".env.example covers $var" grep -qF "${var}" .env.example
-    done < <(grep -oP '\$\{[A-Z_]+\}' .mcp.json | sed 's/[${}]//g' | sort -u)
+    done < <(mcp_env_vars < .mcp.json)
 fi
 
 # ── Git functional ─────────────────────────────────────────
