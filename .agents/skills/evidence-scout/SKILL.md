@@ -80,7 +80,7 @@ The study does not authorize ads or content publication.
 **Concurrent approaches.**
 Research approaches may run concurrently when they examine different source frames or competing explanations.
 The coordinator owns the shared scope and final synthesis; workers use isolated work packets, retain provenance and counterevidence, deduplicate shared sources/incidents, and do not count agreement as independent evidence.
-Customer-voice requirements and the Business pain-first gate still apply.
+Customer-voice requirements still apply.
 
 **Research data and precedents.**
 For substantive Business research, read repo-root `references/research-data-and-precedents.md`:
@@ -154,7 +154,7 @@ For chosen-idea or strategic continuation work, apply repo-root `references/rese
 For customer-journey analysis, read repo-root `references/journey-activation-and-measurement.md`, section 1 (shared repository dependency).
 Record sourced touchpoints and candidate ad/tool/partner hooks with access, next action and measurement;
 keep intervention hypotheses separate from observed pain.
-Research does not select a campaign or bypass the pain-first gate.
+Research does not select a campaign.
 
 Also read when the stage needs it:
 - repo-root `references/institutional-and-university-sources.md`

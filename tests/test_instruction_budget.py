@@ -54,27 +54,48 @@ def test_pain_first_gate_sentence_shared_across_its_three_homes():
         assert phrase in _normalized(path.read_text(encoding="utf-8")), path.relative_to(ROOT)
 
 
+ROUTING = "references/runtime-routing.md"
+# Distinct skill-specific carve-outs: (skill, distinguishing substring of the line).
+PAIN_GATE_CARVE_OUTS = [
+    ("idea-grill", "Recruitment planning is allowed before the pain gate"),
+    ("idea-grill", "Pain-first back-track"),
+    ("startup-business-builder", "no selection or passed pain gate"),
+    ("startup-business-builder", "waive the pain-first gate"),
+    ("market-problem-discovery", "It runs before the pain gate"),
+    ("opportunity-risk-designer", "A passed pain gate or selection is not required"),
+    ("evidence-scout", "None waits for review, synthesis, a claim ledger, the pain-first gate"),
+]
+
+
+def _prose_files(*dirs):
+    for d in dirs:
+        yield from (p for p in (ROOT / d).rglob("*") if p.is_file() and p.suffix in {".md", ".py"})
+
+
 def test_rule_prose_lives_in_one_place():
     """Generic rule prose has one home; scripts enforce the rest."""
-    pain_homes = {
-        "AGENTS.md",
-        ".claude/rules/business-gate.md",
-        ".agents/skills/business-strategist/SKILL.md",
-    }
-    pain, boilerplate, criteria = set(), set(), []
-    for path in list(ROOT.glob("*.md")) + [
-        p for d in ("references", "templates", ".agents", ".claude/rules", "scripts")
-        for p in (ROOT / d).rglob("*") if p.is_file() and p.suffix in {".md", ".py"}
-    ]:
+    boilerplate, promote, criteria, strays = set(), set(), [], []
+    files = list(ROOT.glob("*.md")) + list(_prose_files("references", "templates", ".agents", ".claude/rules", "scripts"))
+    for path in files:
         text = path.read_text(encoding="utf-8")
         rel = str(path.relative_to(ROOT))
         flat = _normalized(text)
-        if "until problem_validation passes" in flat:
-            pain.add(rel)
         if "load only the additional references" in flat:
             boilerplate.add(rel)
-        if path.name == "SKILL.md" and re.search(r"triggers on[^\n]*\d\s*%", text, re.I):
+        if "never promote unapproved" in flat:
+            promote.add(rel)
+        if path.name != "SKILL.md":
+            continue
+        if re.search(r"triggers on[^\n]*\d\s*%", text, re.I):
             criteria.append(rel)
-    assert pain <= pain_homes, sorted(pain - pain_homes)
-    assert len(boilerplate) <= 1, sorted(boilerplate)
+        skill = path.parent.name
+        if skill == "business-strategist":
+            continue
+        for line in text.splitlines():
+            if re.search(r"pain-first|pain gate|problem_validation", line, re.I):
+                if not any(skill == s and sub in line for s, sub in PAIN_GATE_CARVE_OUTS):
+                    strays.append(f"{skill}: {line.strip()[:80]}")
+    assert boilerplate == {ROUTING}, sorted(boilerplate)
+    assert promote == {ROUTING}, sorted(promote)
     assert not criteria, criteria
+    assert not strays, strays
