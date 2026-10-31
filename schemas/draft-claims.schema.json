@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "draft-claims.schema.json",
+  "title": "Draft claims for a claim challenge (no reviewed ledger)",
+  "description": "Claims the agent extracted from its own draft business case or case insights when no reviewed claim-ledger.json exists. Falsification on this basis is labelled basis: draft; it never upgrades a claim and never makes a claim ledger-bound.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["claim_id", "text", "section", "sources"],
+    "properties": {
+      "claim_id": {"type": "string", "minLength": 1, "maxLength": 80},
+      "text": {"type": "string", "minLength": 1, "maxLength": 1200},
+      "section": {"type": "string", "minLength": 1, "maxLength": 200},
+      "sources": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 2048}},
+      "confidence": {"enum": ["unresolved", "low", "medium", "high"]},
+      "decision_affected": {"type": "string", "maxLength": 300}
+    }
+  }
+}

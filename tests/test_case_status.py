@@ -106,3 +106,10 @@ def test_router_status_subcommand_and_positional_request_still_work(tmp_path):
     done = subprocess.run([sys.executable, str(ROOT / 'scripts/route_workflow.py'), 'find customer problems',
                            '--intent', 'market-discovery'], capture_output=True, text=True)
     assert done.returncode == 0 and json.loads(done.stdout)['skill'] == 'market-problem-discovery'
+
+
+def test_status_falsification_runnable_without_ledger_reports_optional_missing(tmp_path):
+    rows = by_route(st.case_status(project(tmp_path), 'a'))
+    for route in ('claim-falsification', 'case-appraisal'):
+        assert rows[route]['state'] == 'runnable', rows[route]
+        assert 'claim-ledger' in rows[route]['optional_missing']

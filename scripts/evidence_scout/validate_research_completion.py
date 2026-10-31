@@ -1195,6 +1195,26 @@ def validate_assignment(workspace: Path, run_dir: Path) -> dict:
         return _result("assignment", "invalid", missing=[str(exc)])
 
 
+CLAIM_CHALLENGE_REPORTS = (("falsification-report.json", "reviewed_ledger"),
+                           ("draft-falsification-report.json", "draft"))
+
+
+def claim_challenge(*dirs: Path) -> dict | None:
+    """The newest falsification report (reviewed-ledger or draft basis) under the given directories."""
+    found = []
+    for base in dirs:
+        for name, default_basis in CLAIM_CHALLENGE_REPORTS:
+            for path in Path(base).rglob(name) if Path(base).is_dir() else ():
+                try:
+                    data = json.loads(path.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError):
+                    continue
+                if isinstance(data, dict):
+                    found.append((path.stat().st_mtime, {"basis": data.get("basis") or default_basis,
+                                                         "path": str(path), "counts": data.get("counts", {})}))
+    return max(found, key=lambda item: item[0])[1] if found else None
+
+
 def validate_delivery(workspace: Path, run_dir: Path) -> dict:
     workspace = Path(workspace).resolve()
     run_dir = Path(run_dir).resolve()
@@ -1263,6 +1283,13 @@ def validate_delivery(workspace: Path, run_dir: Path) -> dict:
                            actions=["Review and incorporate this run in case_insights.md"], inputs=research["inputs"])
     except (OSError, ValueError, KeyError) as exc:
         return _result("delivery", "invalid", missing=[str(exc)], inputs=research["inputs"])
+    # Hard rule: no final recommendation without a claim challenge (falsification of either basis).
+    challenge = claim_challenge(root / "cases" / case_id, run_dir)
+    if challenge is None:
+        return _result("delivery", "partial", missing=["no claim challenge: final delivery needs a falsification "
+                                                       "output (reviewed ledger or draft basis)"],
+                       actions=["Run claim-falsification on the reviewed claim ledger, or with --draft-claims "
+                                "when no ledger exists (references/falsify.md)"], inputs=research["inputs"])
     if case_manifest(root, case_id).get('case_plan_contract_version') == 1:
         try:
             from scripts.case_business_plan import current as current_case_plan
@@ -1272,7 +1299,7 @@ def validate_delivery(workspace: Path, run_dir: Path) -> dict:
                            actions=['Publish and independently review the current per-case business plan'], inputs=research['inputs'])
     return _result("delivery", "complete", gaps=research["open_gaps"], inputs=research["inputs"],
                    execution_status=research["execution_status"], coverage_status=research["coverage_status"],
-                   claim_status=research["claim_status"])
+                   claim_status=research["claim_status"], claim_challenge=challenge)
 
 
 def main() -> int:

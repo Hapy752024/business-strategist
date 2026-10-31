@@ -10,6 +10,11 @@ weakened  -> confidence downgraded one level (high > medium > low > unresolved)
 survived  -> unchanged; means only "no disconfirming evidence found within N searches"
 inconclusive -> unchanged
 No verdict can raise confidence.
+
+Draft basis (no reviewed ledger): `--draft-claims <json>` applies the same rules to claims the agent
+extracted from its draft business case or insights. Outputs are `draft-claims.falsified.json` and
+`draft-falsification-report.json/.md`, all labelled `basis: "draft"`; they never collide with the
+reviewed-ledger outputs that publication_claims.py enforces, and they never make a claim ledger-bound.
 """
 
 from __future__ import annotations
@@ -26,9 +31,9 @@ from typing import Any
 import jsonschema
 
 try:
-    from scripts.evidence_scout.export_claims_for_falsification import is_material, load_ledger
+    from scripts.evidence_scout.export_claims_for_falsification import is_material, load_draft_claims, load_ledger
 except ModuleNotFoundError:  # direct script execution
-    from export_claims_for_falsification import is_material, load_ledger
+    from export_claims_for_falsification import is_material, load_draft_claims, load_ledger
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = ROOT / "schemas/falsification-verdicts.schema.json"
@@ -37,6 +42,9 @@ SURVIVED_PHRASE = re.compile(r"no disconfirming evidence found within (\d+) sear
 CONFIRMATION_WORDS = re.compile(r"\b(confirm|verif|validat)", re.I)
 LEDGER_NAME = "claim-ledger.falsified.json"
 REPORT_NAME = "falsification-report"
+DRAFT_LEDGER_NAME = "draft-claims.falsified.json"
+DRAFT_REPORT_NAME = "draft-falsification-report"
+DRAFT_BASIS_LINE = "Basis: draft claims, not ledger-bound."
 
 
 class FalsificationInputError(ValueError):
@@ -55,7 +63,8 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def validate_verdicts(data: Any, ledger: dict[str, dict[str, Any]], exported: set[str]) -> list[str]:
+def validate_verdicts(data: Any, ledger: dict[str, dict[str, Any]], exported: set[str], *,
+                      source_name: str = "the reviewed ledger", draft: bool = False) -> list[str]:
     """Return all problems with an untrusted verdict file; empty means accepted."""
     validator = jsonschema.Draft202012Validator(json.loads(SCHEMA.read_text(encoding="utf-8")))
     errors = []
@@ -74,13 +83,15 @@ def validate_verdicts(data: Any, ledger: dict[str, dict[str, Any]], exported: se
             errors.append(f"duplicate verdict for claim id {cid}")
         seen.add(cid)
         if cid not in ledger:
-            errors.append(f"unknown claim id {cid}: not in the reviewed ledger")
+            errors.append(f"unknown claim id {cid}: not in {source_name}")
             continue
         if cid not in exported:
             errors.append(f"claim id {cid} was not in the exported claims set given to the falsifier")
         current = ledger[cid].get("confidence")
         proposed = item.get("proposed_confidence")
-        if proposed is not None and _rank(proposed) > _rank(current):
+        # A draft claim without a confidence has nothing to upgrade; the proposal is ignored, never applied.
+        unset = draft and "confidence" not in ledger[cid]
+        if proposed is not None and not unset and _rank(proposed) > _rank(current):
             errors.append(f"{cid}: verdict tries to upgrade confidence {current} -> {proposed}; falsification never upgrades")
         if item["verdict"] == "survived":
             match = SURVIVED_PHRASE.search(item["rationale"])
@@ -100,6 +111,8 @@ def _note(rationale: str, text: str) -> str:
 def render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# Claim falsification report", "",
+        *([DRAFT_BASIS_LINE + " Outputs never upgrade a claim or replace a reviewed ledger.", ""]
+          if report.get("basis") == "draft" else []),
         f"Checked at {report['checked_at']}; budget {report['search_budget_per_claim']} searches per claim.",
         "`survived` means no disconfirming evidence was found within the search budget. It does not confirm a claim or raise its confidence.", "",
         "| Claim | Verdict | Action | Confidence | Evidence |", "|---|---|---|---|---|",
@@ -130,15 +143,32 @@ def exported_ids(claims_export: Path | None, rows: list[dict[str, Any]]) -> set[
 
 def apply(ledger: Path, verdicts: Path, out_dir: Path | None = None, checked_at: str | None = None,
           claims_export: Path | None = None) -> dict[str, Any]:
-    ledger, verdicts = Path(ledger), Path(verdicts)
+    ledger = Path(ledger)
     rows = load_ledger(ledger)
+    return _apply(rows, ledger, Path(verdicts), out_dir, checked_at, exported_ids(claims_export, rows),
+                  basis="reviewed_ledger", names=(LEDGER_NAME, REPORT_NAME), source_name="the reviewed ledger")
+
+
+def apply_draft(draft: Path, verdicts: Path, out_dir: Path | None = None, checked_at: str | None = None,
+                claims_export: Path | None = None) -> dict[str, Any]:
+    """Fallback without a reviewed ledger: same rules on draft claims, outputs labelled basis: draft."""
+    draft = Path(draft)
+    rows = [{"claim_id": r["claim_id"], "claim": r["text"], **{k: v for k, v in r.items() if k not in {"claim_id", "text"}}}
+            for r in load_draft_claims(draft)]
+    exported = ({str(r["claim_id"]) for r in rows} if claims_export is None
+                else exported_ids(claims_export, rows))
+    return _apply(rows, draft, Path(verdicts), out_dir, checked_at, exported, basis="draft",
+                  names=(DRAFT_LEDGER_NAME, DRAFT_REPORT_NAME), source_name="the draft claims")
+
+
+def _apply(rows: list[dict[str, Any]], ledger: Path, verdicts: Path, out_dir: Path | None, checked_at: str | None,
+           exported: set[str], *, basis: str, names: tuple[str, str], source_name: str) -> dict[str, Any]:
     by_id = {str(row["claim_id"]): row for row in rows}
-    exported = exported_ids(claims_export, rows)
     try:
         data = json.loads(verdicts.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         raise FalsificationInputError(f"verdict file is not valid JSON: {exc}") from exc
-    errors = validate_verdicts(data, by_id, exported)
+    errors = validate_verdicts(data, by_id, exported, source_name=source_name, draft=basis == "draft")
     if errors:
         raise FalsificationInputError("rejected verdicts:\n- " + "\n- ".join(errors))
 
@@ -162,10 +192,14 @@ def apply(ledger: Path, verdicts: Path, out_dir: Path | None = None, checked_at:
             quarantined.append({"claim": row, "reason": f"falsified by adversarial search on {checked_at}: {item['rationale']}",
                                 "evidence": item["evidence"]})
         elif kind == "weakened":
-            after = downgrade(before)
-            action = f"downgraded {before} -> {after}"
-            row["confidence"] = after
-            row["confidence_rationale"] = _note(row.get("confidence_rationale", ""), f"weakened on {checked_at}; downgraded {before} -> {after}.")
+            if before is None and basis == "draft":
+                after, action = None, "weakened (draft claim has no confidence to downgrade; qualify it in the text)"
+                row["falsification_status"] = "weakened"
+            else:
+                after = downgrade(before)
+                action = f"downgraded {before} -> {after}"
+                row["confidence"] = after
+                row["confidence_rationale"] = _note(row.get("confidence_rationale", ""), f"weakened on {checked_at}; downgraded {before} -> {after}.")
             publishable.append(row)
         else:
             after = before
@@ -180,17 +214,18 @@ def apply(ledger: Path, verdicts: Path, out_dir: Path | None = None, checked_at:
 
     out_dir = Path(out_dir) if out_dir else ledger.parent
     out_dir.mkdir(parents=True, exist_ok=True)
+    ledger_name, report_name = names
     counts = {k: sum(1 for e in entries if e["verdict"] == k) for k in ("falsified", "weakened", "survived", "inconclusive")}
-    provenance = {"source_ledger": str(ledger), "source_ledger_sha256": _sha256(ledger),
+    provenance = {"basis": basis, "source_ledger": str(ledger), "source_ledger_sha256": _sha256(ledger),
                   "verdicts_sha256": _sha256(verdicts), "checked_at": checked_at}
-    outputs = {"ledger": str(out_dir / LEDGER_NAME), "report_json": str(out_dir / f"{REPORT_NAME}.json"),
-               "report_md": str(out_dir / f"{REPORT_NAME}.md")}
+    outputs = {"ledger": str(out_dir / ledger_name), "report_json": str(out_dir / f"{report_name}.json"),
+               "report_md": str(out_dir / f"{report_name}.md")}
     report = {"schema_version": 1, **provenance, "search_budget_per_claim": budget, "counts": counts,
               "claims": entries, "not_checked": sorted(exported - verdict_by_id.keys()),
               "warnings": warnings, "outputs": outputs}
     falsified_ledger = {"schema_version": 1, **provenance, "claims": publishable, "quarantined": quarantined}
     if Path(outputs["ledger"]).resolve() == ledger.resolve():
-        raise FalsificationInputError("refusing to overwrite the reviewed ledger")
+        raise FalsificationInputError("refusing to overwrite the source claims")
     Path(outputs["ledger"]).write_text(json.dumps(falsified_ledger, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     Path(outputs["report_json"]).write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     Path(outputs["report_md"]).write_text(render_markdown(report), encoding="utf-8")
@@ -199,16 +234,19 @@ def apply(ledger: Path, verdicts: Path, out_dir: Path | None = None, checked_at:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--ledger", type=Path, required=True, help="Reviewed claim-ledger.json (read only)")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--ledger", type=Path, help="Reviewed claim-ledger.json (read only; preferred when it exists)")
+    source.add_argument("--draft-claims", type=Path, help="Fallback without a ledger: draft claims JSON; outputs basis: draft")
     parser.add_argument("--verdicts", type=Path, required=True, help="claim-falsifier JSON output (untrusted)")
     parser.add_argument("--claims", type=Path, help="The falsification-claims.json export given to the agent (default: recompute material claims)")
     parser.add_argument("--out-dir", type=Path, help="Defaults to the ledger's directory")
     args = parser.parse_args()
     try:
-        report = apply(args.ledger, args.verdicts, args.out_dir, claims_export=args.claims)
+        run = apply_draft if args.draft_claims else apply
+        report = run(args.draft_claims or args.ledger, args.verdicts, args.out_dir, claims_export=args.claims)
     except (OSError, ValueError) as exc:
         parser.error(str(exc))
-    print(json.dumps({"counts": report["counts"], "not_checked": len(report["not_checked"]), "outputs": report["outputs"]}, indent=2))
+    print(json.dumps({"basis": report["basis"], "counts": report["counts"], "not_checked": len(report["not_checked"]), "outputs": report["outputs"]}, indent=2))
     return 0
 
 

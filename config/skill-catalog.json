@@ -431,7 +431,8 @@
                 "cases/{case}/market_research/**/customer-feedback/claim-ledger.json",
                 "market_research/**/customer-feedback/claim-ledger.json"
               ],
-              "freshness": "digest"
+              "freshness": "digest",
+              "optional": true
             }
           ],
           "produces": [
@@ -516,7 +517,7 @@
         },
         "falsification": {
           "prerequisites": [
-            "reviewed claim ledger after synthesis"
+            "reviewed claim ledger when it exists; otherwise draft claims extracted from the draft case (basis: draft)"
           ],
           "strategy_stage_prerequisites": [],
           "required_references": [
@@ -525,10 +526,11 @@
           "artifacts": [
             "claim-ledger.falsified.json",
             "falsification-report.json",
-            "falsification-report.md"
+            "falsification-report.md",
+            "draft basis: draft-claims.falsified.json, draft-falsification-report.json/.md"
           ],
           "inputs": [
-            "reviewed claim-ledger.json",
+            "reviewed claim-ledger.json, or draft-claims.json (schemas/draft-claims.schema.json)",
             "claims-only export",
             "claim-falsifier verdicts"
           ],
@@ -541,7 +543,8 @@
                 "cases/{case}/market_research/**/customer-feedback/claim-ledger.json",
                 "market_research/**/customer-feedback/claim-ledger.json"
               ],
-              "freshness": "digest"
+              "freshness": "digest",
+              "optional": true
             }
           ],
           "produces": [

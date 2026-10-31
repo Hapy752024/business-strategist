@@ -45,3 +45,18 @@ def test_repository_catalog_contracts_valid():
     assert v.validate_contracts(catalog, ROOT) == []
     assert any(c['artifact'] == 'assumption-register' for c in catalog['idea-grill']['produces'])
     assert any(c['artifact'] == 'experiment-card' for c in catalog['opportunity-risk-designer']['modes']['smoke_test']['produces'])
+
+
+def test_catalog_optional_consume_allowed_and_typed():
+    good = dict(item('ledger'), optional=True)
+    assert v.validate_contracts({'a': {'produces': [item('ledger')]}, 'b': {'consumes': [good]}}, ROOT) == []
+    errors = v.validate_contracts({'a': {'produces': [item('ledger')]}, 'b': {'consumes': [dict(good, optional='yes')]}}, ROOT)
+    assert errors
+
+
+def test_falsification_and_appraisal_do_not_require_a_reviewed_ledger():
+    """Task 8: dependent steps fall back to draft claims; a missing ledger must not block them."""
+    catalog = json.loads((ROOT / 'config/skill-catalog.json').read_text())['skills']['opportunity-risk-designer']['modes']
+    for mode in ('falsification', 'appraisal'):
+        ledger = [c for c in catalog[mode]['consumes'] if c['artifact'] == 'claim-ledger']
+        assert ledger and all(c.get('optional') is True for c in ledger), mode

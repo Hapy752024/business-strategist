@@ -152,3 +152,53 @@ class SchemaDeclaresCounterEvidence(unittest.TestCase):
         self.assertTrue(list(validator.iter_errors(doc)))
         doc["customer_needs"][0]["counter_evidence_resolution"] = "counter author is outside the segment"
         self.assertEqual(list(validator.iter_errors(doc)), [])
+
+
+class UnreviewedFallback(unittest.TestCase):
+    """Without source review (and optionally synthesis) the table is built from raw records, labelled unreviewed."""
+
+    def _recs(self):
+        return [dict(rec("a", key="k1"), evidence_type="pain"), dict(rec("b", key="k1"), evidence_type="pain"),
+                dict(rec("c", source="forum"), evidence_type="pain"), dict(rec("d"), evidence_type="workaround"),
+                dict(rec("e"), evidence_type="irrelevant"),
+                dict(rec("f", frame="entity_led_feedback", source="app_review"), evidence_type="pain")]
+
+    def test_themes_from_raw_records(self):
+        t = vt.build_unreviewed_table(self._recs())
+        self.assertEqual(t["basis"], "unreviewed")
+        rows = {r["id"]: r for r in t["rows"]}
+        self.assertEqual(set(rows), {"T-pain", "T-workaround"})
+        pain = rows["T-pain"]
+        self.assertEqual(pain["basis"], "unreviewed")
+        self.assertEqual(pain["confidence"], "unreviewed")
+        self.assertEqual(pain["frames"]["topic_led_voc"]["sources"], 2)  # a+b share k1
+        self.assertEqual(pain["frames"]["entity_led_feedback"]["sources"], 1)
+        self.assertTrue(all(r["basis"] == "unreviewed" for r in t["rows"]))
+
+    def test_synthesis_items_without_review(self):
+        t = vt.build_unreviewed_table(self._recs(), synth(evidence_ids=["a", "b", "c"]))
+        r = row(t)
+        self.assertEqual((r["basis"], r["confidence"]), ("unreviewed", "unreviewed"))
+        self.assertEqual(r["frames"]["topic_led_voc"]["sources"], 2)
+
+    def test_markdown_banner_and_cli_without_review(self):
+        md = vt.render_markdown(vt.build_unreviewed_table(self._recs()))
+        self.assertIn("Unreviewed — counts from collected records, not reviewed quotes", md)
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            (d / "evidence.jsonl").write_text("\n".join(json.dumps(r) for r in self._recs()))
+            self.assertEqual(vt.main(["--evidence", str(d / "evidence.jsonl"), "--out-dir", str(d)]), 0)
+            out = json.loads((d / "voc-table.json").read_text())
+            self.assertEqual(out["basis"], "unreviewed")
+            self.assertIn("Unreviewed", (d / "voc-table.md").read_text())
+
+    def test_reviewed_path_keeps_reviewed_basis(self):
+        t = build([rec("a")], [rev("a")], {"evidence_ids": ["a"]})
+        self.assertEqual(t["basis"], "reviewed")
+        self.assertNotIn("Unreviewed", vt.render_markdown(t))
+
+    def test_unreviewed_rows_never_score_pain(self):
+        from scripts.evidence_scout import build_decision_memo as memo
+        t = vt.build_unreviewed_table(self._recs(), synth(evidence_ids=["a", "c"]))
+        result = memo.build(voc_table=t)
+        self.assertIsNone(result["factors"]["pain"]["score"])

@@ -679,3 +679,54 @@ def test_edited_run_manifest_pass_does_not_override_shared_receipt(tmp_path):
     plan = run / "query_plan.json"
     plan.write_text(plan.read_text() + " ")
     assert "no current shared-stage validation receipt" in resume_from_last_gate(run)["reason"]
+
+
+# ---- hard rule: no final delivery without a claim challenge (falsification of either basis) ----
+
+def _final_ready_case(tmp_path, monkeypatch):
+    """A registered case whose every delivery prerequisite is stubbed complete except the claim challenge."""
+    import sys
+    sys.path.insert(0, str(Path(checks.ROOT) / "scripts"))
+    import case_workspace as top_cases
+    import validate_case_insights as vci
+    root = tmp_path / "biz"
+    cases.initialize(root, "Biz")
+    cases.add_case(root, "a", "A")
+    run = root / "cases/a/market_research/pain_points/runs/r1"
+    run.mkdir(parents=True)
+    ok = lambda check: {"check": check, "status": "complete", "missing_requirements": [], "open_gaps": [],
+                        "next_actions": [], "inputs": {}, "work_items": [], "execution_status": "complete",
+                        "coverage_status": "complete", "claim_status": "reviewed"}
+    monkeypatch.setattr(checks, "validate_assignment", lambda w, r: ok("assignment"))
+    monkeypatch.setattr(checks, "validate_research", lambda w, r: ok("research"))
+    monkeypatch.setattr(vci, "current_status", lambda r, c: {"status": "current", "scope_status": "complete",
+                                                             "contract_version": 2})
+    rel = "cases/a/market_research/pain_points/runs/r1/customer-feedback/"
+    monkeypatch.setattr(top_cases, "insights_bindings", lambda r, m: [
+        {"path": rel + n} for n in ("claim-ledger.json", "source-review.json", "evidence.jsonl",
+                                    "customer-feedback-coverage.json")])
+    return root, run
+
+
+def test_final_delivery_refused_without_claim_challenge(tmp_path, monkeypatch):
+    root, run = _final_ready_case(tmp_path, monkeypatch)
+    result = checks.validate_delivery(root, run)
+    assert result["status"] == "partial"
+    assert any("claim challenge" in m for m in result["missing_requirements"])
+
+
+@pytest.mark.parametrize("name,basis", [("falsification-report.json", "reviewed_ledger"),
+                                        ("draft-falsification-report.json", "draft")])
+def test_final_delivery_accepts_claim_challenge_of_either_basis(tmp_path, monkeypatch, name, basis):
+    root, run = _final_ready_case(tmp_path, monkeypatch)
+    write(run / "customer-feedback" / name, {"schema_version": 1, "basis": basis, "counts": {"survived": 1}})
+    result = checks.validate_delivery(root, run)
+    assert result["status"] == "complete", result
+    assert result["claim_challenge"]["basis"] == basis
+
+
+def test_claim_challenge_lookup_reports_basis(tmp_path):
+    case = tmp_path / "cases/a"
+    assert checks.claim_challenge(case) is None
+    write(case / "market_research/case_insights/draft-falsification-report.json", {"basis": "draft"})
+    assert checks.claim_challenge(case)["basis"] == "draft"

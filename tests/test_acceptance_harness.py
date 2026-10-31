@@ -131,6 +131,18 @@ def test_score_marks_missing_artifact_as_fail(tmp_path):
     assert 'decision_memo' in by_id['cp08']['detail']
 
 
+@pytest.mark.parametrize('artifact,basis', [('cases/c1/draft/draft-falsification-report.json', 'basis: draft'),
+                                            ('cases/c1/cf/claim-ledger.falsified.json', 'basis: reviewed ledger')])
+def test_cp08_accepts_draft_or_reviewed_claim_challenge_and_reports_basis(tmp_path, artifact, basis):
+    out = make_out_dir(tmp_path)
+    art = out / 'artifacts/projects' / ('eval-' + SLUG) / 'business-analysis'
+    _write(art / artifact, '{"basis": "x"}')
+    cp08 = {c['id']: c for c in acc.score(out, CHECKPOINTS)['checkpoints']}['cp08']
+    assert cp08['passed'], cp08['detail']
+    falsification = next(s for s in cp08['sub_checks'] if s['label'] == 'falsification')
+    assert basis in falsification['detail']
+
+
 def test_gate_fails_when_downstream_runs_before_override(tmp_path):
     out = make_out_dir(tmp_path)
     lines = (out / 'transcript.jsonl').read_text().splitlines(keepends=True)

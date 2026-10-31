@@ -239,3 +239,53 @@ def test_cli_rejects_whitespace_only_override_fields(tmp_path):
                               capture_output=True, text=True)
         assert proc.returncode != 0 and "--override-reason" in proc.stderr, (by, reason, proc.stderr)
         assert not (tmp_path / "memo" / "scores.json").exists()
+
+
+# ---- draft basis and the final-memo claim-challenge rule ----
+
+def _draft(tmp_path, falsified=True):
+    d = tmp_path / "draft"
+    d.mkdir(parents=True, exist_ok=True)
+    rows = [{"claim_id": "D1", "text": "Owners pay for hybrid advice.", "section": "Executive assessment", "sources": []},
+            {"claim_id": "D2", "text": "No incumbent offers it.", "section": "Competition", "sources": []}]
+    (d / "draft-claims.json").write_text(json.dumps(rows))
+    if falsified:
+        (d / "draft-claims.falsified.json").write_text(json.dumps({
+            "schema_version": 1, "basis": "draft", "claims": [rows[1]],
+            "quarantined": [{"claim": rows[0], "reason": "falsified", "evidence": []}]}))
+    return d / "draft-claims.json"
+
+
+def _run(*args):
+    return subprocess.run([sys.executable, str(SCRIPT), *map(str, args)], capture_output=True, text=True)
+
+
+def test_draft_basis_memo_is_labelled_and_never_scores_draft_claims(tmp_path):
+    out = tmp_path / "memo"
+    proc = _run("--draft-claims", _draft(tmp_path), "--out", out)
+    assert proc.returncode == 0, proc.stderr
+    scores = json.loads((out / "scores.json").read_text())
+    assert scores["basis"] == "draft" and scores["claim_challenge"]["basis"] == "draft"
+    assert scores["factors"]["pain"]["score"] is None  # draft claims never score
+    assert {c["claim_id"]: c["status"] for c in scores["draft_claims"]} == {"D1": "quarantined", "D2": "kept"}
+    text = (out / "decision_memo.md").read_text()
+    assert text.splitlines()[2].startswith("Basis: draft claims, not ledger-bound")
+
+
+def test_final_memo_requires_a_claim_challenge_of_either_basis(tmp_path):
+    refused = _run("--draft-claims", _draft(tmp_path, falsified=False), "--final", "--out", tmp_path / "m1")
+    assert refused.returncode == 2 and "claim challenge" in refused.stderr
+    assert not (tmp_path / "m1" / "decision_memo.md").exists()
+    refused = _run("--final", "--out", tmp_path / "m0")
+    assert refused.returncode == 2 and "claim challenge" in refused.stderr
+    ok = _run("--draft-claims", _draft(tmp_path), "--final", "--out", tmp_path / "m2")
+    assert ok.returncode == 0, ok.stderr
+    assert json.loads((tmp_path / "m2" / "scores.json").read_text())["status"] == "final"
+
+
+def test_provisional_memo_without_challenge_says_so(tmp_path):
+    proc = _run("--out", tmp_path / "m")
+    assert proc.returncode == 0, proc.stderr
+    scores = json.loads((tmp_path / "m" / "scores.json").read_text())
+    assert scores["status"] == "provisional" and scores["claim_challenge"] is None
+    assert "Claim challenge: not run" in (tmp_path / "m" / "decision_memo.md").read_text()

@@ -29,7 +29,8 @@ def validate_contracts(catalog: dict, root: Path = ROOT) -> list[str]:
     for name, metadata in catalog.items():
         for key in ('produces', 'consumes'):
             for item in _contract_items(metadata, key):
-                if (not isinstance(item, dict) or set(item) - {'external'} != CONTRACT_KEYS
+                if (not isinstance(item, dict) or set(item) - {'external', 'optional'} != CONTRACT_KEYS
+                        or not isinstance(item.get('optional', False), bool)
                         or not isinstance(item['artifact'], str) or item['freshness'] not in FRESHNESS
                         or not isinstance(item['path_patterns'], list) or not item['path_patterns']
                         or not all(isinstance(x, str) and x for x in item['path_patterns'])):

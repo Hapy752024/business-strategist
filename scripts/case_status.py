@@ -3,7 +3,9 @@
 
 Read-only. Staleness uses provenance that already exists: case manifest source-binding
 digests and the insights state. Routes without a receipt are reported runnable or
-blocked on presence alone; nothing here records runs or authorizes dispatch.
+blocked on presence alone; nothing here records runs or authorizes dispatch. A consume marked
+`optional` (the step has a labelled fallback, e.g. draft claims) never blocks; it is reported
+under `optional_missing`.
 
 Usage: python3 scripts/route_workflow.py status (--project <slug> | --workspace <business-root>) --case <id> [--json]
 """
@@ -76,7 +78,7 @@ def case_status(root: Path, case_id: str) -> list[dict]:
         consumes = _consumes(catalog, route['skill'], route.get('mode'))
         if consumes is None:
             continue
-        missing, stale = [], []
+        missing, stale, optional_missing = [], [], []
         not_adopted = False
         for item in consumes:
             if item['artifact'] == REGISTER_ARTIFACT and not adopted:
@@ -84,7 +86,7 @@ def case_status(root: Path, case_id: str) -> list[dict]:
                 continue
             paths = _matches(root, item, case_id)
             if not paths:
-                missing.append(item['artifact'])
+                (optional_missing if item.get('optional') else missing).append(item['artifact'])
             elif _stale(root, item, paths, manifest):
                 stale.append(item['artifact'])
         state = 'not_adopted' if not_adopted else 'blocked' if missing else 'stale' if stale else 'runnable'
@@ -94,7 +96,7 @@ def case_status(root: Path, case_id: str) -> list[dict]:
             if responders:
                 notes = 'smoke-test responders with bookings: ' + ', '.join(responders)
         rows.append({'route_id': route['id'], 'skill': route['skill'], 'state': state,
-                     'missing': missing, 'stale': stale, 'notes': notes})
+                     'missing': missing, 'stale': stale, 'optional_missing': optional_missing, 'notes': notes})
     return rows
 
 
@@ -114,7 +116,9 @@ def main(argv=None) -> int:
     for row in rows:
         detail = ', '.join(filter(None, [
             'missing: ' + ', '.join(row['missing']) if row['missing'] else '',
-            'upstream changed: ' + ', '.join(row['stale']) if row['stale'] else '', row['notes']]))
+            'upstream changed: ' + ', '.join(row['stale']) if row['stale'] else '',
+            'fallback (optional missing): ' + ', '.join(row['optional_missing']) if row['optional_missing'] else '',
+            row['notes']]))
         print(f"{row['state']:<12} {row['route_id']:<28} {row['skill']}" + (f'  ({detail})' if detail else ''))
     return 0
 

@@ -228,3 +228,78 @@ def test_verdict_for_claim_outside_exported_set_rejected(tmp_path):
     ex.export(ledger, export, search_budget=3)
     with pytest.raises(af.FalsificationInputError, match="C2 was not in the exported"):
         af.apply(ledger, verdicts, checked_at=CHECKED_AT, claims_export=export)
+
+
+# ---- draft basis: claims extracted from a draft business case / insights, no reviewed ledger ----
+
+def draft_claims(tmp_path, rows=None):
+    rows = rows if rows is not None else [
+        {"claim_id": "D1", "text": "Most cafe owners pay for bookkeeping help.", "section": "Executive assessment",
+         "sources": ["https://example.org/a"]},
+        {"claim_id": "D2", "text": "No competitor offers hybrid advice.", "section": "Competition", "sources": [],
+         "confidence": "medium"},
+        {"claim_id": "D3", "text": "Founders can reach owners via forums.", "section": "Reachability", "sources": []},
+    ]
+    path = tmp_path / "draft" / "draft-claims.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(rows), encoding="utf-8")
+    return path
+
+
+def test_draft_claims_schema_is_valid_and_rejects_malformed(tmp_path):
+    schema = json.loads((ROOT / "schemas/draft-claims.schema.json").read_text())
+    jsonschema.Draft202012Validator.check_schema(schema)
+    with pytest.raises(ValueError, match="draft claims"):
+        ex.load_draft_claims(draft_claims(tmp_path, [{"claim_id": "D1", "text": "x"}]))
+    with pytest.raises(ValueError, match="unique"):
+        ex.load_draft_claims(draft_claims(tmp_path, [
+            {"claim_id": "D1", "text": "x", "section": "s", "sources": []},
+            {"claim_id": "D1", "text": "y", "section": "s", "sources": []}]))
+
+
+def test_draft_export_labels_basis_and_hides_sources(tmp_path):
+    out = tmp_path / "draft" / "falsification-claims.draft.json"
+    result = ex.export_draft(draft_claims(tmp_path), out, search_budget=2)
+    data = json.loads(out.read_text())
+    assert result["claims"] == 3 and data["basis"] == "draft"
+    assert all(c["basis"] == "draft" for c in data["claims"])
+    assert [c["claim"] for c in data["claims"]][0].startswith("Most cafe owners")
+    assert "example.org" not in out.read_text()
+
+
+def test_draft_apply_quarantines_downgrades_and_labels(tmp_path):
+    draft = draft_claims(tmp_path)
+    verdicts = draft.parent / "falsification-verdicts.json"
+    verdicts.write_text(json.dumps({"schema_version": 1, "search_budget_per_claim": 3, "verdicts": [
+        verdict("D1", "falsified"), verdict("D2", "weakened"), verdict("D3", "survived")]}))
+    before = draft.read_bytes()
+    report = af.apply_draft(draft, verdicts, checked_at=CHECKED_AT)
+    assert draft.read_bytes() == before
+    assert report["basis"] == "draft"
+    falsified = json.loads((draft.parent / "draft-claims.falsified.json").read_text())
+    assert falsified["basis"] == "draft"
+    assert [q["claim"]["claim_id"] for q in falsified["quarantined"]] == ["D1"]
+    by_id = {c["claim_id"]: c for c in falsified["claims"]}
+    assert by_id["D2"]["confidence"] == "low"          # downgraded one level
+    assert "confidence" not in by_id["D3"]             # survived never upgrades or invents confidence
+    md = (draft.parent / "draft-falsification-report.md").read_text()
+    assert "Basis: draft claims, not ledger-bound" in md
+    # draft outputs never collide with the reviewed-ledger names that publication_claims enforces
+    assert not (draft.parent / "falsification-report.json").exists()
+    assert not (draft.parent / "claim-ledger.falsified.json").exists()
+
+
+def test_draft_apply_rejects_upgrade_and_unknown_ids(tmp_path):
+    draft = draft_claims(tmp_path)
+    verdicts = draft.parent / "v.json"
+    verdicts.write_text(json.dumps({"schema_version": 1, "search_budget_per_claim": 3, "verdicts": [
+        verdict("D2", "survived", proposed_confidence="high"), verdict("X9", "survived")]}))
+    with pytest.raises(af.FalsificationInputError, match="upgrade.*|unknown claim id X9"):
+        af.apply_draft(draft, verdicts, checked_at=CHECKED_AT)
+
+
+def test_reviewed_report_names_its_basis(tmp_path):
+    ledger, verdicts = write(tmp_path, [claim("C1")], [verdict("C1", "survived")])
+    af.apply(ledger, verdicts, checked_at=CHECKED_AT)
+    _, report = outputs(ledger)
+    assert report["basis"] == "reviewed_ledger"

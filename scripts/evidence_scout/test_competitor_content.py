@@ -237,3 +237,25 @@ def test_robots_401_403_disallow_everything(status):
     fixture["robots"][COMPETITOR] = {"status_code": status, "text": None}
     site = acm.inventory_site(COMPETITOR, "competitive_market", max_pages=10, fetcher=acm.FixtureInventoryFetcher(fixture))
     assert site["pages"] == [] and COMPETITOR + "/ratgeber/bu-kosten" in site["robots_disallowed"]
+
+
+def test_early_run_without_clusters_and_with_unverified_candidates(tmp_path):
+    """Task 8: the inventory runs early on the candidates found so far; unverified ones never count as coverage."""
+    landscape = tmp_path / "competitors.json"
+    landscape.write_text(json.dumps([
+        {"name": "Example Versicherung", "url": COMPETITOR, "primary_lane": "competitive_market", "verification_status": "verified"},
+        {"name": "Candidate Co", "url": ANALOG, "primary_lane": "uncertain", "verification_status": "uncertain",
+         "lane_observations": ["competitive_market"]}]))
+    fixture = tmp_path / "fixture.json"
+    fixture.write_text(json.dumps(FIXTURE))
+    out = tmp_path / "out"
+    code = acm.main(["--content-inventory", "--landscape", str(landscape), "--include-unverified", "--out", str(out),
+                     "--max-pages", "10", "--fixture-inventory-json", str(fixture)])
+    assert code == 0
+    doc = json.loads((out / "competitor-content.json").read_text())
+    assert not list(Draft202012Validator(SCHEMA).iter_errors(doc))
+    assert doc["rows"] == [] and doc["cluster_summary"] == []          # no clusters yet: inventory only
+    assert [u["entity"] for u in doc["unverified_inventory"]] == ["Candidate Co"]
+    assert all(r.get("entity") != "Candidate Co" for r in doc["rows"])
+    md = (out / "competitor-content.md").read_text()
+    assert "Unverified candidates" in md and "not coverage evidence" in md

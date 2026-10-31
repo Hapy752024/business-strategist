@@ -991,18 +991,32 @@ def render_content_inventory(result: dict[str, Any], inventories: list[dict[str,
 
 def main_content_inventory(args: argparse.Namespace) -> int:
     out_dir = Path(args.out or args.out_dir or "")
-    if not args.landscape or not args.clusters or not str(out_dir).strip(". "):
-        print("--content-inventory needs --landscape, --clusters and --out", file=sys.stderr)
+    if not args.landscape or not str(out_dir).strip(". "):
+        print("--content-inventory needs --landscape (entity-landscape.json or competitors.json) and --out", file=sys.stderr)
         return 2
     landscape = json.loads(Path(args.landscape).read_text(encoding="utf-8"))
-    clusters_doc = json.loads(Path(args.clusters).read_text(encoding="utf-8"))
+    # Clusters are optional so the inventory can run early, before a search-journey study exists.
+    clusters_doc = json.loads(Path(args.clusters).read_text(encoding="utf-8")) if args.clusters else []
     clusters = clusters_doc.get("rows", []) if isinstance(clusters_doc, dict) else clusters_doc
+    unverified: list[dict[str, Any]] = []
     fetcher: Any = FixtureInventoryFetcher(json.loads(Path(args.fixture_inventory_json).read_text(encoding="utf-8"))) if args.fixture_inventory_json else LiveInventoryFetcher()
     inventories: list[dict[str, Any]] = []
     skipped: list[dict[str, str]] = []
     for entity in (landscape.get("entities", []) if isinstance(landscape, dict) else landscape)[: args.limit]:
         name = str(entity.get("name") or domain_of(str(entity.get("url", ""))))
         lane = str(entity.get("primary_lane") or entity.get("lane") or "")
+        unverified_lane = next((x for x in [lane, *entity.get("lane_observations", [])] if x in LANE_TO_ENTITY_TYPE), "")
+        if (args.include_unverified and entity.get("url") and entity.get("verification_status", "verified") != "verified"
+                and unverified_lane):
+            # Early inventory of candidates found so far: listed apart, never coverage rows or summaries.
+            site = inventory_site(str(entity["url"]), unverified_lane, args.max_pages, entity=name, fetcher=fetcher,
+                                  focus_terms=[t for c in clusters for t in _cluster_terms(c)])
+            unverified.append({"entity": name, "lane_hint": unverified_lane,
+                               "verification_status": str(entity.get("verification_status") or "unverified"),
+                               "pages_sampled": len(site["pages"]), "page_urls": [p["url"] for p in site["pages"]],
+                               "page_types": sorted({p["page_type"] for p in site["pages"]}),
+                               "formats": sorted({f for p in site["pages"] for f in p["formats"]})})
+            continue
         if lane not in LANE_TO_ENTITY_TYPE or entity.get("verification_status", "verified") != "verified" or not entity.get("url"):
             skipped.append({"entity": name, "reason": f"lane {lane or 'missing'} / {entity.get('verification_status', 'unknown')}: not inventoried"})
             continue
@@ -1011,12 +1025,21 @@ def main_content_inventory(args: argparse.Namespace) -> int:
     result = coverage_matrix(inventories, clusters, out_dir=out_dir)
     result["firecrawl_calls"] = dict(fetcher.firecrawl_calls)
     result["skipped_entities"] = skipped
+    if args.include_unverified:
+        result["unverified_inventory"] = unverified
     write_json(out_dir / "competitor-content.json", result)
-    (out_dir / "competitor-content.md").write_text(render_content_inventory(result, inventories, skipped, fetcher), encoding="utf-8")
+    md = render_content_inventory(result, inventories, skipped, fetcher)
+    if not clusters:
+        md += "\nNo search clusters supplied: inventory only, no coverage matrix. Rerun with --clusters after the search-journey study.\n"
+    if unverified:
+        md += ("\n## Unverified candidates (inventory only; not coverage evidence)\n\n"
+               + "\n".join(f"- {u['entity']} ({u['lane_hint']} hint, {u['verification_status']}): {u['pages_sampled']} pages; "
+                           f"types {', '.join(u['page_types']) or '-'}; formats {', '.join(u['formats']) or '-'}" for u in unverified) + "\n")
+    (out_dir / "competitor-content.md").write_text(md, encoding="utf-8")
     print(json.dumps({"out": str(out_dir), "sites": len(inventories), "pages": sum(len(s["pages"]) for s in inventories),
                       "rows": len(result["rows"]), "skipped_entities": len(skipped), "firecrawl_calls": fetcher.firecrawl_calls,
                       "credits_reported": fetcher.credits_reported}, indent=2))
-    return 0 if inventories else 1
+    return 0 if inventories or unverified else 1
 
 
 def write_marketing_plan(run_dir: Path, args: argparse.Namespace, urls: list[str]) -> None:
@@ -1127,7 +1150,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--workspace", default="", help="Project workspace path. Defaults to projects/<project-slug>.")
     parser.add_argument("--content-inventory", action="store_true", help="Inventory content topics, questions, formats and depth of entities from --landscape against --clusters; writes competitor-content.json/.md to --out.")
     parser.add_argument("--landscape", default="", help="entity-landscape.json (content-inventory mode).")
-    parser.add_argument("--clusters", default="", help="content-opportunities.json whose rows are the clusters (content-inventory mode).")
+    parser.add_argument("--clusters", default="", help="content-opportunities.json whose rows are the clusters (content-inventory mode; optional, without it no coverage matrix).")
+    parser.add_argument("--include-unverified", action="store_true", help="Content-inventory mode: also inventory unverified candidates, listed under unverified_inventory and never counted as coverage.")
     parser.add_argument("--out", default="", help="Output directory (content-inventory mode).")
     parser.add_argument("--max-pages", type=int, default=25, help="Pages scraped per site (content-inventory mode).")
     parser.add_argument("--fixture-inventory-json", default="", help="Offline robots/map/sitemap/scrape replay (content-inventory mode).")

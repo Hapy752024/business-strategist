@@ -86,6 +86,15 @@ pivot->pivot, drop->stop:
 - test: everything else.
 Base rate: published idea-validation tools report roughly 17% "go" outcomes, so verdicts
 above `test` should be rare. A warning is emitted when every factor is >= 80.
+
+Basis and claim challenge:
+- With --ledger the basis is `reviewed_ledger`. Without a ledger, --draft-claims (claims the agent
+  extracted from its draft case, schemas/draft-claims.schema.json) gives basis `draft`: the memo
+  opens with "Basis: draft claims, not ledger-bound", lists each draft claim's falsification status
+  and never scores draft claims (VOC table and economics still score). Its sibling
+  `draft-claims.falsified.json` (apply_falsification.py --draft-claims) is applied automatically.
+- --final marks the memo as a final recommendation and is refused unless a claim challenge
+  (falsification output of either basis) exists. Without --final the memo is `provisional`.
 """
 from __future__ import annotations
 
@@ -108,6 +117,11 @@ AGAINST_CAP = {"high": 10, "medium": 20, "low": 50}
 CONTRADICTED_CAP = 20
 VERDICT_VOCABULARY = "strategy-plan.schema.json#/properties/verdict"
 FALSIFIED_NAME = "claim-ledger.falsified.json"
+DRAFT_FALSIFIED_NAME = "draft-claims.falsified.json"
+DRAFT_BASIS_LINE = "Basis: draft claims, not ledger-bound."
+FINAL_NEEDS_CHALLENGE = ("a final decision memo needs a claim challenge: run export_claims_for_falsification.py, the "
+                         "claim-falsifier and apply_falsification.py on the reviewed ledger, or with --draft-claims "
+                         "when no ledger exists")
 BASE_RATE_WARNING = ("every factor scored >= 80: check for grade inflation; the published base rate "
                      "for a 'go' outcome is roughly 17%, so verdicts above 'test' should be rare")
 
@@ -195,6 +209,32 @@ def load_claims(ledger_path: Path, falsified_path: Path | None = None) -> dict:
     out.update(claims=merged, quarantined=quarantined,
                falsification={"path": str(falsified_path), "quarantined": len(quarantined)})
     return out
+
+
+def load_draft(path: Path, falsified_path: Path | None = None) -> dict:
+    """Draft claims plus their draft falsification sibling; draft claims are listed, never scored."""
+    path = Path(path)
+    rows = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(rows, list) or not all(isinstance(r, dict) and r.get("claim_id") for r in rows):
+        raise ValueError(f"{path}: draft claims must be a JSON array of records with claim_id")
+    falsified_path = Path(falsified_path) if falsified_path else path.parent / DRAFT_FALSIFIED_NAME
+    status = {str(r["claim_id"]): "not_challenged" for r in rows}
+    challenge = None
+    if falsified_path.is_file():
+        data = json.loads(falsified_path.read_text(encoding="utf-8"))
+        if not isinstance(data, dict) or not isinstance(data.get("quarantined"), list) or not isinstance(data.get("claims"), list):
+            raise ValueError(f"{falsified_path}: malformed; re-run apply_falsification.py --draft-claims")
+        for r in data["claims"]:
+            if isinstance(r, dict) and str(r.get("claim_id")) in status:
+                status[str(r["claim_id"])] = r.get("falsification_status") or "kept"
+        for q in data["quarantined"]:
+            cid = str((q.get("claim") or {}).get("claim_id")) if isinstance(q, dict) else None
+            if cid in status:
+                status[cid] = "quarantined"
+        challenge = {"basis": "draft", "path": str(falsified_path), "quarantined": len(data["quarantined"])}
+    listed = [{"claim_id": str(r["claim_id"]), "section": r.get("section"), "status": status[str(r["claim_id"])]}
+              for r in rows]
+    return {"claims": listed, "challenge": challenge}
 
 
 def _types(row: dict) -> set:
@@ -328,7 +368,8 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
           assessment: dict | None = None, voc_table: dict | None = None, economics: dict | None = None,
           factor_claims: dict | None = None, cost_cap: float = 100, currency: str = "EUR",
           warnings: list[str] | None = None, evidence: list[dict] | None = None,
-          gate: dict | None = None) -> dict:
+          gate: dict | None = None, basis: str | None = None, claim_challenge: dict | None = None,
+          draft_claims: list[dict] | None = None, final: bool = False) -> dict:
     ledger, factor_claims = ledger or [], factor_claims or {}
     unknown_factors = set(factor_claims) - set(FACTORS)
     if unknown_factors:
@@ -443,8 +484,14 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
     next_tests = [test_for(n) for n in (weak or [riskiest])]
     kill = [{"factor": n, "threshold": TESTS[n][1], "action": "stop or pivot this case if observed"}
             for n in dict.fromkeys([riskiest] + weak)]
+    if final and not claim_challenge:
+        raise ValueError(FINAL_NEEDS_CHALLENGE)
     return {
         "schema_version": 1, "generated_view": True,
+        "basis": basis or ("reviewed_ledger" if ledger else "none"),
+        "status": "final" if final else "provisional",
+        "claim_challenge": claim_challenge,
+        **({"draft_claims": draft_claims} if draft_claims is not None else {}),
         "factors": factors,
         "total": {"score": total, "method": "100 x product(score/100) over known factors", "caps_applied": caps,
                   "geometric_mean": round(100 * (product / 100) ** (1 / len(known)), 1) if known else None},
@@ -460,8 +507,13 @@ def build(*, ledger: list[dict] | None = None, quarantined: list[dict] | None = 
 
 
 def render(result: dict) -> str:
-    lines = ["# Decision memo", "",
-             f"**Verdict:** {result['verdict']} (strategy-plan verdict vocabulary). "
+    lines = ["# Decision memo", ""]
+    if result.get("basis") == "draft":
+        lines += [DRAFT_BASIS_LINE + " Draft claims are listed below and never scored.", ""]
+    challenge = result.get("claim_challenge")
+    lines += [(f"Claim challenge: {challenge['basis']} basis ({challenge['path']}); status {result.get('status')}."
+               if challenge else "Claim challenge: not run. This memo is provisional and cannot be final."), ""]
+    lines += [f"**Verdict:** {result['verdict']} (strategy-plan verdict vocabulary). "
              f"**Total:** {result['total']['score']} / 100 (multiplicative).", ""]
     g = result["gate"]
     if g.get("override"):
@@ -493,13 +545,19 @@ def render(result: dict) -> str:
     lines += [f"{i}. {x['factor']}: {x['action']}" for i, x in enumerate(result["next_tests"], 1)]
     lines += ["", "## Kill criteria", ""]
     lines += [f"- {k['factor']}: {k['threshold']} -> {k['action']}." for k in result["kill_criteria"]]
+    if result.get("draft_claims") is not None:
+        lines += ["", "## Draft claims (not scored)", "", "| Claim | Section | Claim challenge |", "|---|---|---|"]
+        lines += [f"| {c['claim_id']} | {c.get('section') or ''} | {c['status']} |" for c in result["draft_claims"]]
     lines += ["", result["limits"], ""]
     return "\n".join(lines)
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Build decision_memo.md and scores.json from reviewed case artifacts.")
-    p.add_argument("--ledger", type=Path, help="reviewed claim-ledger.json (falsified sibling applied automatically)")
+    src = p.add_mutually_exclusive_group()
+    src.add_argument("--ledger", type=Path, help="reviewed claim-ledger.json (falsified sibling applied automatically)")
+    src.add_argument("--draft-claims", type=Path, help="fallback without a ledger: draft claims (basis: draft, not scored)")
+    p.add_argument("--final", action="store_true", help="final recommendation: refused without a claim challenge")
     p.add_argument("--falsified", type=Path, help="explicit claim-ledger.falsified.json path")
     p.add_argument("--assessment", type=Path, help="problem-validation-assessment.json")
     p.add_argument("--voc-table", type=Path, help="voc-table.json from build_voc_table.py")
@@ -518,6 +576,9 @@ def main(argv: list[str] | None = None) -> int:
     load = lambda path: json.loads(path.read_text(encoding="utf-8")) if path else None
     try:
         claims = load_claims(a.ledger, a.falsified) if a.ledger else {"claims": [], "quarantined": [], "warnings": []}
+        draft = load_draft(a.draft_claims, a.falsified) if a.draft_claims else None
+        challenge = (draft["challenge"] if draft else
+                     dict(basis="reviewed_ledger", **claims["falsification"]) if claims.get("falsification") else None)
         a.override_by, a.override_reason = (a.override_by or "").strip(), (a.override_reason or "").strip()
         if a.override_gate and not (a.override_by and a.override_reason):
             raise ValueError("--override-gate needs --override-by and --override-reason")
@@ -530,7 +591,9 @@ def main(argv: list[str] | None = None) -> int:
             evidence = [json.loads(l) for l in a.evidence.read_text(encoding="utf-8").splitlines() if l.strip()]
         result = build(evidence=evidence, gate=gate, ledger=claims["claims"], quarantined=claims["quarantined"], warnings=claims["warnings"],
                        assessment=load(a.assessment), voc_table=load(a.voc_table), economics=load(a.economics),
-                       factor_claims=load(a.factor_claims), cost_cap=a.cost_cap, currency=a.currency)
+                       factor_claims=load(a.factor_claims), cost_cap=a.cost_cap, currency=a.currency,
+                       basis="draft" if draft else None, claim_challenge=challenge,
+                       draft_claims=draft["claims"] if draft else None, final=a.final)
         from jsonschema import Draft202012Validator
         errors = list(Draft202012Validator(json.loads(SCHEMA.read_text(encoding="utf-8"))).iter_errors(result))
         if errors:

@@ -362,6 +362,54 @@
           ]
         }
       }
+    },
+    "unverified_inventory": {
+      "type": "array",
+      "description": "Unverified candidates inventoried early (--include-unverified). Inventory only: never coverage rows, summaries or keyword-map inputs.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "entity",
+          "lane_hint",
+          "verification_status",
+          "pages_sampled",
+          "page_urls"
+        ],
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "lane_hint": {
+            "type": "string"
+          },
+          "verification_status": {
+            "type": "string"
+          },
+          "pages_sampled": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page_urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "page_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "formats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   }
 }

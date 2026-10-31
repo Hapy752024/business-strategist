@@ -26,6 +26,12 @@ Counting rules (also rendered in the table footer):
              (also: >= 3 sources but a single type, or unresolved counter-evidence);
    - low:    anything else (0-1 sources, or counter sources >= supporting sources).
 Frequency is not importance: a rarely stated need can be critical and a common one trivial.
+
+Unreviewed fallback: without --source-review the table is built from the collected records
+(`build_unreviewed_table`). Rows are the synthesis items when --synthesis is given, else one theme per
+evidence_type. Copies still count once, irrelevant and supplier/non-customer records are dropped, but no
+statement typing or firsthand check exists, so every row and the table carry `basis: "unreviewed"` and
+`confidence: "unreviewed"`, the markdown shows a banner, and the decision memo never scores these rows.
 """
 from __future__ import annotations
 
@@ -55,6 +61,10 @@ FOOTER = [
     "Frequency is not importance.",
 ]
 RANK = {"low": 0, "medium": 1, "high": 2}
+UNREVIEWED_BANNER = "Unreviewed — counts from collected records, not reviewed quotes"
+UNREVIEWED_FOOTER = ("Unreviewed basis: counts are collected records grouped by independence key; nobody checked "
+                     "author voice, firsthand status or statement type. Confidence is `unreviewed`, never high/medium/low.")
+EXCLUDED_VOICE = {"supplier_context", "non_customer"}
 
 
 class _Sources:
@@ -189,13 +199,81 @@ def build_table(synthesis: dict, source_review: dict, evidence_records: list[dic
             top, cnt = types_total[f].most_common(1)[0]
             skew[f] = {"source_types": dict(types_total[f]), "dominant_type": top, "dominant_share": round(cnt / n, 2)}
     legacy = sum(1 for r in reviews.values() if r.get("statement_type") is None)
-    return {"generated_view": True, "rows": rows,
+    return {"generated_view": True, "basis": "reviewed", "rows": rows,
             "frame_totals": {f: len(totals[f]) for f in FRAMES},
             "bias": {"frames_not_sampled": [f for f in FRAMES if not totals[f]],
                      "provider_coverage_gaps": gaps, "source_type_skew": skew,
                      "legacy_untyped_reviews": legacy,
                      "note": "Public posts and reviews over-represent strong opinions; people who were satisfied, silent or unreachable are missing."},
             "footer": FOOTER}
+
+
+def _bias(totals: dict, types_total: dict, run_summary: dict | None, legacy: int) -> dict:
+    gaps = {name: s.get("status") for name, s in (run_summary or {}).get("providers", {}).items()
+            if isinstance(s, dict) and s.get("status") not in {"ok", None}}
+    skew = {}
+    for f in FRAMES:
+        n = len(totals[f])
+        if n:
+            top, cnt = types_total[f].most_common(1)[0]
+            skew[f] = {"source_types": dict(types_total[f]), "dominant_type": top, "dominant_share": round(cnt / n, 2)}
+    return {"frames_not_sampled": [f for f in FRAMES if not totals[f]], "provider_coverage_gaps": gaps,
+            "source_type_skew": skew, "legacy_untyped_reviews": legacy,
+            "note": "Public posts and reviews over-represent strong opinions; people who were satisfied, silent or unreachable are missing."}
+
+
+def build_unreviewed_table(evidence_records: list[dict], synthesis: dict | None = None,
+                           run_summary: dict | None = None, customer_segment: str | None = None) -> dict:
+    """Fallback without a source review: counts collected records, every row labelled unreviewed."""
+    records = {str(r.get("evidence_id")): r for r in evidence_records
+               if r.get("evidence_id") and r.get("evidence_type") != "irrelevant"
+               and r.get("author_voice_status") not in EXCLUDED_VOICE
+               and (customer_segment is None or r.get("customer_segment") == customer_segment)}
+    sources = _Sources(records)
+    totals = {f: set() for f in FRAMES}
+    types_total: dict[str, Counter] = {f: Counter() for f in FRAMES}
+    for i, r in records.items():
+        f = r.get("sampling_frame")
+        if f in totals and sources.find(i) not in totals[f]:
+            totals[f].add(sources.find(i))
+            types_total[f][r.get("source") or "unknown"] += 1
+    if synthesis:
+        items = [("need", it.get("id"), it.get("outcome"), it) for it in synthesis.get("customer_needs", []) or []]
+        items += [("requirement", it.get("id"), it.get("condition_or_capability"), it)
+                  for it in synthesis.get("solution_requirements", []) or []]
+    else:
+        themes: dict[str, list[str]] = defaultdict(list)
+        for i, r in records.items():
+            if r.get("evidence_type") != "counter_evidence":
+                themes[str(r.get("evidence_type") or "untyped")].append(i)
+        items = [("theme", f"T-{t}", f"Collected {t} records (not reviewed)", {"evidence_ids": ids})
+                 for t, ids in sorted(themes.items())]
+    rows = []
+    for kind, ident, text, item in items:
+        frames = {}
+        for f in FRAMES:
+            ids = [i for i in item.get("evidence_ids", []) or [] if i in records and records[i].get("sampling_frame") == f]
+            if not ids:
+                continue
+            by_src: dict[str, list[str]] = defaultdict(list)
+            for i in ids:
+                by_src[sources.find(i)].append(i)
+            pr = Counter(("unknown" if len(v) > 1 else next(iter(v)))
+                         for v in ({_prompting(records[m], {}) for m in ms} for ms in by_src.values()))
+            counter = {sources.find(i) for i in item.get("counter_evidence_ids", []) or []
+                       if i in records and records[i].get("sampling_frame") == f} - set(by_src)
+            frames[f] = {"sources": len(by_src), "total_sources": len(totals[f]), "unprompted": pr["unprompted"],
+                         "prompted": pr["prompted"], "unknown_prompting": pr["unknown"], "mentioned_not_supporting": 0,
+                         "counter_sources": len(counter),
+                         "source_types": sorted({records[i].get("source") for i in ids if records[i].get("source")}),
+                         "segments": sorted({str(records[i].get("customer_segment") or "unknown") for i in ids}),
+                         "confidence": "unreviewed"}
+        rows.append({"id": ident, "kind": kind, "text": text, "basis": "unreviewed", "frames": frames,
+                     "segments": sorted({g for s in frames.values() for g in s["segments"]}),
+                     "counter_sources": sum(s["counter_sources"] for s in frames.values()), "confidence": "unreviewed"})
+    return {"generated_view": True, "basis": "unreviewed", "banner": UNREVIEWED_BANNER, "rows": rows,
+            "frame_totals": {f: len(totals[f]) for f in FRAMES},
+            "bias": _bias(totals, types_total, run_summary, 0), "footer": [UNREVIEWED_FOOTER] + FOOTER}
 
 
 def _cell(s: dict | None) -> str:
@@ -207,8 +285,10 @@ def _cell(s: dict | None) -> str:
 
 
 def render_markdown(table: dict) -> str:
-    out = ["# Cross-source frequency table", "",
-           "| ID | Need / requirement | Segments | Topic-led VOC | Entity-led feedback | Counter sources | Confidence |",
+    out = ["# Cross-source frequency table", ""]
+    if table.get("basis") == "unreviewed":
+        out += [f"> **{UNREVIEWED_BANNER}.** Every row is unreviewed; do not cite these counts as reviewed customer voice.", ""]
+    out += ["| ID | Need / requirement | Segments | Topic-led VOC | Entity-led feedback | Counter sources | Confidence |",
            "|---|---|---|---|---|---|---|"]
     for r in table["rows"]:
         text = str(r.get("text") or "").replace("|", "/")
@@ -230,16 +310,22 @@ def render_markdown(table: dict) -> str:
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("--evidence", type=Path, required=True)
-    p.add_argument("--synthesis", type=Path, required=True)
-    p.add_argument("--source-review", type=Path, required=True)
+    p.add_argument("--synthesis", type=Path, help="customer-VOC synthesis; optional (rows are evidence_type themes without it)")
+    p.add_argument("--source-review", type=Path,
+                   help="source review; without it (or without --synthesis) the table is built unreviewed from raw records")
     p.add_argument("--summary", type=Path, help="Run summary.json for provider coverage gaps.")
     p.add_argument("--customer-segment")
     p.add_argument("--out-dir", type=Path, required=True)
     a = p.parse_args(argv)
     load = lambda path: json.loads(path.read_text(encoding="utf-8"))
     records = [json.loads(line) for line in a.evidence.read_text(encoding="utf-8").splitlines() if line.strip()]
-    table = build_table(load(a.synthesis), load(a.source_review), records,
-                        load(a.summary) if a.summary else None, a.customer_segment)
+    summary = load(a.summary) if a.summary else None
+    if a.synthesis and a.source_review:
+        table = build_table(load(a.synthesis), load(a.source_review), records, summary, a.customer_segment)
+    else:
+        table = build_unreviewed_table(records, load(a.synthesis) if a.synthesis else None, summary, a.customer_segment)
+        print(f"note: {UNREVIEWED_BANNER} (no " + ("--source-review" if a.synthesis else "--synthesis/--source-review")
+              + "); basis: unreviewed", file=sys.stderr)
     a.out_dir.mkdir(parents=True, exist_ok=True)
     (a.out_dir / "voc-table.json").write_text(json.dumps(table, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (a.out_dir / "voc-table.md").write_text(render_markdown(table), encoding="utf-8")
