@@ -10,7 +10,7 @@
         "evidence-scout",
         "competitor-research",
         "competitor-monitoring",
-        "service-customer-perspective-challenger",
+        "challenge-review",
         "business-archetype-playbook-researcher",
         "growth-case-analyzer",
         "interview-bridge"
@@ -56,9 +56,7 @@
       "startup-business-builder",
       "archetype-gtm-strategist",
       "company-operating-system",
-      "saas-fintech-pilot-designer",
-      "startup-challenge-panel",
-      "strategy-draft-tournament"
+      "saas-fintech-pilot-designer"
     ],
     "agent_infrastructure": [
       "setup-multiharness-project"
@@ -1086,23 +1084,6 @@
         "opportunity_risk"
       ]
     },
-    "service-customer-perspective-challenger": {
-      "intent": [
-        "challenge service offer from customer perspective"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "service concept"
-      ],
-      "artifacts": [
-        "customer perspective review"
-      ],
-      "side_effect": "none",
-      "cost": "medium",
-      "required_references": [
-        "references/customer-voice.md"
-      ]
-    },
     "business-archetype-playbook-researcher": {
       "intent": [
         "research founder/operator playbooks"
@@ -1167,41 +1148,6 @@
           ],
           "freshness": "none"
         }
-      ]
-    },
-    "startup-challenge-panel": {
-      "intent": [
-        "run multi-role startup challenge"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "high-stakes thesis"
-      ],
-      "artifacts": [
-        "challenge decision"
-      ],
-      "side_effect": "research",
-      "cost": "high"
-    },
-    "strategy-draft-tournament": {
-      "intent": [
-        "generate and judge strategic drafts"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "consequential under-determined decision"
-      ],
-      "artifacts": [
-        "ranked drafts"
-      ],
-      "side_effect": "none",
-      "cost": "high",
-      "strategy_stage_prerequisites": [
-        "intake",
-        "segment_selection",
-        "customer_profile",
-        "problem_validation",
-        "opportunity_risk"
       ]
     },
     "earned-media-builder": {
@@ -1621,6 +1567,89 @@
             ".agents/skills/competitor-research/references/teardown.md"
           ],
           "output_owner": "competitor-research"
+        }
+      }
+    },
+    "challenge-review": {
+      "intent": [
+        "run multi-role startup challenge",
+        "generate and judge strategic drafts",
+        "challenge service offer from customer perspective"
+      ],
+      "excludes": [],
+      "prerequisites": [
+        "high-stakes thesis, consequential under-determined decision, or service concept"
+      ],
+      "artifacts": [
+        "challenge decision",
+        "ranked drafts",
+        "customer perspective review"
+      ],
+      "side_effect": "research",
+      "cost": "high",
+      "required_references": [],
+      "modes": {
+        "panel": {
+          "inputs": [
+            "high-stakes thesis"
+          ],
+          "excludes": [],
+          "prerequisites": [
+            "high-stakes thesis"
+          ],
+          "artifacts": [
+            "challenge decision"
+          ],
+          "side_effect": "research",
+          "cost": "high",
+          "required_references": [
+            ".agents/skills/challenge-review/references/panel.md"
+          ],
+          "output_owner": "challenge-review"
+        },
+        "tournament": {
+          "inputs": [
+            "consequential under-determined decision"
+          ],
+          "excludes": [],
+          "prerequisites": [
+            "consequential under-determined decision"
+          ],
+          "artifacts": [
+            "ranked drafts"
+          ],
+          "side_effect": "none",
+          "cost": "high",
+          "strategy_stage_prerequisites": [
+            "intake",
+            "segment_selection",
+            "customer_profile",
+            "problem_validation",
+            "opportunity_risk"
+          ],
+          "required_references": [
+            ".agents/skills/challenge-review/references/tournament.md"
+          ],
+          "output_owner": "challenge-review"
+        },
+        "customer-perspective": {
+          "inputs": [
+            "service concept"
+          ],
+          "excludes": [],
+          "prerequisites": [
+            "service concept"
+          ],
+          "artifacts": [
+            "customer perspective review"
+          ],
+          "side_effect": "none",
+          "cost": "medium",
+          "required_references": [
+            "references/customer-voice.md",
+            ".agents/skills/challenge-review/references/customer-perspective.md"
+          ],
+          "output_owner": "challenge-review"
         }
       }
     }

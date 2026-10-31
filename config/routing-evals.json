@@ -42,7 +42,7 @@
       ]
     },
     {
-      "pair": "idea-grill vs startup-business-builder vs startup-challenge-panel vs service-customer-perspective-challenger",
+      "pair": "idea-grill vs startup-business-builder vs challenge-review panel vs customer-perspective modes",
       "evals": [
         {
           "id": "route-evaluate-1",
@@ -70,25 +70,27 @@
         {
           "id": "route-evaluate-3",
           "prompt": "Three advisors reviewed our GTM plan and disagree on whether to launch B2C first or go through insurance brokers. Help us decide.",
-          "expected_output": "Routes to startup-challenge-panel for a multi-role adversarial review of a high-stakes strategic decision.",
-          "expected_skill": "startup-challenge-panel",
+          "expected_output": "Routes to challenge-review panel mode for a multi-role adversarial review of a high-stakes strategic decision.",
+          "expected_skill": "challenge-review",
+          "expected_route": "startup-challenge-panel",
           "forbidden_skills": [
             "idea-grill"
           ],
           "files": [],
-          "rationale": "High-stakes strategic decision with multiple informed perspectives already on the table — startup-challenge-panel's multi-role structure is the right fit. Not an idea-clarity or business-planning problem."
+          "rationale": "High-stakes strategic decision with multiple informed perspectives already on the table — challenge-review panel mode's multi-role structure is the right fit. Not an idea-clarity or business-planning problem."
         },
         {
           "id": "route-evaluate-4",
           "prompt": "Our consumer finance app is ready to launch in Germany. Challenge our packaging, pricing presentation, trust design, and cancellation policy from a German consumer's perspective.",
-          "expected_output": "Routes to service-customer-perspective-challenger for evidence-grounded buying context and consumer trust challenge.",
-          "expected_skill": "service-customer-perspective-challenger",
+          "expected_output": "Routes to challenge-review customer-perspective mode for evidence-grounded buying context and consumer trust challenge.",
+          "expected_skill": "challenge-review",
+          "expected_route": "service-customer-perspective-challenger",
           "forbidden_skills": [
             "idea-grill",
             "startup-business-builder"
           ],
           "files": [],
-          "rationale": "Consumer service packaging and trust challenge for a specific market — service-customer-perspective-challenger is built for exactly this. Use after evidence collection, before finalizing GTM."
+          "rationale": "Consumer service packaging and trust challenge for a specific market — challenge-review customer-perspective mode is built for exactly this. Use after evidence collection, before finalizing GTM."
         }
       ]
     },
@@ -190,30 +192,29 @@
       ]
     },
     {
-      "pair": "strategy-draft-tournament vs startup-challenge-panel vs marketing-strategy-builder",
+      "pair": "challenge-review tournament vs panel modes vs marketing-strategy-builder",
       "evals": [
         {
           "id": "route-tournament-1",
           "prompt": "Generate 3 alternative GTM approaches for our fintech SaaS, have them compete, and tell me which one wins.",
-          "expected_output": "Routes to strategy-draft-tournament for generate-and-judge over multiple drafts.",
-          "expected_skill": "strategy-draft-tournament",
+          "expected_output": "Routes to challenge-review tournament mode for generate-and-judge over multiple drafts.",
+          "expected_skill": "challenge-review",
+          "expected_route": "strategy-draft-tournament",
           "forbidden_skills": [
-            "startup-challenge-panel",
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "The user wants multiple drafts generated and judged against each other — strategy-draft-tournament owns this. startup-challenge-panel challenges an existing plan; archetype-gtm-strategist produces a single stage-gated strategy."
+          "rationale": "The user wants multiple drafts generated and judged against each other — challenge-review tournament mode owns this. challenge-review panel mode challenges an existing plan; archetype-gtm-strategist produces a single stage-gated strategy."
         },
         {
           "id": "route-tournament-2",
           "prompt": "Here is our launch plan. Tear it apart before we commit the budget.",
-          "expected_output": "Routes to startup-challenge-panel for adversarial review of an existing plan.",
-          "expected_skill": "startup-challenge-panel",
-          "forbidden_skills": [
-            "strategy-draft-tournament"
-          ],
+          "expected_output": "Routes to challenge-review panel mode for adversarial review of an existing plan.",
+          "expected_skill": "challenge-review",
+          "expected_route": "startup-challenge-panel",
+          "forbidden_skills": [],
           "files": [],
-          "rationale": "An existing plan to challenge is startup-challenge-panel territory. The tournament generates new drafts; it does not review a supplied plan."
+          "rationale": "An existing plan to challenge is challenge-review panel mode territory. The tournament generates new drafts; it does not review a supplied plan."
         }
       ]
     },
@@ -502,7 +503,7 @@
           "expected_skill": "opportunity-risk-designer",
           "forbidden_skills": [
             "evidence-scout",
-            "startup-challenge-panel"
+            "challenge-review"
           ],
           "files": [],
           "rationale": "Adversarial falsification of synthesized claims is a post-synthesis risk check owned by opportunity-risk-designer; evidence-scout collects new supporting evidence and the challenge panel critiques strategy, neither isolates the falsifier from the findings."
@@ -607,6 +608,45 @@
           ],
           "files": [],
           "rationale": "What customers type at each journey stage is customer-evidence desk research owned by evidence-scout, before content planning."
+        }
+      ]
+    },
+    {
+      "pair": "challenge-review modes vs marketing-strategy-builder vs brand-website-designer-builder (plain-text boundary)",
+      "evals": [
+        {
+          "id": "route-challenge-boundary-1",
+          "prompt": "Red-team my business plan.",
+          "expected_output": "Routes to challenge-review panel mode (route startup-challenge-panel) for an adversarial review of an existing plan.",
+          "expected_skill": "challenge-review",
+          "expected_route": "startup-challenge-panel",
+          "forbidden_skills": [
+            "archetype-gtm-strategist"
+          ],
+          "files": [],
+          "rationale": "Red-teaming an existing plan is the panel protocol; before the merge this phrasing fell through to clarification."
+        },
+        {
+          "id": "route-challenge-boundary-2",
+          "prompt": "Challenge my marketing strategy.",
+          "expected_output": "Stays with marketing-strategy-builder; a generic challenge verb does not pull marketing work into challenge-review.",
+          "expected_skill": "marketing-strategy-builder",
+          "forbidden_skills": [
+            "challenge-review"
+          ],
+          "files": [],
+          "rationale": "challenge-review match phrases are specific (challenge panel, red-team my plan, strategy drafts, customer/buyer perspective review) so marketing requests keep their owner."
+        },
+        {
+          "id": "route-challenge-boundary-3",
+          "prompt": "Write landing page copy from the buyer perspective.",
+          "expected_output": "Stays with the website builder; only a buyer perspective review routes to customer-perspective mode.",
+          "expected_skill": "brand-website-designer-builder",
+          "forbidden_skills": [
+            "challenge-review"
+          ],
+          "files": [],
+          "rationale": "Website copy is website work; the customer-perspective phrase requires an explicit review."
         }
       ]
     }

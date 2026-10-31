@@ -284,7 +284,7 @@
       ],
       "skill": "opportunity-risk-designer",
       "forbidden": [
-        "strategy-draft-tournament"
+        "challenge-review"
       ]
     },
     {
@@ -527,11 +527,13 @@
     {
       "id": "service-customer-perspective-challenger",
       "match": [
-        "customer perspective review"
+        "customer perspective review",
+        "customer perspective challenge",
+        "buyer perspective review"
       ],
-      "skill": "service-customer-perspective-challenger",
+      "skill": "challenge-review",
       "forbidden": [],
-      "single_mode": true
+      "mode": "customer-perspective"
     },
     {
       "id": "setup-multiharness-project",
@@ -565,21 +567,26 @@
     {
       "id": "startup-challenge-panel",
       "match": [
-        "startup challenge panel"
+        "startup challenge panel",
+        "challenge panel",
+        "red-team my plan",
+        "red-team my business plan"
       ],
-      "skill": "startup-challenge-panel",
+      "skill": "challenge-review",
       "forbidden": [],
-      "single_mode": true
+      "mode": "panel"
     },
     {
       "id": "strategy-draft-tournament",
       "match": [
-        "compare strategy drafts"
+        "compare strategy drafts",
+        "strategy draft tournament",
+        "competing strategy drafts"
       ],
-      "skill": "strategy-draft-tournament",
+      "skill": "challenge-review",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "tournament"
     },
     {
       "id": "case-insights",
@@ -628,7 +635,7 @@
       ],
       "skill": "opportunity-risk-designer",
       "forbidden": [
-        "strategy-draft-tournament"
+        "challenge-review"
       ],
       "mode": "smoke_test"
     },

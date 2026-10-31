@@ -167,7 +167,10 @@ def bare_envelope(skill: str, args: object, event: dict) -> dict | None:
     else:
         # Without a workspace the gate cannot run, so gated routes need an explicit envelope.
         spec = next(r for r in load_routes() if r['id'] == route_id)
-        if spec.get('requires_pain_gate') or load_catalog().get(skill, {}).get('strategy_stage_prerequisites'):
+        metadata = load_catalog().get(skill, {})
+        # A merged skill keeps per-mode prerequisites (e.g. challenge-review tournament mode).
+        metadata = {**metadata, **metadata.get('modes', {}).get(spec.get('mode', 'default'), {})}
+        if spec.get('requires_pain_gate') or metadata.get('strategy_stage_prerequisites'):
             return None
         route['standalone'] = True
     return {'route': route, 'input': args}

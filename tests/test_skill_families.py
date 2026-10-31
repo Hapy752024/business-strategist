@@ -22,6 +22,7 @@ FAMILIES = {
         'brand-ui-kit-producer', 'brand-ui-component-producer', 'brand-motion-designer', 'brand-frontend-app-designer',
     ],
     'competitor-research': ['competitor-scout', 'competitive-landscape-builder', 'competitor-marketing-analyzer'],
+    'challenge-review': ['startup-challenge-panel', 'strategy-draft-tournament', 'service-customer-perspective-challenger'],
 }
 FORMER = [(merged, former) for merged, formers in FAMILIES.items() for former in formers]
 # Paths stay in git history; docs/ and .superpowers/ are dated records of that history. The research-business-plan
@@ -165,3 +166,37 @@ def test_competitor_boundary_routes_unchanged(request_text, expected_route):
 ])
 def test_competitor_research_plain_text_infers_its_mode(request_text, expected_route):
     assert route_workflow.infer_mode('competitor-research', request_text)[0] == expected_route
+
+
+# Plain-text requests near the challenge family's boundary. Unchanged against 935f5fc except the new specific
+# phrases, which move requests from clarification to their mode; a compound request now asks for scope.
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Run a startup challenge panel on my launch plan', 'startup-challenge-panel'),
+    ('Red-team my business plan', 'startup-challenge-panel'),
+    ('Compare strategy drafts for our pricing', 'strategy-draft-tournament'),
+    ('Compare competing strategy drafts for launch', 'strategy-draft-tournament'),
+    ('Do a customer perspective review of my relocation service', 'service-customer-perspective-challenger'),
+    ('Do a buyer perspective review of our insurance service', 'service-customer-perspective-challenger'),
+    ('Generate alternative go-to-market strategies and pick the best', 'gtm-strategy'),
+    ('Challenge my marketing strategy', 'marketing-strategy'),
+    ('Write landing page copy from the buyer perspective', 'website-build'),
+    ('Write ad copy for our fixed-scope service', 'marketing-strategy'),
+    ('Pressure-test this idea: software for care homes', 'idea-validation'),
+    ('Red-team my website security', 'clarify'),
+    ('Red team my business plan and build the GTM strategy', 'clarify'),
+])
+def test_challenge_boundary_routes(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+def test_challenge_protocols_are_separate_and_complete():
+    refs = SKILLS / 'challenge-review' / 'references'
+    panel = (refs / 'panel.md').read_text(encoding='utf-8')
+    tournament = (refs / 'tournament.md').read_text(encoding='utf-8')
+    customer = (refs / 'customer-perspective.md').read_text(encoding='utf-8')
+    assert 'Decision Arbiter' in panel and 'cross-examination' in panel
+    assert 'Judge Round' in tournament and 'Feedback Round' in tournament
+    for marker in ('Evidence hierarchy', 'Customer-role cross-examination', 'Behavioral validation', 'Simulated customer voice'):
+        assert marker in customer, marker
+    assert 'Judge Round' not in panel + customer and 'Decision Arbiter' not in tournament + customer
+    assert (refs / 'regional-lenses.md').is_file()

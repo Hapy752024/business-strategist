@@ -1,4 +1,10 @@
-# Startup Challenge Panel Workflow
+# Panel mode (route `startup-challenge-panel`)
+
+Challenge an existing startup thesis or plan with evidence memos, red-team cross-examination and an arbiter decision. A complete protocol of its own; do not mix in tournament drafting or customer-perspective role-play.
+
+Success: each role has a bounded objective and evidence contract; independent reviews complete before cross-examination; unsupported claims are surfaced; the arbiter verdict is reasoned, not averaged.
+
+Load the active topic manifest and only thesis-relevant artifacts. Role briefings and the GTM and customer-perspective roles draw on repo-root `references/evidence-registry.md`.
 
 ## Procedure
 

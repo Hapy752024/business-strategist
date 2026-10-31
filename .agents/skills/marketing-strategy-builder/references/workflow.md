@@ -24,7 +24,7 @@ If the user has not chosen a customer problem or segment and wants to discover o
 
 When business archetype, MVP/launch stage, first-customer motion, partnerships, or Europe/US/China expansion materially changes the strategy, route first to `archetype-gtm-strategist`; use this skill afterward for detailed positioning, funnel, channel, and campaign execution.
 
-When a consumer service needs customer-role objections, trust/redress review, package boundaries, pricing presentation, reviews, privacy, cancellation, or Europe/Germany/US adaptation, route first to `service-customer-perspective-challenger`. Its simulated customer voice is a hypothesis input, not customer evidence.
+When a consumer service needs customer-role objections, trust/redress review, package boundaries, pricing presentation, reviews, privacy, cancellation, or Europe/Germany/US adaptation, route first to `challenge-review` (customer-perspective mode). Its simulated customer voice is a hypothesis input, not customer evidence.
 
 ## Minimum Inputs
 
@@ -171,7 +171,7 @@ Before finalizing positioning, offer, messaging, or funnel for a consumer servic
 - Is the commitment staged (diagnostic, fixed-scope pilot) when outcome variance and expertise asymmetry are high, instead of one large irreversible purchase?
 - Are cancellation, refund, data-use, and complaint pathways clear in the funnel and messaging?
 
-Escalate to `service-customer-perspective-challenger` for a full challenge when the service is high-risk (regulated, health, financial, legal, immigration, data-sensitive) or when the founder's messaging assumptions conflict with these checks. Its simulated customer voice is a hypothesis input, not customer evidence.
+Escalate to `challenge-review` customer-perspective mode for a full challenge when the service is high-risk (regulated, health, financial, legal, immigration, data-sensitive) or when the founder's messaging assumptions conflict with these checks. Its simulated customer voice is a hypothesis input, not customer evidence.
 
 ## Proof Assets
 

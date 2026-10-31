@@ -8,7 +8,7 @@ description: Pressure-test a chosen business idea's segment, buyer, painful job,
 **Core validation sequence for a founder-chosen idea.**
 1. `idea-grill` clarifies the idea, segment, core hypothesis, alternatives, workaround, urgency and riskiest assumption.
 2. `evidence-scout`, invoked next with the Skill tool, collects source-grounded evidence (topic-led and entity-led customer voice).
-3. `service-customer-perspective-challenger` constructs evidence-grounded buying contexts.
+3. `challenge-review` (customer-perspective mode) constructs evidence-grounded buying contexts.
 4. `competitor-research` (landscape mode) separates same-market competitors, similar companies and capability references.
 5. `opportunity-risk-designer` ranks risks and designs low-cost tests. Only the competitive-market lane may support whitespace claims.
 

@@ -1,0 +1,106 @@
+{
+  "skill_name": "challenge-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Challenge our plan to hire salespeople and spend on ads after collecting 2,000 waitlist signups but before paid usage.",
+      "expected_output": "Bounded independent critiques, explicit unsupported demand claims, disagreement synthesis, and a conversion/retention decision gate rather than a vote.",
+      "files": [],
+      "mode": "panel"
+    },
+    {
+      "id": 2,
+      "prompt": "Run a challenge panel on an AI insurance recommendation service that wants to launch with live customer data next month.",
+      "expected_output": "Customer, model, distribution, and regulatory challenges with authoritative-source requirements, safer staged tests, and an arbiter stop or conditional verdict.",
+      "files": [],
+      "mode": "panel"
+    },
+    {
+      "id": 3,
+      "prompt": "We're stuck on pricing for our expat tax-advisory service in Germany (target €2,400/yr, consequential and data-sensitive). Generate competing pricing structures, challenge them, and pick one.",
+      "expected_output": "Frames the decision with constraints and evidence, spawns 3-4 drafts with genuinely different pricing mechanisms (e.g. staged diagnostic, transparent flat, outcome-linked), judges them against the customer-trust lens (uncertainty reducers, staged commitment, exit clarity) and constraint fit, cross-pollinates in a feedback round if needed, and delivers a winner or synthesis with the cheapest falsifying test.",
+      "files": [],
+      "must_mention": [
+        "judge",
+        "staged",
+        "test"
+      ],
+      "must_not_mention": [],
+      "mode": "tournament"
+    },
+    {
+      "id": 4,
+      "prompt": "Give me options for how our new budgeting app should get its first customers, then tell me which is best. We have 8,000 waitlist signups, no retention data, and €5k.",
+      "expected_output": "Runs a tournament over distinct first-customer mechanisms; the judge applies the sequencing rule and weak-evidence list so the 8,000 signups do not count as retained-value proof; drafts that skip manual learning or start with paid scale score low on sequencing compliance; the winner is a manual/founder-led motion with an explicit proof gate.",
+      "files": [],
+      "must_mention": [
+        "sequencing",
+        "retention",
+        "weak evidence"
+      ],
+      "must_not_mention": [],
+      "mode": "tournament"
+    },
+    {
+      "id": 5,
+      "prompt": "Draft three different launch campaign concepts for our local physiotherapy practice and pick the strongest.",
+      "expected_output": "Checks decision value before spawning agents (a local practice campaign may not justify a full tournament and says so or scales down), produces mechanism-diverse concepts, judges on constraint fit and customer-trust compliance for a health-adjacent service (credentials, clear scope and price, authentic reviews), and ends with a pick plus a cheap falsifying test.",
+      "files": [],
+      "must_mention": [
+        "credentials",
+        "reviews"
+      ],
+      "must_not_mention": [],
+      "mode": "tournament"
+    },
+    {
+      "id": 6,
+      "prompt": "Act as a skeptical German customer and review my €499 relocation concierge for professionals moving to Berlin. We collect passport and employment documents during signup. Improve the package and landing-page message.",
+      "expected_output": "A labeled synthetic customer reaction, privacy and trust audit, bounded package, German hypotheses, and behavioral tests without national stereotypes.",
+      "files": [],
+      "mode": "customer-perspective"
+    },
+    {
+      "id": 7,
+      "prompt": "Challenge a US subscription travel-planning service at $39/month. The founder wants to hide cancellation details until checkout and buy incentivized five-star reviews.",
+      "expected_output": "Rejects deceptive tactics, covers FTC constraints, proposes transparent packaging, authentic proof, and conversion-quality tests.",
+      "files": [],
+      "mode": "customer-perspective"
+    },
+    {
+      "id": 8,
+      "prompt": "Review an EU online insurance-advice idea from the customer perspective. The comparison is funded by insurer commissions and the recommendation affects long-term household finances.",
+      "expected_output": "Models high-consequence decision contexts, independence concerns, advice/comparison safeguards, disclosures, pause/redress, and staged validation.",
+      "files": [],
+      "mode": "customer-perspective"
+    },
+    {
+      "id": 9,
+      "prompt": "My German home-organizing service targets busy parents. Create a customer persona and tell me if 'Premium personalized lifestyle transformation' will convert.",
+      "expected_output": "Replaces demographic fiction with trigger/job contexts, challenges vague language, and proposes concrete scope, proof, pricing, and tests.",
+      "files": [],
+      "mode": "customer-perspective"
+    },
+    {
+      "id": 10,
+      "prompt": "Compare how I should package the same paid visa-document review for France, Germany, and the US. I have no customer interviews yet.",
+      "expected_output": "Separates evidence and hypotheses, refuses unsupported country personalities, identifies shared risk reducers and country-specific tests.",
+      "files": [],
+      "mode": "customer-perspective"
+    },
+    {
+      "id": 11,
+      "prompt": "Customers say they like our US career coaching idea. Role-play the buyer and decide whether we should scale paid ads.",
+      "expected_output": "Treats role-play as hypothesis only, distinguishes stated liking from behavior, challenges outcome and proof, and requires paid/retention evidence before scale.",
+      "files": [],
+      "mode": "customer-perspective"
+    },
+    {
+      "id": 12,
+      "prompt": "Review our low-cost paperwork service for a person with a deadline next week versus one browsing for a move next year. Priorities are founder guesses; no interviews.",
+      "expected_output": "Distinguish buying-situation minimum requirements, deciding preferences and acceptable sacrifices. Label inferred/synthetic reactions and propose confirmation, not personas as demand proof.",
+      "files": [],
+      "mode": "customer-perspective"
+    }
+  ]
+}

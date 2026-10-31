@@ -9,7 +9,7 @@ from scripts import enforce_skill_route, route_workflow, validate_skill_routes
 @pytest.mark.parametrize('intent,skill', [
     ('evidence-scout', 'evidence-scout'), ('competitive-landscape', 'competitor-research'),
     ('competitor-analysis', 'competitor-research'), ('competitor-discovery', 'competitor-research'),
-    ('service-customer-perspective-challenger', 'service-customer-perspective-challenger'),
+    ('service-customer-perspective-challenger', 'challenge-review'),
     ('opportunity-prioritization', 'opportunity-risk-designer'), ('interview-bridge', 'interview-bridge'),
 ])
 def test_customer_voice_reference_is_delivered_without_forcing_strategy(intent, skill):

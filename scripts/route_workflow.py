@@ -47,6 +47,9 @@ SKILL_ALIASES: dict[str, str] = {
     "competitor-scout": "competitor-discovery",
     "competitive-landscape-builder": "competitive-landscape",
     "competitor-marketing-analyzer": "competitor-analysis",
+    "startup-challenge-panel": "startup-challenge-panel",
+    "strategy-draft-tournament": "strategy-draft-tournament",
+    "service-customer-perspective-challenger": "service-customer-perspective-challenger",
 }
 
 

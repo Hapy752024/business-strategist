@@ -1,4 +1,8 @@
-# Strategy Draft Tournament — Workflow
+# Tournament mode (route `strategy-draft-tournament`)
+
+A complete protocol of its own; do not mix in panel roles or customer-perspective role-play. Score with [judge lenses](judge-lenses.md).
+
+Success: 3-4 drafts with genuinely different mechanisms (not cosmetic variants); every judge score cites a registry lens or named assumption; at most 2 feedback rounds before converging or escalating to the user; a winner or top-2 synthesis is always produced; the final pick names what would falsify it.
 
 Generate-and-judge protocol for consequential, under-determined deliverables: service definitions, pricing structures, GTM approaches, campaign concepts, packaging. The point is not volume — it is escaping the first-idea trap by forcing mechanism diversity, evidence-grounded challenge, and cross-pollination before committing.
 
@@ -9,7 +13,7 @@ Generate-and-judge protocol for consequential, under-determined deliverables: se
 
 Do NOT use when:
 
-- A plan already exists and needs challenge → `startup-challenge-panel`.
+- A plan already exists and needs challenge → panel mode (route `startup-challenge-panel`).
 - The deliverable is well-scoped and one draft with a quality checklist suffices → `marketing-strategy-builder`, `archetype-gtm-strategist`, `social-digital-marketing-planner`.
 - Evidence about the customer/problem is still missing → run `evidence-scout` or `interview-bridge` first; a tournament over ungrounded drafts produces polished guesses.
 
@@ -34,7 +38,7 @@ Cap each draft: one screen of mechanism and rationale, not a finished plan. Deta
 
 ## Step 3 — Judge Round
 
-One judge agent (fresh context, not a drafter) receives all drafts plus `references/judge-lenses.md`. The judge:
+One judge agent (fresh context, not a drafter) receives all drafts plus [judge lenses](judge-lenses.md). The judge:
 
 1. Scores each draft on the rubric (evidence grounding, sequencing compliance, customer-trust compliance, constraint fit, testability) with a cited reason per score — a score without a cited lens or named assumption is invalid.
 2. Names each draft's fatal flaw, if any.
