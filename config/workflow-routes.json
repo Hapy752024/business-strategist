@@ -517,12 +517,15 @@
       "id": "saas-fintech-pilot-designer",
       "match": [
         "design a paid pilot",
-        "fintech pilot"
+        "fintech pilot",
+        "insurtech pilot",
+        "saas pilot",
+        "regulatory sandbox"
       ],
-      "skill": "saas-fintech-pilot-designer",
+      "skill": "opportunity-risk-designer",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "pilot"
     },
     {
       "id": "service-customer-perspective-challenger",

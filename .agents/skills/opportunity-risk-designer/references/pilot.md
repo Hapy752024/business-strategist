@@ -1,16 +1,8 @@
-# SaaS Fintech Pilot Designer Workflow
+# Pilot mode (route `saas-fintech-pilot-designer`)
 
-Use this skill to turn an early SaaS, fintech, or insurtech idea into a concrete learning plan: which test to run, with whom, under what constraints, using which data, with what success threshold, and what decision follows.
+Use this mode to turn an early SaaS, fintech, or insurtech idea into a concrete learning plan: which test to run, with whom, under what constraints, using which data, with what success threshold, and what decision follows.
 
-This is a business and product-validation skill, not legal advice. For fintech, insurtech, credit, payments, banking, insurance, KYC/AML, underwriting, claims, financial advice, insurance advice, consumer disclosures, or use of sensitive personal data, flag where licensed counsel, compliance review, a licensed partner, or a regulator sandbox may be required.
-
-## Reference
-
-Before creating a substantial MVP or pilot plan, read:
-
-- `references/mvp-pilot-research.md`
-
-If the user asks about current rules, a named jurisdiction, a named regulator, live consumer testing, or production financial/insurance data, search the web and cite official sources before making claims.
+This is a business and product-validation mode, not legal advice. Whenever the test touches fintech, insurtech, credit, payments, insurance, advice, KYC/AML, underwriting, claims or sensitive personal data, read [pilot regulatory guardrails](pilot-regulatory.md) completely before planning; if the user names a jurisdiction, regulator, live consumer test or production financial/insurance data, search the web and cite official sources before making claims.
 
 ## Stance
 
@@ -68,21 +60,6 @@ For B2B SaaS, design the pilot around a named business outcome:
 - Conversion gate: exact condition for annual/monthly contract, expansion, narrow retry, or stop.
 
 Watch for failure patterns: no economic buyer, vague success criteria, custom-feature dependency, no data access, champion-only enthusiasm, security/procurement discovered too late, manual service hidden as software, and pilots that extend without a conversion decision.
-
-## Fintech And Insurtech Guardrails
-
-Start with the least regulated and least sensitive test that still teaches:
-
-- Use synthetic, mock, redacted, or anonymized data before production data.
-- Use read-only data before write access, money movement, eligibility changes, policy changes, claims actions, or customer-facing recommendations.
-- Keep humans in the loop for regulated or high-impact decisions.
-- Avoid giving financial, credit, investment, insurance, tax, legal, eligibility, or claims advice unless the team has the required licenses, partner oversight, and review.
-- Identify whether the company acts as software vendor, data processor, lead generator, broker, agent, carrier, lender, payment processor, advisor, model provider, or decisioning system.
-- Document data collection, retention, access, disposal, vendor exposure, audit logs, incident response, and customer-facing disclosures.
-- Check for bias, protected-class impacts, explainability, complaint handling, and human appeal paths where eligibility, pricing, underwriting, fraud, claims, or credit are involved.
-- Consider a licensed partner, regulator sandbox, or no-action/sandbox-style path when testing live consumers or novel regulated activity.
-
-Never recommend live production testing with consumer funds, coverage, claims, credit, underwriting, or advice if the legal/compliance path is unknown. Propose a safer staged alternative.
 
 ## Procedure
 
@@ -162,3 +139,25 @@ Before finalizing, check:
 If needed, ask:
 
 `Will the test touch real customer financial/insurance data, money movement, eligibility, underwriting, claims, or advice, and in which jurisdiction?`
+
+## Sources
+
+Source for artifact distinctions (POCs test feasibility, prototypes experience, pilots realistic stakeholder use): https://www.simonoregan.com/essays/poc-prototype-mvp-pilot. Paid pilots with clear goals keep conversion momentum so legal and security work is not discovered after the pilot: https://www.heavybit.com/library/article/saas-poc-paid-pilot-program.
+
+## Evidence Log Template
+
+| Date | Participant / Account | Segment | Assumption Tested | Test Type | Observed Behavior | Metric | Quote / Artifact | Risk Signal | Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Pilot Scorecard Template
+
+| Dimension | Threshold | Result | Evidence | Decision |
+| --- | --- | --- | --- | --- |
+| Activation | e.g. 80% of invited users complete first workflow |  |  |  |
+| Repeated use | e.g. 3+ uses per active user in 30 days |  |  |  |
+| Outcome | e.g. 30% less review time or 20% fewer errors |  |  |  |
+| Buyer value | e.g. sponsor confirms budget owner and target price |  |  |  |
+| Data feasibility | e.g. required fields available with acceptable quality |  |  |  |
+| Security/compliance | e.g. no high-risk unresolved items |  |  |  |
+| Cost to serve | e.g. manual ops under target minutes per account |  |  |  |
+| Conversion | e.g. signed annual contract or paid extension |  |  |  |

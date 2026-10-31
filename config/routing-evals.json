@@ -748,6 +748,41 @@
           "rationale": "Unchanged against 3f1635c; no broad 'interview' phrase was added."
         }
       ]
+    },
+    {
+      "pair": "opportunity-risk-designer pilot mode vs smoke test vs prioritization",
+      "evals": [
+        {
+          "id": "pilot-1",
+          "prompt": "Design an insurtech pilot for broker quoting.",
+          "expected_skill": "opportunity-risk-designer",
+          "expected_route": "saas-fintech-pilot-designer",
+          "forbidden_skills": [],
+          "expected_output": "Routes to opportunity-risk-designer pilot mode (pain-gated, strategy-stage prerequisites) and applies the regulatory guardrails reference.",
+          "files": [],
+          "rationale": "'insurtech pilot' names the pilot deliverable; before the merge it fell to clarification."
+        },
+        {
+          "id": "pilot-2",
+          "prompt": "Design a smoke test for the meal-kit offer.",
+          "expected_skill": "opportunity-risk-designer",
+          "expected_route": "smoke-test-design",
+          "forbidden_skills": [],
+          "expected_output": "Stays on the smoke-test route, not the pilot mode.",
+          "files": [],
+          "rationale": "Unchanged against 3f1635c."
+        },
+        {
+          "id": "pilot-3",
+          "prompt": "Design an MVP for our budgeting app.",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "expected_output": "Asks one scoping question; a bare MVP request is not routed to the pilot mode.",
+          "files": [],
+          "rationale": "Unchanged against 3f1635c; no broad 'MVP' phrase was added."
+        }
+      ]
     }
   ]
 }

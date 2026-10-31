@@ -30,7 +30,8 @@ REGISTER_ARTIFACT = 'assumption-register'
 def _consumes(catalog: dict, skill: str, mode: str | None) -> list[dict] | None:
     metadata = catalog.get(skill, {})
     if mode and 'consumes' in metadata.get('modes', {}).get(mode, {}):
-        return metadata['modes'][mode]['consumes']
+        # An empty mode list means the mode has no input contract (e.g. the pilot mode), not the skill's.
+        return metadata['modes'][mode]['consumes'] or None
     return metadata.get('consumes')
 
 

@@ -27,10 +27,11 @@ FAMILIES = {
     'marketing': ['marketing-strategy-builder', 'social-digital-marketing-planner', 'social-media-idea-validator'],
     'positioning-gtm': ['archetype-gtm-strategist', 'company-operating-system'],
     'evidence-scout': ['interview-bridge'],
+    'opportunity-risk-designer': ['saas-fintech-pilot-designer'],
 }
 # Hosts that absorbed a former skill keep their own pre-existing routes as they were (route ID, mode or no mode);
 # only the absorbed skills' routes gain a mode and a references/<mode>.md.
-ABSORBING_HOSTS = {'evidence-scout'}
+ABSORBING_HOSTS = {'evidence-scout', 'opportunity-risk-designer'}
 FORMER = [(merged, former) for merged, formers in FAMILIES.items() for former in formers]
 # Paths stay in git history; docs/ and .superpowers/ are dated records of that history. The research-business-plan
 # eval is a completed recorded comparison: its manifest snapshot paths are pinned to its baseline revision and results.
@@ -417,3 +418,60 @@ def test_evidence_scout_plain_text_dispatch_still_works_without_an_envelope():
              'cwd': str(ROOT), 'tool_input': {'skill': 'evidence-scout', 'args': 'Research pain points of freelance translators'}}
     out = hook.check_dispatch(event)
     assert '"route_id": "evidence-scout"' in out['hookSpecificOutput']['additionalContext']
+
+
+def test_pilot_mode_keeps_its_gates_and_contract():
+    """Gate fields as frozen at 3f1635c: the pilot route stays pain-gated with five strategy stages and no
+    input/output contract (so `route_workflow.py status` still skips it)."""
+    routes = _routes()
+    assert routes['saas-fintech-pilot-designer']['requires_pain_gate'] is True
+    assert routes['saas-fintech-pilot-designer']['mode'] == 'pilot'
+    modes = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))['skills']['opportunity-risk-designer']['modes']
+    assert modes['pilot']['strategy_stage_prerequisites'] == STAGES
+    assert modes['pilot']['prerequisites'] == ['product hypothesis']
+    from scripts import case_status
+    catalog = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))['skills']
+    assert case_status._consumes(catalog, 'opportunity-risk-designer', 'pilot') is None
+    for route_id in ('opportunity-prioritization', 'case-insights', 'case-appraisal', 'claim-falsification', 'smoke-test-design'):
+        assert not routes[route_id].get('requires_pain_gate'), route_id
+
+
+def test_pilot_regulatory_content_has_its_own_reference():
+    refs = SKILLS / 'opportunity-risk-designer' / 'references'
+    pilot = (refs / 'pilot.md').read_text(encoding='utf-8')
+    regulatory = (refs / 'pilot-regulatory.md').read_text(encoding='utf-8')
+    assert 'pilot-regulatory.md' in pilot and 'not legal advice' in pilot
+    for marker in ('FCA', 'Safeguards Rule', 'NIST Privacy Framework', 'Risk Ladder', 'licensed partner'):
+        assert marker in regulatory, marker
+        assert marker not in pilot, marker
+    for marker in ('Conversion gate', 'Pilot Agreement Outline', 'Evidence Log Template', 'Pilot Scorecard Template'):
+        assert marker in pilot, marker
+
+
+# Plain-text requests near the pilot/risk boundary. Frozen from the router at 3f1635c (before the merge); rows
+# marked "new" moved from clarification to the pilot route through the specific phrases added in the merge.
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Design a paid pilot for our claims software', 'saas-fintech-pilot-designer'),
+    ('Plan a fintech pilot with a bank partner', 'saas-fintech-pilot-designer'),
+    ('Design an insurtech pilot for broker quoting', 'saas-fintech-pilot-designer'),  # new
+    ('Design a SaaS pilot for our scheduling tool', 'saas-fintech-pilot-designer'),  # new
+    ('Should we apply for a regulatory sandbox?', 'saas-fintech-pilot-designer'),  # new
+    ('Design a smoke test for the meal-kit offer', 'smoke-test-design'),
+    ('What should I validate next?', 'opportunity-prioritization'),
+    ('Rank opportunities and set decision gates', 'opportunity-prioritization'),
+    ('Falsify claims in the case insights', 'claim-falsification'),
+    ('Design an MVP for our budgeting app', 'clarify'),
+    ('Set up a pilot program with our first customers', 'clarify'),
+    ('Build a go-to-market strategy for our fintech', 'gtm-strategy'),
+])
+def test_pilot_boundary_routes(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Design a paid pilot for our insurance API', 'saas-fintech-pilot-designer'),
+    ('Design a smoke test with a fake door', 'smoke-test-design'),
+    ('What should I validate next?', 'opportunity-prioritization'),
+])
+def test_opportunity_risk_plain_text_infers_its_mode(request_text, expected_route):
+    assert route_workflow.infer_mode('opportunity-risk-designer', request_text)[0] == expected_route

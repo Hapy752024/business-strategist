@@ -29,7 +29,7 @@ If missing context would materially change the plan, ask one focused question be
 
 If the user wants a fast draft, state assumptions clearly and create a testable plan.
 
-Use `market-problem-discovery` when the user wants to explore a market or discover which customer problems and segments to pursue. Use `idea-grill` when the user has chosen a candidate idea but needs to make it researchable. Use `evidence-scout` for demand validation. Use `competitor-research` (scout mode) for alternatives and substitutes. Use `saas-fintech-pilot-designer` when the user needs detailed SaaS, fintech, or insurtech MVP, POC, paid pilot, sandbox trial, or regulated test design. Use `positioning-gtm` for stage-gated first-customer, launch, partnership, and regional GTM design (gtm mode) and to derive delivery choices from the selected promise or set requested management cadence (operations mode). Use `marketing` (strategy or social mode) for detailed campaign and channel execution.
+Use `market-problem-discovery` when the user wants to explore a market or discover which customer problems and segments to pursue. Use `idea-grill` when the user has chosen a candidate idea but needs to make it researchable. Use `evidence-scout` for demand validation. Use `competitor-research` (scout mode) for alternatives and substitutes. Use `opportunity-risk-designer` (pilot mode) when the user needs detailed SaaS, fintech, or insurtech MVP, POC, paid pilot, sandbox trial, or regulated test design. Use `positioning-gtm` for stage-gated first-customer, launch, partnership, and regional GTM design (gtm mode) and to derive delivery choices from the selected promise or set requested management cadence (operations mode). Use `marketing` (strategy or social mode) for detailed campaign and channel execution.
 
 Before substantial research or a full startup plan, make source availability explicit with:
 
@@ -116,7 +116,7 @@ Design the smallest useful test that creates customer learning:
 - Founder-led sales.
 - Manual onboarding.
 
-For SaaS, fintech, and insurtech, use `saas-fintech-pilot-designer` to choose between smoke test, prototype, concierge MVP, technical POC, paid pilot, regulatory sandbox trial, or beta, and to define data, security, compliance, success metrics, and conversion gates.
+For SaaS, fintech, and insurtech, use `opportunity-risk-designer` (pilot mode) to choose between smoke test, prototype, concierge MVP, technical POC, paid pilot, regulatory sandbox trial, or beta, and to define data, security, compliance, success metrics, and conversion gates.
 
 Avoid building a full product, automated backend, marketplace infrastructure, large app, or polished brand system before the main risk is reduced.
 

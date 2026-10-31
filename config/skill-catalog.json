@@ -50,8 +50,7 @@
       "business-strategist",
       "opportunity-risk-designer",
       "startup-business-builder",
-      "positioning-gtm",
-      "saas-fintech-pilot-designer"
+      "positioning-gtm"
     ],
     "agent_infrastructure": [
       "setup-multiharness-project"
@@ -248,7 +247,8 @@
     },
     "opportunity-risk-designer": {
       "intent": [
-        "rank opportunity risks and tests"
+        "rank opportunity risks and tests",
+        "design SaaS, fintech, or insurtech pilot"
       ],
       "excludes": [],
       "prerequisites": [
@@ -487,6 +487,33 @@
               "freshness": "digest"
             }
           ]
+        },
+        "pilot": {
+          "inputs": [
+            "product hypothesis",
+            "riskiest assumption"
+          ],
+          "prerequisites": [
+            "product hypothesis"
+          ],
+          "artifacts": [
+            "pilot plan"
+          ],
+          "side_effect": "none",
+          "cost": "high",
+          "strategy_stage_prerequisites": [
+            "intake",
+            "segment_selection",
+            "customer_profile",
+            "problem_validation",
+            "opportunity_risk"
+          ],
+          "required_references": [
+            ".agents/skills/opportunity-risk-designer/references/pilot.md"
+          ],
+          "output_owner": "opportunity-risk-designer",
+          "consumes": [],
+          "produces": []
         }
       },
       "consumes": [
@@ -985,27 +1012,6 @@
           ],
           "freshness": "revision"
         }
-      ]
-    },
-    "saas-fintech-pilot-designer": {
-      "intent": [
-        "design SaaS, fintech, or insurtech pilot"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "product hypothesis"
-      ],
-      "artifacts": [
-        "pilot plan"
-      ],
-      "side_effect": "none",
-      "cost": "high",
-      "strategy_stage_prerequisites": [
-        "intake",
-        "segment_selection",
-        "customer_profile",
-        "problem_validation",
-        "opportunity_risk"
       ]
     },
     "earned-media-builder": {

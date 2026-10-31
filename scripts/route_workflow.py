@@ -58,6 +58,7 @@ SKILL_ALIASES: dict[str, str] = {
     "archetype-gtm-strategist": "gtm-strategy",
     "company-operating-system": "company-operations",
     "interview-bridge": "interview-bridge",
+    "saas-fintech-pilot-designer": "saas-fintech-pilot-designer",
 }
 
 
