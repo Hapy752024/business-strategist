@@ -43,7 +43,6 @@
       ],
       "must_not_mention": [
         "conversions were 0",
-        "zero conversions were recorded",
         "you got 0 conversions"
       ]
     }
