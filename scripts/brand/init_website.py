@@ -5,17 +5,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import time
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from scripts.case_outputs import run_staged
+from scripts.common_io import now_iso
 from scripts.brand.website_launch import pending
-
-
-def now_iso() -> str:
-    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
 def main() -> int:

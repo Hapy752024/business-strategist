@@ -45,6 +45,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
+try:
+    from scripts.common_io import now_iso
+except ModuleNotFoundError:
+    from common_io import now_iso
+
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SCENARIO = ROOT / 'evals/acceptance/hybrid-insurance-advisor'
 SCHEMA_PATH = ROOT / 'evals/acceptance/scorecard.schema.json'
@@ -216,10 +221,6 @@ INTAKE_PATTERN = re.compile(r'(?i)(which path|continue \[\d\]|please (confirm|ch
 
 
 # --------------------------------------------------------------------------- utilities
-
-def now_iso() -> str:
-    return datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
-
 
 def _git(args: list[str], cwd: Path = ROOT, check: bool = True) -> subprocess.CompletedProcess:
     return subprocess.run(['git', *args], cwd=cwd, check=check, capture_output=True, text=True)

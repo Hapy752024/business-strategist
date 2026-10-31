@@ -16,17 +16,17 @@ import struct
 import tempfile
 import urllib.request
 from urllib.parse import urlparse
-from datetime import datetime, timezone
 from pathlib import Path
+
+try:
+    from scripts.common_io import now_iso
+except ModuleNotFoundError:
+    from common_io import now_iso
 
 
 ENDPOINT_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_./-]*$")
 ALLOWED_MEDIA_HOSTS = ("fal.media", "fal.ai")
 MAX_ASSET_BYTES = 25 * 1024 * 1024
-
-
-def now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def build_request(args: argparse.Namespace) -> dict[str, object]:

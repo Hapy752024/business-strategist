@@ -22,6 +22,7 @@ import sys
 import uuid
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import case_workspace as cases
+from common_io import now_iso  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -234,10 +235,6 @@ PROJECT_SUBDIRS = (
     "strategy/risks",
     "strategy/experiments",
 )
-
-
-def now_iso() -> str:
-    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
 def slugify(value: str) -> str:

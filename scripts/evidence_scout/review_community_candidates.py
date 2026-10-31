@@ -8,6 +8,7 @@ import base64
 import hashlib
 import json
 import os
+import sys
 import tempfile
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -17,6 +18,9 @@ from typing import Any
 from jsonschema import Draft202012Validator, FormatChecker
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from common_io import read_json  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,10 +38,6 @@ REQUIRED_DIMENSIONS = {
 }
 PUBLIC_METHODS = {"public_web", "paid_public_api"}
 TEST_PRIVATE_KEY_B64 = base64.b64encode(bytes(range(32))).decode()
-
-
-def read_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def write_json(path: Path, value: Any) -> None:

@@ -19,6 +19,9 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from common_io import now_iso  # noqa: E402
+
 
 USER_AGENT = "evidence-scout-validator/0.1"
 REDDIT_APP_NAME = "business-strategist-hapy"
@@ -42,10 +45,6 @@ def project_root() -> Path:
 
 ROOT = project_root()
 OUTPUT_DIR = Path(os.environ.get("EVIDENCE_SCOUT_VALIDATION_DIR", Path(os.environ.get('EVIDENCE_SCOUT_INFRA_DIR', ROOT / '.research-infra')) / 'api-validation'))
-
-
-def now_iso() -> str:
-    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
 def load_local_secrets() -> dict[str, str]:

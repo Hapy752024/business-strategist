@@ -7,7 +7,6 @@ import argparse
 import hashlib
 import json
 import sys
-import time
 from pathlib import Path
 from typing import Any
 
@@ -16,10 +15,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.brand.validate_business_to_brand_handoff import validate_data
 from scripts.strategy_review import validate_plan
 from scripts import case_workspace as cases
-
-
-def now_iso() -> str:
-    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+from scripts.common_io import now_iso
 
 
 SOURCE_KEYS = {

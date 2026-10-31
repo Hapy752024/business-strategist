@@ -61,6 +61,18 @@ SCRIPTS = [
     "validate_scrapling.py",
 ]
 
+# Providers served by a shared validator module: provider -> (module, --provider value).
+SHIMS = {
+    "ecb": ("validate_institutional_sources", "ecb"),
+    "fred": ("validate_institutional_sources", "fred"),
+    "bis": ("validate_institutional_sources", "bis"),
+    "world_bank": ("validate_institutional_sources", "world_bank"),
+    "companies_house": ("validate_institutional_sources", "companies_house"),
+    "france_register": ("validate_registry_sources", "france"),
+    "switzerland_register": ("validate_registry_sources", "switzerland"),
+    "sec_register": ("validate_registry_sources", "sec"),
+}
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate selected source providers")
@@ -78,7 +90,11 @@ def main() -> int:
         name = script.removeprefix("validate_").removesuffix(".py")
         if args.provider and name not in args.provider:
             continue
-        path = Path(__file__).resolve().parent / script
+        if name in SHIMS:
+            module, provider_arg = SHIMS[name]
+            command = [sys.executable, str(Path(__file__).resolve().parent / f"{module}.py"), "--provider", provider_arg]
+        else:
+            command = [sys.executable, str(Path(__file__).resolve().parent / script)]
         supported = {"query": {"dataforseo_google_trends", "google_autocomplete", "github", "firecrawl",
                                 "brave_search", "x", "reddit", "serpapi_google_trends", "hn", "youtube"},
                      "country": {"google_autocomplete", "itunes_reviews"},
@@ -88,7 +104,7 @@ def main() -> int:
             value = getattr(args, flag.replace("-", "_"))
             if value and name in supported[flag]:
                 forwarded.extend(("--" + flag, value))
-        proc = subprocess.run([sys.executable, str(path), *forwarded], cwd=ROOT, text=True, capture_output=True)
+        proc = subprocess.run([*command, *forwarded], cwd=ROOT, text=True, capture_output=True)
         try:
             parsed = json.loads(proc.stdout)
         except json.JSONDecodeError:

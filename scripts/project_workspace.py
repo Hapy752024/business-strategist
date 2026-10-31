@@ -12,7 +12,6 @@ import json
 import os
 import re
 import tempfile
-import time
 from pathlib import Path
 from typing import Any
 try:
@@ -20,14 +19,15 @@ try:
 except ModuleNotFoundError:
     import case_workspace as cases
 
+try:
+    from scripts.common_io import now_iso, read_json
+except ModuleNotFoundError:
+    from common_io import now_iso, read_json
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECTS_ROOT = ROOT / "projects"
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-
-
-def now_iso() -> str:
-    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
 def slugify(value: str) -> str:
@@ -48,10 +48,6 @@ def _safe_path(path: str | Path, *, allow_external: bool = False) -> dict[str, A
             raise ValueError(f"path is outside repository: {candidate}")
         return {"path": str(candidate), "external": True}
     return {"path": relative.as_posix(), "external": False}
-
-
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def write_json_atomic(path: Path, value: dict[str, Any], *, expected_revision: int | None = None) -> int:

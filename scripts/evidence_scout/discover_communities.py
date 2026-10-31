@@ -25,6 +25,8 @@ sys.path.insert(0, str(VALIDATOR_DIR))
 
 from common import get_secret, http_get, http_post, now_iso, request_budget, status_from_response, with_query  # noqa: E402
 from workspace import create_run_manifest, resolve_run_dir, update_run_manifest, update_stage  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from common_io import read_json  # noqa: E402
 
 COLLECTOR_VERSION = "community-discovery-v2"
 SUPPORTED_LANGUAGES = {
@@ -51,10 +53,6 @@ ISO_ALPHA2_COUNTRIES = set("AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA B
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
-
-
-def read_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def csv_terms(value: str) -> list[str]:
