@@ -2,7 +2,7 @@
 
 Last researched: 2026-08-28
 
-Use this reference as background for `social-digital-marketing-planner`. Treat these as planning principles, not fixed platform rules. When the user asks for the latest platform-specific execution details, search current official docs before making precise recommendations.
+Use this reference as background for the marketing skill's social mode. Treat these as planning principles, not fixed platform rules. When the user asks for the latest platform-specific execution details, search current official docs before making precise recommendations.
 
 ## Executive Summary
 

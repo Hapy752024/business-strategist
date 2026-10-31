@@ -59,6 +59,24 @@ def test_runner_writes_separate_trial_records_and_keeps_failures(tmp_path):
     assert (Path(out["trials"][0]["workspace"]) / "prompt.txt").is_file()
 
 
+def test_baseline_arm_reads_a_renamed_file_at_its_old_path(tmp_path):
+    import subprocess
+    manifest_path = ROOT / "evals/workflow-quality/manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    new = ".agents/skills/marketing/SKILL.md"
+    old = manifest["baseline_renames"][new]
+    assert old != new
+    task = {"id": "fixture", "kind": "synthetic", "split": "development", "group": "g", "prompt": "hello",
+            "snapshot_paths": [new]}
+    out = module.run({"source_dataset": manifest["source_dataset"], "baseline_revision": manifest["baseline_revision"],
+                      "baseline_renames": {new: old}, "tasks": [task]}, manifest_path,
+                     [sys.executable, "-c", "print('ok')"], tmp_path, "baseline", 1)
+    expected = subprocess.run(["git", "show", f"{manifest['baseline_revision']}:{old}"], cwd=ROOT,
+                              capture_output=True, check=True).stdout
+    snapshot = Path(out["trials"][0]["workspace"]) / "snapshot" / new
+    assert snapshot.read_bytes() == expected
+
+
 def test_blinded_pair_outputs_and_coordinator_key_are_separate(tmp_path):
     def make_arm(name, answer):
         root = tmp_path / name; trial = root / "task-r1"; trial.mkdir(parents=True)

@@ -72,7 +72,7 @@ def test_independent_requests_are_punctuation_independent(joiner):
 ])
 def test_strategy_components_are_not_separate_workflows(prompt):
     packet = route_request(prompt)
-    assert packet["skill"] == "marketing-strategy-builder"
+    assert packet["route_id"] == "marketing-strategy"
     assert packet["task_scope"] == "strategy"
     assert not packet["ask_question"]
 

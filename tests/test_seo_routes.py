@@ -4,7 +4,7 @@ from scripts.route_workflow import route_request as route
 
 @pytest.mark.parametrize('prompt,intent,skill,mode', [
     ('Plan backlink acquisition','earned-media-discovery','earned-media-builder','discovery'),
-    ('Research SEO keywords and build a keyword-to-page map','seo-page-planning','marketing-strategy-builder','page_planning'),
+    ('Research SEO keywords and build a keyword-to-page map','seo-page-planning','marketing','seo-page-planning'),
     ('Run a technical SEO audit','seo-technical-audit','brand-website-designer-builder','technical_audit'),
     ('Prepare backlink pitches','earned-media-preparation','earned-media-builder','preparation'),
     ('Verify backlink placement','earned-media-verification','earned-media-builder','verification'),

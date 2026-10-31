@@ -1,12 +1,12 @@
-# Marketing Strategy Builder Workflow
+# Strategy mode
 
-Use this skill when the user wants a marketing strategy, go-to-market plan, positioning, campaign plan, or growth plan.
+Route `marketing-strategy`, strategy scope: a marketing strategy, positioning, campaign plan or growth plan.
 
 ## Stance
 
 Marketing is not decoration. Treat it as the link between customer pain, offer design, distribution, proof, and revenue. Do not produce generic channel lists. Do not copy competitor claims without checking whether real customers care.
 
-For social/content and digital-acquisition bets, ground recommendations in the practitioner evidence base gathered with `../../precedent-research/references/playbook.md` (Pain-Point SEO intent tiers, considered-purchase content economics, niche-first entry, broker/loan-officer channel reality), and validate untested channel ideas with `social-media-idea-validator` before committing them to the plan.
+For social/content and digital-acquisition bets, ground recommendations in the practitioner evidence base gathered with `../../precedent-research/references/playbook.md` (Pain-Point SEO intent tiers, considered-purchase content economics, niche-first entry, broker/loan-officer channel reality), and validate untested channel ideas in channel-validation mode (route `social-media-idea-validator`) before committing them to the plan.
 
 Separate observed customer behavior, interpretation, hypotheses and proposed actions. Consume the selected promise, sacrifices and per-claim uncertainty: need, customer choice, delivery fit and defensibility remain separate. Do not turn a hypothetical moat into proven superiority. Return material contradictions to the positioning owner; narrow copy work does not restart strategy.
 
@@ -149,17 +149,9 @@ AI answer engines and agent/comparison surfaces are channel jobs (discovery, dem
 
 Name one primary acquisition motion and one supporting/owned motion. Explicitly defer channels that lack audience fit, assets, capacity, retained-value evidence, or viable economics. Use the channel-job guidance in `references/evidence-registry.md`; retrieve current official platform details before prescribing formats, targeting, algorithms, costs, or regulated-advertising execution.
 
-## Referral, Product, and Community Loops
+## Loops and Low-Cost Growth
 
-Do not describe a share button, waitlist, follower audience, or branded group as a growth loop. Diagnose recipient exposure, collaboration, reciprocal reward, scarcity/invite, network utility, or repeated member-to-member exchange.
-
-Recommend a loop only when value precedes the invitation, the recipient has a real job, every step is measurable, and retained contribution after rewards, fraud, support, refunds/claims, and complaints is plausible. For regulated services, include promotion/incentive, suitability, privacy, and abuse review.
-
-For community, require a narrow member identity, recurring useful exchange, founder/operator stewardship, newcomer onboarding, roles/recognition, moderation, and a customer-outcome link. Track member-to-member help, return contribution, activity not initiated by staff, product/customer outcomes, and moderation load—not just member count or posts.
-
-## Low-Cost Growth Guardrail
-
-Interpret “growth hacks” as low-cash, high-learning, compounding distribution: founder recruitment/onboarding, useful participation in concentrated communities, customer-language content, high-intent SEO, native repurposing, post-activation invitations, product-currency rewards, recipient exposure, and manual partner handoffs. Reject spam, fake scarcity, manufactured controversy, mass unsolicited automation, dark patterns, and regulatory arbitrage.
+Apply `references/loops-and-growth.md` before recommending a referral, product or community loop or any "growth hack".
 
 ## Customer-Perspective Challenge Pass
 
@@ -248,7 +240,5 @@ For campaign-only requests, include the strategic assumptions first, then the ca
 If needed, ask:
 
 `Who is the specific buyer you want this marketing strategy to convert first?`
-
-For a selected visibility intervention, use repo-root `references/seo-rule-pack.md` for the evidence-to-change queue and outcome review. If recordings are needed, apply `references/ai-answer-recordings.md`; the processor is offline, and listening/live collection are not implemented capabilities. Do not run a mandatory multi-engine program.
 
 For question-led content, use `references/customer-question-tracking.md`. Reviewed target-customer question IDs may bind to format briefs; supplier/hypothesis rows stay separate and unknown answers/outcomes stay unknown.

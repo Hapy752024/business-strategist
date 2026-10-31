@@ -1,6 +1,8 @@
-# Social Media Idea Validator — Workflow
+# Channel-validation mode
 
-Detailed procedure for `social-media-idea-validator`. Keep `SKILL.md` lean; maintain this file.
+Route `social-media-idea-validator`: validate a content, social or channel idea before production investment.
+
+**Success criteria:** verdicts follow the founder evidence base (practitioner patterns, not vibes; `references/founder-playbooks.md` and `../../precedent-research/references/playbook.md`); ideas are not rejected merely for an occupied market or unavailable evidence; the user gets a bounded, affordable test calibrated to the buying cycle.
 
 **Cross-skill rules:** apply the sequencing rule, weak-evidence list, channel jobs, and loop gates from `references/evidence-registry.md` at repo root. In particular: views, likes, followers, and waitlist numbers found during Gate 1–2 are weak evidence until tied to retained behavior, and any "viral loop" idea must satisfy the registry's loop gates (value before invitation, relevant recipient, measurable steps, retained economics after rewards and abuse).
 

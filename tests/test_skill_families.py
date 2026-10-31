@@ -24,11 +24,15 @@ FAMILIES = {
     'competitor-research': ['competitor-scout', 'competitive-landscape-builder', 'competitor-marketing-analyzer'],
     'challenge-review': ['startup-challenge-panel', 'strategy-draft-tournament', 'service-customer-perspective-challenger'],
     'precedent-research': ['business-archetype-playbook-researcher', 'growth-case-analyzer'],
+    'marketing': ['marketing-strategy-builder', 'social-digital-marketing-planner', 'social-media-idea-validator'],
 }
 FORMER = [(merged, former) for merged, formers in FAMILIES.items() for former in formers]
 # Paths stay in git history; docs/ and .superpowers/ are dated records of that history. The research-business-plan
 # eval is a completed recorded comparison: its manifest snapshot paths are pinned to its baseline revision and results.
-HISTORY_PREFIXES = ('docs/', '.superpowers/', 'evals/research-business-plan/')
+# evals/non-video/ holds a digest-pinned frozen baseline snapshot whose manifest keys name files in that snapshot;
+# the workflow-quality manifest's baseline_renames name pre-merge paths read at its baseline revision.
+HISTORY_PREFIXES = ('docs/', '.superpowers/', 'evals/research-business-plan/', 'evals/non-video/',
+                    'evals/workflow-quality/manifest.json')
 
 
 def _routes():
@@ -223,3 +227,66 @@ def test_precedent_modes_state_operator_lessons_are_not_demand_evidence():
 ])
 def test_precedent_boundary_routes_unchanged(request_text, expected_route):
     assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+# Plain-text requests near the marketing family's boundary. Frozen from the router at 33710cc (before the merge);
+# the rows marked "new" moved from clarification to their mode through the specific match phrases added in the merge.
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Create a marketing strategy for my bakery', 'marketing-strategy'),
+    ('Write ad copy for our fixed-scope service', 'marketing-strategy'),
+    ('Research SEO keywords and build a keyword-to-page map', 'seo-page-planning'),
+    ('Create a paid social media plan and content calendar', 'social-marketing'),
+    ('Plan my social media for the next quarter: platforms and a posting calendar', 'social-marketing'),  # new
+    ('Build an organic social plan for Instagram', 'social-marketing'),  # new
+    ('Validate a content idea: a YouTube channel about mortgage basics', 'social-media-idea-validator'),
+    ('Validate my channel idea: TikTok videos for insurance brokers', 'social-media-idea-validator'),  # new
+    ('Give me content ideas for Instagram', 'clarify'),
+    ('Find customer problems people share on social media about meal kits', 'market-discovery'),
+    ('Build a landing page for our social media agency', 'website-build'),
+    ('Optimize website SEO and SEO content for the landing page', 'website-build'),
+    ('Monitor competitor social media and track competitor changes', 'competitor-monitoring'),
+    ('Build a go-to-market strategy to get our first customers', 'gtm-strategy'),
+    ('Set up marketing campaign for the launch', 'marketing-campaign-setup'),
+    ('Research what customers say on social media about invoicing', 'clarify'),
+])
+def test_marketing_boundary_routes(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Write a marketing strategy for my ceramics shop', 'marketing-strategy'),
+    ('Do keyword research for our plumbing pages', 'seo-page-planning'),
+    ('Plan my social media and a posting calendar for Instagram', 'social-marketing'),
+    ('Validate my content idea before we film it', 'social-media-idea-validator'),
+])
+def test_marketing_plain_text_infers_its_mode(request_text, expected_route):
+    assert route_workflow.infer_mode('marketing', request_text)[0] == expected_route
+
+
+def test_marketing_modes_keep_their_contracts():
+    refs = SKILLS / 'marketing' / 'references'
+    seo = (refs / 'seo-page-planning.md').read_text(encoding='utf-8')
+    for marker in ('keyword_map.py merge', 'keyword_volume.py', 'traffic_potential', 'business_potential',
+                   'serp_shape', 'difficulty', 'ai_answerable', 'keyword-map.schema.json'):
+        assert marker in seo, marker
+    validation = (refs / 'channel-validation.md').read_text(encoding='utf-8')
+    for marker in ('Gate 1', 'Gate 6', 'INSUFFICIENT EVIDENCE', 'GO-as-assist', '[DATA UNAVAILABLE]'):
+        assert marker in validation, marker
+    social = (refs / 'social.md').read_text(encoding='utf-8')
+    assert 'Sequencing Gate' in social and 'Risk Review' in social
+    assert 'Customer-Perspective Challenge Pass' in (refs / 'strategy.md').read_text(encoding='utf-8')
+    for name in ('campaign-execution.md', 'paid-campaign-planning.md', 'product-marketing-context.md'):
+        assert (refs / name).is_file(), name
+
+
+def test_marketing_modes_keep_their_gates():
+    routes = _routes()
+    for route_id in ('marketing-strategy', 'seo-page-planning', 'social-marketing'):
+        assert routes[route_id]['requires_pain_gate'] is True, route_id
+    assert not routes['social-media-idea-validator'].get('requires_pain_gate')
+    modes = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))['skills']['marketing']['modes']
+    stages = ['intake', 'segment_selection', 'customer_profile', 'problem_validation', 'opportunity_risk']
+    assert modes['strategy']['strategy_stage_prerequisites'] == stages + ['operator_playbook']
+    assert modes['seo-page-planning']['strategy_stage_prerequisites'] == stages + ['operator_playbook']
+    assert modes['social']['strategy_stage_prerequisites'] == stages
+    assert not modes['channel-validation'].get('strategy_stage_prerequisites')

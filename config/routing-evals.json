@@ -3,18 +3,19 @@
   "description": "Routing collision tests — ambiguous prompts per collision pair, testing which skill fires.",
   "pairs": [
     {
-      "pair": "marketing-strategy-builder vs social-digital-marketing-planner vs archetype-gtm-strategist",
+      "pair": "marketing strategy vs social modes vs archetype-gtm-strategist",
       "evals": [
         {
           "id": "route-marketing-1",
           "prompt": "Create a social media plan with a content calendar and paid ad strategy for our B2B SaaS launch in Germany.",
-          "expected_output": "Routes to social-digital-marketing-planner for platform-level social media plan and content calendar.",
-          "expected_skill": "social-digital-marketing-planner",
+          "expected_output": "Routes to marketing (social mode) for platform-level social media plan and content calendar.",
+          "expected_skill": "marketing",
+          "expected_route": "social-marketing",
           "forbidden_skills": [
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "Specific request for platform-level social media plan and content calendar — social-digital-marketing-planner owns this. archetype-gtm-strategist is for end-to-end stage-gated GTM, not campaign-level social planning."
+          "rationale": "Specific request for platform-level social media plan and content calendar — marketing (social mode) owns this. archetype-gtm-strategist is for end-to-end stage-gated GTM, not campaign-level social planning."
         },
         {
           "id": "route-marketing-2",
@@ -22,22 +23,22 @@
           "expected_output": "Routes to archetype-gtm-strategist for end-to-end stage-gated GTM with fintech archetype and Europe region.",
           "expected_skill": "archetype-gtm-strategist",
           "forbidden_skills": [
-            "social-digital-marketing-planner",
-            "marketing-strategy-builder"
+            "marketing"
           ],
           "files": [],
-          "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) — archetype-gtm-strategist owns this. marketing-strategy-builder is for campaign-level marketing detail after the GTM strategy."
+          "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) — archetype-gtm-strategist owns this. marketing (strategy mode) is for campaign-level marketing detail after the GTM strategy."
         },
         {
           "id": "route-marketing-3",
           "prompt": "Define our positioning, messaging, target segments, and channel strategy for our consumer subscription app.",
-          "expected_output": "Routes to marketing-strategy-builder for positioning, messaging, segmentation, and channel fundamentals.",
-          "expected_skill": "marketing-strategy-builder",
+          "expected_output": "Routes to marketing (strategy mode) for positioning, messaging, segmentation, and channel fundamentals.",
+          "expected_skill": "marketing",
+          "expected_route": "marketing-strategy",
           "forbidden_skills": [
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) — marketing-strategy-builder owns this. archetype-gtm-strategist adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
+          "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) — marketing (strategy mode) owns this. archetype-gtm-strategist adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
         }
       ]
     },
@@ -160,7 +161,7 @@
       ]
     },
     {
-      "pair": "competitor-research (teardown) vs social-digital-marketing-planner",
+      "pair": "competitor-research (teardown) vs marketing (social mode)",
       "evals": [
         {
           "id": "route-ads-1",
@@ -169,11 +170,10 @@
           "expected_skill": "competitor-research",
           "expected_route": "competitor-analysis",
           "forbidden_skills": [
-            "social-digital-marketing-planner",
-            "marketing-strategy-builder"
+            "marketing"
           ],
           "files": [],
-          "rationale": "Analyzing competitor paid-ads intelligence is competitor analysis (collect_ads.py + Meta Ad Library), not planning our own social media campaigns — social-digital-marketing-planner owns outbound campaign planning."
+          "rationale": "Analyzing competitor paid-ads intelligence is competitor analysis (collect_ads.py + Meta Ad Library), not planning our own social media campaigns — marketing (social mode) owns outbound campaign planning."
         },
         {
           "id": "route-ads-2",
@@ -182,7 +182,7 @@
           "expected_skill": "evidence-scout",
           "forbidden_skills": [
             "competitor-research",
-            "social-digital-marketing-planner"
+            "marketing"
           ],
           "files": [],
           "rationale": "Social pain evidence collection is evidence-scout's job via collect.py; competitor-research teardown mode analyzes competitor positioning, not customer pain."
@@ -190,7 +190,7 @@
       ]
     },
     {
-      "pair": "challenge-review tournament vs panel modes vs marketing-strategy-builder",
+      "pair": "challenge-review tournament vs panel modes vs marketing (strategy mode)",
       "evals": [
         {
           "id": "route-tournament-1",
@@ -217,7 +217,7 @@
       ]
     },
     {
-      "pair": "brand-website-designer-builder vs brand-identity vs marketing-strategy-builder",
+      "pair": "brand-website-designer-builder vs brand-identity vs marketing (strategy mode)",
       "evals": [
         {
           "id": "route-brand-website-1",
@@ -226,7 +226,7 @@
           "expected_skill": "brand-website-designer-builder",
           "forbidden_skills": [
             "brand-identity",
-            "marketing-strategy-builder"
+            "marketing"
           ],
           "files": [],
           "rationale": "The request is implementation of a website from approved brand inputs, not independent brand discovery or a marketing plan."
@@ -250,7 +250,7 @@
           "expected_output": "Routes to brand-website-designer-builder for Vercel Flags-based experimentation and analytics instrumentation.",
           "expected_skill": "brand-website-designer-builder",
           "forbidden_skills": [
-            "marketing-strategy-builder"
+            "marketing"
           ],
           "files": [],
           "rationale": "The requested artifact is website experimentation implementation, not campaign strategy."
@@ -384,7 +384,8 @@
         {
           "id": "position-copy",
           "prompt": "Write ad copy for our fixed-scope service.",
-          "expected_skill": "marketing-strategy-builder",
+          "expected_skill": "marketing",
+          "expected_route": "marketing-strategy",
           "forbidden_skills": [
             "archetype-gtm-strategist"
           ],
@@ -452,7 +453,8 @@
         {
           "id": "seo-route-seo-page-planning",
           "prompt": "SEO keywords",
-          "expected_skill": "marketing-strategy-builder",
+          "expected_skill": "marketing",
+          "expected_route": "seo-page-planning",
           "expected_output": "Returns bounded page_planning artifacts; preserves scope and permissions.",
           "forbidden_skills": [],
           "files": []
@@ -587,14 +589,15 @@
         {
           "id": "route-entry-seo-content-1",
           "prompt": "Plan our SEO content",
-          "expected_output": "Routes to marketing-strategy-builder (seo-page-planning), which merges the search-journey, competitor content, customer-question and social-topic inputs with keyword_map.py merge.",
-          "expected_skill": "marketing-strategy-builder",
+          "expected_output": "Routes to marketing (seo-page-planning mode), which merges the search-journey, competitor content, customer-question and social-topic inputs with keyword_map.py merge.",
+          "expected_skill": "marketing",
+          "expected_route": "seo-page-planning",
           "forbidden_skills": [
             "brand-website-designer-builder",
             "archetype-gtm-strategist"
           ],
           "files": [],
-          "rationale": "SEO content planning is keyword-to-page planning owned by marketing-strategy-builder; the website skill implements pages afterwards."
+          "rationale": "SEO content planning is keyword-to-page planning owned by marketing (strategy mode); the website skill implements pages afterwards."
         },
         {
           "id": "route-entry-search-journey-1",
@@ -602,7 +605,7 @@
           "expected_output": "Routes to evidence-scout for the customer search-journey SERP study (search_journey.py), producing content-opportunities.json as hypotheses.",
           "expected_skill": "evidence-scout",
           "forbidden_skills": [
-            "marketing-strategy-builder"
+            "marketing"
           ],
           "files": [],
           "rationale": "What customers type at each journey stage is customer-evidence desk research owned by evidence-scout, before content planning."
@@ -610,7 +613,7 @@
       ]
     },
     {
-      "pair": "challenge-review modes vs marketing-strategy-builder vs brand-website-designer-builder (plain-text boundary)",
+      "pair": "challenge-review modes vs marketing (strategy mode) vs brand-website-designer-builder (plain-text boundary)",
       "evals": [
         {
           "id": "route-challenge-boundary-1",
@@ -627,8 +630,9 @@
         {
           "id": "route-challenge-boundary-2",
           "prompt": "Challenge my marketing strategy.",
-          "expected_output": "Stays with marketing-strategy-builder; a generic challenge verb does not pull marketing work into challenge-review.",
-          "expected_skill": "marketing-strategy-builder",
+          "expected_output": "Stays with marketing (strategy mode); a generic challenge verb does not pull marketing work into challenge-review.",
+          "expected_skill": "marketing",
+          "expected_route": "marketing-strategy",
           "forbidden_skills": [
             "challenge-review"
           ],
@@ -645,6 +649,65 @@
           ],
           "files": [],
           "rationale": "Website copy is website work; the customer-perspective phrase requires an explicit review."
+        }
+      ]
+    },
+    {
+      "pair": "marketing modes (plain-text boundary)",
+      "evals": [
+        {
+          "id": "route-marketing-social-calendar",
+          "prompt": "Plan my social media for the next quarter: platforms and a posting calendar",
+          "expected_output": "Routes to marketing social mode through the posting-calendar phrase.",
+          "expected_skill": "marketing",
+          "expected_route": "social-marketing",
+          "forbidden_skills": [
+            "archetype-gtm-strategist"
+          ],
+          "files": [],
+          "rationale": "Added in the marketing merge so plain-text dispatch reaches social mode; before the merge this asked for clarification."
+        },
+        {
+          "id": "route-marketing-organic-social",
+          "prompt": "Build an organic social plan for Instagram",
+          "expected_output": "Routes to marketing social mode.",
+          "expected_skill": "marketing",
+          "expected_route": "social-marketing",
+          "forbidden_skills": [],
+          "files": [],
+          "rationale": "Organic social planning is social mode."
+        },
+        {
+          "id": "route-marketing-channel-idea",
+          "prompt": "Validate my channel idea: TikTok videos for insurance brokers",
+          "expected_output": "Routes to marketing channel-validation mode for a GO/PIVOT/KILL verdict and bounded test.",
+          "expected_skill": "marketing",
+          "expected_route": "social-media-idea-validator",
+          "forbidden_skills": [],
+          "files": [],
+          "rationale": "A channel idea to validate before production is channel-validation mode."
+        },
+        {
+          "id": "route-marketing-content-ideas",
+          "prompt": "Give me content ideas for Instagram",
+          "expected_output": "Asks for scope; brainstorming content ideas is not a request to validate one.",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "files": [],
+          "rationale": "The validation phrases need the verb; bare content ideas must not be pulled into channel validation."
+        },
+        {
+          "id": "route-marketing-social-voice",
+          "prompt": "Research what customers say on social media about invoicing",
+          "expected_output": "Asks for scope; customer voice on social media is research, not social planning.",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [
+            "marketing"
+          ],
+          "files": [],
+          "rationale": "Social-media research must not route to social mode."
         }
       ]
     }

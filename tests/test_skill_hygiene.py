@@ -40,7 +40,7 @@ def test_agents_md_stays_within_instruction_budget():
 
 
 def test_paid_campaign_reference_exists_and_is_linked():
-    skill = SKILLS / 'social-digital-marketing-planner'
+    skill = SKILLS / 'marketing'
     ref = skill / 'references/paid-campaign-planning.md'
     assert ref.exists()
     assert 'paid-campaign-planning.md' in (skill / 'SKILL.md').read_text()
@@ -50,7 +50,7 @@ def test_paid_campaign_reference_exists_and_is_linked():
 
 
 def test_keyword_research_is_owned_by_marketing_and_consumed_by_website():
-    ref = SKILLS / 'marketing-strategy-builder/references/keyword-research.md'
+    ref = SKILLS / 'marketing/references/seo-page-planning.md'
     assert ref.exists() and 'serper_fetch.py' in ref.read_text()
-    assert 'keyword-research.md' in (SKILLS / 'marketing-strategy-builder/SKILL.md').read_text()
+    assert 'references/seo-page-planning.md' in (SKILLS / 'marketing/SKILL.md').read_text()
     assert 'keyword-map.json' in (SKILLS / 'brand-website-designer-builder/references/content-and-conversion.md').read_text()

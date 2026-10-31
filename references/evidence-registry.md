@@ -2,7 +2,7 @@
 
 Distilled, sourced findings that apply across multiple skills. Skills cite this registry instead of keeping private copies. Last researched: 2026-08-28. The detailed source tables were not migrated (do not cite paths under `projects/research/topics/`); the GTM summary lives in `.agents/skills/archetype-gtm-strategist/references/evidence-base.md` and per-geography treatment in `.agents/skills/challenge-review/references/` (regional lenses).
 
-Used by archetype-gtm-strategist (stage gates), social-digital-marketing-planner and marketing-strategy-builder (sequencing gate, weak-evidence check, channel protocol, trust checks), social-media-idea-validator and challenge-review (customer-perspective mode).
+Used by archetype-gtm-strategist (stage gates), marketing (strategy, social and channel-validation modes: sequencing gate, weak-evidence check, channel protocol, trust checks) and challenge-review (customer-perspective mode).
 
 ## The Sequencing Rule
 

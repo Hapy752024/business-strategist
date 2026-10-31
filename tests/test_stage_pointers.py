@@ -26,7 +26,7 @@ POINTERS = {
     "opportunity-risk-designer": [
         "build_voc_table", "build_decision_memo", "falsify.md", "claim-falsification",
     ],
-    "marketing-strategy-builder": [
+    "marketing": [
         "keyword_map.py merge", "search_journey", "site_gate", "verify_tracking",
     ],
     "brand-website-designer-builder": ["site_gate", "geo-audit", "verify_tracking"],
@@ -79,7 +79,7 @@ def test_campaign_operator_stays_founder_invoked():
 
 @pytest.mark.parametrize("prompt,skill", [
     ("Assess this business idea and research customers", "idea-grill"),
-    ("Plan our SEO content", "marketing-strategy-builder"),
+    ("Plan our SEO content", "marketing"),
     ("What will customers search for?", "evidence-scout"),
 ])
 def test_new_routing_phrases(prompt, skill):

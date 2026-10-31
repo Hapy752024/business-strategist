@@ -1,8 +1,6 @@
+# SEO page planning mode: keyword research and keyword-to-page map
 
-
-# Keyword research and keyword-to-page map
-
-Owner: marketing-strategy-builder. Consumers: brand-website-designer-builder and social-digital-marketing-planner.
+Route `seo-page-planning`. Owner: the marketing skill. Consumers: brand-website-designer-builder and the marketing skill's social mode.
 
 1. Seed problem, workaround and search-intent terms from the brief and available idea-grill/evidence runs; add verified competitor names from the landscape. Do not make the user supply a keyword map when research can produce one. Ask for missing business facts or choices only when they change the strategy. Do not turn segment prose into a keyword.
 2. Reuse a current customer search-journey study first: its `search-journey-plan.json` rows, raw captures and `content-opportunities.json` are seeds. Do not re-fetch the same query/locale within 30 days; cite the existing capture instead. `content-opportunities.json` is one input, alongside the competitor content inventory, customer questions from reviewed voice and social discussion topics; its gaps are hypotheses. Then expand with `python3 scripts/serper_fetch.py` (organic only; ads unobserved), `scripts/evidence_scout/search_journey.py --providers serpapi` when sponsored results or SERP features matter, `collect.py --providers google_autocomplete`, and Google Trends as a relative-demand proxy. Record query, locale, date and raw results under `marketing/keywords/raw/`.

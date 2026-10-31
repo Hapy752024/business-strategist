@@ -65,7 +65,7 @@ def test_gate_rechecked_on_each_call_and_override_is_replay_safe(tmp_path, monke
     payload = event('venture', False)
     packet = json.loads(payload['tool_input']['args'])
     packet['route'].update(request='Create a social media plan', intent='social-marketing')
-    payload['tool_input'].update(skill='social-digital-marketing-planner', args=json.dumps(packet))
+    payload['tool_input'].update(skill='marketing', args=json.dumps(packet))
     hook.check_dispatch(payload)
     data['stages'] = {}
     path.write_text(json.dumps(data))
@@ -102,7 +102,7 @@ def test_envelope_override_requires_nonempty_reason(tmp_path, monkeypatch, reaso
                            override_stages=['problem_validation'])
     if reason is not None:
         packet['route']['override_reason'] = reason
-    payload['tool_input'].update(skill='social-digital-marketing-planner', args=json.dumps(packet))
+    payload['tool_input'].update(skill='marketing', args=json.dumps(packet))
     before = path.read_bytes()
     with pytest.raises(ValueError, match='override_reason'):
         hook.check_dispatch(payload)
@@ -117,7 +117,7 @@ def test_cwd_prevents_silent_standalone_bypass(tmp_path, monkeypatch):
     payload = event()
     payload['cwd'] = str(path.parent)
     assert hook.check_dispatch(payload)['hookSpecificOutput']['updatedInput']['args'] == 'The page brief'
-    payload['tool_input']['skill'] = 'social-digital-marketing-planner'
+    payload['tool_input']['skill'] = 'marketing'
     with pytest.raises(ValueError, match='Standalone bypass'):
         hook.check_dispatch(payload)
 

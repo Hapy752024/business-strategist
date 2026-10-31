@@ -112,7 +112,9 @@ def validate_manifest(manifest: dict, base: Path) -> list[str]:
                 except (ValueError, KeyError, TypeError, OSError) as exc:
                     errors.append(str(exc))
                 continue
-            baseline = subprocess.run(["git", "show", f"{manifest.get('baseline_revision', '')}:{relative}"],
+            # A file renamed after the freeze is read at its pre-rename path in the baseline revision.
+            old = manifest.get("baseline_renames", {}).get(relative, relative)
+            baseline = subprocess.run(["git", "show", f"{manifest.get('baseline_revision', '')}:{old}"],
                                       cwd=snapshot_root, capture_output=True, check=False)
             if baseline.returncode != 0 and relative not in task.get("baseline_optional_snapshot_paths", []):
                 errors.append(f"{task.get('id')}: baseline snapshot file missing: {relative}")
@@ -165,9 +167,10 @@ def run(manifest: dict, manifest_path: Path, command: list[str], out: Path, arm:
             snapshot_root_dir = trial_dir / "snapshot"
             skill_hashes, absent_snapshot_paths = {}, []
             for relative in task.get("snapshot_paths", []):
+                source = manifest.get("baseline_renames", {}).get(relative, relative) if arm == "baseline" else relative
                 content = (frozen_baseline(relative, manifest, manifest_path.parent)
                            if arm == 'baseline' and manifest.get('baseline_snapshot')
-                           else snapshot_file(relative, arm, snapshot_root, manifest.get("baseline_revision", "")))
+                           else snapshot_file(source, arm, snapshot_root, manifest.get("baseline_revision", "")))
                 if content is None:
                     absent_snapshot_paths.append(relative)
                     continue

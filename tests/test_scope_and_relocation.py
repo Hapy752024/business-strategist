@@ -11,10 +11,10 @@ from scripts.evidence_scout import workspace
 
 @pytest.mark.parametrize("prompt,expected", [
     ("Do not run a competitive landscape. Only find competitors.", "competitor-discovery"),
-    ("Keep the marketing strategy unchanged. Create a paid social plan.", "social-digital-marketing-planner"),
-    ("Leave the marketing strategy intact; create a content calendar.", "social-digital-marketing-planner"),
+    ("Keep the marketing strategy unchanged. Create a paid social plan.", "social-marketing"),
+    ("Leave the marketing strategy intact; create a content calendar.", "social-marketing"),
     ("Don't build a competitive landscape; find competitors.", "competitor-discovery"),
-    ("Write two ad-copy options", "marketing-strategy-builder"),
+    ("Write two ad-copy options", "marketing-strategy"),
     ("Create a logo only; do not make a website", "brand-identity"),
 ])
 def test_scope_routing(prompt, expected):
@@ -126,7 +126,7 @@ def test_capability_benchmark_allows_consolidation():
 
 
 def test_short_skill_paths_resolve():
-    for name in ("marketing-strategy-builder", "social-digital-marketing-planner"):
+    for name in ("marketing",):
         folder = ROOT / ".agents/skills" / name
         assert (ROOT / "references/task-scope.md").is_file()
         entry = (folder / "SKILL.md").read_text()

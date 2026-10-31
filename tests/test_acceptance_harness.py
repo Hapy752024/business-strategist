@@ -154,7 +154,7 @@ def test_cp08_unapplied_falsification_artifacts_do_not_count(tmp_path):
 def test_gate_fails_when_downstream_runs_before_override(tmp_path):
     out = make_out_dir(tmp_path)
     lines = (out / 'transcript.jsonl').read_text().splitlines(keepends=True)
-    early = _assistant('', [_tool('t0', 'Skill', {'skill': 'marketing-strategy-builder', 'args': '{}'})])
+    early = _assistant('', [_tool('t0', 'Skill', {'skill': 'marketing', 'args': '{}'})])
     (out / 'transcript.jsonl').write_text(''.join(lines[:3] + [early, _result('t0', 'ok')] + lines[3:]))
     by_id = {c['id']: c for c in acc.score(out, CHECKPOINTS)['checkpoints']}
     assert by_id['cp09']['passed'] is False
@@ -695,7 +695,7 @@ def test_gate_ignores_truncated_argparse_failure_as_override(tmp_path):
 def test_gate_accepts_key_value_override_output(tmp_path):
     kv = 'route_id : "gtm-strategy"\ngate_blocked : false\ngate_override : true'
     downstream = [
-        _assistant('', [_tool('g3', 'Bash', {'command': 'cat .agents/skills/marketing-strategy-builder/SKILL.md'})]),
+        _assistant('', [_tool('g3', 'Bash', {'command': 'cat .agents/skills/marketing/SKILL.md'})]),
         _result('g3', 'body'),
         _assistant('', [_tool('g4', 'Write', {'file_path': 'projects/eval-x/digital-assets/website/index.html', 'content': 'x'})]),
         _result('g4', 'ok'),

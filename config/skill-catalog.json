@@ -28,9 +28,7 @@
       "reference": "references/modules/marketing.md",
       "quality_reference": "references/modules/quality/marketing.md",
       "skills": [
-        "marketing-strategy-builder",
-        "social-digital-marketing-planner",
-        "social-media-idea-validator",
+        "marketing",
         "earned-media-builder",
         "marketing-campaign-operator"
       ]
@@ -946,49 +944,6 @@
         }
       ]
     },
-    "marketing-strategy-builder": {
-      "intent": [
-        "express positioning through marketing strategy and messaging"
-      ],
-      "excludes": [
-        "website implementation only"
-      ],
-      "prerequisites": [],
-      "artifacts": [
-        "marketing strategy"
-      ],
-      "side_effect": "none",
-      "cost": "medium",
-      "strategy_stage_prerequisites": [
-        "intake",
-        "segment_selection",
-        "customer_profile",
-        "problem_validation",
-        "opportunity_risk",
-        "operator_playbook"
-      ],
-      "modes": {
-        "page_planning": {
-          "prerequisites": [
-            "requested scope and established-business brief or selected Business handoff"
-          ],
-          "inputs": [
-            "requested scope and established-business brief or selected Business handoff"
-          ],
-          "artifacts": [
-            "validated keyword/page map",
-            "selected content decisions"
-          ],
-          "output_owner": "marketing-strategy-builder",
-          "required_references": [
-            "references/subprojects.md",
-            ".agents/skills/marketing-strategy-builder/references/keyword-research.md"
-          ],
-          "side_effect": "workspace",
-          "cost": "medium"
-        }
-      }
-    },
     "archetype-gtm-strategist": {
       "intent": [
         "build stage-gated GTM",
@@ -1011,41 +966,6 @@
         "opportunity_risk",
         "operator_playbook"
       ]
-    },
-    "social-digital-marketing-planner": {
-      "intent": [
-        "plan social and digital acquisition"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "audience and offer"
-      ],
-      "artifacts": [
-        "channel plan"
-      ],
-      "side_effect": "none",
-      "cost": "medium",
-      "strategy_stage_prerequisites": [
-        "intake",
-        "segment_selection",
-        "customer_profile",
-        "problem_validation",
-        "opportunity_risk"
-      ]
-    },
-    "social-media-idea-validator": {
-      "intent": [
-        "validate a social or content idea"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "content hypothesis"
-      ],
-      "artifacts": [
-        "channel verdict"
-      ],
-      "side_effect": "research",
-      "cost": "medium"
     },
     "company-operating-system": {
       "intent": [
@@ -1676,6 +1596,122 @@
             ".agents/skills/precedent-research/references/case.md"
           ],
           "output_owner": "precedent-research"
+        }
+      }
+    },
+    "marketing": {
+      "intent": [
+        "express positioning through marketing strategy and messaging",
+        "plan social and digital acquisition",
+        "validate a social or content idea",
+        "plan keyword research and SEO pages"
+      ],
+      "excludes": [],
+      "prerequisites": [],
+      "artifacts": [
+        "marketing strategy",
+        "validated keyword/page map",
+        "channel plan",
+        "channel verdict"
+      ],
+      "side_effect": "research",
+      "cost": "medium",
+      "required_references": [],
+      "modes": {
+        "strategy": {
+          "inputs": [
+            "audience, offer and marketing goal; the selected business position when one exists"
+          ],
+          "excludes": [
+            "website implementation only"
+          ],
+          "prerequisites": [],
+          "artifacts": [
+            "marketing strategy"
+          ],
+          "side_effect": "none",
+          "cost": "medium",
+          "strategy_stage_prerequisites": [
+            "intake",
+            "segment_selection",
+            "customer_profile",
+            "problem_validation",
+            "opportunity_risk",
+            "operator_playbook"
+          ],
+          "required_references": [],
+          "output_owner": "marketing"
+        },
+        "seo-page-planning": {
+          "prerequisites": [
+            "requested scope and established-business brief or selected Business handoff"
+          ],
+          "inputs": [
+            "requested scope and established-business brief or selected Business handoff"
+          ],
+          "artifacts": [
+            "validated keyword/page map",
+            "selected content decisions"
+          ],
+          "output_owner": "marketing",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/marketing/references/seo-page-planning.md"
+          ],
+          "side_effect": "workspace",
+          "cost": "medium",
+          "excludes": [
+            "website implementation only"
+          ],
+          "strategy_stage_prerequisites": [
+            "intake",
+            "segment_selection",
+            "customer_profile",
+            "problem_validation",
+            "opportunity_risk",
+            "operator_playbook"
+          ]
+        },
+        "social": {
+          "inputs": [
+            "audience and offer"
+          ],
+          "excludes": [],
+          "prerequisites": [
+            "audience and offer"
+          ],
+          "artifacts": [
+            "channel plan"
+          ],
+          "side_effect": "none",
+          "cost": "medium",
+          "strategy_stage_prerequisites": [
+            "intake",
+            "segment_selection",
+            "customer_profile",
+            "problem_validation",
+            "opportunity_risk"
+          ],
+          "required_references": [],
+          "output_owner": "marketing"
+        },
+        "channel-validation": {
+          "inputs": [
+            "content hypothesis"
+          ],
+          "excludes": [],
+          "prerequisites": [
+            "content hypothesis"
+          ],
+          "artifacts": [
+            "channel verdict"
+          ],
+          "side_effect": "research",
+          "cost": "medium",
+          "required_references": [
+            ".agents/skills/marketing/references/channel-validation.md"
+          ],
+          "output_owner": "marketing"
         }
       }
     }

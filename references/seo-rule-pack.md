@@ -113,7 +113,7 @@ For each stage of the customer journey already recorded (awareness, consideratio
 - One asset per journey question; say why that question and what evidence (search journey, customer voice, competitor content inventory) shows people ask it.
 - State the maintenance cost: who refreshes which number, when, and what the page says when it is stale.
 - Promotion (earned-media-builder) is a separate task; building the asset does not authorize outreach or publication.
-- Record proposed assets as public-resource briefs (marketing-strategy-builder keyword research) so the website build consumes a reviewed brief, not a chat idea.
+- Record proposed assets as public-resource briefs (marketing skill, seo-page-planning mode) so the website build consumes a reviewed brief, not a chat idea.
 
 ## Sources, attribution and licenses
 

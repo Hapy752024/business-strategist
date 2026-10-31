@@ -220,7 +220,7 @@ def test_bare_single_mode_skill_still_gated(tmp_path, monkeypatch):
     _write_manifest(tmp_path, "gated", "not_run", monkeypatch)
     cwd = tmp_path / "projects" / "gated"
     with pytest.raises(ValueError, match="pain-first"):
-        hook.check_dispatch(_skill_event("social-digital-marketing-planner", "Create paid social", cwd))
+        hook.check_dispatch(_skill_event("marketing", "Create paid social", cwd))
     # An ungated single-mode skill in a gated project is still allowed.
     out = hook.check_dispatch(_skill_event("idea-grill", "Pressure test my idea", cwd))
     assert out["hookSpecificOutput"].get("permissionDecision") != "deny"
@@ -234,7 +234,7 @@ def test_single_mode_flag_matches_derived_route_count():
 def test_bare_gated_single_mode_skill_outside_workspace_requires_envelope():
     import pytest
     from scripts import enforce_skill_route as hook
-    for skill in ("company-operating-system", "social-digital-marketing-planner"):
+    for skill in ("company-operating-system", "marketing"):
         with pytest.raises(ValueError, match="JSON route envelope"):
             hook.check_dispatch(_skill_event(skill, "Pick our GTM strategy for the dog-walking venture"))
     # Merged challenge-review: plain text that infers tournament mode is still gated by that mode's prerequisites.

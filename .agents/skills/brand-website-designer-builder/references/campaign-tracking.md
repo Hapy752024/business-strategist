@@ -1,6 +1,6 @@
 # Optional campaign measurement: PostHog, Google, Meta and TikTok
 
-Use only for user-selected website tracking implementation or measurement repair. This is not campaign strategy, ad creation, spend authorization or autonomous publishing. Route technical work via website-build; broader strategy remains marketing-strategy-builder/social-digital-marketing-planner. Analytics can be disabled. Advertising measurement is a separate opt-in from product analytics and each destination requires purpose-specific consent.
+Use only for user-selected website tracking implementation or measurement repair. This is not campaign strategy, ad creation, spend authorization or autonomous publishing. Route technical work via website-build; broader strategy remains the marketing skill (strategy or social mode). Analytics can be disabled. Advertising measurement is a separate opt-in from product analytics and each destination requires purpose-specific consent.
 
 Apply repo-root `references/journey-activation-and-measurement.md` for the shared sales/event contract and `references/ad-platform-connections.md` for account onboarding. Keep this website reference's Basic Consent Mode/no-request default unless the owner explicitly changes the reviewed policy.
 

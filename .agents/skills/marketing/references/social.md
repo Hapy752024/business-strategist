@@ -1,14 +1,14 @@
-# Social / Digital Marketing Planner Workflow
+# Social mode
 
-Use this skill when the user wants a detailed, actionable social or digital marketing plan. The goal is not to produce a list of post ideas; the goal is to connect audience behavior, offer, creative, channel execution, measurement, and learning cadence.
+Route `social-marketing`, strategy scope: a detailed, actionable social or digital marketing plan. The goal is not to produce a list of post ideas; the goal is to connect audience behavior, offer, creative, channel execution, measurement, and learning cadence.
 
 ## Reference
 
 Before creating a substantial plan, read:
 
-- `references/social-digital-marketing-research.md`
+- `references/social-research.md`
 - The channel jobs, founder prerequisites, loop gates, community operating model, and incrementality rules in `references/evidence-registry.md` at repo root.
-- If the user arrives with an untested channel/content idea, validate it first with `social-media-idea-validator`; practitioner evidence on what actually works comes from `../../precedent-research/references/playbook.md`.
+- If the user arrives with an untested channel/content idea, validate it first in channel-validation mode (route `social-media-idea-validator`); practitioner evidence on what actually works comes from `../../precedent-research/references/playbook.md`.
 
 If the user asks for latest platform-specific specs, ad formats, targeting features, algorithm changes, or benchmarks, search current official platform documentation before giving precise advice.
 
@@ -37,7 +37,7 @@ If missing information would materially change the plan, ask one focused questio
 
 If the user wants a fast draft, state assumptions clearly and create a testable plan that can be refined.
 
-If the user is still exploring which customer problem or segment to pursue, use `market-problem-discovery` before planning channels. For unsupported demand claims about a chosen candidate, use `idea-grill` and `evidence-scout`. For competitor positioning or channel examples, use `competitor-research` (scout and teardown modes). For broader marketing strategy, coordinate with `marketing-strategy-builder`. For consumer services that are regulated, data-sensitive, or hard to reverse, challenge the offer and message with `challenge-review` (customer-perspective mode) before committing creative and spend.
+If the user is still exploring which customer problem or segment to pursue, use `market-problem-discovery` before planning channels. For unsupported demand claims about a chosen candidate, use `idea-grill` and `evidence-scout`. For competitor positioning or channel examples, use `competitor-research` (scout and teardown modes). For broader marketing strategy, use strategy mode (route `marketing-strategy`). For consumer services that are regulated, data-sensitive, or hard to reverse, challenge the offer and message with `challenge-review` (customer-perspective mode) before committing creative and spend.
 
 ## Minimum Inputs
 
@@ -109,24 +109,11 @@ Treat AI-answer visibility and brand-mention observation as inputs that require 
 
 ## Product, Referral, And Community Loops
 
-Do not call a share button, contact upload, waitlist, follower base, or branded group a loop by default. Diagnose:
-
-- Recipient exposure: a necessary participant experiences immediate value.
-- Collaboration: a shared job becomes more useful with a relevant participant.
-- Reciprocal reward: both parties receive product-relevant value.
-- Scarcity/invite: access is genuinely limited and invitations follow qualification or activation.
-- Network utility: relevant connections improve recurring product value.
-- Community: members repeatedly create value for one another.
-
-For each proposed loop, map every step, value before the ask, recipient relevance, activation/retention by source, reward economics, attribution, fraud/abuse, complaints, privacy, and compliance. Defer the loop when single-user value or retained economics are unproven.
-
-For community, specify the member identity, recurring exchange, founding cohort, ritual, founder/operator role, newcomer path, roles/recognition, moderation, safety, and link to customer outcomes. Track useful member-to-member response, return contribution, staff-independent activity, product/customer outcomes, and moderation load—not member count alone.
+Apply `references/loops-and-growth.md`: diagnose the loop type, gate value before invitation and defer unproven loops; it also holds the low-cost growth guardrail.
 
 ## Founder-Pattern Transfer Check
 
 When borrowing a founder story, name the mechanism and the prerequisite. Dropbox's demo had technical-community fit; Stripe had dense YC access and technical credibility; Buffer had a relevant founder audience; Monzo had a strong mission, timing, media access, and an early-adopter cohort willing to tolerate an incomplete product. If the prerequisite is missing, test the underlying mechanism at small scale or reject the tactic.
-
-Treat “growth hacking” as low-cash, high-learning, compounding distribution: founder onboarding, useful community participation, customer-language content, high-intent SEO, native repurposing, post-activation invitations, product-currency rewards, recipient exposure, and manual partner handoffs. Reject spam, fake scarcity, manufactured controversy, mass unsolicited automation, dark patterns, and regulatory arbitrage.
 
 ## Content System
 
@@ -261,8 +248,6 @@ Before finalizing, check:
 If needed, ask:
 
 `What is the primary business outcome this social/digital plan must drive in the next 90 days: awareness, qualified leads, sales/bookings, retention, or community?`
-
-For a selected visibility intervention, use repo-root `references/seo-rule-pack.md` for the evidence-to-change queue and outcome review. If recordings are needed, apply `references/ai-answer-recordings.md`; the processor is offline, and listening/live collection are not implemented capabilities. Do not run a mandatory multi-engine program.
 
 Every planned asset is one content brief validated against `schemas/content-brief.schema.json` and stored under `marketing/briefs/<brief_id>.json` with a Markdown twin from `templates/project/content-brief.md`. A calendar is a list of brief IDs with publish windows. Do not deliver post ideas without a brief.
 

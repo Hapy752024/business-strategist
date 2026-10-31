@@ -135,24 +135,6 @@
       "target": "references/strategic-positioning.md"
     }
   ],
-  "marketing-strategy-builder": [
-    {
-      "reason": "experimentation.md is mentioned by a linked file but is outside marketing-strategy-builder's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-website-designer-builder/references/experimentation.md"
-    },
-    {
-      "reason": "campaign-tracking.md is mentioned by a linked file but is outside marketing-strategy-builder's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-website-designer-builder/references/campaign-tracking.md"
-    },
-    {
-      "reason": "playbook.md is mentioned by a linked file but is outside marketing-strategy-builder's own stage; open it only when a task needs it",
-      "target": ".agents/skills/precedent-research/references/playbook.md"
-    },
-    {
-      "reason": "evidence-base.md is mentioned by a linked file but is outside marketing-strategy-builder's own stage; open it only when a task needs it",
-      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
-    }
-  ],
   "opportunity-risk-designer": [
     {
       "reason": "evidence-base.md is mentioned by a linked file but is outside opportunity-risk-designer's own stage; open it only when a task needs it",
@@ -161,30 +143,6 @@
     {
       "reason": "playbook.md is mentioned by a linked file but is outside opportunity-risk-designer's own stage; open it only when a task needs it",
       "target": ".agents/skills/precedent-research/references/playbook.md"
-    }
-  ],
-  "social-digital-marketing-planner": [
-    {
-      "reason": "social-digital-marketing-research.md is social-digital-marketing-planner's own research reference, listed by its references/workflow.md; it loads at that workflow's research step, not from SKILL.md directly",
-      "target": ".agents/skills/social-digital-marketing-planner/references/social-digital-marketing-research.md"
-    },
-    {
-      "reason": "evidence-registry.md is mentioned by a linked file but is outside social-digital-marketing-planner's own stage; open it only when a task needs it",
-      "target": "references/evidence-registry.md"
-    },
-    {
-      "reason": "strategic-positioning.md is mentioned by a linked file but is outside social-digital-marketing-planner's own stage; open it only when a task needs it",
-      "target": "references/strategic-positioning.md"
-    },
-    {
-      "reason": "playbook.md is mentioned by a linked file but is outside social-digital-marketing-planner's own stage; open it only when a task needs it",
-      "target": ".agents/skills/precedent-research/references/playbook.md"
-    }
-  ],
-  "social-media-idea-validator": [
-    {
-      "reason": "evidence-base.md is mentioned by a linked file but is outside social-media-idea-validator's own stage; open it only when a task needs it",
-      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
     }
   ],
   "challenge-review": [
@@ -211,6 +169,32 @@
     {
       "reason": "task-scope.md is mentioned by a linked file but is outside marketing-campaign-operator's own stage; open it only when a task needs it",
       "target": "references/task-scope.md"
+    }
+  ],
+  "marketing": [
+    {
+      "reason": "experimentation.md is mentioned by marketing's strategy mode reference but is outside the marketing skill's own stage; open it only when a visibility intervention needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/experimentation.md"
+    },
+    {
+      "reason": "campaign-tracking.md is mentioned by marketing's strategy mode reference but is outside the marketing skill's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/campaign-tracking.md"
+    },
+    {
+      "reason": "playbook.md is mentioned by marketing's strategy, social and channel-validation mode references but is outside the marketing skill's own stage; open it only when a task needs it",
+      "target": ".agents/skills/precedent-research/references/playbook.md"
+    },
+    {
+      "reason": "evidence-base.md is mentioned by a linked file but is outside the marketing skill's own stage; open it only when a task needs it",
+      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+    },
+    {
+      "reason": "loops-and-growth.md is read by marketing's strategy and social mode references at their loop and growth step, not from SKILL.md directly",
+      "target": ".agents/skills/marketing/references/loops-and-growth.md"
+    },
+    {
+      "reason": "social-research.md is read by marketing's social mode reference at its research step, not from SKILL.md directly",
+      "target": ".agents/skills/marketing/references/social-research.md"
     }
   ]
 }

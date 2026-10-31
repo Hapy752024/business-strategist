@@ -13,7 +13,7 @@ Each stage below names the input to read or the skill and tool that owns the nex
   `scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory`,
   `scripts/marketing/keyword_volume.py` volumes and `scripts/marketing/social_topics.py`.
   If any is missing, run it now (state provider gaps); never skip it.
-  Content planning goes to marketing-strategy-builder, merged by `scripts/marketing/keyword_map.py merge`.
+  Content planning goes to the marketing skill (seo-page-planning mode), merged by `scripts/marketing/keyword_map.py merge`.
 - The website goes to brand-website-designer-builder:
   run `scripts/brand/site_gate.py` whenever a page has been built (no business prerequisite);
   the `geo-audit` route is an optional citability check.

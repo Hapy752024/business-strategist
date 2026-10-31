@@ -52,6 +52,9 @@ SKILL_ALIASES: dict[str, str] = {
     "service-customer-perspective-challenger": "service-customer-perspective-challenger",
     "business-archetype-playbook-researcher": "business-archetype-playbook-researcher",
     "growth-case-analyzer": "growth-case-analyzer",
+    "marketing-strategy-builder": "marketing-strategy",
+    "social-digital-marketing-planner": "social-marketing",
+    "social-media-idea-validator": "social-media-idea-validator",
 }
 
 
@@ -299,9 +302,6 @@ def _route_request(
         raise ValueError(f"Unknown task scope: {task_scope}")
     requested_intent = intent.strip().casefold()
     routes = load_routes()
-    # Preserve the established general-Marketing alias after adding page planning.
-    if requested_intent == 'marketing-strategy-builder':
-        requested_intent = 'marketing-strategy'
     former_skill = requested_intent if requested_intent in SKILL_ALIASES else ''
     if former_skill:
         requested_intent = SKILL_ALIASES[former_skill]
@@ -377,7 +377,9 @@ def _route_request(
                            else "strategy" if metadata.get("strategy_stage_prerequisites")
                            else "focused")
     artifacts = selected.get("artifacts", metadata.get("artifacts", []))
-    if skill in {"marketing-strategy-builder", "social-digital-marketing-planner", "archetype-gtm-strategist"} and scope != "strategy" and selected.get("mode", "default") == "default":
+    # Strategy-capable modes return only the focused/execution deliverable outside strategy scope.
+    if scope != "strategy" and (skill, selected.get("mode", "default")) in {
+            ("archetype-gtm-strategist", "default"), ("marketing", "strategy"), ("marketing", "social")}:
         artifacts = ["requested deliverable only; preserve existing strategy" if scope == "execution" else "focused answer and material evidence limits"]
     packet = {
         "route_id": selected["id"],
@@ -408,7 +410,10 @@ def _route_request(
     else:
         packet['specialist_owner'] = specialist_owner(skill)
     design = skill.startswith('brand-')
-    marketing = skill in {'marketing-strategy-builder', 'social-digital-marketing-planner', 'earned-media-builder', 'marketing-campaign-operator'}
+    # Channel validation is a pre-production research verdict, so it keeps the Business destination it had as
+    # social-media-idea-validator; the other marketing modes write to the Marketing workstream.
+    marketing = (skill in {'earned-media-builder', 'marketing-campaign-operator'}
+                 or (skill == 'marketing' and selected.get('mode') != 'channel-validation'))
     descriptive_campaign = skill == 'marketing-campaign-operator' and selected.get('mode') in {'import','connections'}
     if entry_mode is None:
         entry_mode = 'business_linked' if marketing and project else 'standalone'

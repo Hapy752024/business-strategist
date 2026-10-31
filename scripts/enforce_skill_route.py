@@ -68,7 +68,7 @@ def check_dispatch(event: dict) -> dict:
         parts = (workspace_slug,)
         if project and project != parts[0]:
             raise ValueError('Route project conflicts with the current business workspace')
-        has_independent_marketing_brief = (name in {'marketing-strategy-builder', 'social-digital-marketing-planner'}
+        has_independent_marketing_brief = (name == 'marketing'
                                            and isinstance(route.get('standalone_brief'), str)
                                            and bool(route.get('standalone_brief').strip()))
         if standalone and not name.startswith('brand-') and not has_independent_marketing_brief:

@@ -220,8 +220,7 @@
       "skill": "archetype-gtm-strategist",
       "requires_pain_gate": true,
       "forbidden": [
-        "marketing-strategy-builder",
-        "social-digital-marketing-planner"
+        "marketing"
       ]
     },
     {
@@ -235,11 +234,10 @@
         "ad copy",
         "marketing messaging"
       ],
-      "skill": "marketing-strategy-builder",
+      "skill": "marketing",
       "requires_pain_gate": true,
-      "forbidden": [
-        "social-digital-marketing-planner"
-      ]
+      "forbidden": [],
+      "mode": "strategy"
     },
     {
       "id": "social-marketing",
@@ -248,14 +246,15 @@
         "social media strategy",
         "content calendar",
         "paid social",
-        "social campaign"
+        "social campaign",
+        "posting calendar",
+        "organic social",
+        "plan my social media"
       ],
-      "skill": "social-digital-marketing-planner",
-      "forbidden": [
-        "marketing-strategy-builder"
-      ],
+      "skill": "marketing",
+      "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "social"
     },
     {
       "id": "company-operations",
@@ -549,11 +548,13 @@
       "id": "social-media-idea-validator",
       "match": [
         "validate a channel idea",
-        "validate a content idea"
+        "validate a content idea",
+        "validate my channel idea",
+        "validate my content idea"
       ],
-      "skill": "social-media-idea-validator",
+      "skill": "marketing",
       "forbidden": [],
-      "single_mode": true
+      "mode": "channel-validation"
     },
     {
       "id": "startup-business-builder",
@@ -669,8 +670,7 @@
     },
     {
       "id": "seo-page-planning",
-      "skill": "marketing-strategy-builder",
-      "mode": "page_planning",
+      "skill": "marketing",
       "match": [
         "SEO keywords",
         "keyword research",
@@ -679,7 +679,8 @@
         "SEO page planning"
       ],
       "requires_pain_gate": true,
-      "forbidden": []
+      "forbidden": [],
+      "mode": "seo-page-planning"
     },
     {
       "id": "seo-technical-audit",

@@ -1,0 +1,359 @@
+{
+  "skill_name": "marketing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a marketing strategy for a new AI tool that helps solo consultants turn meeting notes into client updates. We have no users yet.",
+      "expected_output": "A skeptical strategy that narrows the segment, defines positioning, offer, proof needs, channel tests, metrics, and a 30/60/90-day plan without assuming demand.",
+      "files": [],
+      "mode": "strategy"
+    },
+    {
+      "id": 2,
+      "prompt": "We sell premium Thai massage gift cards locally and want world-class marketing for the next quarter.",
+      "expected_output": "A local-service marketing strategy with target segments, offers, seasonal/channel plan, proof assets, conversion metrics, and practical tests.",
+      "files": [],
+      "mode": "strategy"
+    },
+    {
+      "id": 3,
+      "prompt": "Our founder wants to spend $20k on Meta ads because competitors are running ads. Build the strategy.",
+      "expected_output": "A response that challenges channel-first thinking, identifies missing positioning/offer/proof data, proposes smaller tests, and defines paid-media success and stop thresholds.",
+      "files": [],
+      "must_mention": [
+        "positioning",
+        "stop rule",
+        "test"
+      ],
+      "must_not_mention": [],
+      "mode": "strategy"
+    },
+    {
+      "id": 4,
+      "prompt": "We announced a partnership with a big retailer, our launch video got 500k views, and we have 12k newsletter subscribers. Build the Q3 marketing strategy to capitalize on this traction.",
+      "expected_output": "Treats views, subscribers, and partnership announcements as weak evidence until tied to retained customers or revenue, re-anchors the strategy on proof assets, repeatable conversion, and funnel metrics, and sequences brand/partnership amplification behind demand evidence.",
+      "files": [],
+      "must_mention": [
+        "weak evidence",
+        "retention"
+      ],
+      "must_not_mention": [],
+      "mode": "strategy"
+    },
+    {
+      "id": 5,
+      "prompt": "Create a low-budget growth-hacking strategy for a new digital insurance service. Include Instagram, TikTok, YouTube, LinkedIn, Reddit, influencers, referrals, and a community.",
+      "expected_output": "Rejects the channel checklist, assigns channels explicit jobs and prerequisites, chooses one primary plus one supporting motion, distinguishes acquisition channels from referral/product/community loops, includes financial-promotion and incentive safeguards, defines source-cohort retention and contribution gates, and rejects spam, fake scarcity, and vanity metrics.",
+      "files": [],
+      "must_mention": [
+        "one primary",
+        "cohort",
+        "stop rule"
+      ],
+      "must_not_mention": [
+        "growth-hack your way"
+      ],
+      "mode": "strategy"
+    },
+    {
+      "id": 6,
+      "prompt": "Create a marketing strategy for our expat tax-advisory service in Germany (EUR 2,400/year, collects payroll and residence documents). Our persona is 'Anna, 34, a typical risk-averse German who values quality'. Messaging direction: 'A premium lifestyle upgrade for your new life in Berlin.' We want to sell the annual contract directly from the landing page.",
+      "expected_output": "Rejects the nationality-based personality persona and re-segments by trigger, job, and risk context; leads messaging and offer with uncertainty reducers (precise scope, credentials, total price, human access, redress) instead of lifestyle claims for a consequential data-sensitive service; stages the commitment (paid diagnostic or fixed-scope pilot before the annual contract); makes cancellation/refund/complaint pathways explicit; requires authentic, specific, verifiable reviews rather than star averages; measures qualified commitment, not clicks.",
+      "files": [],
+      "must_mention": [
+        "trigger",
+        "diagnostic",
+        "cancellation",
+        "credentials"
+      ],
+      "must_not_mention": [
+        "typical risk-averse German"
+      ],
+      "mode": "strategy"
+    },
+    {
+      "id": "position-narrow-copy",
+      "prompt": "Only write three short ad-copy variants. Selected promise: checklist preparation in 3 days after complete intake; no legal advice. Use these supplied assumptions; do not research or redo positioning.",
+      "expected_output": "Deliver only the requested copy, preserving timing and exclusion without invented proof, a full strategy plan, new positioning alternatives or unrelated reference loads.",
+      "files": [],
+      "mode": "strategy"
+    },
+    {
+      "id": 8,
+      "prompt": "Should we invest in AI answer-engine visibility work this quarter?",
+      "expected_output": "Bottleneck diagnosis first (exposure, proof, conversion path, offer); smallest justified intervention with a named business outcome and stop rule; visibility metrics labelled intermediate measures; handoff to the website skill or an own-brand monitoring run; owner actions via contract.",
+      "files": [],
+      "must_mention": [
+        "bottleneck",
+        "stop",
+        "owner",
+        "handoff"
+      ],
+      "mode": "strategy"
+    },
+    {
+      "id": "journey-to-sales",
+      "prompt": "Use our approved home-energy audit offer and sourced homeowner journey to connect Google/Meta/TikTok opportunities to actual completed audits. We have no CRM outcome imports yet.",
+      "expected_output": "Compares evidence-backed hook placements and tools, distinguishes channel from sales path, defines saved/qualified/booked/attended/paid stages and ownership, maps selected bidding versus observation events, gives monitoring and CRM gaps without claiming live linkage or authorizing spend.",
+      "files": [],
+      "mode": "strategy"
+    },
+    {
+      "id": "buyer-comprehension-before-scale",
+      "prompt": "Our B2B page says \"AI-powered all-in-one workflow\". The founder and an AI grader rate it 9/10. Only 80 suitable visitors arrive monthly. Competitors all claim security, which we call our differentiator. Should we scale ads or run an A/B test first?",
+      "expected_output": "Diagnoses missing buyer comprehension and choice evidence; proposes unpaid target-fit qualitative review using unaided explanation, real alternatives, must-have versus choice drivers, objections/proof and CTA understanding; avoids automatic paid panels, underpowered A/B claims and treating stated preference as conversion lift. Reuses existing positioning instead of silently replacing the business strategy.",
+      "files": [],
+      "mode": "strategy"
+    },
+    {
+      "id": 11,
+      "prompt": "Create a detailed social and digital marketing plan for a new local Thai massage studio. Budget is $1,500/month, goal is bookings, and we only have Instagram and Google Business Profile right now.",
+      "expected_output": "A practical local-services plan with audience, platform-role map, organic cadence, paid/local search ideas, creative tests, booking KPIs, risk checks, 7-day actions, and 30/60/90-day roadmap.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": 12,
+      "prompt": "We are launching a B2B SaaS product for finance teams. Give us a LinkedIn-heavy digital marketing plan that creates qualified pipeline, not just leads.",
+      "expected_output": "A B2B plan emphasizing buyer triggers, thought leadership, proof assets, LinkedIn platform role, paid/organic mix, lead quality metrics, sales handoff, and experiment thresholds.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": 13,
+      "prompt": "Our founder wants to copy Duolingo's unhinged TikTok style for a healthcare compliance product. Build the plan.",
+      "expected_output": "A skeptical response that explains transferability limits, brand-safety risk, regulated-market constraints, safer creative alternatives, testing plan, and approval checklist.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": 14,
+      "prompt": "We have $10k to spend on Meta and TikTok ads next month for an ecommerce skincare brand. Create the campaign plan.",
+      "expected_output": "A paid-social plan with offer/conversion assumptions, creative testing matrix, platform-specific creative guidance, budget allocation, fatigue management, measurement, stop/scale rules, and compliance checks for skincare claims.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": 15,
+      "prompt": "Our consumer app has 30k signups, strong TikTok views, and no retention or repeat-purchase data yet. Build us an aggressive paid growth plan across Meta, TikTok, and YouTube to hit 200k users this quarter.",
+      "expected_output": "Applies the sequencing gate: names signups/views as weak evidence without retained-value proof, refuses a pure scale plan, proposes capped learning-budget experiments tied to activation/retention targets, and defines the evidence gates that unlock larger paid spend.",
+      "files": [],
+      "must_mention": [
+        "sequencing",
+        "gate",
+        "retention"
+      ],
+      "must_not_mention": [],
+      "mode": "social"
+    },
+    {
+      "id": 16,
+      "prompt": "Explain exactly what Instagram, TikTok, YouTube, LinkedIn, Meta, X, Reddit, SEO, email, creators, and product referrals should each do for our consumer finance app, and tell us which to skip.",
+      "expected_output": "Produces a channel-to-job map with audience/context fit, operating requirements, conversion bridges, source-cohort metrics and stop rules; selects one primary and one supporting/owned motion; defers poor-fit channels; separates product loops from media channels; and includes current-platform retrieval and finance-compliance caveats.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": 17,
+      "prompt": "We opened a Discord for our SaaS customers but have 600 members and almost no conversations. Give us hacks to grow it to 10,000 members.",
+      "expected_output": "Rejects member count as the objective, diagnoses missing member-to-member value, defines a narrow identity and recurring exchange, proposes a manually seeded founding cohort and rituals, adds newcomer/moderation/safety design, measures useful responses and staff-independent return participation, and sets repair or shutdown gates.",
+      "files": [],
+      "must_mention": [
+        "member-to-member"
+      ],
+      "must_not_mention": [],
+      "mode": "social"
+    },
+    {
+      "id": 18,
+      "prompt": "Dropbox and Monzo grew through referrals. Design a viral referral program for our new finance app before users have linked accounts or completed their first transaction.",
+      "expected_output": "Refuses a pre-value referral launch, distinguishes Dropbox product-currency reciprocity from Monzo post-activation scarcity and network utility, requires value before invitation, gates on linked/funded/active/retained behavior, and includes reward economics, fraud, complaints, privacy, and financial-promotion review.",
+      "files": [],
+      "must_mention": [
+        "activation",
+        "fraud",
+        "value before"
+      ],
+      "must_not_mention": [],
+      "mode": "social"
+    },
+    {
+      "id": 19,
+      "prompt": "Build the launch plan for our US home-cleaning subscription. To kickstart trust we will seed 50 five-star Google reviews with a $10 gift card each, keep the 12-month minimum term off the ads and landing page, and make cancellation phone-only to protect churn. Budget $5k/month on Meta and Google.",
+      "expected_output": "Refuses incentivized/seeded reviews, hidden contract terms, and obstructed cancellation as tactics; cites FTC review-authenticity, material-connection disclosure, honest fee presentation, and cancellation-design constraints; replaces them with compliant trust-building (real-customer review generation, provider responses to failure, clear total price and cancellation in ads and landing pages); scopes paid spend behind a clear conversion path, creative tests, and stop thresholds.",
+      "files": [],
+      "must_mention": [
+        "FTC",
+        "disclosure",
+        "cancellation"
+      ],
+      "must_not_mention": [],
+      "mode": "social"
+    },
+    {
+      "id": 20,
+      "prompt": "We are a new financial-planning service. We want YouTube to make future customers familiar with us before retirement decisions arise. Design the channel role without pretending views are sales.",
+      "expected_output": "Defines discovery, education/trust or relationship, conversion bridge and owned follow-up separately; includes response/production costs, repeat substantive engagement measures and commercial outcome thresholds rather than treating views as proof.",
+      "files": [],
+      "must_mention": [
+        "discovery",
+        "relationship",
+        "conversion",
+        "repeat"
+      ],
+      "must_not_mention": [
+        "views prove demand"
+      ],
+      "mode": "social"
+    },
+    {
+      "id": 21,
+      "prompt": "Set up our Reddit and community presence to improve AI visibility.",
+      "expected_output": "Bottleneck justification required before any recurring program; human posting stated as repository operating policy, not a platform prohibition; authentic viewpoint non-delegable; owner actions surfaced via contract.",
+      "files": [],
+      "must_mention": [
+        "bottleneck",
+        "owner",
+        "policy"
+      ],
+      "mode": "social"
+    },
+    {
+      "id": "paid-1",
+      "prompt": "I have EUR 600 for ads to test my PKV switching service for expats. Where should I spend it?",
+      "expected_output": "Chooses one channel by intent, sizes budget against learning thresholds, proposes an upstream event, ties to validation page, and records stop rules and approval.",
+      "must_mention": [
+        "learning",
+        "optimization event",
+        "stop rule",
+        "approval",
+        "landing page"
+      ],
+      "must_not_mention": [
+        "spread across all platforms"
+      ],
+      "required_artifacts": [],
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": "measurement-alignment",
+      "prompt": "Our booking site fires Meta Lead when Submit is clicked and CAPI Schedule on booking success, with different random IDs. Google Ads and imported GA4 booking conversions are both primary. TikTok reports Results. Prepare the repair and monitoring plan.",
+      "expected_output": "Separates click, saved lead and confirmed booking; aligns copies of each actual occurrence by exact name/destination/shared ID; stable retries and new milestone IDs; audits Google goals including custom-goal secondary exception; refuses to read TikTok Results as qualified sales; retains consent and provider QA boundaries.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": "journey-tool-placement",
+      "prompt": "A repair workshop has sourced evidence that customers search for fault codes, compare repair-versus-replace costs and abandon booking while finding a serial number. Show where ads and a useful tool belong in that journey.",
+      "expected_output": "Maps each observed touchpoint to a proposed hook, distribution route, useful tool/asset, CTA, sales handoff, completion event, customer-quality outcome and affordable test. No invented demand or default three-platform spend.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": "native-form-sales-path",
+      "prompt": "Our TikTok campaign uses an instant form and closes sales by telephone. Design the tracking, organization and review, without launching.",
+      "expected_output": "Keeps native form, CRM qualification and phone sale distinct from website events; defines owners, stable IDs, permitted attribution joins, objective/event mapping and mature cohort monitoring; stages connection enrollment without claiming a verified MCP or live access.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": "agent-intervention-overlap",
+      "prompt": "Our campaign agent changed bids, audiences and landing pages yesterday. Sales take 10 days. Today CTR is down, so propose three more optimizations. Tracking works and spend is within the authorized limit.",
+      "expected_output": "Does not manufacture three changes; inspects actual intervention timing, scope, baseline and overlap, separates CTR from mature sales, proposes waiting/collecting data with a defined review date or evidence trigger and records confounding. Uses existing context/tasks, permits zero new tasks, and does not claim the local controller enforces a live cooldown.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": "attribution-definition-drift",
+      "prompt": "Meta ROAS rose after a reporting settings change. We only exported total purchases, while old and new click-attribution definitions may differ. Pixel/CAPI deduplication is clean. Can we double spend and add 1-day plus 7-day click purchases to show the gain?",
+      "expected_output": "Rejects overlapping-window addition and unsupported scaling; requests current and historical event/counting/model/windows/definition metadata and component breakdowns, checks dated primary platform guidance, separates deduplication from attribution and incrementality, and uses comparable restated windows or marks comparison unavailable. No automatic exclusion of all view credit or universal lead window.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": "creative-allocation-bias",
+      "prompt": "Meta allocated 95% of spend to creative A and 5% to B in three days. B has a better hook rate but no purchases. A creator recommends producing 100 variants weekly. Declare the loser and our next production plan.",
+      "expected_output": "Treats B as underexposed rather than a demonstrated loser; distinguishes adaptive delivery from randomization and similar spend from comparable audiences; inspects lag, budget and qualified outcomes; proposes a feasible controlled or explicitly directional test, separates concepts from hooks/proof/CTA, and rejects a universal creative-volume quota.",
+      "files": [],
+      "mode": "social"
+    },
+    {
+      "id": 29,
+      "prompt": "I'm a solo insurance broker in Munich. Should I start a TikTok channel about German insurance products to get clients?",
+      "expected_output": "Runs the validation gates instead of jumping to a content plan. Restates the idea as a testable claim, checks audience presence and demand evidence for the segment, applies practitioner patterns (considered purchase, education-first content, social-as-assist for brokers), and returns a GO/PIVOT/KILL verdict with a bounded low-cost test and calibrated thresholds. Does not produce a full 90-day marketing plan.",
+      "must_mention": [
+        "audience",
+        "demand",
+        "verdict",
+        "test",
+        "stop rule"
+      ],
+      "must_not_mention": [
+        "post 3 times a day",
+        "guaranteed viral",
+        "definitely start the channel"
+      ],
+      "required_artifacts": [],
+      "files": [],
+      "mode": "channel-validation"
+    },
+    {
+      "id": 30,
+      "prompt": "Our B2B SaaS wants to blog about broad industry trends to grow traffic. Is that a good content idea?",
+      "expected_output": "Challenges the volume-first framing with Pain-Point SEO logic: prioritize high-intent topics (category, comparison/alternatives, jobs-to-be-done) over top-funnel traffic, asks for customer-language sources (sales calls, surveys), and gives a verdict with the cheapest test rather than a generic yes.",
+      "must_mention": [
+        "intent",
+        "comparison",
+        "jobs-to-be-done",
+        "conversion",
+        "customer"
+      ],
+      "must_not_mention": [
+        "traffic is the goal",
+        "great idea, just start blogging",
+        "volume first"
+      ],
+      "required_artifacts": [],
+      "files": [],
+      "mode": "channel-validation"
+    },
+    {
+      "id": 31,
+      "prompt": "I run a mortgage brokerage. I want to post daily loan-product graphics on Instagram. Validate this idea.",
+      "expected_output": "Treats practitioner cases as hypotheses with transfer limits, checks the target audience and discovery path, and tests whether product graphics serve a useful job. Does not force a partner or face-to-face acquisition model merely because the business is a brokerage. Returns an evidence-calibrated verdict and bounded test.",
+      "must_mention": [
+        "audience",
+        "verdict",
+        "test"
+      ],
+      "must_not_mention": [
+        "daily graphics will build your brand",
+        "post more often",
+        "guaranteed leads from Instagram"
+      ],
+      "required_artifacts": [],
+      "files": [],
+      "mode": "channel-validation"
+    },
+    {
+      "id": 32,
+      "prompt": "Several established creators already explain retirement planning. Can a new adviser build a useful YouTube relationship before people are ready to buy? We have a six-month learning window and no paid media budget.",
+      "expected_output": "Does not reject the idea merely because competitors exist. Separates discovery, repeat/relevant engagement and commercial evidence; evaluates a credible entry mechanism and founder capacity; proposes bounded access, relationship and commercial thresholds calibrated to the long buying cycle.",
+      "must_mention": [
+        "discovery",
+        "relationship",
+        "commercial",
+        "threshold"
+      ],
+      "must_not_mention": [
+        "no whitespace",
+        "five posts",
+        "one-week kill"
+      ],
+      "required_artifacts": [],
+      "files": [],
+      "mode": "channel-validation"
+    }
+  ]
+}
