@@ -6,7 +6,6 @@ description: Validate a content, social, or channel idea before production inves
 # Social Media Idea Validator
 
 ## Success Criteria
-- **Quantitative:** triggers on >=90% of "is this social/content idea worth it" queries; completes in <=15 tool calls; every GO verdict cites at least one demand signal and one audience-presence signal; zero verdicts without an explicit test plan and stop rule.
 - **Qualitative:** verdicts follow the founder evidence base (practitioner patterns, not vibes); ideas are not rejected merely for an occupied market or unavailable evidence; the user gets a bounded, affordable test calibrated to the buying cycle.
 
 ## Workflow

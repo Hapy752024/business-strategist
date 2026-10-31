@@ -52,3 +52,29 @@ def test_pain_first_gate_sentence_shared_across_its_three_homes():
                          "passes or an explicit override is recorded")
     for path in (AGENTS, ROOT / ".agents/skills/business-strategist/SKILL.md", ROOT / ".claude/rules/business-gate.md"):
         assert phrase in _normalized(path.read_text(encoding="utf-8")), path.relative_to(ROOT)
+
+
+def test_rule_prose_lives_in_one_place():
+    """Generic rule prose has one home; scripts enforce the rest."""
+    pain_homes = {
+        "AGENTS.md",
+        ".claude/rules/business-gate.md",
+        ".agents/skills/business-strategist/SKILL.md",
+    }
+    pain, boilerplate, criteria = set(), set(), []
+    for path in list(ROOT.glob("*.md")) + [
+        p for d in ("references", "templates", ".agents", ".claude/rules", "scripts")
+        for p in (ROOT / d).rglob("*") if p.is_file() and p.suffix in {".md", ".py"}
+    ]:
+        text = path.read_text(encoding="utf-8")
+        rel = str(path.relative_to(ROOT))
+        flat = _normalized(text)
+        if "until problem_validation passes" in flat:
+            pain.add(rel)
+        if "load only the additional references" in flat:
+            boilerplate.add(rel)
+        if path.name == "SKILL.md" and re.search(r"triggers on[^\n]*\d\s*%", text, re.I):
+            criteria.append(rel)
+    assert pain <= pain_homes, sorted(pain - pain_homes)
+    assert len(boilerplate) <= 1, sorted(boilerplate)
+    assert not criteria, criteria

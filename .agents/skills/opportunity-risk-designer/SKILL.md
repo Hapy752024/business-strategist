@@ -44,7 +44,6 @@ Do not use investor attention as demand, success, market-size, or fundraising-fi
 State when VC fit is immaterial for a smaller business.
 
 ## Success Criteria
-- **Quantitative:** triggers on >=90% of risk/opportunity queries; completes in <=12 tool calls; covers decision-changing risks and proportionate low-cost tests; zero risks stated without a testable assumption.
 - **Qualitative:** observations, interpretations, assumptions, and unknowns are separated; each risk has a test with pass/fail criteria; the riskiest assumption is surfaced first.
 
 ## Workflow

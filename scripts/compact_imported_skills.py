@@ -33,7 +33,7 @@ def compact(name: str) -> None:
     title = name.replace("-", " ").title()
     entry.write_text(
         frontmatter
-        + f"\n# {title}\n\nRead `references/workflow.md` for the complete procedure. Load only the additional references needed for the requested stage.\n\n## Procedure\n\nUse the imported workflow and keep state in the active manifest.\n\n## Output\n\nReturn the requested artifacts, provenance, unresolved gaps, and next action.\n\n## Quality Checklist\n\nRun the relevant validators before delivery; never promote unapproved artifacts.\n",
+        + f"\n# {title}\n\nRead `references/workflow.md` for the complete procedure.\n\n## Procedure\n\nUse the imported workflow and keep state in the active manifest.\n\n## Output\n\nReturn the requested artifacts, provenance, unresolved gaps, and next action.\n\n## Quality Checklist\n\nRun the relevant validators before delivery.\n",
         encoding="utf-8",
     )
 

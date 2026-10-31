@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Brand Workspace Manager
 
-Read `references/workflow.md` for the complete procedure. Load only the additional references needed for the requested stage.
+Read `references/workflow.md` for the complete procedure.
 
 Apply the shared repo-root `references/subprojects.md` contract. New work belongs to umbrella `branding/`, independent of Business research. Use explicit business-linked entry only when consuming a selected Business handoff. Current outputs stay separate from dated decisions and archived versions.
 
@@ -20,7 +20,7 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 
 ## Quality Checklist
 
-Run the relevant validators before delivery; never promote unapproved artifacts.
+Run the relevant validators before delivery.
 
 Also read when the stage needs it:
 - `references/workspace-rules.md`

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Setup Multiharness Project
 
-Read `references/workflow.md` for the complete procedure. Load only the additional references needed for the requested stage.
+Read `references/workflow.md` for the complete procedure.
 
 ## Procedure
 
@@ -18,4 +18,4 @@ Return the requested artifacts, provenance, unresolved gaps, and next action.
 
 ## Quality Checklist
 
-Run the relevant validators before delivery; never promote unapproved artifacts.
+Run the relevant validators before delivery.

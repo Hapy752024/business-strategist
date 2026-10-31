@@ -14,7 +14,7 @@ Before Business commitments, this venture needs its three foundations pinned wit
 2. **Customer journey** — how they move through the topic today: [`market_research/customer_journey/`](market_research/customer_journey/)
 3. **Pain points** — detected/validated from public evidence: [`market_research/pain_points/`](market_research/pain_points/) (collection runs under `pain_points/runs/`)
 
-Even when the founder arrives with a solution, these come first within Business. Business model, offer and GTM stay gated until `problem_validation` passes or the founder records an explicit override. Explicit business-linked handoffs preserve those checks; standalone design does not require research.
+Even when the founder arrives with a solution, these come first within Business. Pain gate: `python3 scripts/route_workflow.py` exits 2 until problem validation passes. Explicit business-linked handoffs preserve those checks; standalone design does not require research.
 
 - Initial customer segment: {{CUSTOMER_SEGMENT}}
 - Segment status: [UNRESOLVED]

@@ -41,7 +41,6 @@ For a topic without a chosen idea, route to market-problem-discovery.
 **Pain-first back-track.** When the founder arrives with a solution, do not pressure-test the solution first. Back-track explicitly: pin the customer segment (`market_research/customer_segments/`), the customer journey for the topic (`market_research/customer_journey/`), and the pain points along that journey (`market_research/pain_points/`) — then validate those pains with web-searched evidence (collection runs land in `market_research/pain_points/runs/`). Only after the pain picture is on record do you pressure-test whether the proposed solution is the right answer to it. Solution-first grilling without the segment/journey/pain foundation is out of scope for this skill.
 
 ## Success Criteria
-- **Quantitative:** triggers on >=90% of validation-mode queries; captures all 8 minimum inputs in <=15 questions; produces a copy-pasteable evidence-scout command on every completion.
 - **Qualitative:** the output hypothesis is specific enough to generate search terms; segment is narrow enough to find and interview this week; solution language is stripped from search targets.
 
 ## Workflow
