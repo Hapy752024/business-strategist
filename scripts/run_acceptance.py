@@ -20,6 +20,11 @@ Whether `--max-budget-usd` caps one invocation or the whole session is unverifie
 reading and passes the remaining budget (model budget minus cumulative cost) on every round, which is
 correct if the cap is per invocation and stricter than needed if it is per session.
 A round killed on timeout may emit no result event, so its cost can be unreported.
+
+Bash permissions: ALLOWED_TOOLS grants `Bash(python3 *)`, which by itself allows `python3 -c "import runpy; ..."`
+or any other interpreter one-liner. Such a command can run a denylisted script without naming its path in a
+form a deny rule or the Bash guard can match. That is a pre-existing hole the denylist cannot close; the guard
+(see bash_guard_output) never approves anything and only denies, rewrites a plain `cd <dir> &&` prefix, or defers.
 """
 from __future__ import annotations
 
@@ -91,86 +96,54 @@ DISALLOWED_TOOLS = [
 
 
 # --------------------------------------------------------------------------- subagent Bash guard
-# Claude Code matches allow rules per subcommand, and an allow rule does not match past a variable assignment, so
-# research subagents' `cd <wt> && python3 scripts/...` and `P=...; cat $P/...` forms were auto-denied in headless
-# runs (Task 7.3 audit, root cause 3). A PreToolUse hook (installed by claude_command) approves exactly those
-# shapes when every part is otherwise allowed. It never widens the allowlist beyond: `cd` into the eval worktree,
-# plain `NAME=value` assignments, and `NAME=value python3 scripts/...`. DISALLOWED_TOOLS stays authoritative: the
-# deny rules still run in Claude Code (a hook "allow" does not bypass them), and the guard itself denies a
-# denylisted command, including one reached through a variable, `./` or an absolute path.
+# Research subagents wrote `cd <dir> && python3 scripts/...`; Claude Code matched the `cd` part against no allow
+# rule and, with --permission-prompts none, denied the whole call (Task 7.3 audit, root cause 3). A PreToolUse hook
+# (installed by claude_command) narrows that one shape. The guard NEVER returns permissionDecision "allow": an
+# allow would skip Claude Code's own Bash safety checks. Its only powers are:
+#   1. deny a command that mentions a denylisted script in any form (path, ./, absolute, python -m, after a cd);
+#   2. rewrite exactly `cd <plain path inside the worktree> && <rest>` to `<rest>` via updatedInput, with no
+#      permissionDecision, so Claude Code evaluates its normal allow/deny rules against <rest>;
+#   3. otherwise return nothing (defer to Claude Code's rules; in headless runs an unmatched command is denied).
+# DISALLOWED_TOOLS remains authoritative: deny rules apply whatever a hook returns.
+# Pre-existing hole the denylist cannot close: `Bash(python3 *)` itself allows `python3 -c "import runpy; ..."`
+# (or any interpreter one-liner) to run a denylisted script without naming its path in a matchable form.
 
-SHELL_SEPARATORS = {'&&', '||', ';', '|'}
-REDIRECTS = {'>', '>>', '>&', '&>', '&>>', '>|', '<', '<<', '<<<', '<&', '<>'}
-ASSIGNMENT_RE = re.compile(r'^([A-Za-z_][A-Za-z0-9_]*)=(.*)$', re.S)
-VAR_REF_RE = re.compile(r'\$(?:\{([A-Za-z_][A-Za-z0-9_]*)\}|([A-Za-z_][A-Za-z0-9_]*))')
-UNSAFE_VAR_RE = re.compile(r'^(PATH|IFS|ENV|BASH_ENV|BASHOPTS|SHELLOPTS|PS4|PROMPT_COMMAND|HOME|CDPATH|LD_\w*|PYTHON\w*'
-                           r'|NODE_\w*|NPM_\w*|GIT_\w*|DYLD_\w*|PERL\w*|RUBY\w*)$')
-PREFIX_ASSIGN_CMD_RE = re.compile(r'^python3? scripts/\S+\.py( |$)')
-FIND_ACTION_RE = re.compile(r'(^| )-(exec|execdir|ok|okdir|delete|fprint\w*|fls)( |$)')
-
-
-def _bash_rules(rules: Iterable[str]) -> list[re.Pattern]:
-    """`Bash(prefix *)` rules as anchored regexes; a trailing ` *` also matches the bare command."""
-    out = []
-    for rule in rules:
-        m = re.fullmatch(r'Bash\((.*)\)', rule)
-        if not m:
-            continue
-        body = m.group(1)
-        if body.endswith(' *'):
-            out.append(re.compile('^' + re.escape(body[:-2]) + '( .*)?$', re.S))
-        else:
-            out.append(re.compile('^' + re.escape(body).replace(r'\*', '.*') + '$', re.S))
-    return out
-
-
-ALLOW_BASH = _bash_rules(ALLOWED_TOOLS)
-DENY_BASH = _bash_rules(DISALLOWED_TOOLS)
 DENIED_SCRIPTS = [m.group(1) for r in DISALLOWED_TOOLS for m in [re.fullmatch(r'Bash\(python3? (scripts/\S+\.py)\*?\)', r)] if m]
+CD_PREFIX_RE = re.compile(r'\A\s*cd\s+([A-Za-z0-9_.][A-Za-z0-9_./-]*|/[A-Za-z0-9_./-]+)\s*&&\s*(\S.*)\Z', re.S)
+REST_UNSAFE_RE = re.compile(r'[`\n\r]|\$\(|<\(|>\(|\|\s*(sh|bash|zsh|dash|eval|xargs|source)\b|^\s*cd\b')
+CREATING_CMDS = {'mkdir', 'touch', 'cp', 'mv', 'rm', 'tee', 'ln', 'rsync', 'install', 'dd', 'unzip', 'tar'}
 
 
-def _split_command(command: str) -> list[list[str]] | None:
-    """Subcommands as token lists, or None when the command uses anything the guard does not reason about."""
-    if '`' in command or '$(' in command or '<(' in command or '>(' in command or '\\\n' in command:
-        return None
-    try:
-        # Unquoted newlines separate commands (shlex would otherwise treat them as spaces); quoted ones,
-        # as in a multi-line `python3 -c "..."`, stay inside their token.
-        lex = shlex.shlex(command, posix=True, punctuation_chars='();<>|&\n')
-        lex.whitespace = ' \t\r'
-        lex.whitespace_split = True
-        tokens = list(lex)
-    except ValueError:
-        return None
-    parts, current, i = [], [], 0
-    while i < len(tokens):
-        tok = tokens[i]
-        if tok and set(tok) == {'\n'}:
-            if current:
-                parts.append(current)
-                current = []
-        elif tok in SHELL_SEPARATORS:
-            if not current:
-                return None
-            parts.append(current)
-            current = []
-        elif tok in REDIRECTS:
-            target = tokens[i + 1] if i + 1 < len(tokens) else ''
-            ok = target == '/dev/null' if tok in ('>', '>>', '&>', '<') else (tok == '>&' and target in ('1', '2'))
-            if not ok:
-                return None
-            if current and current[-1] in ('1', '2'):
-                current.pop()  # the fd of `2>&1` / `2>/dev/null`
-            i += 1
-        elif set(tok) <= set('();<>|&\n'):
-            return None  # subshells, background jobs, separators glued to newlines, anything unusual
-        else:
-            current.append(tok)
-        i += 1
-    if not current:
-        return None
-    parts.append(current)
-    return parts
+def _denied_script_forms(script: str) -> list[re.Pattern]:
+    """Every spelling of a denylisted script: scripts/a/b.py, a/b.py, a.b module, and its file name."""
+    rel = script[len('scripts/'):] if script.startswith('scripts/') else script
+    parts = rel[:-3].split('/')
+    forms = [re.escape(rel), re.escape('.'.join(parts)) + r'\b']
+    if len(parts) == 1:
+        forms.append(re.escape(parts[0]) + r'\b')  # top-level script names are distinctive
+    else:  # a nested name (execute.py) counts when its directory is also named (after a `cd`)
+        forms.append(r'(?=.*\b' + re.escape(parts[-2]) + r'\b).*\b' + re.escape(parts[-1]) + r'\.py\b')
+    return [re.compile(f, re.S) for f in forms]
+
+
+DENIED_FORMS = [(s, f) for s in DENIED_SCRIPTS for f in _denied_script_forms(s)]
+
+
+def _has_unquoted(command: str, chars: str) -> bool:
+    quote = ''
+    escaped = False
+    for ch in command:
+        if escaped:
+            escaped = False
+        elif ch == '\\' and quote != "'":
+            escaped = True
+        elif quote:
+            quote = '' if ch == quote else quote
+        elif ch in ('"', "'"):
+            quote = ch
+        elif ch in chars:
+            return True
+    return False
 
 
 def _within(path: str, root: str) -> bool:
@@ -180,93 +153,54 @@ def _within(path: str, root: str) -> bool:
         return False
 
 
-def _is_denied(words: list[str], cwd: str, root: str) -> bool:
-    text = ' '.join(words)
-    if any(rx.match(text) for rx in DENY_BASH):
-        return True
-    executed = words[:1]
-    if words and re.fullmatch(r'(python[\d.]*|node|bash|sh)', os.path.basename(words[0])):
-        args = [w for w in words[1:] if w not in ('-u', '-B', '-E', '-s', '-I')]
-        if args[:1] == ['-m'] and len(args) > 1:
-            executed = [args[1].replace('.', '/') + '.py']
-        else:
-            executed = args[:1]
-    for word in executed:  # a denylisted script reached through ./, an absolute path, a module or a variable
-        full = os.path.realpath(os.path.join(cwd, word))
-        rel = os.path.relpath(full, os.path.realpath(root)) if _within(full, root) else ''
-        if any(rel == d or word.endswith('/' + d) or word == d for d in DENIED_SCRIPTS):
-            return True
-    return False
-
-
-def bash_guard_decision(command: str, root: str, cwd: str | None = None) -> tuple[str | None, str]:
-    """('allow' | 'deny' | None, reason). None defers to Claude Code's own rules (in headless runs: deny)."""
+def bash_guard_output(tool_input: dict, root: str, cwd: str | None = None) -> tuple[dict | None, str]:
+    """(hook output or None, reason). Never contains permissionDecision "allow"."""
+    command = str(tool_input.get('command') or '')
     root = str(root)
     cwd = cwd if cwd and _within(cwd, root) else root
-    parts = _split_command(command)
-    if parts is None:
-        return None, 'unparsed shell form'
-    env: dict[str, str] = {}
-    denied, deferred, has_cd, has_git = [], [], False, False
-    for words in parts:
-        def expand(word: str) -> str | None:
-            missing = [m.group(1) or m.group(2) for m in VAR_REF_RE.finditer(word) if (m.group(1) or m.group(2)) not in env]
-            if missing or re.search(r'\$[^A-Za-z_{]|\$\{[^}]*[^A-Za-z0-9_}]', word):
-                return None
-            return VAR_REF_RE.sub(lambda m: env[m.group(1) or m.group(2)], word)
-        expanded = [expand(w) for w in words]
-        if None in expanded:
-            deferred.append(' '.join(words))
-            continue
-        assigns = []
-        while expanded and ASSIGNMENT_RE.match(expanded[0]):
-            assigns.append(ASSIGNMENT_RE.match(expanded.pop(0)).groups())
-        if any(UNSAFE_VAR_RE.match(name) for name, _ in assigns):
-            deferred.append(' '.join(words))
-            continue
-        if not expanded:  # a plain `NAME=value` statement: a shell variable for later parts, never exported
-            env.update(assigns)
-            continue
-        text = ' '.join(expanded)
-        if _is_denied(expanded, cwd, root):
-            denied.append(text)
-            continue
-        if expanded[0] == 'cd':
-            target = expanded[1] if len(expanded) == 2 else None
-            if target and target != '-' and _within(os.path.join(cwd, target), root):
-                cwd, has_cd = os.path.realpath(os.path.join(cwd, target)), True
-            else:
-                deferred.append(text)
-            continue
-        has_git = has_git or expanded[0] == 'git'
-        if assigns and not PREFIX_ASSIGN_CMD_RE.match(text):
-            deferred.append(text)  # exported assignments only in front of a repository script
-        elif expanded[0] == 'find' and FIND_ACTION_RE.search(text):
-            deferred.append(text)
-        elif not any(rx.match(text) for rx in ALLOW_BASH):
-            deferred.append(text)
-    if denied:
-        return 'deny', 'acceptance harness denylist: ' + '; '.join(denied)[:300]
-    if deferred:
-        return None, 'not covered: ' + '; '.join(deferred)[:300]
-    if has_cd and has_git:
-        return None, 'cd combined with git'
-    return 'allow', 'acceptance guard: cd into the eval worktree / shell variables with otherwise-allowed commands'
+    hits = sorted({s for s, rx in DENIED_FORMS if rx.search(command)})
+    if hits:
+        reason = 'acceptance harness denylist: ' + ', '.join(hits)
+        return {'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'permissionDecision': 'deny',
+                                       'permissionDecisionReason': reason}}, reason
+    m = CD_PREFIX_RE.match(command)
+    if not m:
+        return None, 'defer: not a cd-prefixed command'
+    target, rest = m.group(1), m.group(2).strip()
+    if '..' in target.split('/') or REST_UNSAFE_RE.search(rest) or _has_unquoted(command, '#'):
+        return None, 'defer: unsafe cd target or rest'
+    dest = os.path.realpath(os.path.join(cwd, target))
+    if not _within(dest, root):
+        return None, 'defer: cd target outside the eval worktree'
+    try:
+        lex = shlex.shlex(rest, posix=True, punctuation_chars=True)
+        lex.whitespace_split = True
+        lex.commenters = ''
+        tokens = list(lex)
+    except ValueError:
+        return None, 'defer: unparsable rest'
+    if dest != os.path.realpath(cwd):
+        # Dropping a cd into a subdirectory changes what relative paths mean. Rewrite only when nothing in
+        # <rest> names an existing path relative to the cd target and <rest> does not create files.
+        if any(t in CREATING_CMDS for t in tokens):
+            return None, 'defer: rest creates files relative to the cd target'
+        if any(t not in ('.', '..') and not t.startswith('-') and os.path.lexists(os.path.join(dest, t)) for t in tokens):
+            return None, 'defer: rest names paths relative to the cd target'
+    return {'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'updatedInput': {**tool_input, 'command': rest}}}, \
+        'rewrite: cd prefix dropped; normal permission rules evaluate the rest'
 
 
 def bash_guard_hook(root: str, stdin=None) -> int:
-    """PreToolUse hook entry point: read the hook payload, print a decision, or nothing to defer."""
+    """PreToolUse hook entry point: print a deny or a rewrite, or nothing to defer."""
     try:
         payload = json.load(stdin or sys.stdin)
     except (json.JSONDecodeError, ValueError):
         return 0
-    if payload.get('tool_name') != 'Bash':
+    if payload.get('tool_name') != 'Bash' or not isinstance(payload.get('tool_input'), dict):
         return 0
-    command = str((payload.get('tool_input') or {}).get('command') or '')
-    decision, reason = bash_guard_decision(command, root, cwd=payload.get('cwd'))
-    if decision:
-        print(json.dumps({'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'permissionDecision': decision,
-                                                 'permissionDecisionReason': reason}}))
+    output, _ = bash_guard_output(payload['tool_input'], root, cwd=payload.get('cwd'))
+    if output:
+        print(json.dumps(output))
     return 0
 
 
