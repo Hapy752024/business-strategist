@@ -82,13 +82,13 @@ Carry supported U/R IDs, evidence and confidence into the test/GTM brief; keep t
 
 | Decision | Required handoff |
 |---|---|
-| Pilot scope | U outcomes investigated; R requirements included/excluded with reasons. |
+| Pilot scope | U outcomes investigated; R requirements included/excluded with reasons. Keep necessary operational R items even when their motivational root is unknown. |
 | Smoke test | Lead with an evidenced U outcome; test R preferences separately. Qualified observable behavior with denominator, window and success/stop thresholds (experimental decisions, not market facts). A click, qualified signup, interview and price-bearing commitment are not interchangeable. |
 | Recruitment | Screener on role, trigger and recent experience plus researched access channels from `interview-recruitment.md`. Offer no cash, vouchers, gifts or compensated panels unless the founder changes the preference; unpaid signups still require screening. |
 | GTM | U evidence for segment, message and offer hypotheses; R evidence for promises, objections and delivery requirements. |
 | Next uncertainty | The most consequential unresolved assumption and the cheapest suitable test. |
 
-Preparing a test brief is distinct from launching it: publishing, outreach, advertising/distribution spend and live pilots keep their authorization requirements.
+Preparing a test brief is distinct from launching it: publishing, outreach, advertising/distribution spend and live pilots keep their authorization requirements. A smoke page's purpose may be interview recruitment, message testing or demand testing: choose explicitly, and never present contact collection as paid demand validation.
 
 ## Customer-needs research method
 
@@ -135,6 +135,21 @@ Use for substantive market, operator, competitor and community discovery; reuse 
 | Communities | Verified source shape, audience, activity, locale and access route; indexed URLs alone are leads |
 
 xAI output is model-mediated discovery requiring inspection of cited posts. After a probe, inspect relevant and rejected leads, failures and duplicates; separate result slots, unique URLs, original speakers and verified entities. Refine with reviewed vocabulary, bind the new revision to its parent digest, and retain failures. None of these mechanics proves prevalence, demand, competitor strength or a successful business.
+
+### Judgment checks (no script enforces these)
+
+- Sample favorable and unfavorable feedback and more than one time window; compare contrasting slices when an outage or platform ranking dominates. No equal star quotas, no representativeness claims.
+- A forum post mentioning a brand is not automatically a usage report; do not infer authorship from sentiment or "I".
+- HTTP success or extraction may contain only navigation, supplier replies, AI summaries or copied quotations; check original pages or API units.
+- Include indirect accounts of a problem, not only explicit complaints. Generic positive wording retrieves supplier testimonials; seek successful episodes in discussion sources.
+- A translated search result is not a new source-language experience; do not compare languages as if they sampled the same people.
+- Independent plan review asks: is local wording plausible, are phrases supplier-oriented, are candidates paraphrases of one idea, is provider syntax supported?
+- Do not pool baseline results into each candidate's score. Freeze before/after schedules before inspecting results; a later source-derived round is a refinement check, not an independent benchmark. Finding the seed thread again does not validate the revised query.
+- Missing vocabulary is not negative customer evidence; test the exact failure before changing the classifier.
+- Choose the next search from reviewed yield, not provider volume.
+- Maintain competing hypotheses when evidence is insufficient and explain any changed recommendation.
+- Preserve rare consequential cases and negative findings; a rare consequential need must not disappear under "convenience".
+- Ask only a decision-changing founder question; use interviews for missing customer facts rather than asking the founder to invent them.
 
 ## Pain-query calibration: plan, challenge, probe, review, refine
 

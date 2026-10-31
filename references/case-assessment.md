@@ -16,11 +16,11 @@ Keep the opinion/behavior/money scorecard in supporting appraisal material and t
 
 - Customer choice: trigger, user/buyer/payer, workaround including doing nothing, switching friction, trust, why this entrant might be chosen.
 - Commercial evidence: current spend and prices separately from stated intent. A complaint, job posting, supplier claim or signup does not establish a purchase or willingness to pay this entrant.
-- Reach and repeat value: concrete access, funnel denominators, founder effort, time to value, repeat/referral and reasons to cancel.
-- Feasibility: build/buy/partner, people/data/permissions, lead times, capacity, support, cash and founder dependence.
+- Reach and repeat value: concrete access, funnel denominators, founder effort, time to value, repeat/referral and reasons to cancel. Use windows appropriate to the service; annual needs do not require daily use.
+- Feasibility: build/buy/partner, people/data/permissions, lead times, capacity, support, cash and founder dependence. Investigate AI reliability only where material.
 - Decision: strongest support and counter-evidence, failure paths, pivotal unknown, proportionate next test and its predeclared interpretation. Insufficient evidence permits continued investigation, not a forced winner or automatic rejection.
 
-Keep need, promise, operating configuration and defensibility as separate provisional findings. Adequate service, insufficient evidence and a viable business with no moat are distinct valid findings; appraisal never selects execution. Compare cases at comparable evidence coverage; archive superseded advice rather than appending contradictory recommendations.
+Keep need, promise, operating configuration and defensibility as separate provisional findings. Adequate service, insufficient evidence and a viable business with no moat are distinct valid findings; appraisal never selects execution. Compare cases at comparable evidence coverage; corrections change ranking only when their implications justify it; archive superseded advice rather than appending contradictory recommendations.
 
 ## Publication and ownership
 
@@ -34,9 +34,9 @@ For a final appraisal run `case_workspace.py prepare-appraisal`, give the render
 
 ## Economics
 
-The helper calculates economics results; agents author inputs, never results (`python3 scripts/case_economics.py <inputs.json>`). Numeric unknowns are null. Provenance labels are assumptions unless supported by a declared binding. Never use pass-through premiums as revenue or count founder labor twice (owner cash compensation is separate from imputed opportunity cost). No arbitrary price multipliers, retention defaults, guessed ranges, invented probabilities or unsupported lifetime-value forecasts. Conditional arithmetic never establishes purchase demand.
+The helper calculates economics results; agents author inputs, never results (`python3 scripts/case_economics.py <inputs.json>`). Numeric unknowns are null. Provenance labels are assumptions unless supported by a declared binding. Never use pass-through premiums as revenue or count founder labor twice (owner cash compensation is separate from imputed opportunity cost). No arbitrary price multipliers, retention defaults, guessed ranges, invented probabilities or unsupported lifetime-value forecasts. Service costs begin when recurring customers are served even if billing is deferred. Conditional arithmetic never establishes purchase demand.
 
-Quote model-derived claims only through `{{economics.…}}` placeholders with the reviewed `economics_input_digest`; literal model values fail publication. `economics_inputs.viability_targets` records the founder's test (profitable-by month, maximum cash need, owner income); quote `{{economics.results.viability.status}}`, never hand-write the verdict. Unresolved means schedule or targets are missing, not that the business is unviable. Missing scenarios or sensitivities stay visibly unresolved with a reason. Optional charts: `scripts/chart_case_economics.py` (conditional arithmetic, not forecasts).
+Quote model-derived claims only through `{{economics.…}}` placeholders with the reviewed `economics_input_digest`; literal model values fail publication. `economics_inputs.viability_targets` records the founder's test (profitable-by month, default proposal 24–36 months confirmed by the founder; maximum cash need; owner income); quote `{{economics.results.viability.status}}`, never hand-write the verdict. Unresolved means schedule or targets are missing, not that the business is unviable. Missing scenarios or sensitivities stay visibly unresolved with a reason. Optional charts: `scripts/chart_case_economics.py` (conditional arithmetic, not forecasts).
 
 Source-attributed decision-relevant figures use `{{source_numeric.<id>}}`; inspect the original source first, then check with `python3 scripts/verify_numeric_claims.py --workspace <business-root> --packet <draft.json>`. Unverified claims need a reason and render as unverified. The check compares declared fields only; it does not certify extraction or surrounding prose.
 
@@ -58,6 +58,18 @@ A strategy plan with `verdict: commit` must include `decision_review` (`schemas/
 
 V2 appraisal generates a provisional `business-plan.md` (`appraisal_draft`). Full per-case publication uses startup-business-builder's `case-business-plan` mode: `case_workspace.py prepare-case-plan` then `case-plan`, against `schemas/case-business-plan.schema.json`. Prerequisites: initial reviewed case research, a bound eligible claim ledger and current reviewed `case_insights.md`; case selection and a passed pain gate are not prerequisites for a conditional planning document.
 
-The nine section keys: `business`, `customer_market`, `competitive_choice` (including international commercial precedents and failed examples), `product_revenue`, `acquisition_sales` (separate unpaid learning recruitment from selling), `delivery_team`, `finances`, `milestones_risks`, `funding_legal_ip`. Supported sections need their original sources; missing/not-applicable sections explain the consequence and next action. Document publication (`progress`/`final`) and evidence basis (`desk_research`/`offer_tested`/`pilot_informed`) are independent; signups, interviews, purchases and repeat use are distinct observations. A `final` case plan needs an independent review with different author and reviewer identities; the plan cannot cite itself.
+The nine section keys cover:
+
+- `business`: executive decision, customer problem, thesis, founder objective/resources, pivotal uncertainty.
+- `customer_market`: user/buyer/payer, segments/jobs/journey, pain/current spend, scoped bottom-up and attainable initial market.
+- `competitive_choice`: local competitors, substitutes/doing nothing, international commercial precedents, failed examples, entrant choice/switching conditions.
+- `product_revenue`: offer/exclusions, delivery promise, MVP/manual scope, pricing and revenue mechanics; label proposals and tests.
+- `acquisition_sales`: first-customer access, channels, funnel denominators, sales effort/cycle, repeat value; separate unpaid learning recruitment from selling.
+- `delivery_team`: workflow, build/buy/partner, capacity, suppliers/data, quality/support, founder work, hiring triggers.
+- `finances`: startup/unit costs, owner cash and imputed labor, cash timing/runway, break-even, base/downside and sensitivity assumptions.
+- `milestones_risks`: dated milestones, owners, costs, measurements, dependencies, stop/pivot criteria, unresolved assumptions.
+- `funding_legal_ip`: funding need/use/timing, bootstrap/outside capital, investor activity, legal/regulatory/data/IP dependencies and verification gaps.
+
+Supported sections need their original sources; missing/not-applicable sections explain the consequence and next action. Document publication (`progress`/`final`) and evidence basis (`desk_research`/`offer_tested`/`pilot_informed`) are independent; signups, interviews, purchases and repeat use are distinct observations. A `final` case plan needs an independent review with different author and reviewer identities; the plan cannot cite itself.
 
 Plan use checks insight/source/economics digests; research completion does not imply the plan is current. Do not bulk-rename legacy files. A selected strategy plan for a case with a canonical plan binds it via `case_plan_binding`; final execution-plan publication requires the case's final plan review.
