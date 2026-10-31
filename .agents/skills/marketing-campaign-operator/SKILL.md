@@ -7,6 +7,7 @@ disable-model-invocation: true
 # Marketing Campaign Operator
 
 Use the checked setup, import, review or connections mode.
+For a first campaign, follow `references/first-campaign-runbook.md`; external writes need a signed founder approval (`references/marketing-execution.md`).
 Read repo-root `references/marketing-campaign-operations.md` before executing it; this is a shared repository dependency.
 
 1.
