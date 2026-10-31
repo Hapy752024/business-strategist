@@ -217,7 +217,7 @@
       ]
     },
     {
-      "pair": "brand-website-designer-builder vs brand-designer vs marketing-strategy-builder",
+      "pair": "brand-website-designer-builder vs brand-identity vs marketing-strategy-builder",
       "evals": [
         {
           "id": "route-brand-website-1",
@@ -225,7 +225,7 @@
           "expected_output": "Routes to brand-website-designer-builder for preference-led website implementation; it may consume a linked brand snapshot but must not rerun research.",
           "expected_skill": "brand-website-designer-builder",
           "forbidden_skills": [
-            "brand-designer",
+            "brand-identity",
             "marketing-strategy-builder"
           ],
           "files": [],
@@ -234,8 +234,8 @@
         {
           "id": "route-brand-independent-1",
           "prompt": "Independently develop a brand identity for my new service, including positioning, visual direction, typography, and logo concepts. Do not do market research.",
-          "expected_output": "Routes to brand-designer for independent branding; research workflows remain out of scope.",
-          "expected_skill": "brand-designer",
+          "expected_output": "Routes to brand-identity for independent branding; research workflows remain out of scope.",
+          "expected_skill": "brand-identity",
           "forbidden_skills": [
             "brand-website-designer-builder",
             "market-problem-discovery",
@@ -296,7 +296,7 @@
       ]
     },
     {
-      "pair": "brand-asset-producer (imagery-style) vs brand-motion-designer (motion-concept) vs brand-ui-kit-producer",
+      "pair": "brand-asset-producer (imagery-style) vs brand-ui-system motion mode (motion-concept) vs brand-ui-system kit mode",
       "evals": [
         {
           "id": "route-imagery-style-1",
@@ -304,7 +304,7 @@
           "expected_output": "Runs the imagery-style art-direction gate (brand-asset-producer in art-direction mode) producing an art-direction brief and style frames; no batch imagery production before approval.",
           "expected_skill": "brand-asset-producer",
           "forbidden_skills": [
-            "brand-ui-kit-producer",
+            "brand-ui-system",
             "brand-website-designer-builder"
           ],
           "files": [],
@@ -313,10 +313,10 @@
         {
           "id": "route-motion-concept-1",
           "prompt": "Define the animation concept for our web page and assets: motion principles, duration and easing primitives, and signature moments like a hover crossfade from a drawn image to a realistic photo, plus reduced-motion fallbacks.",
-          "expected_output": "Runs the motion-concept gate (brand-motion-designer in concept mode) producing a motion-concept doc; tokenization and reference implementations come later in the motion stage.",
-          "expected_skill": "brand-motion-designer",
+          "expected_output": "Runs the motion-concept gate (brand-ui-system motion mode, concept step) producing a motion-concept doc; tokenization and reference implementations come later in the motion stage.",
+          "expected_skill": "brand-ui-system",
+          "expected_route": "brand-motion-designer",
           "forbidden_skills": [
-            "brand-ui-component-producer",
             "brand-website-designer-builder"
           ],
           "files": [],
@@ -332,7 +332,7 @@
           "prompt": "Compare strategic positions for my business and derive the operating model.",
           "expected_skill": "archetype-gtm-strategist",
           "forbidden_skills": [
-            "brand-designer"
+            "brand-identity"
           ],
           "expected_output": "Choose the business position first; derive only requested implications.",
           "files": [],
@@ -363,7 +363,7 @@
         {
           "id": "position-brand",
           "prompt": "Develop a standalone brand identity without market research.",
-          "expected_skill": "brand-designer",
+          "expected_skill": "brand-identity",
           "forbidden_skills": [
             "archetype-gtm-strategist"
           ],

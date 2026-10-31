@@ -16,13 +16,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = [
-    ("standalone-brand", "Independently develop a brand identity without research", "brand-designer"),
-    ("business-linked-brand", "Turn my validated business workspace into a segment-informed brand", "brand-designer"),
-    ("logo-only", "Create a logo only; do not make a website", "brand-designer"),
-    ("brand-research", "Research visual codes for a luxury skincare brand", "brand-guideline-researcher"),
+    ("standalone-brand", "Independently develop a brand identity without research", "brand-identity"),
+    ("business-linked-brand", "Turn my validated business workspace into a segment-informed brand", "brand-identity"),
+    ("logo-only", "Create a logo only; do not make a website", "brand-identity"),
+    ("brand-research", "Research visual codes for a luxury skincare brand", "brand-identity"),
     ("standalone-website", "Build a unique Next.js landing page", "brand-website-designer-builder"),
     ("approved-brand-website", "Build a marketing website from our approved brand", "brand-website-designer-builder"),
-    ("app-ui", "Design product dashboard UI screens", "brand-frontend-app-designer"),
+    ("app-ui", "Design product dashboard UI screens", "brand-ui-system"),
     ("competitor-website", "Analyze a competitor's website positioning and CTA", "competitor-marketing-analyzer"),
     ("competitive-landscape", "Map the competitive landscape, similar companies abroad, pricing, social presence, and positioning white space", "competitive-landscape-builder"),
     ("competitor-discovery-only", "Find competitors for my invoice automation idea; I only need a candidate list", "competitor-scout"),

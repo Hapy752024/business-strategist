@@ -102,7 +102,7 @@ def test_interview_responders_are_bound_and_cross_case_inputs_rejected(tmp_path)
 
 def test_brand_audit_accepts_lean_but_checks_started_optional_stages(tmp_path):
     import runpy
-    audit = runpy.run_path(str(ROOT / '.agents/skills/brand-quality-reviewer/scripts/audit-brand-package.py'))
+    audit = runpy.run_path(str(ROOT / '.agents/skills/brand-identity/scripts/audit-brand-package.py'))
     for path in ('BRAND-GUIDELINES.md','DECISIONS.md','PACKAGE-MANIFEST.md'):
         (tmp_path / path).write_text('Synthetic lean package')
     for path in ('logos/source','logos/export','colors','typography','qa'):

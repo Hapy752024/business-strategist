@@ -15,7 +15,7 @@ from scripts.evidence_scout import workspace
     ("Leave the marketing strategy intact; create a content calendar.", "social-digital-marketing-planner"),
     ("Don't build a competitive landscape; find competitors.", "competitor-scout"),
     ("Write two ad-copy options", "marketing-strategy-builder"),
-    ("Create a logo only; do not make a website", "brand-designer"),
+    ("Create a logo only; do not make a website", "brand-identity"),
 ])
 def test_scope_routing(prompt, expected):
     assert route_request(prompt)["skill"] == expected
@@ -25,7 +25,7 @@ def test_scope_routing(prompt, expected):
 def test_unrelated_brand_ignores_active_website(intent):
     packet = route_request("Create a new brand identity for an unrelated business",
                            intent=intent, active_manifest={"active_track": "website"})
-    assert packet["skill"] == "brand-designer"
+    assert packet["skill"] == "brand-identity"
     assert packet["route_id"] == "standalone-brand"
 
 

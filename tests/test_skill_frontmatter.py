@@ -4,8 +4,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / '.agents/skills'
 HIDDEN = [
-    'brand-exporter',
-    'brand-workspace-manager',
     'setup-multiharness-project',
     'marketing-campaign-operator',
     'pre-release-regression',

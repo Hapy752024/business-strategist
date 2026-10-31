@@ -2,7 +2,7 @@ from __future__ import annotations
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-REVIEWER = ROOT / ".agents/skills/brand-quality-reviewer/SKILL.md"
+REVIEWER = ROOT / ".agents/skills/brand-identity/references/review.md"
 
 
 def test_reviewer_checks_motion_coherence() -> None:

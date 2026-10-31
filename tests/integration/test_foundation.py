@@ -28,11 +28,11 @@ def load_script(name: str, relative: str):
 def test_routes_keep_branding_independent_and_website_specific() -> None:
     route = load_script("route_workflow", "scripts/route_workflow.py")
     standalone = route.route_request("Develop a brand identity and logo without research")
-    assert standalone["skill"] == "brand-designer"
+    assert standalone["skill"] == "brand-identity"
     website = route.route_request("Build a visually stunning unique Next.js landing page")
     assert website["skill"] == "brand-website-designer-builder"
     app = route.route_request("Design product dashboard UI screens")
-    assert app["skill"] == "brand-frontend-app-designer"
+    assert app["skill"] == "brand-ui-system"
     gtm = route.route_request("Build a go-to-market strategy for first customers")
     assert gtm["skill"] == "archetype-gtm-strategist"
     explicit = route.route_request("A vague request", intent="opportunity-prioritization")
@@ -203,7 +203,7 @@ def test_fal_finalizer_downloads_validated_assets_without_persisting_url(tmp_pat
 
 
 def test_brand_workspace_has_full_stage_manifest(tmp_path: Path) -> None:
-    manager = load_script("brand_workspace", ".agents/skills/brand-workspace-manager/scripts/manage-brand-workspace.py")
+    manager = load_script("brand_workspace", ".agents/skills/brand-identity/scripts/manage-brand-workspace.py")
     root = tmp_path / "brand-projects" / "demo"
     manager.create_workspace(root)
     manifest = manager.write_manifest(root, entry_mode="standalone")
@@ -213,7 +213,7 @@ def test_brand_workspace_has_full_stage_manifest(tmp_path: Path) -> None:
 
 
 def test_brand_workspace_cli_records_explicit_approval_and_archive_revision(tmp_path: Path) -> None:
-    cli = ROOT / ".agents/skills/brand-workspace-manager/scripts/workspace_cli.py"
+    cli = ROOT / ".agents/skills/brand-identity/scripts/workspace_cli.py"
     subprocess.run(["python3", str(cli), "create", "--name", "Synthetic Brand", "--base-dir", str(tmp_path)], check=True, capture_output=True, text=True)
     project = tmp_path / "synthetic-brand"
     candidate = project / "stages" / "logo" / "option.svg"
@@ -229,7 +229,7 @@ def test_brand_workspace_cli_records_explicit_approval_and_archive_revision(tmp_
 
 
 def test_business_linked_brand_copies_immutable_handoff(tmp_path: Path) -> None:
-    cli = ROOT / ".agents/skills/brand-workspace-manager/scripts/workspace_cli.py"
+    cli = ROOT / ".agents/skills/brand-identity/scripts/workspace_cli.py"
     handoff = tmp_path / "handoff.json"
     handoff.write_text('{"snapshot_id":"synthetic"}', encoding="utf-8")
     subprocess.run(["python3", str(cli), "create", "--name", "Linked Brand", "--base-dir", str(tmp_path / "brands"), "--entry-mode", "business_linked", "--business-to-brand", str(handoff)], check=True, capture_output=True, text=True)

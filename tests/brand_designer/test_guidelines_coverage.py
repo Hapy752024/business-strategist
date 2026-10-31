@@ -2,7 +2,7 @@ from __future__ import annotations
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-WRITER = ROOT / ".agents/skills/brand-guidelines-writer/SKILL.md"
+WRITER = ROOT / ".agents/skills/brand-identity/references/guidelines.md"
 
 
 def test_guidelines_include_motion_section() -> None:

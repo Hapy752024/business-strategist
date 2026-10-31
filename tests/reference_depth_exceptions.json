@@ -9,58 +9,34 @@
       "target": ".agents/skills/marketing-campaign-operator/references/first-campaign-runbook.md"
     }
   ],
-  "brand-designer": [
+  "brand-identity": [
     {
-      "reason": "strategic-positioning.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "reason": "strategic-positioning.md is mentioned by a linked file but is outside brand-identity's own stage; open it only when a task needs it",
       "target": "references/strategic-positioning.md"
     },
     {
-      "reason": "imagery-art-direction.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "reason": "imagery-art-direction.md is mentioned by a linked file but is outside brand-identity's own stage; open it only when a task needs it",
       "target": ".agents/skills/brand-asset-producer/references/imagery-art-direction.md"
     },
     {
-      "reason": "concept.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-motion-designer/references/concept.md"
-    },
-    {
-      "reason": "image-sourcing.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
+      "reason": "image-sourcing.md is mentioned by a linked file but is outside brand-identity's own stage; open it only when a task needs it",
       "target": ".agents/skills/brand-asset-producer/references/image-sourcing.md"
     },
     {
-      "reason": "naming-and-checks.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-strategy-director/references/naming-and-checks.md"
+      "reason": "motion-concept.md is mentioned by a linked file but is outside brand-identity's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-ui-system/references/motion-concept.md"
     },
     {
-      "reason": "verbal-identity.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-strategy-director/references/verbal-identity.md"
+      "reason": "reference-sites.md is mentioned by a linked file but is outside brand-identity's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/reference-sites.md"
     },
     {
-      "reason": "trusted-mcps.md is mentioned by a linked file but is outside brand-designer's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-frontend-app-designer/references/trusted-mcps.md"
-    }
-  ],
-  "brand-discovery-interviewer": [
+      "reason": "privacy-design.md is mentioned by a linked file but is outside brand-identity's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/privacy-design.md"
+    },
     {
-      "reason": "reference-sites.md is mentioned by a linked file but is outside brand-discovery-interviewer's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-website-designer-builder/references/reference-sites.md"
-    }
-  ],
-  "brand-guideline-researcher": [
-    {
-      "reason": "reference-sites.md is mentioned by a linked file but is outside brand-guideline-researcher's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-website-designer-builder/references/reference-sites.md"
-    }
-  ],
-  "brand-quality-reviewer": [
-    {
-      "reason": "strategic-positioning.md is mentioned by a linked file but is outside brand-quality-reviewer's own stage; open it only when a task needs it",
-      "target": "references/strategic-positioning.md"
-    }
-  ],
-  "brand-strategy-director": [
-    {
-      "reason": "strategic-positioning.md is mentioned by a linked file but is outside brand-strategy-director's own stage; open it only when a task needs it",
-      "target": "references/strategic-positioning.md"
+      "reason": "external-link-maintenance.md is mentioned by a linked file but is outside brand-identity's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-website-designer-builder/references/external-link-maintenance.md"
     }
   ],
   "brand-website-designer-builder": [
@@ -77,8 +53,8 @@
       "target": "references/task-scope.md"
     },
     {
-      "reason": "research-method.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
-      "target": ".agents/skills/brand-guideline-researcher/references/research-method.md"
+      "reason": "research.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",
+      "target": ".agents/skills/brand-identity/references/research.md"
     },
     {
       "reason": "marketing-execution.md is mentioned by a linked file but is outside brand-website-designer-builder's own stage; open it only when a task needs it",

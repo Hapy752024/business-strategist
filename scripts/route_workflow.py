@@ -28,6 +28,23 @@ ROUTES_PATH = ROOT / "config" / "workflow-routes.json"
 CATALOG_PATH = ROOT / "config" / "skill-catalog.json"
 PAIN_GATE_MANIFEST_REL = Path("market_research") / "manifest.json"
 PAIN_GATE_CONCEPTS = ["customer_segments", "customer_journey", "pain_points"]
+# Former skill name -> route ID it served before a family merge. Route IDs never change, so old intents,
+# manifests and receipts keep working; the packet's alias_note names the skill that now serves the route.
+SKILL_ALIASES: dict[str, str] = {
+    "brand-designer": "standalone-brand",
+    "brand-discovery-interviewer": "brand-discovery-interviewer",
+    "brand-workspace-manager": "brand-workspace-manager",
+    "brand-guideline-researcher": "brand-research",
+    "brand-typography-researcher": "brand-typography-researcher",
+    "brand-strategy-director": "brand-strategy-director",
+    "brand-guidelines-writer": "brand-guidelines-writer",
+    "brand-exporter": "brand-exporter",
+    "brand-quality-reviewer": "brand-quality-reviewer",
+    "brand-ui-kit-producer": "brand-ui-kit-producer",
+    "brand-ui-component-producer": "brand-ui-component-producer",
+    "brand-motion-designer": "brand-motion-designer",
+    "brand-frontend-app-designer": "app-ui",
+}
 
 
 def load_routes() -> list[dict[str, Any]]:
@@ -277,6 +294,9 @@ def _route_request(
     # Preserve the established general-Marketing alias after adding page planning.
     if requested_intent == 'marketing-strategy-builder':
         requested_intent = 'marketing-strategy'
+    former_skill = requested_intent if requested_intent in SKILL_ALIASES else ''
+    if former_skill:
+        requested_intent = SKILL_ALIASES[former_skill]
     # Explicit specialist names are aliases only when they identify one route.
     # Multi-mode specialists (e.g. website build/experiment) need the route ID.
     if requested_intent and not any(route["id"].casefold() == requested_intent for route in routes):
@@ -337,7 +357,11 @@ def _route_request(
     metadata = {**catalog[skill], **catalog[skill].get("modes", {}).get(selected.get("mode", "default"), {})}
     if check_skill and (skill == "business-strategist" or check_skill != skill
                         or check_skill in selected.get("forbidden", [])):
-        raise ValueError(f"Dispatch rejected: requested {check_skill}, routed {skill}")
+        merged_note = ''
+        if check_skill in SKILL_ALIASES:
+            now = next(r["skill"] for r in routes if r["id"] == SKILL_ALIASES[check_skill])
+            merged_note = f" ({check_skill} was merged into {now}; dispatch {now} with route {SKILL_ALIASES[check_skill]})"
+        raise ValueError(f"Dispatch rejected: requested {check_skill}, routed {skill}{merged_note}")
     requested_strategy = bool(re.search(action + r"\b[^.;!?]*\bstrateg(?:y|ies)\b", outcome_text))
     scope = task_scope or ("strategy" if requested_strategy
                            else "focused" if re.search(r"\b(explain|what is|what does|why)\b", outcome_text)
@@ -362,6 +386,9 @@ def _route_request(
         "side_effect": metadata.get("side_effect", "unknown"),
         "estimated_cost": metadata.get("cost", "unknown"),
     }
+    if former_skill and selected["id"] == SKILL_ALIASES[former_skill]:
+        packet["alias_note"] = (f"{former_skill} was merged into {skill}; this request uses route "
+                                f"{selected['id']} (mode {packet['mode']}).")
     module_name, module_reference = module_contract(skill)
     if module_name:
         packet['module'] = module_name

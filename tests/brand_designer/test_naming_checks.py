@@ -22,7 +22,7 @@ def test_status_mapping(monkeypatch):
 
 def test_naming_stage_and_reviewer_checks_exist():
     for script in ['manage-brand-workspace.py', 'workspace_cli.py']:
-        assert '"naming"' in (ROOT / '.agents/skills/brand-workspace-manager/scripts' / script).read_text()
-    checklist = (ROOT / '.agents/skills/brand-quality-reviewer/references/review-checklist.md').read_text().lower()
+        assert '"naming"' in (ROOT / '.agents/skills/brand-identity/scripts' / script).read_text()
+    checklist = (ROOT / '.agents/skills/brand-identity/references/review.md').read_text().lower()
     for needle in ['trademark', 'human vector', '16px', 'monochrome']:
         assert needle in checklist

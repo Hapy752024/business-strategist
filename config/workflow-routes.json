@@ -40,13 +40,13 @@
         "branding",
         "segment-informed brand"
       ],
-      "skill": "brand-designer",
+      "skill": "brand-identity",
       "forbidden": [
         "market-problem-discovery",
         "idea-grill"
       ],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "orchestration"
     },
     {
       "id": "website-build",
@@ -85,7 +85,7 @@
       "skill": "brand-website-designer-builder",
       "requires_pain_gate": true,
       "forbidden": [
-        "brand-frontend-app-designer",
+        "brand-ui-system",
         "competitor-marketing-analyzer"
       ]
     },
@@ -100,7 +100,7 @@
       "mode": "experiment",
       "requires_pain_gate": true,
       "forbidden": [
-        "brand-frontend-app-designer"
+        "brand-ui-system"
       ]
     },
     {
@@ -128,12 +128,12 @@
         "product interface",
         "app screens"
       ],
-      "skill": "brand-frontend-app-designer",
+      "skill": "brand-ui-system",
       "forbidden": [
         "brand-website-designer-builder"
       ],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "app"
     },
     {
       "id": "competitor-discovery",
@@ -298,12 +298,12 @@
         "visual codes",
         "inspect reference websites"
       ],
-      "skill": "brand-guideline-researcher",
+      "skill": "brand-identity",
       "forbidden": [
         "market-problem-discovery",
         "evidence-scout"
       ],
-      "single_mode": true
+      "mode": "research"
     },
     {
       "id": "brand-asset",
@@ -345,55 +345,82 @@
       ],
       "requires_pain_gate": true,
       "forbidden": [
-        "brand-designer"
+        "brand-identity"
       ]
     },
     {
       "id": "brand-discovery-interviewer",
-      "match": [],
-      "skill": "brand-discovery-interviewer",
+      "match": [
+        "brand discovery",
+        "brand brief interview",
+        "brand questionnaire"
+      ],
+      "skill": "brand-identity",
       "forbidden": [],
-      "single_mode": true
+      "mode": "discovery"
     },
     {
       "id": "brand-exporter",
-      "match": [],
-      "skill": "brand-exporter",
+      "match": [
+        "export brand package",
+        "brand css variables",
+        "brand agent skill"
+      ],
+      "skill": "brand-identity",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "export"
     },
     {
       "id": "brand-guidelines-writer",
-      "match": [],
-      "skill": "brand-guidelines-writer",
+      "match": [
+        "brand book",
+        "write guidelines document",
+        "guideline document"
+      ],
+      "skill": "brand-identity",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "guidelines"
     },
     {
       "id": "brand-motion-designer",
-      "match": [],
-      "skill": "brand-motion-designer",
+      "match": [
+        "motion system",
+        "motion tokens",
+        "animation guidelines",
+        "animation concept"
+      ],
+      "skill": "brand-ui-system",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "motion"
     },
     {
       "id": "brand-quality-reviewer",
-      "match": [],
-      "skill": "brand-quality-reviewer",
+      "match": [
+        "brand QA",
+        "review brand package",
+        "audit brand package",
+        "brand quality review"
+      ],
+      "skill": "brand-identity",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "review"
     },
     {
       "id": "brand-strategy-director",
-      "match": [],
-      "skill": "brand-strategy-director",
+      "match": [
+        "brand strategy",
+        "brand territories",
+        "verbal identity",
+        "brand naming"
+      ],
+      "skill": "brand-identity",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "strategy"
     },
     {
       "id": "brand-typography-researcher",
@@ -402,32 +429,44 @@
         "font pairing",
         "font license"
       ],
-      "skill": "brand-typography-researcher",
+      "skill": "brand-identity",
       "forbidden": [],
-      "single_mode": true
+      "mode": "typography"
     },
     {
       "id": "brand-ui-component-producer",
-      "match": [],
-      "skill": "brand-ui-component-producer",
+      "match": [
+        "component library",
+        "branded components",
+        "React components"
+      ],
+      "skill": "brand-ui-system",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "components"
     },
     {
       "id": "brand-ui-kit-producer",
-      "match": [],
-      "skill": "brand-ui-kit-producer",
+      "match": [
+        "UI kit",
+        "design tokens",
+        "UI tokens"
+      ],
+      "skill": "brand-ui-system",
       "forbidden": [],
       "requires_pain_gate": true,
-      "single_mode": true
+      "mode": "kit"
     },
     {
       "id": "brand-workspace-manager",
-      "match": [],
-      "skill": "brand-workspace-manager",
+      "match": [
+        "brand workspace",
+        "resume brand project",
+        "archive brand iteration"
+      ],
+      "skill": "brand-identity",
       "forbidden": [],
-      "single_mode": true
+      "mode": "workspace"
     },
     {
       "id": "business-archetype-playbook-researcher",
@@ -607,7 +646,7 @@
       "skill": "brand-website-designer-builder",
       "requires_pain_gate": true,
       "forbidden": [
-        "brand-frontend-app-designer",
+        "brand-ui-system",
         "competitor-marketing-analyzer"
       ],
       "mode": "validation_page"
@@ -634,7 +673,8 @@
         "SEO content",
         "SEO page planning"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "forbidden": []
     },
     {
       "id": "seo-technical-audit",
@@ -645,7 +685,8 @@
         "SEO regression audit",
         "audit website SEO"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "forbidden": []
     },
     {
       "id": "earned-media-discovery",
@@ -657,7 +698,8 @@
         "earned media opportunities",
         "discover backlinks"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "forbidden": []
     },
     {
       "id": "earned-media-preparation",
@@ -669,7 +711,8 @@
         "prepare directory submission",
         "prepare earned media packet"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "forbidden": []
     },
     {
       "id": "earned-media-verification",
@@ -681,7 +724,8 @@
         "check published backlinks",
         "verify earned media placement"
       ],
-      "requires_pain_gate": true
+      "requires_pain_gate": true,
+      "forbidden": []
     },
     {
       "id": "stripe-best-practices",

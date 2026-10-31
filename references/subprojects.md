@@ -50,7 +50,7 @@ Each handoff is an explicit import with owner, path, hash and applicability. Con
 
 | Handoff | Artifact | Producer | Consumer | Staleness check |
 |---|---|---|---|---|
-| Business → Brand | `branding/business-to-brand-*.json` (`business-to-brand.schema.json`) | startup-business-builder | brand-designer | source digests and applicability review |
+| Business → Brand | `branding/business-to-brand-*.json` (`business-to-brand.schema.json`) | startup-business-builder | brand-identity | source digests and applicability review |
 | Business → Marketing | `strategy-plan.json` positioning + `customer-voc-synthesis.json` customer language | GTM / evidence-scout | marketing skills | imported-decision hash and applicability |
 | Brand → Marketing | `branding/voice/voice.json`, asset manifest | brand strategy / exporter | marketing skills | imported purposes `brand_voice`/`brand_assets` |
 | Brand → Website | tokens, brand refs, favicon package | brand exporter | website builder | website manifest brand-ref hashes |

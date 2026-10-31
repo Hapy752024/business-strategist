@@ -1,0 +1,108 @@
+{
+  "skill_name": "brand-identity",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a complete brand identity from this brief and route its stages.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "orchestration"
+    },
+    {
+      "id": 2,
+      "prompt": "I have a validated idea and need a brand for launch next month. Keep it minimal.",
+      "expected_output": "Proposes the lean sprint and explicitly defers motion, components and app screens.",
+      "must_mention": [
+        "voice",
+        "logo",
+        "guidelines",
+        "defer"
+      ],
+      "must_not_mention": [
+        "component library",
+        "motion tokens"
+      ],
+      "required_artifacts": [],
+      "files": [],
+      "mode": "orchestration"
+    },
+    {
+      "id": 3,
+      "prompt": "Interview me one question at a time to build a brand brief.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "discovery"
+    },
+    {
+      "id": 4,
+      "prompt": "Create or resume a brand workspace without deleting history.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "workspace"
+    },
+    {
+      "id": 5,
+      "prompt": "Promote approved logo option 2 over a different existing master file.",
+      "expected_output": "Performs a dry run, reports the conflict, and refuses overwrite until separate explicit replacement approval is recorded.",
+      "files": [],
+      "must_mention": [
+        "conflict",
+        "approval",
+        "dry run"
+      ],
+      "must_not_mention": [
+        "automatically overwrite"
+      ],
+      "mode": "workspace"
+    },
+    {
+      "id": 6,
+      "prompt": "Research brand guideline patterns for this identity.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "research"
+    },
+    {
+      "id": 7,
+      "prompt": "Select licensable typography for this brand.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "typography"
+    },
+    {
+      "id": 8,
+      "prompt": "Create three evidence-aware brand territories from this brief.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "strategy"
+    },
+    {
+      "id": 9,
+      "prompt": "Our linked business snapshot selects a low-cost fixed-scope paperwork service; demand remains hypothetical. I prefer luxury concierge branding promising instant bespoke advice. Define territories.",
+      "expected_output": "Flag changed scope, relative-price signal and promise; preserve hypothesis labels, check source revision and propose expressions of the selected position or an explicit business revision.",
+      "files": [],
+      "mode": "strategy"
+    },
+    {
+      "id": 10,
+      "prompt": "Write guidelines from the approved brand package.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "guidelines"
+    },
+    {
+      "id": 11,
+      "prompt": "Export the approved brand assets and preserve provenance.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "export"
+    },
+    {
+      "id": 12,
+      "prompt": "Audit this brand package before final delivery.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "review"
+    }
+  ]
+}

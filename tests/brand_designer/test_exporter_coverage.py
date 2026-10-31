@@ -2,7 +2,7 @@ from __future__ import annotations
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-EXPORTER = ROOT / ".agents/skills/brand-exporter/SKILL.md"
+EXPORTER = ROOT / ".agents/skills/brand-identity/references/export.md"
 
 
 def test_exporter_includes_motion_tokens() -> None:

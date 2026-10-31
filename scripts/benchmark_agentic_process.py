@@ -58,7 +58,7 @@ def snapshot(files: set[str], read_text) -> dict[str, object]:
         "website-skill": ".agents/skills/brand-website-designer-builder/SKILL.md" in files and "brand-website-designer-builder" in workflow,
         "server-experiment": "flags/next" in experiment and "Math.random" not in experiment and '"use client"' not in experiment,
         "browser-qa": "playwright" in ci.lower() and "@axe-core/playwright" in read_text("fixtures/website/stellar-repair/package.json"),
-        "brand-state-cli": ".agents/skills/brand-workspace-manager/scripts/workspace_cli.py" in files,
+        "brand-state-cli": ".agents/skills/brand-identity/scripts/workspace_cli.py" in files,
         "safe-promotion": "refusing to overwrite a different artifact" in promoter,
         "fal-finalization": "scripts/brand/finalize_fal_assets.py" in files,
         "claim-fail-closed": "unknown evidence IDs" in claim_builder and "if str(item) in by_id" not in claim_builder,

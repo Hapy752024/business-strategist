@@ -12,7 +12,7 @@ The question is a normal new-site step, not a requirement that the user supply U
 
 For supplied URLs, inspect the actual rendered site at desktop and mobile where tools allow. For screenshot references, inspect the actual images. Record layout/hierarchy, spacing, palette, type roles, imagery/crops, navigation/components, and observed motion. Separate user likes from your observations and recommendations. If a page cannot be inspected, record the gap and use accessible references; do not infer its style from a title or claim a screenshot review that did not happen.
 
-Write a compact `design/reference-review.md`: source URL/image, inspection date and evidence, specific traits, what to adapt/avoid, accessibility/performance implications, and how those choices translate into this site's direction. Cross-category references are valid. Combine useful principles into an original design; reference sites do not confer rights to their code, logos or photographs. Reuse the benchmark method in `../../brand-guideline-researcher/references/research-method.md` where useful; a narrow reference pass does not require a full brand research project.
+Write a compact `design/reference-review.md`: source URL/image, inspection date and evidence, specific traits, what to adapt/avoid, accessibility/performance implications, and how those choices translate into this site's direction. Cross-category references are valid. Combine useful principles into an original design; reference sites do not confer rights to their code, logos or photographs. Reuse the benchmark method in `../../brand-identity/references/research.md` where useful; a narrow reference pass does not require a full brand research project.
 
 ## Photo sets
 

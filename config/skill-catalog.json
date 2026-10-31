@@ -22,20 +22,9 @@
       "reference": "references/modules/branding.md",
       "quality_reference": "references/modules/quality/branding.md",
       "skills": [
-        "brand-designer",
-        "brand-discovery-interviewer",
-        "brand-workspace-manager",
-        "brand-guideline-researcher",
-        "brand-typography-researcher",
-        "brand-strategy-director",
+        "brand-identity",
         "brand-asset-producer",
-        "brand-ui-kit-producer",
-        "brand-motion-designer",
-        "brand-ui-component-producer",
-        "brand-frontend-app-designer",
-        "brand-quality-reviewer",
-        "brand-exporter",
-        "brand-guidelines-writer"
+        "brand-ui-system"
       ]
     },
     "marketing": {
@@ -598,106 +587,198 @@
         }
       ]
     },
-    "brand-designer": {
+    "brand-identity": {
       "intent": [
-        "orchestrate brand identity and design system"
+        "orchestrate brand identity and design system",
+        "discover brand brief and preferences",
+        "create or resume brand workspace",
+        "research brand guideline patterns",
+        "select and verify brand typography",
+        "create brand strategy and creative territories",
+        "write brand guidelines",
+        "export approved brand package",
+        "audit brand assets and visual quality"
       ],
       "excludes": [
-        "business validation prerequisite"
+        "business validation prerequisite",
+        "market demand validation",
+        "customer demand research",
+        "unverified business claims",
+        "unapproved options"
       ],
       "prerequisites": [],
       "artifacts": [
-        "brand manifest"
-      ],
-      "side_effect": "workspace",
-      "cost": "medium",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-discovery-interviewer": {
-      "intent": [
-        "discover brand brief and preferences"
-      ],
-      "excludes": [
-        "market demand validation"
-      ],
-      "prerequisites": [],
-      "artifacts": [
+        "brand manifest",
         "brand brief",
-        "preference profile"
-      ],
-      "side_effect": "workspace",
-      "cost": "low",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-workspace-manager": {
-      "intent": [
-        "create or resume brand workspace"
-      ],
-      "excludes": [],
-      "prerequisites": [],
-      "artifacts": [
-        "brand workspace"
-      ],
-      "side_effect": "workspace",
-      "cost": "low",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-guideline-researcher": {
-      "intent": [
-        "research brand guideline patterns"
-      ],
-      "excludes": [
-        "customer demand research"
-      ],
-      "prerequisites": [],
-      "artifacts": [
-        "guideline evidence"
-      ],
-      "side_effect": "research",
-      "cost": "medium",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-typography-researcher": {
-      "intent": [
-        "select and verify brand typography"
-      ],
-      "excludes": [],
-      "prerequisites": [],
-      "artifacts": [
-        "font decision"
-      ],
-      "side_effect": "research",
-      "cost": "medium",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-strategy-director": {
-      "intent": [
-        "create brand strategy and creative territories"
-      ],
-      "excludes": [
-        "unverified business claims"
-      ],
-      "prerequisites": [
-        "brand brief or handoff"
-      ],
-      "artifacts": [
-        "brand strategy"
+        "preference profile",
+        "brand workspace",
+        "guideline evidence",
+        "font decision",
+        "brand strategy",
+        "guidelines",
+        "export package",
+        "brand QA report"
       ],
       "side_effect": "workspace",
       "cost": "medium",
       "required_references": [
         "references/subprojects.md"
-      ]
+      ],
+      "modes": {
+        "orchestration": {
+          "inputs": [
+            "own brief or requested scope"
+          ],
+          "prerequisites": [],
+          "artifacts": [
+            "brand manifest"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "workspace",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/orchestration.md"
+          ]
+        },
+        "discovery": {
+          "inputs": [
+            "own brief or requested scope"
+          ],
+          "prerequisites": [],
+          "artifacts": [
+            "brand brief",
+            "preference profile"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "workspace",
+          "cost": "low",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/discovery.md"
+          ]
+        },
+        "workspace": {
+          "inputs": [
+            "own brief or requested scope"
+          ],
+          "prerequisites": [],
+          "artifacts": [
+            "brand workspace"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "workspace",
+          "cost": "low",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/workspace.md"
+          ]
+        },
+        "research": {
+          "inputs": [
+            "own brief or requested scope"
+          ],
+          "prerequisites": [],
+          "artifacts": [
+            "guideline evidence"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "research",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/research.md"
+          ]
+        },
+        "typography": {
+          "inputs": [
+            "own brief or requested scope"
+          ],
+          "prerequisites": [],
+          "artifacts": [
+            "font decision"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "research",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/typography.md"
+          ]
+        },
+        "strategy": {
+          "inputs": [
+            "brand brief or handoff"
+          ],
+          "prerequisites": [
+            "brand brief or handoff"
+          ],
+          "artifacts": [
+            "brand strategy"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "workspace",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/strategy.md"
+          ]
+        },
+        "guidelines": {
+          "inputs": [
+            "approved brand system"
+          ],
+          "prerequisites": [
+            "approved brand system"
+          ],
+          "artifacts": [
+            "guidelines"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "workspace",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/guidelines.md"
+          ]
+        },
+        "export": {
+          "inputs": [
+            "approved assets"
+          ],
+          "prerequisites": [
+            "approved assets"
+          ],
+          "artifacts": [
+            "export package"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "workspace",
+          "cost": "low",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/export.md"
+          ]
+        },
+        "review": {
+          "inputs": [
+            "brand artifacts"
+          ],
+          "prerequisites": [
+            "brand artifacts"
+          ],
+          "artifacts": [
+            "brand QA report"
+          ],
+          "output_owner": "brand-identity",
+          "side_effect": "none",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-identity/references/review.md"
+          ]
+        }
+      }
     },
     "brand-asset-producer": {
       "intent": [
@@ -722,133 +803,107 @@
         "references/subprojects.md"
       ]
     },
-    "brand-ui-kit-producer": {
+    "brand-ui-system": {
       "intent": [
-        "produce design tokens and UI kit"
-      ],
-      "excludes": [
-        "website conversion strategy"
-      ],
-      "prerequisites": [
-        "approved brand direction"
-      ],
-      "artifacts": [
-        "tokens"
-      ],
-      "side_effect": "workspace",
-      "cost": "medium",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-motion-designer": {
-      "intent": [
+        "produce design tokens and UI kit",
+        "produce reusable branded components",
         "design brand motion",
-        "define motion concept (principles, signature moments)"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "brand tokens"
-      ],
-      "artifacts": [
-        "motion tokens",
-        "approved motion concept"
-      ],
-      "side_effect": "workspace",
-      "cost": "medium",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-ui-component-producer": {
-      "intent": [
-        "produce reusable branded components"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "brand tokens"
-      ],
-      "artifacts": [
-        "component library"
-      ],
-      "side_effect": "workspace",
-      "cost": "medium",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-frontend-app-designer": {
-      "intent": [
+        "define motion concept (principles, signature moments)",
         "build branded product or app screens"
       ],
       "excludes": [
+        "website conversion strategy",
         "marketing website",
         "SEO landing page"
       ],
-      "prerequisites": [
-        "brand tokens"
-      ],
+      "prerequisites": [],
       "artifacts": [
+        "tokens",
+        "component library",
+        "motion tokens",
+        "approved motion concept",
         "app UI"
       ],
       "side_effect": "workspace",
-      "cost": "high",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-quality-reviewer": {
-      "intent": [
-        "audit brand assets and visual quality"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "brand artifacts"
-      ],
-      "artifacts": [
-        "brand QA report"
-      ],
-      "side_effect": "none",
       "cost": "medium",
       "required_references": [
         "references/subprojects.md"
-      ]
-    },
-    "brand-exporter": {
-      "intent": [
-        "export approved brand package"
       ],
-      "excludes": [
-        "unapproved options"
-      ],
-      "prerequisites": [
-        "approved assets"
-      ],
-      "artifacts": [
-        "export package"
-      ],
-      "side_effect": "workspace",
-      "cost": "low",
-      "required_references": [
-        "references/subprojects.md"
-      ]
-    },
-    "brand-guidelines-writer": {
-      "intent": [
-        "write brand guidelines"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "approved brand system"
-      ],
-      "artifacts": [
-        "guidelines"
-      ],
-      "side_effect": "workspace",
-      "cost": "medium",
-      "required_references": [
-        "references/subprojects.md"
-      ]
+      "modes": {
+        "kit": {
+          "inputs": [
+            "approved brand direction"
+          ],
+          "prerequisites": [
+            "approved brand direction"
+          ],
+          "artifacts": [
+            "tokens"
+          ],
+          "output_owner": "brand-ui-system",
+          "side_effect": "workspace",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-ui-system/references/kit.md"
+          ]
+        },
+        "components": {
+          "inputs": [
+            "brand tokens"
+          ],
+          "prerequisites": [
+            "brand tokens"
+          ],
+          "artifacts": [
+            "component library"
+          ],
+          "output_owner": "brand-ui-system",
+          "side_effect": "workspace",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-ui-system/references/components.md"
+          ]
+        },
+        "motion": {
+          "inputs": [
+            "brand tokens"
+          ],
+          "prerequisites": [
+            "brand tokens"
+          ],
+          "artifacts": [
+            "motion tokens",
+            "approved motion concept"
+          ],
+          "output_owner": "brand-ui-system",
+          "side_effect": "workspace",
+          "cost": "medium",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-ui-system/references/motion.md"
+          ]
+        },
+        "app": {
+          "inputs": [
+            "brand tokens"
+          ],
+          "prerequisites": [
+            "brand tokens"
+          ],
+          "artifacts": [
+            "app UI"
+          ],
+          "output_owner": "brand-ui-system",
+          "side_effect": "workspace",
+          "cost": "high",
+          "required_references": [
+            "references/subprojects.md",
+            ".agents/skills/brand-ui-system/references/app.md"
+          ]
+        }
+      }
     },
     "brand-website-designer-builder": {
       "intent": [

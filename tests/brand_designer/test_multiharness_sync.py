@@ -21,11 +21,11 @@ def test_claude_skills_points_to_agents_skills() -> None:
 
 def test_new_skills_visible_via_claude_skills() -> None:
     base = ROOT / ".claude/skills"
-    assert (base / "brand-motion-designer/SKILL.md").exists()
-    assert (base / "brand-ui-component-producer/SKILL.md").exists()
+    assert (base / "brand-identity/SKILL.md").exists()
+    assert (base / "brand-ui-system/SKILL.md").exists()
 
 
 def test_catalog_exposes_imported_skills() -> None:
     catalog = (ROOT / "config/skill-catalog.json").read_text(encoding="utf-8")
-    assert "brand-motion-designer" in catalog
-    assert "brand-ui-component-producer" in catalog
+    assert "brand-identity" in catalog
+    assert "brand-ui-system" in catalog

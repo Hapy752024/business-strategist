@@ -50,7 +50,7 @@ def test_coverage_fails_closed(tmp_path, defect):
 
 def test_dispatch_rejects_mismatch_and_ambiguity():
     with pytest.raises(ValueError, match='Dispatch rejected'):
-        route_workflow.route_request('find competitors', check_skill='brand-designer')
+        route_workflow.route_request('find competitors', check_skill='brand-identity')
     with pytest.raises(ValueError, match='Dispatch rejected'):
         route_workflow.route_request('unclassified', check_skill='business-strategist')
 
@@ -64,4 +64,4 @@ def test_commitment_routes_do_not_bypass_pain_gate(tmp_path, monkeypatch, intent
 
 
 def test_precise_typography_and_town_requests():
-    assert route_workflow.route_request('font research')['skill'] == 'brand-typography-researcher'
+    assert route_workflow.route_request('font research')['route_id'] == 'brand-typography-researcher'

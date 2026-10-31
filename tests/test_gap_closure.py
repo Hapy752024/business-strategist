@@ -23,8 +23,8 @@ def _isolated_research_gate(monkeypatch):
     monkeypatch.setattr(insights, 'current_status', lambda *_: {'status': 'current'})
 
 REPO = Path(__file__).resolve().parents[1]
-BRAND = '.agents/skills/brand-workspace-manager/scripts/workspace_cli.py'
-MANAGER = '.agents/skills/brand-workspace-manager/scripts/manage-brand-workspace.py'
+BRAND = '.agents/skills/brand-identity/scripts/workspace_cli.py'
+MANAGER = '.agents/skills/brand-identity/scripts/manage-brand-workspace.py'
 SITE = '.agents/skills/brand-website-designer-builder/scripts/scaffold-site.mjs'
 
 
@@ -390,13 +390,13 @@ def test_recovery_at_each_replacement_and_interrupted_rollback(tmp_path, monkeyp
 @pytest.mark.parametrize('script,arguments', [
     ('brand-asset-producer/scripts/export-brand-assets.py', ['{source}', '{brand}/export']),
     ('brand-asset-producer/scripts/export-logo-package.py', ['{source}', '{brand}/export']),
-    ('brand-exporter/scripts/create-brand-agent-skill.py', ['--brand-name','Example','--workspace','{brand}']),
-    ('brand-ui-component-producer/scripts/apply-brand-tokens.py', ['--component','{brand}/component.tsx','--tokens','{source}/tokens','--motion-css','{source}/motion.css','--motion-ts','{source}/motion.ts']),
-    ('brand-motion-designer/scripts/promote-motion-iteration.py', ['--project','{brand}','--phase','pillar','--name','responsive']),
-    ('brand-motion-designer/scripts/generate-demo.py', ['pillar','--pillar','responsive','--tokens','{source}/tokens','--output-dir','{brand}/demo']),
-    ('brand-ui-component-producer/scripts/scaffold-component.py', ['--name','Button','--tier','core','--base','button','--output-dir','{brand}/components']),
+    ('brand-identity/scripts/create-brand-agent-skill.py', ['--brand-name','Example','--workspace','{brand}']),
+    ('brand-ui-system/scripts/apply-brand-tokens.py', ['--component','{brand}/component.tsx','--tokens','{source}/tokens','--motion-css','{source}/motion.css','--motion-ts','{source}/motion.ts']),
+    ('brand-ui-system/scripts/promote-motion-iteration.py', ['--project','{brand}','--phase','pillar','--name','responsive']),
+    ('brand-ui-system/scripts/generate-demo.py', ['pillar','--pillar','responsive','--tokens','{source}/tokens','--output-dir','{brand}/demo']),
+    ('brand-ui-system/scripts/scaffold-component.py', ['--name','Button','--tier','core','--base','button','--output-dir','{brand}/components']),
     ('brand-asset-producer/scripts/generate-openrouter-images.py', ['--prompt','Synthetic','--out-dir','{brand}/images']),
-    ('brand-designer/scripts/promote-approved-assets.py', ['{brand}']),
+    ('brand-identity/scripts/promote-approved-assets.py', ['{brand}']),
 ])
 def test_specialized_design_writers_stop_before_work_when_pending(tmp_path, script, arguments):
     root = tmp_path / 'topic'; subprojects.initialize(root, 'Topic')
@@ -443,7 +443,7 @@ def test_cross_project_handoff_does_not_publish_invalid_snapshot(tmp_path, monke
 def test_motion_selector_cannot_escape_workspace(tmp_path, name):
     root = tmp_path / 'topic'; subprojects.start(root, 'branding')
     before = snapshot(root)
-    result = cli(sys.executable, '.agents/skills/brand-motion-designer/scripts/promote-motion-iteration.py',
+    result = cli(sys.executable, '.agents/skills/brand-ui-system/scripts/promote-motion-iteration.py',
         '--project', str(root / 'branding'), '--phase', 'pillar', '--name', name, '--dry-run')
     assert result.returncode == 2 and 'safe pillar' in result.stderr
     assert snapshot(root) == before

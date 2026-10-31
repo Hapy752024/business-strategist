@@ -6,16 +6,16 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 AGENTS = ROOT / "AGENTS.md"
 
 
-def test_catalog_lists_brand_motion_designer() -> None:
+def test_catalog_lists_brand_ui_system_motion_mode() -> None:
     catalog = json.loads((ROOT / "config/skill-catalog.json").read_text())["skills"]
-    assert "brand-motion-designer" in catalog
-    assert (ROOT / ".agents/skills/brand-motion-designer/SKILL.md").is_file()
+    assert "motion" in catalog["brand-ui-system"]["modes"]
+    assert (ROOT / ".agents/skills/brand-ui-system/SKILL.md").is_file()
 
 
-def test_catalog_lists_brand_ui_component_producer() -> None:
+def test_catalog_lists_brand_ui_system_components_mode() -> None:
     catalog = json.loads((ROOT / "config/skill-catalog.json").read_text())["skills"]
-    assert "brand-ui-component-producer" in catalog
-    assert (ROOT / ".agents/skills/brand-ui-component-producer/SKILL.md").is_file()
+    assert "components" in catalog["brand-ui-system"]["modes"]
+    assert (ROOT / ".agents/skills/brand-ui-system/references/components.md").is_file()
 
 
 def test_root_links_canonical_catalog_and_pipeline() -> None:

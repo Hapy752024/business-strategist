@@ -37,7 +37,7 @@ def test_saved_reference_and_photo_preferences_fit_existing_schema():
 
 def test_shared_image_reference_links_resolve():
     for relative in [
-        'brand-designer/references/workflow.md',
+        'brand-identity/references/orchestration.md',
         'brand-website-designer-builder/references/reference-sites.md',
     ]:
         source = ROOT / '.agents/skills' / relative

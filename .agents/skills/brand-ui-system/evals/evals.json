@@ -1,0 +1,33 @@
+{
+  "skill_name": "brand-ui-system",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a branded UI token kit from the approved direction.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "kit"
+    },
+    {
+      "id": 2,
+      "prompt": "Produce a tested branded button component from the token set.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "components"
+    },
+    {
+      "id": 3,
+      "prompt": "Define coherent motion tokens for the approved brand.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "motion"
+    },
+    {
+      "id": 4,
+      "prompt": "Build a branded product dashboard screen from the approved tokens.",
+      "expected_output": "Uses the skill workflow, preserves approvals/provenance, and reports artifacts and next action.",
+      "files": [],
+      "mode": "app"
+    }
+  ]
+}
