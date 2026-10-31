@@ -102,8 +102,23 @@ SIGNERS = {}
 
 
 @pytest.fixture(autouse=True)
-def _signers(keys):
+def _signers(keys, monkeypatch):
     SIGNERS["path"] = keys["signers"]
+    monkeypatch.setattr(ex, "_stat", _root_owned_signers_stat())
+
+
+def _root_owned_signers_stat():
+    """Tests cannot chown to root: report test signers files (and their folders) as root-owned, nothing else."""
+    real = os.stat
+
+    def fake(path):
+        info = real(path)
+        target = Path(path)
+        is_signers = target.name == "allowed_signers" or (target.is_dir() and (target / "allowed_signers").exists())
+        if is_signers and info.st_uid == os.getuid():
+            return types.SimpleNamespace(st_uid=0, st_mode=info.st_mode)
+        return info
+    return fake
 
 
 def run(action, approval, tmp_path, http=None, **kw):
@@ -583,7 +598,8 @@ def test_settings_deny_self_approval_paths():
     perms = json.loads((ROOT / ".claude/settings.json").read_text())["permissions"]
     required = ["Bash(*MARKETING_APPROVAL_PIN*)", "Bash(*MARKETING_ALLOWED_SIGNERS*)", "Bash(*ssh-keygen*-Y sign*)", "Write(**/*.approval.json)",
                 "Edit(**/*.approval.json)", "Write(**/receipts/**)", "Edit(**/receipts/**)",
-                "Write(~/.config/business-strategist/**)", "Edit(~/.config/business-strategist/**)"]
+                "Write(~/.config/business-strategist/**)", "Edit(~/.config/business-strategist/**)",
+                "Bash(*allowed_signers*)", "Bash(*-Y sign*)"]
     for rule in required:
         assert rule in perms["deny"], rule
     assert not any("execute.py" in rule or "ssh-keygen" in rule for rule in perms["allow"])
@@ -644,7 +660,42 @@ def test_group_writable_root_owned_signers_refused(keys, monkeypatch):
 
 def test_signers_owned_by_other_user_refused(keys, monkeypatch):
     monkeypatch.setattr(ex, "_stat", _fake_stat(os.getuid() + 12345))
-    assert any("not owned" in p for p in ex.signers_file_problems(keys["signers"]))
+    assert any("not owned by root" in p for p in ex.signers_file_problems(keys["signers"]))
+
+
+def test_user_owned_signers_file_refused_even_read_only(tmp_path, keys, approval_for, monkeypatch):
+    """C1: the agent runs as the founder's OS user, so a user-owned file (even 0444 in a 0700 dir) is forgeable."""
+    monkeypatch.setattr(ex, "_stat", _fake_stat(os.getuid()))
+    folder = tmp_path / "cfg"
+    folder.mkdir(mode=0o700)
+    signers = folder / "allowed_signers"
+    signers.write_text(keys["signers"].read_text())
+    signers.chmod(0o444)
+    problems = ex.signers_file_problems(signers)
+    assert problems and all("not owned by root" in p for p in problems)
+    assert not any("user-owned" in p or "0444" in p for p in problems)
+    action = base_action()
+    result = ex.execute(action, approval_for(action), marketing_root=tmp_path, secret=secrets, now=NOW,
+                        allowed_signers=signers)
+    assert result["outcome"] == "refused"
+
+
+def test_user_owned_signers_directory_refused(keys, monkeypatch):
+    real = os.stat
+
+    def fake(path):
+        info = real(path)
+        uid = 0 if Path(path).name == "allowed_signers" else os.getuid()
+        return types.SimpleNamespace(st_uid=uid, st_mode=info.st_mode)
+    monkeypatch.setattr(ex, "_stat", fake)
+    problems = ex.signers_file_problems(keys["signers"])
+    assert problems and all(str(keys["signers"].parent) in p for p in problems)
+
+
+def test_no_user_owned_alternative_in_setup_text():
+    source = (ROOT / "scripts/marketing/execute.py").read_text()
+    assert "0444" not in source and "user-owned read-only" not in source
+    assert "root:root" in ex.SETUP_STEPS and "passphrase" in ex.SETUP_STEPS
 
 
 def test_signers_directory_symlink_into_temp_refused(tmp_path, keys, approval_for):
@@ -654,3 +705,39 @@ def test_signers_directory_symlink_into_temp_refused(tmp_path, keys, approval_fo
     result, http = run(action, approval_for(action), tmp_path, dry_run=True,
                        allowed_signers=link_dir / "allowed_signers")
     assert result["outcome"] == "refused" and any("symlink" in r for r in result["reasons"])
+
+
+def test_runbook_step0_requires_root_owned_signers_and_dedicated_key():
+    text = (ROOT / ".agents/skills/marketing-campaign-operator/references/first-campaign-runbook.md").read_text()
+    step0 = text.split("## 0.", 1)[1].split("## 1.", 1)[0]
+    assert "0444" not in step0 and "accepted but weaker" not in step0
+    for phrase in ("dedicated", "passphrase", "ssh-agent", "outside the repository", "root"):
+        assert phrase in step0, phrase
+    doc = (ROOT / "references/marketing-execution.md").read_text()
+    assert "0444" not in doc and "accepted but is weaker" not in doc
+
+
+def test_cli_dry_run_prints_verified_signer(tmp_path, keys, approval_for, monkeypatch, capsys):
+    """I3: the runbook's step-6 check reads the verified signer from the dry-run output."""
+    monkeypatch.setattr(ex, "default_signers_path", lambda: keys["signers"])
+    action = base_action()
+    approval = approval_for(action, granted_at=(datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(),
+                            valid_until=(datetime.now(timezone.utc) + timedelta(days=6)).isoformat())
+    (tmp_path / "a.json").write_text(json.dumps(action))
+    (tmp_path / "a.approval.json").write_text(json.dumps(approval))
+    code = ex.main(["run", str(tmp_path / "a.json"), "--approval", str(tmp_path / "a.approval.json"),
+                    "--marketing-root", str(tmp_path)])
+    out = json.loads(capsys.readouterr().out)
+    assert code == 0 and out["outcome"] == "dry_run" and out["verified_signer"] == PRINCIPAL
+
+
+def test_cli_refusal_prints_no_verified_signer(tmp_path, keys, approval_for, monkeypatch, capsys):
+    monkeypatch.setattr(ex, "default_signers_path", lambda: keys["signers"])
+    action = base_action()
+    approval = approval_for(action, key="mallory")
+    (tmp_path / "a.json").write_text(json.dumps(action))
+    (tmp_path / "a.approval.json").write_text(json.dumps(approval))
+    code = ex.main(["run", str(tmp_path / "a.json"), "--approval", str(tmp_path / "a.approval.json"),
+                    "--marketing-root", str(tmp_path)])
+    out = json.loads(capsys.readouterr().out)
+    assert code == 1 and "verified_signer" not in out

@@ -52,8 +52,9 @@ SETUP_STEPS = (
     "2) mkdir -p ~/.config/business-strategist && "
     "echo \"<your-principal> namespaces=\\\"marketing-approval\\\" $(cat ~/.ssh/marketing_approval.pub)\" "
     ">> ~/.config/business-strategist/allowed_signers ; "
-    "3) recommended, because the agent runs as your OS user: sudo chown root:root ~/.config/business-strategist/allowed_signers "
-    "&& sudo chmod 0644 ~/.config/business-strategist/allowed_signers (or sudo chattr +i it); "
+    "3) required, because the agent runs as your OS user: sudo chown root:root ~/.config/business-strategist "
+    "~/.config/business-strategist/allowed_signers && sudo chmod 0755 ~/.config/business-strategist "
+    "&& sudo chmod 0644 ~/.config/business-strategist/allowed_signers (optionally also sudo chattr +i the file); "
     "<your-principal> is the --by value you will use (letters, digits, . _ @ + -).")
 
 
@@ -113,7 +114,7 @@ def _owner_mode_problems(candidate: Path, allowed_uids: set[int]) -> list[str]:
         return [f"cannot stat {candidate}"]
     problems = []
     if info.st_uid not in allowed_uids:
-        problems.append(f"{candidate} is not owned by " + ("root" if allowed_uids == {0} else "the current user or root"))
+        problems.append(f"{candidate} is not owned by root")
     if info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
         problems.append(f"{candidate} is group- or world-writable")
     return problems
@@ -124,17 +125,20 @@ def _inside_untrusted(target: Path) -> bool:
 
 
 def signers_file_problems(path: Path) -> list[str]:
-    """StrictModes-like checks: owned by the current user or root, not group/world-writable, and neither the file
-    nor its directory is a symlink into the repository or a temp directory."""
+    """Owned by root (uid 0) and not group/world-writable: the file, its resolved path and both parent directories.
+
+    A user-owned file is refused even when read-only: the agent runs as the founder's OS user and could chmod and
+    append its own key. Neither the file nor its directory may be a symlink into the repository or a temp directory."""
     if (path.is_symlink() or path.parent.is_symlink()) and _inside_untrusted(path.resolve()):
         return [f"allowed_signers {path} (or its directory) is a symlink into the repository or a temp directory; refusing"]
     if not path.is_file():
         return [f"no allowed_signers file at {path}; every execution is refused until the founder sets it up. {SETUP_STEPS}"]
     problems = []
     for candidate in dict.fromkeys([path, path.resolve(), path.parent, path.resolve().parent]):
-        problems.extend(_owner_mode_problems(candidate, {os.getuid(), 0}))
-    return [f"allowed_signers permissions are unsafe: {p}; use a root-owned file (sudo chown root:root, "
-            "sudo chmod 0644) or a user-owned read-only one (chmod 0444, directory 0700)" for p in problems]
+        problems.extend(_owner_mode_problems(candidate, {0}))
+    return [f"allowed_signers permissions are unsafe: {p}; the file and its directory must be root-owned and not "
+            "group/world-writable (sudo chown root:root on both, sudo chmod 0644 the file, 0755 the directory)"
+            for p in problems]
 
 
 def verifier_path() -> tuple[Path | None, list[str]]:
@@ -468,6 +472,8 @@ def cmd_run(args) -> int:
     action = json.loads(Path(args.action).read_text(encoding="utf-8"))
     approval = json.loads(Path(args.approval).read_text(encoding="utf-8"))
     result = execute(action, approval, dry_run=not args.execute, marketing_root=Path(args.marketing_root))
+    if result["outcome"] in {"dry_run", "executed"}:  # only reached after verify_signature passed
+        result = {**result, "verified_signer": approval.get("granted_by")}
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["outcome"] in {"dry_run", "executed"} else 1
 
