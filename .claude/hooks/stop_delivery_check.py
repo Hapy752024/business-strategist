@@ -6,6 +6,10 @@ delivered/complete/rerun AND the session checkpoint names a resolvable case
 and run, runs the delivery validator. A non-complete result blocks the stop
 once. Without a resolvable case/run, an unreadable transcript, or any error,
 it allows the stop (the claim cannot be checked; never fail closed).
+
+Report only: when the session names a case that has an evidence run, every stop
+also lists early desk steps with no output ("missing early steps: ...") as a
+systemMessage. That note never blocks.
 """
 from __future__ import annotations
 
@@ -87,7 +91,42 @@ def resolve_paths(state: dict, root: Path):
     return business_root, run_dir
 
 
+def early_steps_note(event: dict, root: Path) -> str:
+    """'missing early steps: ...' for the session's case, or '' (no case, no evidence run, nothing missing, error)."""
+    try:
+        session_id = event.get("session_id")
+        if not isinstance(session_id, str) or not session_id:
+            return ""
+        state = load_state(resume_path(root, session_id), session_id) or {}
+        ws = state.get("workspace") or {}
+        case_id = ws.get("case_id") or (state.get("active_selection") or {}).get("case")
+        manifest = ws.get("manifest_path")
+        if not (case_id and manifest):
+            return ""
+        case_root = (root / manifest).parent.parent
+        if case_root.name != case_id:
+            return ""
+        repo = Path(__file__).resolve().parents[2]
+        if str(repo) not in sys.path:
+            sys.path.insert(0, str(repo))
+        from scripts.case_status import early_steps_line
+        line = early_steps_line(case_root.parent.parent, case_id)
+        return line if line.startswith("missing") else ""
+    except Exception:
+        return ""
+
+
 def stop_delivery_check(event: dict, root: Path) -> dict:
+    if event.get("stop_hook_active"):
+        return {}
+    note = early_steps_note(event, root)
+    out = _delivery_check(event, root)
+    if note:
+        out["systemMessage"] = note + " (report only; run them or state why not)."
+    return out
+
+
+def _delivery_check(event: dict, root: Path) -> dict:
     try:
         if event.get("stop_hook_active"):
             return {}

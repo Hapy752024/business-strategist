@@ -70,3 +70,18 @@ def test_firecrawl_cli_wrapper_uses_required_account_not_generic(monkeypatch):
     assert wrapper.main() == 0
     assert seen["command"] == ["firecrawl", "search", "PKV"]
     assert seen["env"]["FIRECRAWL_API_KEY"] == "required-dummy"
+
+
+def test_provider_doctor_accepts_either_serper_key_name(monkeypatch):
+    sys.path.insert(0, str(ROOT / "scripts/evidence_scout"))
+    doctor = importlib.import_module("provider_doctor")
+    common = importlib.import_module("common")
+    monkeypatch.setattr(common, "load_local_secrets", lambda: None)  # never read real secret files
+    for name in ("SERPER_DEV_API_KEY", "SERPER_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    missing = doctor._env_backend("serper_search", [doctor.SERPER_KEYS])
+    assert missing.status == "missing_credentials" and "SERPER_DEV_API_KEY or SERPER_API_KEY" in missing.message
+    for name in ("SERPER_DEV_API_KEY", "SERPER_API_KEY"):
+        monkeypatch.setenv(name, "dummy")
+        assert doctor._env_backend("serper_search", [doctor.SERPER_KEYS]).status == "ok"
+        monkeypatch.delenv(name)

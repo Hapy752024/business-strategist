@@ -7,6 +7,8 @@ Each stage below names the input to read or the skill and tool that owns the nex
   (built by `scripts/evidence_scout/build_decision_memo.py`).
   If the memo is missing or stale, build it (draft basis via `--draft-claims` when no reviewed ledger exists)
   and say which basis it uses; never skip it.
+  Claim-challenge order: export claims (`--draft-claims` or ledger) → claim-falsifier JSON verdicts →
+  `apply_falsification.py` → (re)build the memo (route `claim-falsification`).
 - Reuse the evidence-scout early desk steps: `content-opportunities.json` from `scripts/evidence_scout/search_journey.py`,
   `scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory`,
   `scripts/marketing/keyword_volume.py` volumes and `scripts/marketing/social_topics.py`.

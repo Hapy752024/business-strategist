@@ -137,13 +137,17 @@ def apply_live_validation(candidate: BackendStatus, latest: dict[str, dict[str, 
     )
 
 
+SERPER_KEYS = "SERPER_DEV_API_KEY|SERPER_API_KEY"  # same aliases as serper_fetch.py and collect.py
+
+
 def _env_backend(name: str, required_env: list[str], *, risk: str = "normal") -> BackendStatus:
-    missing = [env for env in required_env if not get_secret(env)[1]]
+    """Each entry is one env name or `A|B` aliases (any one present satisfies it)."""
+    missing = [env for env in required_env if not get_secret(*env.split("|"))[1]]
     if missing:
         return BackendStatus(
             name=name,
             status="missing_credentials",
-            message=f"Missing env: {', '.join(missing)}",
+            message=f"Missing env: {', '.join(m.replace('|', ' or ') for m in missing)}",
             kind="api",
             risk=risk,
         )
@@ -284,7 +288,7 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
             _env_backend("dataforseo_google_trends", ["DATAFORSEO_LOGIN", "DATAFORSEO_PASSWORD"], risk="paid_credits"),
         ],
         "web_search": [
-            _env_backend("serper_search", ["SERPER_DEV_API_KEY"], risk="paid_credits_google_only"),
+            _env_backend("serper_search", [SERPER_KEYS], risk="paid_credits_google_only"),
             _env_backend("firecrawl_search", ["FIRECRAWL_API_KEY_HGINVESTOR"], risk="paid_or_quota_limited"),
             _env_backend("brave_search", ["BRAVE_SEARCH_API_KEY"], risk="paid_or_quota_limited"),
         ],
@@ -358,7 +362,7 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
             _agent_reach_channel("bilibili"),
         ],
         "china_public_search": [
-            _env_backend("serper_bilibili_v2ex_site_search", ["SERPER_DEV_API_KEY"], risk="paid_credits_google_only"),
+            _env_backend("serper_bilibili_v2ex_site_search", [SERPER_KEYS], risk="paid_credits_google_only"),
             _env_backend("brave_bilibili_v2ex_site_search", ["BRAVE_SEARCH_API_KEY"], risk="paid_or_quota_limited"),
             _env_backend("firecrawl_bilibili_v2ex_site_search", ["FIRECRAWL_API_KEY_HGINVESTOR"], risk="paid_or_quota_limited"),
         ],
@@ -367,7 +371,7 @@ def provider_groups() -> dict[str, list[BackendStatus]]:
             _env_backend("scrapecreators_china_social", ["SCRAPE_CREATORS_API_KEY"], risk="paid_credits"),
         ],
         "china_web": [
-            _env_backend("serper_china_web", ["SERPER_DEV_API_KEY"], risk="paid_credits_google_only"),
+            _env_backend("serper_china_web", [SERPER_KEYS], risk="paid_credits_google_only"),
             _env_backend("firecrawl_china_web", ["FIRECRAWL_API_KEY_HGINVESTOR"], risk="paid_or_quota_limited"),
             _env_backend("brave_china_web", ["BRAVE_SEARCH_API_KEY"], risk="paid_or_quota_limited"),
         ],

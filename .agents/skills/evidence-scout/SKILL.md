@@ -41,6 +41,8 @@ None waits for review, synthesis, a claim ledger, the pain-first gate or a GTM s
    --landscape <competitors.json> --include-unverified [--clusters <content-opportunities.json>] --out <dir>`
    on >=3 competitors found so far; state fewer as a gap. If no candidates exist yet, run
    `python3 scripts/evidence_scout/discover_competitors.py` first to produce `competitors.json`.
+   If delegated, give the competitor-researcher an exclusive output dir (`market_research/competitors/<date>/`)
+   and require `--content-inventory`; never tell it not to write files.
 3. Keyword volumes: `python3 scripts/marketing/keyword_volume.py --keyword <phrase> [--keyword ...]
    --location-code <n> --language-code <xx> --out <run>/keyword-volumes.json` on the top brainstormed phrases;
    no keyword map needed.

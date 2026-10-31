@@ -327,3 +327,25 @@ def test_falsified_basis_must_match_claims_basis(tmp_path):
     ledger.write_text(json.dumps([claim("p1", "unmetness", "high")]))
     bad = _run("--ledger", ledger, "--falsified", d.parent / "draft-claims.falsified.json", "--out", tmp_path / "y")
     assert bad.returncode == 2 and "does not match the reviewed ledger" in bad.stderr
+
+
+def test_memo_warns_on_claim_challenge_order(tmp_path):
+    import os
+    # Built before any challenge while draft claims exist.
+    d = _draft(tmp_path, falsified=False)
+    early = _run("--draft-claims", d, "--out", tmp_path / "early")
+    assert early.returncode == 0 and "no claim challenge while draft claims exist" in early.stderr
+    # A hand-written challenge beside the memo with nothing applied.
+    (tmp_path / "early" / "claim-challenge-draft-basis.md").write_text("# Progress challenge\n")
+    again = _run("--draft-claims", d, "--out", tmp_path / "early")
+    assert "none was applied to this memo (claim-challenge-draft-basis.md)" in again.stderr
+    # Applied challenge, then newer verdicts that were never applied.
+    d = _draft(tmp_path)
+    current = _run("--draft-claims", d, "--out", tmp_path / "cur")
+    assert current.returncode == 0 and "claim challenge" not in current.stderr.lower()
+    verdicts = d.parent / "falsification-verdicts.draft.json"
+    verdicts.write_text("[]")
+    applied = d.parent / "draft-claims.falsified.json"
+    os.utime(verdicts, (applied.stat().st_mtime + 60,) * 2)
+    stale = _run("--draft-claims", d, "--out", tmp_path / "cur")
+    assert stale.returncode == 0 and "newer than the applied challenge (falsification-verdicts.draft.json)" in stale.stderr

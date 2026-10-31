@@ -565,6 +565,32 @@ def render(result: dict) -> str:
     return "\n".join(lines)
 
 
+CHALLENGE_FILE_GLOBS = ("*falsif*.json", "*falsif*.md", "*claim-challenge*")
+EXPORT_PREFIX = "falsification-claims"  # export_claims_for_falsification.py output: precedes the challenge
+
+
+def challenge_order_warnings(dirs: list[Path], challenge: dict | None, draft_claims: Path | None) -> list[str]:
+    """Order check (export -> falsifier verdicts -> apply -> memo). Report only; never blocks the build."""
+    applied = Path(challenge["path"]) if challenge and challenge.get("path") else None
+    files = {f for d in dirs if d and d.is_dir() for g in CHALLENGE_FILE_GLOBS for f in d.glob(g) if f.is_file()}
+    files = sorted(f for f in files if not f.name.startswith(EXPORT_PREFIX) and f != applied)
+    if applied is None:
+        out = []
+        if draft_claims is not None:
+            out.append("memo built with no claim challenge while draft claims exist: export claims, run the "
+                       "claim-falsifier, apply_falsification.py, then rebuild this memo")
+        if files:
+            out.append("claim-challenge file(s) exist but none was applied to this memo (" +
+                       ", ".join(f.name for f in files[:3]) + "): run apply_falsification.py, then rebuild")
+        return out
+    base = applied.stat().st_mtime + 1.0  # files written by the same apply run share its time
+    newer = [f.name for f in files if f.stat().st_mtime > base]
+    if newer:
+        return ["claim-challenge file(s) newer than the applied challenge (" + ", ".join(newer[:3]) +
+                "): re-run apply_falsification.py, then rebuild this memo"]
+    return []
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Build decision_memo.md and scores.json from reviewed case artifacts.")
     src = p.add_mutually_exclusive_group()
@@ -620,6 +646,9 @@ def main(argv: list[str] | None = None) -> int:
     (a.out / "scores.json").write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     (a.out / "decision_memo.md").write_text(render(result), encoding="utf-8")
     for w in result["warnings"]:
+        print("warning: " + w, file=sys.stderr)
+    claims_dir = (a.draft_claims or a.ledger).parent if (a.draft_claims or a.ledger) else None
+    for w in challenge_order_warnings([claims_dir, a.out], challenge, a.draft_claims):
         print("warning: " + w, file=sys.stderr)
     print(json.dumps({"verdict": result["verdict"], "total": result["total"]["score"],
                       "outputs": [str(a.out / "decision_memo.md"), str(a.out / "scores.json")]}))

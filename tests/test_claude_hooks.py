@@ -277,7 +277,7 @@ def test_stop_hook_ignores_non_delivery_turn(tmp_path):
     for text in ("Here is a progress snapshot of the research.", "The case is not yet delivered.",
                  "Research is not complete."):
         event = {"session_id": "s1", "transcript_path": _transcript(tmp_path, text)}
-        assert stop_hook.stop_delivery_check(event, tmp_path) == {}
+        assert "decision" not in stop_hook.stop_delivery_check(event, tmp_path)
 
 
 def test_stop_hook_blocks_unvalidated_delivery_claim(tmp_path):
@@ -293,7 +293,7 @@ def test_stop_hook_blocks_unvalidated_delivery_claim(tmp_path):
     # No loop, and no block when the case cannot be resolved.
     assert stop_hook.stop_delivery_check({**event, "stop_hook_active": True}, tmp_path) == {}
     assert stop_hook.stop_delivery_check({**event, "session_id": "other"}, tmp_path) == {}
-    assert stop_hook.stop_delivery_check({**event, "transcript_path": "/nonexistent"}, tmp_path) == {}
+    assert "decision" not in stop_hook.stop_delivery_check({**event, "transcript_path": "/nonexistent"}, tmp_path)
 
 
 def test_stop_hook_registered_without_onfailure():
@@ -357,7 +357,7 @@ def test_stop_hook_falls_back_to_case_parent_run(tmp_path):
     event = {"session_id": "s2", "transcript_path": _transcript(tmp_path, "The research is complete.")}
     assert stop_hook.stop_delivery_check(event, tmp_path)["decision"] == "block"
     manifest.write_text("{}")  # no registered parent run -> cannot check
-    assert stop_hook.stop_delivery_check(event, tmp_path) == {}
+    assert "decision" not in stop_hook.stop_delivery_check(event, tmp_path)
 
 
 @pytest.mark.parametrize("parent", ["../../outside", "/etc"])
@@ -373,3 +373,22 @@ def test_stop_hook_rejects_escaping_parent_run(tmp_path, parent):
                                           "manifest_path": manifest.relative_to(tmp_path).as_posix()}})
     event = {"session_id": "s3", "transcript_path": _transcript(tmp_path, "The case is delivered.")}
     assert stop_hook.stop_delivery_check(event, tmp_path) == {}
+
+
+def test_stop_hook_reports_missing_early_steps_without_blocking(tmp_path):
+    _case_checkpoint(tmp_path)
+    event = {"session_id": "s1", "transcript_path": _transcript(tmp_path, "Here is a progress snapshot.")}
+    out = stop_hook.stop_delivery_check(event, tmp_path)
+    assert "decision" not in out
+    assert out["systemMessage"].startswith("missing early steps: search-journey plan, search-journey results, "
+                                           "competitor content inventory, keyword volumes, social topics, VOC table")
+    biz = tmp_path / "projects/p/business-analysis"
+    for rel in ("market_research/search_journey/2026-10-31/plan.json", "cases/c1/r/serp-landscape.json",
+                "cases/c1/c/competitor-content.json", "market_research/k/keyword-volumes.json",
+                "cases/c1/s/social-topics.json", "cases/c1/v/voc-table.json"):
+        (biz / rel).parent.mkdir(parents=True, exist_ok=True)
+        (biz / rel).write_text("{}")
+    assert stop_hook.stop_delivery_check(event, tmp_path) == {}
+    (biz / "cases/other").mkdir()
+    (biz / "cases/c1/v/voc-table.json").rename(biz / "cases/other/voc-table.json")  # another case's output does not count
+    assert stop_hook.stop_delivery_check(event, tmp_path)["systemMessage"].startswith("missing early steps: VOC table")

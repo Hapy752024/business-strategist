@@ -118,3 +118,17 @@ def test_status_falsification_runnable_without_ledger_reports_optional_missing(t
 def test_status_appraisal_notes_final_publication_needs_claim_challenge(tmp_path):
     rows = by_route(st.case_status(project(tmp_path), 'a'))
     assert 'final appraisal publication needs a current claim challenge' in rows['case-appraisal']['notes']
+
+
+def test_status_reports_missing_early_steps_only_after_an_evidence_run(tmp_path):
+    p = project(tmp_path)
+    assert st.missing_early_steps(p, 'a') is None and st.early_steps_line(p, 'a') == ''
+    (p / 'cases/a/market_research/pain_points/runs/r1').mkdir(parents=True, exist_ok=True)
+    (p / 'market_research/search_journey/2026-10-31').mkdir(parents=True, exist_ok=True)
+    (p / 'market_research/search_journey/2026-10-31/keyword-volumes.json').write_text('[]')
+    missing = st.missing_early_steps(p, 'a')
+    assert 'keyword volumes' not in missing and 'VOC table' in missing and 'search-journey plan' in missing
+    done = subprocess.run([sys.executable, str(ROOT / 'scripts/route_workflow.py'), 'status', '--workspace', str(p),
+                           '--case', 'a'], capture_output=True, text=True)
+    assert done.returncode == 0 and 'missing early steps: search-journey plan' in done.stdout
+    assert 'never blocks' in done.stdout

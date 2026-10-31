@@ -1251,3 +1251,22 @@ def test_scorecard_hook_denial_input_is_truncated(tmp_path):
     card = acc.score(out, CHECKPOINTS)
     assert card['hook_denials']['count'] == 1
     assert all(len(e['input']) <= 80 for e in card['hook_denials']['events'])
+
+
+def test_link_tooling_symlinks_host_node_modules_or_skips(tmp_path):
+    wt, host, bare = tmp_path / 'wt', tmp_path / 'host', tmp_path / 'bare'
+    (wt / 'scripts/brand').mkdir(parents=True)
+    (host / 'scripts/brand/node_modules/axe-core').mkdir(parents=True)
+    bare.mkdir()
+    assert acc.link_tooling(wt, [bare]) == []  # nothing on the host: skip silently
+    assert acc.link_tooling(wt, [bare, host]) == ['scripts/brand/node_modules']
+    link = wt / 'scripts/brand/node_modules'
+    assert link.is_symlink() and (link / 'axe-core').is_dir()
+    assert acc.link_tooling(wt, [host]) == []  # already present
+
+
+def test_tooling_symlink_is_not_an_agent_write(tmp_path, monkeypatch):
+    porcelain = '?? scripts/brand/node_modules\n?? scripts/agent-made.py\n'
+    monkeypatch.setattr(acc.subprocess, 'run', lambda *a, **k: subprocess.CompletedProcess(a, 0, porcelain, ''))
+    (tmp_path / 'wt/projects').mkdir(parents=True)
+    assert acc.writes_outside_eval(tmp_path / 'wt', [], {}) == ['repo:?? scripts/agent-made.py']

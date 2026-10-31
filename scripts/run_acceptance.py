@@ -1270,6 +1270,22 @@ def create_worktree(sha: str) -> tuple[Path, Path]:
     return parent, wt
 
 
+TOOLING_LINKS = ('scripts/brand/node_modules',)  # gitignored tooling site_gate.py needs; never copied
+
+
+def link_tooling(wt: Path, sources: list[Path] | None = None) -> list[str]:
+    """Symlink host tooling dirs (e.g. scripts/brand/node_modules) into the worktree; skip silently when absent."""
+    linked = []
+    for rel in TOOLING_LINKS:
+        dst = wt / rel
+        src = next((r / rel for r in (sources if sources is not None else host_repo_roots()) if (r / rel).is_dir()), None)
+        if src is None or dst.exists() or dst.is_symlink() or not dst.parent.is_dir():
+            continue
+        dst.symlink_to(src.resolve(), target_is_directory=True)
+        linked.append(rel)
+    return linked
+
+
 def remove_worktree(parent: Path, wt: Path) -> None:
     subprocess.run(['git', 'worktree', 'remove', '--force', str(wt)], cwd=ROOT, capture_output=True, text=True)
     shutil.rmtree(parent, ignore_errors=True)
@@ -1480,6 +1496,7 @@ def _run_in_worktree(scenario_dir, out_dir, sha, slug, alt_slug, ref, budget_usd
         eval_dir = wt / 'projects' / alt_slug  # a top-level slug: route_workflow --project accepts it unchanged
         eval_dirs = [eval_dir]
         removed = hide_scoring_files(wt)
+        tooling = link_tooling(wt)
         writes = stage_inputs(scenario_dir, wt, eval_dir, reference_project)
         eval_rel = f'projects/{alt_slug}'
         prompt = load_prompt(scenario_dir, budget_usd=budget_usd, eval_dir=eval_rel, alt_slug=alt_slug)
@@ -1488,7 +1505,7 @@ def _run_in_worktree(scenario_dir, out_dir, sha, slug, alt_slug, ref, budget_usd
                     'project_slug': alt_slug,
                     'out_dir': str(out_dir), 'writes': writes + out_dir_writes(out_dir),
                     'reference_seeded': any(w['kind'] == 'reference_seed' for w in writes),
-                    'removed_from_worktree': removed,
+                    'removed_from_worktree': removed, 'tooling_linked': tooling,
                     'first_command': claude_command(prompt[:80] + '...', session_id=None, model_budget=model_budget_usd,
                                                     wt=wt, tools_blocked=tools_blocked, model=model),
                     'blocked_tools': tools_blocked}
@@ -1572,7 +1589,8 @@ def writes_outside_eval(wt: Path, eval_dirs: list[Path], before: dict, before_ho
                if before.get(rel) != meta and not any(rel.startswith(p) for p in prefixes)]
     status = subprocess.run(['git', 'status', '--porcelain'], cwd=wt, capture_output=True, text=True, check=False).stdout
     changed += [f'repo:{line.strip()}' for line in status.splitlines()
-                if line.strip() and HIDDEN_TREE + '/' not in line]  # the runner's own deletion is not an agent write
+                if line.strip() and HIDDEN_TREE + '/' not in line  # the runner's own deletion is not an agent write
+                and line[3:].strip().rstrip('/') not in TOOLING_LINKS]  # nor its tooling symlinks
     # The agent can reach host checkouts by absolute path through allowed Bash; audit their projects/ trees too.
     for root, snap in (before_host or {}).items():
         after_host = snapshot(Path(root) / 'projects')

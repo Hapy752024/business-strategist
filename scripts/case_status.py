@@ -7,6 +7,8 @@ blocked on presence alone; nothing here records runs or authorizes dispatch. A c
 `optional` (the step has a labelled fallback, e.g. draft claims) never blocks; it is reported
 under `optional_missing`.
 
+The text output ends with "missing early steps: ..." once the case has an evidence run (report only).
+
 Usage: python3 scripts/route_workflow.py status (--project <slug> | --workspace <business-root>) --case <id> [--json]
 """
 from __future__ import annotations
@@ -61,6 +63,47 @@ def _booked_responders(root: Path, case_id: str) -> list[str]:
         if sum(stage.get('booked', 0) for variant in counts.values() for stage in variant.values()) > 0:
             notes.append(card['responders_ref']['path'])
     return notes
+
+
+# Early desk outputs (evidence-scout "Early parallel desk steps"): label -> accepted file names / globs.
+EARLY_STEPS = {
+    'search-journey plan': ('search-journey-plan.json', 'search_journey/*/plan.json'),
+    'search-journey results': ('serp-landscape.json',),
+    'competitor content inventory': ('competitor-content.json',),
+    'keyword volumes': ('keyword-volumes*.json',),
+    'social topics': ('social-topics.json',),
+    'VOC table': ('voc-table.json',),
+}
+
+
+def missing_early_steps(root: Path, case_id: str) -> list[str] | None:
+    """Early desk steps with no output in the business root or this case; None before any evidence run.
+
+    Report-only: it never blocks a route. Other cases' folders are ignored."""
+    root = Path(root)
+    other_cases = root / 'cases'
+
+    def own(path: Path) -> bool:
+        try:
+            rel = path.relative_to(other_cases)
+        except ValueError:
+            return True
+        return rel.parts[:1] == (case_id,)
+
+    if not any(own(p) for p in root.glob('**/pain_points/runs/*') if p.is_dir()):
+        return None
+    missing = []
+    for label, patterns in EARLY_STEPS.items():
+        if not any(own(p) for pattern in patterns for p in root.glob('**/' + pattern) if p.is_file()):
+            missing.append(label)
+    return missing
+
+
+def early_steps_line(root: Path, case_id: str) -> str:
+    missing = missing_early_steps(root, case_id)
+    if missing is None:
+        return ''
+    return 'missing early steps: ' + ', '.join(missing) if missing else 'early steps: all outputs present'
 
 
 def case_status(root: Path, case_id: str) -> list[dict]:
@@ -123,6 +166,9 @@ def main(argv=None) -> int:
             'fallback (optional missing): ' + ', '.join(row['optional_missing']) if row['optional_missing'] else '',
             row['notes']]))
         print(f"{row['state']:<12} {row['route_id']:<28} {row['skill']}" + (f'  ({detail})' if detail else ''))
+    early = early_steps_line(root, a.case)
+    if early:
+        print(early + ' (report only; never blocks)')
     return 0
 
 
