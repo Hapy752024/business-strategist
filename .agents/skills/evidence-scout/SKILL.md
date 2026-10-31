@@ -33,7 +33,7 @@ For substantive customer-input research, always run a topic-led VOC pass from th
 When verified competitors, substitutes or similar services exist, also apply repo-root `references/customer-voice.md`:
 run a separate entity-led feedback pass across applicable independent review sites, Google business/location reviews, company Facebook/Instagram comments, Apple App Store reviews, Google Play reviews and external forums;
 keep supplier posts/replies/testimonials separately attributed.
-If no entity is yet known, mark entity-led analysis pending, discover candidates, then run it after verification.
+If no entity is yet known, mark entity-led analysis pending, discover candidates, then run it after verification. For delegated entity-led work the coordinator runs `scripts/evidence_scout/plan_customer_feedback.py` and passes the plan path plus an allowed `--out-dir` in the packet (workers cannot write).
 Keep the two sampling frames separate, map independent customer needs separately from solution-use requirements, and assess each before segment/journey/pain and risk synthesis.
 Evidence-scout owns customer voice; competitor-marketing-analyzer owns supplier claims.
 Read the `required_references` from your route packet.

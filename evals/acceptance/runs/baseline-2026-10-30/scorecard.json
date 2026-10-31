@@ -52,12 +52,12 @@
       "Bash(python3 scripts/brand/finalize_fal_assets.py*)",
       "Bash(python3 scripts/brand/indexnow_ping.py*)",
       "Bash(python3 scripts/marketing/execute.py*)",
-      "Edit(//home/habib/work/general/business-strategist/**)",
-      "Write(//home/habib/work/general/business-strategist/**)",
-      "Read(//home/habib/work/general/business-strategist/evals/acceptance/**)",
-      "Edit(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
-      "Write(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
-      "Read(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/evals/acceptance/**)"
+      "Edit(~/work/general/business-strategist/**)",
+      "Write(~/work/general/business-strategist/**)",
+      "Read(~/work/general/business-strategist/evals/acceptance/**)",
+      "Edit(~/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
+      "Write(~/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
+      "Read(~/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/evals/acceptance/**)"
     ]
   },
   "checkpoints": [
@@ -79,7 +79,24 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": "transcript.jsonl#L14",
-      "detail": "missing: tool_use (tool_use: 0 matching call(s), need 1); hook_denials (hook_denials: 1 matching denial(s), max 0)"
+      "detail": "missing: route_check_and_skill_loaded (skill_reached: no successful route check returning idea-grill); hook_denials (hook_denials: 1 matching denial(s), max 0)",
+      "sub_checks": [
+        {
+          "label": "route_check_and_skill_loaded",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "skill_reached: no successful route check returning idea-grill"
+        },
+        {
+          "label": "hook_denials",
+          "passed": false,
+          "evidence_path": "transcript.jsonl#L14",
+          "detail": "hook_denials: 1 matching denial(s), max 0"
+        }
+      ],
+      "flags": {
+        "skill_tool_bypassed": false
+      }
     },
     {
       "id": "cp03",
@@ -89,7 +106,21 @@
       "status": "fail",
       "proxy": true,
       "evidence_path": null,
-      "detail": "missing: max_questions_per_turn (proxy: no answered intake turns to measure); answers_persisted (answers_persisted: no fed answer carried persist markers (not exercised))"
+      "detail": "missing: max_questions_per_turn (proxy: no answered intake turns to measure); answers_persisted (answers_persisted: no fed answer carried persist markers (not exercised))",
+      "sub_checks": [
+        {
+          "label": "max_questions_per_turn",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "proxy: no answered intake turns to measure"
+        },
+        {
+          "label": "answers_persisted",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "answers_persisted: no fed answer carried persist markers (not exercised)"
+        }
+      ]
     },
     {
       "id": "cp04",
@@ -99,7 +130,27 @@
       "status": "fail",
       "proxy": true,
       "evidence_path": null,
-      "detail": "missing: artifact (artifact: 0 file(s) match **/*.jsonl); artifact (artifact: 0 file(s) match **/*.jsonl); jsonl_distinct (jsonl_distinct: 0 distinct subject_entity_id, need 3)"
+      "detail": "missing: artifact (artifact: 0 file(s) match **/*.jsonl); artifact (artifact: 0 file(s) match **/*.jsonl); jsonl_distinct (jsonl_distinct: 0 distinct subject_entity_id, need 3)",
+      "sub_checks": [
+        {
+          "label": "artifact",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "artifact: 0 file(s) match **/*.jsonl"
+        },
+        {
+          "label": "artifact",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "artifact: 0 file(s) match **/*.jsonl"
+        },
+        {
+          "label": "jsonl_distinct",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "jsonl_distinct: 0 distinct subject_entity_id, need 3"
+        }
+      ]
     },
     {
       "id": "cp05",
@@ -109,17 +160,57 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 file(s) match **/*.json); artifact (artifact: 0 file(s) match **/*.json)"
+      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 file(s) match **/*.json); artifact (artifact: 0 file(s) match **/*.json)",
+      "sub_checks": [
+        {
+          "label": "json_len",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "json_len: max 0 entries at stages, need 4"
+        },
+        {
+          "label": "artifact",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "artifact: 0 file(s) match **/*.json"
+        },
+        {
+          "label": "artifact",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "artifact: 0 file(s) match **/*.json"
+        }
+      ]
     },
     {
       "id": "cp06",
       "stage": "desk_research",
       "title": "Official statistics and the §34d versus §34e GewO distinction are surfaced with sources",
-      "passed": true,
-      "status": "pass",
+      "passed": false,
+      "status": "fail",
       "proxy": true,
       "evidence_path": "artifacts/projects/_eval/hybrid-insurance-advisor-20261030-200015/research/regulation-primary-check-draft.md",
-      "detail": "all sub-checks passed"
+      "detail": "missing: official_statistics_source (official_statistics_source: no single line matched all 2 patterns)",
+      "sub_checks": [
+        {
+          "label": "s34d_s34e_with_url",
+          "passed": true,
+          "evidence_path": "artifacts/projects/_eval/hybrid-insurance-advisor-20261030-200015/research/regulation-primary-check-draft.md",
+          "detail": "s34d_s34e_with_url: all patterns in one document"
+        },
+        {
+          "label": "statute_or_regulator_source",
+          "passed": true,
+          "evidence_path": "transcript.jsonl#L12",
+          "detail": "statute_or_regulator_source: all patterns in one document"
+        },
+        {
+          "label": "official_statistics_source",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "official_statistics_source: no single line matched all 2 patterns"
+        }
+      ]
     },
     {
       "id": "cp07",
@@ -129,7 +220,21 @@
       "status": "fail",
       "proxy": true,
       "evidence_path": null,
-      "detail": "any: none matched (text: no single document matched all 3 patterns; text: no single document matched all 1 patterns)"
+      "detail": "any: none matched (named_foreign_precedent: no single line matched all 3 patterns; precedents_inapplicable: no single document matched all 1 patterns)",
+      "sub_checks": [
+        {
+          "label": "named_foreign_precedent",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "named_foreign_precedent: no single line matched all 3 patterns"
+        },
+        {
+          "label": "precedents_inapplicable",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "precedents_inapplicable: no single document matched all 1 patterns"
+        }
+      ]
     },
     {
       "id": "cp08",
@@ -139,7 +244,33 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: falsification (falsification: none matched (artifact: 0 file(s) match **/*falsif*; tool_use: 0 matching call(s), need 1)); decision_memo (decision_memo: 0 file(s) match **/decision_memo.md); scores (scores: 0 file(s) match **/scores.json); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))"
+      "detail": "missing: falsification (falsification: none matched (artifact: 0 file(s) match **/*falsif*; tool_use: 0 matching call(s), need 1)); decision_memo (decision_memo: 0 file(s) match **/decision_memo.md); scores (scores: 0 file(s) match **/scores.json); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))",
+      "sub_checks": [
+        {
+          "label": "falsification",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "falsification: none matched (artifact: 0 file(s) match **/*falsif*; tool_use: 0 matching call(s), need 1)"
+        },
+        {
+          "label": "decision_memo",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "decision_memo: 0 file(s) match **/decision_memo.md"
+        },
+        {
+          "label": "scores",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "scores: 0 file(s) match **/scores.json"
+        },
+        {
+          "label": "delivery_check",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns)"
+        }
+      ]
     },
     {
       "id": "cp09",
@@ -159,7 +290,51 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: gtm (gtm: none matched (artifact: 0 file(s) match **/*gtm*; artifact: 0 file(s) match **/*go-to-market*)); keyword_volumes (keyword_volumes: 0 file(s) match **/keyword-map*.json); local_site (local_site: none matched (artifact: 0 file(s) match **/website/**/package.json; artifact: 0 file(s) match **/website/**/index.html; artifact: 0 file(s) match **/digital-assets/**/index.html)); site_gate (site_gate: 0 file(s) match **/site-gate*.json); runbook (runbook: 0 file(s) match **/*runbook*); paused_campaign (paused_campaign: 0 file(s) match **/*campaign*.json)"
+      "detail": "missing: gtm (gtm: none matched (artifact: 0 file(s) match **/*gtm*; artifact: 0 file(s) match **/*go-to-market*)); keyword_volumes (keyword_volumes: 0 file(s) match **/keyword-map*.json); local_site (local_site: none matched (artifact: 0 file(s) match **/website/**/package.json; artifact: 0 file(s) match **/website/**/index.html; artifact: 0 file(s) match **/digital-assets/**/index.html)); site_gate (site_gate: 0 file(s) match **/site-gate*.json); runbook (runbook: 0 file(s) match **/*runbook*); paused_campaign (paused_campaign: 0 file(s) match **/*campaign*.json)",
+      "sub_checks": [
+        {
+          "label": "gtm",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "gtm: none matched (artifact: 0 file(s) match **/*gtm*; artifact: 0 file(s) match **/*go-to-market*)"
+        },
+        {
+          "label": "keyword_volumes",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "keyword_volumes: 0 file(s) match **/keyword-map*.json"
+        },
+        {
+          "label": "local_site",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "local_site: none matched (artifact: 0 file(s) match **/website/**/package.json; artifact: 0 file(s) match **/website/**/index.html; artifact: 0 file(s) match **/digital-assets/**/index.html)"
+        },
+        {
+          "label": "site_gate",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "site_gate: 0 file(s) match **/site-gate*.json"
+        },
+        {
+          "label": "runbook",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "runbook: 0 file(s) match **/*runbook*"
+        },
+        {
+          "label": "paused_campaign",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "paused_campaign: 0 file(s) match **/*campaign*.json"
+        },
+        {
+          "label": "nothing_sent",
+          "passed": true,
+          "evidence_path": null,
+          "detail": "nothing_sent: none found"
+        }
+      ]
     },
     {
       "id": "cp11",
@@ -168,14 +343,14 @@
       "passed": true,
       "status": "pass",
       "proxy": true,
-      "evidence_path": "transcript.jsonl#L12",
+      "evidence_path": "transcript.jsonl#L52",
       "detail": "proxy: failed providers ['brave-search'] and a coverage gap is stated"
     }
   ],
   "summary": {
     "total": 11,
-    "passed": 3,
-    "failed": 8,
+    "passed": 2,
+    "failed": 9,
     "not_exercised": [],
     "proxy": 5
   },
@@ -228,46 +403,46 @@
   },
   "permission_denials": 5,
   "writes_outside_eval": [
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-1440.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-320.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-390.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-desktop.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-mobile.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-1440.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-320.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-390.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/.last-run.json",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/error-context.md",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/test-failed-1.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/trace.zip",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/error-context.md",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/test-failed-1.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/trace.zip",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/error-context.md",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/test-failed-1.png",
-    "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/trace.zip"
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-1440.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-320.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-390.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-desktop.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-mobile.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-1440.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-320.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-390.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/.last-run.json",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/error-context.md",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/test-failed-1.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/trace.zip",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/error-context.md",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/test-failed-1.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/trace.zip",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/error-context.md",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/test-failed-1.png",
+    "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/trace.zip"
   ],
   "host_writes": {
     "attributed": [],
     "unattributed_possibly_concurrent": [
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-1440.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-320.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-390.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-desktop.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-mobile.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-1440.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-320.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-390.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/.last-run.json",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/error-context.md",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/test-failed-1.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/trace.zip",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/error-context.md",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/test-failed-1.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/trace.zip",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/error-context.md",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/test-failed-1.png",
-      "host:/home/habib/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/trace.zip"
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-1440.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-320.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/package-restoration-2026-10-12/packages-390.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-desktop.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/review-intake-2026-10-12/book-mobile.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-1440.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-320.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/qa/stripe-payment-2026-10-17/success-390.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/.last-run.json",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/error-context.md",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/test-failed-1.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-booking-page-states-the-offer-and-the-slot-request-flow-chromium/trace.zip",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/error-context.md",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/test-failed-1.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-names-the--fca80-ad-route-for-remote-workers-chromium/trace.zip",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/error-context.md",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/test-failed-1.png",
+      "host:~/work/general/business-strategist/projects/us-retirees-italy/web-site/test-results/site-visa-check-walks-one--e841b-rdict-with-a-booking-action-chromium/trace.zip"
     ]
   },
   "friction": "",

@@ -168,7 +168,12 @@ def record_gate_override(manifest_path: Path, route_id: str, override_id: str = 
     if modern:
         data = cases.load(manifest_path)
         event_name = f'routing_gate_override:{route_id}'
-        previous = next((e for e in data['events'] if override_id and e.get('override_id') == override_id and e.get('event') == event_name), None)
+        generation = cases.read_project(modern)['selection_generation']
+        # Idempotent: one override decision is one event, whether recorded by the CLI (no id) or the Skill hook (derived id).
+        previous = next((e for e in data['events'] if e.get('event') == event_name
+                         and ((override_id and e.get('override_id') == override_id)
+                              or (e.get('stages') == list(stages) and e.get('assessment_revision') == data.get('assessment_revision')
+                                  and e.get('selection_generation') == generation))), None)
         if previous:
             if (previous.get('assessment_revision') != data.get('assessment_revision') or previous.get('stages') != list(stages)
                     or previous.get('selection_generation') != cases.read_project(modern)['selection_generation']):
@@ -189,9 +194,9 @@ def record_gate_override(manifest_path: Path, route_id: str, override_id: str = 
             raise ValueError("Cannot audit gate override: unreadable research manifest") from exc
         if not isinstance(data, dict) or not isinstance(data.get("events"), list):
             raise ValueError("Cannot audit gate override: manifest requires an events list")
-        if override_id and any(event.get("override_id") == override_id
-                               and event.get("event") == f"routing_gate_override:{route_id}"
-                               for event in data["events"] if isinstance(event, dict)):
+        if any(isinstance(event, dict) and event.get("event") == f"routing_gate_override:{route_id}"
+               and (not override_id or not event.get("override_id") or event.get("override_id") == override_id)
+               for event in data["events"]):
             return
         data["events"].append({
             **({"override_id": override_id} if override_id else {}),
@@ -442,7 +447,14 @@ def _route_request(
                                  f'select --workspace projects/{project} --case {case_id or "<id>"} --configuration '
                                  f'"<chosen scope>" --decision-id <id> --reason "<founder decision>"`, then route again') from exc
             if design:
-                cases.check_plan(project_root, cases.load(project_root / 'strategy/strategy-plan.json'))
+                plan_path = project_root / 'strategy/strategy-plan.json'
+                if not plan_path.is_file():
+                    packet.update(gate_blocked=True, gate='strategy_plan_required', first_skill='archetype-gtm-strategist',
+                                  missing_artifact='strategy/strategy-plan.json',
+                                  reason=reason + '; business-linked design needs the selected strategy plan, which is missing: '
+                                  'strategy/strategy-plan.json; run archetype-gtm-strategist first')
+                    return packet
+                cases.check_plan(project_root, cases.load(plan_path))
         else:
             execution = None
         scope_root = cases.resolve(project_root, case_id)

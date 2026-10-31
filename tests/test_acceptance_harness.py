@@ -694,7 +694,7 @@ def test_gate_fails_when_gtm_artifact_written_before_override(tmp_path):
 
 
 STATUTE = 'Licensing: §34d GewO and §34e GewO, see gesetze-im-internet.de/gewo/__34d.html.\n'
-STATS = 'Coverage figures: www.destatis.de/DE/Themen/example.html\n'
+STATS = 'Coverage figures: about 5.1 Mio insured per Destatis, www.destatis.de/DE/Themen/example.html\n'
 
 
 def test_cp06_scheme_optional_and_split_into_two_reported_sub_checks(tmp_path):
@@ -995,3 +995,107 @@ def test_claude_command_installs_bash_guard_and_keeps_deny_rules(tmp_path):
     assert hook['matcher'] == 'Bash' and '--bash-guard' in hook['hooks'][0]['command']
     assert str(tmp_path) in hook['hooks'][0]['command']
     assert 'Bash(curl*)' in cmd[cmd.index('--disallowedTools'):]
+
+
+def _selected_project(tmp_path, monkeypatch, slug='probe'):
+    from scripts import case_workspace as cases, route_workflow as routing
+    from scripts.evidence_scout import workspace
+    root = tmp_path / 'repo'
+    monkeypatch.setattr(routing, 'ROOT', root)
+    monkeypatch.setattr(workspace, 'ROOT', root)
+    business = workspace.create_project_workspace('Probe topic', f'projects/{slug}', 'Private clients')
+    cases.add_case(business, 'probe-case', 'Private clients')
+    cases.select(business, 'probe-case', 'Germany', 'founder-choice-1', 'founder chose this case')
+    return routing, business
+
+
+def test_business_linked_website_route_without_strategy_plan_is_a_structured_block(tmp_path, monkeypatch):
+    routing, business = _selected_project(tmp_path, monkeypatch)
+    assert not (business / 'strategy/strategy-plan.json').exists()
+    packet = routing.route_request('Build the website for the venture', intent='website-experiment', task_scope='strategy',
+                                   check_skill='brand-website-designer-builder', project='probe', case_id='probe-case',
+                                   entry_mode='business_linked')
+    assert packet['gate_blocked'] is True
+    assert packet['gate'] == 'strategy_plan_required'
+    assert packet['first_skill'] == 'archetype-gtm-strategist'
+    assert 'strategy/strategy-plan.json' in packet['reason']
+
+
+def test_cli_then_hook_override_for_one_route_records_one_event(tmp_path, monkeypatch):
+    routing, business = _selected_project(tmp_path, monkeypatch)
+    stages = ['intake', 'segment_selection', 'customer_profile', 'problem_validation', 'opportunity_risk', 'operator_playbook']
+    manifest = routing.cases.resolve(business, 'probe-case') / 'market_research/manifest.json'
+    routing.record_gate_override(manifest, 'gtm-strategy', '', stages)          # CLI: no override id
+    routing.record_gate_override(manifest, 'gtm-strategy', 'hook-derived-id', stages)  # Skill hook: derived id
+    routing.record_gate_override(manifest, 'gtm-strategy', 'hook-derived-id', stages)
+    events = [e for e in json.loads(manifest.read_text())['events'] if e['event'] == 'routing_gate_override:gtm-strategy']
+    assert len(events) == 1
+
+
+def test_out_dir_conflict_error_names_the_allowed_root(tmp_path, monkeypatch):
+    from scripts.evidence_scout import workspace
+    routing, business = _selected_project(tmp_path, monkeypatch)
+    with pytest.raises(ValueError) as err:
+        workspace.resolve_run_dir(topic='Probe topic', workspace_arg='projects/probe', case_id='probe-case',
+                                  out_dir=str(tmp_path / 'elsewhere'), legacy_output=False,
+                                  workspace_subdir='market_research/pain_points/runs')
+    message = str(err.value)
+    assert 'out-dir conflicts with case/output purpose' in message
+    assert 'market_research/pain_points/runs' in message and 'probe-case' in message
+
+
+def test_cp01_help_invocation_is_not_a_write_and_evidence_is_the_first_real_write(tmp_path):
+    lines = [
+        _assistant('Existing workspaces: german-insurance-opportunity (left untouched).'),
+        _assistant('', [_tool('h1', 'Bash', {'command': 'python3 scripts/project_workspace.py create --help'})]), _result('h1', 'usage'),
+        _assistant('', [_tool('h2', 'Bash', {'command': 'python3 scripts/evidence_scout/init_project.py -h'})]), _result('h2', 'usage'),
+    ]
+    assert _cp(_run(tmp_path, lines), 'cp01')['passed']
+    real = lines[1:] + [_assistant('', [_tool('w1', 'Bash', {'command': 'python3 scripts/project_workspace.py create eval-x'})]), _result('w1', 'ok'),
+                        lines[0]]
+    cp = _cp(_run(tmp_path / 'r', real), 'cp01')
+    assert not cp['passed'] and cp['evidence_path'] == 'transcript.jsonl#L5'
+
+
+def test_cp06_bare_domain_in_a_ranking_list_is_not_an_official_statistic(tmp_path):
+    ranking = 'PKV oder GKV: handelsblatt, finanztip, test.de, bundesgesundheitsministerium, pkv.de, destatis.de\n'
+    out = _run(tmp_path, [], files={'projects/eval-x/n.md': STATUTE + ranking})
+    subs = {x['label']: x['passed'] for x in _cp(out, 'cp06')['sub_checks']}
+    assert subs['official_statistics_source'] is False
+    cited = 'Registered brokers: 240,000 Vermittler (Destatis, https://www.destatis.de/x)\n'
+    out2 = _run(tmp_path / 'c', [], files={'projects/eval-x/n.md': STATUTE + cited})
+    assert {x['label']: x['passed'] for x in _cp(out2, 'cp06')['sub_checks']}['official_statistics_source'] is True
+
+
+def test_cp07_stays_strict_but_reports_a_named_comparable_without_source(tmp_path):
+    files = {'projects/eval-x/n.md': '## Precedents\nPolicygenius (US) was acquired in 2023, an international analog.\n'}
+    cp = _cp(_run(tmp_path, [], files=files), 'cp07')
+    assert not cp['passed']
+    assert 'named foreign comparable without source' in cp['detail'] and 'Policygenius' in cp['detail']
+
+
+def test_cp11_helper_script_text_is_not_a_provider_failure_and_evidence_is_the_gap_statement(tmp_path):
+    lines = [
+        _assistant('Starting the research round.'),
+        _assistant('', [_tool('c1', 'Bash', {'command': 'python3 scripts/capability_lookup.py serp'})]),
+        _result('c1', 'Catalog: insufficient credits handling is described here'),
+        _assistant('', [_tool('c2', 'Bash', {'command': 'python3 scripts/serper_fetch.py q'})]),
+        _result('c2', '{"status": 402, "error": "payment required"}'),
+        _assistant('Coverage gap: the search provider could not be checked, so demand stays unknown.'),
+    ]
+    out = _run(tmp_path, lines, rounds=[{'round': 0, 'kind': 'initial'}])
+    cp = _cp(out, 'cp11')
+    assert cp['passed'], cp['detail']
+    assert 'capability_lookup' not in cp['detail']
+    assert cp['evidence_path'] == 'transcript.jsonl#L6'
+
+
+def test_scorecard_paths_are_relativized_to_home(tmp_path):
+    out = make_out_dir(tmp_path)
+    card = acc.score(out, CHECKPOINTS)
+    card['run']['blocked_tools'] = ['Edit(//home/someone/work/repo/**)', 'Read(/home/someone/x)']
+    card['friction'] = 'wrote /home/someone/work/repo/.claude/worktrees/w/a.md'
+    path = acc.write_scorecard(out, card)
+    text = path.read_text()
+    assert '/home/' not in text and 'someone' not in text
+    assert 'Edit(~/work/repo/**)' in text

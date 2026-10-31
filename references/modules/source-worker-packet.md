@@ -9,6 +9,7 @@ Each worker receives one packet containing:
 - **Allowed retrieval:** named public sources/providers and permitted query budget. No credentials, private-community access, or unapproved spend is implied by the packet.
 - **Allocation:** exclusive query IDs, entities, or source families so workers do not duplicate samples or contaminate independent evidence counts.
 - **Output boundary:** a new exclusive output directory. Workers return raw/normalized evidence and a short handoff; they do not edit shared synthesis, findings, claims, gates, or module manifests.
+- **Entity-led setup:** workers such as `evidence-researcher` have no Write tool, so the coordinator runs `python3 scripts/evidence_scout/plan_customer_feedback.py --topic ... --entities-json ... --out-dir <dir>` first and puts the accepted source-plan path and an allowed `--out-dir` (a new directory under the case's `market_research/pain_points/runs/`) in the packet.
 - **Required handoff:** retrieval attempts and failures, exact source locators/spans, source/customer/supplier role, deduplication notes, counterevidence, unresolved questions, and coverage limits.
 
 The coordinator verifies sources, independence, dates, scope and claim links, then owns the shared synthesis. A failed or unavailable retrieval is a coverage gap, not evidence that customers lack the problem.

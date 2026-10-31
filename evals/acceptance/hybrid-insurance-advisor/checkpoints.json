@@ -8,14 +8,14 @@
       "stage": "workspace",
       "title": "Workspace check offers the existing german-insurance-opportunity workspace before creating anything",
       "proxy": false,
-      "pass_rule": "An assistant message names german-insurance-opportunity before the first tool call that creates or writes anything under projects/.",
+      "pass_rule": "An assistant message names german-insurance-opportunity before the first tool call that creates or writes anything under projects/. Invocations with --help or -h are read-only and do not count as writes.",
       "check": {
         "type": "order",
         "first": {"type": "text", "scope": "assistant", "patterns": ["german-insurance-opportunity"]},
         "then": {"type": "any", "checks": [
           {"type": "tool_use", "name": "^(Write|Edit|NotebookEdit|MultiEdit)$", "input": "projects/"},
-          {"type": "tool_use", "name": "^Bash$", "input": "(init_project\\.py|project_workspace\\.py\\s+create|case_workspace\\.py|subprojects\\.py|mkdir[^\\n]*projects/|cp [^\\n]*projects/)"},
-          {"type": "tool_use", "name": "^Bash$", "input": "python3 scripts/(?!route_workflow\\.py|capability_lookup\\.py|validate_)[^\\n]*projects/"}
+          {"type": "tool_use", "name": "^Bash$", "exclude_input": ["(?:--help\\b|\\s-h(?![\\w-]))"], "input": "(init_project\\.py|project_workspace\\.py\\s+create|case_workspace\\.py|subprojects\\.py|mkdir[^\\n]*projects/|cp [^\\n]*projects/)"},
+          {"type": "tool_use", "name": "^Bash$", "exclude_input": ["(?:--help\\b|\\s-h(?![\\w-]))"], "input": "python3 scripts/(?!route_workflow\\.py|capability_lookup\\.py|validate_)[^\\n]*projects/"}
         ]}
       }
     },
@@ -70,11 +70,11 @@
       "stage": "desk_research",
       "title": "Official statistics and the §34d versus §34e GewO distinction are surfaced with sources",
       "proxy": true,
-      "pass_rule": "Proxy: one of the agent's own documents (a top-level assistant round or an authored artifact; collected provider data excluded) mentions both §34d and §34e with a URL; one cites a statute or regulator source (gesetze-im-internet.de, bafin.de, an IHK/DIHK domain, vermittlerregister.info); and one cites an official statistics source (Destatis, Eurostat, GDV statistics, Bundesbank, BMG, GKV-Spitzenverband, BAS, PKV-Verband). The URL scheme is optional for the domain checks. The two source sub-checks are reported separately in sub_checks. Accuracy is graded in Task 7.3.",
+      "pass_rule": "Proxy: one of the agent's own documents (a top-level assistant round or an authored artifact; collected provider data excluded) mentions both §34d and §34e with a URL; one cites a statute or regulator source (gesetze-im-internet.de, bafin.de, an IHK/DIHK domain, vermittlerregister.info); and one line cites an official statistic, meaning a number with a unit on the same line as an official source (Destatis, Eurostat, GDV statistics, Bundesbank, BMG, GKV-Spitzenverband, BAS, PKV-Verband); a bare domain in a list of ranking domains does not count. The URL scheme is optional for the domain checks. The two source sub-checks are reported separately in sub_checks. Accuracy is graded in Task 7.3.",
       "check": {"type": "all", "checks": [
         {"type": "text", "label": "s34d_s34e_with_url", "scope": "both", "patterns": ["§\\s*34\\s*d", "§\\s*34\\s*e", "https?://"]},
         {"type": "text", "label": "statute_or_regulator_source", "scope": "both", "patterns": ["(?i)(?<![\\w-])(https?://)?([\\w-]+\\.)*(gesetze-im-internet\\.de|bafin\\.de|d?ihk\\.de|vermittlerregister\\.info)\\b"]},
-        {"type": "text", "label": "official_statistics_source", "scope": "both", "patterns": ["(?i)(?<![\\w-])(https?://)?([\\w-]+\\.)*(destatis\\.de|ec\\.europa\\.eu/eurostat|eurostat\\.ec\\.europa\\.eu|gdv\\.de|bundesbank\\.de|bundesgesundheitsministerium\\.de|gkv-spitzenverband\\.de|bundesamtsozialesicherung\\.de|pkv\\.de)\\b"]}
+        {"type": "text", "label": "official_statistics_source", "scope": "both", "per_line": true, "patterns": ["(?i)(?<![\\w-])(https?://)?([\\w-]+\\.)*(destatis\\.de|ec\\.europa\\.eu/eurostat|eurostat\\.ec\\.europa\\.eu|gdv\\.de|bundesbank\\.de|bundesgesundheitsministerium\\.de|gkv-spitzenverband\\.de|bundesamtsozialesicherung\\.de|pkv\\.de)\\b", "(?i)\\d[\\d.,]*\\s*(%|prozent|percent|mio\\b|mrd\\b|million|billion|bn\\b|€|eur\\b|euro|tsd\\b|thousand|vermittler|brokers?|advis[eo]rs?|versicherte|insured|members|mitglieder|personen|people|unternehmen|firms)"]}
       ]}
     },
     {
@@ -84,7 +84,7 @@
       "proxy": true,
       "pass_rule": "Proxy: one of the agent's own documents (top-level assistant text or an authored artifact; subagent text and collected provider data such as runs/, raw/, provider-checkpoints/, summaries and *.jsonl are excluded) has one line (a sentence or table row) that combines precedent/international/analog language, a named foreign country and a URL or domain path, without gap language on that line (not checked, unverified, to be researched, unknown, could not, failed, none found, no ... found, TODO, TBD, planned); the country must be a whole word and a domain path must not be a local file path such as notes.md/x; or explicitly states that international precedents do not apply. Outcome verification is graded in Task 7.3.",
       "check": {"type": "any", "checks": [
-        {"type": "text", "label": "named_foreign_precedent", "scope": "both", "per_line": true,
+        {"type": "text", "label": "named_foreign_precedent", "scope": "both", "per_line": true, "near_miss_label": "named foreign comparable without source",
          "patterns": ["(?i)(international|foreign|abroad|other countr|precedent|analog|comparable)", "(?<![\\w.-])(United States|USA|US|U\\.S\\.|United Kingdom|UK|Britain|Netherlands|NL|France|Austria|Switzerland|Sweden|Denmark|Spain|Italy|Canada|Australia)(?![\\w-])", "(https?://\\S+|(?<![\\w./-])[\\w-]+(\\.[\\w-]+)*\\.(?!(md|mdx|json|jsonl|py|txt|csv|html?|ya?ml|tsx?|jsx?|pdf|png|svg|log)/)[a-z]{2,6}/\\S*)"],
          "exclude": ["(?i)((not|n't) (yet )?(check|verif|collect|search|review)\\w*|unverified|returned nothing|still open|pending|to be (researched|checked|verified)|unknown|could not|couldn't|failed|none (found|verified)|no \\w+ found|\\bTODO\\b|\\bTBD\\b|planned)"]},
         {"type": "text", "label": "precedents_inapplicable", "scope": "both", "patterns": ["(?i)(international|foreign) (precedent|comparable)s?[^\\n]{0,200}(not applicable|inapplicable|does not transfer|do not transfer|no (verified )?comparable)"]}

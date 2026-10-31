@@ -1043,7 +1043,8 @@ def resolve_run_dir(
         if out_dir:
             output = Path(out_dir).absolute()
             if not output.is_relative_to(workspace / workspace_subdir):
-                raise ValueError('out-dir conflicts with case/output purpose')
+                raise ValueError('out-dir conflicts with case/output purpose: for this purpose --out-dir must be a new directory under '
+                                 f'{workspace / workspace_subdir} (omit --out-dir to use the default run directory)')
             cases.safe(root, str(output.relative_to(root)))
             if output.exists() and any(output.iterdir()) and not resume:
                 raise ValueError('Research runs are immutable; choose a new output directory')

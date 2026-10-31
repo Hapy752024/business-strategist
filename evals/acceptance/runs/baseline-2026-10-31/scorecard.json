@@ -52,12 +52,12 @@
       "Bash(python3 scripts/brand/finalize_fal_assets.py*)",
       "Bash(python3 scripts/brand/indexnow_ping.py*)",
       "Bash(python3 scripts/marketing/execute.py*)",
-      "Edit(//home/habib/work/general/business-strategist/**)",
-      "Write(//home/habib/work/general/business-strategist/**)",
-      "Read(//home/habib/work/general/business-strategist/evals/acceptance/**)",
-      "Edit(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
-      "Write(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
-      "Read(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/evals/acceptance/**)"
+      "Edit(~/work/general/business-strategist/**)",
+      "Write(~/work/general/business-strategist/**)",
+      "Read(~/work/general/business-strategist/evals/acceptance/**)",
+      "Edit(~/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
+      "Write(~/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
+      "Read(~/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/evals/acceptance/**)"
     ]
   },
   "checkpoints": [
@@ -79,17 +79,48 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": "transcript.jsonl#L67",
-      "detail": "missing: hook_denials (hook_denials: 1 matching denial(s), max 0)"
+      "detail": "missing: hook_denials (hook_denials: 1 matching denial(s), max 0)",
+      "sub_checks": [
+        {
+          "label": "route_check_and_skill_loaded",
+          "passed": true,
+          "evidence_path": "transcript.jsonl#L67",
+          "detail": "skill_reached: route check plus idea-grill via Skill tool"
+        },
+        {
+          "label": "hook_denials",
+          "passed": false,
+          "evidence_path": "transcript.jsonl#L13",
+          "detail": "hook_denials: 1 matching denial(s), max 0"
+        }
+      ],
+      "flags": {
+        "skill_tool_bypassed": false
+      }
     },
     {
       "id": "cp03",
       "stage": "intake",
       "title": "Intake asks at most one decision-changing question per turn and persists answers",
-      "passed": false,
-      "status": "fail",
+      "passed": true,
+      "status": "pass",
       "proxy": true,
       "evidence_path": "rounds.jsonl#round0",
-      "detail": "missing: max_questions_per_turn (proxy: max 3 question sentence(s) over 6 answered turn(s), limit 1)"
+      "detail": "all sub-checks passed",
+      "sub_checks": [
+        {
+          "label": "max_questions_per_turn",
+          "passed": true,
+          "evidence_path": "rounds.jsonl#round0",
+          "detail": "proxy: max 1 question block(s) over 6 answered turn(s), limit 1"
+        },
+        {
+          "label": "answers_persisted",
+          "passed": true,
+          "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/market_research/competitor-scan-20261031.md",
+          "detail": "answers_persisted: 3/3 fed answers found in artifacts"
+        }
+      ]
     },
     {
       "id": "cp04",
@@ -99,7 +130,27 @@
       "status": "fail",
       "proxy": true,
       "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/market_research/pain_points/runs/20261031-010903-pkv-gkv-berufsunfähigkeitsversicherung-versicherungsberatung-7ed4caa6f03c/evidence.jsonl",
-      "detail": "missing: artifact (artifact: 0 file(s) match **/*.jsonl); jsonl_distinct (jsonl_distinct: 0 distinct subject_entity_id, need 3)"
+      "detail": "missing: artifact (artifact: 0 file(s) match **/*.jsonl); jsonl_distinct (jsonl_distinct: 0 distinct subject_entity_id, need 3)",
+      "sub_checks": [
+        {
+          "label": "artifact",
+          "passed": true,
+          "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/market_research/pain_points/runs/20261031-010903-pkv-gkv-berufsunfähigkeitsversicherung-versicherungsberatung-7ed4caa6f03c/evidence.jsonl",
+          "detail": "artifact: 11 file(s) match **/*.jsonl"
+        },
+        {
+          "label": "artifact",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "artifact: 0 file(s) match **/*.jsonl"
+        },
+        {
+          "label": "jsonl_distinct",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "jsonl_distinct: 0 distinct subject_entity_id, need 3"
+        }
+      ]
     },
     {
       "id": "cp05",
@@ -109,17 +160,57 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 file(s) match **/*.json); artifact (artifact: 0 file(s) match **/*.json)"
+      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 file(s) match **/*.json); artifact (artifact: 0 file(s) match **/*.json)",
+      "sub_checks": [
+        {
+          "label": "json_len",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "json_len: max 0 entries at stages, need 4"
+        },
+        {
+          "label": "artifact",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "artifact: 0 file(s) match **/*.json"
+        },
+        {
+          "label": "artifact",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "artifact: 0 file(s) match **/*.json"
+        }
+      ]
     },
     {
       "id": "cp06",
       "stage": "desk_research",
       "title": "Official statistics and the §34d versus §34e GewO distinction are surfaced with sources",
-      "passed": true,
-      "status": "pass",
+      "passed": false,
+      "status": "fail",
       "proxy": true,
       "evidence_path": "transcript.jsonl#L80",
-      "detail": "all sub-checks passed"
+      "detail": "missing: official_statistics_source (official_statistics_source: no single line matched all 2 patterns)",
+      "sub_checks": [
+        {
+          "label": "s34d_s34e_with_url",
+          "passed": true,
+          "evidence_path": "transcript.jsonl#L80",
+          "detail": "s34d_s34e_with_url: all patterns in one document"
+        },
+        {
+          "label": "statute_or_regulator_source",
+          "passed": true,
+          "evidence_path": "transcript.jsonl#L80",
+          "detail": "statute_or_regulator_source: all patterns in one document"
+        },
+        {
+          "label": "official_statistics_source",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "official_statistics_source: no single line matched all 2 patterns"
+        }
+      ]
     },
     {
       "id": "cp07",
@@ -128,8 +219,22 @@
       "passed": true,
       "status": "pass",
       "proxy": true,
-      "evidence_path": "transcript.jsonl#L80",
-      "detail": "text: all patterns in one document"
+      "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/market_research/competitor-scan-20261031.md",
+      "detail": "named_foreign_precedent: all patterns in one line",
+      "sub_checks": [
+        {
+          "label": "named_foreign_precedent",
+          "passed": true,
+          "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/market_research/competitor-scan-20261031.md",
+          "detail": "named_foreign_precedent: all patterns in one line"
+        },
+        {
+          "label": "precedents_inapplicable",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "precedents_inapplicable: no single document matched all 1 patterns"
+        }
+      ]
     },
     {
       "id": "cp08",
@@ -139,7 +244,33 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": null,
-      "detail": "missing: falsification (falsification: none matched (artifact: 0 file(s) match **/*falsif*; tool_use: 0 matching call(s), need 1)); decision_memo (decision_memo: 0 file(s) match **/decision_memo.md); scores (scores: 0 file(s) match **/scores.json); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))"
+      "detail": "missing: falsification (falsification: none matched (artifact: 0 file(s) match **/*falsif*; tool_use: 0 matching call(s), need 1)); decision_memo (decision_memo: 0 file(s) match **/decision_memo.md); scores (scores: 0 file(s) match **/scores.json); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))",
+      "sub_checks": [
+        {
+          "label": "falsification",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "falsification: none matched (artifact: 0 file(s) match **/*falsif*; tool_use: 0 matching call(s), need 1)"
+        },
+        {
+          "label": "decision_memo",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "decision_memo: 0 file(s) match **/decision_memo.md"
+        },
+        {
+          "label": "scores",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "scores: 0 file(s) match **/scores.json"
+        },
+        {
+          "label": "delivery_check",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns)"
+        }
+      ]
     },
     {
       "id": "cp09",
@@ -149,7 +280,7 @@
       "status": "pass",
       "proxy": false,
       "evidence_path": "transcript.jsonl#L599",
-      "detail": "gate: blocked, overridden, then 1 downstream call(s)"
+      "detail": "gate: blocked, overridden, downstream skill via Skill tool, then 5 artifact write(s)"
     },
     {
       "id": "cp10",
@@ -159,7 +290,51 @@
       "status": "fail",
       "proxy": false,
       "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/provisional/gtm-plan.md",
-      "detail": "missing: keyword_volumes (keyword_volumes: 0 file(s) match **/keyword-map*.json); site_gate (site_gate: 0 file(s) match **/site-gate*.json); runbook (runbook: 0 file(s) match **/*runbook*); paused_campaign (paused_campaign: 0 file(s) match **/*campaign*.json)"
+      "detail": "missing: keyword_volumes (keyword_volumes: 0 file(s) match **/keyword-map*.json); site_gate (site_gate: 0 file(s) match **/site-gate*.json); runbook (runbook: 0 file(s) match **/*runbook*); paused_campaign (paused_campaign: 0 file(s) match **/*campaign*.json)",
+      "sub_checks": [
+        {
+          "label": "gtm",
+          "passed": true,
+          "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/provisional/gtm-plan.md",
+          "detail": "artifact: 1 file(s) match **/*gtm*"
+        },
+        {
+          "label": "keyword_volumes",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "keyword_volumes: 0 file(s) match **/keyword-map*.json"
+        },
+        {
+          "label": "local_site",
+          "passed": true,
+          "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/digital-assets/website/site/berufsunfaehigkeitsversicherung/index.html",
+          "detail": "artifact: 11 file(s) match **/website/**/index.html"
+        },
+        {
+          "label": "site_gate",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "site_gate: 0 file(s) match **/site-gate*.json"
+        },
+        {
+          "label": "runbook",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "runbook: 0 file(s) match **/*runbook*"
+        },
+        {
+          "label": "paused_campaign",
+          "passed": false,
+          "evidence_path": null,
+          "detail": "paused_campaign: 0 file(s) match **/*campaign*.json"
+        },
+        {
+          "label": "nothing_sent",
+          "passed": true,
+          "evidence_path": null,
+          "detail": "nothing_sent: none found"
+        }
+      ]
     },
     {
       "id": "cp11",
@@ -168,7 +343,7 @@
       "passed": true,
       "status": "pass",
       "proxy": true,
-      "evidence_path": "transcript.jsonl#L80",
+      "evidence_path": "transcript.jsonl#L110",
       "detail": "proxy: failed providers ['brave-search', 'firecrawl', 'youtube'] and a coverage gap is stated"
     }
   ],

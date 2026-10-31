@@ -640,6 +640,8 @@ def _tool_matches(ctx: Ctx, check: dict) -> list[dict]:
     for ev in ctx.events:
         if ev['kind'] != 'tool_use' or not name_re.search(ev['name']) or not input_re.search(ev['input_text']):
             continue
+        if any(re.search(x, ev['input_text']) for x in check.get('exclude_input', [])):
+            continue  # e.g. `--help` runs of a write-capable script are read-only invocations
         res = ev.get('result')
         if check.get('exclude_denied') and (ev['denied'] or (res and res['is_error'])):
             continue  # denied or failed calls do not count as reaching the tool
@@ -698,7 +700,15 @@ def run_check(ctx: Ctx, check: dict) -> Result:
             for chunk in (text.splitlines() if per_line else [text]):
                 if all(p.search(chunk) for p in pats) and not any(x.search(chunk) for x in excludes):
                     return True, ref, f'{label}: all patterns in one {unit}'
-        return False, None, f'{label}: no single {unit} matched all {len(pats)} patterns'
+        detail = f'{label}: no single {unit} matched all {len(pats)} patterns'
+        near = [re.compile(p) for p in (check.get('near_miss_patterns') or (check['patterns'][:2] if check.get('near_miss_label') else []))]
+        if near:
+            for ref, text in ctx.documents(check.get('scope', 'both')):
+                for chunk in text.splitlines():
+                    if all(p.search(chunk) for p in near):
+                        return False, None, (f"{detail}; near miss: {check.get('near_miss_label', 'partial match')} "
+                                             f"at {ref}: {chunk.strip()[:140]!r}")
+        return False, None, detail
     if kind == 'tool_use':
         hits = _tool_matches(ctx, check)
         need = int(check.get('min', 1))
@@ -911,6 +921,10 @@ QUOTA_RE = re.compile(r'(?i)(\b402\b[^\n]{0,40}payment required|\b429\b[^\n]{0,4
                       r'|quota (exceeded|exhausted)|insufficient (credits?|balance)|\"status\"\s*:\s*402)')
 
 
+HELPER_SCRIPT_RE = re.compile(r'scripts/(?:capability_lookup|route_workflow|evaluate|run_acceptance|project_workspace|case_workspace'
+                              r'|subprojects|enforce_skill_route)\.py|scripts/(?:[\w/]*/)?validate_[\w]*\.py')
+
+
 def quota_events(ctx: Ctx) -> list[dict]:
     """Tool calls whose result says a provider is out of quota or credit (a coverage gap, not absence of demand)."""
     out = []
@@ -922,6 +936,8 @@ def quota_events(ctx: Ctx) -> list[dict]:
             provider = ev['name'].split('__')[1]
         else:
             script = re.search(r'scripts/[\w/.-]+\.py', ev['input_text'])
+            if script and HELPER_SCRIPT_RE.search(script.group(0)):
+                continue  # a repository helper (catalog lookup, router, validator) is not a provider; its text may mention credits
             provider = script.group(0) if script else ev['name']
         out.append({'line': ev['line'] + 1, 'provider': provider})
     return out
@@ -962,6 +978,10 @@ def provider_gaps(ctx: Ctx, check: dict) -> Result:
     gaps = [re.compile(p) for p in check['gap_patterns']]
     for ref, text in docs:
         if any(p.search(text) for p in gaps):
+            for ev in ctx.events:  # point at the message that states the gap, not the round opener
+                if ev['kind'] == 'text' and ev['top'] and any(p.search(ev['text']) for p in gaps):
+                    ref = f"transcript.jsonl#L{ev['line'] + 1}"
+                    break
             return True, ref, f"proxy: failed providers {status['failed']} and a coverage gap is stated"
     return False, None, f"proxy: providers {status['failed']} failed but no assistant round names a coverage gap"
 
@@ -1104,7 +1124,22 @@ def classify_host_writes(ctx: Ctx, entries: list[str]) -> dict:
     return out
 
 
+HOME_PATH_RE = re.compile(r'/{1,2}home/[^/\s"\')*:]+')
+
+
+def relativize_paths(node: Any) -> Any:
+    """Scorecards are committed: replace a host home directory (and so the repo/worktree prefix) with `~`."""
+    if isinstance(node, str):
+        return HOME_PATH_RE.sub('~', node)
+    if isinstance(node, list):
+        return [relativize_paths(x) for x in node]
+    if isinstance(node, dict):
+        return {relativize_paths(k): relativize_paths(v) for k, v in node.items()}
+    return node
+
+
 def write_scorecard(out_dir: Path, card: dict) -> Path:
+    card = relativize_paths(card)
     try:
         import jsonschema
         jsonschema.validate(card, json.loads(SCHEMA_PATH.read_text(encoding='utf-8')))
