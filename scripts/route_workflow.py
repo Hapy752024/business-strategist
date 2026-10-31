@@ -356,7 +356,9 @@ def _route_request(
         if route_id:
             selected = {**next(route for route in routes if route["id"] == route_id), "matched": ["workspace continuation"]}
             reason = "explicit workspace continuation"
-    # Distinct independently requested workflows need semantic resolution.
+    # Distinct independently requested workflows need semantic resolution. Winners are keyed on route ID, not
+    # skill: a merged skill serves several routes (some pain-gated), and two of its workflows in one request
+    # must still clarify rather than let one route carry the other past its gate.
     if not requested_intent and len(candidates) > 1:
         clause_winners = set()
         for clause in outcomes:
@@ -364,7 +366,7 @@ def _route_request(
                        if any(re.sub(r"[-–—]", " ", phrase.casefold()) in clause
                               for phrase in candidate["matched"])]
             if matches:
-                clause_winners.add(max(matches, key=lambda item: (item[0], item[1], -item[2]["order"]))[2]["skill"])
+                clause_winners.add(max(matches, key=lambda item: (item[0], item[1], -item[2]["order"]))[2]["id"])
         if len(clause_winners) > 1:
             selected = {"id": "clarify", "skill": "business-strategist", "matched": []}
             reason = "multiple requested workflows; resolve scope before dispatch"

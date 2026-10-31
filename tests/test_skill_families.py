@@ -475,3 +475,61 @@ def test_pilot_boundary_routes(request_text, expected_route):
 ])
 def test_opportunity_risk_plain_text_infers_its_mode(request_text, expected_route):
     assert route_workflow.infer_mode('opportunity-risk-designer', request_text)[0] == expected_route
+
+
+# Fix round 1: two workflows of one merged skill in one request must still clarify, as two different skills did at
+# fd05161 (branch base, before any merge). Run in a workspace whose pain gate has not passed, so a gated route cannot
+# ride along with an ungated one.
+TWO_WORKFLOW_REQUESTS = [
+    'What should I validate next? Then plan a fintech pilot',
+    'Prioritize ideas and rank opportunities using decision gates; also plan a fintech pilot',
+    'Build a go-to-market strategy, then design our operating cadence',
+    'Collect voice of customer from reviews, then write a customer interview guide',
+    'Design a smoke test, then plan a fintech pilot',
+    'Falsify claims in the draft, then design a paid pilot',
+    # One representative per earlier family.
+    'Do brand discovery, then write the brand book',
+    'Find competitors for my app, then analyze competitor pricing',
+    'Find founder playbooks for SaaS, then analyze a company growth case',
+    'Write a marketing strategy, then build a content calendar',
+    'Reposition the business; also design the delivery model',
+    'Validate customer pain, then build an interview screener',
+]
+
+
+@pytest.mark.parametrize('request_text', TWO_WORKFLOW_REQUESTS)
+def test_two_workflows_of_one_merged_skill_clarify(tmp_path, monkeypatch, request_text):
+    import sys
+    sys.path.insert(0, str(ROOT / 'tests'))
+    from test_workspace_gates import _write_manifest
+    monkeypatch.setattr(route_workflow, 'ROOT', tmp_path)
+    _write_manifest(tmp_path, 'gated', 'not_run', monkeypatch)
+    packet = route_workflow.route_request(request_text, project='gated')
+    assert packet['route_id'] == 'clarify', packet['route_id']
+    assert packet['reason'] == 'multiple requested workflows; resolve scope before dispatch'
+
+
+def test_plain_text_default_is_only_on_the_evidence_scout_route(tmp_path):
+    import shutil
+    from scripts import validate_skill_routes
+    assert validate_skill_routes.validate() == []
+    for rel in ('config', '.agents'):
+        shutil.copytree(ROOT / rel, tmp_path / rel, symlinks=True)
+    shutil.copytree(ROOT / 'references', tmp_path / 'references')
+    path = tmp_path / 'config/workflow-routes.json'
+    data = json.loads(path.read_text(encoding='utf-8'))
+    next(r for r in data['routes'] if r['id'] == 'opportunity-prioritization')['plain_text_default'] = True
+    path.write_text(json.dumps(data), encoding='utf-8')
+    errors = validate_skill_routes.validate(tmp_path)
+    assert any('plain_text_default is allowed only on route evidence-scout' in e for e in errors), errors
+
+
+@pytest.mark.parametrize('former', [former for _, former in FORMER])
+def test_skill_call_with_a_former_name_is_denied_with_its_replacement(former):
+    from scripts import enforce_skill_route as hook
+    event = {'hook_event_name': 'PreToolUse', 'tool_name': 'Skill', 'session_id': 's1', 'tool_use_id': 't1',
+             'cwd': str(ROOT), 'tool_input': {'skill': former, 'args': 'do the task'}}
+    route_id = route_workflow.SKILL_ALIASES[former]
+    merged = _routes()[route_id]['skill']
+    with pytest.raises(ValueError, match=f'{former} was merged into {merged}; dispatch {merged} with route {route_id}'):
+        hook.check_dispatch(event)

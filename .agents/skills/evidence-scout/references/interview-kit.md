@@ -26,25 +26,20 @@ Pass an evidence run directory (`projects/<topic>/market_research/pain_points/ru
 
 ## Stage checklist
 
-1. Read this file and repo-root `references/customer-voice.md` completely. Choose interviews for the unresolved question, not an aggregate evidence-strength label.
+One ordered list for the whole mode; the sections below give detail for individual steps.
+
+1. Read this file and repo-root `references/customer-voice.md` completely. Name the unresolved question and explain why interviews can answer it. Source-coverage gaps may instead need local discovery; solution-use uncertainty may need observation/usability testing; payment claims need a separately authorized behavioral test. Choose interviews for the unresolved question, not an aggregate evidence-strength label.
 2. Review source meaning and provenance and write the digest-bound `source-review.json` (section below); unreviewed records cannot generate probes.
-3. Run `build_interview_kit.py --run-dir <evidence or discovery run dir>`; for smoke-test responders add `--responders <card's responders_ref>` (`scripts/route_workflow.py status` reports this route runnable once a card has bookings).
-4. Research recruitment routes before recruiting: apply repo-root `references/interview-recruitment.md` — unpaid recruitment (no cash, vouchers, gifts or paid panels unless the founder changes that preference), a researched zero-network route and a learning funnel separate from first customers. Screen segment fit and a recent incident before counting an interview; unpaid signups are not automatically valid evidence.
-5. Interview, log results in `interview/interview-tracker.md` and update the tally.
-6. Code each transcript yourself into `{"transcript_id", "items": [{"theme", "interpretation", "verbatim_quote", "speaker", "locator", "evidence_type", "author_voice_status"}]}`, copying quotes exactly. Run `python3 scripts/evidence_scout/ingest_transcript_coding.py --coding <coding.json> --transcript <id>=<path> --out <fresh evidence.jsonl>`; it rejects any quote not found verbatim. Quotes become evidence; themes stay labelled interpretation. Keep transcripts and speaker identities private.
-7. For a registered Business case, pass reviewed interview learnings and still-open customer questions to the case-insights owner under repo-root `references/case-insights.md`; the tracker remains the detailed source.
+3. Run `build_interview_kit.py --run-dir <evidence or discovery run dir>`; for smoke-test responders add `--responders <card's responders_ref>` (`scripts/route_workflow.py status` reports this route runnable once a card has bookings). Inspect all three artifacts.
+4. Review the screener against the segment hypothesis: are the recruitment pools reachable by this team? Are the disqualifiers consistent with the buyer? Adjust pools/questions by editing the artifact.
+5. Review every probe in the guide: rephrase into the segment's own language where the public phrasing is insider jargon, and keep the evidence trace (E1, E2, …) intact.
+6. Research recruitment routes before recruiting: apply repo-root `references/interview-recruitment.md` — unpaid recruitment (no cash, vouchers, gifts or paid panels unless the founder changes that preference), a researched zero-network route and a learning funnel separate from first customers. Screen segment fit and a recent incident before counting an interview; unpaid signups are not automatically valid evidence.
+7. Choose an initial learning batch for the question and contrasting contexts; include successful alternatives and non-adopters, not only painful cases. Interview, log every result (refutations included) in `interview/interview-tracker.md` and update the tally.
+8. Update the interpretation after each batch against hypothesis-specific criteria set beforehand. No fixed confirmation count validates a claim. A contrary case may reveal a context or segment boundary rather than erase other experiences. Inspect interview-selection.json for omitted perspectives and expand the guide when needed.
+9. Code each transcript yourself into `{"transcript_id", "items": [{"theme", "interpretation", "verbatim_quote", "speaker", "locator", "evidence_type", "author_voice_status"}]}`, copying quotes exactly. Run `python3 scripts/evidence_scout/ingest_transcript_coding.py --coding <coding.json> --transcript <id>=<path> --out <fresh evidence.jsonl>`; it rejects any quote not found verbatim. Quotes become evidence; themes stay labelled interpretation. Keep transcripts and speaker identities private.
+10. Feed confirmed/refuted results back into the topic workspace before running `idea-grill` refinement or `opportunity-risk-designer`. For a registered Business case, pass reviewed interview learnings and still-open customer questions to the case-insights owner under repo-root `references/case-insights.md`; the tracker remains the detailed source.
 
 Success means every probe traces to reviewed evidence or a named hypothesis, material counterexamples and distinct contexts survive selection, the screener recruits people with a recent incident rather than idea fans, and the tracker separates confirmation from refutation.
-
-## Procedure
-
-1. Name the unresolved question and explain why interviews can answer it. Source-coverage gaps may instead need local discovery; solution-use uncertainty may need observation/usability testing; payment claims need a separately authorized behavioral test.
-2. Run the generator and inspect all three artifacts.
-3. Review the screener against the segment hypothesis: are the recruitment pools reachable by this team? Are the disqualifiers consistent with the buyer? Adjust pools/questions by editing the artifact.
-4. Review every probe in the guide: rephrase into the segment's own language where the public phrasing is insider jargon, and keep the evidence trace (E1, E2, …) intact.
-5. Choose an initial learning batch for the question and contrasting contexts; include successful alternatives and non-adopters, not only painful cases. Log every interview, including refutations.
-6. Update the interpretation after each batch against hypothesis-specific criteria set beforehand. No fixed confirmation count validates a claim. A contrary case may reveal a context or segment boundary rather than erase other experiences. Inspect interview-selection.json for omitted perspectives and expand the guide when needed.
-7. Feed confirmed/refuted results back into the topic workspace before running `idea-grill` refinement or `opportunity-risk-designer`.
 
 ## Hypothesis Probes From The Evidence Registry
 

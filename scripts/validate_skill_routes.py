@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 CONTRACT_KEYS = {'artifact', 'schema', 'path_patterns', 'freshness'}
 FRESHNESS = {'digest', 'revision', 'none'}
+PLAIN_TEXT_DEFAULT_ROUTE = 'evidence-scout'
 
 
 def _contract_items(metadata: dict, key: str):
@@ -121,8 +122,10 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.append(f'Route {route_id} forbids unknown skill: {forbidden}')
         if name in route.get('forbidden', []):
             errors.append(f'Route {route_id} forbids its own skill')
-        if route.get('plain_text_default') and sum(r['skill'] == name and bool(r.get('plain_text_default')) for r in routes) != 1:
-            errors.append(f'Route {route_id}: {name} has more than one plain_text_default route')
+        # Controller ruling: only evidence-scout's own route is the plain-text default (it was single-mode before
+        # absorbing interview-bridge); every other multi-route skill needs a phrase match or an envelope.
+        if route.get('plain_text_default') and route_id != PLAIN_TEXT_DEFAULT_ROUTE:
+            errors.append(f'Route {route_id}: plain_text_default is allowed only on route {PLAIN_TEXT_DEFAULT_ROUTE}')
         if bool(route.get('single_mode', False)) != (route_counts[name] == 1):
             errors.append(f'Route {route_id}: single_mode flag disagrees with {route_counts[name]} route(s) for {name}')
     for name in sorted(skills - reached):

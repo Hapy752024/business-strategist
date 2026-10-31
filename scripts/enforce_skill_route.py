@@ -11,9 +11,9 @@ import sys
 from pathlib import Path
 
 try:
-    from scripts.route_workflow import infer_mode, load_catalog, load_routes, route_request
+    from scripts.route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, route_request
 except ModuleNotFoundError:
-    from route_workflow import infer_mode, load_catalog, load_routes, route_request
+    from route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, route_request
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -24,6 +24,12 @@ def check_dispatch(event: dict) -> dict:
     if not expansion and event.get('tool_name') != 'Skill':
         return {}
     name = event.get('command_name', '') if expansion else tool_input.get('skill', '')
+    # A merged-away skill name is denied with its replacement instead of passing through as a foreign skill.
+    if name in SKILL_ALIASES:
+        route_id = SKILL_ALIASES[name]
+        now = next(r['skill'] for r in load_routes() if r['id'] == route_id)
+        raise ValueError(f'{name} was merged into {now}; dispatch {now} with route {route_id} '
+                         f'(JSON envelope intent "{route_id}"). See references/runtime-routing.md.')
     # Foreign plugin skills belong to their own router; do not hijack them.
     if name not in load_catalog():
         if isinstance(name, str) and '/' not in name and (ROOT / '.agents/skills' / name / 'SKILL.md').is_file():

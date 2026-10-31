@@ -783,6 +783,143 @@
           "rationale": "Unchanged against 3f1635c; no broad 'MVP' phrase was added."
         }
       ]
+    },
+    {
+      "pair": "two workflows of one merged skill in one request",
+      "evals": [
+        {
+          "id": "two-workflow-1",
+          "prompt": "What should I validate next? Then plan a fintech pilot",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-2",
+          "prompt": "Prioritize ideas and rank opportunities using decision gates; also plan a fintech pilot",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-3",
+          "prompt": "Build a go-to-market strategy, then design our operating cadence",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-4",
+          "prompt": "Collect voice of customer from reviews, then write a customer interview guide",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-5",
+          "prompt": "Design a smoke test, then plan a fintech pilot",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-6",
+          "prompt": "Falsify claims in the draft, then design a paid pilot",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-7",
+          "prompt": "Do brand discovery, then write the brand book",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-8",
+          "prompt": "Find competitors for my app, then analyze competitor pricing",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-9",
+          "prompt": "Find founder playbooks for SaaS, then analyze a company growth case",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-10",
+          "prompt": "Write a marketing strategy, then build a content calendar",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-11",
+          "prompt": "Reposition the business; also design the delivery model",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        },
+        {
+          "id": "two-workflow-12",
+          "prompt": "Validate customer pain, then build an interview screener",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "project_context": true,
+          "expected_output": "Asks one scoping question; neither workflow (gated or not) is dispatched with the other's scope.",
+          "files": [],
+          "rationale": "Clarified at fd05161 when the routes belonged to different skills; clause winners are keyed on route ID so merged skills keep that behaviour."
+        }
+      ]
     }
   ]
 }
