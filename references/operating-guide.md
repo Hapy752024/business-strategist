@@ -42,4 +42,4 @@ Run outputs: `raw/` (redacted provider responses), `evidence.jsonl`, `summary.js
 
 ## Skill listing budget
 
-`.claude/settings.json` sets `skillListingBudgetFraction` to 0.03 so skill descriptions stay in the listing (https://code.claude.com/docs/en/skills). Three side-effect skills set `disable-model-invocation: true` and are invoked explicitly only: setup-multiharness-project, marketing-campaign-operator, pre-release-regression. The `brand-identity` export and workspace modes write files and run only on explicit request. User-level firecrawl skills in `~/.claude/skills` cannot be disabled from this repo.
+`.claude/settings.json` sets `skillListingBudgetFraction` to 0.03 so skill descriptions stay in the listing (https://code.claude.com/docs/en/skills). Two side-effect skills set `disable-model-invocation: true` and are invoked explicitly only: setup-multiharness-project, marketing-campaign-operator. The `brand-identity` export and workspace modes and the `site-testing` regression mode (formerly the user-only pre-release check) run only on explicit request. User-level firecrawl skills in `~/.claude/skills` cannot be disabled from this repo.

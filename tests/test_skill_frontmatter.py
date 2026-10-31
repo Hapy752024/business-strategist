@@ -6,7 +6,6 @@ SKILLS = ROOT / '.agents/skills'
 HIDDEN = [
     'setup-multiharness-project',
     'marketing-campaign-operator',
-    'pre-release-regression',
 ]
 
 

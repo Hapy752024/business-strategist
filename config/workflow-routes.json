@@ -755,17 +755,23 @@
     },
     {
       "id": "webapp-testing",
-      "match": [],
-      "skill": "webapp-testing",
+      "match": [
+        "Playwright",
+        "browser test"
+      ],
+      "skill": "site-testing",
       "forbidden": [],
-      "single_mode": true
+      "mode": "browser"
     },
     {
       "id": "pre-release-regression",
-      "match": [],
-      "skill": "pre-release-regression",
+      "match": [
+        "pre-release",
+        "release regression"
+      ],
+      "skill": "site-testing",
       "forbidden": [],
-      "single_mode": true
+      "mode": "regression"
     },
     {
       "id": "marketing-campaign-setup",

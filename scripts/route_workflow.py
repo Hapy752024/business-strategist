@@ -61,6 +61,8 @@ SKILL_ALIASES: dict[str, str] = {
     "saas-fintech-pilot-designer": "saas-fintech-pilot-designer",
     "geo-audit": "geo-audit",
     "stripe-best-practices": "stripe-best-practices",
+    "webapp-testing": "webapp-testing",
+    "pre-release-regression": "pre-release-regression",
 }
 # Website-skill modes absorbed from former non-design helpers keep their former packet: no standalone/business-linked
 # design branch, website subproject or strategy-plan gate (frozen at 3943842, before the merge).

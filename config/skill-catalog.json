@@ -38,8 +38,7 @@
       "skills": [
         "brand-website-designer-builder",
         "security-review",
-        "webapp-testing",
-        "pre-release-regression"
+        "site-testing"
       ]
     }
   },
@@ -1181,26 +1180,9 @@
       "cost": "low",
       "required_references": []
     },
-    "webapp-testing": {
+    "site-testing": {
       "intent": [
-        "test local web application behavior"
-      ],
-      "excludes": [
-        "customer research",
-        "production deployment"
-      ],
-      "prerequisites": [
-        "selected target application and bounded task"
-      ],
-      "artifacts": [
-        "scoped findings and verification evidence"
-      ],
-      "side_effect": "local_files",
-      "cost": "low",
-      "required_references": []
-    },
-    "pre-release-regression": {
-      "intent": [
+        "test local web application behavior",
         "assess application release regression coverage"
       ],
       "excludes": [
@@ -1215,7 +1197,35 @@
       ],
       "side_effect": "local_files",
       "cost": "low",
-      "required_references": []
+      "required_references": [],
+      "modes": {
+        "browser": {
+          "intent": [
+            "test local web application behavior"
+          ],
+          "artifacts": [
+            "scoped findings and verification evidence"
+          ],
+          "inputs": [
+            "selected target application",
+            "requested behavior and local URL"
+          ],
+          "output_owner": "site-testing"
+        },
+        "regression": {
+          "intent": [
+            "assess application release regression coverage"
+          ],
+          "artifacts": [
+            "scoped findings and verification evidence"
+          ],
+          "inputs": [
+            "selected target application",
+            "release base and head or declared bounded scope"
+          ],
+          "output_owner": "site-testing"
+        }
+      }
     },
     "marketing-campaign-operator": {
       "intent": [

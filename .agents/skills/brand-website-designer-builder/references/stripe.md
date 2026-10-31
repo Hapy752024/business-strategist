@@ -9,7 +9,7 @@ selected application. Website builds that add payments read it too.
 2. Verify current official Stripe documentation before implementation decisions; these references are starting guidance and may age.
 3. Read only the reference for the task (table below) before answering an integration question or writing code.
 4. Use test mode and synthetic data. Live charges, deployment, account connections and dashboard changes need explicit authorization; this mode does not authorize a Business launch or bypass project gates.
-5. For code changes, pair with `security-review` (its Stripe checks) and the browser or release-regression checks (routes `webapp-testing`, `pre-release-regression`).
+5. For code changes, pair with `security-review` (its Stripe checks) and `site-testing` browser or regression checks (routes `webapp-testing`, `pre-release-regression`).
 6. Report design choices, implementation or review evidence, open gaps and release state.
 
 ## Integration routing

@@ -1,4 +1,6 @@
-# Release Regression Workflow
+# Regression mode (route `pre-release-regression`)
+
+Run this mode only on explicit request: the user names a release regression or pre-release check. Use [browser mode](browser.md) for browser execution.
 
 1. Resolve the selected application and release scope. Use an explicit base commit/tag where supplied; otherwise inspect history and release metadata. If no defensible base exists, report that gap and use a declared bounded scope rather than inventing a tag or commit range.
 2. Discover existing test suites, fixtures, supported languages, responsive targets and product journeys. Map changes and shared dependencies to affected behavior.

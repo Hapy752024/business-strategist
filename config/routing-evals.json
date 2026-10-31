@@ -946,6 +946,51 @@
           "rationale": "Unchanged against 3943842: the 6-character 'Stripe' phrase never outranks a website-build phrase such as 'landing page', so a gated build is not pulled into the ungated stripe mode."
         }
       ]
+    },
+    {
+      "pair": "site-testing browser and regression modes vs website build",
+      "evals": [
+        {
+          "id": "site-testing-1",
+          "prompt": "Write Playwright tests for the signup form.",
+          "expected_skill": "site-testing",
+          "expected_route": "webapp-testing",
+          "forbidden_skills": [],
+          "expected_output": "Routes to site-testing browser mode (ungated, synthetic data).",
+          "files": [],
+          "rationale": "Before the merge (3943842) this fell to clarification; 'Playwright' now reaches browser mode."
+        },
+        {
+          "id": "site-testing-2",
+          "prompt": "Plan the release regression for our app.",
+          "expected_skill": "site-testing",
+          "expected_route": "pre-release-regression",
+          "forbidden_skills": [],
+          "expected_output": "Routes to site-testing regression mode, which runs only on explicit request.",
+          "files": [],
+          "rationale": "'release regression' is an explicit request; before the merge it fell to clarification."
+        },
+        {
+          "id": "site-testing-3",
+          "prompt": "Run browser tests on the landing page.",
+          "expected_skill": "brand-website-designer-builder",
+          "expected_route": "website-build",
+          "forbidden_skills": [],
+          "expected_output": "Stays on the pain-gated website-build route.",
+          "files": [],
+          "rationale": "Unchanged against 3943842: \"browser test\" ties \"landing page\" on length and website-build wins by route order."
+        },
+        {
+          "id": "site-testing-4",
+          "prompt": "Run regression tests before the release.",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "expected_output": "Asks one scoping question; a generic regression-test request is not routed to the explicit-request-only regression mode.",
+          "files": [],
+          "rationale": "Unchanged against 3943842; no broad 'regression' phrase was added."
+        }
+      ]
     }
   ]
 }

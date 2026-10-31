@@ -29,6 +29,7 @@ FAMILIES = {
     'evidence-scout': ['interview-bridge'],
     'opportunity-risk-designer': ['saas-fintech-pilot-designer'],
     'brand-website-designer-builder': ['geo-audit', 'stripe-best-practices'],
+    'site-testing': ['webapp-testing', 'pre-release-regression'],
 }
 # Hosts that absorbed a former skill keep their own pre-existing routes as they were (route ID, mode or no mode);
 # only the absorbed skills' routes gain a mode and a references/<mode>.md.
@@ -501,6 +502,7 @@ TWO_WORKFLOW_REQUESTS = [
     'Reposition the business; also design the delivery model',
     'Validate customer pain, then build an interview screener',
     'Run a GEO audit, then build a landing page',
+    'Write Playwright tests, then run a pre-release regression',
 ]
 
 
@@ -610,3 +612,65 @@ def test_website_geo_stripe_boundary_routes(request_text, expected_route):
 ])
 def test_website_plain_text_infers_its_mode(request_text, expected_route):
     assert route_workflow.infer_mode(WEBSITE, request_text)[0] == expected_route
+
+
+def test_site_testing_modes_keep_their_gates_and_packets():
+    """Gate and packet fields as frozen at 3943842: both routes ungated, no strategy stages, same prerequisites,
+    side effect, cost and (no) required references; neither is a design or marketing route."""
+    routes = _routes()
+    assert routes['webapp-testing']['mode'] == 'browser' and routes['pre-release-regression']['mode'] == 'regression'
+    modes = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))['skills']['site-testing']['modes']
+    for route_id in ('webapp-testing', 'pre-release-regression'):
+        route = routes[route_id]
+        assert route['skill'] == 'site-testing' and not route.get('requires_pain_gate')
+        assert not modes[route['mode']].get('strategy_stage_prerequisites')
+        packet = route_workflow.route_request('explicit specialist task', intent=route_id, check_skill='site-testing')
+        assert packet['prerequisites'] == ['selected target application and bounded task']
+        assert packet['side_effect'] == 'local_files' and packet['estimated_cost'] == 'low'
+        assert packet['required_references'] == [] and 'entry_mode' not in packet and not packet.get('gate_blocked')
+    catalog = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))
+    assert 'site-testing' in catalog['modules']['website']['skills']
+
+
+def test_site_testing_regression_mode_runs_only_on_explicit_request():
+    """pre-release-regression was user-only (disable-model-invocation); its mode keeps that guard in text."""
+    skill = (SKILLS / 'site-testing' / 'SKILL.md').read_text(encoding='utf-8')
+    regression = (SKILLS / 'site-testing' / 'references' / 'regression.md').read_text(encoding='utf-8')
+    assert 'only on explicit request' in skill.lower() and 'only on explicit request' in regression.lower()
+    assert 'disable-model-invocation' not in skill
+    browser = (SKILLS / 'site-testing' / 'references' / 'browser.md').read_text(encoding='utf-8')
+    assert 'scripts/with_server.py' in browser and (SKILLS / 'site-testing' / 'scripts' / 'with_server.py').is_file()
+    assert 'Apache License' in (SKILLS / 'site-testing' / 'LICENSE.txt').read_text(encoding='utf-8')
+
+
+# Plain-text requests near the site-testing boundary. Frozen from the router at 3943842 (before the merge, when both
+# routes had no match phrase). Rows marked "new" moved from clarification to their mode; rows marked "changed" moved
+# between routes: a testing phrase outranks the 6-character "Vercel" website-build phrase, and the explicit
+# "release regression" outranks "landing page"; two workflows in one request now clarify.
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Write Playwright tests for the signup form', 'webapp-testing'),  # new
+    ('Run browser tests on our web app', 'webapp-testing'),  # new
+    ('Run a pre-release regression check on the app', 'pre-release-regression'),  # new
+    ('Plan the release regression for our app', 'pre-release-regression'),  # new
+    ('Run Playwright against the Vercel preview', 'webapp-testing'),  # changed
+    ('Run a release regression on the landing page', 'pre-release-regression'),  # changed
+    ('Build a landing page, then run browser tests', 'clarify'),  # changed
+    ('Run browser tests on the landing page', 'website-build'),
+    ('Create a Next.js website and test it with Playwright', 'website-build'),
+    ('Run regression tests before the release', 'clarify'),
+    ('Fix the SEO regression after the Vercel deploy', 'website-build'),
+    ('Run an SEO regression audit', 'seo-technical-audit'),
+    ('Test my A/B test variants with Playwright', 'website-experiment'),
+    ('Design a smoke test for the meal-kit offer', 'smoke-test-design'),
+    ('Review the security of our login flow', 'clarify'),
+])
+def test_site_testing_boundary_routes(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Write Playwright tests for the signup form', 'webapp-testing'),
+    ('Run the pre-release regression for v2', 'pre-release-regression'),
+])
+def test_site_testing_plain_text_infers_its_mode(request_text, expected_route):
+    assert route_workflow.infer_mode('site-testing', request_text)[0] == expected_route
