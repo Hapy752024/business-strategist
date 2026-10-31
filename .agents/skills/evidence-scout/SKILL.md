@@ -16,6 +16,9 @@ Update that case's single `case_insights.md` progressively after each coherent b
 Keep it a concise business recap, qualify provisional findings and label remaining questions in plain language.
 Do not call a progress snapshot final delivery.
 Bind the exact reviewed run and its claim ledger into the current insight publication.
+Build the cross-source VOC table first:
+`python3 scripts/evidence_scout/build_voc_table.py --evidence <evidence.jsonl> --synthesis <synthesis.json>
+--source-review <source-review.json> --out-dir <dir>`; pass its `voc-table.json` to the memo as `--voc-table`.
 Before publishing or updating case insights, run `python3 scripts/evidence_scout/build_decision_memo.py ...`
 (see repo-root `references/case-insights.md`, Decision memo) and carry its verdict, caps and riskiest-assumption test
 into Executive assessment and Recommended next decisions.

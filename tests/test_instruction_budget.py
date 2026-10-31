@@ -36,3 +36,11 @@ def test_rehomed_rules_present_in_destinations():
         if ignore_case:
             text, phrase = text.lower(), phrase.lower()
         assert phrase in text, f"{phrase!r} missing from {path.relative_to(ROOT)}"
+
+
+def test_restored_standing_rules_present():
+    text = _normalized(AGENTS.read_text(encoding="utf-8"))
+    for phrase in ("required_references", "precedent", "official statistics", "skill tool"):
+        assert phrase in text, f"{phrase!r} missing from AGENTS.md"
+    assert "research-data-and-precedents.md" in text
+    assert "opportunity-research-approaches.md" in text

@@ -5,6 +5,8 @@ description: Select business positioning and strategic trade-offs, or build stag
 
 # Archetype GTM Strategist
 
+Before positioning, channel, content, website or first-campaign work, read `references/handoffs.md`.
+
 ## Success Criteria
 - **Decision quality:** links reviewed need to a specific promise, feasible delivery and separately assessed defensibility; preserves scope, uncertainty and stage gates.
 - **Qualitative:** recommendations are grounded in the founder's evidence and constraints; archetype-specific patterns are applied; regional adaptations are explicit when geography differs.

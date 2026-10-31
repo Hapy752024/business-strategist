@@ -3,6 +3,10 @@
     {
       "reason": "research-query-calibration.md is mentioned by a linked file but is outside archetype-gtm-strategist's own stage; open it only when a task needs it",
       "target": "references/research-query-calibration.md"
+    },
+    {
+      "reason": "the first-campaign runbook belongs to the founder-invoked marketing-campaign-operator; references/handoffs.md names it so the agent can prepare action files and approval requests, not run it from this stage",
+      "target": ".agents/skills/marketing-campaign-operator/references/first-campaign-runbook.md"
     }
   ],
   "brand-designer": [

@@ -19,6 +19,7 @@
       "id": "idea-validation",
       "match": [
         "validate my idea",
+        "assess this business idea",
         "pressure test",
         "pressure-test",
         "this idea",
@@ -447,6 +448,8 @@
         "customer feedback about competitors",
         "competitor customer reviews",
         "customer needs from reviews",
+        "customers search for",
+        "customer search journey",
         "solution requirements from reviews"
       ],
       "skill": "evidence-scout",
@@ -628,6 +631,7 @@
         "SEO keywords",
         "keyword research",
         "keyword to page map",
+        "SEO content",
         "SEO page planning"
       ],
       "requires_pain_gate": true

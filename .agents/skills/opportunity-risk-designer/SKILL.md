@@ -17,6 +17,10 @@ A new deep dive makes downstream plan use pending until the selected insights ar
 For a registered Business case, maintain `cases/<id>/case_insights.md` as its one current reader-facing assessment.
 Publish coherent reviewed findings progressively, then consolidate material findings across research runs, deep dives and answered founder questions.
 Check source coverage, numeric context, freshness and conflicting conclusions before each publication; distinguish a current progress snapshot from final delivery.
+Build the cross-source VOC table first:
+`python3 scripts/evidence_scout/build_voc_table.py --evidence <evidence.jsonl> --synthesis <synthesis.json>
+--source-review <source-review.json> --out-dir <dir>`; pass its `voc-table.json` to the memo as `--voc-table`.
+Before final delivery, put material claims through the `claim-falsification` route (see Workflow).
 Before publishing or updating case insights, run `python3 scripts/evidence_scout/build_decision_memo.py ...`
 (see repo-root `references/case-insights.md`, Decision memo) and carry its verdict, caps and riskiest-assumption test
 into Executive assessment and Recommended next decisions.

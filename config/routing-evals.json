@@ -535,6 +535,46 @@
           "rationale": "Whether an engine names or cites the site is an answer observation owned by competitor-monitoring's AI-answer visibility capability."
         }
       ]
+    },
+    {
+      "pair": "capability entry points: idea assessment, SEO content, customer search journey",
+      "evals": [
+        {
+          "id": "route-entry-idea-assessment-1",
+          "prompt": "Assess this business idea and research customers",
+          "expected_output": "Routes to idea-grill first; once the hypothesis is researchable, evidence-scout is invoked next with the Skill tool for customer research, including the international commercial-precedent pass or a stated reason it does not apply.",
+          "expected_skill": "idea-grill",
+          "forbidden_skills": [
+            "startup-business-builder",
+            "archetype-gtm-strategist"
+          ],
+          "files": [],
+          "rationale": "An idea assessment with customer research is chosen-idea validation: idea-grill makes the hypothesis researchable, then evidence-scout collects."
+        },
+        {
+          "id": "route-entry-seo-content-1",
+          "prompt": "Plan our SEO content",
+          "expected_output": "Routes to marketing-strategy-builder (seo-page-planning), which merges the search-journey, competitor content, customer-question and social-topic inputs with keyword_map.py merge.",
+          "expected_skill": "marketing-strategy-builder",
+          "forbidden_skills": [
+            "brand-website-designer-builder",
+            "archetype-gtm-strategist"
+          ],
+          "files": [],
+          "rationale": "SEO content planning is keyword-to-page planning owned by marketing-strategy-builder; the website skill implements pages afterwards."
+        },
+        {
+          "id": "route-entry-search-journey-1",
+          "prompt": "What will customers search for?",
+          "expected_output": "Routes to evidence-scout for the customer search-journey SERP study (search_journey.py), producing content-opportunities.json as hypotheses.",
+          "expected_skill": "evidence-scout",
+          "forbidden_skills": [
+            "marketing-strategy-builder"
+          ],
+          "files": [],
+          "rationale": "What customers type at each journey stage is customer-evidence desk research owned by evidence-scout, before content planning."
+        }
+      ]
     }
   ]
 }

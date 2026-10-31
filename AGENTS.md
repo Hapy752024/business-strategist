@@ -2,7 +2,7 @@
 
 This repo contains a portable business-idea validation skill set for Claude Code.
 This file holds facts and standing rules for every session.
-Procedures live in the skill that owns them; load the selected skill, not the whole catalog.
+Procedures live in the skill that owns them; invoke the selected skill, not the whole catalog.
 
 ## Standing rules
 
@@ -34,6 +34,10 @@ Details: `references/operating-guide.md`.
 **Pain-first gate.**
 Business commitments (business model, offer and GTM) stay gated until `problem_validation` passes or an explicit override is recorded; `scripts/route_workflow.py` enforces it with `--project <slug>`.
 Gate details: `.agents/skills/business-strategist/SKILL.md` and `.claude/rules/business-gate.md`.
+
+**Research coverage.**
+For substantive chosen-idea validation, run a targeted international commercial-precedent pass or state why it does not apply (`references/opportunity-research-approaches.md`).
+For substantive Business research, use official statistics and studies for market, population and regulatory claims, or name them as unchecked (`references/research-data-and-precedents.md`).
 
 ## Workspace check: always first
 
@@ -78,6 +82,7 @@ python3 scripts/route_workflow.py --intent <intent> --task-scope <scope> --check
 ```
 
 Exit 2 means stop dispatch (blocked gate or invalid selection).
+Invoke repository skills with the Skill tool (not by reading SKILL.md), so the route hook can attach the route packet; then read the packet's `required_references`.
 Multi-mode specialists need their route ID (for example `case-appraisal`), not the bare skill name.
 Claude skill-tool and slash dispatch use the checked envelope; details in `references/runtime-routing.md`.
 
