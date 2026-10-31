@@ -70,3 +70,15 @@ Open: WF-033 Brave quota, WF-034 first Skill call without envelope (recurred in 
 Three single runs. The pre-plan tree scored 5/11 and the best deliverables; the branch scored 5/11 then 3/11, and its deliverables were graded lower. There is no evidence yet that the branch improves research outcomes. What it shows is better process control (routing, packets, commands) and a set of capabilities that the agent does not reach unprompted. Variance between runs is unmeasured, so the 5-versus-3 and the 36-versus-31 may partly be noise.
 
 The next run (at the current head, with the 4384169 fixes) should check: whether the agent produces a source review and claim ledger before the business case; whether the entity-led frame covers at least three entities; whether the main agent can extract PDF statistics; and whether the first Skill call carries the envelope. Run at least two per arm and grade the verify deliverables blind before drawing any conclusion.
+
+## 7. Addendum: loosened workflow run (ref f8fe94d, Task 8)
+
+After the founder judged the setup too strict, Task 8 made four desk steps (search journey, competitor content inventory, keyword volumes, social topics) default early steps, added labelled fallbacks (unreviewed VOC table, draft-claims challenge and memo), and kept one hard rule: no final recommendation without a current claim challenge.
+
+Run `evals/acceptance/runs/loosened-2026-10-31/`: 2/11 strict (cp02, cp09); cp03 and cp11 not exercised; 4/11 on a lenient reading (cp06 sources named without URLs, cp08 draft challenge and memo exist). Model 4.69 USD, provider 0.09 USD, 887 s.
+
+- Ran: keyword volumes (after the gate override, before GTM), draft-claims memo with its label, the claim-falsifier agent, a broad competitor map (about 17 entities), the strongest regulatory analysis of any run (court rulings, §34d adviser licence) and the first real statistics.
+- Did not run: the search-journey study, the VOC table and social topics (skipped without stated reason); the competitor content inventory (the agent told its own subagent not to write files); `apply_falsification.py` (verdicts copied by hand, memo built before the challenge so it still says "not run"); no international precedent pass. Customer voice was the thinnest of all runs (topic-led only).
+- Harness fault found: the feeder answered the agent's licence question with the gate-override answer (cue matched anywhere in the message), so intake was not exercised. Fix pending.
+
+Conclusion unchanged: making steps default in the instructions is not enough; the agent still skips steps nothing checks. n=1.
