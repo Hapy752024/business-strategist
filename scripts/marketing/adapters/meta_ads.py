@@ -15,7 +15,7 @@ ALLOWED = {"ad_account_id", "name", "objective", "special_ad_categories", "spend
            "lifetime_budget", "status", "buying_type", "bid_strategy"}
 
 
-def validate(request: dict, approval: dict) -> list[str]:
+def validate(request: dict, approval: dict, now=None) -> list[str]:
     errors = []
     for field in ("ad_account_id", "name", "objective"):
         if not str(request.get(field) or "").strip():

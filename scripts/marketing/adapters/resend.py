@@ -8,7 +8,7 @@ POST /broadcasts/{id}/send. Resend renamed audiences to segments; ``audience_id`
 """
 from __future__ import annotations
 
-from . import first_id, require_secret
+from . import AdapterError, first_id, require_secret
 
 REQUIRES_ENV = ("RESEND_API_KEY",)
 API = "https://api.resend.com"
@@ -18,7 +18,7 @@ def _test_send(request: dict) -> bool:
     return request.get("test_send", True) is not False
 
 
-def validate(request: dict, approval: dict) -> list[str]:
+def validate(request: dict, approval: dict, now=None) -> list[str]:
     errors = [f"resend broadcast requires {f}" for f in ("audience_id", "from", "subject", "html")
               if not str(request.get(f) or "").strip()]
     if "test_send" in request and not isinstance(request["test_send"], bool):
@@ -52,6 +52,10 @@ def run(request: dict, approval: dict, *, http, secret) -> dict:
     created = http("POST", steps[0]["url"], headers, steps[0]["body"])
     broadcast_id = first_id(created, "id")
     if not broadcast_id:
-        return {"status": "broadcast_create_failed", "provider_ids": {}}
-    http("POST", f"{API}/broadcasts/{broadcast_id}/send", headers, {})
+        raise AdapterError("resend broadcast creation returned no id; nothing was sent")
+    try:
+        http("POST", f"{API}/broadcasts/{broadcast_id}/send", headers, {})
+    except Exception as exc:  # the draft exists; keep its id in the receipt
+        raise AdapterError(f"resend send failed after draft broadcast creation ({type(exc).__name__})",
+                           provider_ids={"draft_broadcast_id": broadcast_id}, uncertain=True) from None
     return {"status": "broadcast_sent", "provider_ids": {"broadcast_id": broadcast_id}}

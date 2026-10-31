@@ -13,7 +13,15 @@ import urllib.request
 
 
 class AdapterError(RuntimeError):
-    """A provider refused or failed the request; the message never contains credentials."""
+    """A provider refused or failed the request; the message never contains credentials.
+
+    ``uncertain`` marks failures after a provider may already have acted; ``provider_ids`` keeps ids created so far.
+    """
+
+    def __init__(self, message: str, *, provider_ids: dict | None = None, uncertain: bool = False):
+        super().__init__(message)
+        self.provider_ids = provider_ids or {}
+        self.uncertain = uncertain
 
 
 def require_secret(secret, name: str) -> str:

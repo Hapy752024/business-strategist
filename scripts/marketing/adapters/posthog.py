@@ -12,7 +12,7 @@ REQUIRES_ENV = ("POSTHOG_HOST", "POSTHOG_PERSONAL_API_KEY", "POSTHOG_PROJECT_ID"
 ALLOWED = {"name", "description", "feature_flag_key", "parameters", "filters", "metrics", "metrics_secondary"}
 
 
-def validate(request: dict, approval: dict) -> list[str]:
+def validate(request: dict, approval: dict, now=None) -> list[str]:
     errors = [f"posthog experiment requires {f}" for f in ("name", "feature_flag_key")
               if not str(request.get(f) or "").strip()]
     if request.get("start_date") or request.get("launch"):

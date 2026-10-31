@@ -6,17 +6,25 @@ base URL is https://api.postiz.com; self-hosted instances use their own public A
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from . import first_id, require_secret
 
 REQUIRES_ENV = ("POSTIZ_BASE_URL", "POSTIZ_API_KEY")
 
 
-def validate(request: dict, approval: dict) -> list[str]:
+def validate(request: dict, approval: dict, now=None) -> list[str]:
     errors = []
     if request.get("type", "schedule") != "schedule":
         errors.append("postiz adapter only schedules posts (type must be 'schedule')")
-    if not str(request.get("date") or "").strip():
-        errors.append("postiz post requires a scheduled date")
+    try:
+        when = datetime.fromisoformat(str(request.get("date") or "").replace("Z", "+00:00"))
+    except ValueError:
+        when = None
+    if when is None or when.tzinfo is None:
+        errors.append("postiz post requires a scheduled ISO 8601 date with timezone")
+    elif when <= (now or datetime.now(timezone.utc)):
+        errors.append("postiz scheduled date must be in the future")
     posts = request.get("posts")
     if not isinstance(posts, list) or not posts:
         errors.append("postiz post requires at least one channel entry in posts")
