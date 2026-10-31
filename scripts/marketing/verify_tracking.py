@@ -119,7 +119,8 @@ def _posthog_live(plan_events, days):
     reason = 'posthog_limit' if len(results) >= POSTHOG_LIMIT else None  # exactly LIMIT rows may be a truncated list
     for e in plan_events:
         if e['name'] not in out or not e['required_properties']: continue
-        assert all(NAME_PROP.fullmatch(p) for p in e['required_properties']) and NAME.fullmatch(e['name']), 'unsafe name in HogQL'
+        if not (all(NAME_PROP.fullmatch(p) for p in e['required_properties']) and NAME.fullmatch(e['name'])):
+            raise ValueError('unsafe name in HogQL')  # a real check, not an assert: python -O strips asserts
         cols = ', '.join(f"countIf(isNotNull(properties.{p}))" for p in e['required_properties'])  # names validated by schema regex
         name = e['name'].replace("'", "''")
         rows = q(f"SELECT {cols} FROM events WHERE event = '{name}' AND timestamp > now() - INTERVAL {int(days)} DAY")

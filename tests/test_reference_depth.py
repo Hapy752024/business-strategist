@@ -43,3 +43,9 @@ def test_reference_depth_le_one():
             failures[skill_dir.name] = sorted(names)
     report = '\n'.join(f'{k}:\n  ' + '\n  '.join(v) for k, v in failures.items())
     assert not failures, f'{sum(map(len, failures.values()))} depth-2 references:\n{report}'
+
+
+def test_exception_reasons_do_not_call_a_skills_own_reference_outside_its_stage():
+    false = [(skill, e['target']) for skill, entries in EXCEPTIONS.items() for e in entries
+             if e['target'].startswith(f'.agents/skills/{skill}/') and 'outside' in e.get('reason', '')]
+    assert false == [], f'own-skill references described as outside the stage: {false}'

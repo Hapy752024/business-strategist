@@ -44,3 +44,11 @@ def test_restored_standing_rules_present():
         assert phrase in text, f"{phrase!r} missing from AGENTS.md"
     assert "research-data-and-precedents.md" in text
     assert "opportunity-research-approaches.md" in text
+
+
+def test_pain_first_gate_sentence_shared_across_its_three_homes():
+    """The gate is stated in AGENTS.md, the router skill and the path rule; one shared sentence prevents drift."""
+    phrase = _normalized("Business commitments (business model, offer and GTM) stay gated until `problem_validation` "
+                         "passes or an explicit override is recorded")
+    for path in (AGENTS, ROOT / ".agents/skills/business-strategist/SKILL.md", ROOT / ".claude/rules/business-gate.md"):
+        assert phrase in _normalized(path.read_text(encoding="utf-8")), path.relative_to(ROOT)

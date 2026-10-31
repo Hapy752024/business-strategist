@@ -34,7 +34,7 @@ POINTERS = {
 }
 
 
-ONE_HOP = {"archetype-gtm-strategist", "marketing-strategy-builder", "brand-website-designer-builder"}
+ONE_HOP = {"archetype-gtm-strategist"}
 
 
 def skill_text(name: str) -> str:

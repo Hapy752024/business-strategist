@@ -20,6 +20,7 @@ For chosen-idea or strategic continuation work, apply repo-root `references/rese
 For interview recruitment or strategic acquisition planning, apply repo-root `references/interview-recruitment.md` (shared repository dependency), including a researched zero-network route and a separate learning funnel.
 
 For keyword research, SEO content planning, the `seo-page-planning` route and public-resource briefs read [keyword research](references/keyword-research.md). Use earned-media-builder for selected external opportunity work.
+Stage tools: `scripts/evidence_scout/search_journey.py` (search journey), `scripts/marketing/keyword_map.py merge` (content inputs), `python3 -m scripts.brand.site_gate` (page launch gate) and `scripts/marketing/verify_tracking.py` (tracking before launch spend).
 For selected multi-step work, read repo-root `references/marketing-execution.md`; prepare the agent work, exact owner/platform handoffs and observable completion checks.
 
 For funnel, growth-tool or campaign design, read repo-root `references/journey-activation-and-measurement.md`. Carry sourced placement hooks into an explicit sales path and event contract. Use `references/ad-platform-connections.md` for selected Meta/Google/TikTok setup and monitoring; these shared dependencies do not authorize connections or spend.

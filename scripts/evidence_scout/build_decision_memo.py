@@ -518,6 +518,7 @@ def main(argv: list[str] | None = None) -> int:
     load = lambda path: json.loads(path.read_text(encoding="utf-8")) if path else None
     try:
         claims = load_claims(a.ledger, a.falsified) if a.ledger else {"claims": [], "quarantined": [], "warnings": []}
+        a.override_by, a.override_reason = (a.override_by or "").strip(), (a.override_reason or "").strip()
         if a.override_gate and not (a.override_by and a.override_reason):
             raise ValueError("--override-gate needs --override-by and --override-reason")
         gate = gate_from_project(a.project, a.case) if a.project else None

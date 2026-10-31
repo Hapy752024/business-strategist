@@ -187,7 +187,7 @@
   ],
   "social-digital-marketing-planner": [
     {
-      "reason": "social-digital-marketing-research.md is mentioned by a linked file but is outside social-digital-marketing-planner's own stage; open it only when a task needs it",
+      "reason": "social-digital-marketing-research.md is social-digital-marketing-planner's own research reference, listed by its references/workflow.md; it loads at that workflow's research step, not from SKILL.md directly",
       "target": ".agents/skills/social-digital-marketing-planner/references/social-digital-marketing-research.md"
     },
     {

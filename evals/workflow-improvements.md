@@ -24,7 +24,7 @@ Single shared record for failures, problems and improvement candidates across th
 - Expected behavior and impact: Those two skills may not be selected from natural requests when routing relies on descriptions alone. The sandbox skips CLAUDE.md and the route hook, so this measures description triggering only.
 - Cause: Unverified; prompts may echo description wording, which would inflate other cases rather than explain these misses.
 - Next action: Rewrite the two descriptions and rerun the suite; do not lower the gate.
-- Resolution/history: 2026-10-31 logged; no fix attempted.
+- Resolution/history: 2026-10-31 logged; no fix attempted. 2026-10-31 final review asked to fix or mark non-blocking: left open without description changes, because a rewrite cannot be verified without a live suite run. The suite is on-demand (`scripts/run_plugin_evals.sh`); its 0.8 threshold is not part of `scripts/evaluate.py check`, and CI runs it only on manual `workflow_dispatch` (billed), so it does not gate pushes or merges.
 
 ### WF-044 — Background-subagent re-wake roughly doubled model cost
 

@@ -21,6 +21,7 @@ Licensed stock may inspire AI imagery when the planned use is permitted.
 - Use approved assets; paid FAL needs an approved concrete need.
 Branding owns favicon production through brand-asset-producer; website integrates the handoff.
 - New build/release: apply [launch contract](references/launch-contract.md), [SEO/performance](references/seo-performance.md), [EU consent](references/consent-eu.md), [testing](references/testing.md).
+Launch gate: `python3 -m scripts.brand.site_gate` on the served build, and `scripts/marketing/verify_tracking.py` before paid launch (workflow steps 9, 9a).
 - For forms, wizards, accounts, embeds, analytics or changes to personal-data use, apply [privacy by design](references/privacy-design.md) before implementation.
 Minimize collection and use layered, timely information; distinguish notices from consent and test actual data handling.
 - For sites with external resources, apply [external-link maintenance](references/external-link-maintenance.md): derive the inventory from published content, retain referring pages, classify uncertain checks and automatically create or update GitHub Actions CI with a weekly schedule and manual trigger.

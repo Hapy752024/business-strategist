@@ -230,3 +230,12 @@ def test_against_claim_counts_only_when_verified_supported():
     result = memo.build(ledger=ledger, factor_claims=factor_claims, economics=economics, evidence=EVIDENCE)
     assert result["factors"]["competition"]["score"] is None
     assert "c1" in result["factors"]["competition"]["ignored"]
+
+
+def test_cli_rejects_whitespace_only_override_fields(tmp_path):
+    for by, reason in (("founder", "   "), ("  ", "accepts pain risk")):
+        proc = subprocess.run([sys.executable, str(SCRIPT), "--override-gate", "--override-by", by,
+                               "--override-reason", reason, "--out", str(tmp_path / "memo")],
+                              capture_output=True, text=True)
+        assert proc.returncode != 0 and "--override-reason" in proc.stderr, (by, reason, proc.stderr)
+        assert not (tmp_path / "memo" / "scores.json").exists()

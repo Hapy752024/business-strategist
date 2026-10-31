@@ -29,7 +29,9 @@
           "outcome": {"type": "string", "minLength": 1},
           "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
           "perspectives": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["customer", "former_customer", "prospective_user", "nonadopter"]}},
-          "attribution": {"enum": ["customer_stated", "analyst_inferred", "unknown"]}
+          "attribution": {"enum": ["customer_stated", "analyst_inferred", "unknown"]},
+          "counter_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}, "description": "Evidence ids that contradict this item; each counter source lowers VOC-table confidence until resolved."},
+          "counter_evidence_resolution": {"type": "string", "minLength": 1, "description": "Why the counter evidence does not overturn this item (for example, the author is outside the segment); required for high confidence when counter evidence exists."}
         }
       }
     },
@@ -47,7 +49,9 @@
           "perspectives": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["customer", "former_customer", "prospective_user", "nonadopter"]}},
           "linked_u_ids": {"type": "array", "items": {"type": "string", "pattern": "^U[0-9]+$"}},
           "operational_root_unknown": {"type": "boolean"},
-          "attribution": {"enum": ["customer_stated", "analyst_inferred", "unknown"]}
+          "attribution": {"enum": ["customer_stated", "analyst_inferred", "unknown"]},
+          "counter_evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}, "description": "Evidence ids that contradict this item; each counter source lowers VOC-table confidence until resolved."},
+          "counter_evidence_resolution": {"type": "string", "minLength": 1, "description": "Why the counter evidence does not overturn this item (for example, the author is outside the segment); required for high confidence when counter evidence exists."}
         },
         "anyOf": [
           {"properties": {"linked_u_ids": {"minItems": 1}}},

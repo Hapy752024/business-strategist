@@ -127,3 +127,28 @@ class VocTable(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SchemaDeclaresCounterEvidence(unittest.TestCase):
+    """Synthesis authors write from the schema; an undeclared resolution field meant counters never resolved."""
+
+    def setUp(self):
+        root = Path(__file__).resolve().parents[2]
+        self.schema = json.loads((root / "schemas/customer-voc-synthesis.schema.json").read_text(encoding="utf-8"))
+
+    def test_needs_and_requirements_declare_counter_fields(self):
+        for key in ("customer_needs", "solution_requirements"):
+            props = self.schema["properties"][key]["items"]["properties"]
+            self.assertIn("counter_evidence_ids", props, key)
+            self.assertIn("counter_evidence_resolution", props, key)
+
+    def test_resolution_must_be_nonempty_text(self):
+        from jsonschema import Draft202012Validator
+        doc = {"topic_led_evidence_ids": ["a"], "entity_led_evidence_ids": [], "solution_requirements": [],
+               "customer_needs": [{"id": "U1", "outcome": "o", "evidence_ids": ["a"], "perspectives": ["customer"],
+                                   "attribution": "customer_stated", "counter_evidence_ids": ["c"],
+                                   "counter_evidence_resolution": ""}]}
+        validator = Draft202012Validator(self.schema)
+        self.assertTrue(list(validator.iter_errors(doc)))
+        doc["customer_needs"][0]["counter_evidence_resolution"] = "counter author is outside the segment"
+        self.assertEqual(list(validator.iter_errors(doc)), [])

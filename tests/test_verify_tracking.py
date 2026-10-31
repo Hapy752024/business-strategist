@@ -166,3 +166,19 @@ def test_export_property_reason_is_explicit(tmp_path):
     p = plan(tmp_path, event("generate_lead", required_properties=["form_id"]))
     out = vt.verify(p, "ga4", export=export(tmp_path, ["generate_lead,5"]), metadata=META)
     assert any("properties cannot be confirmed from an export: verify live or drop the property requirement" in r for r in out["reasons"])
+
+
+def test_unsafe_hogql_name_raises_value_error_not_assert(monkeypatch):
+    """The HogQL safety check must survive python -O, so it is a ValueError, not an assert."""
+    import pytest
+    queries = []
+
+    def query(host, project, key, sql):
+        queries.append(sql)
+        return {"results": [["signup", 3]]}
+    monkeypatch.setattr(vt, "_posthog_query", query)
+    monkeypatch.setattr(vt, "posthog_settings", lambda: ("k", "1", "https://posthog.example"))
+    bad = event("signup", required_properties=["plan) OR 1=1 --"])
+    with pytest.raises(ValueError, match="unsafe name in HogQL"):
+        vt._posthog_live([bad], 7)
+    assert len(queries) == 1  # the unsafe property query was never sent

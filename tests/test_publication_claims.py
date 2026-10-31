@@ -218,3 +218,19 @@ def test_claim_unaffected_by_falsification_publishes(tmp_path):
     _falsify(pack, set())
     rendered = render(root, {'case_insights.md': 'Wait {{evidence_claim.wait_source}}.'}, [ref], bindings)['case_insights.md']
     assert '[Source: e1](https://example.org/review/1)' in rendered
+
+
+def test_deleted_falsified_ledger_after_recorded_falsification_is_refused(tmp_path):
+    """Deleting claim-ledger.falsified.json must not silently disable quarantine once a falsification ran."""
+    root, pack, bindings, ref = reviewed_claim(tmp_path)
+    _falsify(pack, {'wait'})
+    (pack / 'falsification-report.json').write_text(json.dumps({'schema_version': 1, 'counts': {'falsified': 1}}))
+    (pack / 'claim-ledger.falsified.json').unlink()
+    with pytest.raises(ValueError, match='falsification-report.json exists but claim-ledger.falsified.json is missing'):
+        render(root, {'case_insights.md': 'Wait {{evidence_claim.wait_source}}.'}, [ref], bindings)
+
+
+def test_no_falsification_run_still_publishes(tmp_path):
+    root, pack, bindings, ref = reviewed_claim(tmp_path)
+    rendered = render(root, {'case_insights.md': 'Wait {{evidence_claim.wait_source}}.'}, [ref], bindings)['case_insights.md']
+    assert '[Source: e1]' in rendered

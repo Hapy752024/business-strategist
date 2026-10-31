@@ -156,8 +156,9 @@ class HydrateTests(unittest.TestCase):
         self.assertIsNone(error)
         data = json.loads((Path(collect.ROOT) / "config" / "source-capabilities.json").read_text())
         end = next(c for c in data["capabilities"] if c["id"] == "reddit")["sunset"]["public_api_end"]
-        from datetime import date
-        self.assertEqual(reached, date.today() >= date.fromisoformat(end))
+        from datetime import date, datetime, timezone
+        # The production check uses the UTC date; comparing against local date.today() flakes near midnight.
+        self.assertEqual(reached, datetime.now(timezone.utc).date() >= date.fromisoformat(end))
 
     def test_sunset_check_failure_is_visible_and_fails_open(self) -> None:
         rget = mock.Mock(return_value={"ok": True, "status_code": 200, "body": reddit_listing("syn001")})

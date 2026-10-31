@@ -319,3 +319,19 @@ def test_timeouts_are_recorded_and_report_written(tmp_path, serve, monkeypatch):
         assert checks[check]['status'] in {'fail', 'tool_unavailable'}, checks[check]
     assert 'timed out' in json.dumps(checks['axe'])
     assert json.loads((tmp_path / 'out/site-gate.json').read_text())['verdict'] == 'fail'
+
+
+@pytest.mark.parametrize('broken', ['collect', '_fetch'])
+def test_seo_or_llms_probe_crash_is_a_reported_fail(tmp_path, serve, monkeypatch, broken):
+    """A crash in check_seo/check_llms_txt must still write site-gate.json with a failing check."""
+    base = serve(FIXTURE)
+
+    def boom(*args, **kwargs):
+        raise RuntimeError('probe exploded')
+    monkeypatch.setattr(site_gate.probe, broken, boom)
+    result = site_gate.run_gate(base, canonical_origin=CANONICAL, out_dir=tmp_path / 'out', runners=GREEN)
+    crashed = 'seo_signals' if broken == 'collect' else 'llms_txt'
+    check = by_id(result)[crashed]
+    assert check['status'] == 'fail' and 'crashed' in check['details']['message'], check
+    assert result['verdict'] == 'fail' and crashed in result['blocking']
+    assert json.loads((tmp_path / 'out/site-gate.json').read_text())['verdict'] == 'fail'

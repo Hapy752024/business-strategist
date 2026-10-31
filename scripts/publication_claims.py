@@ -170,6 +170,11 @@ def _check_falsification(ident: str, ledger_path: Path, claim_id: str) -> None:
     """Enforce quarantine recorded by apply_falsification.py in the reviewed ledger's sibling."""
     path = ledger_path.parent / 'claim-ledger.falsified.json'
     if not path.exists():
+        # apply_falsification.py writes the report and the quarantine ledger together; a report without its ledger
+        # means the quarantine was removed after a falsification ran, so enforcement cannot be skipped silently.
+        if (ledger_path.parent / 'falsification-report.json').exists():
+            raise ValueError(ident + ': falsification-report.json exists but claim-ledger.falsified.json is missing; '
+                             're-run apply_falsification.py instead of deleting its quarantine ledger')
         return
     try:
         result = json.loads(path.read_text(encoding='utf-8'))

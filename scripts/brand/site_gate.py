@@ -270,9 +270,15 @@ def run_gate(base: str, *, out_dir: Path, canonical_origin: str | None = None, s
     out_dir.mkdir(parents=True, exist_ok=True)
     results: dict[str, dict] = {}
 
-    seo, paths = check_seo(base, canonical, out_dir)
+    try:  # crashed steps are recorded failures, so site-gate.json is always written
+        seo, paths = check_seo(base, canonical, out_dir)
+    except Exception as exc:
+        seo, paths = _check('seo_signals', 'fail', {'message': f'SEO probe step crashed: {exc!r}'}), []
     results['seo_signals'] = seo
-    results['llms_txt'] = check_llms_txt(base)
+    try:
+        results['llms_txt'] = check_llms_txt(base)
+    except Exception as exc:
+        results['llms_txt'] = _check('llms_txt', 'fail', {'message': f'llms.txt step crashed: {exc!r}'})
     coverage = [] if paths else [NO_SITEMAP_LIMIT]
     paths = paths or ['/']
     urls = [base + p for p in paths]
