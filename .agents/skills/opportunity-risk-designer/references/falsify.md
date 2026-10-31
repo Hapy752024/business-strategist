@@ -4,7 +4,8 @@ Checked route: `claim-falsification`. A fresh agent with no access to the findin
 
 ## When to run
 
-- After synthesis has produced a reviewed `claim-ledger.json`, and before final case delivery (v2 `case_insights.md` final review, appraisal or case plan).
+- Before any final recommendation: final case delivery (v2 `case_insights.md` final review, appraisal or case plan) or a decision memo built with `--final`. The delivery check (`validate_research_completion.py --check delivery`) and `build_decision_memo.py --final` refuse without a falsification output of either basis.
+- Use the reviewed `claim-ledger.json` when it exists. Otherwise use the draft basis below; never skip the challenge.
 - On material claims only: claims with a non-empty `decision_affected`, or `claim_type`/`claim_scope_type` in `willingness_to_pay`, `prevalence`, `unmetness`, `pattern` or `transfer` (demand, willingness to pay and transfer claims). Competition and regulation claims count as material when you record them through `decision_affected`.
 - Rerun after a deep dive changes a material claim. Do not run it on progress snapshots that nobody will act on yet.
 
@@ -18,6 +19,16 @@ Checked route: `claim-falsification`. A fresh agent with no access to the findin
    Verdicts for claim ids outside the exported set are rejected. A survived rationale must give N equal to the number of searches run.
    The reviewed `claim-ledger.json` is never rewritten. Outputs are written beside it: `claim-ledger.falsified.json` (publishable `claims` plus `quarantined` claims with reasons), `falsification-report.json` and `falsification-report.md`.
 4. If the agent's verdicts are rejected, return the error list to a new falsifier run. Never hand-edit verdicts so they pass.
+
+## Draft basis (no reviewed ledger)
+
+1. Extract the material claims from your draft business case or case insights into `draft-claims.json`: a list of `{"claim_id", "text", "section", "sources": [...]}` (optional `confidence`, `decision_affected`), schema `schemas/draft-claims.schema.json`.
+2. Export: `python3 scripts/evidence_scout/export_claims_for_falsification.py --draft-claims <dir>/draft-claims.json --output <dir>/falsification-claims.draft.json`. Sources are not exported.
+3. Run the `claim-falsifier` exactly as in step 2 above, saving `<dir>/falsification-verdicts.draft.json`.
+4. Apply: `python3 scripts/evidence_scout/apply_falsification.py --draft-claims <dir>/draft-claims.json --verdicts <dir>/falsification-verdicts.draft.json --claims <dir>/falsification-claims.draft.json`. Outputs `draft-claims.falsified.json` and `draft-falsification-report.json/.md`, all `basis: "draft"`; the report opens with "Basis: draft claims, not ledger-bound".
+5. Build the memo with `build_decision_memo.py --draft-claims <dir>/draft-claims.json`; it lists draft claims with their challenge status and never scores them.
+
+Same verdict effects as below; a draft output never upgrades a claim and never makes it ledger-bound. In the case text, drop quarantined draft claims, qualify weakened ones, and say the challenge ran on draft claims. Rerun on the reviewed ledger once it exists.
 
 ## Effects
 

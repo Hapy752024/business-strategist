@@ -20,7 +20,10 @@ Check source coverage, numeric context, freshness and conflicting conclusions be
 Build the cross-source VOC table first:
 `python3 scripts/evidence_scout/build_voc_table.py --evidence <evidence.jsonl> --synthesis <synthesis.json>
 --source-review <source-review.json> --out-dir <dir>`; pass its `voc-table.json` to the memo as `--voc-table`.
-Before final delivery, put material claims through the `claim-falsification` route (see Workflow).
+Without review/synthesis, run it with `--evidence` only and keep its `Unreviewed` label.
+Before final delivery, put material claims through the `claim-falsification` route (see Workflow);
+no final recommendation without it. Without a reviewed ledger, challenge draft claims (`basis: draft`).
+Use reviewed inputs when they exist, otherwise the labelled fallback; never skip a step.
 Before publishing or updating case insights, run `python3 scripts/evidence_scout/build_decision_memo.py ...`
 (see repo-root `references/case-insights.md`, Decision memo) and carry its verdict, caps and riskiest-assumption test
 into Executive assessment and Recommended next decisions.
@@ -47,7 +50,7 @@ State when VC fit is immaterial for a smaller business.
 ## Workflow
 
 For the checked `case-appraisal` route, read repo-root `references/case-assessment.md` and use its bounded appraisal/publication mode. Under the contract above, cover all nine decision sections, direct reviewed-source links, conditional economics and missing inputs. Prepare the exact bundle and obtain separate review before final v2 publication. Progress may publish while research continues. A passed pain gate or selection is not required; do not advance commitment stages.
-For the checked `claim-falsification` route, follow `references/falsify.md` before final case delivery: export claims only, run the `claim-falsifier` agent, then apply its verdicts to a copy of the ledger.
+For the checked `claim-falsification` route, follow `references/falsify.md` before final case delivery: export claims only, run the `claim-falsifier` agent, then apply its verdicts to a copy of the ledger, or of the draft claims when no reviewed ledger exists.
 For the checked `case-insights` route, consolidate the registered case's reviewed findings, deep dives and answered questions into `case_insights.md` (see top). Use the full inventory, numeric and freshness checks, then record a semantic contradiction review before publishing. This mode does not run the full risk workflow or change stage gates.
 
 1. Read `references/workflow.md` completely.

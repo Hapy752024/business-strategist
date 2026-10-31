@@ -96,6 +96,8 @@ When content or SEO planning needs to know which topics, questions, formats and 
 python3 scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory --landscape "<run>/entity-landscape.json" --clusters "<content-opportunities.json>" --out "<dir>" --max-pages 25
 ```
 
+Early, before a landscape or search study exists, run it on `competitors.json` with `--include-unverified` and without `--clusters`: unverified candidates are listed under `unverified_inventory` only and never count as coverage; rerun with clusters later.
+
 It discovers URLs with Firecrawl map (fallback sitemap.xml), checks robots.txt before scraping, skips legal, careers, login/account and cart pages, and writes `competitor-content.json` (input to `keyword_map.py merge`) and `competitor-content.md`. Cost: one map plus up to `--max-pages` scrape credits per site. Rules:
 
 - Supplier content shows what suppliers publish, not what customers need.

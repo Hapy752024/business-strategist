@@ -25,7 +25,7 @@ Paths use `<mkt>` for the project's Marketing root. Run commands from the repo r
 - Blocked by: unreviewed or contradicted evidence; unsupported claims are removed, not softened.
 
 ## 3. Content inputs and keyword map (agent, founder reviews)
-- Run, as inputs exist: `python3 scripts/evidence_scout/search_journey.py --plan <plan> --run-dir <dir>`; `python3 scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory ...`; `python3 scripts/marketing/social_topics.py --records <evidence> --out <dir>`; optional demand proxy `python3 scripts/marketing/keyword_volume.py --map <keyword-map.json> --location-code N --language-code xx --dry-run` (shows cost first).
+- Reuse the evidence-scout early desk-step outputs; run any that are missing (never skip): `python3 scripts/evidence_scout/search_journey.py --plan <plan> --run-dir <dir>`; `python3 scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory ...`; `python3 scripts/marketing/social_topics.py --records <evidence> --out <dir>`; optional demand proxy `python3 scripts/marketing/keyword_volume.py --map <keyword-map.json> --location-code N --language-code xx --dry-run` (shows cost first).
 - Then `python3 scripts/marketing/keyword_map.py <map.json> --base <dir>` and apply the seo-rule-pack reference.
 - Done when: the map validates, each target page has one intent, and the founder accepted or rejected each proposal. Volumes are a demand proxy, not pain; null stays unknown.
 

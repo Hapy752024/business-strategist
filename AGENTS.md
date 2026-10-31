@@ -35,8 +35,13 @@ Details: `references/operating-guide.md`.
 Business commitments (business model, offer and GTM) stay gated until `problem_validation` passes or an explicit override is recorded; `scripts/route_workflow.py` enforces it with `--project <slug>`.
 Gate details: `.agents/skills/business-strategist/SKILL.md` and `.claude/rules/business-gate.md`.
 
+**No final recommendation without a claim challenge.**
+Final case delivery, a final decision memo or final case insights need a falsification output (reviewed-ledger or draft basis); progress snapshots do not.
+
 **Research coverage.**
 For substantive chosen-idea validation, run a targeted international commercial-precedent pass or state why it does not apply (`references/opportunity-research-approaches.md`).
+Once the idea/segment is clear, run the evidence-scout early desk steps (search journey, competitor content, keyword volumes, social topics) in parallel with customer voice; they wait for no review, ledger or gate.
+Dependent steps (VOC table, claim challenge, decision memo) use reviewed inputs when they exist, otherwise their labelled fallback; never skip them.
 For substantive Business research, use official statistics and studies for market, population and regulatory claims, or name them as unchecked (`references/research-data-and-precedents.md`).
 
 ## Workspace check: always first

@@ -104,7 +104,7 @@ Single shared record for failures, problems and improvement candidates across th
 - Expected behavior and impact: The branch ships capabilities with passing unit tests and no live evidence they change research outcomes. The 7.3 blind grade preferred the baseline.
 - Cause: Observed: prerequisites not produced. Hypothesis: the agent takes the shortest path to the five requested deliverables.
 - Next action: Next live run: check whether the agent creates a source review and claim ledger before the business case, and whether the router or skill gates downstream writing on them.
-- Resolution/history: 2026-10-31 opened. No closure; deterministic tests do not count.
+- Resolution/history: 2026-10-31 opened. No closure; deterministic tests do not count. 2026-10-31 (Task 8, founder judged the setup too strict): search journey, competitor content (`--include-unverified`, clusters optional), keyword volumes and social topics are now default early parallel desk steps in evidence-scout; `build_voc_table.py` falls back to an `unreviewed` table, falsification and the decision memo accept `--draft-claims` (`basis: draft`), and the claim-ledger consume is optional for the falsification/appraisal modes. One hard rule kept: final delivery (`validate_research_completion.py --check delivery`) and `build_decision_memo.py --final` refuse without a claim challenge of either basis. cp08 accepts a draft-basis challenge. Status stays open until a live run shows the steps executing.
 
 ### WF-036 — Large MCP search results exceed the Read token limit
 

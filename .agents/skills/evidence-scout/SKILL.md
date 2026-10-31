@@ -19,14 +19,33 @@ Bind the exact reviewed run and its claim ledger into the current insight public
 Build the cross-source VOC table first:
 `python3 scripts/evidence_scout/build_voc_table.py --evidence <evidence.jsonl> --synthesis <synthesis.json>
 --source-review <source-review.json> --out-dir <dir>`; pass its `voc-table.json` to the memo as `--voc-table`.
+Without a source review or synthesis, run it with `--evidence` only: the table is labelled `Unreviewed`; keep that label.
 Before publishing or updating case insights, run `python3 scripts/evidence_scout/build_decision_memo.py ...`
-(see repo-root `references/case-insights.md`, Decision memo) and carry its verdict, caps and riskiest-assumption test
-into Executive assessment and Recommended next decisions.
+(`--ledger` when reviewed, else `--draft-claims`; see repo-root `references/case-insights.md`, Decision memo)
+and carry its verdict, caps and riskiest-assumption test into Executive assessment and Recommended next decisions.
+Use reviewed inputs when they exist, otherwise the labelled fallback; never skip the step.
+Final delivery needs a claim challenge of either basis (`.agents/skills/opportunity-risk-designer/references/falsify.md`).
 Render material VOC claims with direct original-source markers under repo-root `references/case-insights.md`;
 preserve source limitations and private-source references.
 Completed delivery also requires a separate review of the exact final document and consumed inputs.
 Resume unfinished source capture, review, synthesis or publication before describing a case as fully rerun.
 Valid empty research can end as insufficient evidence; inaccessible sources remain explicit gaps.
+
+**Early parallel desk steps (default).**
+Once idea-grill is done or skipped, run these in parallel with customer-voice collection.
+None waits for review, synthesis, a claim ledger, the pain-first gate or a GTM stage:
+1. Search journey: brainstorm customer searches at >=4 stages (inform, compare, buy, after-purchase)
+   in the market's language, write the plan (method below), then run
+   `python3 scripts/evidence_scout/search_journey.py --plan <plan> --providers serpapi --run-dir <run> --max-searches <n>`.
+2. Competitor content: `python3 scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory
+   --landscape <competitors.json> --include-unverified [--clusters <content-opportunities.json>] --out <dir>`
+   on >=3 competitors found so far; state fewer as a gap.
+3. Keyword volumes: `python3 scripts/marketing/keyword_volume.py --keyword <phrase> [--keyword ...]
+   --location-code <n> --language-code <xx>` on the top brainstormed phrases; no keyword map needed.
+4. Social topics: `python3 scripts/marketing/social_topics.py --records <evidence.jsonl or dir>
+   [--clusters <content-opportunities.json>] --out <dir>` on records collected for the same phrases.
+A failed provider is a stated gap, not a reason to skip.
+`scripts/brand/site_gate.py` runs whenever a page has been built; it needs no business prerequisite.
 
 **Two customer-voice frames.**
 For substantive customer-input research, always run a topic-led VOC pass from the customer job/problem/trigger without requiring competitor names.
@@ -39,13 +58,11 @@ Evidence-scout owns customer voice; competitor-marketing-analyzer owns supplier 
 Read the `required_references` from your route packet.
 Reuse current evidence; focused factual lookups do not trigger a full study.
 
-**Customer search-journey SERP study.**
-Stage: after the segment is named, before competitor discovery; desk research that runs before the pain gate.
+**Customer search-journey SERP study (method for early step 1).**
 Brainstorm 4–8 queries per journey stage per searcher role, in the customers' language and locale, typed the way a customer would.
 Brainstormed rows are hypotheses (`seed_origin: brainstorm`).
 Expand with autocomplete, PAA and related searches, mark those origins, and prefer non-brainstorm rows when ranking.
-Validate the plan against `schemas/search-journey-plan.schema.json`, then run
-`python3 scripts/evidence_scout/search_journey.py --plan <plan> --providers serpapi --run-dir <run> --max-searches <n>`.
+Validate the plan against `schemas/search-journey-plan.schema.json` before running it; ads and organic are reported separately.
 Ads are a supplier-spend signal for that intent, not customer demand.
 No ads observed is not evidence of no demand; `unobserved` (Serper fallback cannot see ads) is never reported as zero.
 Ads vary by time, location and device: record all three and use `--repeat` with a gap to separate stable from occasional advertisers.

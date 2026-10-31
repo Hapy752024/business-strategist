@@ -11,8 +11,9 @@ description: Discover sourced customer problems, workarounds, segments, and cand
 3. Once the user selects a candidate, use `idea-grill` to fill remaining hypothesis gaps, then continue with its core validation sequence.
 
 **Customer search-journey SERP study.**
-After a segment is named and before competitor discovery, optionally run the evidence-scout search-journey study
-(`scripts/evidence_scout/search_journey.py`; method rules in `.agents/skills/evidence-scout/SKILL.md`).
+Once a segment is named, run the evidence-scout early parallel desk steps by default: search journey
+(`scripts/evidence_scout/search_journey.py`), competitor content, keyword volumes and social topics
+(method and commands in `.agents/skills/evidence-scout/SKILL.md`); none waits for review or a gate.
 Brainstormed queries are hypotheses; ads are supplier spend, not demand; `unobserved` ads are never zero.
 Forum or aggregator dominance is a hypothesis for the next test, not a discovery finding.
 It runs before the pain gate and does not authorize ads or content publication.
