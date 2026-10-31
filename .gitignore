@@ -92,3 +92,4 @@ evals/local-runs/
 # site gate evidence (scripts/brand/site_gate.py)
 qa/site-gate/
 site-gate/
+evals/acceptance/blinded-*/

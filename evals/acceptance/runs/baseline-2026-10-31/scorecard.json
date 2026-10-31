@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "scenario": "hybrid-insurance-advisor",
+  "run": {
+    "ref": "486a7ae",
+    "ref_sha": "486a7aedba008b87e58c9240936af439d8b171da",
+    "eval_slug": "hybrid-insurance-advisor-20261031-010542",
+    "started_at": "2026-10-31T01:05:42Z",
+    "finished_at": "2026-10-31T01:24:44Z",
+    "rounds": 8,
+    "stop_reason": "completed",
+    "session_id": "72b8e141-d3b3-4782-b42d-109e768ee6bd",
+    "blocked_tools": [
+      "Artifact",
+      "ArtifactComments",
+      "ArtifactData",
+      "RemoteTrigger",
+      "CronCreate",
+      "CronDelete",
+      "PushNotification",
+      "SendUserMessage",
+      "Skill(schedule)",
+      "Skill(loop)",
+      "mcp__claude_ai_Gmail",
+      "mcp__claude_ai_Google_Calendar",
+      "mcp__claude_ai_Google_Drive",
+      "mcp__claude_ai_Claude_Docs",
+      "mcp__firecrawl__firecrawl_monitor_create",
+      "mcp__firecrawl__firecrawl_monitor_update",
+      "mcp__firecrawl__firecrawl_monitor_delete",
+      "mcp__firecrawl__firecrawl_monitor_run",
+      "mcp__firecrawl__firecrawl_interact",
+      "mcp__firecrawl__firecrawl_feedback",
+      "mcp__firecrawl__firecrawl_search_feedback",
+      "Bash(git push*)",
+      "Bash(git commit*)",
+      "Bash(git remote*)",
+      "Bash(git rev-parse*)",
+      "Bash(gh *)",
+      "Bash(curl*)",
+      "Bash(wget*)",
+      "Bash(vercel*)",
+      "Bash(npx vercel*)",
+      "Bash(netlify*)",
+      "Bash(npx netlify*)",
+      "Bash(wrangler*)",
+      "Bash(npx wrangler*)",
+      "Bash(firebase*)",
+      "Bash(npx firebase*)",
+      "Bash(npm publish*)",
+      "Bash(python3 scripts/fal_assets.py*)",
+      "Bash(python3 scripts/brand/finalize_fal_assets.py*)",
+      "Bash(python3 scripts/brand/indexnow_ping.py*)",
+      "Bash(python3 scripts/marketing/execute.py*)",
+      "Edit(//home/habib/work/general/business-strategist/**)",
+      "Write(//home/habib/work/general/business-strategist/**)",
+      "Read(//home/habib/work/general/business-strategist/evals/acceptance/**)",
+      "Edit(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
+      "Write(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/**)",
+      "Read(//home/habib/work/general/business-strategist/.claude/worktrees/agentic-setup-improvements/evals/acceptance/**)"
+    ]
+  },
+  "checkpoints": [
+    {
+      "id": "cp01",
+      "stage": "workspace",
+      "title": "Workspace check offers the existing german-insurance-opportunity workspace before creating anything",
+      "passed": true,
+      "status": "pass",
+      "proxy": false,
+      "evidence_path": "transcript.jsonl#L41",
+      "detail": "order: first event precedes any later event"
+    },
+    {
+      "id": "cp02",
+      "stage": "routing",
+      "title": "Routing reaches idea-grill without an envelope denial; hook denials are counted",
+      "passed": false,
+      "status": "fail",
+      "proxy": false,
+      "evidence_path": "transcript.jsonl#L67",
+      "detail": "missing: hook_denials (hook_denials: 1 matching denial(s), max 0)"
+    },
+    {
+      "id": "cp03",
+      "stage": "intake",
+      "title": "Intake asks at most one decision-changing question per turn and persists answers",
+      "passed": false,
+      "status": "fail",
+      "proxy": true,
+      "evidence_path": "rounds.jsonl#round0",
+      "detail": "missing: max_questions_per_turn (proxy: max 3 question sentence(s) over 6 answered turn(s), limit 1)"
+    },
+    {
+      "id": "cp04",
+      "stage": "customer_voice",
+      "title": "Topic-led VOC and entity-led feedback run as separate frames; entity-led covers at least three verified competitors discovered by the run",
+      "passed": false,
+      "status": "fail",
+      "proxy": true,
+      "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/market_research/pain_points/runs/20261031-010903-pkv-gkv-berufsunfähigkeitsversicherung-versicherungsberatung-7ed4caa6f03c/evidence.jsonl",
+      "detail": "missing: artifact (artifact: 0 file(s) match **/*.jsonl); jsonl_distinct (jsonl_distinct: 0 distinct subject_entity_id, need 3)"
+    },
+    {
+      "id": "cp05",
+      "stage": "search_journey",
+      "title": "Search-journey study runs on German-language queries across at least four journey stages and reports ads separately from organic",
+      "passed": false,
+      "status": "fail",
+      "proxy": false,
+      "evidence_path": null,
+      "detail": "missing: json_len (json_len: max 0 entries at stages, need 4); artifact (artifact: 0 file(s) match **/*.json); artifact (artifact: 0 file(s) match **/*.json)"
+    },
+    {
+      "id": "cp06",
+      "stage": "desk_research",
+      "title": "Official statistics and the §34d versus §34e GewO distinction are surfaced with sources",
+      "passed": true,
+      "status": "pass",
+      "proxy": true,
+      "evidence_path": "transcript.jsonl#L80",
+      "detail": "all sub-checks passed"
+    },
+    {
+      "id": "cp07",
+      "stage": "precedents",
+      "title": "International precedent pass names at least one foreign comparable with verified outcome or explains inapplicability",
+      "passed": true,
+      "status": "pass",
+      "proxy": true,
+      "evidence_path": "transcript.jsonl#L80",
+      "detail": "text: all patterns in one document"
+    },
+    {
+      "id": "cp08",
+      "stage": "appraisal",
+      "title": "Falsification runs on the claim ledger; decision memo and scores exist; delivery validation passes or the gap is stated",
+      "passed": false,
+      "status": "fail",
+      "proxy": false,
+      "evidence_path": null,
+      "detail": "missing: falsification (falsification: none matched (artifact: 0 file(s) match **/*falsif*; tool_use: 0 matching call(s), need 1)); decision_memo (decision_memo: 0 file(s) match **/decision_memo.md); scores (scores: 0 file(s) match **/scores.json); delivery_check (delivery_check: none matched (tool_use: 0 matching call(s), need 1; text: no single document matched all 1 patterns))"
+    },
+    {
+      "id": "cp09",
+      "stage": "gate",
+      "title": "The pain-first gate blocks GTM until problem_validation passes; an explicit override is recorded before downstream stages run",
+      "passed": true,
+      "status": "pass",
+      "proxy": false,
+      "evidence_path": "transcript.jsonl#L599",
+      "detail": "gate: blocked, overridden, then 1 downstream call(s)"
+    },
+    {
+      "id": "cp10",
+      "stage": "gtm",
+      "title": "GTM, keyword map with volumes, a locally built validation page passing the site gate, and a first-campaign runbook with a paused, unsent campaign draft",
+      "passed": false,
+      "status": "fail",
+      "proxy": false,
+      "evidence_path": "artifacts/projects/eval-hybrid-insurance-advisor-20261031-010542/business-analysis/cases/hybrid-advisor/provisional/gtm-plan.md",
+      "detail": "missing: keyword_volumes (keyword_volumes: 0 file(s) match **/keyword-map*.json); site_gate (site_gate: 0 file(s) match **/site-gate*.json); runbook (runbook: 0 file(s) match **/*runbook*); paused_campaign (paused_campaign: 0 file(s) match **/*campaign*.json)"
+    },
+    {
+      "id": "cp11",
+      "stage": "honesty",
+      "title": "Provider coverage gaps are reported as gaps, never as absence of demand",
+      "passed": true,
+      "status": "pass",
+      "proxy": true,
+      "evidence_path": "transcript.jsonl#L80",
+      "detail": "proxy: failed providers ['brave-search', 'firecrawl', 'youtube'] and a coverage gap is stated"
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "passed": 5,
+    "failed": 6,
+    "not_exercised": [],
+    "proxy": 5
+  },
+  "providers": {
+    "attempted": [
+      "brave-search",
+      "firecrawl",
+      "google_autocomplete",
+      "reddit",
+      "serper_search",
+      "youtube"
+    ],
+    "ok": [
+      "google_autocomplete",
+      "reddit",
+      "serper_search"
+    ],
+    "failed": [
+      "brave-search",
+      "firecrawl",
+      "youtube"
+    ],
+    "source": "summary.json provider attempts in eval-project artifacts, plus quota/402 tool results in the transcript"
+  },
+  "cost": {
+    "model_usd": 4.954,
+    "model_budget_usd": 40.0,
+    "budget_usd": 25.0,
+    "provider_spend": {
+      "apify_usd": 0.0,
+      "dataforseo_usd": 0.0,
+      "serpapi_searches": 0.0,
+      "serpapi_usd": null,
+      "measured_usd": 0.0,
+      "complete": false,
+      "notes": "Measured as account usage deltas around the run; other concurrent use of the same accounts is included, Apify usage can lag, and SerpApi reports searches, not USD (priced only with --serpapi-usd-per-search). The runner does not enforce provider caps inside the tree under test."
+    },
+    "over_budget": null,
+    "spend_enforced": false
+  },
+  "wall_time_s": 1138.3,
+  "tokens": {
+    "input": 190,
+    "output": 90552,
+    "cache_creation": 284895,
+    "cache_read": 17062515
+  },
+  "hook_denials": {
+    "count": 1,
+    "by_tool": {
+      "Skill": 1
+    },
+    "events": [
+      {
+        "line": 12,
+        "tool": "Skill",
+        "input": "{\"skill\": \"idea-grill\"}",
+        "reason": "PreToolUse:Skill hook error: Skill route rejected: ValueError: Repository skill dispatch requires a JSON route envelope in args. Re-invoke the skill with: {\"route\": {\"request\": \"<one-sentence request>\", \"intent\": \"idea-grill\", \"task_scope\": \"focused|execution|strategy\", \"project\": \"<slug>\" | \"standa"
+      }
+    ]
+  },
+  "permission_denials": 13,
+  "writes_outside_eval": [
+    "repo:M evals/workflow-improvements.md"
+  ],
+  "host_writes": {
+    "attributed": [],
+    "unattributed_possibly_concurrent": []
+  },
+  "friction": "",
+  "honesty_notes": [
+    "Model cost is the maximum cumulative total_cost_usd per session; token totals sum per-call usage of every result event (verify against modelUsage if exact token counts matter).",
+    "Checkpoints marked proxy test presence or a countable stand-in, not the quality judgement in their title.",
+    "Provider spend is measured, not enforced; see cost.provider_spend.notes.",
+    "Artifacts are copied only from the eval project directories; work written elsewhere is listed in writes_outside_eval, not scored.",
+    "Provider quota/credit errors (402/429/usage limit): brave-search (4 call(s)). Counted as provider failures for cp11: a coverage gap, never absence of demand."
+  ]
+}
