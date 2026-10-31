@@ -115,6 +115,6 @@ def test_status_falsification_runnable_without_ledger_reports_optional_missing(t
         assert 'claim-ledger' in rows[route]['optional_missing']
 
 
-def test_status_appraisal_notes_final_publication_needs_bound_ledger(tmp_path):
+def test_status_appraisal_notes_final_publication_needs_claim_challenge(tmp_path):
     rows = by_route(st.case_status(project(tmp_path), 'a'))
-    assert 'final appraisal publication still needs a bound reviewed claim ledger' in rows['case-appraisal']['notes']
+    assert 'final appraisal publication needs a current claim challenge' in rows['case-appraisal']['notes']
