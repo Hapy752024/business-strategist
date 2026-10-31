@@ -2424,6 +2424,39 @@
       "implementation_status": "implemented_cli; live readiness requires separate check"
     },
     {
+      "id": "dataforseo_backlinks",
+      "family": "seo_earned_media",
+      "label": "DataForSEO competitor backlinks",
+      "description": "Linking domains of named competitor sites from DataForSEO Backlinks (backlinks/backlinks/live, one row per domain, dofollow and live only). Excludes domains already linking to the own property; flags scraper/whois pages. Produces earned-media link candidates, not qualified opportunities.",
+      "use_when": [
+        "competitor backlinks",
+        "backlink prospecting",
+        "who links to competitors",
+        "link gap"
+      ],
+      "avoid_when": [
+        "customer demand proof",
+        "ranking uplift claims",
+        "own-site link audit (use Search Console export)"
+      ],
+      "evidence_strength": "dated_observation_requires_review",
+      "collector_provider": "scripts/marketing/competitor_backlinks.py",
+      "provider_aliases": [],
+      "validation_providers": [
+        "dataforseo"
+      ],
+      "requires_env": [
+        "DATAFORSEO_LOGIN",
+        "DATAFORSEO_PASSWORD"
+      ],
+      "fallbacks": [],
+      "approval_required": false,
+      "authorization_policy": "Metered per task (about 0.02-0.03 USD per competitor); paid customer-evidence API spend is pre-authorized, bound each run with --max-cost-usd (default 2) and read the printed estimate first. Does not authorize outreach, ads or publication.",
+      "status_check": "python3 -m pytest -q tests/test_competitor_backlinks.py",
+      "example": "python3 scripts/marketing/competitor_backlinks.py --competitor <domain> [--competitor <domain>] --own <own-domain> --out <new-dir> [--limit 100 --language en --max-cost-usd 2] [--dry-run]",
+      "caveat": "Provider index sample, not Google's view; dofollow and rank values are provider observations. A competitor link is a prospecting clue, not a reason a publisher owes inclusion; every candidate still needs earned-media-builder qualification (audience-fit passage, live page, contact route). Search Console cannot show competitor links."
+    },
+    {
       "id": "submission_catalogue",
       "family": "seo_earned_media",
       "label": "Submission opportunity catalogue",
