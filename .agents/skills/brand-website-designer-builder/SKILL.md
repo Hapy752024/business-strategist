@@ -10,11 +10,12 @@ description: Build and maintain Next.js websites. Use for landing pages, respons
 Follow [workflow](references/workflow.md) and the repository subproject contract.
 Start standalone from the user's brief; consume Business/Branding only through explicit handoff.
 Preserve business-linked gates and resumable website manifests.
+Routes `geo-audit` and `stripe-best-practices` follow only that mode reference; page builds or changes need route `website-build`.
 
 - New builds/redesigns: apply [reference-site and supplied-photo intake](references/reference-sites.md) before creative direction.
 Ask once for admired sites and photos unless supplied or declined; design-preserving repairs skip intake.
 - New builds: load preference profile/brand constraints, propose lightweight territories and obtain selection before expansion; pin stable Next.js.
-- Imagery: apply [image sourcing and AI references](../brand-asset-producer/references/image-sourcing.md); verify stock rights; paid FAL needs an approved concrete need. Branding owns favicons; the website integrates the handoff.
+- Imagery: apply [image sourcing and AI references](../brand-asset-producer/references/image-sourcing.md); verify stock rights; paid FAL needs an approved concrete need. Branding owns favicons; integrate its handoff.
 - New build/release: apply [launch contract](references/launch-contract.md), [SEO/performance](references/seo-performance.md), [EU consent](references/consent-eu.md), [testing](references/testing.md).
 Launch gate: `python3 -m scripts.brand.site_gate` on the served build, and `scripts/marketing/verify_tracking.py` before paid launch (workflow steps 9, 9a).
 - Forms, wizards, accounts, embeds, analytics or personal-data changes: apply [privacy by design](references/privacy-design.md) before implementation.
@@ -36,9 +37,9 @@ Run build and real-browser responsive, accessibility, performance, state and vis
 Production recording requires the complete release-bound launch assessment.
 After each authorized deploy, run the production host probe and hand the owner the Search Console steps unprompted (launch-contract `production_host`, `search_console`).
 
-- Optional measurement, reported as observations, never ranking or citation claims: read-only [GEO audit](references/geo-audit.md) (route `geo-audit`; vendored tool and MIT licence in `geo/`) and the AI-answer panel (repo-root `references/ai-answer-recordings.md`).
-- Stripe work (route `stripe-best-practices`, also inside builds): [Stripe](references/stripe.md).
-- Validation page for a smoke test: apply [validation page](references/validation-page.md) and repo-root `references/smoke-test.md`; use a static single-CTA page with disclosure and no analytics without owner activation.
-- When selected marketing work requires an owner action or third-party platform, use repo-root `references/marketing-execution.md` and keep local QA separate from externally verified outcomes.
+- Optional measurement, reported as observations, never ranking or citation claims: [GEO audit](references/geo-audit.md) (vendored tool and licence in `geo/`) and the AI-answer panel (repo-root `references/ai-answer-recordings.md`).
+- Stripe work, also inside builds: [Stripe](references/stripe.md).
+- Validation page for a smoke test: apply [validation page](references/validation-page.md) and repo-root `references/smoke-test.md`; static single-CTA page, disclosure, no analytics without owner activation.
+- Marketing work needing an owner action or third-party platform: use repo-root `references/marketing-execution.md`; keep local QA separate from externally verified outcomes.
 
 Advertising-event implementation or repair: read repo-root `references/journey-activation-and-measurement.md` and verify per-platform mapping in selected destinations.

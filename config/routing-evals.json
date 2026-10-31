@@ -927,13 +927,13 @@
       "evals": [
         {
           "id": "stripe-1",
-          "prompt": "Integrate Stripe checkout into our Next.js app.",
-          "expected_skill": "brand-website-designer-builder",
-          "expected_route": "stripe-best-practices",
+          "prompt": "Build our website and set up Stripe.",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
           "forbidden_skills": [],
-          "expected_output": "Routes to the website skill stripe mode (ungated, test mode, security-review pairing).",
+          "expected_output": "Asks one scoping question; the stripe mode is reachable only by its explicit route ID, so page-building work never reaches it ungated.",
           "files": [],
-          "rationale": "Before the merge (3943842) this fell to clarification; the single 'Stripe' phrase now reaches the stripe mode."
+          "rationale": "Unchanged against 3943842: the stripe-best-practices route keeps match [] (reference-only mode)."
         },
         {
           "id": "stripe-2",
@@ -943,7 +943,7 @@
           "forbidden_skills": [],
           "expected_output": "Stays on the pain-gated website-build route; the website skill reads the Stripe reference inside the build.",
           "files": [],
-          "rationale": "Unchanged against 3943842: the 6-character 'Stripe' phrase never outranks a website-build phrase such as 'landing page', so a gated build is not pulled into the ungated stripe mode."
+          "rationale": "Unchanged against 3943842; the stripe route has no match phrase."
         }
       ]
     },
@@ -978,7 +978,7 @@
           "forbidden_skills": [],
           "expected_output": "Stays on the pain-gated website-build route.",
           "files": [],
-          "rationale": "Unchanged against 3943842: \"browser test\" ties \"landing page\" on length and website-build wins by route order."
+          "rationale": "Unchanged against 3943842: browser mode matches only \"Playwright\", so \"landing page\" keeps the request on website-build."
         },
         {
           "id": "site-testing-4",
@@ -989,6 +989,18 @@
           "expected_output": "Asks one scoping question; a generic regression-test request is not routed to the explicit-request-only regression mode.",
           "files": [],
           "rationale": "Unchanged against 3943842; no broad 'regression' phrase was added."
+        },
+        {
+          "id": "site-testing-5",
+          "prompt": "Plan a pre-release marketing campaign.",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [
+            "site-testing"
+          ],
+          "expected_output": "Asks one scoping question; \"pre-release\" alone does not reach the explicit-request-only regression mode.",
+          "files": [],
+          "rationale": "Unchanged against 3943842: regression phrases are \"pre-release regression\", \"pre-release check\" and \"release regression\"."
         }
       ]
     }

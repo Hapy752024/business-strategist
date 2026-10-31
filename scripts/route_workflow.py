@@ -64,9 +64,10 @@ SKILL_ALIASES: dict[str, str] = {
     "webapp-testing": "webapp-testing",
     "pre-release-regression": "pre-release-regression",
 }
-# Website-skill modes absorbed from former non-design helpers keep their former packet: no standalone/business-linked
-# design branch, website subproject or strategy-plan gate (frozen at 3943842, before the merge).
-WEBSITE_HELPER_MODES = {"geo-audit", "stripe"}
+# Website-skill routes absorbed from former non-design helpers keep their former packet: no standalone/business-linked
+# design branch, website subproject or strategy-plan gate (frozen at 3943842, before the merge). Keyed on route ID so a
+# pain-gated website route can never share the exemption through a mode name.
+WEBSITE_HELPER_ROUTES = {"geo-audit", "stripe-best-practices"}
 
 
 def load_routes() -> list[dict[str, Any]]:
@@ -428,7 +429,7 @@ def _route_request(
         checked_references({'required_references': [module_reference]}, CATALOG_PATH.parent.parent)
     else:
         packet['specialist_owner'] = specialist_owner(skill)
-    design = skill.startswith('brand-') and selected.get('mode') not in WEBSITE_HELPER_MODES
+    design = skill.startswith('brand-') and selected['id'] not in WEBSITE_HELPER_ROUTES
     # Channel validation is a pre-production research verdict, so it keeps the Business destination it had as
     # social-media-idea-validator; the other marketing modes write to the Marketing workstream.
     marketing = (skill in {'earned-media-builder', 'marketing-campaign-operator'}

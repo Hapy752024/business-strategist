@@ -6,7 +6,7 @@ license: Browser mode and scripts/with_server.py derive from Anthropic's webapp-
 
 # Site Testing
 
-Pick the mode from the checked route; plain text infers it from the request.
+Pick the mode from the checked route; plain text infers it from the request. This skill tests and reports; page fixes and changes go to route `website-build`.
 
 | Route | Mode | Use for | Reference |
 | --- | --- | --- | --- |

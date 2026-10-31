@@ -739,9 +739,7 @@
     },
     {
       "id": "stripe-best-practices",
-      "match": [
-        "Stripe"
-      ],
+      "match": [],
       "skill": "brand-website-designer-builder",
       "forbidden": [],
       "mode": "stripe"
@@ -756,8 +754,7 @@
     {
       "id": "webapp-testing",
       "match": [
-        "Playwright",
-        "browser test"
+        "Playwright"
       ],
       "skill": "site-testing",
       "forbidden": [],
@@ -766,7 +763,8 @@
     {
       "id": "pre-release-regression",
       "match": [
-        "pre-release",
+        "pre-release regression",
+        "pre-release check",
         "release regression"
       ],
       "skill": "site-testing",

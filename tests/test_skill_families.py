@@ -581,9 +581,8 @@ def test_website_geo_and_stripe_references_are_reachable_from_the_skill():
     assert 'security-review' in stripe and 'test mode' in stripe
 
 
-# Plain-text requests near the website/GEO/Stripe boundary. Frozen from the router at 3943842 (before the merge);
-# the row marked "new" moved from clarification to the stripe mode through the single "Stripe" phrase added, and
-# the row marked "changed" is the one request that moved between routes.
+# Plain-text requests near the website/GEO/Stripe boundary. Unchanged against the router at 3943842 (before the
+# merge): the stripe route keeps match [] (explicit route ID only), so no request moves between routes.
 @pytest.mark.parametrize('request_text,expected_route', [
     ('Run a GEO audit on https://www.example.com', 'geo-audit'),
     ('Do an AEO audit of our website', 'geo-audit'),
@@ -591,12 +590,13 @@ def test_website_geo_and_stripe_references_are_reachable_from_the_skill():
     ('Structured data audit', 'website-build'),
     ('Is my site visible in ChatGPT?', 'competitor-monitoring'),
     ('Run a technical SEO audit of our site', 'seo-technical-audit'),
-    ('Integrate Stripe checkout into our Next.js app', 'stripe-best-practices'),  # new
+    ('Integrate Stripe checkout into our Next.js app', 'clarify'),
     ('Add Stripe checkout to my landing page', 'website-build'),
     ('Build a landing page and integrate Stripe payments', 'website-build'),
     ('Deploy the Stripe checkout to Vercel', 'website-build'),
-    # changed: was standalone-brand through its 4-character "logo" phrase; any Stripe phrase outranks it.
-    ('Add the Stripe logo to the checkout page', 'stripe-best-practices'),
+    ('Add the Stripe logo to the checkout page', 'standalone-brand'),
+    ('Design a striped logo for the bakery', 'standalone-brand'),
+    ('Build our website and set up Stripe', 'clarify'),
     ('Review the payment flow security of our checkout', 'clarify'),
     ('Create a pricing strategy for our subscription plans', 'clarify'),
     ('Run a GEO audit, then build a landing page', 'clarify'),
@@ -605,9 +605,24 @@ def test_website_geo_stripe_boundary_routes(request_text, expected_route):
     assert route_workflow.route_request(request_text)['route_id'] == expected_route
 
 
+def test_stripe_route_is_reachable_by_explicit_route_id_only():
+    assert _routes()['stripe-best-practices']['match'] == []
+    assert route_workflow.infer_mode(WEBSITE, 'Review our Stripe subscription code')[0] is None
+    packet = route_workflow.route_request('Review our Stripe subscription code', intent='stripe-best-practices')
+    assert packet['skill'] == WEBSITE and packet['mode'] == 'stripe'
+
+
+def test_website_helper_routes_are_confined_to_their_mode_reference():
+    skill = (SKILLS / WEBSITE / 'SKILL.md').read_text(encoding='utf-8')
+    line = next(l for l in skill.splitlines() if 'only that mode reference' in l)
+    assert '`geo-audit`' in line and '`stripe-best-practices`' in line and '`website-build`' in line
+    routes = _routes()
+    for route_id in route_workflow.WEBSITE_HELPER_ROUTES:
+        assert routes[route_id]['skill'] == WEBSITE and not routes[route_id].get('requires_pain_gate'), route_id
+
+
 @pytest.mark.parametrize('request_text,expected_route', [
     ('Run a GEO audit on the preview URL', 'geo-audit'),
-    ('Review our Stripe subscription code', 'stripe-best-practices'),
     ('Build a landing page for the launch', 'website-build'),
 ])
 def test_website_plain_text_infers_its_mode(request_text, expected_route):
@@ -638,6 +653,7 @@ def test_site_testing_regression_mode_runs_only_on_explicit_request():
     regression = (SKILLS / 'site-testing' / 'references' / 'regression.md').read_text(encoding='utf-8')
     assert 'only on explicit request' in skill.lower() and 'only on explicit request' in regression.lower()
     assert 'disable-model-invocation' not in skill
+    assert 'page fixes and changes go to route `website-build`' in skill
     browser = (SKILLS / 'site-testing' / 'references' / 'browser.md').read_text(encoding='utf-8')
     assert 'scripts/with_server.py' in browser and (SKILLS / 'site-testing' / 'scripts' / 'with_server.py').is_file()
     assert 'Apache License' in (SKILLS / 'site-testing' / 'LICENSE.txt').read_text(encoding='utf-8')
@@ -645,16 +661,25 @@ def test_site_testing_regression_mode_runs_only_on_explicit_request():
 
 # Plain-text requests near the site-testing boundary. Frozen from the router at 3943842 (before the merge, when both
 # routes had no match phrase). Rows marked "new" moved from clarification to their mode; rows marked "changed" moved
-# between routes: a testing phrase outranks the 6-character "Vercel" website-build phrase, and the explicit
-# "release regression" outranks "landing page"; two workflows in one request now clarify.
+# between routes: "Playwright" outranks the 6-character "Vercel" website-build phrase, and the explicit
+# "release regression" / "pre-release check" outrank "landing page". The router cannot split "and fix": the browser
+# route has no "browser test" phrase, so a test-and-fix request without "Playwright" stays on gated website-build;
+# with "Playwright" it reaches browser mode, whose SKILL.md sends page fixes back to route website-build.
 @pytest.mark.parametrize('request_text,expected_route', [
     ('Write Playwright tests for the signup form', 'webapp-testing'),  # new
-    ('Run browser tests on our web app', 'webapp-testing'),  # new
     ('Run a pre-release regression check on the app', 'pre-release-regression'),  # new
     ('Plan the release regression for our app', 'pre-release-regression'),  # new
+    ('Do a pre-release check of our web app', 'pre-release-regression'),  # new
     ('Run Playwright against the Vercel preview', 'webapp-testing'),  # changed
     ('Run a release regression on the landing page', 'pre-release-regression'),  # changed
-    ('Build a landing page, then run browser tests', 'clarify'),  # changed
+    ('Do a pre-release check of the landing page', 'pre-release-regression'),  # changed
+    ('Browser test the Vercel preview and fix the layout bugs', 'website-build'),
+    ('Browser test the Vercel preview', 'website-build'),
+    ('Run browser tests on our web app', 'clarify'),
+    ('Build a landing page, then run browser tests', 'website-build'),
+    ('Design a pre-release teaser website', 'clarify'),
+    ('Plan a pre-release marketing campaign', 'clarify'),
+    ('Release the pre-release build notes for the beta', 'clarify'),
     ('Run browser tests on the landing page', 'website-build'),
     ('Create a Next.js website and test it with Playwright', 'website-build'),
     ('Run regression tests before the release', 'clarify'),
