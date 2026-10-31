@@ -44,6 +44,9 @@ SKILL_ALIASES: dict[str, str] = {
     "brand-ui-component-producer": "brand-ui-component-producer",
     "brand-motion-designer": "brand-motion-designer",
     "brand-frontend-app-designer": "app-ui",
+    "competitor-scout": "competitor-discovery",
+    "competitive-landscape-builder": "competitive-landscape",
+    "competitor-marketing-analyzer": "competitor-analysis",
 }
 
 

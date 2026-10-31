@@ -10,15 +10,17 @@ from scripts.evidence_scout import workspace
 
 
 @pytest.mark.parametrize("prompt,expected", [
-    ("Do not run a competitive landscape. Only find competitors.", "competitor-scout"),
+    ("Do not run a competitive landscape. Only find competitors.", "competitor-discovery"),
     ("Keep the marketing strategy unchanged. Create a paid social plan.", "social-digital-marketing-planner"),
     ("Leave the marketing strategy intact; create a content calendar.", "social-digital-marketing-planner"),
-    ("Don't build a competitive landscape; find competitors.", "competitor-scout"),
+    ("Don't build a competitive landscape; find competitors.", "competitor-discovery"),
     ("Write two ad-copy options", "marketing-strategy-builder"),
     ("Create a logo only; do not make a website", "brand-identity"),
 ])
 def test_scope_routing(prompt, expected):
-    assert route_request(prompt)["skill"] == expected
+    packet = route_request(prompt)
+    # A route ID pins the mode inside a merged skill; a skill name pins single-mode skills.
+    assert expected in (packet["route_id"], packet["skill"])
 
 
 @pytest.mark.parametrize("intent", ["", "standalone-brand"])

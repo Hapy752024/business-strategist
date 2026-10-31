@@ -189,7 +189,7 @@ def main() -> int:
     }
     gate["passed"] = gate["ready_for_competitive_conclusions"] and gate["ready_for_inspiration_synthesis"] and gate["social_coverage_complete"] and not unresolved and not gate["coverage_gaps"]
     write(out / "quality-gate.json", gate)
-    write(out / "competitive-insight-handoff.json", {"schema_version": "1.0", "source": "competitive-landscape-builder", "competitive_entities": [row.get("name") for row in competitive], "inspiration_entities": [row.get("name") for row in similar + references], "approved_for_branding": False, "quality_gate_passed": gate["passed"], "note": "Optional input to branding or website work; not a substitute for customer validation."})
+    write(out / "competitive-insight-handoff.json", {"schema_version": "1.0", "source": "competitor-research", "competitive_entities": [row.get("name") for row in competitive], "inspiration_entities": [row.get("name") for row in similar + references], "approved_for_branding": False, "quality_gate_passed": gate["passed"], "note": "Optional input to branding or website work; not a substitute for customer validation."})
     if args.workspace:
         artifact_paths = [
             out / "competitive-market-matrix.md", out / "offer-price-matrix.json", out / "social-presence.json",

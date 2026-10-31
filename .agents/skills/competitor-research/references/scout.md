@@ -1,6 +1,8 @@
-# Competitor Scout Workflow
+# Scout mode (route `competitor-discovery`)
 
-Use this skill for narrow discovery or classification. For a complete market landscape with analogs, capability references, offer/price analysis and social usage, route to `competitive-landscape-builder`.
+Narrow competitor discovery or classification. For a complete market landscape with analogs, capability references, offer/price analysis and social usage use landscape mode (route `competitive-landscape`).
+
+Success: blogs, directories, affiliates and agencies are excluded; each competitor has a classification reason; known competitors are preserved and enriched.
 
 ## Stance
 
@@ -16,16 +18,12 @@ Do not confuse review sites, blogs, app stores, directories, consultants, affili
 
 Use stricter candidate classes: `direct_broker_candidate`, `indirect_broker_candidate`, `direct_insurer_candidate`, `indirect_insurer_candidate`, `marketplace_comparison_portal`, `lead_gen_affiliate`, `editorial_resource`, `service_substitute_candidate`, `substitute_candidate`, `future_threat_candidate`, `known_competitor_unverified`, `uncertain_candidate`, and false positives/exclusions. SEO guides, affiliate content, and editorial resources are not direct competitors unless the page evidence shows they sell, underwrite, broker, or manage the product for the target customer.
 
-## Ambiguity and Unknowns
-
-If the category, segment, geography, or competitor definition is ambiguous enough to change classification, ask one focused clarification question before running or interpreting discovery. If a candidate cannot be classified from the available title, snippet, URL, or page evidence, say "I don't know" for that field and mark the candidate `uncertain` rather than guessing.
-
 ## Procedure
 
-Before broad collection apply repo-root `references/customer-voice.md`: brainstorm and review local provider/substitute names and source locations separately for all three lanes. Use `--query-preview`, local `--topic-keywords` / `--segment-keywords`, or an exact `--query-plan` with lane bindings. Search depth is separate from shortlist limits. Refine with terms from verified supplier/customer pages; preserve parent digest, counterexamples, failed queries and newly discovered entities.
+Before broad collection apply repo-root `references/customer-voice.md` (keep each workflow's evidence type and source-review requirements distinct): brainstorm and review local provider/substitute names and source locations separately for all three lanes. Use `--query-preview`, local `--topic-keywords` / `--segment-keywords`, or an exact `--query-plan` with lane bindings. Search depth is separate from shortlist limits. Refine with terms from verified supplier/customer pages; preserve parent digest, counterexamples, failed queries and newly discovered entities.
 
 1. Define the category/job, target segment, buyer, geography, and what counts as competitive, similar, reference, or false positive.
-2. Preserve and pass any user-supplied known competitors into discovery.
+2. Preserve and pass any user-supplied known competitors into discovery. Use the active topic workspace. When a search-journey study exists, consume its `serp-landscape.json` advertisers and unclassified ranking domains as unverified candidates; advertising is not proof of competition or demand.
 3. Run competitor discovery with the documented script.
 4. Review the script-generated `competitor_plan.md` (objective, scope, questions, limits) and confirm the stated classification rules still match the request.
 5. Inspect `competitors.json`, `summary.json`, `report.md`, and raw source evidence.
@@ -116,9 +114,11 @@ Report:
 - Category language and positioning patterns.
 - Competitor-array matrix: candidate, type, segment fit, job fit, key success factors, evidence quality.
 - Gaps where the user's idea may still differ.
-- Recommendation for which competitors to pass to `competitor-marketing-analyzer`.
+- Recommendation for which competitors to pass to teardown mode (route `competitor-analysis`).
 
-When asking the user for input, ask exactly one question at a time. Recommended first question after competitor discovery: `Which candidate do you most want to understand as a threat or positioning reference?`
+`competitors.json` arrays are lane-aware: preserve legacy fields while adding `primary_lane`, `competitive_role` and `inspiration_roles`.
+
+Recommended first question after competitor discovery: `Which candidate do you most want to understand as a threat or positioning reference?`
 
 ## Quality Checklist
 
@@ -128,7 +128,4 @@ Before finalizing, check:
 - Known competitors supplied by the user are included or explicitly marked unverified.
 - Search-result candidates are not treated as competitors without supporting page evidence.
 - Editorial, affiliate, directory, review, and app-store pages are not mislabeled as direct competitors.
-- Entity type and source-page type are kept separate.
 - False positives and uncertain candidates are explicitly labeled.
-- Evidence quality is rated before competitor strength.
-- Source URLs and snippets are preserved for inspection.

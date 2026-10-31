@@ -541,7 +541,7 @@ def render_markdown(report: dict, plan: dict | None = None) -> str:
         cands = st["new_competitor_candidates"]
         if cands:
             shown = f"{len(cands)} total, first 15" if len(cands) > 15 else f"{len(cands)} total"
-            lines.append(f"- Advertisers and unclassified ranking domains for competitor-scout triage ({shown}; unverified, "
+            lines.append(f"- Advertisers and unclassified ranking domains for competitor-research scout triage ({shown}; unverified, "
                          f"may include institutions): {', '.join(cands[:15])}.")
         for claim in st["ad_claims"][:6]:
             lines.append(f"  - Ad claim [{claim['advertiser_domain']}, {claim['position']}]: {claim['headline']} | {claim['description']}")

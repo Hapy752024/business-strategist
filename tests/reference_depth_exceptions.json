@@ -75,23 +75,25 @@
       "target": "references/customer-voice.md"
     }
   ],
-  "competitive-landscape-builder": [
+  "competitor-research": [
     {
-      "reason": "workspace-lifecycle.md is mentioned by a linked file but is outside competitive-landscape-builder's own stage; open it only when a task needs it",
-      "target": "references/workspace-lifecycle.md"
+      "reason": "case-insights.md is read by competitor-research's landscape mode reference at that stage, not from SKILL.md directly",
+      "target": "references/case-insights.md"
     },
     {
-      "reason": "institutional-and-university-sources.md is mentioned by a linked file but is outside competitive-landscape-builder's own stage; open it only when a task needs it",
-      "target": "references/institutional-and-university-sources.md"
-    }
-  ],
-  "competitor-marketing-analyzer": [
+      "reason": "research-data-and-precedents.md is read by competitor-research's landscape mode reference at that stage, not from SKILL.md directly",
+      "target": "references/research-data-and-precedents.md"
+    },
     {
-      "reason": "strategic-positioning.md is mentioned by a linked file but is outside competitor-marketing-analyzer's own stage; open it only when a task needs it",
+      "reason": "strategic-positioning.md is read by competitor-research's landscape mode reference at that stage, not from SKILL.md directly",
       "target": "references/strategic-positioning.md"
     },
     {
-      "reason": "evidence-registry.md is mentioned by a linked file but is outside competitor-marketing-analyzer's own stage; open it only when a task needs it",
+      "reason": "workspace-lifecycle.md is read by competitor-research's landscape mode reference at that stage, not from SKILL.md directly",
+      "target": "references/workspace-lifecycle.md"
+    },
+    {
+      "reason": "evidence-registry.md is read by competitor-research's teardown mode reference at that stage, not from SKILL.md directly",
       "target": "references/evidence-registry.md"
     }
   ],

@@ -19,7 +19,7 @@ def test_mode_ownership_and_bounded_artifacts(prompt,intent,skill,mode):
 
 def test_negation_and_near_miss():
     assert route('write supplied copy', intent='marketing-strategy-builder', task_scope='execution')['route_id'] == 'marketing-strategy'
-    assert route('Analyze competitor landing pages, do not plan backlink acquisition')['skill']=='competitor-marketing-analyzer'
+    assert route('Analyze competitor landing pages, do not plan backlink acquisition')['route_id']=='competitor-analysis'
     assert route('Create a logo only; do not run a technical SEO audit')['skill']=='brand-identity'
     assert route('What is SEO?')['ask_question']
     with pytest.raises(ValueError,match='earned-media-discovery, earned-media-preparation, earned-media-verification'):

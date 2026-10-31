@@ -21,10 +21,12 @@ FAMILIES = {
     'brand-ui-system': [
         'brand-ui-kit-producer', 'brand-ui-component-producer', 'brand-motion-designer', 'brand-frontend-app-designer',
     ],
+    'competitor-research': ['competitor-scout', 'competitive-landscape-builder', 'competitor-marketing-analyzer'],
 }
 FORMER = [(merged, former) for merged, formers in FAMILIES.items() for former in formers]
-# Paths stay in git history; docs/ and .superpowers/ are dated records of that history.
-HISTORY_PREFIXES = ('docs/', '.superpowers/')
+# Paths stay in git history; docs/ and .superpowers/ are dated records of that history. The research-business-plan
+# eval is a completed recorded comparison: its manifest snapshot paths are pinned to its baseline revision and results.
+HISTORY_PREFIXES = ('docs/', '.superpowers/', 'evals/research-business-plan/')
 
 
 def _routes():
@@ -138,3 +140,28 @@ def test_website_requests_do_not_route_to_brand_ui_system(request_text, expected
     packet = route_workflow.route_request(request_text)
     assert packet['skill'] != 'brand-ui-system'
     assert packet['route_id'] == expected_route
+
+
+# Plain-text requests near the competitor family's boundary, frozen from the router at 935f5fc (before the merge).
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Find competitors for my invoice automation idea', 'competitor-discovery'),
+    ('Map the competitive landscape and similar companies abroad', 'competitive-landscape'),
+    ('competitor analysis for my bakery', 'competitive-landscape'),
+    ('Analyze competitor website positioning and CTA', 'competitor-analysis'),
+    ('Analyze competitor pricing for dog walking apps', 'competitor-analysis'),
+    ('Monitor competitor pricing and track competitor changes', 'competitor-monitoring'),
+    ('Build a landing page that beats our competitors', 'website-build'),
+    ('Write marketing messaging that differentiates us from competitors', 'marketing-strategy'),
+    ('Research which customers complain about competitor X', 'clarify'),
+])
+def test_competitor_boundary_routes_unchanged(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Find competitors for my meal-planning app', 'competitor-discovery'),
+    ('Build the competitive landscape with similar companies', 'competitive-landscape'),
+    ('Analyze competitor website and competitor pricing', 'competitor-analysis'),
+])
+def test_competitor_research_plain_text_infers_its_mode(request_text, expected_route):
+    assert route_workflow.infer_mode('competitor-research', request_text)[0] == expected_route

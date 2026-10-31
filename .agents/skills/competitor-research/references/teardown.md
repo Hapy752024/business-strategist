@@ -1,16 +1,16 @@
-# Competitor Marketing Analyzer Workflow
+# Teardown mode (route `competitor-analysis`)
 
-Use this skill after entities have been identified, or when the user provides URLs and wants a narrow marketing teardown. For lane assignment and full competitive/analog/reference synthesis, use `competitive-landscape-builder`.
+Use after entities have been identified, or when the user provides URLs and wants a narrow marketing teardown. For lane assignment and full competitive/analog/reference synthesis use landscape mode (route `competitive-landscape`).
 
-## Ambiguity and Unknowns
+Success: positioning, CTAs, pricing signals and proof points are separated; every claim cites a source URL; data gaps are named; analog/reference findings stay separate from competitor conclusions. For a registered Business case, pass material verified supplier claims and their limits to the case-insights owner under repo-root `references/case-insights.md`; keep supplier statements distinct from customer experience.
 
-If competitor identity, URL ownership, target geography, or category scope is ambiguous enough to change the analysis, ask one focused clarification question before proceeding. If a claim is not visible in the scraped/source material, say "I don't know" or "not found" and preserve the source gap. Do not infer pricing, conversion performance, channel success, ad spend, or customer traction from marketing copy alone.
+Do not infer pricing, conversion performance, channel success, ad spend, or customer traction from marketing copy alone.
 
 ## Procedure
 
 1. Clarify the category/problem, target customer segment, geography, and competitor URL ownership when ambiguous.
 2. State the marketing-analysis plan before scraping: competitor types prioritized, page types to treat as product evidence, and claims that will not be inferred.
-3. Run the marketing analyzer on explicit URLs or a `competitors.json` from `competitor-scout`; review the script-generated `marketing_plan.md` for the run's scope, limits, and checkpoint.
+3. Run the marketing analyzer on explicit URLs or a `competitors.json` from scout mode; review the script-generated `marketing_plan.md` for the run's scope, limits, and checkpoint.
 4. Run the ads collector for paid-acquisition evidence when competitor Meta/Instagram presence matters: `python3 scripts/evidence_scout/collect_ads.py --topic "<topic>" --competitors-json "<competitors.json>" --countries <ISO codes> --limit 20`. Free official Meta Ad Library for EU/UK/EEA audiences; non-EU markets fall back to paid Apify (`--providers auto`, ask before `--approve-paid`). If `validate_meta.py` reports missing credentials, tell the user the one-time Meta app + identity-verification setup is pending instead of skipping ad evidence silently.
 5. Inspect provider failures, fallback evidence, page types, source URLs, and pricing-token extraction before interpreting results.
 6. Separate scraped landing-page evidence from direct HTTP fallback and cached snippets.
@@ -28,7 +28,7 @@ Analyze explicit URLs:
 python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitor-url "https://example.com" --competitor-url "https://competitor.com"
 ```
 
-Analyze candidates from `competitor-scout`:
+Analyze candidates from scout mode:
 
 ```bash
 python3 scripts/evidence_scout/analyze_competitor_marketing.py --topic "<category/problem>" --competitors-json "projects/<topic>/market_research/solution_alternatives/runs/<run>/competitors.json" --limit 10
@@ -142,7 +142,7 @@ Report:
 - Suggested landing-page messaging hypotheses for the user's idea.
 - Follow-up evidence needed before copying any competitor strategy.
 
-When asking the user for input, ask exactly one question at a time. Recommended first question after marketing analysis: `Which competitor promise should we test against real customer interviews first?`
+Recommended first question after marketing analysis: `Which competitor promise should we test against real customer interviews first?`
 
 ## Quality Checklist
 

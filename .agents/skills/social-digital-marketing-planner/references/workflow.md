@@ -37,7 +37,7 @@ If missing information would materially change the plan, ask one focused questio
 
 If the user wants a fast draft, state assumptions clearly and create a testable plan that can be refined.
 
-If the user is still exploring which customer problem or segment to pursue, use `market-problem-discovery` before planning channels. For unsupported demand claims about a chosen candidate, use `idea-grill` and `evidence-scout`. For competitor positioning or channel examples, use `competitor-scout` and `competitor-marketing-analyzer`. For broader marketing strategy, coordinate with `marketing-strategy-builder`. For consumer services that are regulated, data-sensitive, or hard to reverse, challenge the offer and message with `service-customer-perspective-challenger` before committing creative and spend.
+If the user is still exploring which customer problem or segment to pursue, use `market-problem-discovery` before planning channels. For unsupported demand claims about a chosen candidate, use `idea-grill` and `evidence-scout`. For competitor positioning or channel examples, use `competitor-research` (scout and teardown modes). For broader marketing strategy, coordinate with `marketing-strategy-builder`. For consumer services that are regulated, data-sensitive, or hard to reverse, challenge the offer and message with `service-customer-perspective-challenger` before committing creative and spend.
 
 ## Minimum Inputs
 

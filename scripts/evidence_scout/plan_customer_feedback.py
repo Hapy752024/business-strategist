@@ -29,7 +29,7 @@ APPROACHES = {
         "source_frame": "topic-led customer voice without requiring supplier names",
     },
     "alternatives_and_cases": {
-        "owner": "competitive-landscape-builder/evidence-scout",
+        "owner": "competitor-research/evidence-scout",
         "question": "How does this target customer solve the same job across software, services, manual work and no action?",
         "source_frame": "actual shortlist and relevant comparable companies; geography is a contextual field",
     },
@@ -39,7 +39,7 @@ APPROACHES = {
         "source_frame": "dated customer episodes and company changes with affected-customer evidence",
     },
     "ecosystem_and_implementation": {
-        "owner": "competitive-landscape-builder/evidence-scout",
+        "owner": "competitor-research/evidence-scout",
         "question": "Which integrations, marketplace tasks or repeated implementation jobs illuminate the customer workflow?",
         "source_frame": "platform/ecosystem observations and attributed customer or intermediary accounts",
     },

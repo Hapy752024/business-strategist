@@ -101,7 +101,7 @@ def test_website_routes(prompt):
     assert route_request(prompt)['skill'] == 'brand-website-designer-builder'
 
 
-@pytest.mark.parametrize('prompt,expected', [('Analyze competitor website','competitor-marketing-analyzer'), ('Create favicon set','brand-asset-producer'), ('Build dashboard UI','brand-ui-system')])
+@pytest.mark.parametrize('prompt,expected', [('Analyze competitor website','competitor-research'), ('Create favicon set','brand-asset-producer'), ('Build dashboard UI','brand-ui-system')])
 def test_scope_boundaries(prompt, expected):
     assert route_request(prompt)['skill'] == expected
 

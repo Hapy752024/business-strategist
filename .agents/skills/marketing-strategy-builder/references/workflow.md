@@ -20,7 +20,7 @@ If the customer segment, product, buyer, price, geography, or business model is 
 
 If the user wants a fast draft, state assumptions and create a testable strategy, not a definitive one.
 
-If the user has not chosen a customer problem or segment and wants to discover opportunities, route first to `market-problem-discovery`. For unsupported demand claims about a chosen candidate, route to `idea-grill` and `evidence-scout`. For competitor positioning, route to `competitor-scout` and `competitor-marketing-analyzer`.
+If the user has not chosen a customer problem or segment and wants to discover opportunities, route first to `market-problem-discovery`. For unsupported demand claims about a chosen candidate, route to `idea-grill` and `evidence-scout`. For competitor positioning, route to `competitor-research` (scout and teardown modes).
 
 When business archetype, MVP/launch stage, first-customer motion, partnerships, or Europe/US/China expansion materially changes the strategy, route first to `archetype-gtm-strategist`; use this skill afterward for detailed positioning, funnel, channel, and campaign execution.
 

@@ -160,13 +160,14 @@
       ]
     },
     {
-      "pair": "competitor-marketing-analyzer vs social-digital-marketing-planner",
+      "pair": "competitor-research (teardown) vs social-digital-marketing-planner",
       "evals": [
         {
           "id": "route-ads-1",
           "prompt": "Analyze what Facebook and Instagram ads my competitors are running — creatives, copy, CTAs, and how long the ads have been active.",
-          "expected_output": "Routes to competitor-marketing-analyzer, which now includes an ad-evidence step via scripts/evidence_scout/collect_ads.py.",
-          "expected_skill": "competitor-marketing-analyzer",
+          "expected_output": "Routes to competitor-research teardown mode, which now includes an ad-evidence step via scripts/evidence_scout/collect_ads.py.",
+          "expected_skill": "competitor-research",
+          "expected_route": "competitor-analysis",
           "forbidden_skills": [
             "social-digital-marketing-planner",
             "marketing-strategy-builder"
@@ -180,11 +181,11 @@
           "expected_output": "Routes to evidence-scout for ScrapeCreators-backed social pain collection (--fb-groups, --ig-hashtags).",
           "expected_skill": "evidence-scout",
           "forbidden_skills": [
-            "competitor-marketing-analyzer",
+            "competitor-research",
             "social-digital-marketing-planner"
           ],
           "files": [],
-          "rationale": "Social pain evidence collection is evidence-scout's job via collect.py; competitor-marketing-analyzer analyzes competitor positioning, not customer pain."
+          "rationale": "Social pain evidence collection is evidence-scout's job via collect.py; competitor-research teardown mode analyzes competitor positioning, not customer pain."
         }
       ]
     },
@@ -291,13 +292,14 @@
       ]
     },
     {
-      "pair": "competitive-landscape-builder vs competitor-scout vs competitor-marketing-analyzer vs brand-website-designer-builder",
+      "pair": "competitor-research landscape vs scout vs teardown modes vs brand-website-designer-builder",
       "evals": [
         {
           "id": "route-landscape-1",
           "prompt": "Map our competitive landscape: same-market competitors, similar companies in other countries, their services and prices, and how they use YouTube and Instagram. Suggest positioning white space.",
-          "expected_output": "Routes to competitive-landscape-builder with three lane outputs and no website build.",
-          "expected_skill": "competitive-landscape-builder",
+          "expected_output": "Routes to competitor-research landscape mode with three lane outputs and no website build.",
+          "expected_skill": "competitor-research",
+          "expected_route": "competitive-landscape",
           "forbidden_skills": [
             "brand-website-designer-builder"
           ],
@@ -307,22 +309,20 @@
         {
           "id": "route-landscape-2",
           "prompt": "Find competitors for my invoice automation idea; I only need a classified candidate list.",
-          "expected_output": "Routes to competitor-scout for narrow discovery.",
-          "expected_skill": "competitor-scout",
-          "forbidden_skills": [
-            "competitive-landscape-builder"
-          ],
+          "expected_output": "Routes to competitor-research scout mode for narrow discovery.",
+          "expected_skill": "competitor-research",
+          "expected_route": "competitor-discovery",
+          "forbidden_skills": [],
           "files": [],
           "rationale": "The user explicitly requests discovery only, not synthesis or social analysis."
         },
         {
           "id": "route-landscape-3",
           "prompt": "Analyze these three competitor landing pages and their pricing CTAs.",
-          "expected_output": "Routes to competitor-marketing-analyzer for a supplied-URL teardown.",
-          "expected_skill": "competitor-marketing-analyzer",
-          "forbidden_skills": [
-            "competitive-landscape-builder"
-          ],
+          "expected_output": "Routes to competitor-research teardown mode for a supplied-URL teardown.",
+          "expected_skill": "competitor-research",
+          "expected_route": "competitor-analysis",
+          "forbidden_skills": [],
           "files": [],
           "rationale": "A supplied-URL narrow marketing analysis remains owned by the existing analyzer."
         }
@@ -436,7 +436,8 @@
         {
           "id": "gate-exempt-1",
           "prompt": "Find competitors for my meal-planning app idea.",
-          "expected_skill": "competitor-scout",
+          "expected_skill": "competitor-research",
+          "expected_route": "competitor-discovery",
           "forbidden_skills": [],
           "expected_output": "Not gate-blocked: discovery/evidence routes never require the pain gate.",
           "files": [],
@@ -518,7 +519,7 @@
           "expected_skill": "geo-audit",
           "forbidden_skills": [
             "competitor-monitoring",
-            "competitor-marketing-analyzer"
+            "competitor-research"
           ],
           "files": [],
           "rationale": "A tool-backed citability audit of our own public site is geo-audit's scope. Broad AEO/GEO content and schema work stays with brand-website-designer-builder; recorded AI-answer visibility stays with competitor-monitoring."

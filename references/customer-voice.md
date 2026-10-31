@@ -26,7 +26,7 @@ Missing or failed locales and platforms stay explicit gaps; useful scoped findin
 
 ## Ownership and sequence
 
-1. Identify and disambiguate the competitor, substitute or foreign analog first (domain, product, operating market). Reuse a verified shortlist or use competitor-scout; do not require a full landscape before listening to customers.
+1. Identify and disambiguate the competitor, substitute or foreign analog first (domain, product, operating market). Reuse a verified shortlist or use competitor-research scout mode; do not require a full landscape before listening to customers.
 2. Evidence-scout owns customer-voice retrieval and source review. Competitor-marketing-analyzer owns supplier positioning, prices and promises, which cannot establish customer motives. Competitive-landscape-builder joins them without merging provenance.
 3. With an unknown segment, explore broadly to form explicit segment/job hypotheses, then narrow. Keep adjacent/foreign voices labelled; never silently broaden the target to fill a quota.
 4. Build the separate needs and requirements maps, then assess **each** mapped item before segment/journey/pain synthesis and before opportunity-risk-designer ranks assumptions. This is a research loop, not a new stage pass.

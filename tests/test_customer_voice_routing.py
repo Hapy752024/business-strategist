@@ -6,14 +6,18 @@ import pytest
 from scripts import enforce_skill_route, route_workflow, validate_skill_routes
 
 
-@pytest.mark.parametrize('skill', [
-    'evidence-scout', 'competitive-landscape-builder', 'competitor-marketing-analyzer',
-    'service-customer-perspective-challenger', 'opportunity-risk-designer', 'interview-bridge',
+@pytest.mark.parametrize('intent,skill', [
+    ('evidence-scout', 'evidence-scout'), ('competitive-landscape', 'competitor-research'),
+    ('competitor-analysis', 'competitor-research'), ('competitor-discovery', 'competitor-research'),
+    ('service-customer-perspective-challenger', 'service-customer-perspective-challenger'),
+    ('opportunity-prioritization', 'opportunity-risk-designer'), ('interview-bridge', 'interview-bridge'),
 ])
-def test_customer_voice_reference_is_delivered_without_forcing_strategy(skill):
-    packet = route_workflow.route_request('separate customer desired outcomes from solution-use requirements using known sources', intent="opportunity-prioritization" if skill == "opportunity-risk-designer" else skill,
+def test_customer_voice_reference_is_delivered_without_forcing_strategy(intent, skill):
+    packet = route_workflow.route_request('separate customer desired outcomes from solution-use requirements using known sources', intent=intent,
                                          task_scope='focused', check_skill=skill)
-    assert packet['required_references'] == ['references/customer-voice.md']
+    # Merged family skills also deliver the selected mode's own reference.
+    mode_reference = f'.agents/skills/{skill}/references/{packet["mode"]}.md'
+    assert packet['required_references'] in (['references/customer-voice.md'], ['references/customer-voice.md', mode_reference])
     assert packet['task_scope'] == 'focused'
     assert not packet.get('gate_blocked')
     assert not packet.get('required_stages')

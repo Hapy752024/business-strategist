@@ -450,7 +450,7 @@ run a separate entity-led feedback pass across applicable independent review sit
 keep supplier posts/replies/testimonials separately attributed.
 If no entity is yet known, mark entity-led analysis pending, discover candidates, then run it after verification. For delegated entity-led work the coordinator runs `scripts/evidence_scout/plan_customer_feedback.py` and passes the plan path plus an allowed `--out-dir` in the packet (workers cannot write).
 Keep the two sampling frames separate, map independent customer needs separately from solution-use requirements, and assess each before segment/journey/pain and risk synthesis.
-Evidence-scout owns customer voice; competitor-marketing-analyzer owns supplier claims.
+Evidence-scout owns customer voice; competitor-research owns supplier claims.
 Read the `required_references` from your route packet.
 Reuse current evidence; focused factual lookups do not trigger a full study.
 
@@ -465,7 +465,7 @@ Ads vary by time, location and device: record all three and use `--repeat` with 
 Forums in the top 10 for problem-aware queries suggest an unmet information need.
 Aggregators dominating purchase queries signal a hard entry.
 Both are hypotheses for the case appraisal, not findings.
-Hand advertisers and unclassified ranking domains to competitor-scout as unverified candidates.
+Hand advertisers and unclassified ranking domains to competitor-research (scout mode) as unverified candidates.
 `content-opportunities.json` is one input to content planning; its gaps are hypotheses and volumes stay null.
 The study does not authorize ads or content publication.
 

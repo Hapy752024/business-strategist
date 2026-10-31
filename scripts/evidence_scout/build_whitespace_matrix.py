@@ -155,7 +155,7 @@ def render_matrix(topic: str, pains: list[dict[str, Any]], competitors: list[dic
             "",
             "## Coverage Notes",
             "",
-            "- Competitors without a full marketing analysis default to `unknown` — run `competitor-marketing-analyzer` before rating their column.",
+            "- Competitors without a full marketing analysis default to `unknown` — run `competitor-research` teardown mode before rating their column.",
             "- Rows with weak single-source pain stay in the matrix but cannot support a white-spot claim alone.",
         ]
     )

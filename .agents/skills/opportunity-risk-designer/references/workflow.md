@@ -18,7 +18,7 @@ Use:
 - `evidence.jsonl`
 - `report.md`
 - The user hypothesis from `idea-grill`
-- `competitors.json` and `marketing_analysis.json` from `competitor-scout` / `competitor-marketing-analyzer`, when they exist
+- `competitors.json` and `marketing_analysis.json` from `competitor-research` scout / teardown modes, when they exist
 
 Reuse relevant founder decision context from the active thesis or strategy record: objective, desired role, means/access, affordable downside, time horizon, and acquisition/operating constraints. If a missing item changes the ranking or test design, ask one focused question and label the result as constraint, preference, assumption, or unresolved input.
 

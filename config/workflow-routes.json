@@ -86,7 +86,7 @@
       "requires_pain_gate": true,
       "forbidden": [
         "brand-ui-system",
-        "competitor-marketing-analyzer"
+        "competitor-research"
       ]
     },
     {
@@ -117,7 +117,7 @@
       ],
       "skill": "geo-audit",
       "forbidden": [
-        "competitor-marketing-analyzer"
+        "competitor-research"
       ],
       "single_mode": true
     },
@@ -143,12 +143,9 @@
         "competitor list",
         "competitor candidates"
       ],
-      "skill": "competitor-scout",
-      "forbidden": [
-        "competitive-landscape-builder",
-        "competitor-marketing-analyzer"
-      ],
-      "single_mode": true
+      "skill": "competitor-research",
+      "forbidden": [],
+      "mode": "scout"
     },
     {
       "id": "competitive-landscape",
@@ -166,11 +163,11 @@
         "possible USPs",
         "competitor services and prices"
       ],
-      "skill": "competitive-landscape-builder",
+      "skill": "competitor-research",
       "forbidden": [
         "brand-website-designer-builder"
       ],
-      "single_mode": true
+      "mode": "landscape"
     },
     {
       "id": "competitor-analysis",
@@ -181,11 +178,11 @@
         "competitor pricing",
         "competitor messaging"
       ],
-      "skill": "competitor-marketing-analyzer",
+      "skill": "competitor-research",
       "forbidden": [
         "brand-website-designer-builder"
       ],
-      "single_mode": true
+      "mode": "teardown"
     },
     {
       "id": "competitor-monitoring",
@@ -207,7 +204,7 @@
       ],
       "skill": "competitor-monitoring",
       "forbidden": [
-        "competitor-marketing-analyzer"
+        "competitor-research"
       ],
       "single_mode": true
     },
@@ -648,7 +645,7 @@
       "requires_pain_gate": true,
       "forbidden": [
         "brand-ui-system",
-        "competitor-marketing-analyzer"
+        "competitor-research"
       ],
       "mode": "validation_page"
     },

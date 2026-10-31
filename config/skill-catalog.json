@@ -8,9 +8,7 @@
         "market-problem-discovery",
         "idea-grill",
         "evidence-scout",
-        "competitor-scout",
-        "competitive-landscape-builder",
-        "competitor-marketing-analyzer",
+        "competitor-research",
         "competitor-monitoring",
         "service-customer-perspective-challenger",
         "business-archetype-playbook-researcher",
@@ -189,110 +187,6 @@
           ],
           "freshness": "digest"
         }
-      ]
-    },
-    "competitive-landscape-builder": {
-      "intent": [
-        "separate market competitors, similar companies, and capability references",
-        "analyze services, prices, social usage, positioning and inspiration"
-      ],
-      "excludes": [
-        "building a website",
-        "standalone branding"
-      ],
-      "prerequisites": [
-        "candidate offer or customer job"
-      ],
-      "artifacts": [
-        "schema-validated entity landscape",
-        "verified competitive matrix",
-        "inspiration library",
-        "positioning hypotheses",
-        "quality gate"
-      ],
-      "side_effect": "research",
-      "cost": "high",
-      "required_references": [
-        "references/customer-voice.md"
-      ],
-      "consumes": [
-        {
-          "artifact": "competitor-candidates",
-          "schema": "schemas/competitor.schema.json",
-          "path_patterns": [
-            "cases/{case}/market_research/**/competitors.json",
-            "market_research/**/competitors.json"
-          ],
-          "freshness": "digest"
-        }
-      ],
-      "produces": [
-        {
-          "artifact": "entity-landscape",
-          "schema": "schemas/entity-landscape.schema.json",
-          "path_patterns": [
-            "cases/{case}/market_research/**/entity-landscape.json",
-            "market_research/**/entity-landscape.json"
-          ],
-          "freshness": "digest"
-        }
-      ]
-    },
-    "competitor-scout": {
-      "intent": [
-        "discover competitors and substitutes"
-      ],
-      "excludes": [
-        "brand inspiration only"
-      ],
-      "prerequisites": [
-        "candidate problem or offer"
-      ],
-      "artifacts": [
-        "competitor plan"
-      ],
-      "side_effect": "research",
-      "cost": "medium",
-      "consumes": [
-        {
-          "artifact": "founder-brief",
-          "schema": null,
-          "path_patterns": [
-            "cases/{case}/market_research/manifest.json"
-          ],
-          "freshness": "none",
-          "external": true
-        }
-      ],
-      "produces": [
-        {
-          "artifact": "competitor-candidates",
-          "schema": "schemas/competitor.schema.json",
-          "path_patterns": [
-            "cases/{case}/market_research/**/competitors.json",
-            "market_research/**/competitors.json"
-          ],
-          "freshness": "digest"
-        }
-      ]
-    },
-    "competitor-marketing-analyzer": {
-      "intent": [
-        "analyze competitor positioning, pages, pricing, CTAs"
-      ],
-      "excludes": [
-        "build a new website"
-      ],
-      "prerequisites": [
-        "known competitor or URL"
-      ],
-      "artifacts": [
-        "marketing analysis"
-      ],
-      "side_effect": "research",
-      "cost": "medium",
-      "required_references": [
-        "references/customer-voice.md"
       ]
     },
     "competitor-monitoring": {
@@ -1585,6 +1479,150 @@
           "external": true
         }
       ]
+    },
+    "competitor-research": {
+      "intent": [
+        "discover competitors and substitutes",
+        "separate market competitors, similar companies, and capability references",
+        "analyze services, prices, social usage, positioning and inspiration",
+        "analyze competitor positioning, pages, pricing, CTAs"
+      ],
+      "excludes": [
+        "brand inspiration only",
+        "building a website",
+        "standalone branding"
+      ],
+      "prerequisites": [
+        "candidate problem, offer or customer job; a known competitor or URL for a teardown"
+      ],
+      "artifacts": [
+        "competitor plan",
+        "schema-validated entity landscape",
+        "verified competitive matrix",
+        "inspiration library",
+        "positioning hypotheses",
+        "quality gate",
+        "marketing analysis"
+      ],
+      "side_effect": "research",
+      "cost": "high",
+      "required_references": [
+        "references/customer-voice.md"
+      ],
+      "modes": {
+        "scout": {
+          "inputs": [
+            "candidate problem or offer"
+          ],
+          "excludes": [
+            "brand inspiration only"
+          ],
+          "prerequisites": [
+            "candidate problem or offer"
+          ],
+          "artifacts": [
+            "competitor plan"
+          ],
+          "side_effect": "research",
+          "cost": "medium",
+          "consumes": [
+            {
+              "artifact": "founder-brief",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/manifest.json"
+              ],
+              "freshness": "none",
+              "external": true
+            }
+          ],
+          "produces": [
+            {
+              "artifact": "competitor-candidates",
+              "schema": "schemas/competitor.schema.json",
+              "path_patterns": [
+                "cases/{case}/market_research/**/competitors.json",
+                "market_research/**/competitors.json"
+              ],
+              "freshness": "digest"
+            }
+          ],
+          "required_references": [
+            "references/customer-voice.md",
+            ".agents/skills/competitor-research/references/scout.md"
+          ],
+          "output_owner": "competitor-research"
+        },
+        "landscape": {
+          "inputs": [
+            "candidate offer or customer job"
+          ],
+          "excludes": [
+            "building a website",
+            "standalone branding"
+          ],
+          "prerequisites": [
+            "candidate offer or customer job"
+          ],
+          "artifacts": [
+            "schema-validated entity landscape",
+            "verified competitive matrix",
+            "inspiration library",
+            "positioning hypotheses",
+            "quality gate"
+          ],
+          "side_effect": "research",
+          "cost": "high",
+          "consumes": [
+            {
+              "artifact": "competitor-candidates",
+              "schema": "schemas/competitor.schema.json",
+              "path_patterns": [
+                "cases/{case}/market_research/**/competitors.json",
+                "market_research/**/competitors.json"
+              ],
+              "freshness": "digest"
+            }
+          ],
+          "produces": [
+            {
+              "artifact": "entity-landscape",
+              "schema": "schemas/entity-landscape.schema.json",
+              "path_patterns": [
+                "cases/{case}/market_research/**/entity-landscape.json",
+                "market_research/**/entity-landscape.json"
+              ],
+              "freshness": "digest"
+            }
+          ],
+          "required_references": [
+            "references/customer-voice.md",
+            ".agents/skills/competitor-research/references/landscape.md"
+          ],
+          "output_owner": "competitor-research"
+        },
+        "teardown": {
+          "inputs": [
+            "known competitor or URL"
+          ],
+          "excludes": [
+            "build a new website"
+          ],
+          "prerequisites": [
+            "known competitor or URL"
+          ],
+          "artifacts": [
+            "marketing analysis"
+          ],
+          "side_effect": "research",
+          "cost": "medium",
+          "required_references": [
+            "references/customer-voice.md",
+            ".agents/skills/competitor-research/references/teardown.md"
+          ],
+          "output_owner": "competitor-research"
+        }
+      }
     }
   }
 }
