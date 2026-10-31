@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import urllib.parse
 
-from common import cli_arg, fields_present, finish, get_secret, http_get, http_post, missing_credentials, status_from_response, with_query
+from common import cli_arg, fields_present, finish, get_secret, http_get, http_post, missing_credentials, reddit_user_agent, status_from_response, with_query
 
 
 PROVIDER = "reddit"
@@ -27,7 +27,7 @@ def main() -> int:
 
     token_response = http_post(
         "https://www.reddit.com/api/v1/access_token",
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        headers={"Content-Type": "application/x-www-form-urlencoded", "User-Agent": reddit_user_agent()},
         data=urllib.parse.urlencode({"grant_type": "client_credentials"}),
         basic_auth=(client_id, client_secret),
     )
@@ -39,7 +39,7 @@ def main() -> int:
     query = cli_arg("query", "projectmanagement")
     if status == "ok":
         token = (token_response.get("body") or {}).get("access_token")
-        headers = {"Authorization": f"Bearer {token}", "User-Agent": "evidence-scout-validator/0.1"}
+        headers = {"Authorization": f"Bearer {token}", "User-Agent": reddit_user_agent()}
         subreddits = http_get(
             with_query("https://oauth.reddit.com/subreddits/search", {"q": query, "limit": 5}),
             headers=headers,

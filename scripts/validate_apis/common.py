@@ -21,6 +21,15 @@ from typing import Any
 
 
 USER_AGENT = "evidence-scout-validator/0.1"
+REDDIT_APP_NAME = "business-strategist-hapy"
+
+
+def reddit_user_agent() -> str:
+    """Reddit's requested format: <platform>:<app id>:<version> (by /u/<username>).
+
+    The username comes from REDDIT_USERNAME so the public repo does not name the account."""
+    _, username = get_secret("REDDIT_USERNAME")
+    return f"python:{REDDIT_APP_NAME}:0.1" + (f" (by /u/{username})" if username else "")
 
 
 def project_root() -> Path:

@@ -49,6 +49,7 @@ from common import (  # noqa: E402
     reserve_enrichment_allowance,
     is_credit_exhaustion,
     now_iso,
+    reddit_user_agent,
     redact_sensitive,
     status_from_response,
     with_query,
@@ -1349,7 +1350,7 @@ def reddit_token() -> tuple[str | None, dict[str, Any]]:
         return None, {"status": "missing_credentials", "required_env": ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"]}
     response = http_post(
         "https://www.reddit.com/api/v1/access_token",
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        headers={"Content-Type": "application/x-www-form-urlencoded", "User-Agent": reddit_user_agent()},
         data=urllib.parse.urlencode({"grant_type": "client_credentials"}),
         basic_auth=(client_id, client_secret),
     )
@@ -1372,7 +1373,7 @@ def collect_reviewed_reddit_target(args: argparse.Namespace, run_dir: Path) -> t
     post_id = match.group(1)
     token, token_raw = reddit_token()
     raw: dict[str, Any] = {"token": token_raw, "binding": binding, "primary": None, "fallback": None}
-    headers = {"Authorization": f"Bearer {token}", "User-Agent": "evidence-scout/0.1"} if token else {}
+    headers = {"Authorization": f"Bearer {token}", "User-Agent": reddit_user_agent()} if token else {}
     response = None
     if token:
         response = http_get(with_query(f"https://oauth.reddit.com/comments/{post_id}",
@@ -1518,7 +1519,7 @@ def collect_reddit(args: argparse.Namespace, queries: list[str], run_dir: Path) 
         write_json(run_dir / "raw" / "reddit.json", redact_sensitive(raw))
         return [], {"status": status, "query_ledger": ledger}
 
-    headers = {"Authorization": f"Bearer {token}", "User-Agent": "evidence-scout/0.1"}
+    headers = {"Authorization": f"Bearer {token}", "User-Agent": reddit_user_agent()}
     cutoff = time.time() - (args.days * 86400)
     records: list[dict[str, Any]] = []
     by_id: dict[str, dict[str, Any]] = {}
@@ -2376,7 +2377,7 @@ def collect_reddit_hydrate(args: argparse.Namespace, queries: list[str], run_dir
                     continue
                 response = http_get(with_query(f"https://oauth.reddit.com/comments/{ref['post_id']}",
                     {"limit": min(100, max(1, comments_per_post)), "depth": 4, "sort": "confidence", "raw_json": 1}),
-                    headers={"Authorization": f"Bearer {token}", "User-Agent": "evidence-scout/0.1"})
+                    headers={"Authorization": f"Bearer {token}", "User-Agent": reddit_user_agent()})
                 raw["threads"].append({"post_id": ref["post_id"], "backend": backend, "response": response})
                 status = status_from_response(response)
                 found = reddit_hydrate.api_listing_to_records(response.get("body"), ref, query, now, normalize_record,
