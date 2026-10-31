@@ -50,4 +50,4 @@ Does the draft name its riskiest assumption and the cheapest test that would fal
 - **Select a winner:** one draft leads on the lenses that are decisive for this decision (state which lenses were decisive and why).
 - **Synthesize:** a winner plus grafted strengths from losers, when the grafts do not violate the winner's mechanism.
 - **Feedback round:** no draft scores ≥4 on evidence grounding AND constraint fit.
-- **Escalate to the user:** after 2 feedback rounds without a winner, or when the judge's real finding is that the decision lacks evidence — route the gap to `evidence-scout` or `interview-bridge` instead of picking the least-bad guess.
+- **Escalate to the user:** after 2 feedback rounds without a winner, or when the judge's real finding is that the decision lacks evidence — route the gap to `evidence-scout` (incl. interview-kit mode) instead of picking the least-bad guess.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic structural tests for the interview-bridge kit generator."""
+"""Deterministic structural tests for the interview kit generator (evidence-scout interview-kit mode)."""
 
 from __future__ import annotations
 
@@ -97,11 +97,11 @@ class InterviewKitTests(unittest.TestCase):
             self.assertIn("no evidence records", result.stderr)
 
     def test_skill_structure(self) -> None:
-        skill = ROOT / ".agents" / "skills" / "interview-bridge"
+        skill = ROOT / ".agents" / "skills" / "evidence-scout"
         entry = (skill / "SKILL.md").read_text(encoding="utf-8")
-        self.assertLessEqual(len(entry.splitlines()), 30)
-        self.assertIn("name: interview-bridge", entry)
-        self.assertTrue((skill / "references" / "workflow.md").is_file())
+        self.assertLessEqual(len(entry.split()), 450)
+        self.assertIn("references/interview-kit.md", entry)
+        self.assertTrue((skill / "references" / "interview-kit.md").is_file())
         self.assertTrue((skill / "evals" / "evals.json").is_file())
 
 

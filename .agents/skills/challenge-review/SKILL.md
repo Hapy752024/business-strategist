@@ -20,7 +20,7 @@ Tournament mode needs its strategy prerequisites; the router enforces them and r
 - Challenge by default; never approve because a plan sounds good. Say "I don't know" when evidence does not settle a point.
 - Every critique or score cites evidence, a registry lens or a named assumption; claims without support are listed as unsupported.
 - Decide on evidence weight: no averaging, no majority vote.
-- Simulated customer voice and role memos are hypotheses, never evidence records; send evidence gaps to `evidence-scout` or `interview-bridge`.
+- Simulated customer voice and role memos are hypotheses, never evidence records; send evidence gaps to `evidence-scout` (incl. interview-kit mode).
 - Never infer personality from nationality; segment by trigger, job, stakes and decision role.
 - Multi-agent effort stays proportional to decision value; for a simple question use one critic.
 - Save substantial outputs under the topic workspace `reviews/<timestamp>-<decision>/` and record the event in the topic manifest.

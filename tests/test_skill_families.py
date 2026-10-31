@@ -26,7 +26,11 @@ FAMILIES = {
     'precedent-research': ['business-archetype-playbook-researcher', 'growth-case-analyzer'],
     'marketing': ['marketing-strategy-builder', 'social-digital-marketing-planner', 'social-media-idea-validator'],
     'positioning-gtm': ['archetype-gtm-strategist', 'company-operating-system'],
+    'evidence-scout': ['interview-bridge'],
 }
+# Hosts that absorbed a former skill keep their own pre-existing routes as they were (route ID, mode or no mode);
+# only the absorbed skills' routes gain a mode and a references/<mode>.md.
+ABSORBING_HOSTS = {'evidence-scout'}
 FORMER = [(merged, former) for merged, formers in FAMILIES.items() for former in formers]
 # Paths stay in git history; docs/ and .superpowers/ are dated records of that history. The research-business-plan
 # eval is a completed recorded comparison: its manifest snapshot paths are pinned to its baseline revision and results.
@@ -49,7 +53,10 @@ def test_merged_skill_has_one_skill_md_and_a_reference_per_mode(merged):
     skill_md = SKILLS / merged / 'SKILL.md'
     assert skill_md.is_file(), f'{merged} missing'
     assert _words(skill_md) <= 450
-    modes = [route.get('mode') for route in _routes().values() if route['skill'] == merged]
+    routes = _routes()
+    modes = [route.get('mode') for route in routes.values() if route['skill'] == merged]
+    if merged in ABSORBING_HOSTS:
+        modes = [routes[route_workflow.SKILL_ALIASES[former]].get('mode') for former in FAMILIES[merged]]
     assert None not in modes and len(modes) == len(set(modes)), modes
     assert len(modes) >= len(FAMILIES[merged])
     for mode in modes:
@@ -81,6 +88,10 @@ def test_dispatch_check_with_a_former_name_explains_the_merge(merged, former):
 
 @pytest.mark.parametrize('merged', sorted(FAMILIES))
 def test_bare_merged_skill_intent_lists_its_route_ids(merged):
+    if merged in {route['id'] for route in _routes().values()}:
+        # A host whose own route ID is its skill name keeps resolving the bare name to that route.
+        assert route_workflow.route_request('explicit specialist task', intent=merged)['route_id'] == merged
+        return
     with pytest.raises(ValueError) as excinfo:
         route_workflow.route_request('explicit specialist task', intent=merged)
     for route_id in (route['id'] for route in _routes().values() if route['skill'] == merged):
@@ -347,3 +358,62 @@ def test_positioning_gtm_boundary_routes_unchanged(request_text, expected_route)
 ])
 def test_positioning_gtm_plain_text_infers_its_mode(request_text, expected_route):
     assert route_workflow.infer_mode('positioning-gtm', request_text)[0] == expected_route
+
+
+def test_evidence_scout_interview_kit_mode_keeps_its_contract():
+    refs = SKILLS / 'evidence-scout' / 'references'
+    kit = (refs / 'interview-kit.md').read_text(encoding='utf-8')
+    for marker in ('build_interview_kit.py', 'source-review.json', '--responders', 'ingest_transcript_coding.py',
+                   'interview-tracker.md', 'interview-screener.md', 'interview-guide.md',
+                   'references/interview-recruitment.md', 'references/case-insights.md', 'Never pitch the solution'):
+        assert marker in kit, marker
+    assert 'unpaid' in kit.lower()
+    skill = (SKILLS / 'evidence-scout' / 'SKILL.md').read_text(encoding='utf-8')
+    assert 'references/interview-kit.md' in skill
+    routes = _routes()
+    assert routes['interview-bridge']['mode'] == 'interview-kit'
+    assert not routes['interview-bridge'].get('requires_pain_gate') and not routes['evidence-scout'].get('requires_pain_gate')
+    assert not routes['evidence-scout'].get('mode')
+    catalog = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))['skills']['evidence-scout']
+    kit_mode = catalog['modes']['interview-kit']
+    assert [c['artifact'] for c in kit_mode['consumes']] == ['evidence-run']
+    assert [c['artifact'] for c in kit_mode['produces']] == ['interview-tracker']
+    assert not kit_mode.get('strategy_stage_prerequisites')
+
+
+# Plain-text requests near the interview/evidence boundary. Frozen from the router at 3f1635c (before the merge);
+# rows marked "new" moved from clarification to interview-bridge through the specific phrases added in the merge.
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Build a customer interview guide from the evidence run', 'interview-bridge'),
+    ('Write an interview screener for dentists', 'interview-bridge'),
+    ('Create an interview kit for the meal-kit evidence', 'interview-bridge'),  # new
+    ('Set up an interview tracker for our customer calls', 'interview-bridge'),  # new
+    ('Collect customer evidence for invoice automation pain', 'evidence-scout'),
+    ('Validate customer pain for dog walkers', 'evidence-scout'),
+    ('What will customers search for?', 'evidence-scout'),
+    ('Plan customer interviews to validate the pain', 'clarify'),
+    ('Recruit customer interviews for my idea', 'clarify'),
+    ('Find customer problems in independent elder care', 'market-discovery'),
+    ('Pressure-test this idea: software for care homes', 'idea-validation'),
+    ('Research what customers say on social media about invoicing', 'clarify'),
+])
+def test_evidence_interview_boundary_routes(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Build the interview kit: screener and customer interview guide', 'interview-bridge'),
+    ('Collect customer evidence and validate customer pain', 'evidence-scout'),
+    # No phrase matches: the skill's own route stays the plain-text default, as when it was single-mode.
+    ('Research pain points of freelance translators', 'evidence-scout'),
+])
+def test_evidence_scout_plain_text_infers_its_mode(request_text, expected_route):
+    assert route_workflow.infer_mode('evidence-scout', request_text)[0] == expected_route
+
+
+def test_evidence_scout_plain_text_dispatch_still_works_without_an_envelope():
+    from scripts import enforce_skill_route as hook
+    event = {'hook_event_name': 'PreToolUse', 'tool_name': 'Skill', 'session_id': 's1', 'tool_use_id': 't1',
+             'cwd': str(ROOT), 'tool_input': {'skill': 'evidence-scout', 'args': 'Research pain points of freelance translators'}}
+    out = hook.check_dispatch(event)
+    assert '"route_id": "evidence-scout"' in out['hookSpecificOutput']['additionalContext']

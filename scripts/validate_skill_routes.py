@@ -121,6 +121,8 @@ def validate(root: Path = ROOT) -> list[str]:
                 errors.append(f'Route {route_id} forbids unknown skill: {forbidden}')
         if name in route.get('forbidden', []):
             errors.append(f'Route {route_id} forbids its own skill')
+        if route.get('plain_text_default') and sum(r['skill'] == name and bool(r.get('plain_text_default')) for r in routes) != 1:
+            errors.append(f'Route {route_id}: {name} has more than one plain_text_default route')
         if bool(route.get('single_mode', False)) != (route_counts[name] == 1):
             errors.append(f'Route {route_id}: single_mode flag disagrees with {route_counts[name]} route(s) for {name}')
     for name in sorted(skills - reached):

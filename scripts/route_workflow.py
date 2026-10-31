@@ -57,6 +57,7 @@ SKILL_ALIASES: dict[str, str] = {
     "social-media-idea-validator": "social-media-idea-validator",
     "archetype-gtm-strategist": "gtm-strategy",
     "company-operating-system": "company-operations",
+    "interview-bridge": "interview-bridge",
 }
 
 
@@ -66,7 +67,8 @@ def load_routes() -> list[dict[str, Any]]:
 
 def infer_mode(skill: str, request: str) -> tuple[str | None, list[str]]:
     """Pick a skill's route from plain text: (route_id, []) when one route uniquely scores highest on its
-    `match` phrases (case-insensitive substring count), else (None, candidate route IDs)."""
+    `match` phrases (case-insensitive substring count), or when nothing matches and the skill has one
+    `plain_text_default` route; else (None, candidate route IDs)."""
     text = request.lower()
     scores = {r["id"]: sum(1 for phrase in r.get("match", []) if phrase.lower() in text)
               for r in load_routes() if r["skill"] == skill}
@@ -74,6 +76,11 @@ def infer_mode(skill: str, request: str) -> tuple[str | None, list[str]]:
     top = [rid for rid, score in scores.items() if score == best]
     if best > 0 and len(top) == 1:
         return top[0], []
+    # A host skill that absorbed another keeps its own route as the default when no phrase matches,
+    # so plain text that worked while it was single-mode still works (e.g. evidence-scout).
+    default = [r["id"] for r in load_routes() if r["skill"] == skill and r.get("plain_text_default")]
+    if best == 0 and len(default) == 1:
+        return default[0], []
     return None, (top if best > 0 else list(scores))
 
 

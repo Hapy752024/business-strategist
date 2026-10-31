@@ -34,7 +34,7 @@ APPROACHES = {
         "source_frame": "actual shortlist and relevant comparable companies; geography is a contextual field",
     },
     "switching_and_changes": {
-        "owner": "competitor-monitoring/interview-bridge",
+        "owner": "competitor-monitoring/evidence-scout (interview-kit)",
         "question": "What triggered a search or change, who could approve it, and why did others stay?",
         "source_frame": "dated customer episodes and company changes with affected-customer evidence",
     },

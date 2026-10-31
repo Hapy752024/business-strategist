@@ -711,6 +711,43 @@
           "rationale": "Social-media research must not route to social mode."
         }
       ]
+    },
+    {
+      "pair": "evidence-scout default vs interview-kit mode",
+      "evals": [
+        {
+          "id": "interview-kit-1",
+          "prompt": "Create an interview kit for the meal-kit evidence.",
+          "expected_skill": "evidence-scout",
+          "expected_route": "interview-bridge",
+          "forbidden_skills": [
+            "idea-grill"
+          ],
+          "expected_output": "Routes to evidence-scout interview-kit mode: screener, guide and learning tracker from reviewed evidence.",
+          "files": [],
+          "rationale": "'interview kit' names the interview-kit deliverable; before the merge it fell to clarification."
+        },
+        {
+          "id": "interview-kit-2",
+          "prompt": "Collect customer evidence for invoice automation pain.",
+          "expected_skill": "evidence-scout",
+          "expected_route": "evidence-scout",
+          "forbidden_skills": [],
+          "expected_output": "Routes to evidence-scout's own research route, not the interview kit.",
+          "files": [],
+          "rationale": "Customer-voice collection stays on the evidence-scout route."
+        },
+        {
+          "id": "interview-kit-3",
+          "prompt": "Plan customer interviews to validate the pain.",
+          "expected_skill": "business-strategist",
+          "expected_route": "clarify",
+          "forbidden_skills": [],
+          "expected_output": "Asks one scoping question: interviews without a named kit deliverable stay ambiguous.",
+          "files": [],
+          "rationale": "Unchanged against 3f1635c; no broad 'interview' phrase was added."
+        }
+      ]
     }
   ]
 }

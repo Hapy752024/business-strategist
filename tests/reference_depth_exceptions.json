@@ -111,22 +111,20 @@
     {
       "reason": "ai-answer-recordings.md is mentioned by a linked file but is outside evidence-scout's own stage; open it only when a task needs it",
       "target": "references/ai-answer-recordings.md"
+    },
+    {
+      "reason": "evidence-registry.md is linked from the interview-kit mode reference for hypothesis probes; open it in that mode when the workspace carries offer, pricing or loop hypotheses",
+      "target": "references/evidence-registry.md"
+    },
+    {
+      "reason": "interview-recruitment.md is linked from the interview-kit mode reference (stage checklist step 4, unpaid recruitment) and named in AGENTS.md standing rules; open it in that mode before recruiting",
+      "target": "references/interview-recruitment.md"
     }
   ],
   "idea-grill": [
     {
       "reason": "customer-voice.md is mentioned by a linked file but is outside idea-grill's own stage; open it only when a task needs it",
       "target": "references/customer-voice.md"
-    }
-  ],
-  "interview-bridge": [
-    {
-      "reason": "evidence-base.md is mentioned by a linked file but is outside interview-bridge's own stage; open it only when a task needs it",
-      "target": ".agents/skills/positioning-gtm/references/evidence-base.md"
-    },
-    {
-      "reason": "playbook.md is mentioned by a linked file but is outside interview-bridge's own stage; open it only when a task needs it",
-      "target": ".agents/skills/precedent-research/references/playbook.md"
     }
   ],
   "market-problem-discovery": [

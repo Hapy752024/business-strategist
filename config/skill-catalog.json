@@ -11,8 +11,7 @@
         "competitor-research",
         "competitor-monitoring",
         "challenge-review",
-        "precedent-research",
-        "interview-bridge"
+        "precedent-research"
       ]
     },
     "branding": {
@@ -136,7 +135,8 @@
     },
     "evidence-scout": {
       "intent": [
-        "collect customer pain and workaround evidence"
+        "collect customer pain and workaround evidence",
+        "turn weak evidence into interview kit"
       ],
       "excludes": [
         "brand-only research"
@@ -181,7 +181,51 @@
           ],
           "freshness": "digest"
         }
-      ]
+      ],
+      "modes": {
+        "interview-kit": {
+          "inputs": [
+            "reviewed evidence or discovery run",
+            "unresolved customer question"
+          ],
+          "prerequisites": [
+            "weak or medium evidence"
+          ],
+          "artifacts": [
+            "screener and guide",
+            "learning tracker"
+          ],
+          "side_effect": "none",
+          "cost": "low",
+          "required_references": [
+            "references/customer-voice.md",
+            ".agents/skills/evidence-scout/references/interview-kit.md"
+          ],
+          "output_owner": "evidence-scout",
+          "consumes": [
+            {
+              "artifact": "evidence-run",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/**/runs/*/summary.json",
+                "market_research/**/runs/*/summary.json"
+              ],
+              "freshness": "digest"
+            }
+          ],
+          "produces": [
+            {
+              "artifact": "interview-tracker",
+              "schema": null,
+              "path_patterns": [
+                "cases/{case}/market_research/**/interview*/interview-tracker.md"
+              ],
+              "freshness": "none"
+            }
+          ],
+          "excludes": []
+        }
+      }
     },
     "competitor-monitoring": {
       "intent": [
@@ -962,44 +1006,6 @@
         "customer_profile",
         "problem_validation",
         "opportunity_risk"
-      ]
-    },
-    "interview-bridge": {
-      "intent": [
-        "turn weak evidence into interview kit"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "weak or medium evidence"
-      ],
-      "artifacts": [
-        "screener and guide"
-      ],
-      "side_effect": "none",
-      "cost": "low",
-      "required_references": [
-        "references/customer-voice.md"
-      ],
-      "consumes": [
-        {
-          "artifact": "evidence-run",
-          "schema": null,
-          "path_patterns": [
-            "cases/{case}/market_research/**/runs/*/summary.json",
-            "market_research/**/runs/*/summary.json"
-          ],
-          "freshness": "digest"
-        }
-      ],
-      "produces": [
-        {
-          "artifact": "interview-tracker",
-          "schema": null,
-          "path_patterns": [
-            "cases/{case}/market_research/**/interview*/interview-tracker.md"
-          ],
-          "freshness": "none"
-        }
       ]
     },
     "earned-media-builder": {

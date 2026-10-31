@@ -343,7 +343,7 @@ Always inspect `summary.json.needs_user_attention` and the Provider Alerts secti
 
 When involving the user, ask exactly one question per response — the first unresolved item from the run's `assumptions.md` / `user_review_plan.md`, or the strongest evidence item needing review. Where relevant, include a recommendation for the next or extended research step, but never bundle multiple questions in one message; wait for the answer, mark the item resolved, and move to the next.
 
-Choose the next method from the unanswered question, not the aggregate weak/medium/strong label. Missing local sources need discovery; unknown motives, decisions or handoffs may need interviews; solution-use uncertainty needs observation/usability testing; payment claims need separately authorized behavioral evidence. When interviews fit, route to `interview-bridge` via `python3 scripts/evidence_scout/build_interview_kit.py --run-dir <run dir>`.
+Choose the next method from the unanswered question, not the aggregate weak/medium/strong label. Missing local sources need discovery; unknown motives, decisions or handoffs may need interviews; solution-use uncertainty needs observation/usability testing; payment claims need separately authorized behavioral evidence. When interviews fit, use interview-kit mode (route `interview-bridge`, [interview kit](interview-kit.md)) via `python3 scripts/evidence_scout/build_interview_kit.py --run-dir <run dir>`.
 
 When improving this skill or the collector, run:
 

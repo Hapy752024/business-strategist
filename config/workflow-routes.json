@@ -489,7 +489,7 @@
       ],
       "skill": "evidence-scout",
       "forbidden": [],
-      "single_mode": true
+      "plain_text_default": true
     },
     {
       "id": "growth-case-analyzer",
@@ -505,11 +505,13 @@
       "id": "interview-bridge",
       "match": [
         "customer interview guide",
-        "interview screener"
+        "interview screener",
+        "interview kit",
+        "interview tracker"
       ],
-      "skill": "interview-bridge",
+      "skill": "evidence-scout",
       "forbidden": [],
-      "single_mode": true
+      "mode": "interview-kit"
     },
     {
       "id": "saas-fintech-pilot-designer",

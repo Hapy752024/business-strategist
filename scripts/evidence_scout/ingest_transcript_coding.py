@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Turn agent-authored interview coding into evidence records after verifying every quote verbatim.
 
-No model is called here: the agent codes the transcript under interview-bridge instructions;
+No model is called here: the agent codes the transcript under evidence-scout interview-kit mode instructions;
 this script only checks that each quote appears in the transcript (whitespace-normalised)
 and emits records conforming to schemas/evidence-record.schema.json. Quotes are
 observations; themes and interpretations are carried as labelled interpretation.

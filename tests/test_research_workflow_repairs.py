@@ -46,8 +46,9 @@ def test_strategy_requires_reviewed_intake_and_risk_even_with_pain_pass(tmp_path
 
 def test_interview_and_provisional_risk_not_deadlocked_by_missing_pain(tmp_path, monkeypatch):
     ws = setup_project(tmp_path, monkeypatch)
-    for skill in ['interview-bridge', 'opportunity-risk-designer', 'evidence-scout']:
-        packet = route_workflow.route_request('repair and investigate', intent="opportunity-prioritization" if skill == "opportunity-risk-designer" else skill, task_scope='focused', project=ws.name, check_skill=skill)
+    for intent, skill in [('interview-bridge', 'evidence-scout'), ('opportunity-prioritization', 'opportunity-risk-designer'),
+                          ('evidence-scout', 'evidence-scout')]:
+        packet = route_workflow.route_request('repair and investigate', intent=intent, task_scope='focused', project=ws.name, check_skill=skill)
         assert not packet.get('gate_blocked')
     assert not route_workflow.route_request('build a landing page', project=ws.name).get('gate_blocked')
     assert route_workflow.route_request('Create a social media plan', project=ws.name)['gate_blocked']

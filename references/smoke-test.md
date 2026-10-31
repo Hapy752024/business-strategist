@@ -7,7 +7,7 @@ Default validation path for a founder without a customer panel: expose a specifi
 1. Problem interviews or reviewed public evidence name the segment, trigger and pain in customer language (idea-grill, evidence-scout).
 2. Message/offer smoke test: one page, one segment, one conversion action, two or three message variants that differ in pain frame, not wording.
 3. Escalate commitment only after the page converts: priced fake door, deposit, pre-order, booked qualified call, or concierge sale.
-4. Recruit interviewees from responders (screener → booked → attended → usable incident). Feed results to interview-bridge and back into the risk ranking.
+4. Recruit interviewees from responders (screener → booked → attended → usable incident). Feed results to evidence-scout interview-kit mode (route `interview-bridge`) and back into the risk ranking.
 
 ## Conversion action and thresholds
 
@@ -33,7 +33,7 @@ Interview script, 5–8 minutes, past behaviour first:
 6. What would have to be true for you to switch from what you do now?
 7. Who else is involved in deciding?
 
-Feed answers to interview-bridge. A stated price is intent, not willingness to pay.
+Feed answers to evidence-scout interview-kit mode. A stated price is intent, not willingness to pay.
 
 ## Disclosure
 

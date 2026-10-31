@@ -10,7 +10,7 @@ from scripts import enforce_skill_route, route_workflow, validate_skill_routes
     ('evidence-scout', 'evidence-scout'), ('competitive-landscape', 'competitor-research'),
     ('competitor-analysis', 'competitor-research'), ('competitor-discovery', 'competitor-research'),
     ('service-customer-perspective-challenger', 'challenge-review'),
-    ('opportunity-prioritization', 'opportunity-risk-designer'), ('interview-bridge', 'interview-bridge'),
+    ('opportunity-prioritization', 'opportunity-risk-designer'), ('interview-bridge', 'evidence-scout'),
 ])
 def test_customer_voice_reference_is_delivered_without_forcing_strategy(intent, skill):
     packet = route_workflow.route_request('separate customer desired outcomes from solution-use requirements using known sources', intent=intent,

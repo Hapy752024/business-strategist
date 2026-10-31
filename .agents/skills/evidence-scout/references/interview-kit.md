@@ -1,14 +1,14 @@
-# Interview Bridge Workflow
+# Interview-kit mode (route `interview-bridge`)
 
 ## Purpose and Boundary
 
-Public evidence is mostly weak. Its best use is recruiting real customers and grounding interviews — not deciding whether an idea is good. This skill turns an evidence run into three artifacts:
+Public evidence is mostly weak. Its best use is recruiting real customers and grounding interviews — not deciding whether an idea is good. This mode turns reviewed customer experiences and unresolved questions into three artifacts:
 
 - `interview-screener.md` — who to recruit, from where, and who to disqualify
 - `interview-guide.md` — non-leading probes, each traced to a specific public evidence item
 - `interview-tracker.md` — a confirmation/refutation log so interview outcomes update the evidence, not just the founder's mood
 
-Do not use this skill before any evidence run exists. Do not use interviews to validate the solution; use them to verify whether the publicly observed pain, workaround, and segment are real.
+Do not use this mode before any evidence run exists. Do not use interviews to validate the solution; use them to verify whether the publicly observed pain, workaround, and segment are real.
 
 ## When To Use
 
@@ -24,6 +24,18 @@ python3 scripts/evidence_scout/build_interview_kit.py --run-dir "<run path>" --l
 
 Pass an evidence run directory (`projects/<topic>/market_research/pain_points/runs/<run>`) or a market-discovery run root (`projects/<topic>/market_research/market_discovery/runs/<run>`); the script finds `evidence.jsonl` in either layout. `--topic` and `--segment` override labels from `summary.json`.
 
+## Stage checklist
+
+1. Read this file and repo-root `references/customer-voice.md` completely. Choose interviews for the unresolved question, not an aggregate evidence-strength label.
+2. Review source meaning and provenance and write the digest-bound `source-review.json` (section below); unreviewed records cannot generate probes.
+3. Run `build_interview_kit.py --run-dir <evidence or discovery run dir>`; for smoke-test responders add `--responders <card's responders_ref>` (`scripts/route_workflow.py status` reports this route runnable once a card has bookings).
+4. Research recruitment routes before recruiting: apply repo-root `references/interview-recruitment.md` — unpaid recruitment (no cash, vouchers, gifts or paid panels unless the founder changes that preference), a researched zero-network route and a learning funnel separate from first customers. Screen segment fit and a recent incident before counting an interview; unpaid signups are not automatically valid evidence.
+5. Interview, log results in `interview/interview-tracker.md` and update the tally.
+6. Code each transcript yourself into `{"transcript_id", "items": [{"theme", "interpretation", "verbatim_quote", "speaker", "locator", "evidence_type", "author_voice_status"}]}`, copying quotes exactly. Run `python3 scripts/evidence_scout/ingest_transcript_coding.py --coding <coding.json> --transcript <id>=<path> --out <fresh evidence.jsonl>`; it rejects any quote not found verbatim. Quotes become evidence; themes stay labelled interpretation. Keep transcripts and speaker identities private.
+7. For a registered Business case, pass reviewed interview learnings and still-open customer questions to the case-insights owner under repo-root `references/case-insights.md`; the tracker remains the detailed source.
+
+Success means every probe traces to reviewed evidence or a named hypothesis, material counterexamples and distinct contexts survive selection, the screener recruits people with a recent incident rather than idea fans, and the tracker separates confirmation from refutation.
+
 ## Procedure
 
 1. Name the unresolved question and explain why interviews can answer it. Source-coverage gaps may instead need local discovery; solution-use uncertainty may need observation/usability testing; payment claims need a separately authorized behavioral test.
@@ -36,7 +48,7 @@ Pass an evidence run directory (`projects/<topic>/market_research/pain_points/ru
 
 ## Hypothesis Probes From The Evidence Registry
 
-Public evidence tests pain and workaround; it rarely tests the offer. When the workspace carries offer, pricing, packaging, channel, or loop hypotheses, add probes derived from the untested hypotheses in `references/evidence-registry.md`, phrased as past-behavior questions rather than pitches:
+Public evidence tests pain and workaround; it rarely tests the offer. When the workspace carries offer, pricing, packaging, channel, or loop hypotheses, add probes derived from the untested hypotheses in repo-root `references/evidence-registry.md`, phrased as past-behavior questions rather than pitches:
 
 - **Uncertainty reducers:** for consequential, data-sensitive, or hard-to-reverse services, ask how the participant evaluated the last comparable purchase — what they needed to see (scope, credentials, total price, human contact, redress) before committing, and what made them walk away.
 - **Staged commitment:** ask whether they previously bought a diagnostic, trial, or fixed-scope first step before a large commitment in this category, and what happened — instead of asking whether they *would* prefer one.
@@ -75,3 +87,7 @@ Read the actual source and decide whether its segment, incident/journey and voic
 Only accepted firsthand customer records with segment_relation=target can produce E probes. Adjacent and unresolved segment sources are comparator/discovery context, not target pain. Operator claims, creator transcripts, aggregate context and unreviewed stories cannot become customer voice. Missing/stale review or no eligible customer evidence stops generation before writes. In that case write a manually curated H hypothesis guide from the named customer/job hypothesis, clearly marked as hypotheses; do not fabricate an acceptance record to satisfy the generator. Discovery destinations remain unverified recruitment access until checked under the shared recruitment contract.
 
 After a smoke test, pass `--responders <run>/experiments/<smoke>/responders.json` to add responder rows to the tracker as unresolved. Screen each for segment fit and a recent incident before booking; unpaid volunteering is not evidence of need.
+
+## Output
+
+Return the kit paths, accepted evidence items, recruitment plan and unresolved decisions. Interviews test hypotheses; they are not validation by volume. For chosen-idea continuation apply repo-root `references/research-coaching.md`.
