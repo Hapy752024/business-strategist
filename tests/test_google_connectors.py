@@ -70,7 +70,7 @@ def test_providers_and_mcp_entries_are_read_only_and_pinned():
     for name in PROVIDERS:
         assert providers[name]['status'] == 'read_connector_available'
         assert 'probe' in providers[name]['connection_check']
-    assert providers['meta_ads']['status'] == providers['tiktok_ads']['status'] == 'documented_not_connected'
+    assert providers['tiktok_ads']['status'] == providers['postiz']['status'] == 'documented_not_connected'
     servers = json.loads((ROOT / '.mcp.json').read_text())['mcpServers']
     for name in ('analytics-mcp', 'google-ads-mcp', 'search-console-mcp'):
         text = json.dumps({k: v for k, v in servers[name].items() if not k.startswith('_')})

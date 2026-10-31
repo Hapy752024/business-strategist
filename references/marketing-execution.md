@@ -54,7 +54,7 @@ External-delivery authorization in v2 binds recipient, destination, action kind,
 
 ## Executing approved actions
 
-`scripts/marketing/execute.py` is the only code path for an external marketing write: schedule a Postiz post (`schedule_post`), create a Meta campaign (`create_campaign`, always `PAUSED`, positive `spend_cap` required), send a Resend broadcast (`send_broadcast`, defaults to a test email to the approval's `founder_email`; a full audience send needs `test_send: false`), or create a PostHog draft experiment (`create_experiment`, no `start_date`). The action file carries `id`, `action_kind` and the exact `provider_request`; `authorization_digest` binds `provider_request`, so any change after approval invalidates it.
+`scripts/marketing/execute.py` is the only code path for an external marketing write: schedule a Postiz post (`schedule_post`), create a Meta campaign (`create_campaign`, always `PAUSED`, positive `spend_cap` required), send a Resend broadcast (`send_broadcast`, defaults to a test email to the approval's `founder_email`; a full audience send needs `test_send: false`), or create a PostHog draft experiment (`create_experiment`, no `start_date`). The `meta-ads` and `postiz` MCP servers are for reading only: their write tools are in `permissions.deny` (see `ad-platform-connections.md`). The action file carries `id`, `action_kind` and the exact `provider_request`; `authorization_digest` binds `provider_request`, so any change after approval invalidates it.
 
 Approvals are SSH signatures from the founder; the agent can prepare a request and read the public key but cannot sign.
 

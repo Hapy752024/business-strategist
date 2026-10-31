@@ -24,8 +24,12 @@
         "ads_mcp_management",
         "ads_read"
       ],
-      "capability": "reporting_requires_verification",
-      "status": "documented_not_connected"
+      "capability": "reporting",
+      "status": "read_connector_available",
+      "mcp_server": "meta-ads",
+      "writes": "scripts/marketing/execute.py",
+      "write_policy": "MCP write tools are denied in .claude/settings.json; campaigns are created only by the executor, always PAUSED with a spend_cap, after a signed founder approval.",
+      "connection_check": "In Claude Code run /mcp, authenticate meta-ads, then ask it to list ad accounts (ads_get_ad_accounts); confirm GET /me/permissions shows only ads_mcp_management and ads_read granted."
     },
     "gsc": {
       "preferred": "search_analytics_api",
@@ -44,6 +48,24 @@
       "status": "read_connector_available",
       "mcp_server": "analytics-mcp",
       "connection_check": "python3 scripts/marketing/connections.py probe ga4"
+    },
+    "postiz": {
+      "preferred": "self_hosted_postiz",
+      "capability": "social_scheduling",
+      "auth": [
+        "api_key"
+      ],
+      "status": "documented_not_connected",
+      "mcp_server": "postiz",
+      "writes": "scripts/marketing/execute.py",
+      "write_policy": "MCP write tools are denied in .claude/settings.json; posts are scheduled (never published now) only by the executor after a signed founder approval.",
+      "owner_steps": [
+        "Self-host Postiz: git clone https://github.com/gitroomhq/postiz-docker-compose, set MAIN_URL/FRONTEND_URL/NEXT_PUBLIC_BACKEND_URL/JWT_SECRET in its compose file, run docker compose up, and put it behind HTTPS (reverse proxy must forward /api/mcp with streaming HTTP).",
+        "Connect the social channels in the Postiz UI (each platform needs its own developer app; see docs.postiz.com/self-host/providers/overview).",
+        "Copy the API key from Postiz Settings > Developers > Public API; never paste it into the repo or chat.",
+        "Export POSTIZ_BASE_URL (the backend URL, e.g. https://postiz.example.com/api) and POSTIZ_API_KEY in the shell that launches Claude Code (the executor also reads ~/.secrets), and add both names without values to .env.example.",
+        "Enable the postiz server in .claude/settings.local.json (enabledMcpjsonServers), run /mcp, and check integrationList returns the connected channels."
+      ]
     }
   }
 }

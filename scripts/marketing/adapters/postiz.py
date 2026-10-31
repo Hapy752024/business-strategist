@@ -1,8 +1,11 @@
 """Postiz public API: schedule a social post (never ``type: now``).
 
 Docs: https://docs.postiz.com/public-api/introduction
-POST {POSTIZ_BASE_URL}/public/v1/posts with ``Authorization: <api key>`` (no Bearer prefix). For Postiz cloud the
-base URL is https://api.postiz.com; self-hosted instances use their own public API host.
+POST {POSTIZ_BASE_URL}/public/v1/posts with ``Authorization: <api key>`` (no Bearer prefix). ``POSTIZ_BASE_URL`` is
+the Postiz backend URL (``NEXT_PUBLIC_BACKEND_URL``): self-hosted with the official docker compose it is
+``https://<your-domain>/api``, so posts go to ``https://<your-domain>/api/public/v1/posts`` (OpenAPI server
+``https://{your-domain}/api/public/v1``); Postiz cloud uses ``https://api.postiz.com``. The same backend serves the MCP
+endpoint at ``{POSTIZ_BASE_URL}/mcp``, whose write tools are denied; this adapter is the only scheduling path.
 """
 from __future__ import annotations
 

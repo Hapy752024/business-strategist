@@ -84,6 +84,26 @@
       "_category": "first_party_analytics",
       "_priority": "low",
       "_comment": "saurabhsharma2u/search-console-mcp 2.1.3 (2026-09-02, tag commit ec9cf15). Read-only is enforced by the permissions.deny list in .claude/settings.json (sites_manage, sitemaps_submit/delete, indexing_submit, accounts_manage, adsense_*) plus the OAuth webmasters.readonly scope; the server itself has no read-only flag and requests the indexing scope on its own with service-account credentials, so use user OAuth only and never owner-level service-account credentials. Do not run setup with the indexing scope, never set BING_API_KEY, and do not use its GA4 engine (use analytics-mcp). Enable in .claude/settings.local.json."
+    },
+    "meta-ads": {
+      "type": "http",
+      "url": "https://mcp.facebook.com/ads",
+      "oauth": {
+        "callbackPort": 8976
+      },
+      "_category": "first_party_analytics",
+      "_priority": "low",
+      "_comment": "Meta's official hosted Ads MCP (OAuth via Facebook Login for Business in the client; no token in this file). Reporting only: request ads_mcp_management + ads_read, never ads_management. Every documented write tool is in permissions.deny in .claude/settings.json; campaign creation goes only through scripts/marketing/execute.py with a signed founder approval. If Meta rejects dynamic client registration, add your Meta app ID as oauth.clientId (an app ID is not a secret) and register http://localhost:8976/callback as the app's redirect URL. Enable in .claude/settings.local.json. Setup: references/ad-platform-connections.md (Meta)."
+    },
+    "postiz": {
+      "type": "http",
+      "url": "${POSTIZ_BASE_URL:-http://localhost:4007/api}/mcp",
+      "headers": {
+        "Authorization": "Bearer ${POSTIZ_API_KEY:-}"
+      },
+      "_category": "social_scheduling",
+      "_priority": "low",
+      "_comment": "Self-hosted Postiz MCP. POSTIZ_BASE_URL is the founder's Postiz backend URL (NEXT_PUBLIC_BACKEND_URL, e.g. https://postiz.example.com/api; the default is only a placeholder). POSTIZ_API_KEY comes from Postiz Settings > Developers > Public API and is exported in the launching shell. Read tools only: schedulePostTool, postSettingsTool, triggerTool, uploadFromUrlTool and the generate/clipping tools are denied in .claude/settings.json; posts are scheduled only through scripts/marketing/execute.py with a signed founder approval. Disabled until listed in .claude/settings.local.json. Setup: references/ad-platform-connections.md (Scheduling)."
     }
   }
 }
