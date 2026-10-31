@@ -109,7 +109,7 @@ def test_router_errors_name_the_documented_fix(tmp_path, monkeypatch):
     """Task 7.2a: the acceptance agent could not tell from the errors what to run."""
     monkeypatch.setattr(routing, 'ROOT', tmp_path)
     monkeypatch.setattr(workspace, 'ROOT', tmp_path)
-    gtm = dict(intent='gtm-strategy', task_scope='strategy', check_skill='archetype-gtm-strategist')
+    gtm = dict(intent='gtm-strategy', task_scope='strategy', check_skill='positioning-gtm')
     # A nested path is still rejected, and the error says what --project takes.
     for bad in ('_eval/topic', 'projects/topic', 'Topic'):
         with pytest.raises(ValueError, match=r'top-level directory name under projects/'):

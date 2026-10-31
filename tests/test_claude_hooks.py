@@ -234,7 +234,7 @@ def test_single_mode_flag_matches_derived_route_count():
 def test_bare_gated_single_mode_skill_outside_workspace_requires_envelope():
     import pytest
     from scripts import enforce_skill_route as hook
-    for skill in ("company-operating-system", "marketing"):
+    for skill in ("positioning-gtm", "marketing"):
         with pytest.raises(ValueError, match="JSON route envelope"):
             hook.check_dispatch(_skill_event(skill, "Pick our GTM strategy for the dog-walking venture"))
     # Merged challenge-review: plain text that infers tournament mode is still gated by that mode's prerequisites.

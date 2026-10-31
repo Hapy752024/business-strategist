@@ -217,11 +217,12 @@
         "first customers",
         "launch strategy"
       ],
-      "skill": "archetype-gtm-strategist",
+      "skill": "positioning-gtm",
       "requires_pain_gate": true,
       "forbidden": [
         "marketing"
-      ]
+      ],
+      "mode": "gtm"
     },
     {
       "id": "marketing-strategy",
@@ -266,12 +267,10 @@
         "operating model",
         "delivery model"
       ],
-      "skill": "company-operating-system",
+      "skill": "positioning-gtm",
       "requires_pain_gate": true,
-      "forbidden": [
-        "archetype-gtm-strategist"
-      ],
-      "single_mode": true
+      "forbidden": [],
+      "mode": "operations"
     },
     {
       "id": "opportunity-prioritization",
@@ -334,7 +333,7 @@
         "compare strategic positions",
         "reposition the business"
       ],
-      "skill": "archetype-gtm-strategist",
+      "skill": "positioning-gtm",
       "mode": "positioning",
       "artifacts": [
         "positioning decision and requested implications"

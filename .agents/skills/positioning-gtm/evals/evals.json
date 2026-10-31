@@ -1,11 +1,12 @@
 {
-  "skill_name": "archetype-gtm-strategist",
+  "skill_name": "positioning-gtm",
   "evals": [
     {
       "id": 1,
       "prompt": "We have a prototype for collecting missing tax documents from small accounting firms in Germany, no paying users, and €3,000 for GTM. Build our test and first-customer strategy.",
       "expected_output": "Europe-first B2B SaaS strategy using a narrow ICP, founder-led sales, paid/design-partner tests, proof creation, one primary channel, and explicit sales-hiring and paid-marketing gates.",
-      "files": []
+      "files": [],
+      "mode": "gtm"
     },
     {
       "id": 2,
@@ -16,31 +17,36 @@
         "retention",
         "gate"
       ],
-      "must_not_mention": []
+      "must_not_mention": [],
+      "mode": "gtm"
     },
     {
       "id": 3,
       "prompt": "Create a GTM strategy for an AI insurance adviser for self-employed people in Germany. We want direct-to-consumer launch and insurer partnerships.",
       "expected_output": "Regulation-aware insurtech strategy separating consumer, licensed entity and carrier, using safe/human-reviewed tests, trust metrics, manual partner pilots, and no unreviewed automated advice.",
-      "files": []
+      "files": [],
+      "mode": "gtm"
     },
     {
       "id": 4,
       "prompt": "I want to launch a paid relocation concierge for US professionals moving to Italy. Budget is €5k and I will deliver the first cases myself.",
       "expected_output": "B2C professional-service plan with a trigger-defined package, paid concierge cohort, delivery economics, expat/employer/housing partnerships, reviews, local density, and capacity gates.",
-      "files": []
+      "files": [],
+      "mode": "gtm"
     },
     {
       "id": 5,
       "prompt": "Our European B2B SaaS has repeatable sales in France and wants a US launch. Should we hire five sellers and run a national campaign?",
       "expected_output": "A narrow US beachhead test that revalidates message, price, competition, references, support and sales motion before broad hiring, with country-expansion gates.",
-      "files": []
+      "files": [],
+      "mode": "gtm"
     },
     {
       "id": 6,
       "prompt": "Adapt our successful European consumer finance app GTM to China using Xiaohongshu, Douyin and WeChat.",
       "expected_output": "Lower-confidence China adaptation that rejects direct translation, requires current Chinese/local regulatory expertise, tests one audience/platform wedge, distinguishes discovery from retention, and measures downstream behavior rather than engagement.",
-      "files": []
+      "files": [],
+      "mode": "gtm"
     },
     {
       "id": 7,
@@ -50,19 +56,22 @@
       "must_mention": [
         "retention"
       ],
-      "must_not_mention": []
+      "must_not_mention": [],
+      "mode": "gtm"
     },
     {
       "id": 8,
       "prompt": "We built a marketplace for student-organized city tours in Germany, but in month two five professional tour agencies asked us to list them and one offered to pay for faster onboarding. Students are barely booking. What do we do with GTM?",
       "expected_output": "Treats the professional-supplier pull as a pivot signal (GetYourGuide pattern), proposes a small paid/onboarding test with the pulling segment before committing supply, keeps the weak original demand explicit, and reframes first-customer motion toward the segment showing pull rather than the original thesis.",
-      "files": []
+      "files": [],
+      "mode": "gtm"
     },
     {
       "id": 9,
       "prompt": "We want to launch a Gen-Z beauty e-commerce app in China with direct brand sales and checkout from day one. Give us the launch plan.",
       "expected_output": "Sequences trust and community before direct commerce using the Xiaohongshu pattern (expert content or review/shopping-guide wedge first, commerce after), requires current China regulatory and platform expertise, and sets gates that prove content/community retention before adding transactions.",
-      "files": []
+      "files": [],
+      "mode": "gtm"
     },
     {
       "id": 10,
@@ -73,55 +82,120 @@
         "prerequisite",
         "activation"
       ],
-      "must_not_mention": []
+      "must_not_mention": [],
+      "mode": "gtm"
     },
     {
       "id": 11,
       "prompt": "Our collaboration SaaS has 20 retained design teams. Users already invite external reviewers into every project. Should we add paid ads, referrals, or community next?",
       "expected_output": "Distinguishes the existing recipient/collaboration product loop from acquisition channels, measures invite-to-recipient activation and retention, selects one channel job and test based on reachable buyers, defines product-loop and paid-scale gates, and avoids recommending a community without a recurring member-to-member exchange.",
-      "files": []
+      "files": [],
+      "mode": "gtm"
     },
     {
       "id": "position-priorities",
       "prompt": "Small firms want inexpensive all-in-one support, according to six forum posts and no interviews. Compare strategic positions and the next test only.",
       "expected_output": "Separate buyer evidence from inferred priorities; compare feasible alternatives, exclusions and a discriminating test without false precision or a full GTM plan.",
-      "files": []
+      "files": [],
+      "mode": "positioning"
     },
     {
       "id": "position-founder-pressure",
       "prompt": "I insist on premium customization, instant delivery and the lowest price. We have 20 delivery hours weekly, 5 hours per case, EUR 50 price per case. Define our strategic positioning and operating choices.",
       "expected_output": "Challenge the combination with capacity and economic calculations, offer feasible narrower alternatives and customer-outcome/economic tests; do not agree because the founder insists.",
-      "files": []
+      "files": [],
+      "mode": "positioning"
     },
     {
       "id": "position-new-evidence",
       "prompt": "I previously insisted instant custom delivery works without evidence. Now a pilot shows checklist automation reduces each standard case from 5 hours to 20 minutes, 12 buyers paid EUR 50, and 2 required costly exceptions. Reconsider our position.",
       "expected_output": "Revise the recommendation on new evidence, distinguish standard cases and exceptions, revisit exclusions/capacity/economics and affected downstream work while retaining the original experiment interpretation.",
-      "files": []
+      "files": [],
+      "mode": "positioning"
     },
     {
       "id": "need-model-need-not-choice",
       "prompt": "Synthetic packet: Technicians demonstrably lose time ordering parts. They reject our prepaid delivery offer because their supplier offers credit and flexible quantities. Assess our specific value proposition.",
       "expected_output": "Preserve the need evidence but revise the proposition. Explain switching/credit/quantity requirements and test a specific alternative promise before claiming choice or launching.",
-      "files": []
+      "files": [],
+      "mode": "positioning"
     },
     {
       "id": "need-model-subscription-not-moat",
       "prompt": "We have a subscription and 20,000 support messages. Therefore our recurring AI service has a data moat. No retention or measurable learning results yet. Assess only that claim.",
       "expected_output": "Separate recurring billing from benefit/barrier; data quantity is not a learning advantage. Assess replication, access, economic value, incumbent and new entrant, value capture and a next test. Keep hypothesis or none identified.",
-      "files": []
+      "files": [],
+      "mode": "positioning"
     },
     {
       "id": "need-model-counterposition-new-entrant",
       "prompt": "Synthetic packet: An incumbent would sacrifice profitable bespoke contracts by copying our standardized low-cost service. A new entrant has no such legacy customers. Evaluate defensibility.",
       "expected_output": "Counter-positioning may deter the incumbent but does not block the entrant; consider a separate incumbent unit, formation costs and erosion. No additive moat score or automatic durable conclusion.",
-      "files": []
+      "files": [],
+      "mode": "positioning"
     },
     {
       "id": "need-model-small-profitable-no-moat",
       "prompt": "Synthetic packet: A local service has observed repeat purchases and positive contribution including owner labor. The founder wants a modest income in one district. Competitors can copy its service; no structural barrier is evidenced. Assess fit.",
       "expected_output": "Acknowledge a potentially suitable business at the stated scale while exposing competitive risk; do not automatically reject it or invent a moat. Separate observed economics from future durability.",
-      "files": []
+      "files": [],
+      "mode": "positioning"
+    },
+    {
+      "id": 12,
+      "prompt": "We are 3 founders building a B2B SaaS for accounting firms. We have 5 unpaid pilots, no revenue, and we keep changing priorities. Set up an operating system for the next 90 days.",
+      "expected_output": "A stage-appropriate 90-day operating plan with strategy, metrics, cadence, decision rights, customer learning, cash discipline, risks, and next-week actions.",
+      "files": [],
+      "mode": "operations"
+    },
+    {
+      "id": 13,
+      "prompt": "Our ecommerce brand is at $120k/month revenue but fulfillment errors and customer complaints are rising. We need a management rhythm and KPIs.",
+      "expected_output": "A focused operating rhythm and KPI scorecard emphasizing delivery quality, customer issues, cash/margins, accountability, and process improvement.",
+      "files": [],
+      "mode": "operations"
+    },
+    {
+      "id": 14,
+      "prompt": "I want to hire a sales team before product-market fit so we can grow faster. Help me design the company setup.",
+      "expected_output": "A skeptical response that challenges hiring before validated demand, identifies assumptions, proposes cheaper validation and sales-learning routines, and defines hiring gates.",
+      "files": [],
+      "mode": "operations"
+    },
+    {
+      "id": "position-coherent-tradeoffs",
+      "prompt": "Our selected position is predictable low-cost fixed-scope paperwork support. Customers accept 3-day delivery and self-service intake. Bespoke advice is excluded. Derive only the operating model and second-order consequences.",
+      "expected_output": "Recognize coherent sacrifices; derive necessary activities, exception boundaries, capacity/costs and reinforcing choices before routines. Explain reversal costs and customer-outcome/delivery/economic guardrails.",
+      "files": [],
+      "mode": "operations"
+    },
+    {
+      "id": "need-model-clean-sheet-unaffordable",
+      "prompt": "Synthetic packet: The selected promise is next-day parts delivery. A dedicated warehouse would cut picking time, but costs 150,000 upfront; available cash is 15,000. A partner offers a manual pilot. Derive only an operating model.",
+      "expected_output": "Compare available assets, target and affordable transition; evaluate partner economics/capacity and service test. Do not equate faster picking with optimal economics or prescribe an unfunded warehouse. No automatic meeting cadence.",
+      "files": [],
+      "mode": "operations"
+    },
+    {
+      "id": "need-model-coherent-overserved",
+      "prompt": "Synthetic packet: Small venues accept a weekly fixed menu, no customization and self-service ordering for a lower price. Their current full-service caterer meets quality requirements but costs more for features they do not use. Derive delivery choices.",
+      "expected_output": "Recognize overservice as a possible simplification opportunity, trace standardization and batch purchasing to costs, capacity and exclusions; verify choice/economics. Do not require novelty or a proven moat.",
+      "files": [],
+      "mode": "operations"
+    },
+    {
+      "id": "need-model-cadence-only-no-expansion",
+      "prompt": "Our customer promise and delivery configuration are fixed. Give only a weekly review routine for late orders. Do not revisit strategy or add a moat analysis.",
+      "expected_output": "Provide owner, inputs, customer-outcome metric and decision/threshold with explicit assumptions. Stay in cadence mode and do not load strategic-positioning or introduce new strategy artifacts.",
+      "files": [],
+      "mode": "operations"
+    },
+    {
+      "id": "need-model-conflicting-promises",
+      "prompt": "Synthetic packet: One founder has eight service hours per day and each bespoke job takes four hours. The proposed promise is ten bespoke jobs daily at the lowest price with instant delivery. Design feasible delivery.",
+      "expected_output": "Expose the capacity conflict with concrete arithmetic, propose scope/price/delivery changes or a bounded feasibility test, and return the promise to positioning. Do not assume an unsupported automation gain or say every ambitious combination is impossible.",
+      "files": [],
+      "mode": "operations"
     }
   ]
 }

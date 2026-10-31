@@ -1,12 +1,12 @@
-# Archetype GTM Strategist Workflow
+# GTM mode (route `gtm-strategy`)
 
 ## Purpose and boundary
 
-Use this skill for the strategic sequence from market test to repeatable distribution. Use `marketing` afterward: strategy mode for detailed campaigns, social mode for platform calendars and creative execution. If the user first needs to discover which customer problem or segment is worth pursuing, route to `market-problem-discovery`; route unproven pain for a chosen candidate to `idea-grill` and `evidence-scout`; route regulated pilots to `saas-fintech-pilot-designer`.
+Use this mode for the strategic sequence from market test to repeatable distribution. Use `marketing` afterward: strategy mode for detailed campaigns, social mode for platform calendars and creative execution. If the user first needs to discover which customer problem or segment is worth pursuing, route to `market-problem-discovery`; route unproven pain for a chosen candidate to `idea-grill` and `evidence-scout`; route regulated pilots to `opportunity-risk-designer` (pilot mode).
 
 ## Minimum inputs
 
-For business-position selection/revision or a coherence review, load `references/strategic-positioning.md` at repo root. Compare specific customer-choice hypotheses before choosing the offer; derive consequential delivery choices and separately assess benefit, imitation barrier and value capture using that shared method. Reuse an existing selected position unless evidence or a material conflict warrants revisiting it. For a focused positioning question, use only relevant inputs and output sections; archetype and regional playbooks are conditional.
+Reuse the selected position (positioning mode, [positioning](positioning.md)); revisit it only when evidence or a material conflict warrants it.
 
 - Business archetype and revenue model.
 - Geography and launch language.

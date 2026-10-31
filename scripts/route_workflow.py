@@ -55,6 +55,8 @@ SKILL_ALIASES: dict[str, str] = {
     "marketing-strategy-builder": "marketing-strategy",
     "social-digital-marketing-planner": "social-marketing",
     "social-media-idea-validator": "social-media-idea-validator",
+    "archetype-gtm-strategist": "gtm-strategy",
+    "company-operating-system": "company-operations",
 }
 
 
@@ -379,7 +381,7 @@ def _route_request(
     artifacts = selected.get("artifacts", metadata.get("artifacts", []))
     # Strategy-capable modes return only the focused/execution deliverable outside strategy scope.
     if scope != "strategy" and (skill, selected.get("mode", "default")) in {
-            ("archetype-gtm-strategist", "default"), ("marketing", "strategy"), ("marketing", "social")}:
+            ("positioning-gtm", "gtm"), ("marketing", "strategy"), ("marketing", "social")}:
         artifacts = ["requested deliverable only; preserve existing strategy" if scope == "execution" else "focused answer and material evidence limits"]
     packet = {
         "route_id": selected["id"],
@@ -517,10 +519,10 @@ def _route_request(
             if design:
                 plan_path = project_root / 'strategy/strategy-plan.json'
                 if not plan_path.is_file():
-                    packet.update(gate_blocked=True, gate='strategy_plan_required', first_skill='archetype-gtm-strategist',
+                    packet.update(gate_blocked=True, gate='strategy_plan_required', first_skill='positioning-gtm',
                                   missing_artifact='strategy/strategy-plan.json',
                                   reason=reason + '; business-linked design needs the selected strategy plan, which is missing: '
-                                  'strategy/strategy-plan.json; run archetype-gtm-strategist first')
+                                  'strategy/strategy-plan.json; run positioning-gtm (route gtm-strategy) first')
                     return packet
                 cases.check_plan(project_root, cases.load(plan_path))
         else:

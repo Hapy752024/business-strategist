@@ -32,15 +32,15 @@ SCENARIOS = [
     ("vercel-release", "Prepare a GitHub to Vercel Preview release", "brand-website-designer-builder"),
     ("market-discovery", "Find customer problems in independent elder care", "market-problem-discovery"),
     ("idea-validation", "Pressure-test this idea: software for independent care homes to schedule staff", "idea-grill"),
-    ("gtm", "Build a go-to-market strategy to get our first customers", "archetype-gtm-strategist"),
+    ("gtm", "Build a go-to-market strategy to get our first customers", "positioning-gtm"),
     ("marketing", "Create a demand generation and positioning strategy", "marketing"),
     ("social", "Create a paid social media plan and content calendar", "marketing"),
     ("monitoring", "Monitor competitor pricing and track competitor changes", "competitor-monitoring"),
     ("prioritization", "Help me prioritize ideas using decision gates", "opportunity-risk-designer"),
-    ("business-positioning", "Compare strategic positions for my business and derive the operating model", "archetype-gtm-strategist"),
-    ("selected-position-delivery", "Derive the operating model from our selected position", "company-operating-system"),
+    ("business-positioning", "Compare strategic positions for my business and derive the operating model", "positioning-gtm"),
+    ("selected-position-delivery", "Derive the operating model from our selected position", "positioning-gtm"),
     ("position-ad-copy-only", "Write ad copy for our fixed-scope service", "marketing"),
-    ("selected-position-cadence", "Design an operating cadence for our selected position", "company-operating-system"),
+    ("selected-position-cadence", "Design an operating cadence for our selected position", "positioning-gtm"),
 ]
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic structural tests for archetype-gtm-strategist."""
+"""Deterministic structural tests for positioning-gtm."""
 
 from __future__ import annotations
 
@@ -9,16 +9,18 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SKILL = ROOT / ".agents" / "skills" / "archetype-gtm-strategist"
+SKILL = ROOT / ".agents" / "skills" / "positioning-gtm"
 
 
 class GtmSkillTests(unittest.TestCase):
     def test_entry_budget_and_resources(self) -> None:
         entry = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        self.assertLessEqual(len(entry.splitlines()), 30)
-        self.assertIn("name: archetype-gtm-strategist", entry)
+        self.assertLessEqual(len(entry.split()), 450)
+        self.assertIn("name: positioning-gtm", entry)
         for relative in (
-            "references/workflow.md",
+            "references/gtm.md",
+            "references/positioning.md",
+            "references/operations.md",
             "references/archetypes.md",
             "references/regions.md",
             "references/experiments.md",
@@ -37,7 +39,7 @@ class GtmSkillTests(unittest.TestCase):
             self.assertIn(heading, regions)
 
     def test_decision_gates_and_partnership_economics(self) -> None:
-        workflow = (SKILL / "references" / "workflow.md").read_text(encoding="utf-8").lower()
+        workflow = (SKILL / "references" / "gtm.md").read_text(encoding="utf-8").lower()
         for term in ("pass, repeat, pivot, and stop", "value exchange", "attribution", "contribution margin", "one primary"):
             self.assertIn(term, workflow)
         experiments = (SKILL / "references" / "experiments.md").read_text(encoding="utf-8").lower()

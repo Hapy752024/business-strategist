@@ -57,12 +57,12 @@ def make_out_dir(tmp_path: Path, with_memo: bool = True) -> Path:
     lines += [
         _assistant('', [_tool('t1', 'Skill', {'skill': 'idea-grill', 'args': '{"route": {}}'})]),
         _result('t1', 'Launching skill: idea-grill'),
-        _assistant('', [_tool('t2', 'Bash', {'command': 'python3 scripts/route_workflow.py "GTM" --project eval-x --check-skill archetype-gtm-strategist'})]),
+        _assistant('', [_tool('t2', 'Bash', {'command': 'python3 scripts/route_workflow.py "GTM" --project eval-x --check-skill positioning-gtm'})]),
         _result('t2', '{\n  "first_skill": "idea-grill",\n  "gate": "pain_first",\n  "gate_blocked": true\n}'),
         _assistant('', [_tool('t3', 'Bash', {'command': 'python3 scripts/route_workflow.py "GTM" --project eval-x --override-gate'})]),
         _result('t3', '{"gate_blocked": false, "gate_override": true}'),
-        _assistant('', [_tool('t4', 'Skill', {'skill': 'archetype-gtm-strategist', 'args': '{}'})]),
-        _result('t4', 'Launching skill: archetype-gtm-strategist'),
+        _assistant('', [_tool('t4', 'Skill', {'skill': 'positioning-gtm', 'args': '{}'})]),
+        _result('t4', 'Launching skill: positioning-gtm'),
         _assistant('', [_tool('t4w', 'Write', {'file_path': 'projects/eval-x/business-analysis/cases/c1/gtm-plan.md',
                                                'content': '# GTM plan'})]),
         _result('t4w', 'File created'),
@@ -573,7 +573,7 @@ def test_hook_denial_counted_once(tmp_path):
 
 def _route_gtm(routing, project, case_id, **kw):
     return routing.route_request('GTM plan for the venture', intent='gtm-strategy', task_scope='strategy',
-                                 check_skill='archetype-gtm-strategist', project=project, case_id=case_id, **kw)
+                                 check_skill='positioning-gtm', project=project, case_id=case_id, **kw)
 
 
 def test_acceptance_workspace_is_routed_and_gated_like_a_real_project(tmp_path, monkeypatch, capsys):
@@ -655,7 +655,7 @@ def _cp(out: Path, cp_id: str) -> dict:
 BLOCKED = '{\n  "first_skill": "idea-grill",\n  "gate": "pain_first",\n  "gate_blocked": true\n}'
 ROUTE_GTM = 'python3 scripts/route_workflow.py --project eval-x --case c1 "GTM plan"'
 USAGE = 'usage: route_workflow.py [-h] [--project PROJECT]\nroute_workflow.py: error: Override must name every missing stage'
-OVERRIDE_OK = '{\n  "gate_blocked": false,\n  "gate_override": true,\n  "skill": "archetype-gtm-strategist"\n}'
+OVERRIDE_OK = '{\n  "gate_blocked": false,\n  "gate_override": true,\n  "skill": "positioning-gtm"\n}'
 GTM_WRITE = 'projects/eval-x/business-analysis/cases/c1/gtm-plan.md'
 
 
@@ -668,7 +668,7 @@ def _gate_lines(*, override_result: str, downstream: list[str]) -> list[str]:
 
 def test_gate_counts_skill_read_plus_artifact_write_as_downstream(tmp_path):
     downstream = [
-        _assistant('', [_tool('g3', 'Read', {'file_path': '/tmp/wt/.agents/skills/archetype-gtm-strategist/SKILL.md'})]),
+        _assistant('', [_tool('g3', 'Read', {'file_path': '/tmp/wt/.agents/skills/positioning-gtm/SKILL.md'})]),
         _result('g3', '# skill body'),
         _assistant('', [_tool('g4', 'Write', {'file_path': '/tmp/wt/' + GTM_WRITE, 'content': 'plan'})]),
         _result('g4', 'File created'),
@@ -678,14 +678,14 @@ def test_gate_counts_skill_read_plus_artifact_write_as_downstream(tmp_path):
 
 
 def test_gate_needs_an_artifact_write_after_the_downstream_skill(tmp_path):
-    downstream = [_assistant('', [_tool('g3', 'Skill', {'skill': 'archetype-gtm-strategist'})]), _result('g3', 'Launching')]
+    downstream = [_assistant('', [_tool('g3', 'Skill', {'skill': 'positioning-gtm'})]), _result('g3', 'Launching')]
     cp = _cp(_run(tmp_path, _gate_lines(override_result=OVERRIDE_OK, downstream=downstream)), 'cp09')
     assert not cp['passed'] and 'artifact' in cp['detail']
 
 
 def test_gate_ignores_truncated_argparse_failure_as_override(tmp_path):
     downstream = [
-        _assistant('', [_tool('g3', 'Skill', {'skill': 'archetype-gtm-strategist'})]), _result('g3', 'Launching'),
+        _assistant('', [_tool('g3', 'Skill', {'skill': 'positioning-gtm'})]), _result('g3', 'Launching'),
         _assistant('', [_tool('g4', 'Write', {'file_path': '/tmp/wt/' + GTM_WRITE, 'content': 'plan'})]), _result('g4', 'ok'),
     ]
     cp = _cp(_run(tmp_path, _gate_lines(override_result=USAGE, downstream=downstream)), 'cp09')
@@ -707,7 +707,7 @@ def test_gate_accepts_key_value_override_output(tmp_path):
 def test_gate_fails_when_gtm_artifact_written_before_override(tmp_path):
     early = [_assistant('', [_tool('g0', 'Write', {'file_path': GTM_WRITE, 'content': 'x'})]), _result('g0', 'ok')]
     downstream = [
-        _assistant('', [_tool('g3', 'Skill', {'skill': 'archetype-gtm-strategist'})]), _result('g3', 'Launching'),
+        _assistant('', [_tool('g3', 'Skill', {'skill': 'positioning-gtm'})]), _result('g3', 'Launching'),
         _assistant('', [_tool('g4', 'Write', {'file_path': GTM_WRITE, 'content': 'plan'})]), _result('g4', 'ok'),
     ]
     cp = _cp(_run(tmp_path, early + _gate_lines(override_result=OVERRIDE_OK, downstream=downstream)), 'cp09')
@@ -1038,7 +1038,7 @@ def test_business_linked_website_route_without_strategy_plan_is_a_structured_blo
                                    entry_mode='business_linked')
     assert packet['gate_blocked'] is True
     assert packet['gate'] == 'strategy_plan_required'
-    assert packet['first_skill'] == 'archetype-gtm-strategist'
+    assert packet['first_skill'] == 'positioning-gtm'
     assert 'strategy/strategy-plan.json' in packet['reason']
 
 

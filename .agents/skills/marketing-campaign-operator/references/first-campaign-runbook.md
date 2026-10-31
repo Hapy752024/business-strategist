@@ -19,7 +19,7 @@ Paths use `<mkt>` for the project's Marketing root. Run commands from the repo r
 - Blocked by: `problem_validation` missing. Route to `idea-grill` and evidence research; do not paper over it.
 
 ## 2. Positioning and product-marketing context (agent, founder reviews)
-- Skills: `archetype-gtm-strategist` then `marketing` (strategy mode); fill the product-marketing-context reference of `marketing`.
+- Skills: `positioning-gtm` then `marketing` (strategy mode); fill the product-marketing-context reference of `marketing`.
 - Input: reviewed segments, pains and journey from the case.
 - Done when: every positioning claim cites an evidence ref and the founder confirmed segment, offer and one channel.
 - Blocked by: unreviewed or contradicted evidence; unsupported claims are removed, not softened.

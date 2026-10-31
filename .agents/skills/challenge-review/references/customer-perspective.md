@@ -40,7 +40,7 @@ When evaluating customer priorities or a service-positioning conflict, load repo
 - Send evidence gaps back to `evidence-scout`; simulated reactions are not evidence records.
 - Use `opportunity-risk-designer` to rank failed assumptions and tests.
 - Use `marketing` (strategy mode) after this review for marketing expression, funnel, and campaigns; GTM owns unresolved business-position selection.
-- Use `archetype-gtm-strategist` when stage, first-customer motion, partnership, or international rollout is the primary question.
+- Use `positioning-gtm` when stage, first-customer motion, partnership, or international rollout is the primary question.
 
 ## Output standard
 

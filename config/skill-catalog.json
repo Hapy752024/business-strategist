@@ -51,8 +51,7 @@
       "business-strategist",
       "opportunity-risk-designer",
       "startup-business-builder",
-      "archetype-gtm-strategist",
-      "company-operating-system",
+      "positioning-gtm",
       "saas-fintech-pilot-designer"
     ],
     "agent_infrastructure": [
@@ -944,44 +943,6 @@
         }
       ]
     },
-    "archetype-gtm-strategist": {
-      "intent": [
-        "build stage-gated GTM",
-        "select or revise business positioning and strategic trade-offs"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "business candidate"
-      ],
-      "artifacts": [
-        "GTM plan"
-      ],
-      "side_effect": "none",
-      "cost": "high",
-      "strategy_stage_prerequisites": [
-        "intake",
-        "segment_selection",
-        "customer_profile",
-        "problem_validation",
-        "opportunity_risk",
-        "operator_playbook"
-      ]
-    },
-    "company-operating-system": {
-      "intent": [
-        "design company operating cadence",
-        "derive the operating model from a selected strategic position"
-      ],
-      "excludes": [],
-      "prerequisites": [
-        "company context"
-      ],
-      "artifacts": [
-        "requested delivery configuration and feasible transition, or management routines"
-      ],
-      "side_effect": "none",
-      "cost": "medium"
-    },
     "saas-fintech-pilot-designer": {
       "intent": [
         "design SaaS, fintech, or insurtech pilot"
@@ -1712,6 +1673,81 @@
             ".agents/skills/marketing/references/channel-validation.md"
           ],
           "output_owner": "marketing"
+        }
+      }
+    },
+    "positioning-gtm": {
+      "intent": [
+        "build stage-gated GTM",
+        "select or revise business positioning and strategic trade-offs",
+        "design company operating cadence",
+        "derive the operating model from a selected strategic position"
+      ],
+      "excludes": [],
+      "prerequisites": [],
+      "artifacts": [
+        "GTM plan",
+        "positioning decision",
+        "operating model or management routines"
+      ],
+      "side_effect": "none",
+      "cost": "high",
+      "required_references": [],
+      "modes": {
+        "gtm": {
+          "inputs": [
+            "business candidate"
+          ],
+          "prerequisites": [
+            "business candidate"
+          ],
+          "artifacts": [
+            "GTM plan"
+          ],
+          "cost": "high",
+          "strategy_stage_prerequisites": [
+            "intake",
+            "segment_selection",
+            "customer_profile",
+            "problem_validation",
+            "opportunity_risk",
+            "operator_playbook"
+          ],
+          "output_owner": "positioning-gtm"
+        },
+        "positioning": {
+          "inputs": [
+            "business candidate and reviewed customer-choice evidence"
+          ],
+          "prerequisites": [
+            "business candidate"
+          ],
+          "artifacts": [
+            "positioning decision and requested implications"
+          ],
+          "cost": "high",
+          "strategy_stage_prerequisites": [
+            "intake",
+            "segment_selection",
+            "customer_profile",
+            "problem_validation",
+            "opportunity_risk",
+            "operator_playbook"
+          ],
+          "output_owner": "positioning-gtm"
+        },
+        "operations": {
+          "inputs": [
+            "company context and the selected position"
+          ],
+          "prerequisites": [
+            "company context"
+          ],
+          "artifacts": [
+            "requested delivery configuration and feasible transition, or management routines"
+          ],
+          "cost": "medium",
+          "output_owner": "positioning-gtm"
         }
       }
     }

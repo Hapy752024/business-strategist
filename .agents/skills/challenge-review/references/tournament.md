@@ -14,7 +14,7 @@ Generate-and-judge protocol for consequential, under-determined deliverables: se
 Do NOT use when:
 
 - A plan already exists and needs challenge → panel mode (route `startup-challenge-panel`).
-- The deliverable is well-scoped and one draft with a quality checklist suffices → `marketing` (strategy or social mode), `archetype-gtm-strategist`.
+- The deliverable is well-scoped and one draft with a quality checklist suffices → `marketing` (strategy or social mode), `positioning-gtm`.
 - Evidence about the customer/problem is still missing → run `evidence-scout` or `interview-bridge` first; a tournament over ungrounded drafts produces polished guesses.
 
 Multi-agent cost must be proportional to decision value. Four drafting agents plus a judge is 5+ subagent runs — spend that on a pricing structure or GTM motion, not on a newsletter subject line.

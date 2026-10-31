@@ -1,14 +1,16 @@
-# Company Operating System Workflow
+# Operations mode (route `company-operations`)
 
-## Choose scope before loading detail
+Use it once the customer, business model and company stage are clear enough.
 
-Use the existing `company-operations` route for both modes; the requested outcome selects the procedure below. Preserve its pain gate and existing skill alias. No new route or stage is needed.
+## Stage checklist
 
-- **Delivery design:** derive how a selected promise will be delivered. Read repo-root `references/strategic-positioning.md`, including delivery and defensibility distinctions. Return only requested model implications; no automatic meeting plan.
-- **Management cadence:** design goals, scorecards, decision rights, cash/hiring discipline and routines around the supplied position. Do not load the strategic method or reopen positioning unless a material contradiction appears.
-- **Combined company setup:** delivery design first, then only routines needed to run it. A generic company operating system request uses management mode unless it also requests delivery design.
+Operating-model work derives from the selected position; keep this order.
 
-If the position is unresolved, return the consequential choice to `archetype-gtm-strategist`. If customer need is unresolved, use discovery/validation; provisional case appraisal remains with `opportunity-risk-designer` through `case-appraisal`, not this commitment route.
+1. Confirm the selected position (positioning mode). If it is unresolved, return the consequential choice to positioning mode; if customer need is unresolved, use discovery/validation. Provisional case appraisal stays with `opportunity-risk-designer` (`case-appraisal`), not this commitment route.
+2. Delivery design: derive activities and affordable transitions from the selected promise (procedure below), reading repo-root `references/strategic-positioning.md` for delivery and defensibility distinctions.
+3. Management routines: add only the metrics, decision rights and routines needed to run that delivery (procedure below). Cadence-only requests reuse the supplied position and do not reopen positioning unless a material contradiction appears.
+
+A generic company operating system request uses management cadence unless it also requests delivery design. Uncertainty does not authorize execution or change existing gates.
 
 ## Minimum context
 

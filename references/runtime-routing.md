@@ -64,7 +64,7 @@ For a known case add `case` to the envelope and `--case <id>` to CLI dispatch. `
 - Former skill names merged into a family skill (for example `brand-designer`) still work as `--intent`; the packet's `alias_note` names the skill and route that now serve them (`route_workflow.SKILL_ALIASES`).
 - Use `competitor-research` (route `competitor-analysis`) for competitor pages, not for building a new site.
 - Use the website skill's experiment mode for a simple control/treatment test; do not redesign when the user only asks for an experiment.
-- Business-position selection/repositioning belongs to `archetype-gtm-strategist` (`--intent business-positioning`, focused positioning mode); a delivery-model request with a selected position belongs to `company-operating-system` (`--intent company-operations`). For compound requests, select the position first and continue only to requested implications. Use explicit intent when context/paraphrases would mislead phrase matching. Marketing-message positioning stays with marketing; standalone branding stays independent.
+- Business-position selection/repositioning belongs to `positioning-gtm` (`--intent business-positioning`, focused positioning mode); a delivery-model request with a selected position belongs to its operations mode (`--intent company-operations`). For compound requests, select the position first and continue only to requested implications. Use explicit intent when context/paraphrases would mislead phrase matching. Marketing-message positioning stays with marketing; standalone branding stays independent.
 
 ## Router procedure
 

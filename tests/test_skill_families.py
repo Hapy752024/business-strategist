@@ -25,6 +25,7 @@ FAMILIES = {
     'challenge-review': ['startup-challenge-panel', 'strategy-draft-tournament', 'service-customer-perspective-challenger'],
     'precedent-research': ['business-archetype-playbook-researcher', 'growth-case-analyzer'],
     'marketing': ['marketing-strategy-builder', 'social-digital-marketing-planner', 'social-media-idea-validator'],
+    'positioning-gtm': ['archetype-gtm-strategist', 'company-operating-system'],
 }
 FORMER = [(merged, former) for merged, formers in FAMILIES.items() for former in formers]
 # Paths stay in git history; docs/ and .superpowers/ are dated records of that history. The research-business-plan
@@ -290,3 +291,59 @@ def test_marketing_modes_keep_their_gates():
     assert modes['seo-page-planning']['strategy_stage_prerequisites'] == stages + ['operator_playbook']
     assert modes['social']['strategy_stage_prerequisites'] == stages
     assert not modes['channel-validation'].get('strategy_stage_prerequisites')
+
+
+STAGES = ['intake', 'segment_selection', 'customer_profile', 'problem_validation', 'opportunity_risk']
+
+
+def test_positioning_gtm_modes_keep_their_gates():
+    """Gate fields as frozen at 3f1635c: all three routes pain-gated; GTM and positioning keep six strategy stages,
+    operations (formerly company-operating-system) has none."""
+    routes = _routes()
+    for route_id in ('gtm-strategy', 'business-positioning', 'company-operations'):
+        assert routes[route_id]['requires_pain_gate'] is True, route_id
+    modes = json.loads((ROOT / 'config/skill-catalog.json').read_text(encoding='utf-8'))['skills']['positioning-gtm']['modes']
+    assert modes['gtm']['strategy_stage_prerequisites'] == STAGES + ['operator_playbook']
+    assert modes['positioning']['strategy_stage_prerequisites'] == STAGES + ['operator_playbook']
+    assert not modes['operations'].get('strategy_stage_prerequisites')
+    assert route_workflow.route_request('Derive the operating model from our selected position')['task_scope'] == 'focused'
+
+
+def test_operations_mode_derives_from_the_selected_position_first():
+    text = (SKILLS / 'positioning-gtm' / 'references' / 'operations.md').read_text(encoding='utf-8')
+    checklist = text.split('## Stage checklist', 1)[1]
+    position = checklist.index('1. ')
+    delivery = checklist.index('2. ')
+    routines = checklist.index('3. ')
+    assert position < delivery < routines
+    assert 'selected position' in checklist[position:delivery]
+    assert 'routines' in checklist[routines:].lower()
+
+
+# Plain-text requests near the positioning/GTM/operations boundary, frozen from the router at 3f1635c (before the
+# merge). No match phrase changed, so every route ID is unchanged.
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Build a go-to-market strategy to get our first customers', 'gtm-strategy'),
+    ('Create a launch strategy for our new app', 'gtm-strategy'),
+    ('Plan our first customers and partnerships in Germany', 'gtm-strategy'),
+    ('Compare strategic positions for my business and derive the operating model', 'business-positioning'),
+    ('Reposition the business toward enterprise buyers', 'business-positioning'),
+    ('Derive the operating model from our selected position', 'company-operations'),
+    ('Design an operating cadence for our selected position', 'company-operations'),
+    ('Set up a weekly leadership meeting and company KPIs', 'company-operations'),
+    ('Design our delivery model for the cleaning service', 'company-operations'),
+    ('Create a marketing strategy for my bakery', 'marketing-strategy'),
+    ('Build a landing page for our launch', 'website-build'),
+    ('Brand positioning for my coffee shop', 'clarify'),
+])
+def test_positioning_gtm_boundary_routes_unchanged(request_text, expected_route):
+    assert route_workflow.route_request(request_text)['route_id'] == expected_route
+
+
+@pytest.mark.parametrize('request_text,expected_route', [
+    ('Build a go-to-market strategy for our first customers', 'gtm-strategy'),
+    ('Compare strategic positions before we pick one', 'business-positioning'),
+    ('Design the operating model and operating cadence', 'company-operations'),
+])
+def test_positioning_gtm_plain_text_infers_its_mode(request_text, expected_route):
+    assert route_workflow.infer_mode('positioning-gtm', request_text)[0] == expected_route

@@ -1,7 +1,7 @@
 {
-  "archetype-gtm-strategist": [
+  "positioning-gtm": [
     {
-      "reason": "customer-voice.md is mentioned by a linked file but is outside archetype-gtm-strategist's own stage; open it only when a task needs it",
+      "reason": "customer-voice.md is mentioned by a linked file but is outside positioning-gtm's own stage; open it only when a task needs it",
       "target": "references/customer-voice.md"
     },
     {
@@ -122,7 +122,7 @@
   "interview-bridge": [
     {
       "reason": "evidence-base.md is mentioned by a linked file but is outside interview-bridge's own stage; open it only when a task needs it",
-      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+      "target": ".agents/skills/positioning-gtm/references/evidence-base.md"
     },
     {
       "reason": "playbook.md is mentioned by a linked file but is outside interview-bridge's own stage; open it only when a task needs it",
@@ -138,7 +138,7 @@
   "opportunity-risk-designer": [
     {
       "reason": "evidence-base.md is mentioned by a linked file but is outside opportunity-risk-designer's own stage; open it only when a task needs it",
-      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+      "target": ".agents/skills/positioning-gtm/references/evidence-base.md"
     },
     {
       "reason": "playbook.md is mentioned by a linked file but is outside opportunity-risk-designer's own stage; open it only when a task needs it",
@@ -156,7 +156,7 @@
     },
     {
       "reason": "evidence-base.md is mentioned by a linked file but is outside challenge-review's own stage; open it only when a task needs it",
-      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+      "target": ".agents/skills/positioning-gtm/references/evidence-base.md"
     }
   ],
   "earned-media-builder": [
@@ -186,7 +186,7 @@
     },
     {
       "reason": "evidence-base.md is mentioned by a linked file but is outside the marketing skill's own stage; open it only when a task needs it",
-      "target": ".agents/skills/archetype-gtm-strategist/references/evidence-base.md"
+      "target": ".agents/skills/positioning-gtm/references/evidence-base.md"
     },
     {
       "reason": "loops-and-growth.md is read by marketing's strategy and social mode references at their loop and growth step, not from SKILL.md directly",

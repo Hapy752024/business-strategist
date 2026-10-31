@@ -46,7 +46,7 @@ Use this table within the existing positioning section, not a separate business 
 | Customer priority and evidence | Promise and exclusion | Operating choice | Consequences and trade-offs | Service, brand and marketing implications | Test/KPI reference |
 |---|---|---|---|---|---|
 
-If delivery is infeasible or customers do not value the promise, revisit the position. Do not force the operating model to rationalize the founder's preferred answer. `archetype-gtm-strategist` owns business-position selection; `company-operating-system` develops delivery and management implications. Neither requires a full GTM/company blueprint for a narrow request.
+If delivery is infeasible or customers do not value the promise, revisit the position. Do not force the operating model to rationalize the founder's preferred answer. `positioning-gtm` owns business-position selection (positioning mode) and develops delivery and management implications (operations mode). Neither requires a full GTM/company blueprint for a narrow request.
 
 ## Defensibility and value capture
 

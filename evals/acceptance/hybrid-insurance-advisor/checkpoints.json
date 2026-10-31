@@ -125,7 +125,7 @@
         "denial": "(?i)pain.first|problem_validation",
         "override": "--override-gate",
         "writes": "(?i)(gtm|go-to-market|digital-assets/|/website/|campaign)",
-        "downstream": "(archetype-gtm-strategist|brand-website-designer-builder|marketing-campaign-operator|(?<![\\w-])marketing(?=\"|/SKILL))"
+        "downstream": "(archetype-gtm-strategist|positioning-gtm|brand-website-designer-builder|marketing-campaign-operator|(?<![\\w-])marketing(?=\"|/SKILL))"
       }
     },
     {

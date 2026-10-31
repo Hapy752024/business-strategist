@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / ".agents/skills"
 
 POINTERS = {
-    "archetype-gtm-strategist": [
+    "positioning-gtm": [
         "case_insights.md", "build_decision_memo", "search_journey", "--content-inventory",
         "social_topics", "keyword_map.py merge", "brand-website-designer-builder", "site_gate",
         "geo-audit", "first-campaign-runbook", "marketing-campaign-operator",
@@ -34,7 +34,7 @@ POINTERS = {
 }
 
 
-ONE_HOP = {"archetype-gtm-strategist"}
+ONE_HOP = {"positioning-gtm"}
 
 
 def skill_text(name: str) -> str:
@@ -52,7 +52,7 @@ def one_hop_text(name: str) -> str:
 
 
 def test_gtm_points_to_handoffs_at_top():
-    head = skill_text("archetype-gtm-strategist").split("## Success Criteria")[0]
+    head = skill_text("positioning-gtm").split("## Success Criteria")[0]
     assert "references/handoffs.md" in head
 
 

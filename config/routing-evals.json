@@ -3,7 +3,7 @@
   "description": "Routing collision tests — ambiguous prompts per collision pair, testing which skill fires.",
   "pairs": [
     {
-      "pair": "marketing strategy vs social modes vs archetype-gtm-strategist",
+      "pair": "marketing strategy vs social modes vs positioning-gtm",
       "evals": [
         {
           "id": "route-marketing-1",
@@ -12,21 +12,22 @@
           "expected_skill": "marketing",
           "expected_route": "social-marketing",
           "forbidden_skills": [
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "files": [],
-          "rationale": "Specific request for platform-level social media plan and content calendar — marketing (social mode) owns this. archetype-gtm-strategist is for end-to-end stage-gated GTM, not campaign-level social planning."
+          "rationale": "Specific request for platform-level social media plan and content calendar — marketing (social mode) owns this. positioning-gtm is for end-to-end stage-gated GTM, not campaign-level social planning."
         },
         {
           "id": "route-marketing-2",
           "prompt": "We need a full go-to-market strategy for our fintech SaaS — first customers, partnerships, European expansion, and regulatory path.",
-          "expected_output": "Routes to archetype-gtm-strategist for end-to-end stage-gated GTM with fintech archetype and Europe region.",
-          "expected_skill": "archetype-gtm-strategist",
+          "expected_output": "Routes to positioning-gtm for end-to-end stage-gated GTM with fintech archetype and Europe region.",
+          "expected_skill": "positioning-gtm",
           "forbidden_skills": [
             "marketing"
           ],
           "files": [],
-          "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) — archetype-gtm-strategist owns this. marketing (strategy mode) is for campaign-level marketing detail after the GTM strategy."
+          "rationale": "End-to-end stage-gated GTM with archetype-specific concerns (fintech, Europe, regulatory) — positioning-gtm owns this. marketing (strategy mode) is for campaign-level marketing detail after the GTM strategy.",
+          "expected_route": "gtm-strategy"
         },
         {
           "id": "route-marketing-3",
@@ -35,10 +36,10 @@
           "expected_skill": "marketing",
           "expected_route": "marketing-strategy",
           "forbidden_skills": [
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "files": [],
-          "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) — marketing (strategy mode) owns this. archetype-gtm-strategist adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
+          "rationale": "Marketing strategy fundamentals (positioning, messaging, segmentation, channels) — marketing (strategy mode) owns this. positioning-gtm adds stage-gated GTM structure only when SaaS vs fintech archetype or region materially changes the plan."
         }
       ]
     },
@@ -199,10 +200,10 @@
           "expected_skill": "challenge-review",
           "expected_route": "strategy-draft-tournament",
           "forbidden_skills": [
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "files": [],
-          "rationale": "The user wants multiple drafts generated and judged against each other — challenge-review tournament mode owns this. challenge-review panel mode challenges an existing plan; archetype-gtm-strategist produces a single stage-gated strategy."
+          "rationale": "The user wants multiple drafts generated and judged against each other — challenge-review tournament mode owns this. challenge-review panel mode challenges an existing plan; positioning-gtm produces a single stage-gated strategy."
         },
         {
           "id": "route-tournament-2",
@@ -362,24 +363,24 @@
         {
           "id": "position-select",
           "prompt": "Compare strategic positions for my business and derive the operating model.",
-          "expected_skill": "archetype-gtm-strategist",
+          "expected_skill": "positioning-gtm",
           "forbidden_skills": [
             "brand-identity"
           ],
           "expected_output": "Choose the business position first; derive only requested implications.",
           "files": [],
-          "rationale": "Choose the business position first; derive only requested implications."
+          "rationale": "Choose the business position first; derive only requested implications.",
+          "expected_route": "business-positioning"
         },
         {
           "id": "position-delivery",
           "prompt": "Derive the operating model from our selected position.",
-          "expected_skill": "company-operating-system",
-          "forbidden_skills": [
-            "archetype-gtm-strategist"
-          ],
+          "expected_skill": "positioning-gtm",
+          "forbidden_skills": [],
           "expected_output": "Use the selected position and derive activities before routines.",
           "files": [],
-          "rationale": "Use the selected position and derive activities before routines."
+          "rationale": "Use the selected position and derive activities before routines.",
+          "expected_route": "company-operations"
         },
         {
           "id": "position-copy",
@@ -387,7 +388,7 @@
           "expected_skill": "marketing",
           "expected_route": "marketing-strategy",
           "forbidden_skills": [
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "expected_output": "Write the requested copy without a positioning exercise.",
           "files": [],
@@ -398,7 +399,7 @@
           "prompt": "Develop a standalone brand identity without market research.",
           "expected_skill": "brand-identity",
           "forbidden_skills": [
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "expected_output": "Preserve standalone brand discovery.",
           "files": [],
@@ -424,7 +425,7 @@
         {
           "id": "gate-gtm-1",
           "prompt": "Create a go-to-market strategy and launch plan for my meal-planning app for busy parents.",
-          "expected_skill": "archetype-gtm-strategist",
+          "expected_skill": "positioning-gtm",
           "forbidden_skills": [],
           "expected_output": "Route is gtm-strategy, gate_blocked with first_skill idea-grill until the pain gate passes or an explicit override is recorded.",
           "files": [],
@@ -581,7 +582,7 @@
           "expected_skill": "idea-grill",
           "forbidden_skills": [
             "startup-business-builder",
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "files": [],
           "rationale": "An idea assessment with customer research is chosen-idea validation: idea-grill makes the hypothesis researchable, then evidence-scout collects."
@@ -594,7 +595,7 @@
           "expected_route": "seo-page-planning",
           "forbidden_skills": [
             "brand-website-designer-builder",
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "files": [],
           "rationale": "SEO content planning is keyword-to-page planning owned by marketing (strategy mode); the website skill implements pages afterwards."
@@ -622,7 +623,7 @@
           "expected_skill": "challenge-review",
           "expected_route": "startup-challenge-panel",
           "forbidden_skills": [
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "files": [],
           "rationale": "Red-teaming an existing plan is the panel protocol; before the merge this phrasing fell through to clarification."
@@ -662,7 +663,7 @@
           "expected_skill": "marketing",
           "expected_route": "social-marketing",
           "forbidden_skills": [
-            "archetype-gtm-strategist"
+            "positioning-gtm"
           ],
           "files": [],
           "rationale": "Added in the marketing merge so plain-text dispatch reaches social mode; before the merge this asked for clarification."

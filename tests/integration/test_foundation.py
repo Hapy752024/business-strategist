@@ -34,7 +34,7 @@ def test_routes_keep_branding_independent_and_website_specific() -> None:
     app = route.route_request("Design product dashboard UI screens")
     assert app["skill"] == "brand-ui-system"
     gtm = route.route_request("Build a go-to-market strategy for first customers")
-    assert gtm["skill"] == "archetype-gtm-strategist"
+    assert gtm["skill"] == "positioning-gtm"
     explicit = route.route_request("A vague request", intent="opportunity-prioritization")
     assert explicit["skill"] == "opportunity-risk-designer"
     assert explicit["expected_artifacts"] == ["risk matrix and tests"]
@@ -43,11 +43,11 @@ def test_routes_keep_branding_independent_and_website_specific() -> None:
 def test_position_routes_keep_scope_and_explicit_context() -> None:
     route = load_script("position_routes", "scripts/route_workflow.py")
     choice = route.route_request("Compare strategic positions and derive the operating model")
-    assert choice["skill"] == "archetype-gtm-strategist"
+    assert choice["skill"] == "positioning-gtm"
     assert choice["mode"] == "positioning"
     assert choice["expected_artifacts"] == ["positioning decision and requested implications"]
     known = route.route_request("Our strategic positioning is already selected. Derive the operating model.", intent="company-operations")
-    assert known["skill"] == "company-operating-system"
+    assert known["skill"] == "positioning-gtm"
     assert known["reason"] == "explicit intent"
     translated = route.route_request("حدد موقع المشروع الاستراتيجي", intent="business-positioning")
     assert translated["mode"] == "positioning"

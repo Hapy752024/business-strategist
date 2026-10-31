@@ -1,5 +1,5 @@
 ---
 type: tool_used
 tool: Skill
-input_match: '"skill"\s*:\s*"(?:[\w-]+:)?archetype-gtm-strategist"'
+input_match: '"skill"\s*:\s*"(?:[\w-]+:)?positioning-gtm"'
 ---
