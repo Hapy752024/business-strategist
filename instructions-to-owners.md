@@ -21,6 +21,7 @@ Do in this order. Time is a rough estimate.
 | 11 | Postiz on GzaraNet (only when scheduled social posts start) | 1-2 h | social scheduling |
 | 12 | Meta token (only when a paid campaign is near) | 15 min | paused-campaign creation |
 | 13 | Decide: statistics page and 7%-town checker for the site (agent plans from a brief) | decision | linkable content |
+| 14 | Add a "How did you hear about us?" question (with an AI-assistant option) to the booking flow; when analytics is on, add the AI-referrer channel | 30 min | AI attribution |
 | Monthly | Re-run competitor backlinks, `diff`, `link_ledger check`, read the ledger report | 20 min | link gap and lost links |
 
 ## 1. Repository
@@ -57,6 +58,8 @@ Agents now plan this by default (`references/linkable-assets.md`): for each stag
 - **Statistics page** "Retiring in Italy: the numbers (2026)": costs by region, visa income bar, pension taxation, healthcare, expat counts, each with source and date. Agent drafts the public-resource brief; you approve before it is built.
 - **Second calculator**: "Does my town qualify for the 7% pensioner regime?" (the existing `/check` covers the visa income bar). Same path: brief, approval, build, tests.
 - **Your own photos**: upload photos you took of Italian towns to Unsplash, Pexels or Flickr with a credit link to the site. Do not re-upload licensed stock (see the site's image-credits page). Later the agent can reverse-image-search them to ask for missing credits.
+
+**AI visibility measurement (item 14).** The one reliable signal is self-reported: ask "How did you hear about us?" on `/book` with options including "ChatGPT or another AI assistant". If analytics is ever enabled, add a channel for AI referrers (chatgpt.com, perplexity, gemini.google.com, copilot.microsoft.com, claude.ai); several assistants send no referrer, so it undercounts. Check robots.txt does not block GPTBot, OAI-SearchBot, ClaudeBot or PerplexityBot unless you decide to, and look at 404s that keep receiving AI referrals: those are made-up URLs to redirect.
 
 ## 4. Backlinks: the routine
 

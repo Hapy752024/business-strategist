@@ -62,7 +62,7 @@ def test_observation_moves_live_then_lost_and_keeps_rel(ledger):
     with pytest.raises(ValueError, match='target differs'):
         ll.record(ledger, observation(src, 'https://italyforretirees.com/other', 'present'), observation_path='x')
     rep = ll.report(ledger, today='2027-01-02')
-    assert rep['counts']['lost'] == 1 and rep['live_domains'] == []
+    assert rep['counts']['lost'] == 1 and rep['live_domains'] == [] and rep['by_origin'] == {'manual': 1}
 
 
 def test_search_console_import_is_reported_not_live(ledger):

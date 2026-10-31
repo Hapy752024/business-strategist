@@ -13,4 +13,8 @@ Design and write the page so it radiates confidence: make a clear promise, use d
 
 When `marketing/keywords/keyword-map.json` exists, derive page inventory and headings from its clusters. If absent, create a provisional map from the brief, supplied evidence and current search observations; identify confidence and gaps. Ask the owner only for missing business facts, private access or decisions that materially change the page. Use the selected workstream's execution plan for exact owner steps.
 
+## Writing that search engines and AI answers can use
+
+Length is not a target: cited and ranking pages are often short; cover the subtopics the top relevant pages share and stop. Habits that help readers and retrieval alike (Google's guidance requires no AI-specific style; these are readability rules): put the answer first in each section; make each section stand on its own under its heading; name entities, numbers, dates and sources instead of "this tool" or "recent data"; short sentences and paragraphs with descriptive subheadings; one quotable sentence per key finding. Label original ideas and data with the brand name so a reuse carries the source. Freshness is claim-level: update facts and say what changed; a date bump alone is not an update. Before new pages, refresh "sleeper" pages (pages with links whose traffic is declining). Publish an FAQ with specific numbers, dates and facts about the offer: vague truth loses to specific fiction in AI answers.
+
 Before page edits, inventory useful calculators, quizzes, tables and conversion flows. Carry their purpose/selectors into preservation declarations and keep separate local behavior tests.

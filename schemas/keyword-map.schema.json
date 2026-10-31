@@ -168,6 +168,118 @@
               "string",
               "null"
             ]
+          },
+          "traffic_potential": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Estimated monthly organic traffic of the current #1 page for the primary term (provider estimate); beats raw volume"
+          },
+          "business_potential": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 3,
+            "description": "0 irrelevant, 1 informational and hard to pitch, 2 'best X' comparison, 3 ready to buy"
+          },
+          "serp_shape": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "content_type",
+              "format"
+            ],
+            "properties": {
+              "content_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "format": {
+                "type": "string",
+                "minLength": 1
+              },
+              "angle": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "observed_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date"
+              }
+            },
+            "description": "Dominant content type, format and angle of the current top results; a guide cannot rank where category/product pages dominate"
+          },
+          "difficulty": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "intent_mismatch_in_top": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "links_within_reach": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "authority_in_ballpark": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "topical_authority_comparable": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "better_offer_possible": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "description": "Yes/no signals compared with the current top pages; more yes, more winnable"
+          },
+          "ai_answerable": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when an AI answer settles the query without a click (observed, dated); then the goal is a mention in the answer, not the click"
+          },
+          "ai_answer_observed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
           }
         },
         "required": [

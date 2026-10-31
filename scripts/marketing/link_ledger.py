@@ -202,7 +202,10 @@ def overdue_follow_ups(doc: dict, today: str | None = None, days: int = FOLLOW_U
 def report(doc: dict, today: str | None = None) -> dict:
     counts = {s: sum(1 for r in doc['rows'] if r['stage'] == s) for s in STAGES}
     live = [r for r in doc['rows'] if r['stage'] == 'live']
-    return {'property': doc['property'], 'updated_at': doc['updated_at'], 'counts': counts,
+    origins = {}
+    for r in doc['rows']:
+        origins[r['origin']] = origins.get(r['origin'], 0) + 1
+    return {'property': doc['property'], 'updated_at': doc['updated_at'], 'counts': counts, 'by_origin': origins,
             'live_domains': sorted({r['source_domain'] for r in live}),
             'nofollow_live': sorted(r['source_domain'] for r in live if (r['last_observation'] or {}).get('rel') and
                                     any(k in (r['last_observation']['rel'] or '') for k in ('nofollow', 'sponsored', 'ugc'))),
@@ -214,6 +217,7 @@ def report(doc: dict, today: str | None = None) -> dict:
 def render(rep: dict) -> str:
     lines = [f"# Link ledger: {rep['property']}", '', f"Updated {rep['updated_at']}. {rep['limits']}", '', '| stage | rows |', '|---|---|']
     lines += [f'| {s} | {n} |' for s, n in rep['counts'].items()]
+    lines += ['', 'By origin: ' + ', '.join(f'{k} {v}' for k, v in sorted(rep['by_origin'].items())) if rep['by_origin'] else 'By origin: none']
     lines += ['', f"Live domains ({len(rep['live_domains'])}): " + (', '.join(rep['live_domains']) or 'none')]
     if rep['nofollow_live']:
         lines.append('Live but nofollow/sponsored/ugc: ' + ', '.join(rep['nofollow_live']))

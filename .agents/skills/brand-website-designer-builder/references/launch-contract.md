@@ -10,12 +10,12 @@ Canonical IDs: repository `scripts/brand/website_launch.py`. No silent N/A. Anal
 
 | ID | Required acceptance evidence |
 | --- | --- |
-| custom_404 | Branded recovery/navigation, actual unknown-URL HTTP 404; inspect Next.js streaming behavior and prevent soft-404 indexing. |
+| custom_404 | Branded recovery/navigation, actual unknown-URL HTTP 404; inspect Next.js streaming behavior and prevent soft-404 indexing. After launch, review 404s with repeat referrals from AI assistants (hallucinated URLs) and redirect them to the intended page. |
 | meta_title | Meaningful nonempty title on every route/locale including utility pages; distinct indexable-page titles. |
 | meta_description | Nonempty route-specific description on every page; check inherited/dynamic metadata and accidental duplicates. |
 | above_fold_cta | Primary action usable before scrolling on conversion pages at mobile/desktop sizes; legal pages need no sales CTA. |
 | favicon_integration | Branding-approved set with source/digests; verify served URLs, MIME and browser rendering. Website never designs/exports the set. |
-| robots | Working /robots.txt, reviewed search/training bot policy, correct environment and sitemap URL; no accidental production block-all. |
+| robots | Working /robots.txt, reviewed search/training bot policy per vendor (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended; CDN defaults checked), correct environment and sitemap URL; no accidental production block-all. |
 | https_enforcement | Production serves HTTPS with valid TLS; HTTP permanently redirects to HTTPS without chains, HSTS enabled, no mixed content on any route. Verify with production HTTP requests and rendered pages, not platform defaults. |
 | sitemap | Valid /sitemap.xml with canonical production URLs/locales and genuine modified dates; exclude redirects, errors, noindex, private and thank-you routes; compare full inventory. |
 | open_graph | Resolved title/description/url and reachable correctly sized OG image, absolute production URLs and social-preview review. |
