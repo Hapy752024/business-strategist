@@ -575,7 +575,7 @@ def _route_request(
     return packet
 
 
-def route_request(request: str, **kwargs) -> dict[str, Any]:
+def _locked_route_request(request: str, **kwargs) -> dict[str, Any]:
     project = kwargs.get('project', '')
     if project:
         check_project_slug(project)
@@ -591,6 +591,27 @@ def route_request(request: str, **kwargs) -> dict[str, Any]:
                         return _route_request(request, **kwargs)
                 return _route_request(request, **kwargs)
     return _route_request(request, **kwargs)
+
+
+INLINE_REFERENCE_WORDS = 1500
+
+
+def _attach_reference_text(packet: dict[str, Any], root: Path) -> dict[str, Any]:
+    """Inline short required references; always report per-reference word counts."""
+    refs = packet.get('required_references') or []
+    if not refs:
+        return packet
+    texts = {r: (root / r).read_text(encoding='utf-8') for r in refs}
+    words = {r: len(t.split()) for r, t in texts.items()}
+    packet['required_reference_words'] = words
+    if sum(words.values()) <= INLINE_REFERENCE_WORDS:
+        packet['reference_text'] = '\n\n'.join(f'--- {r} ---\n{t.strip()}' for r, t in texts.items())
+    return packet
+
+
+def route_request(request: str, **kwargs) -> dict[str, Any]:
+    packet = _locked_route_request(request, **kwargs)
+    return _attach_reference_text(packet, CATALOG_PATH.parent.parent)
 
 
 def main() -> int:

@@ -248,3 +248,30 @@ def test_infer_mode_scores_match_phrases():
     assert router.infer_mode('earned-media-builder', 'Verify backlinks please') == ('earned-media-verification', [])
     mode, candidates = router.infer_mode('earned-media-builder', 'something unrelated')
     assert mode is None and 'earned-media-preparation' in candidates
+
+
+def _packet_with_reference(tmp_path, monkeypatch, words):
+    import json
+    from scripts import route_workflow
+    (tmp_path / 'config').mkdir(exist_ok=True)
+    (tmp_path / 'ref.md').write_text('# Inline Heading\n' + 'word ' * words)
+    catalog = route_workflow.load_catalog()
+    catalog['evidence-scout']['required_references'] = ['ref.md']
+    path = tmp_path / 'config/skill-catalog.json'
+    path.write_text(json.dumps({'skills': catalog}))
+    monkeypatch.setattr(route_workflow, 'CATALOG_PATH', path)
+    return route_workflow.route_request('customer feedback', intent='evidence-scout',
+                                        task_scope='focused', check_skill='evidence-scout')
+
+
+def test_packet_inlines_short_required_references(tmp_path, monkeypatch):
+    packet = _packet_with_reference(tmp_path, monkeypatch, 300)
+    assert '--- ref.md ---' in packet['reference_text']
+    assert '# Inline Heading' in packet['reference_text']
+    assert packet['required_references'] == ['ref.md']
+
+
+def test_packet_lists_long_references_with_word_counts(tmp_path, monkeypatch):
+    packet = _packet_with_reference(tmp_path, monkeypatch, 1600)
+    assert 'reference_text' not in packet
+    assert packet['required_reference_words']['ref.md'] > 1500
