@@ -28,6 +28,7 @@ import base64
 import json
 import os
 import re
+import shlex
 import shutil
 import signal
 import subprocess
@@ -87,6 +88,192 @@ DISALLOWED_TOOLS = [
     'Bash(python3 scripts/fal_assets.py*)', 'Bash(python3 scripts/brand/finalize_fal_assets.py*)',
     'Bash(python3 scripts/brand/indexnow_ping.py*)', 'Bash(python3 scripts/marketing/execute.py*)',
 ]
+
+
+# --------------------------------------------------------------------------- subagent Bash guard
+# Claude Code matches allow rules per subcommand, and an allow rule does not match past a variable assignment, so
+# research subagents' `cd <wt> && python3 scripts/...` and `P=...; cat $P/...` forms were auto-denied in headless
+# runs (Task 7.3 audit, root cause 3). A PreToolUse hook (installed by claude_command) approves exactly those
+# shapes when every part is otherwise allowed. It never widens the allowlist beyond: `cd` into the eval worktree,
+# plain `NAME=value` assignments, and `NAME=value python3 scripts/...`. DISALLOWED_TOOLS stays authoritative: the
+# deny rules still run in Claude Code (a hook "allow" does not bypass them), and the guard itself denies a
+# denylisted command, including one reached through a variable, `./` or an absolute path.
+
+SHELL_SEPARATORS = {'&&', '||', ';', '|'}
+REDIRECTS = {'>', '>>', '>&', '&>', '&>>', '>|', '<', '<<', '<<<', '<&', '<>'}
+ASSIGNMENT_RE = re.compile(r'^([A-Za-z_][A-Za-z0-9_]*)=(.*)$', re.S)
+VAR_REF_RE = re.compile(r'\$(?:\{([A-Za-z_][A-Za-z0-9_]*)\}|([A-Za-z_][A-Za-z0-9_]*))')
+UNSAFE_VAR_RE = re.compile(r'^(PATH|IFS|ENV|BASH_ENV|BASHOPTS|SHELLOPTS|PS4|PROMPT_COMMAND|HOME|CDPATH|LD_\w*|PYTHON\w*'
+                           r'|NODE_\w*|NPM_\w*|GIT_\w*|DYLD_\w*|PERL\w*|RUBY\w*)$')
+PREFIX_ASSIGN_CMD_RE = re.compile(r'^python3? scripts/\S+\.py( |$)')
+FIND_ACTION_RE = re.compile(r'(^| )-(exec|execdir|ok|okdir|delete|fprint\w*|fls)( |$)')
+
+
+def _bash_rules(rules: Iterable[str]) -> list[re.Pattern]:
+    """`Bash(prefix *)` rules as anchored regexes; a trailing ` *` also matches the bare command."""
+    out = []
+    for rule in rules:
+        m = re.fullmatch(r'Bash\((.*)\)', rule)
+        if not m:
+            continue
+        body = m.group(1)
+        if body.endswith(' *'):
+            out.append(re.compile('^' + re.escape(body[:-2]) + '( .*)?$', re.S))
+        else:
+            out.append(re.compile('^' + re.escape(body).replace(r'\*', '.*') + '$', re.S))
+    return out
+
+
+ALLOW_BASH = _bash_rules(ALLOWED_TOOLS)
+DENY_BASH = _bash_rules(DISALLOWED_TOOLS)
+DENIED_SCRIPTS = [m.group(1) for r in DISALLOWED_TOOLS for m in [re.fullmatch(r'Bash\(python3? (scripts/\S+\.py)\*?\)', r)] if m]
+
+
+def _split_command(command: str) -> list[list[str]] | None:
+    """Subcommands as token lists, or None when the command uses anything the guard does not reason about."""
+    if '`' in command or '$(' in command or '<(' in command or '>(' in command or '\\\n' in command:
+        return None
+    try:
+        # Unquoted newlines separate commands (shlex would otherwise treat them as spaces); quoted ones,
+        # as in a multi-line `python3 -c "..."`, stay inside their token.
+        lex = shlex.shlex(command, posix=True, punctuation_chars='();<>|&\n')
+        lex.whitespace = ' \t\r'
+        lex.whitespace_split = True
+        tokens = list(lex)
+    except ValueError:
+        return None
+    parts, current, i = [], [], 0
+    while i < len(tokens):
+        tok = tokens[i]
+        if tok and set(tok) == {'\n'}:
+            if current:
+                parts.append(current)
+                current = []
+        elif tok in SHELL_SEPARATORS:
+            if not current:
+                return None
+            parts.append(current)
+            current = []
+        elif tok in REDIRECTS:
+            target = tokens[i + 1] if i + 1 < len(tokens) else ''
+            ok = target == '/dev/null' if tok in ('>', '>>', '&>', '<') else (tok == '>&' and target in ('1', '2'))
+            if not ok:
+                return None
+            if current and current[-1] in ('1', '2'):
+                current.pop()  # the fd of `2>&1` / `2>/dev/null`
+            i += 1
+        elif set(tok) <= set('();<>|&\n'):
+            return None  # subshells, background jobs, separators glued to newlines, anything unusual
+        else:
+            current.append(tok)
+        i += 1
+    if not current:
+        return None
+    parts.append(current)
+    return parts
+
+
+def _within(path: str, root: str) -> bool:
+    try:
+        return os.path.commonpath([os.path.realpath(path), os.path.realpath(root)]) == os.path.realpath(root)
+    except ValueError:
+        return False
+
+
+def _is_denied(words: list[str], cwd: str, root: str) -> bool:
+    text = ' '.join(words)
+    if any(rx.match(text) for rx in DENY_BASH):
+        return True
+    executed = words[:1]
+    if words and re.fullmatch(r'(python[\d.]*|node|bash|sh)', os.path.basename(words[0])):
+        args = [w for w in words[1:] if w not in ('-u', '-B', '-E', '-s', '-I')]
+        if args[:1] == ['-m'] and len(args) > 1:
+            executed = [args[1].replace('.', '/') + '.py']
+        else:
+            executed = args[:1]
+    for word in executed:  # a denylisted script reached through ./, an absolute path, a module or a variable
+        full = os.path.realpath(os.path.join(cwd, word))
+        rel = os.path.relpath(full, os.path.realpath(root)) if _within(full, root) else ''
+        if any(rel == d or word.endswith('/' + d) or word == d for d in DENIED_SCRIPTS):
+            return True
+    return False
+
+
+def bash_guard_decision(command: str, root: str, cwd: str | None = None) -> tuple[str | None, str]:
+    """('allow' | 'deny' | None, reason). None defers to Claude Code's own rules (in headless runs: deny)."""
+    root = str(root)
+    cwd = cwd if cwd and _within(cwd, root) else root
+    parts = _split_command(command)
+    if parts is None:
+        return None, 'unparsed shell form'
+    env: dict[str, str] = {}
+    denied, deferred, has_cd, has_git = [], [], False, False
+    for words in parts:
+        def expand(word: str) -> str | None:
+            missing = [m.group(1) or m.group(2) for m in VAR_REF_RE.finditer(word) if (m.group(1) or m.group(2)) not in env]
+            if missing or re.search(r'\$[^A-Za-z_{]|\$\{[^}]*[^A-Za-z0-9_}]', word):
+                return None
+            return VAR_REF_RE.sub(lambda m: env[m.group(1) or m.group(2)], word)
+        expanded = [expand(w) for w in words]
+        if None in expanded:
+            deferred.append(' '.join(words))
+            continue
+        assigns = []
+        while expanded and ASSIGNMENT_RE.match(expanded[0]):
+            assigns.append(ASSIGNMENT_RE.match(expanded.pop(0)).groups())
+        if any(UNSAFE_VAR_RE.match(name) for name, _ in assigns):
+            deferred.append(' '.join(words))
+            continue
+        if not expanded:  # a plain `NAME=value` statement: a shell variable for later parts, never exported
+            env.update(assigns)
+            continue
+        text = ' '.join(expanded)
+        if _is_denied(expanded, cwd, root):
+            denied.append(text)
+            continue
+        if expanded[0] == 'cd':
+            target = expanded[1] if len(expanded) == 2 else None
+            if target and target != '-' and _within(os.path.join(cwd, target), root):
+                cwd, has_cd = os.path.realpath(os.path.join(cwd, target)), True
+            else:
+                deferred.append(text)
+            continue
+        has_git = has_git or expanded[0] == 'git'
+        if assigns and not PREFIX_ASSIGN_CMD_RE.match(text):
+            deferred.append(text)  # exported assignments only in front of a repository script
+        elif expanded[0] == 'find' and FIND_ACTION_RE.search(text):
+            deferred.append(text)
+        elif not any(rx.match(text) for rx in ALLOW_BASH):
+            deferred.append(text)
+    if denied:
+        return 'deny', 'acceptance harness denylist: ' + '; '.join(denied)[:300]
+    if deferred:
+        return None, 'not covered: ' + '; '.join(deferred)[:300]
+    if has_cd and has_git:
+        return None, 'cd combined with git'
+    return 'allow', 'acceptance guard: cd into the eval worktree / shell variables with otherwise-allowed commands'
+
+
+def bash_guard_hook(root: str, stdin=None) -> int:
+    """PreToolUse hook entry point: read the hook payload, print a decision, or nothing to defer."""
+    try:
+        payload = json.load(stdin or sys.stdin)
+    except (json.JSONDecodeError, ValueError):
+        return 0
+    if payload.get('tool_name') != 'Bash':
+        return 0
+    command = str((payload.get('tool_input') or {}).get('command') or '')
+    decision, reason = bash_guard_decision(command, root, cwd=payload.get('cwd'))
+    if decision:
+        print(json.dumps({'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'permissionDecision': decision,
+                                                 'permissionDecisionReason': reason}}))
+    return 0
+
+
+def bash_guard_settings(wt: Path) -> str:
+    command = f'python3 {shlex.quote(str(Path(__file__).resolve()))} --bash-guard {shlex.quote(str(wt))}'
+    return json.dumps({'hooks': {'PreToolUse': [{'matcher': 'Bash', 'hooks': [{'type': 'command', 'command': command}]}]}})
+
 
 INTAKE_PATTERN = re.compile(r'(?i)(which path|continue \[\d\]|please (confirm|choose|tell me)|let me know (which|whether|if)'
                             r'|do you want|would you like|shall i|should i)')
@@ -160,6 +347,38 @@ def question_sentences(text: str) -> list[str]:
 
 def count_questions(text: str) -> int:
     return len(question_sentences(text))
+
+
+LIST_ITEM = re.compile(r'^\s*(\d+[.)]|[-*+•])\s+')
+CONTINUATION_Q = re.compile(r'(?i)^(or|if not|if so|otherwise|alternatively|and if|failing that)\b')
+
+
+def count_question_blocks(text: str) -> int:
+    """Questions about one decision count once.
+
+    A block is a run of consecutive question sentences within one paragraph (blank lines and list items
+    start a new paragraph); a later question in the same paragraph that opens with Or / If not / Otherwise /
+    Alternatively continues the current block. Whether two questions really concern the same decision is
+    left to the blinded grader; this is the deterministic proxy."""
+    cleaned = re.sub(r'https?://\S+', 'URL', text)
+    paragraphs: list[list[str]] = [[]]
+    for line in cleaned.splitlines():
+        if not line.strip() or LIST_ITEM.match(line):
+            paragraphs.append([])
+        if line.strip():
+            paragraphs[-1].append(line)
+    blocks = 0
+    for para in paragraphs:
+        open_block, seen_q = False, False
+        for s in sentences(' '.join(para)):
+            is_q = s.rstrip(' )"\'').endswith('?')
+            if not is_q:
+                open_block = False
+                continue
+            if not (open_block or (seen_q and CONTINUATION_Q.match(s))):
+                blocks += 1
+            open_block = seen_q = True
+    return blocks
 
 
 PRIVATE_ANSWERS = 'founder-answers.private.json'
@@ -382,7 +601,8 @@ def hook_denials(parsed: dict) -> dict:
 # --------------------------------------------------------------------------- checks
 
 CHECK_TYPES = {'all', 'any', 'not', 'text', 'tool_use', 'artifact', 'json_len', 'jsonl_distinct', 'order',
-               'max_questions_per_turn', 'answers_persisted', 'hook_denials', 'gate_sequence', 'provider_gaps'}
+               'max_questions_per_turn', 'answers_persisted', 'hook_denials', 'gate_sequence', 'provider_gaps',
+               'skill_reached'}
 
 
 def validate_check(check: dict) -> None:
@@ -405,6 +625,7 @@ class Ctx:
         self.scenario_dir = scenario_dir
         self._files: list[Path] | None = None
         self._cache: dict[Path, str] = {}
+        self.flags: dict[str, Any] = {}  # per-checkpoint report-only flags, reset by score()
 
     def files(self) -> list[Path]:
         if self._files is None:
@@ -428,18 +649,33 @@ class Ctx:
         return path.relative_to(self.out_dir).as_posix()
 
     def documents(self, scope: str) -> list[tuple[str, str]]:
+        """The agent's own deliverables: top-level assistant text per round and authored eval-project files.
+
+        Subagent text and collected provider data (evidence runs, raw payloads, provider checkpoints, run
+        summaries and any *.jsonl) are excluded, so a text check cannot pass on third-party content the
+        agent merely collected (Task 7.3 audit, cp07)."""
         docs: list[tuple[str, str]] = []
         if scope in ('assistant', 'both'):
             by_round: dict[int, list[str]] = {}
             first_line: dict[int, int] = {}
             for ev in self.events:
-                if ev['kind'] == 'text':
+                if ev['kind'] == 'text' and ev['top']:
                     by_round.setdefault(ev['round'], []).append(ev['text'])
                     first_line.setdefault(ev['round'], ev['line'])
             docs += [(f'transcript.jsonl#L{first_line[r] + 1}', '\n'.join(t)) for r, t in sorted(by_round.items())]
         if scope in ('artifacts', 'both'):
-            docs += [(self.rel(p), self.read(p)) for p in self.files() if p.suffix.lower() in TEXT_SUFFIXES]
+            docs += [(self.rel(p), self.read(p)) for p in self.files()
+                     if p.suffix.lower() in TEXT_SUFFIXES and not is_collected_data(p.relative_to(self.art).as_posix())]
         return docs
+
+
+COLLECTED_DATA_GLOBS = ('**/runs/**', '**/raw/**', '**/provider-checkpoints/**', '**/run-checkpoint.json',
+                        '**/summary.json', '**/*.jsonl')
+
+
+def is_collected_data(rel: str) -> bool:
+    """Collected provider output (forum, review or SERP text) rather than something the agent authored."""
+    return any(glob_regex(g).fullmatch(rel) for g in COLLECTED_DATA_GLOBS)
 
 
 def glob_regex(pattern: str) -> re.Pattern:
@@ -519,10 +755,16 @@ def run_check(ctx: Ctx, check: dict) -> Result:
         return (not ok), ev, (f'{label}: forbidden event found ({detail})' if ok else f'{label}: none found')
     if kind == 'text':
         pats = [re.compile(p) for p in check['patterns']]
+        excludes = [re.compile(p) for p in check.get('exclude', [])]
+        per_line = bool(check.get('per_line'))
+        unit = 'line' if per_line else 'document'
         for ref, text in ctx.documents(check.get('scope', 'both')):
-            if all(p.search(text) for p in pats):
-                return True, ref, f'{label}: all patterns in one document'
-        return False, None, f'{label}: no single document matched all {len(pats)} patterns'
+            # per_line: all patterns on one line (a sentence or table row), and no exclude pattern on that line,
+            # so a gap statement ("UK analogs not checked") is not read as a precedent.
+            for chunk in (text.splitlines() if per_line else [text]):
+                if all(p.search(chunk) for p in pats) and not any(x.search(chunk) for x in excludes):
+                    return True, ref, f'{label}: all patterns in one {unit}'
+        return False, None, f'{label}: no single {unit} matched all {len(pats)} patterns'
     if kind == 'tool_use':
         hits = _tool_matches(ctx, check)
         need = int(check.get('min', 1))
@@ -577,13 +819,13 @@ def run_check(ctx: Ctx, check: dict) -> Result:
                 continue
             final = round_final_text(ctx, r['round'])
             checked += 1
-            n = count_questions(final)
+            n = count_question_blocks(final)
             if n > worst:
                 worst, worst_ref = n, f"rounds.jsonl#round{r['round']}"
         limit = int(check.get('max', 1))
         if not checked:
             return False, None, 'proxy: no answered intake turns to measure'
-        return worst <= limit, worst_ref, f'proxy: max {worst} question sentence(s) over {checked} answered turn(s), limit {limit}'
+        return worst <= limit, worst_ref, f'proxy: max {worst} question block(s) over {checked} answered turn(s), limit {limit}'
     if kind == 'answers_persisted':
         feeder_data = _founder_answers(ctx)
         fed = [i for r in ctx.rounds if r.get('kind') in ANSWER_KINDS for i in r.get('matched_ids', [])]
@@ -608,6 +850,8 @@ def run_check(ctx: Ctx, check: dict) -> Result:
             f'hook_denials: {len(hits)} matching denial(s), max {limit}'
     if kind == 'gate_sequence':
         return gate_sequence(ctx, check)
+    if kind == 'skill_reached':
+        return skill_reached(ctx, check)
     if kind == 'provider_gaps':
         return provider_gaps(ctx, check)
     raise ValueError(f'unknown check type {kind}')
@@ -628,41 +872,105 @@ def round_final_text(ctx: Ctx, rnd: int) -> str:
     return texts[-1] if texts else ''
 
 
+OVERRIDE_RECORDED_RE = re.compile(r'"?gate_override"?\s*:\s*true\b')
+ROUTER_REJECTED_RE = re.compile(r'(?im)^(usage: |[\w.]+\.py: error:|error:|traceback )')
+DEFAULT_DOWNSTREAM_WRITES = r'(?i)(gtm|go-to-market|digital-assets/|/website/|campaign)'
+
+
+def router_result_ok(res: dict | None) -> bool:
+    """A router result that is not an argparse/usage failure. `| head` hides the exit code, so the text decides."""
+    return bool(res) and not res['is_error'] and not ROUTER_REJECTED_RE.search(res['text'])
+
+
+def _skill_file_re(skills: str) -> re.Pattern:
+    return re.compile(r'(?:\.agents|\.claude)/skills/' + skills + r'/SKILL\.md')
+
+
+def _skill_loads(ctx: Ctx, skills: str) -> tuple[list[int], list[int], list[int]]:
+    """(Skill tool calls, SKILL.md reads, denied Skill calls) for skills matching the `skills` regex."""
+    down_re, file_re = re.compile(skills), _skill_file_re(skills)
+    invoked, read, denied = [], [], []
+    for ev in ctx.events:
+        if ev['kind'] != 'tool_use':
+            continue
+        res = ev.get('result') or {'text': '', 'is_error': False}
+        if ev['name'] == 'Skill' and down_re.search(ev['input_text']):
+            (denied if ev['denied'] or res['is_error'] else invoked).append(ev['idx'])
+        elif ev['name'] in ('Read', 'Bash') and file_re.search(ev['input_text']) and not res['is_error']:
+            read.append(ev['idx'])
+    return invoked, read, denied
+
+
 def gate_sequence(ctx: Ctx, check: dict) -> Result:
+    """Pain-first block, then a recorded override, then downstream work.
+
+    Downstream work = a downstream skill loaded (Skill tool call, or a Read/cat of its SKILL.md) and a
+    GTM/website/campaign artifact written after the override. An override counts only when the router's
+    result records it (gate_override: true); a usage/argparse failure piped through `head` does not."""
     route_re = re.compile(check['route'])
     blocked_res = [re.compile(b) for b in (check['blocked'] if isinstance(check['blocked'], list) else [check['blocked']])]
     denial_re = re.compile(check.get('denial', r'(?i)pain.first|problem_validation'))
-    override_re, down_re = re.compile(check['override']), re.compile(check['downstream'])
-    blocks, overrides, downstream = [], [], []
+    override_re = re.compile(check['override'])
+    writes_re = re.compile(check.get('writes', DEFAULT_DOWNSTREAM_WRITES))
+    blocks, overrides, writes = [], [], []
     for ev in ctx.events:
         if ev['kind'] != 'tool_use':
             continue
         res = ev.get('result') or {'text': '', 'is_error': False}
         if ev['name'] == 'Bash' and route_re.search(ev['input_text']):
             if override_re.search(ev['input_text']):
-                if not res['is_error']:
+                if router_result_ok(res) and OVERRIDE_RECORDED_RE.search(res['text']):
                     overrides.append(ev['idx'])
             elif all(b.search(res['text']) for b in blocked_res):  # matched independently: key order varies
                 blocks.append(ev['idx'])
-        elif ev['name'] == 'Skill' and down_re.search(ev['input_text']):
-            if ev['denied'] and denial_re.search(res['text']):
-                blocks.append(ev['idx'])
-            elif not res['is_error']:
-                downstream.append(ev['idx'])
+        elif ev['name'] in ('Write', 'Edit', 'MultiEdit', 'NotebookEdit') and not res['is_error']:
+            path = str(ev['input'].get('file_path') or ev['input'].get('notebook_path') or '')
+            if writes_re.search(path):
+                writes.append(ev['idx'])
+    invoked, read, denied = _skill_loads(ctx, check['downstream'])
+    blocks += [i for i in denied if denial_re.search((ctx.events[i].get('result') or {}).get('text', ''))]
+    blocks.sort()
     if not blocks:
         return False, None, 'gate: no blocked gated route observed'
     if not overrides:
         return False, _line_ref(ctx, blocks[0]), 'gate: blocked, but no --override-gate call recorded'
-    first_override = min(o for o in overrides if o > blocks[0]) if any(o > blocks[0] for o in overrides) else None
+    first_override = min((o for o in overrides if o > blocks[0]), default=None)
     if first_override is None:
         return False, _line_ref(ctx, overrides[0]), 'gate: override recorded before any block'
-    early = [d for d in downstream if d < first_override]
+    early = sorted(i for i in invoked + writes if i < first_override)
     if early:
-        return False, _line_ref(ctx, early[0]), 'gate: a downstream skill ran before the override'
-    late = [d for d in downstream if d > first_override]
-    if not late:
-        return False, _line_ref(ctx, first_override), 'gate: override recorded but no downstream stage ran'
-    return True, _line_ref(ctx, first_override), f'gate: blocked, overridden, then {len(late)} downstream call(s)'
+        return False, _line_ref(ctx, early[0]), 'gate: a downstream skill or GTM artifact ran before the override'
+    loads = [i for i in invoked + read if i > first_override]
+    late_writes = [w for w in writes if loads and w > min(loads)]
+    if not loads:
+        return False, _line_ref(ctx, first_override), 'gate: override recorded but no downstream skill was loaded'
+    if not late_writes:
+        return False, _line_ref(ctx, first_override), \
+            'gate: override and downstream skill load recorded, but no GTM/website/campaign artifact was written'
+    how = 'Skill tool' if any(i > first_override for i in invoked) else 'SKILL.md read (Skill tool bypassed)'
+    return True, _line_ref(ctx, first_override), \
+        f'gate: blocked, overridden, downstream skill via {how}, then {len(late_writes)} artifact write(s)'
+
+
+def skill_reached(ctx: Ctx, check: dict) -> Result:
+    """A successful route check for the skill plus the skill loaded by the Skill tool or a read of its SKILL.md.
+
+    Sets flags.skill_tool_bypassed when the skill was only read, so a Skill-tool bypass (which also skips the
+    PreToolUse hook and its injected route context) is visible instead of silently scored."""
+    skill = check['skill']
+    route_re = re.compile(check.get('route', r'route_workflow\.py'))
+    packet_re = re.compile(r'"?(skill|first_skill)"?\s*:\s*"' + re.escape(skill) + '"')
+    routes = [ev for ev in ctx.events if ev['kind'] == 'tool_use' and ev['name'] == 'Bash'
+              and route_re.search(ev['input_text']) and router_result_ok(ev.get('result'))
+              and packet_re.search(ev['result']['text'])]
+    invoked, read, _ = _skill_loads(ctx, re.escape(skill))
+    ctx.flags['skill_tool_bypassed'] = bool(read) and not invoked
+    if not routes:
+        return False, None, f'skill_reached: no successful route check returning {skill}'
+    if not (invoked or read):
+        return False, _line_ref(ctx, routes[0]['idx']), f'skill_reached: route check ran but {skill} was never loaded'
+    how = 'Skill tool' if invoked else 'SKILL.md read (Skill tool bypassed)'
+    return True, _line_ref(ctx, (invoked or read)[0]), f'skill_reached: route check plus {skill} via {how}'
 
 
 QUOTA_RE = re.compile(r'(?i)(\b402\b[^\n]{0,40}payment required|\b429\b[^\n]{0,40}too many|usage limit exceeded'
@@ -760,10 +1068,20 @@ def score(out_dir: Path, checkpoints: Path, scenario_dir: Path | None = None) ->
     cps = []
     for cp in spec['checkpoints']:
         validate_check(cp['check'])
+        ctx.flags = {}
         ok, evidence, detail = run_check(ctx, cp['check'])
         status = 'pass' if ok is True else ('not_exercised' if ok is None else 'fail')
-        cps.append({'id': cp['id'], 'stage': cp['stage'], 'title': cp['title'], 'passed': ok is True, 'status': status,
-                    'proxy': bool(cp.get('proxy')), 'evidence_path': evidence, 'detail': detail})
+        entry = {'id': cp['id'], 'stage': cp['stage'], 'title': cp['title'], 'passed': ok is True, 'status': status,
+                 'proxy': bool(cp.get('proxy')), 'evidence_path': evidence, 'detail': detail}
+        if cp['check']['type'] in ('all', 'any'):  # report each sub-check, so a partial pass shows what is missing
+            entry['sub_checks'] = []
+            for child in cp['check']['checks']:
+                c_ok, c_ev, c_detail = run_check(ctx, child)
+                entry['sub_checks'].append({'label': child.get('label') or child['type'], 'passed': c_ok is True,
+                                            'evidence_path': c_ev, 'detail': c_detail})
+        if ctx.flags:
+            entry['flags'] = dict(ctx.flags)
+        cps.append(entry)
     tokens, perm = {'input': 0, 'output': 0, 'cache_creation': 0, 'cache_read': 0}, 0
     session, per_session = None, {}
     for ev in ctx.events:
@@ -1035,6 +1353,7 @@ def claude_command(prompt: str, *, session_id: str | None, model_budget: float, 
         cmd += ['--model', model]
     if (wt / '.mcp.json').is_file():
         cmd += ['--strict-mcp-config', '--mcp-config', str(wt / '.mcp.json')]
+    cmd += ['--settings', bash_guard_settings(wt)]
     cmd += ['--allowedTools', *ALLOWED_TOOLS, '--disallowedTools', *tools_blocked]
     return cmd
 
@@ -1278,7 +1597,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument('--max-rounds', type=int, default=MAX_ROUNDS)
     ap.add_argument('--dry-run', action='store_true', help='create/remove the worktree and print planned writes only')
     ap.add_argument('--score-only', type=Path, default=None, help='rescore an existing out_dir')
+    ap.add_argument('--bash-guard', default=None, metavar='WORKTREE', help=argparse.SUPPRESS)  # PreToolUse hook mode
     args = ap.parse_args(argv)
+    if args.bash_guard:
+        return bash_guard_hook(args.bash_guard)
     try:
         check_budgets(args.budget_usd, args.model_budget_usd)
     except ValueError as exc:

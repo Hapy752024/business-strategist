@@ -24,9 +24,9 @@
       "stage": "routing",
       "title": "Routing reaches idea-grill without an envelope denial; hook denials are counted",
       "proxy": false,
-      "pass_rule": "At least one non-denied Skill call to idea-grill and zero hook denials of idea-grill. All hook denials are counted in the scorecard's hook_denials.",
+      "pass_rule": "A successful route_workflow.py result naming idea-grill (not a usage/argparse failure), idea-grill loaded by a non-denied Skill call or a read of its SKILL.md, and zero hook denials of idea-grill. flags.skill_tool_bypassed reports (without failing) a read-only load, which also skips the Skill hook's injected route context. All hook denials are counted in the scorecard's hook_denials.",
       "check": {"type": "all", "checks": [
-        {"type": "tool_use", "name": "^Skill$", "input": "idea-grill", "exclude_denied": true, "min": 1},
+        {"type": "skill_reached", "label": "route_check_and_skill_loaded", "skill": "idea-grill", "route": "route_workflow\\.py"},
         {"type": "hook_denials", "tool": "^Skill$", "input": "idea-grill", "max": 0}
       ]}
     },
@@ -70,10 +70,11 @@
       "stage": "desk_research",
       "title": "Official statistics and the §34d versus §34e GewO distinction are surfaced with sources",
       "proxy": true,
-      "pass_rule": "Proxy: one document (an assistant round or an artifact) mentions both §34d and §34e with a URL, and one document cites an official statistics or regulator domain. Accuracy is graded in Task 7.3.",
+      "pass_rule": "Proxy: one of the agent's own documents (a top-level assistant round or an authored artifact; collected provider data excluded) mentions both §34d and §34e with a URL; one cites a statute or regulator source (gesetze-im-internet.de, bafin.de, an IHK/DIHK domain, vermittlerregister.info); and one cites an official statistics source (Destatis, Eurostat, GDV statistics, Bundesbank, BMG, GKV-Spitzenverband, BAS, PKV-Verband). The URL scheme is optional for the domain checks. The two source sub-checks are reported separately in sub_checks. Accuracy is graded in Task 7.3.",
       "check": {"type": "all", "checks": [
-        {"type": "text", "scope": "both", "patterns": ["§\\s*34\\s*d", "§\\s*34\\s*e", "https?://"]},
-        {"type": "text", "scope": "both", "patterns": ["https?://(www\\.)?(destatis\\.de|bundesgesundheitsministerium\\.de|gkv-spitzenverband\\.de|bundesamtsozialesicherung\\.de|bafin\\.de|bundesbank\\.de|ec\\.europa\\.eu/eurostat|gesetze-im-internet\\.de|vermittlerregister\\.info|dihk\\.de)"]}
+        {"type": "text", "label": "s34d_s34e_with_url", "scope": "both", "patterns": ["§\\s*34\\s*d", "§\\s*34\\s*e", "https?://"]},
+        {"type": "text", "label": "statute_or_regulator_source", "scope": "both", "patterns": ["(?i)(?<![\\w-])(https?://)?([\\w-]+\\.)*(gesetze-im-internet\\.de|bafin\\.de|d?ihk\\.de|vermittlerregister\\.info)\\b"]},
+        {"type": "text", "label": "official_statistics_source", "scope": "both", "patterns": ["(?i)(?<![\\w-])(https?://)?([\\w-]+\\.)*(destatis\\.de|ec\\.europa\\.eu/eurostat|eurostat\\.ec\\.europa\\.eu|gdv\\.de|bundesbank\\.de|bundesgesundheitsministerium\\.de|gkv-spitzenverband\\.de|bundesamtsozialesicherung\\.de|pkv\\.de)\\b"]}
       ]}
     },
     {
@@ -81,10 +82,12 @@
       "stage": "precedents",
       "title": "International precedent pass names at least one foreign comparable with verified outcome or explains inapplicability",
       "proxy": true,
-      "pass_rule": "Proxy: one document combines precedent/international language, a named foreign country and a URL, or explicitly states that international precedents do not apply. Outcome verification is graded in Task 7.3.",
+      "pass_rule": "Proxy: one of the agent's own documents (top-level assistant text or an authored artifact; subagent text and collected provider data such as runs/, raw/, provider-checkpoints/, summaries and *.jsonl are excluded) has one line (a sentence or table row) that combines precedent/international/analog language, a named foreign country and a URL or domain path, without gap language such as 'not checked' or 'unverified' on that line; or explicitly states that international precedents do not apply. Outcome verification is graded in Task 7.3.",
       "check": {"type": "any", "checks": [
-        {"type": "text", "scope": "both", "patterns": ["(?i)(international|foreign|abroad|other countr|precedent)", "\\b(United States|USA|U\\.S\\.|United Kingdom|UK|Netherlands|France|Austria|Switzerland|Sweden|Denmark|Spain|Italy|Canada|Australia)\\b", "https?://"]},
-        {"type": "text", "scope": "both", "patterns": ["(?i)(international|foreign) (precedent|comparable)s?[^\\n]{0,200}(not applicable|inapplicable|does not transfer|do not transfer|no (verified )?comparable)"]}
+        {"type": "text", "label": "named_foreign_precedent", "scope": "both", "per_line": true,
+         "patterns": ["(?i)(international|foreign|abroad|other countr|precedent|analog|comparable)", "\\b(United States|USA|US|U\\.S\\.|United Kingdom|UK|Britain|Netherlands|NL|France|Austria|Switzerland|Sweden|Denmark|Spain|Italy|Canada|Australia)\\b", "(https?://\\S+|\\b[\\w-]+(\\.[\\w-]+)*\\.[a-z]{2,6}/\\S*)"],
+         "exclude": ["(?i)((not|n't) (yet )?(check|verif|collect|search|review)\\w*|unverified|returned nothing|still open|pending)"]},
+        {"type": "text", "label": "precedents_inapplicable", "scope": "both", "patterns": ["(?i)(international|foreign) (precedent|comparable)s?[^\\n]{0,200}(not applicable|inapplicable|does not transfer|do not transfer|no (verified )?comparable)"]}
       ]}
     },
     {
@@ -111,13 +114,14 @@
       "stage": "gate",
       "title": "The pain-first gate blocks GTM until problem_validation passes; an explicit override is recorded before downstream stages run",
       "proxy": false,
-      "pass_rule": "The pain-first gate specifically was blocked (route_workflow result with gate_blocked true and gate pain_first, or a Skill denial naming pain-first/problem_validation) before a route_workflow --override-gate call, no downstream GTM/marketing/website skill ran before the override, and at least one ran after it.",
+      "pass_rule": "The pain-first gate specifically was blocked (route_workflow result with gate_blocked true and gate pain_first, or a Skill denial naming pain-first/problem_validation) before a route_workflow --override-gate call whose result records gate_override true (a usage/argparse failure does not count); no downstream skill call and no GTM/website/campaign artifact write happened before the override; after it a downstream GTM/marketing/website skill was loaded (Skill tool call or a read of its SKILL.md) and a GTM/website/campaign artifact was then written.",
       "check": {
         "type": "gate_sequence",
         "route": "route_workflow\\.py",
         "blocked": ["\"gate_blocked\"\\s*:\\s*true", "\"gate\"\\s*:\\s*\"pain_first\""],
         "denial": "(?i)pain.first|problem_validation",
         "override": "--override-gate",
+        "writes": "(?i)(gtm|go-to-market|digital-assets/|/website/|campaign)",
         "downstream": "(archetype-gtm-strategist|marketing-strategy-builder|brand-website-designer-builder|marketing-campaign-operator|social-digital-marketing-planner)"
       }
     },

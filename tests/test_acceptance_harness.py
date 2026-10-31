@@ -60,9 +60,12 @@ def make_out_dir(tmp_path: Path, with_memo: bool = True) -> Path:
         _assistant('', [_tool('t2', 'Bash', {'command': 'python3 scripts/route_workflow.py "GTM" --project eval-x --check-skill archetype-gtm-strategist'})]),
         _result('t2', '{\n  "first_skill": "idea-grill",\n  "gate": "pain_first",\n  "gate_blocked": true\n}'),
         _assistant('', [_tool('t3', 'Bash', {'command': 'python3 scripts/route_workflow.py "GTM" --project eval-x --override-gate'})]),
-        _result('t3', '{"gate_blocked": false, "override": true}'),
+        _result('t3', '{"gate_blocked": false, "gate_override": true}'),
         _assistant('', [_tool('t4', 'Skill', {'skill': 'archetype-gtm-strategist', 'args': '{}'})]),
         _result('t4', 'Launching skill: archetype-gtm-strategist'),
+        _assistant('', [_tool('t4w', 'Write', {'file_path': 'projects/eval-x/business-analysis/cases/c1/gtm-plan.md',
+                                               'content': '# GTM plan'})]),
+        _result('t4w', 'File created'),
         _assistant('', [_tool('t5', 'Bash', {'command': 'python3 scripts/evidence_scout/validate_research_completion.py --workspace w --run-dir r --check delivery'})]),
         _result('t5', 'delivery: ok'),
         _assistant('Regulation: §34d GewO brokers earn commission while §34e GewO advisers are fee-based '
@@ -609,3 +612,304 @@ def test_eval_project_footprint_is_audited_and_copied_precisely(tmp_path, monkey
     assert changed == ['projects/_infra/layout-migrations/real-topic/migration.lock', 'projects/real-topic/notes.md']
     assert acc.copy_artifacts(wt, [eval_dir], tmp_path / 'art') == 1
     assert (tmp_path / 'art/projects/eval-s/business-analysis/project-manifest.json').is_file()
+
+
+# --------------------------------------------------------------------------- Task 7.4B: detectors match real behaviour
+# All snippets below are synthetic; none is copied from a recorded run.
+
+def _run(tmp_path: Path, lines: list[str], rounds: list[dict] | None = None, files: dict[str, str] | None = None) -> Path:
+    out = tmp_path / 'run'
+    _write(out / 'transcript.jsonl', ''.join(lines))
+    if rounds is not None:
+        _write(out / 'rounds.jsonl', ''.join(_line(r) for r in rounds))
+    for rel, text in (files or {}).items():
+        _write(out / 'artifacts' / rel, text)
+    return out
+
+
+def _cp(out: Path, cp_id: str) -> dict:
+    return {c['id']: c for c in acc.score(out, CHECKPOINTS)['checkpoints']}[cp_id]
+
+
+BLOCKED = '{\n  "first_skill": "idea-grill",\n  "gate": "pain_first",\n  "gate_blocked": true\n}'
+ROUTE_GTM = 'python3 scripts/route_workflow.py --project eval-x --case c1 "GTM plan"'
+USAGE = 'usage: route_workflow.py [-h] [--project PROJECT]\nroute_workflow.py: error: Override must name every missing stage'
+OVERRIDE_OK = '{\n  "gate_blocked": false,\n  "gate_override": true,\n  "skill": "archetype-gtm-strategist"\n}'
+GTM_WRITE = 'projects/eval-x/business-analysis/cases/c1/gtm-plan.md'
+
+
+def _gate_lines(*, override_result: str, downstream: list[str]) -> list[str]:
+    return [
+        _assistant('', [_tool('g1', 'Bash', {'command': ROUTE_GTM})]), _result('g1', BLOCKED),
+        _assistant('', [_tool('g2', 'Bash', {'command': ROUTE_GTM + ' --override-gate 2>&1 | head -30'})]),
+        _result('g2', override_result), *downstream]
+
+
+def test_gate_counts_skill_read_plus_artifact_write_as_downstream(tmp_path):
+    downstream = [
+        _assistant('', [_tool('g3', 'Read', {'file_path': '/tmp/wt/.agents/skills/archetype-gtm-strategist/SKILL.md'})]),
+        _result('g3', '# skill body'),
+        _assistant('', [_tool('g4', 'Write', {'file_path': '/tmp/wt/' + GTM_WRITE, 'content': 'plan'})]),
+        _result('g4', 'File created'),
+    ]
+    cp = _cp(_run(tmp_path, _gate_lines(override_result=OVERRIDE_OK, downstream=downstream)), 'cp09')
+    assert cp['passed'], cp['detail']
+
+
+def test_gate_needs_an_artifact_write_after_the_downstream_skill(tmp_path):
+    downstream = [_assistant('', [_tool('g3', 'Skill', {'skill': 'archetype-gtm-strategist'})]), _result('g3', 'Launching')]
+    cp = _cp(_run(tmp_path, _gate_lines(override_result=OVERRIDE_OK, downstream=downstream)), 'cp09')
+    assert not cp['passed'] and 'artifact' in cp['detail']
+
+
+def test_gate_ignores_truncated_argparse_failure_as_override(tmp_path):
+    downstream = [
+        _assistant('', [_tool('g3', 'Skill', {'skill': 'archetype-gtm-strategist'})]), _result('g3', 'Launching'),
+        _assistant('', [_tool('g4', 'Write', {'file_path': '/tmp/wt/' + GTM_WRITE, 'content': 'plan'})]), _result('g4', 'ok'),
+    ]
+    cp = _cp(_run(tmp_path, _gate_lines(override_result=USAGE, downstream=downstream)), 'cp09')
+    assert not cp['passed'] and 'no --override-gate' in cp['detail']
+
+
+def test_gate_accepts_key_value_override_output(tmp_path):
+    kv = 'route_id : "gtm-strategy"\ngate_blocked : false\ngate_override : true'
+    downstream = [
+        _assistant('', [_tool('g3', 'Bash', {'command': 'cat .agents/skills/marketing-strategy-builder/SKILL.md'})]),
+        _result('g3', 'body'),
+        _assistant('', [_tool('g4', 'Write', {'file_path': 'projects/eval-x/digital-assets/website/index.html', 'content': 'x'})]),
+        _result('g4', 'ok'),
+    ]
+    cp = _cp(_run(tmp_path, _gate_lines(override_result=kv, downstream=downstream)), 'cp09')
+    assert cp['passed'], cp['detail']
+
+
+def test_gate_fails_when_gtm_artifact_written_before_override(tmp_path):
+    early = [_assistant('', [_tool('g0', 'Write', {'file_path': GTM_WRITE, 'content': 'x'})]), _result('g0', 'ok')]
+    downstream = [
+        _assistant('', [_tool('g3', 'Skill', {'skill': 'archetype-gtm-strategist'})]), _result('g3', 'Launching'),
+        _assistant('', [_tool('g4', 'Write', {'file_path': GTM_WRITE, 'content': 'plan'})]), _result('g4', 'ok'),
+    ]
+    cp = _cp(_run(tmp_path, early + _gate_lines(override_result=OVERRIDE_OK, downstream=downstream)), 'cp09')
+    assert not cp['passed'] and 'before the override' in cp['detail']
+
+
+STATUTE = 'Licensing: §34d GewO and §34e GewO, see gesetze-im-internet.de/gewo/__34d.html.\n'
+STATS = 'Coverage figures: www.destatis.de/DE/Themen/example.html\n'
+
+
+def test_cp06_scheme_optional_and_split_into_two_reported_sub_checks(tmp_path):
+    out = _run(tmp_path, [], files={'projects/eval-x/notes.md': STATUTE + 'Source https://example.org/x\n'})
+    cp = _cp(out, 'cp06')
+    assert not cp['passed']
+    subs = {s['label']: s['passed'] for s in cp['sub_checks']}
+    assert subs['statute_or_regulator_source'] is True
+    assert subs['official_statistics_source'] is False
+    assert 'official_statistics_source' in cp['detail']
+    out2 = _run(tmp_path / 'b', [], files={'projects/eval-x/notes.md': STATUTE + STATS + 'https://example.org/x\n'})
+    assert _cp(out2, 'cp06')['passed']
+
+
+def test_cp06_accepts_ihk_subdomain_as_regulator_source(tmp_path):
+    out = _run(tmp_path, [], files={'projects/eval-x/n.md': 'Sachkunde: https://www.ihk.de/example/sachkunde\n'})
+    subs = {s['label']: s['passed'] for s in _cp(out, 'cp06')['sub_checks']}
+    assert subs['statute_or_regulator_source'] is True
+
+
+def test_collected_provider_data_is_not_an_agent_deliverable(tmp_path):
+    collected = ('{"text": "In the United States an international precedent exists https://example.com/p", '
+                 '"source": "https://www.destatis.de/x"}\n')
+    files = {
+        'projects/eval-x/market_research/pain_points/runs/r1/evidence.jsonl': collected,
+        'projects/eval-x/market_research/pain_points/runs/r1/raw/reddit.json': collected,
+        'projects/eval-x/market_research/provider-checkpoints/reddit.jsonl': collected,
+        'projects/eval-x/market_research/raw/serp.json': collected,
+        'projects/eval-x/market_research/summary.json': collected,
+        'projects/eval-x/market_research/run-checkpoint.json': collected,
+    }
+    out = _run(tmp_path, [], files=files)
+    assert Ctx_docs(out) == []
+    assert not _cp(out, 'cp07')['passed']
+    assert not _cp(out, 'cp06')['passed']
+
+
+def Ctx_docs(out: Path) -> list[str]:
+    return [ref for ref, _ in acc.Ctx(out).documents('artifacts')]
+
+
+def test_cp07_passes_on_authored_precedent_statement(tmp_path):
+    files = {'projects/eval-x/cases/c1/competitor-scan.md':
+             'International precedent: a comparable service in the United Kingdom (https://example.com/uk).\n'}
+    assert _cp(_run(tmp_path, [], files=files), 'cp07')['passed']
+    row = {'projects/eval-x/cases/c1/scan.md': '| ExampleCo (US) | Analog | acquired 2023 | example.com/news | Medium |\n'}
+    assert _cp(_run(tmp_path / 'row', [], files=row), 'cp07')['passed']
+
+
+def test_cp07_gap_statement_is_not_a_precedent(tmp_path):
+    gap = ('The scan did not check UK or NL analogs. See https://example.com/method\n'
+           '- Still not collected: international precedents.\n')
+    assert not _cp(_run(tmp_path, [], files={'projects/eval-x/cases/c1/progress.md': gap}), 'cp07')['passed']
+    spread = 'International precedents were planned.\nThe UK market is different.\nSource: https://example.com/x\n'
+    assert not _cp(_run(tmp_path / 's', [], files={'projects/eval-x/n.md': spread}), 'cp07')['passed']
+
+
+def test_subagent_text_is_not_the_agents_own_deliverable(tmp_path):
+    sub = _assistant('International precedent in the Netherlands: https://example.com/nl', parent='agent-1')
+    out = _run(tmp_path, [sub], rounds=[{'round': 0, 'kind': 'initial', 'line_start': 0, 'line_end': 1}])
+    assert not _cp(out, 'cp07')['passed']
+    top = _assistant('International precedent in the Netherlands: https://example.com/nl')
+    out2 = _run(tmp_path / 'b', [top], rounds=[{'round': 0, 'kind': 'initial', 'line_start': 0, 'line_end': 1}])
+    assert _cp(out2, 'cp07')['passed']
+
+
+ROUTE_IG = 'python3 scripts/route_workflow.py --intent idea-validation --check-skill idea-grill "x" 2>&1 | head -40'
+ROUTE_IG_OK = '{\n  "ask_question": false,\n  "skill": "idea-grill",\n  "mode": "default"\n}'
+
+
+def test_cp02_accepts_route_check_plus_skill_read_and_flags_bypass(tmp_path):
+    lines = [
+        _assistant('', [_tool('r1', 'Bash', {'command': 'ls projects; cat .agents/skills/idea-grill/SKILL.md | head -120'})]),
+        _result('r1', 'skill text'),
+        _assistant('', [_tool('r2', 'Bash', {'command': ROUTE_IG})]), _result('r2', ROUTE_IG_OK),
+    ]
+    cp = _cp(_run(tmp_path, lines), 'cp02')
+    assert cp['passed'], cp['detail']
+    assert cp['flags']['skill_tool_bypassed'] is True
+
+
+def test_cp02_skill_tool_path_is_not_flagged(tmp_path):
+    lines = [
+        _assistant('', [_tool('r2', 'Bash', {'command': ROUTE_IG})]), _result('r2', ROUTE_IG_OK),
+        _assistant('', [_tool('r3', 'Skill', {'skill': 'idea-grill', 'args': '{"route": {}}'})]), _result('r3', 'Launching'),
+    ]
+    cp = _cp(_run(tmp_path, lines), 'cp02')
+    assert cp['passed'] and cp['flags']['skill_tool_bypassed'] is False
+
+
+def test_cp02_needs_a_successful_route_check(tmp_path):
+    lines = [
+        _assistant('', [_tool('r2', 'Bash', {'command': ROUTE_IG})]), _result('r2', USAGE),
+        _assistant('', [_tool('r3', 'Read', {'file_path': '/tmp/wt/.agents/skills/idea-grill/SKILL.md'})]), _result('r3', 'x'),
+    ]
+    assert not _cp(_run(tmp_path, lines), 'cp02')['passed']
+
+
+def test_cp02_still_fails_on_hook_denial(tmp_path):
+    lines = [
+        _assistant('', [_tool('r2', 'Bash', {'command': ROUTE_IG})]), _result('r2', ROUTE_IG_OK),
+        _assistant('', [_tool('r3', 'Skill', {'skill': 'idea-grill'})]),
+        _result('r3', 'PreToolUse:Skill hook error: Skill route rejected', is_error=True),
+        _assistant('', [_tool('r4', 'Skill', {'skill': 'idea-grill', 'args': '{"route": {}}'})]), _result('r4', 'Launching'),
+    ]
+    assert not _cp(_run(tmp_path, lines), 'cp02')['passed']
+
+
+def test_question_blocks_group_one_decision():
+    one = ('**Question 1:** What is your licence position? Do you hold a broker licence today? '
+           'If not, would you partner with a licensed pool?\n\nIf you do not know, I will assume none.')
+    assert acc.count_questions(one) == 3  # the sentence count itself is unchanged
+    assert acc.count_question_blocks(one) == 1
+    alt = ('Which licence do you hold or plan to get?\nThe options are broker or adviser. '
+           'Or will a hired adviser carry the licence?\n\nThis decides the model.')
+    assert acc.count_question_blocks(alt) == 1
+    two = 'Which segment first?\n\nSeparately: how many months of runway do you have?'
+    assert acc.count_question_blocks(two) == 2
+    listed = 'Two things:\n1. Which segment first?\n2. Who pays?'
+    assert acc.count_question_blocks(listed) == 2
+
+
+def test_cp03_counts_question_blocks(tmp_path):
+    q = 'What is your licence position? Do you hold one today? If not, which route would you take?'
+    lines = [
+        _assistant(q),
+        _line({'type': 'result', 'session_id': 's', 'result': q}),
+        _assistant('ok. journey complete'),
+    ]
+    rounds = [{'round': 0, 'kind': 'initial', 'line_start': 0, 'line_end': 2, 'matched_ids': []},
+              {'round': 1, 'kind': 'answer', 'line_start': 2, 'line_end': 3, 'matched_ids': []}]
+    cp = _cp(_run(tmp_path, lines, rounds=rounds), 'cp03')
+    sub = {s['label']: s for s in cp['sub_checks']}
+    assert sub['max_questions_per_turn']['passed'], sub['max_questions_per_turn']['detail']
+
+
+# --------------------------------------------------------------------------- subagent Bash guard
+
+WT = '/tmp/acceptance-abc/wt'
+
+
+@pytest.mark.parametrize('command', [
+    f'cd {WT} && python3 scripts/evidence_scout/collect.py --help | head -60',
+    f'cd {WT}; ls projects/eval-x/ projects/eval-x/market_research 2>&1; python3 scripts/evidence_scout/collect.py --help | head -60',
+    f'cd {WT}/projects/eval-x && ls',
+    'P=projects/eval-x; cat $P/project-manifest.json | head -40; ls $P/scenario',
+    'P=projects/eval-x && python3 scripts/route_workflow.py --project ${P#projects/} "x"'.replace('${P#projects/}', 'eval-x'),
+    'SERPER_TIMEOUT=30 python3 scripts/serper_fetch.py "query"',
+    f'cd {WT} && python3 -c "import json,sys; print(1)" < /dev/null',
+    f'cd {WT} && cat scripts/marketing/execute.py | head -20',  # reading a denylisted script is not running it
+    f'cd {WT}/projects/eval-x && ls; python3 -I -c "\nimport json\nprint(json.dumps({{}}))\n"',
+    'D=projects/eval-x/market_research\npython3 scripts/evidence_scout/collect.py --query-plan $D/plan.json 2>&1 | tail -20',
+])
+def test_bash_guard_allows_compound_research_commands(command):
+    assert acc.bash_guard_decision(command, WT, cwd=WT)[0] == 'allow', command
+
+
+@pytest.mark.parametrize('command', [
+    f'cd {WT} && python3 scripts/marketing/execute.py --send',
+    'S=scripts/marketing/execute.py; python3 $S',
+    'ls\npython3 scripts/marketing/execute.py',
+    f'cd {WT} && python3 {WT}/scripts/marketing/execute.py',
+    f'cd {WT} && python3 ./scripts/brand/indexnow_ping.py',
+    'python3 scripts/fal_assets.py --generate',
+    f'cd {WT} && python3 -m scripts.marketing.execute --send',
+    f'cd {WT} && curl https://example.com',
+    f'cd {WT} && git push origin main',
+])
+def test_bash_guard_denylist_is_authoritative(command):
+    assert acc.bash_guard_decision(command, WT, cwd=WT)[0] == 'deny', command
+
+
+@pytest.mark.parametrize('command', [
+    'cd /etc && ls',
+    f'cd {WT}/../.. && ls',
+    'env | grep -ci serper',
+    f'cd {WT} && bash -c "ls"',
+    f'cd {WT} && python3 $(echo scripts/x.py)',
+    f'cd {WT} && python3 `echo x`',
+    'LD_PRELOAD=/tmp/x.so python3 scripts/a.py',
+    'PATH=/tmp:$PATH python3 scripts/a.py',
+    'X=1 rm -rf build',
+    'X=1 ls',
+    f'cd {WT} && ls > /tmp/out.txt',
+    f'cd {WT} && git status',
+    'python3 scripts/a.py $UNKNOWN',
+    f'cd {WT} && (ls)',
+    f'cd {WT} && sleep 5 &',
+    'cd',
+    f'find {WT} -name "*.py" -delete',
+    'ls\nrm -rf build',  # an unquoted newline separates commands; it is not a space
+    'cat > plan.json <<EOF\n{}\nEOF',
+    'cd /tmp/scratch-out && ls',
+    'ls \\\nrm',
+])
+def test_bash_guard_defers_everything_else(command):
+    assert acc.bash_guard_decision(command, WT, cwd=WT)[0] is None, command
+
+
+def test_bash_guard_hook_io(tmp_path, capsys, monkeypatch):
+    import io
+    payload = {'tool_name': 'Bash', 'cwd': WT, 'tool_input': {'command': f'cd {WT} && python3 scripts/a.py'}}
+    monkeypatch.setattr('sys.stdin', io.StringIO(json.dumps(payload)))
+    assert acc.main(['--bash-guard', WT]) == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out['hookSpecificOutput']['permissionDecision'] == 'allow'
+    monkeypatch.setattr('sys.stdin', io.StringIO(json.dumps({**payload, 'tool_input': {'command': 'env'}})))
+    assert acc.main(['--bash-guard', WT]) == 0
+    assert capsys.readouterr().out.strip() == ''
+
+
+def test_claude_command_installs_bash_guard_and_keeps_deny_rules(tmp_path):
+    cmd = acc.claude_command('p', session_id=None, model_budget=1.0, wt=tmp_path, tools_blocked=['Bash(curl*)'])
+    settings = json.loads(cmd[cmd.index('--settings') + 1])
+    hook = settings['hooks']['PreToolUse'][0]
+    assert hook['matcher'] == 'Bash' and '--bash-guard' in hook['hooks'][0]['command']
+    assert str(tmp_path) in hook['hooks'][0]['command']
+    assert 'Bash(curl*)' in cmd[cmd.index('--disallowedTools'):]

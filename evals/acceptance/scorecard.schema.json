@@ -37,7 +37,22 @@
           "status": {"enum": ["pass", "fail", "not_exercised"]},
           "proxy": {"type": "boolean"},
           "evidence_path": {"type": ["string", "null"]},
-          "detail": {"type": "string"}
+          "detail": {"type": "string"},
+          "sub_checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "passed", "evidence_path", "detail"],
+              "properties": {
+                "label": {"type": "string"},
+                "passed": {"type": "boolean"},
+                "evidence_path": {"type": ["string", "null"]},
+                "detail": {"type": "string"}
+              }
+            }
+          },
+          "flags": {"type": "object", "additionalProperties": {"type": ["boolean", "string", "number", "null"]}}
         }
       }
     },
