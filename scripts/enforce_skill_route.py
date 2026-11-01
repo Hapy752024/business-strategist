@@ -11,9 +11,9 @@ import sys
 from pathlib import Path
 
 try:
-    from scripts.route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, matched_routes, route_request
+    from scripts.route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, co_matched_routes, route_request
 except ModuleNotFoundError:
-    from route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, matched_routes, route_request
+    from route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, co_matched_routes, route_request
 
 ROOT = Path(__file__).resolve().parents[1]
 # A plugin name can never contain a NUL, so a missing or malformed manifest strips nothing.
@@ -190,10 +190,10 @@ def bare_envelope(skill: str, args: object, event: dict) -> dict | None:
     if slug:
         route['project'] = slug
     else:
-        # Without a workspace the gate cannot run, so a request naming any gated route (the inferred one or another
-        # matched route the specialist would also receive) needs an explicit envelope.
+        # Without a workspace the gate cannot run, so a request naming any gated route (the inferred one, or a
+        # co-matched route the router would gate too: same matcher and shadowing) needs an explicit envelope.
         spec = next(r for r in load_routes() if r['id'] == route_id)
-        if any(_gated(route) for route in [spec, *matched_routes(args)]):
+        if any(_gated(candidate) for candidate in [spec, *co_matched_routes(args, route_id)]):
             return None
         route['standalone'] = True
     return {'route': route, 'input': args}

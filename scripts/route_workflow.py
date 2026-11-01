@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import sys
 import json
 import re
@@ -70,16 +71,43 @@ SKILL_ALIASES: dict[str, str] = {
 WEBSITE_HELPER_ROUTES = {"geo-audit", "stripe-best-practices"}
 
 
+def _normalized(phrase: str) -> str:
+    return re.sub(r"[-–—]", " ", phrase.casefold())
+
+
+@functools.lru_cache(maxsize=None)
+def _phrase_pattern(phrase: str) -> re.Pattern[str]:
+    # Lookarounds instead of \b so phrases that start or end with punctuation ("A/B test") still need word edges.
+    return re.compile(r"(?<!\w)" + re.escape(_normalized(phrase)) + r"(?!\w)")
+
+
+def _phrase_spans(phrase: str, text: str) -> list[tuple[int, int]]:
+    """Every (start, end) where the phrase occurs as whole words in normalized text, overlaps included."""
+    pattern, spans, match = _phrase_pattern(phrase), [], None
+    match = pattern.search(text)
+    while match:
+        spans.append(match.span())
+        match = pattern.search(text, match.start() + 1)
+    return spans
+
+
+def phrase_in(phrase: str, text: str) -> bool:
+    """The one routing matcher: the phrase occurs in normalized text as whole words, case-insensitively
+    (hyphens and dashes read as spaces); "FAL" does not match "falsify", "landing page" does not match "landing pages"."""
+    return _phrase_pattern(phrase).search(text) is not None
+
+
 def load_routes() -> list[dict[str, Any]]:
     return json.loads(ROUTES_PATH.read_text(encoding="utf-8"))["routes"]
 
 
 def infer_mode(skill: str, request: str) -> tuple[str | None, list[str]]:
     """Pick a skill's route from plain text: (route_id, []) when one route uniquely scores highest on its
-    `match` phrases (case-insensitive substring count), or when nothing matches and the skill has one
-    `plain_text_default` route; else (None, candidate route IDs)."""
-    text = request.lower()
-    scores = {r["id"]: sum(1 for phrase in r.get("match", []) if phrase.lower() in text)
+    `match` phrases (count of phrases found as whole words by `phrase_in`), or when nothing matches and the skill
+    has one `plain_text_default` route; else (None, candidate route IDs)."""
+    text = _normalized(request)
+    # Spelling variants of one phrase ("go to market"/"go-to-market") count once.
+    scores = {r["id"]: sum(1 for phrase in {_normalized(p) for p in r.get("match", [])} if phrase_in(phrase, text))
               for r in load_routes() if r["skill"] == skill}
     best = max(scores.values(), default=0)
     top = [rid for rid, score in scores.items() if score == best]
@@ -282,10 +310,6 @@ def record_gate_override(manifest_path: Path, route_id: str, override_id: str = 
 ACTION = r"(?:build|create|develop|design|write|draft|find|discover|analy[sz]e|make|plan|prepare|run|verify|research|check)"
 
 
-def _normalized(phrase: str) -> str:
-    return re.sub(r"[-–—]", " ", phrase.casefold())
-
-
 def _request_outcomes(request: str) -> tuple[str, list[str], str]:
     """Return (normalized text, outcome clauses, outcome text): the text routing phrases are matched against.
 
@@ -304,7 +328,7 @@ def _request_outcomes(request: str) -> tuple[str, list[str], str]:
 
 
 def _phrase_hits(route: dict[str, Any], outcome_text: str) -> list[str]:
-    return [phrase for phrase in route.get("match", []) if _normalized(phrase) in outcome_text]
+    return [phrase for phrase in route.get("match", []) if phrase_in(phrase, outcome_text)]
 
 
 def matched_routes(request: str) -> list[dict[str, Any]]:
@@ -319,14 +343,19 @@ def matched_routes(request: str) -> list[dict[str, Any]]:
     return list({route["id"]: route for route in matched}.values())
 
 
+def co_matched_routes(request: str, route_id: str) -> list[dict[str, Any]]:
+    """Matched routes other than ``route_id`` that ask for a second workflow: every matched route except those whose
+    phrase occurrences all lie strictly inside the winner's own phrases. The router gates each of them; the Skill
+    hook uses the same list for plain text."""
+    _, _, outcome_text = _request_outcomes(request)
+    winner = next((route for route in load_routes() if route["id"] == route_id), {})
+    winner_hits = _phrase_hits(winner, outcome_text)
+    return [other for other in matched_routes(request)
+            if other["id"] != route_id and not _shadowed(other, winner_hits, outcome_text)]
+
+
 def _spans(phrases: list[str], text: str) -> list[tuple[int, int]]:
-    spans = []
-    for phrase in map(_normalized, phrases):
-        start = text.find(phrase)
-        while start != -1:
-            spans.append((start, start + len(phrase)))
-            start = text.find(phrase, start + 1)
-    return spans
+    return [span for phrase in phrases for span in _phrase_spans(phrase, text)]
 
 
 def _shadowed(route: dict[str, Any], winner_hits: list[str], outcome_text: str) -> bool:
@@ -417,7 +446,7 @@ def _route_request(
         clause_winners = set()
         for clause in outcomes:
             matches = [(length, hits, candidate) for length, hits, candidate in candidates
-                       if any(_normalized(phrase) in clause
+                       if any(phrase_in(phrase, clause)
                               for phrase in candidate["matched"])]
             if matches:
                 clause_winners.add(max(matches, key=lambda item: (item[0], item[1], -item[2]["order"]))[2]["id"])
@@ -434,7 +463,7 @@ def _route_request(
     matched = matched_routes(request)
     packet["matched_route_ids"] = [route["id"] for route in matched]
     if selected["id"] != "clarify" and not packet.get("gate_blocked"):
-        _gate_matched_routes(packet, selected, matched, outcome_text, overrides, packet_args)
+        _gate_matched_routes(packet, co_matched_routes(request, selected["id"]), overrides, packet_args)
     if overrides and not packet.get("gate_blocked"):
         # One override per request: the first gate it lifted (the winner's, else the first matched route's in route
         # order) names the audited event, and that single decision covers every other matched route's gate.
@@ -445,19 +474,15 @@ def _route_request(
     return packet
 
 
-def _gate_matched_routes(packet: dict[str, Any], selected: dict[str, Any], matched: list[dict[str, Any]],
-                         outcome_text: str, overrides: list[tuple[Path, str]], packet_args: dict[str, Any]) -> None:
+def _gate_matched_routes(packet: dict[str, Any], others: list[dict[str, Any]], overrides: list[tuple[Path, str]],
+                         packet_args: dict[str, Any]) -> None:
     """Block the packet when another matched route would be gate-blocked had it won.
 
     The specialist receives the whole request, so gated work named next to the winner must pass its own gate.
     Each other matched route (by route ID) is evaluated by the winner's own gate logic with the caller's entry mode,
-    task scope, project and case; the winner's skill check and output subproject do not apply to it. A route whose
-    every phrase occurrence lies inside the winner's matched phrase is the winner's own wording, not a second
-    request. The first blocking route in route order names the gate and reason."""
-    for route in matched:
-        # The winner's own phrases in the text, also when it was chosen by explicit intent.
-        if route["id"] == selected["id"] or _shadowed(route, _phrase_hits(selected, outcome_text), outcome_text):
-            continue
+    task scope, project and case; the winner's skill check and output subproject do not apply to it. ``others`` comes
+    from `co_matched_routes` (shadowed routes excluded). The first blocking route in route order names the gate."""
+    for route in others:
         try:
             other = _route_packet(route, "explicit phrase match", former_skill="", check_skill="",
                                   subproject="", overrides=overrides, **packet_args)

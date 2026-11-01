@@ -429,3 +429,48 @@ def test_missing_or_malformed_plugin_manifest_strips_no_namespace(tmp_path, monk
     assert hook.repository_skill_name('evidence-scout-agent-set:evidence-scout') == 'evidence-scout-agent-set:evidence-scout'
     assert hook.repository_skill_name(':evidence-scout') == ':evidence-scout'
     assert hook.repository_skill_name('evidence-scout') == 'evidence-scout'
+
+
+@pytest.mark.parametrize('skill,text', [
+    ('opportunity-risk-designer', 'Design a landing page test'),
+    ('opportunity-risk-designer', 'falsify claims'),
+    ('competitor-research', 'Analyze these three competitor landing pages and their pricing CTAs.'),
+])
+def test_plain_text_outside_a_workspace_dispatches_when_the_router_would(tmp_path, skill, text):
+    """The hook uses the router's own matcher and shadowing, so it refuses only what the router would gate."""
+    out = hook.check_dispatch(_plain_event(text, tmp_path, skill=skill))
+    assert out['hookSpecificOutput']['updatedInput']['args'] == text
+
+
+def test_plain_text_outside_a_workspace_refuses_a_non_shadowed_gated_co_match(tmp_path):
+    with pytest.raises(ValueError, match='JSON route envelope'):
+        hook.check_dispatch(_plain_event('Design a smoke test for the landing page', tmp_path,
+                                         skill='opportunity-risk-designer'))
+
+
+@pytest.mark.parametrize('phrase,text,expected', [
+    ('FAL', 'falsify claims in the draft', False),
+    ('FAL', 'generate the hero with fal', True),
+    ('landing page', 'build two landing pages', False),
+    ('landing pages', 'build two landing pages', True),
+    ('A/B test', 'run an a/b test on pricing', True),
+    ('A/B test', 'run an a/b tests suite', False),
+    ('go-to-market', 'a go to market plan', True),
+    ("competitor's website", "review my competitor's website", True),
+])
+def test_phrase_matching_is_whole_word(phrase, text, expected):
+    assert router.phrase_in(phrase, router._normalized(text)) is expected
+
+
+def test_falsify_is_not_a_brand_asset_request(tmp_path, monkeypatch):
+    _not_passed_project(tmp_path, monkeypatch)
+    assert [r['id'] for r in router.matched_routes('Falsify claims in the draft')] == ['claim-falsification']
+    packet = router.route_request('Find competitors, then falsify claims', project='venture', entry_mode='business_linked')
+    assert packet['route_id'] == 'competitor-discovery' and not packet.get('gate_blocked')
+
+
+def test_plural_landing_pages_still_meets_the_website_gate(tmp_path, monkeypatch):
+    _not_passed_project(tmp_path, monkeypatch)
+    packet = router.route_request('Do a pre-release check of the landing pages', project='venture',
+                                  entry_mode='business_linked')
+    assert packet['gate_blocked'] is True and packet['gate_route_id'] == 'website-build'

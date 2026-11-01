@@ -553,7 +553,7 @@ def _skill_keyed_routing_decisions(source):
                 and mentions_skill(node.value)):
             problems.append(f'line {node.lineno}: matched_route_ids must be route IDs')
         # The per-route gate check and route matching never consult the skill.
-        if (isinstance(node, ast.FunctionDef) and node.name in {'matched_routes', '_gate_matched_routes', '_shadowed'}
+        if (isinstance(node, ast.FunctionDef) and node.name in {'matched_routes', 'co_matched_routes', '_gate_matched_routes', '_shadowed'}
                 and mentions_skill(node)):
             problems.append(f'{node.name}: decides by skill')
     return problems
@@ -565,7 +565,7 @@ def test_routing_decisions_are_keyed_on_route_id_not_skill():
     mutations = [
         ('[2]["id"])', '[2]["skill"])'),
         ('gate_route_id=route["id"]', 'gate_route_id=route["skill"]'),
-        ('if route["id"] == selected["id"]', 'if route["skill"] == selected["skill"]'),
+        ('if other["id"] != route_id', 'if other["skill"] != winner["skill"]'),
         ('[route["id"] for route in matched]', '[route["skill"] for route in matched]'),
     ]
     for old, new in mutations:
