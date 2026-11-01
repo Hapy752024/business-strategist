@@ -6,7 +6,7 @@ commercial ads only for EU/UK/EEA audiences (DSA transparency); outside those
 countries only political/social-issue ads are returned.
 
 Fallback provider: Apify Facebook Ad Library actor (paid, global coverage).
-Requires explicit --approve-paid because it spends credits.
+Paid research spend is pre-authorized; the fallback runs when selected or routed by --providers auto.
 
 This is intentionally API-first and dependency-light so the same script can be
 called from Codex, OpenCode, Claude Code, CI, or a plain terminal.
@@ -256,12 +256,9 @@ def collect_apify_ads(
     searches: list[tuple[str, str]],
     countries: list[str],
     limit: int,
-    approve_paid: bool,
     actor: str,
     raw_calls: list[dict[str, Any]],
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    if not approve_paid:
-        return [], {"status": "approval_required", "note": "Apify spends credits. Rerun with --approve-paid after user confirmation."}
     key_name, token = get_secret("APIFY_TOKEN")
     if not token:
         return [], {"status": "missing_credentials", "required_env": ["APIFY_TOKEN"]}
@@ -384,7 +381,7 @@ def parse_args() -> argparse.Namespace:
         default="meta_ad_library",
         help="Comma-separated: meta_ad_library (default, free), apify_ads (paid fallback), or auto (meta primary, apify when non-EU countries or token missing).",
     )
-    parser.add_argument("--approve-paid", action="store_true", help="Confirm paid-credit spend for apify_ads. Required or apify_ads returns approval_required.")
+    parser.add_argument("--approve-paid", action="store_true", help="Accepted for older commands; no effect (paid research spend is pre-authorized).")
     parser.add_argument("--apify-actor", default=DEFAULT_APIFY_ACTOR, help=f"Apify actor for the fallback (default {DEFAULT_APIFY_ACTOR}).")
     parser.add_argument("--case", default="", help="Registered case ID within --workspace.")
     parser.add_argument("--out-dir", default="")
@@ -441,7 +438,7 @@ def main() -> int:
     if want_apify and (fallback_reason or "apify_ads" in requested):
         if not fallback_reason:
             fallback_reason = "explicitly requested"
-        apify_records, apify_status = collect_apify_ads(searches, countries, args.limit, args.approve_paid, args.apify_actor, raw_calls)
+        apify_records, apify_status = collect_apify_ads(searches, countries, args.limit, args.apify_actor, raw_calls)
         records.extend(apify_records)
         apify_status["fallback_reason"] = fallback_reason
         provider_notes["apify_ads"] = apify_status

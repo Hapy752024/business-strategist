@@ -1,8 +1,9 @@
 """Google Ads keyword volumes via DataForSEO Keywords Data `google_ads/search_volume/live`.
 
 Volumes are bucketed Google Ads estimates and a demand proxy, not customer pain. Unknown stays null.
-Cost is estimated and printed before any call; `--max-keywords` (default 200) refuses larger requests
-before touching the network. One task holds up to 1000 keywords and is billed per task.
+Cost is estimated and printed before any call. Paid research spend is pre-authorized, so there is no default
+cap; an optional `--max-keywords` refuses larger requests before touching the network. One task holds up to
+1000 keywords and is billed per task; larger lists are sent as several tasks.
 """
 from __future__ import annotations
 
@@ -23,7 +24,7 @@ ENDPOINT = 'https://api.dataforseo.com/v3/keywords_data/google_ads/search_volume
 MAX_PER_TASK = 1000
 # Observed live cost per task (USD, 2026-10-30 check); the real cost is read from each response.
 ASSUMED_COST_PER_TASK = 0.09
-DEFAULT_CAP = 200
+DEFAULT_CAP = None  # no cap unless the caller sets one
 
 
 class MissingCredentials(RuntimeError):
@@ -72,10 +73,10 @@ def _dedupe(keywords: list[str]) -> list[str]:
 
 
 def fetch_volumes(keywords: list[str], location_code: int, language_code: str, *,
-                  max_keywords: int = DEFAULT_CAP, post=None) -> list[dict]:
+                  max_keywords: int | None = DEFAULT_CAP, post=None) -> list[dict]:
     """Return one row per distinct keyword: keyword, volume, cpc, competition (0-100 index), source, fetched_at, cost."""
     terms = _dedupe(keywords)
-    if len(terms) > max_keywords:
+    if max_keywords is not None and len(terms) > max_keywords:
         raise CapExceeded(f'{len(terms)} keywords exceed --max-keywords {max_keywords}; nothing was sent')
     login, password = credentials()
     if not login or not password:
@@ -124,7 +125,7 @@ def main() -> int:
     ap.add_argument('--keyword', action='append', default=[])
     ap.add_argument('--location-code', type=int, required=True)
     ap.add_argument('--language-code', required=True)
-    ap.add_argument('--max-keywords', type=int, default=DEFAULT_CAP)
+    ap.add_argument('--max-keywords', type=int, default=DEFAULT_CAP, help='optional cap; none by default')
     ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--out', type=Path, help='also write the result JSON here (e.g. <run>/keyword-volumes.json)')
     args = ap.parse_args()

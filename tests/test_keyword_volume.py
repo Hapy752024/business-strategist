@@ -109,3 +109,10 @@ def test_out_writes_result_json_without_a_map(creds, monkeypatch, tmp_path):
     assert kv.main() == 0
     data = json.loads(out.read_text())
     assert data['status'] == 'ok' and data['rows'][0]['keyword'] == 'bu vergleich'
+
+
+def test_no_default_cap_and_large_lists_split_into_tasks(creds):
+    calls = []
+    kv.fetch_volumes([f'k{i}' for i in range(1500)], 2276, 'de', post=fake_post(calls))
+    assert kv.DEFAULT_CAP is None
+    assert [len(payload[0]['keywords']) for _, payload in calls] == [1000, 500]

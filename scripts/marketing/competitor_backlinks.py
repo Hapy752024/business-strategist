@@ -6,8 +6,9 @@ link *candidates* for `earned-media-builder`, never qualified opportunities: a c
 is a prospecting clue, not a reason a publisher owes inclusion. Domains already linking to the
 own property are excluded; obvious scraper/whois pages are kept but flagged, not silently dropped.
 
-Cost is estimated and printed before any call; `--max-cost-usd` (default 2.00) refuses larger
-runs before touching the network. The real cost is read from each response.
+Cost is estimated and printed before any call. Paid research spend is pre-authorized, so there is no default
+cap; an optional `--max-cost-usd` refuses larger runs before touching the network. The real cost is read
+from each response.
 """
 from __future__ import annotations
 
@@ -26,7 +27,7 @@ ENDPOINT = 'https://api.dataforseo.com/v3/backlinks/backlinks/live'
 # Observed live cost (USD, 2026-10-31 check): about 0.02 per task plus a small per-row charge.
 ASSUMED_COST_PER_TASK = 0.03
 DEFAULT_LIMIT = 100
-DEFAULT_MAX_COST = 2.0
+DEFAULT_MAX_COST = None  # no cap unless the caller sets one
 SCRAPER_TITLE = re.compile(r'whois|find backlinks|domain list|backlink checker|site stats', re.I)
 LINK_SELLER = re.compile(r'\bPBN\b|link ?building|buy .*backlinks|aged domains|dofollow backlink|guest post service|'
                          r'high (da|dr|authority) backlinks|niche edit|outreach backlinks|seo links|link profile|domain authority|casino', re.I)
@@ -74,11 +75,11 @@ def flags(item: dict) -> list[str]:
 
 
 def prospect(competitors: list[str], own: str, *, limit: int = DEFAULT_LIMIT, language: str | None = 'en',
-             max_cost_usd: float = DEFAULT_MAX_COST, post=None) -> dict:
+             max_cost_usd: float | None = DEFAULT_MAX_COST, post=None) -> dict:
     """Return candidate linking domains for the competitors, minus domains already linking to `own`."""
     targets = sorted({_domain(c) for c in competitors})
     own_domain = _domain(own)
-    if estimate_cost(len(targets)) > max_cost_usd:
+    if max_cost_usd is not None and estimate_cost(len(targets)) > max_cost_usd:
         raise CapExceeded(f'{len(targets)} competitors estimate {estimate_cost(len(targets))} USD, above --max-cost-usd {max_cost_usd}; nothing was sent')
     login, password = credentials()
     if not login or not password:
@@ -130,7 +131,7 @@ def main() -> int:
     ap.add_argument('--out', type=Path, required=True, help='new directory for candidates.json and raw/')
     ap.add_argument('--limit', type=int, default=DEFAULT_LIMIT, help='linking domains per competitor')
     ap.add_argument('--language', default='en', help="page language filter; '' for none")
-    ap.add_argument('--max-cost-usd', type=float, default=DEFAULT_MAX_COST)
+    ap.add_argument('--max-cost-usd', type=float, default=DEFAULT_MAX_COST, help='optional cap; none by default')
     ap.add_argument('--dry-run', action='store_true')
     args = ap.parse_args()
     targets = len({_domain(c) for c in args.competitor})

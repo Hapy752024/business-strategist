@@ -20,7 +20,7 @@ Offer no cash, vouchers, gifts or panels unless the founder changes this.
 Advertising spend needs its own authorization; screen fit independently, since unpaid signups are not automatically valid evidence (`references/interview-recruitment.md`).
 
 **Spend policy (Provider Policy).**
-Paid customer-evidence API spend is pre-authorized with no cap; advertising, paid asset generation, deployment and ad/social-platform writes need explicit approval.
+Paid research API spend (customer, market, competitor, SEO data) is pre-authorized with no cap; advertising, paid asset generation, deployment and ad/social-platform writes need explicit approval.
 Credit failures are coverage gaps, never absence of demand.
 Details: `references/operating-guide.md`.
 

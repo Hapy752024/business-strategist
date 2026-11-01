@@ -6,7 +6,7 @@ After collecting and auditing evidence for a consumer service, route to `challen
 
 ## Ambiguity and Unknowns
 
-If ambiguity materially changes provider choice, query wording, geography, language, or interpretation, ask one focused clarification question before spending meaningful API or scraping credits. If the answer is not available from user input, local files, provider output, or cited sources, say "I don't know" and state what evidence is missing. Do not fill gaps with plausible-sounding claims.
+If ambiguity materially changes provider choice, query wording, geography, language, or interpretation, ask one focused clarification question before collecting. If the answer is not available from user input, local files, provider output, or cited sources, say "I don't know" and state what evidence is missing. Do not fill gaps with plausible-sounding claims.
 
 ## Procedure
 
@@ -428,7 +428,7 @@ Once idea-grill is done or skipped, run these in parallel with customer-voice co
 None waits for review, synthesis, a claim ledger, the pain-first gate or a GTM stage:
 1. Search journey: brainstorm customer searches at >=4 stages (inform, compare, buy, after-purchase)
    in the market's language, write the plan (method below) to `market_research/search_journey/<YYYY-MM-DD>/plan.json`, then run
-   `python3 scripts/evidence_scout/search_journey.py --plan <plan> --providers serpapi --run-dir <run> --max-searches <n>`.
+   `python3 scripts/evidence_scout/search_journey.py --plan <plan> --providers serpapi --run-dir <run>`.
 2. Competitor content: `python3 scripts/evidence_scout/analyze_competitor_marketing.py --content-inventory
    --landscape <competitors.json> --include-unverified [--clusters <content-opportunities.json>] --out <dir>`
    on >=3 competitors found so far; state fewer as a gap. If no candidates exist yet, run
@@ -522,7 +522,7 @@ never steal/share credentials, bypass access controls or use deceptive membershi
 7.
 Inspect plans, raw outputs, evidence, irrelevant records, source-role counts, per-lane denominators, alerts, and gaps.
 8.
-Paid API spend for customer evidence and voice-of-customer work is pre-authorized with no monetary cap;
+Paid research API spend (customer evidence, voice of customer, market, competitor and SEO data) is pre-authorized with no monetary cap;
 use and expand appropriate providers without a spend checkpoint.
 Query/sample bounds are for reproducibility, relevance and safe execution, not cost control.
 On `insufficient_credits`/`billing_required`, notify the user of lost coverage and the top-up route, continue with valid fallbacks where possible, and preserve the gap.

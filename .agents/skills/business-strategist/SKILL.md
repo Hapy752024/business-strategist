@@ -25,7 +25,7 @@ Rules:
 
 - Keep research, brand, website, and experiment state in their authoritative manifests.
 - Ask at most one question when ambiguity would materially change the workflow.
-- Paid customer-evidence API spend is pre-authorized (see AGENTS.md spend policy). Require explicit approval before advertising or recruitment spend, paid asset generation, external connections, analytics activation, live experiments, commits to another repository, or deployment.
+- Paid research API spend is pre-authorized (see AGENTS.md spend policy). Require explicit approval before advertising or recruitment spend, paid asset generation, external connections, analytics activation, live experiments, commits to another repository, or deployment.
 - Return the selected skill, mode, prerequisites, expected artifacts, cost class, and next action before dispatch.
 
 ## Procedure

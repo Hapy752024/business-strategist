@@ -122,7 +122,7 @@ Use this workflow only when physical presence matters.
 python3 scripts/validate_apis/validate_apify.py
 ```
 
-2. Ask the user to narrow geography before spending credits: city/region, radius, categories, named chains, or direct place URLs.
+2. Narrow geography from the request (ask only when it is unclear; a relevance bound, not a spend question): city/region, radius, categories, named chains, or direct place URLs.
 3. Prefer direct place URLs or a small set of distinct search terms for smoke tests. Avoid long overlapping category lists that inflate cost and false positives.
 4. Normalize these fields when present:
    - `title`, `categoryName`, `categories`, `address`, `city`, `state`, `countryCode`, `location`.

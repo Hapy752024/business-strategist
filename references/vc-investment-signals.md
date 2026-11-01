@@ -52,15 +52,16 @@ The bounded source client is:
 
 ```bash
 python3 scripts/market_research/scan_vc_topics.py --max-topics 12 --window-days 365 \
-  --signals-per-query 20 --max-credits 400 \
+  --signals-per-query 20 \
   --out '<case>/market_research/investor_activity/parsersvc-topic-scan.json'
 ```
 
 For an idea-specific check, map it to exact provider tags and pass each with
 `--topic '<tag>'`; add `--country '<country>'` for a target-geography view.
 The tool checks the remaining API-credit balance and estimated run spend before
-making signal queries. Keep `--max-credits` within the account's authorized
-spend. API credentials alone do not authorize paid overage.
+making signal queries. Paid research spend is pre-authorized, so there is no
+default credit ceiling: the run stops at the account balance, and `--max-credits`
+sets an optional ceiling.
 
 The scan compares `round.recorded` and `investor.joined_round` signals using
 equal-length periods, and records original responses, request parameters,

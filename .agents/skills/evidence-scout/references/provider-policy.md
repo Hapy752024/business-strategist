@@ -41,8 +41,9 @@ Firecrawl always uses `FIRECRAWL_API_KEY_HGINVESTOR`; do not silently fall back 
 
 Social providers: direct X API, optional Grok/xAI X Search discovery, and ScrapeCreators.
 
-Paid API spend for customer evidence and voice-of-customer research is
-standing-authorized with no monetary spending cap. Use and expand appropriate
+Paid API spend for research (customer evidence, voice of customer, market,
+competitor and SEO data such as DataForSEO) is standing-authorized with no
+monetary spending cap. Use and expand appropriate
 providers without a spend question. Query/sample bounds are methodological and
 operational controls, not cost ceilings. During the current private
 exploratory/academic phase, no GDPR paperwork, formal ethics review or separate
@@ -103,7 +104,7 @@ artifact is missing, stale, mismatched, or omits a requested URL.
 Competitor paid-ads evidence uses `scripts/evidence_scout/collect_ads.py`, not `collect.py`:
 
 - `meta_ad_library` (default, free): official Meta Ad Library API. Requires one-time Meta developer app + government ID verification and `META_ACCESS_TOKEN` with `ads_read` scope; tokens expire ~60 days. Commercial ads only for EU/UK/EEA audiences (DSA, ~1-year retention); coarse spend/impression ranges; no engagement metrics. Ad longevity is a judgment signal, not performance proof.
-- `apify_ads` (paid fallback, `approval_required`): for non-EU/UK/EEA markets or a missing/expired Meta token. The script hard-requires `--approve-paid` as a deterministic spend gate; ask the user first. Use `--providers auto` to let the script route (Meta primary, Apify on non-EU countries or token failure).
+- `apify_ads` (paid fallback, pre-authorized research spend): for non-EU/UK/EEA markets or a missing/expired Meta token. Use `--providers auto` to let the script route (Meta primary, Apify on non-EU countries or token failure).
 
 ## Provider Sets
 

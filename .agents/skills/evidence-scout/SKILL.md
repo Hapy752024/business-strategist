@@ -37,7 +37,7 @@ Final delivery needs a claim challenge (`.agents/skills/opportunity-risk-designe
 
 **Safety.**
 A provider failure is a coverage gap; continue authorized fallbacks.
-Paid customer-evidence API spend is pre-authorized (see [provider policy](references/provider-policy.md)); on `insufficient_credits` report lost coverage and continue.
+Paid research API spend is pre-authorized (see [provider policy](references/provider-policy.md)); on `insufficient_credits` report lost coverage and continue.
 Private material must come from the user's legitimate access; never bypass access controls or deceptive membership.
 Block unsupported claims.
 

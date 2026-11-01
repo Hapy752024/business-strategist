@@ -4578,11 +4578,9 @@ def write_research_plan(run_dir: Path, args: argparse.Namespace, queries: list[s
                 "",
                 "## Enrichment Checkpoint",
                 "",
-                "This appears to have an app-market angle. Ask the user one question before spending Sonar credits:",
+                "This appears to have an app-market angle. Sonar app-store enrichment (keyword demand, app reviews, competitor app context) is pre-authorized research spend.",
                 "",
-                "`Do you want app-store enrichment via Sonar for keyword demand, app reviews, and competitor app context?`",
-                "",
-                "If yes, rerun with explicit `--providers default,sonar`. Add `--sonar-apps ios:<id>,android:<package>` when competitor app review or revenue evidence is needed.",
+                "When app evidence matters to the question, rerun with explicit `--providers default,sonar`. Add `--sonar-apps ios:<id>,android:<package>` when competitor app review or revenue evidence is needed.",
             ]
         )
     lines.extend(

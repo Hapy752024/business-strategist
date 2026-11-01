@@ -769,7 +769,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--competitors", type=Path, help="Landscape or competitor JSON; its domains classify as competitor.")
     ap.add_argument("--repeat", type=int, default=1, help="Captures per query, to separate stable from occasional advertisers.")
     ap.add_argument("--repeat-gap-minutes", type=float, default=0.0)
-    ap.add_argument("--max-searches", type=int, default=30, help="Refuse runs that would exceed this many paid searches.")
+    ap.add_argument("--max-searches", type=int, default=None, help="Optional: refuse runs that would exceed this many paid searches (no cap by default).")
     args = ap.parse_args(argv)
 
     plan = json.loads(args.plan.read_text(encoding="utf-8"))
@@ -783,7 +783,7 @@ def main(argv: list[str] | None = None) -> int:
         known |= load_competitor_domains(args.competitors)
         plan = {**plan, "known_competitors": sorted(known)}
     planned = len(plan["rows"]) * len(providers) * args.repeat
-    if planned > args.max_searches:
+    if args.max_searches is not None and planned > args.max_searches:
         print(f"Refusing: {planned} searches planned > --max-searches {args.max_searches}.", file=sys.stderr)
         return 2
     run_dir = args.run_dir

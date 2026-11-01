@@ -277,7 +277,7 @@ def scan(args: argparse.Namespace) -> dict[str, Any]:
                     continue
                 while len(query['pages']) < max_pages:
                     reserve = max(1, math.ceil(base_rate + args.signals_per_query * per_record_rate * (1 + .25 * len(EXPANDS))))
-                    if spent + reserve > args.max_credits or reserve > balance:
+                    if (args.max_credits is not None and spent + reserve > args.max_credits) or reserve > balance:
                         stop_reason = 'credit_budget_or_balance'
                         break
                     cursor = query['pages'][-1].get('next_cursor') if query['pages'] else None
@@ -305,7 +305,7 @@ def scan(args: argparse.Namespace) -> dict[str, Any]:
                     if not page['next_cursor'] or page['next_cursor'] == cursor:
                         query['coverage_gap'] = 'Capped page has no advancing cursor'
                         break
-                    if spent > args.max_credits or balance < 0:
+                    if (args.max_credits is not None and spent > args.max_credits) or balance < 0:
                         stop_reason = 'actual_charge_exceeded_reservation'
                         break
                 if stop_reason:
@@ -334,7 +334,7 @@ def main() -> int:
     parser.add_argument("--max-topics", type=int, default=12, help="Topics in automatic scan (1-50).")
     parser.add_argument("--window-days", type=int, default=365, help="Length of each adjacent period (30-1095 days).")
     parser.add_argument("--signals-per-query", type=int, default=20, help="Maximum returned signals per topic, period and signal type (1-200).")
-    parser.add_argument("--max-credits", type=int, default=400, help="Hard estimated/observed Parsers VC credit ceiling for this run.")
+    parser.add_argument("--max-credits", type=int, default=None, help="Optional Parsers VC credit ceiling for this run; by default the run stops only at the account balance.")
     parser.add_argument("--max-pages", type=int, default=1, help="Maximum pages per topic/window/type; capped results stay lower bounds.")
     parser.add_argument("--as-of", help="Explicit market date, YYYY-MM-DD")
     parser.add_argument("--resume", type=Path, help="Resume a matching saved checkpoint")
@@ -349,7 +349,7 @@ def main() -> int:
         parser.error("--signals-per-query must be between 1 and 200")
     if not 1 <= args.max_pages <= 100:
         parser.error("--max-pages must be 1..100")
-    if args.max_credits < 1:
+    if args.max_credits is not None and args.max_credits < 1:
         parser.error("--max-credits must be positive")
     try:
         result = scan(args)

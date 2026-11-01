@@ -92,3 +92,12 @@ def test_cli_writes_candidates_and_raw_with_provenance(creds, tmp_path, monkeypa
     assert (out / 'raw' / 'competitor-a.com.json').is_file()
     lines = [json.loads(l) for l in capsys.readouterr().out.strip().splitlines()]
     assert lines[0]['estimated_cost_usd'] == cb.estimate_cost(1) and lines[-1]['status'] == 'ok'
+
+
+def test_no_default_cost_cap(creds):
+    calls = []
+    def post(url, payload, auth):
+        calls.append(payload[0]['target'])
+        return {'tasks': [{'status_code': 20000, 'cost': 0.024, 'result': [{'items': []}]}]}
+    cb.prospect([f'c{i}.com' for i in range(200)], 'own.com', post=post)
+    assert cb.DEFAULT_MAX_COST is None and len([t for t in calls if t != 'own.com']) == 200
