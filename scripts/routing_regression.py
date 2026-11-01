@@ -2,12 +2,14 @@
 """Frozen routing decisions for a differential corpus; any change to routing shows up as a changed row.
 
 Corpus: every prompt in config/routing-evals.json, each route's first match phrase alone, and every ordered pair of
-routes with match phrases as "<phrase A>, then <phrase B>". Each request is routed in-process in two contexts:
+routes with match phrases as "<phrase A>, then <phrase B>". Each request is routed in-process in three contexts:
 
 - ``no-project``: no project (standalone defaults).
 - ``gate-not-passed``: a versioned project with a selected case whose problem_validation has not passed, routed with
   ``entry_mode=business_linked`` (what a Skill envelope with a project and ``standalone: false`` sends), so design and
   website routes meet their business-linked gates too.
+- ``gate-not-passed-case``: the same project with its registered case ``a`` named, so case routes (insights,
+  appraisal, case plan) reach their own gates instead of refusing for a missing case.
 
 Decision per request: the route ID, ``clarify``, ``gate:<gate name>`` when blocked, or ``error:<message>`` when the router
 refuses the request. ``--update`` rewrites tests/routing_expected.json; without it the script exits 1 and prints every
@@ -30,7 +32,8 @@ except ModuleNotFoundError:  # Direct CLI execution from scripts/.
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_PATH = ROOT / 'tests' / 'routing_expected.json'
 PROJECT = 'gate-not-passed'
-CONTEXTS = {'no-project': {}, 'gate-not-passed': {'project': PROJECT, 'entry_mode': 'business_linked'}}
+CONTEXTS = {'no-project': {}, 'gate-not-passed': {'project': PROJECT, 'entry_mode': 'business_linked'},
+            'gate-not-passed-case': {'project': PROJECT, 'case_id': 'a', 'entry_mode': 'business_linked'}}
 
 
 def corpus() -> list[tuple[str, tuple[str, str] | None]]:

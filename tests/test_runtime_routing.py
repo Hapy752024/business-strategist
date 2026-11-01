@@ -385,3 +385,47 @@ def test_phrase_inside_the_winners_phrase_is_not_a_second_request(tmp_path, monk
     assert packet['matched_route_ids'] == ['website-build', 'smoke-test-design']
     packet = router.route_request('Design a landing page test for the landing page', **kwargs)
     assert packet['gate_blocked'] and packet['gate_route_id'] == 'website-build'
+
+
+def test_a_phrase_both_routes_claim_verbatim_does_not_shadow_the_gated_route(tmp_path, monkeypatch):
+    """"validation page" is a phrase of ungated smoke-test-design (wins the tie) and gated validation-page."""
+    _not_passed_project(tmp_path, monkeypatch)
+    packet = router.route_request('Build a validation page', project='venture', entry_mode='business_linked')
+    assert packet['route_id'] == 'smoke-test-design'
+    assert packet['gate_blocked'] is True and packet['gate_route_id'] == 'validation-page'
+
+
+def test_override_does_not_record_when_a_co_matched_route_blocks_without_override(tmp_path, monkeypatch):
+    """Winner social-marketing (pain gate, lifted by the override) + website-build (strategy plan, not overridable)."""
+    manifest = _not_passed_project(tmp_path, monkeypatch) / 'cases/venture/market_research/manifest.json'
+    request = 'Create a social media plan for the landing page'
+    kwargs = dict(project='venture', entry_mode='business_linked', task_scope='execution', override_gate=True,
+                  override_stages=['problem_validation'], override_reason='Founder: "skip it"')
+    alone = router.route_request('Create a social media plan', **{**kwargs, 'override_gate': False})
+    assert alone['route_id'] == 'social-marketing' and alone['gate'] == 'pain_first'
+    packet = router.route_request(request, **kwargs)
+    assert packet['route_id'] == 'social-marketing'
+    assert packet['gate_blocked'] is True and packet['gate'] == 'strategy_plan_required'
+    assert packet['gate_route_id'] == 'website-build' and 'gate_override' not in packet
+    assert json.loads(manifest.read_text())['events'] == []
+
+
+def test_plain_text_outside_a_workspace_needs_an_envelope_when_any_matched_route_is_gated(tmp_path):
+    with pytest.raises(ValueError, match='JSON route envelope'):
+        hook.check_dispatch(_plain_event('Do a pre-release regression of the content calendar', tmp_path,
+                                         skill='site-testing'))
+    out = hook.check_dispatch(_plain_event('Run the pre-release regression for v2', tmp_path, skill='site-testing'))
+    assert '"route_id": "pre-release-regression"' in out['hookSpecificOutput']['additionalContext']
+
+
+@pytest.mark.parametrize('content', [None, '{not json', '[]', '{"name": 7}', '{"name": ""}', '{}'])
+def test_missing_or_malformed_plugin_manifest_strips_no_namespace(tmp_path, monkeypatch, content):
+    if content is not None:
+        (tmp_path / '.claude-plugin').mkdir()
+        (tmp_path / '.claude-plugin/plugin.json').write_text(content)
+    name = hook.plugin_name(tmp_path)
+    assert name == hook.NO_PLUGIN
+    monkeypatch.setattr(hook, 'PLUGIN_NAME', name)
+    assert hook.repository_skill_name('evidence-scout-agent-set:evidence-scout') == 'evidence-scout-agent-set:evidence-scout'
+    assert hook.repository_skill_name(':evidence-scout') == ':evidence-scout'
+    assert hook.repository_skill_name('evidence-scout') == 'evidence-scout'

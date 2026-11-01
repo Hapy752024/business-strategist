@@ -11,17 +11,29 @@ import sys
 from pathlib import Path
 
 try:
-    from scripts.route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, route_request
+    from scripts.route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, matched_routes, route_request
 except ModuleNotFoundError:
-    from route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, route_request
+    from route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, matched_routes, route_request
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN_NAME = json.loads((ROOT / '.claude-plugin' / 'plugin.json').read_text(encoding='utf-8'))['name']
+# A plugin name can never contain a NUL, so a missing or malformed manifest strips nothing.
+NO_PLUGIN = '\0'
+
+
+def plugin_name(root: Path = ROOT) -> str:
+    try:
+        name = json.loads((root / '.claude-plugin' / 'plugin.json').read_text(encoding='utf-8'))['name']
+    except (OSError, ValueError, TypeError, KeyError):
+        return NO_PLUGIN
+    return name if isinstance(name, str) and name.strip() else NO_PLUGIN
+
+
+PLUGIN_NAME = plugin_name()
 
 
 def repository_skill_name(name: object) -> object:
     """Strip this repository's own plugin namespace (``<plugin>:skill``); other namespaces stay foreign."""
-    prefix = PLUGIN_NAME + ':'
+    prefix = PLUGIN_NAME + ':'  # NO_PLUGIN + ':' never prefixes a real skill name
     return name[len(prefix):] if isinstance(name, str) and name.startswith(prefix) else name
 
 
@@ -178,15 +190,20 @@ def bare_envelope(skill: str, args: object, event: dict) -> dict | None:
     if slug:
         route['project'] = slug
     else:
-        # Without a workspace the gate cannot run, so gated routes need an explicit envelope.
+        # Without a workspace the gate cannot run, so a request naming any gated route (the inferred one or another
+        # matched route the specialist would also receive) needs an explicit envelope.
         spec = next(r for r in load_routes() if r['id'] == route_id)
-        metadata = load_catalog().get(skill, {})
-        # A merged skill keeps per-mode prerequisites (e.g. challenge-review tournament mode).
-        metadata = {**metadata, **metadata.get('modes', {}).get(spec.get('mode', 'default'), {})}
-        if spec.get('requires_pain_gate') or metadata.get('strategy_stage_prerequisites'):
+        if any(_gated(route) for route in [spec, *matched_routes(args)]):
             return None
         route['standalone'] = True
     return {'route': route, 'input': args}
+
+
+def _gated(route: dict) -> bool:
+    """True for a route with a pain gate or strategy-stage prerequisites (a merged skill keeps per-mode ones)."""
+    metadata = load_catalog().get(route['skill'], {})
+    metadata = {**metadata, **metadata.get('modes', {}).get(route.get('mode', 'default'), {})}
+    return bool(route.get('requires_pain_gate') or metadata.get('strategy_stage_prerequisites'))
 
 
 def envelope_hint(skill: str, raw_args: str) -> str:

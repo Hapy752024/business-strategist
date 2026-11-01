@@ -330,10 +330,12 @@ def _spans(phrases: list[str], text: str) -> list[tuple[int, int]]:
 
 
 def _shadowed(route: dict[str, Any], winner_hits: list[str], outcome_text: str) -> bool:
-    """True when every occurrence of the route's phrases lies inside an occurrence of the winner's matched phrases
-    ("landing page" inside "landing page test"): that text asks for the winner's workflow, not a second one."""
+    """True when every occurrence of the route's phrases lies strictly inside a longer occurrence of the winner's
+    matched phrases ("landing page" inside "landing page test"): that text asks for the winner's workflow. A phrase
+    both routes claim verbatim ("validation page") is not shadowed; the other route's gate still applies."""
     covers = _spans(winner_hits, outcome_text)
-    return all(any(a <= start and end <= b for a, b in covers) for start, end in _spans(route["matched"], outcome_text))
+    return all(any(a <= start and end <= b and (a, b) != (start, end) for a, b in covers)
+               for start, end in _spans(route["matched"], outcome_text))
 
 
 def _route_request(
