@@ -82,3 +82,28 @@ Run `evals/acceptance/runs/loosened-2026-10-31/`: 2/11 strict (cp02, cp09); cp03
 - Harness fault found: the feeder answered the agent's licence question with the gate-override answer (cue matched anywhere in the message), so intake was not exercised. Fix pending.
 
 Conclusion unchanged: making steps default in the instructions is not enough; the agent still skips steps nothing checks. n=1.
+
+## 8. Addendum: simplified setup run (ref 04c7a9f, branch setup-simplification)
+
+The branch merged 45 skills into 21 (route IDs unchanged), cut shared references from about 43,000 to 29,000 words, added plain-text dispatch, and made the router gate on every route a request matches, with one whole-word phrase matcher.
+
+Run `evals/acceptance/runs/simplified-2026-11-01/`: 3/11 strict (cp03 intake, cp05 search journey, cp11 honest provider gaps). Model 4.59 USD, provider 0.09 USD measured (DataForSEO; incomplete), 875 s, 9 rounds.
+
+| cp | baseline | after | verify | loosened | simplified |
+|---|---|---|---|---|---|
+| 01 workspace first | pass | pass | fail | fail | fail |
+| 02 routing, no envelope denial | fail | pass | fail | pass | fail |
+| 03 intake | pass | pass | pass | not exercised | pass |
+| 05 search-journey study | fail | fail | fail | fail | **pass** (first time) |
+| 07 international precedent | pass | fail | fail | fail | fail |
+| 09 gate then override | pass | pass | pass | pass | fail (scorer; see below) |
+| 11 honest provider gaps | pass | pass | pass | not exercised | pass |
+| others (04, 06, 08, 10) | fail | fail | fail | fail | fail |
+
+- cp05 passed for the first time: a German-language search-journey study across four stages, ads reported separately.
+- cp09 is a scoring miss, not a gate failure. The transcript shows the GTM route packet with `gate: pain_first`, problem_validation not passed, and the founder's override recorded with its reason (`gate_override: true`, `gate_blocked: false`). The founder answer had already granted the override, so the agent sent the override with its first GTM call; the detector requires a blocked attempt before the override and found none. Fix the detector to accept a recorded override whose packet states the gate was not passed.
+- cp02 failed on one hook denial: the agent's first call was `Skill idea-grill` with empty args, which plain-text dispatch cannot route (WF-034 recurs); it recovered on the next call.
+- cp01 still fails on order (a write before the workspace check).
+- One provider call failed on credit/quota (collect.py); recorded as a coverage gap.
+
+Conclusion: no regression attributable to the simplification, one new capability reached (search journey), and process faults unchanged (workspace order, empty first Skill call). Still n=1; variance between runs is unmeasured.
