@@ -8,8 +8,7 @@ description: Build and maintain Next.js websites. Use for landing pages, respons
 ## Procedure
 
 Follow [workflow](references/workflow.md) and the repository subproject contract.
-Start standalone from the user's brief; consume Business/Branding only through explicit handoff.
-Preserve business-linked gates and resumable website manifests.
+In a project, builds are business-linked (gated); standalone only on explicit request or with no project. Keep website manifests resumable.
 Routes `geo-audit` and `stripe-best-practices` follow only that mode reference; page builds or changes need route `website-build`.
 
 - New builds/redesigns: apply [reference-site and supplied-photo intake](references/reference-sites.md) before creative direction.

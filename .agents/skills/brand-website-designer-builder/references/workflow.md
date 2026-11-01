@@ -3,7 +3,7 @@
 Existing-site repairs use `references/maintenance.md` without repeating creative selection. Every new site applies `references/launch-contract.md` and executable `references/testing.md`.
 Page plans and content briefs draw on keyword-map rows (reviewed, or `keyword-map.proposed.json` marked provisional). Each brief names the inputs supporting it (search study, competitor/similar-company content, customer voice, social discussion) with refs and flags a `single_input` row; the customer and search questions the page must answer; and the SERP features it targets (PAA answers, FAQ blocks, comparison tables, AI-overview-citable summaries with sources). Retain or improve a matched existing page before creating another.
 
-1. Inspect an explicit brand manifest or start a standalone brief. Do not trigger business research automatically.
+1. Inspect an explicit brand manifest, the business-linked handoff (default inside a project) or, on explicit request, a standalone brief. Do not trigger business research automatically.
 2. Load/create `website-preferences.json`; separate brand-locked, user-stated, user-selected, and agent-inferred choices. Apply `reference-sites.md`: reuse supplied sites/photos or ask once, inspect actual references, and record accepted inspiration plus per-photo use modes. A user with no references/photos can proceed.
    Before sourcing or generating imagery, apply `../../brand-asset-producer/references/image-sourcing.md`; consume supplied assets and the imagery manifest, including permitted licensed-stock AI references and native imagegen handoff.
 3. Resolve the current stable Next.js version with `scripts/resolve-next-stable.mjs`; pin it and the lockfile.

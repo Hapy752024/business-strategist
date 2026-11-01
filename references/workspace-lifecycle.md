@@ -18,7 +18,7 @@ Before writes, check `history/pending.json`. Recover through `python3 scripts/ca
 
 Explicit migration: inventory files and links, copy the project, then run `python3 scripts/project_workspace.py migrate-cases <copy> --mapping <mapping.json> --decision-id <id> --reason <scope>`. Mapping is an object keyed by stable case ID; each entry has a title and optional sources (project-relative path, locator, applicability). The helper snapshots previous root outputs, registers cases with no inherited passes and no selection, and switches the root version last. Test interruption/recovery and verify original evidence hashes before any separately authorized live migration.
 
-The remaining layout and legacy stage instructions below apply to unversioned projects. Ordinary legacy research continues without creating cases; new business-linked execution requires migration; standalone branding and website work remain independent. Repository-root `research/` and `brand-projects/` roots are retired. A new unrelated request does not inherit another workspace's active track.
+The remaining layout and legacy stage instructions below apply to unversioned projects. Ordinary legacy research continues without creating cases; new business-linked execution requires migration; branding and website builds inside a project are business-linked by default; explicitly standalone work remains independent. Repository-root `research/` and `brand-projects/` roots are retired. A new unrelated request does not inherit another workspace's active track.
 
 ## Legacy layout and stage → folder map
 

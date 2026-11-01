@@ -1,6 +1,6 @@
 # Website maintenance
 
-Use checked website-build intent for technical website tasks; standalone unless explicitly consuming Business handoff. Load manifest, actual source/version, route inventory, last QA and deployment record. Do not repeat creative selection for a technical repair. Record baseline and scoped plan; preserve brand choices/unrelated work.
+Use checked website-build intent for technical website tasks; business-linked by default inside a project, standalone on explicit request or outside a project. Load manifest, actual source/version, route inventory, last QA and deployment record. Do not repeat creative selection for a technical repair. Record baseline and scoped plan; preserve brand choices/unrelated work.
 
 For AEO/GEO/AI-visibility audits of existing sites, also load `references/aeo-geo-visibility.md`; for businesses with commerce or comparable offers add `references/deo-agent-readiness.md`. Observation and measurement follow their contracts; visibility findings are intermediate measures, not business outcomes.
 

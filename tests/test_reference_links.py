@@ -73,8 +73,8 @@ DELETED_REFERENCES = (
 
 def test_no_pointer_to_deleted_reference():
     roots = [ROOT / '.agents', ROOT / 'references', ROOT / 'config', ROOT / 'scripts', ROOT / 'AGENTS.md', ROOT / 'CLAUDE.md', ROOT / '.claude', ROOT / 'instructions-to-owners.md']
-    # Only files under version control: local runtime state (.claude/plans, worktrees) may name old paths.
-    tracked = set(subprocess.run(['git', 'ls-files'], cwd=ROOT, capture_output=True, text=True, check=True).stdout.splitlines())
+    # Tracked and new non-ignored files: gitignored runtime state (.claude/plans, worktrees) may name old paths.
+    tracked = set(subprocess.run(['git', 'ls-files', '--cached', '--others', '--exclude-standard'], cwd=ROOT, capture_output=True, text=True, check=True).stdout.splitlines())
     offenders = []
     for base in roots:
         files = [base] if base.is_file() else [p for p in base.rglob('*') if p.is_file() and p.relative_to(ROOT).as_posix() in tracked]

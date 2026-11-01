@@ -30,7 +30,7 @@ For agent-driven specialist invocation, pass routing metadata in the skill's arg
 }
 ```
 
-Supply a `project` destination or `"standalone": true`; inside a project Brand/Website/Marketing `entry_mode` defaults to `business_linked` and is gated; outside a project it is `standalone`. Set `"standalone": true` only when the user asks for independent design work ("independent of the business case"). The calling agent fills this from the user's scope; never ask the user for technical JSON. Explicitly independent Branding/Website work needs no Business research; this does not let Business/GTM tasks bypass their gates. Unknown route IDs, mismatched skills, malformed metadata and blocked gates deny dispatch.
+Supply a `project` destination or `"standalone": true`; inside a project, gated Brand/Website routes and Marketing default `entry_mode` to `business_linked` (ungated brand research/discovery and the GEO, Stripe and smoke-test routes stay standalone); outside a project it is `standalone`. Set `"standalone": true` only when the user asks for independent design work ("independent of the business case"). The calling agent fills this from the user's scope; never ask the user for technical JSON. Explicitly independent Branding/Website work needs no Business research; this does not let Business/GTM tasks bypass their gates. Unknown route IDs, mismatched skills, malformed metadata and blocked gates deny dispatch.
 
 Direct repository slash invocations follow the same plain-text rule below; when no route can be inferred they stop with a routing explanation. Users can use the `business-strategist` entrypoint with natural language to have the agent prepare the envelope. Foreign plugin slash commands are unaffected.
 
@@ -59,7 +59,7 @@ For a known case add `case` to the envelope and `--case <id>` to CLI dispatch. `
 ## Routing boundaries
 
 - Market discovery finds problems and segments; idea validation pressure-tests a named idea.
-- Brand requests remain independent. Use `brand-identity` (route `standalone-brand`) for identity orchestration and `brand-website-designer-builder` for marketing/corporate sites.
+- Brand research and discovery stay independent (ungated); brand and website builds inside a project are business-linked by default. Use `brand-identity` (route `standalone-brand`) for identity orchestration and `brand-website-designer-builder` for marketing/corporate sites.
 - Use `brand-ui-system` (route `app-ui`) for product dashboards and application screens.
 - Former skill names merged into a family skill (for example `brand-designer`) still work as `--intent`; the packet's `alias_note` names the skill and route that now serve them (`route_workflow.SKILL_ALIASES`).
 - Use `competitor-research` (route `competitor-analysis`) for competitor pages, not for building a new site.

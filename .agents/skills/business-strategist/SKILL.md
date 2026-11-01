@@ -9,7 +9,7 @@ description: Route business, brand, website, and experiment requests to the smal
 For venture investigation, first establish customer segments, journeys and pain points with web evidence, even when the user arrives with a solution.
 Paths are relative to the Business or investigated-case root: `market_research/customer_segments/`, `market_research/customer_journey/`, and `market_research/pain_points/` (runs under `pain_points/runs/`).
 Business commitments (business model, offer and GTM) stay gated until `problem_validation` passes or an explicit override is recorded.
-Branding, standalone Marketing and other Digital Assets can start from their own brief; only explicitly business-linked consumption inherits Business checks.
+Inside a project, brand, website and marketing builds are business-linked by default and inherit Business checks; work starts from its own brief only when the user asks for it independent of the business case (or outside a project). Brand research and discovery stay ungated.
 Marketing inside a project that also contains Business defaults to business-linked.
 An independent Marketing route inside that project must include an established-business brief; a routing flag alone does not bypass the gate.
 

@@ -54,6 +54,9 @@ def test_interview_and_provisional_risk_not_deadlocked_by_missing_pain(tmp_path,
     # explicitly independent work does not.
     assert route_workflow.route_request('build a landing page', project=ws.name)['gate_blocked']
     assert not route_workflow.route_request('build a landing page', project=ws.name, entry_mode='standalone').get('gate_blocked')
+    # Ungated brand research keeps the standalone default inside a project (no Business handoff needed).
+    research = route_workflow.route_request('brand research', intent='brand-research', project=ws.name)
+    assert research.get('entry_mode') == 'standalone' and not research.get('gate_blocked')
     assert route_workflow.route_request('Create a social media plan', project=ws.name)['gate_blocked']
 
 

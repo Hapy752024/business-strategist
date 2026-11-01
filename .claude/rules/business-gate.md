@@ -9,6 +9,6 @@ Paths are relative to the Business or investigated-case root: `market_research/c
 Business commitments (business model, offer and GTM) stay gated until `problem_validation` passes or an explicit override is recorded.
 `scripts/route_workflow.py --project <slug>` returns `gate_blocked` with `first_skill: idea-grill` until the required `problem_validation` receipt is current, or the user records an explicit `--override-gate`.
 Interview recruitment planning is allowed before the gate; launches remain gated.
-Branding, standalone Marketing and other Digital Assets can start from their own brief; only explicitly business-linked consumption inherits Business checks.
+Inside a project, brand, website and marketing builds are business-linked by default and inherit Business checks; work starts from its own brief only when the user asks for it independent of the business case (or outside a project). Brand research and discovery stay ungated.
 Marketing inside a project that also contains Business defaults to business-linked; an independent Marketing route there must include an established-business brief, and a routing flag alone does not bypass the gate.
 Full routing rules: `.agents/skills/business-strategist/SKILL.md`.

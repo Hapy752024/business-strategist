@@ -568,7 +568,8 @@ def _route_packet(selected: dict[str, Any], reason: str, *, former_skill: str,
     if entry_mode is None:
         # Inside a project, brand, website and marketing work belongs to the business case and is gated;
         # independent design work is an explicit choice (standalone: true / --entry-mode standalone).
-        entry_mode = 'business_linked' if (marketing or design) and project else 'standalone'
+        gated_design = design and bool(selected.get('requires_pain_gate'))
+        entry_mode = 'business_linked' if (marketing or gated_design) and project else 'standalone'
     if entry_mode not in {'standalone', 'business_linked'}:
         raise ValueError('entry_mode must be standalone or business_linked')
     umbrella = ROOT / 'projects' / project if project else None
@@ -819,7 +820,7 @@ def main() -> int:
     parser.add_argument("--continue-workspace", action="store_true")
     parser.add_argument("--project", default="", help="Project slug; enforces the pain-first gate on routes that require it.")
     parser.add_argument("--case", default="", help="Registered research case; execution resolves the selected case.")
-    parser.add_argument('--entry-mode', choices=['standalone', 'business_linked'], default=None, help='Brand/website defaults to standalone; marketing with a project defaults to business-linked. Override only when scope supports it.')
+    parser.add_argument('--entry-mode', choices=['standalone', 'business_linked'], default=None, help='Inside a project, gated brand/website routes and marketing default to business-linked; ungated brand research and work outside a project default to standalone. Use standalone only when the user asks for work independent of the business case.')
     parser.add_argument('--standalone-brief', default='', help='Required when starting independent Marketing inside a project that also contains Business work.')
     parser.add_argument('--subproject', choices=[*subprojects.PATHS, 'business-analysis'], default='')
     parser.add_argument("--check-skill", default="", help="Reject dispatch unless this skill matches the selected route; blocked gates exit 2.")
