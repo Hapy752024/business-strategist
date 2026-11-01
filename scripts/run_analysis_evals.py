@@ -242,6 +242,9 @@ def main() -> int:
     parser.add_argument("--snapshot-root", type=Path, default=ROOT, help="Working tree root for the current arm; baseline files come from the pinned Git revision.")
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+    if manifest.get("status") == "retired":
+        print(json.dumps({"retired": True, "manifest": str(args.manifest), "note": "Recorded comparison is finished; its snapshot paths may no longer exist, so it is not validated or run."}, indent=2))
+        return 0 if args.validate_only else parser.error("manifest is retired; it cannot be run")
     errors = validate_manifest(manifest, args.manifest.resolve().parent)
     if errors: parser.error("; ".join(errors))
     if args.validate_only:

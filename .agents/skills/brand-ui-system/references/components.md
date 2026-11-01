@@ -28,3 +28,8 @@ Dispatch a fresh subagent when work parallelizes, passing exact paths, component
 - One research subagent when a component is missing from the shadcn mapping, to append its entry.
 
 Never parallelize subagents that touch the same file; do single-component work inline.
+
+## Success criteria
+
+- Quantitative: at least 90% trigger on branded component requests; 100% of shipped components have passing tests; zero unbranded components at completion.
+- Qualitative: drop-in for a Next.js App Router app; a developer can install and use it from the README alone; the library covers every selected taxonomy item.

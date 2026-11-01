@@ -32,3 +32,8 @@ Pass exact paths, pillar names and token filenames, never this conversation:
 - One research subagent when the user names a new reference product, to append 2-3 patterns to the benchmarks.
 
 Never parallelize subagents that touch the same file; do single-variant work inline.
+
+## Success criteria
+
+- Quantitative: at least 90% trigger on motion and transition requests; at most 3 iteration rounds per pillar; zero invalid token files at completion.
+- Qualitative: the user does not redirect mid-loop; motion feels coherent across elements; a developer can implement the reference implementations from one read.

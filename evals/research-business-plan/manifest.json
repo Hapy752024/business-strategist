@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "synthetic_comparison_coordinator_review_complete",
+  "status": "retired",
   "baseline_revision": "e796a119508466c4d08f9bfb02a8b8cfbdb99e1c",
   "source_dataset": "sources.json",
   "source_dataset_sha256": "5d56d78fb36abfad530dc453a15dc9e2a0567f995873346e8109b60513ee1188",

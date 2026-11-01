@@ -169,3 +169,11 @@ def test_live_runner_prunes_after_failed_worktree_add(monkeypatch):
     cmds = [c[0][:4] for c in calls]
     assert ['git', 'worktree', 'remove', '--force'] in cmds and cmds[-1][:3] == ['git', 'worktree', 'prune']
     assert not any(c[0][0] == 'claude' for c in calls)
+
+
+def test_retired_manifest_is_skipped_by_validate_only():
+    import subprocess
+    path = ROOT / "evals/research-business-plan/manifest.json"
+    assert json.loads(path.read_text())["status"] == "retired"
+    done = subprocess.run([sys.executable, str(ROOT / "scripts/run_analysis_evals.py"), "--validate-only", "--manifest", str(path)], capture_output=True, text=True)
+    assert done.returncode == 0 and '"retired": true' in done.stdout
