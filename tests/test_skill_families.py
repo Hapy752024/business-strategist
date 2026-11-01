@@ -518,6 +518,61 @@ def test_two_workflows_of_one_merged_skill_clarify(tmp_path, monkeypatch, reques
     assert packet['reason'] == 'multiple requested workflows; resolve scope before dispatch'
 
 
+def _skill_keyed_routing_decisions(source):
+    """Places where route_workflow groups or compares clause winners or gate decisions by skill, not route ID."""
+    import ast
+
+    def key(node, name):
+        return (isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant) and node.slice.value == name
+                or isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == 'get'
+                and node.args and isinstance(node.args[0], ast.Constant) and node.args[0].value == name)
+
+    def mentions_skill(node):
+        return any(key(n, 'skill') for n in ast.walk(node))
+
+    problems = []
+    tree = ast.parse(source)
+    for node in ast.walk(tree):
+        # Clause winners and other routing collections are keyed on route ID.
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and node.func.attr in {'add', 'append', 'setdefault'} and isinstance(node.func.value, ast.Name)
+                and any(word in node.func.value.id for word in ('winner', 'gate', 'block', 'matched', 'override'))
+                and any(mentions_skill(arg) for arg in node.args)):
+            problems.append(f'line {node.lineno}: {node.func.value.id} collects by skill')
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == 'add'
+                and isinstance(node.func.value, ast.Name) and node.func.value.id == 'clause_winners'
+                and not (node.args and key(node.args[0], 'id'))):
+            problems.append(f'line {node.lineno}: clause winners must be route IDs')
+        # Two routes compared by their skill instead of their ID.
+        if isinstance(node, ast.Compare) and sum(key(side, 'skill') for side in [node.left, *node.comparators]) >= 2:
+            problems.append(f'line {node.lineno}: routes compared by skill')
+        if isinstance(node, ast.keyword) and node.arg == 'gate_route_id' and not key(node.value, 'id'):
+            problems.append(f'line {node.lineno}: gate_route_id must be a route ID')
+        if (isinstance(node, ast.Assign) and any(isinstance(t, ast.Subscript) and isinstance(t.slice, ast.Constant)
+                                                 and t.slice.value == 'matched_route_ids' for t in node.targets)
+                and mentions_skill(node.value)):
+            problems.append(f'line {node.lineno}: matched_route_ids must be route IDs')
+        # The per-route gate check and route matching never consult the skill.
+        if (isinstance(node, ast.FunctionDef) and node.name in {'matched_routes', '_gate_matched_routes', '_shadowed'}
+                and mentions_skill(node)):
+            problems.append(f'{node.name}: decides by skill')
+    return problems
+
+
+def test_routing_decisions_are_keyed_on_route_id_not_skill():
+    source = (ROOT / 'scripts/route_workflow.py').read_text(encoding='utf-8')
+    assert _skill_keyed_routing_decisions(source) == []
+    mutations = [
+        ('[2]["id"])', '[2]["skill"])'),
+        ('gate_route_id=route["id"]', 'gate_route_id=route["skill"]'),
+        ('if route["id"] == selected["id"]', 'if route["skill"] == selected["skill"]'),
+        ('[route["id"] for route in matched]', '[route["skill"] for route in matched]'),
+    ]
+    for old, new in mutations:
+        assert source.count(old) == 1, old
+        assert _skill_keyed_routing_decisions(source.replace(old, new)), f'lint missed {new}'
+
+
 def test_plain_text_default_is_only_on_the_evidence_scout_route(tmp_path):
     import shutil
     from scripts import validate_skill_routes

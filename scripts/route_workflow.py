@@ -277,6 +277,65 @@ def record_gate_override(manifest_path: Path, route_id: str, override_id: str = 
         write_json(manifest_path, data)
 
 
+# A conservative fallback, not a language parser. The caller should supply
+# intent/scope for complex phrasing, quotations and multi-step requests.
+ACTION = r"(?:build|create|develop|design|write|draft|find|discover|analy[sz]e|make|plan|prepare|run|verify|research|check)"
+
+
+def _normalized(phrase: str) -> str:
+    return re.sub(r"[-–—]", " ", phrase.casefold())
+
+
+def _request_outcomes(request: str) -> tuple[str, list[str], str]:
+    """Return (normalized text, outcome clauses, outcome text): the text routing phrases are matched against.
+
+    Negated clauses ("do not ...", "keep ... unchanged") and include/with/cover elaborations are dropped."""
+    text = _normalized(request)
+    clauses = re.split(r"(?<!next)\.|[;!?\n]|\bbut\b|(?:,\s*(?:then\s+)?|\band(?:\s+then)?\b|\bthen\b)\s*(?=(?:also\s+)?(?:(?:do not|don't|don’t|never)\s+)?" + ACTION + r"\b)", text)
+    clauses = [re.split(r"\bwithout\b", clause, maxsplit=1)[0] for clause in clauses]
+    actionable = [clause for clause in clauses if not re.search(
+        r"\b(do not|don't|don’t|never|not asking|no need to)\b|"
+        r"\b(keep|leave)\b.*\b(unchanged|as is|intact)\b", clause)]
+    # Include/with/cover clauses elaborate an outcome, not a second workflow.
+    outcomes = [re.split(r"\b(?:including|with|covering)\b", clause, maxsplit=1)[0]
+                for clause in actionable
+                if not re.match(r"\s*(?:and\s+)?(?:include|including|cover|covering|with)\b", clause)]
+    return text, outcomes, " ".join(outcomes)
+
+
+def _phrase_hits(route: dict[str, Any], outcome_text: str) -> list[str]:
+    return [phrase for phrase in route.get("match", []) if _normalized(phrase) in outcome_text]
+
+
+def matched_routes(request: str) -> list[dict[str, Any]]:
+    """Every route whose match phrases occur in the request, by the router's own matching rules (normalized
+    case-insensitive substring of the outcome text), once per route ID, in route order, with ``matched`` hits."""
+    _, _, outcome_text = _request_outcomes(request)
+    matched = []
+    for index, route in enumerate(load_routes()):
+        hits = _phrase_hits(route, outcome_text)
+        if hits:
+            matched.append({**route, "matched": hits, "order": index})
+    return list({route["id"]: route for route in matched}.values())
+
+
+def _spans(phrases: list[str], text: str) -> list[tuple[int, int]]:
+    spans = []
+    for phrase in map(_normalized, phrases):
+        start = text.find(phrase)
+        while start != -1:
+            spans.append((start, start + len(phrase)))
+            start = text.find(phrase, start + 1)
+    return spans
+
+
+def _shadowed(route: dict[str, Any], winner_hits: list[str], outcome_text: str) -> bool:
+    """True when every occurrence of the route's phrases lies inside an occurrence of the winner's matched phrases
+    ("landing page" inside "landing page test"): that text asks for the winner's workflow, not a second one."""
+    covers = _spans(winner_hits, outcome_text)
+    return all(any(a <= start and end <= b for a, b in covers) for start, end in _spans(route["matched"], outcome_text))
+
+
 def _route_request(
     request: str,
     *,
@@ -301,21 +360,7 @@ def _route_request(
         raise ValueError("Gate override requires --project and an existing research manifest")
     if override_stages is not None and (not isinstance(override_stages, list) or any(not isinstance(s, str) or not s for s in override_stages)):
         raise ValueError('override_stages must be a list of named evidence prerequisites')
-    text = re.sub(r"[-–—]", " ", request.casefold())
-    # A conservative fallback, not a language parser. The caller should supply
-    # intent/scope for complex phrasing, quotations and multi-step requests.
-    action = r"(?:build|create|develop|design|write|draft|find|discover|analy[sz]e|make|plan|prepare|run|verify|research|check)"
-    clauses = re.split(r"(?<!next)\.|[;!?\n]|\bbut\b|(?:,\s*(?:then\s+)?|\band(?:\s+then)?\b|\bthen\b)\s*(?=(?:also\s+)?(?:(?:do not|don't|don’t|never)\s+)?" + action + r"\b)", text)
-    clauses = [re.split(r"\bwithout\b", clause, maxsplit=1)[0] for clause in clauses]
-    actionable = [clause for clause in clauses if not re.search(
-        r"\b(do not|don't|don’t|never|not asking|no need to)\b|"
-        r"\b(keep|leave)\b.*\b(unchanged|as is|intact)\b", clause)]
-    search_text = " ".join(actionable)
-    # Include/with/cover clauses elaborate an outcome, not a second workflow.
-    outcomes = [re.split(r"\b(?:including|with|covering)\b", clause, maxsplit=1)[0]
-                for clause in actionable
-                if not re.match(r"\s*(?:and\s+)?(?:include|including|cover|covering|with)\b", clause)]
-    outcome_text = " ".join(outcomes)
+    text, outcomes, outcome_text = _request_outcomes(request)
     if task_scope not in {"", "focused", "execution", "strategy"}:
         raise ValueError(f"Unknown task scope: {task_scope}")
     requested_intent = intent.strip().casefold()
@@ -339,8 +384,7 @@ def _route_request(
         if requested_intent and route["id"].casefold() == requested_intent:
             candidates.append((10_000, 1, {**route, "matched": [f"intent:{intent}"], "order": index}))
             continue
-        hits = [phrase for phrase in route.get("match", [])
-                if re.sub(r"[-–—]", " ", phrase.casefold()) in outcome_text]
+        hits = _phrase_hits(route, outcome_text)
         if hits:
             # Longer phrases are more specific; index is a stable tie-breaker.
             candidates.append((max(map(len, hits)), len(hits), {**route, "matched": hits, "order": index}))
@@ -371,13 +415,67 @@ def _route_request(
         clause_winners = set()
         for clause in outcomes:
             matches = [(length, hits, candidate) for length, hits, candidate in candidates
-                       if any(re.sub(r"[-–—]", " ", phrase.casefold()) in clause
+                       if any(_normalized(phrase) in clause
                               for phrase in candidate["matched"])]
             if matches:
                 clause_winners.add(max(matches, key=lambda item: (item[0], item[1], -item[2]["order"]))[2]["id"])
         if len(clause_winners) > 1:
             selected = {"id": "clarify", "skill": "business-strategist", "matched": []}
             reason = "multiple requested workflows; resolve scope before dispatch"
+    packet_args = dict(outcome_text=outcome_text, task_scope=task_scope, project=project, case_id=case_id,
+                       entry_mode=entry_mode, standalone_brief=standalone_brief, override_gate=override_gate,
+                       override_stages=override_stages)
+    # Overrides found while evaluating gates; recorded once per request after every matched route was checked.
+    overrides: list[tuple[Path, str]] = []
+    packet = _route_packet(selected, reason, former_skill=former_skill, check_skill=check_skill,
+                           subproject=subproject, overrides=overrides, **packet_args)
+    matched = matched_routes(request)
+    packet["matched_route_ids"] = [route["id"] for route in matched]
+    if selected["id"] != "clarify" and not packet.get("gate_blocked"):
+        _gate_matched_routes(packet, selected, matched, outcome_text, overrides, packet_args)
+    if overrides and not packet.get("gate_blocked"):
+        # One override per request: the first gate it lifted (the winner's, else the first matched route's in route
+        # order) names the audited event, and that single decision covers every other matched route's gate.
+        manifest_path, route_id = overrides[0]
+        record_gate_override(manifest_path, route_id, override_id, override_stages or [],
+                             source=override_source, reason=override_reason)
+        packet["gate_override"] = True
+    return packet
+
+
+def _gate_matched_routes(packet: dict[str, Any], selected: dict[str, Any], matched: list[dict[str, Any]],
+                         outcome_text: str, overrides: list[tuple[Path, str]], packet_args: dict[str, Any]) -> None:
+    """Block the packet when another matched route would be gate-blocked had it won.
+
+    The specialist receives the whole request, so gated work named next to the winner must pass its own gate.
+    Each other matched route (by route ID) is evaluated by the winner's own gate logic with the caller's entry mode,
+    task scope, project and case; the winner's skill check and output subproject do not apply to it. A route whose
+    every phrase occurrence lies inside the winner's matched phrase is the winner's own wording, not a second
+    request. The first blocking route in route order names the gate and reason."""
+    for route in matched:
+        # The winner's own phrases in the text, also when it was chosen by explicit intent.
+        if route["id"] == selected["id"] or _shadowed(route, _phrase_hits(selected, outcome_text), outcome_text):
+            continue
+        try:
+            other = _route_packet(route, "explicit phrase match", former_skill="", check_skill="",
+                                  subproject="", overrides=overrides, **packet_args)
+        except ValueError as exc:
+            raise ValueError(f"matched route {route['id']} cannot run with this request: {exc}") from exc
+        if other.get("gate_blocked"):
+            packet.update(gate_blocked=True, gate=other["gate"], gate_route_id=route["id"],
+                          first_skill=other.get("first_skill"),
+                          reason=(f"{packet['reason']}; the request also matches gated route {route['id']} "
+                                  f"({other['gate']}): {other.get('reason', other['gate'])}"))
+            packet.pop("gate_override", None)
+            return
+
+
+def _route_packet(selected: dict[str, Any], reason: str, *, former_skill: str,
+                  check_skill: str, subproject: str, overrides: list[tuple[Path, str]], outcome_text: str,
+                  task_scope: str, project: str, case_id: str, entry_mode: str | None, standalone_brief: str,
+                  override_gate: bool, override_stages: list[str] | None) -> dict[str, Any]:
+    """Build the route packet for ``selected`` and apply its gates; a lifted override is appended to ``overrides``
+    for the caller to record, never recorded here."""
     skill = selected["skill"]
     catalog = load_catalog()
     if skill not in catalog:
@@ -387,10 +485,10 @@ def _route_request(
                         or check_skill in selected.get("forbidden", [])):
         merged_note = ''
         if check_skill in SKILL_ALIASES:
-            now = next(r["skill"] for r in routes if r["id"] == SKILL_ALIASES[check_skill])
+            now = next(r["skill"] for r in load_routes() if r["id"] == SKILL_ALIASES[check_skill])
             merged_note = f" ({check_skill} was merged into {now}; dispatch {now} with route {SKILL_ALIASES[check_skill]})"
         raise ValueError(f"Dispatch rejected: requested {check_skill}, routed {skill}{merged_note}")
-    requested_strategy = bool(re.search(action + r"\b[^.;!?]*\bstrateg(?:y|ies)\b", outcome_text))
+    requested_strategy = bool(re.search(ACTION + r"\b[^.;!?]*\bstrateg(?:y|ies)\b", outcome_text))
     scope = task_scope or ("strategy" if requested_strategy
                            else "focused" if re.search(r"\b(explain|what is|what does|why)\b", outcome_text)
                            else "execution" if re.search(r"\b(ad copy|content calendar|paid social|social campaign)\b", outcome_text)
@@ -606,8 +704,7 @@ def _route_request(
                 if modern and not set(missing).issubset(override_stages or []):
                     raise ValueError('Override must explicitly name every missing evidence stage: pass '
                                      + ' '.join(f'--override-stage {m}' for m in missing))
-                record_gate_override(manifest_path, selected["id"], override_id, override_stages or [],
-                                     source=override_source, reason=override_reason)
+                overrides.append((manifest_path, selected["id"]))
                 packet.update(gate_blocked=False, gate_override=True)
     if project and selected.get("requires_pain_gate"):
         passed, manifest_path = pain_gate_state(project, case_id)
@@ -628,8 +725,7 @@ def _route_request(
                 if manifest_path is None:
                     raise ValueError("Cannot audit gate override: research manifest is missing")
                 if not packet.get("gate_override"):
-                    record_gate_override(manifest_path, selected["id"], override_id, override_stages or [],
-                                     source=override_source, reason=override_reason)
+                    overrides.append((manifest_path, selected["id"]))
                 packet["gate_blocked"] = False
                 packet["gate_override"] = True
     return packet

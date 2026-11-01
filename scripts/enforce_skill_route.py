@@ -16,6 +16,13 @@ except ModuleNotFoundError:
     from route_workflow import SKILL_ALIASES, infer_mode, load_catalog, load_routes, route_request
 
 ROOT = Path(__file__).resolve().parents[1]
+PLUGIN_NAME = json.loads((ROOT / '.claude-plugin' / 'plugin.json').read_text(encoding='utf-8'))['name']
+
+
+def repository_skill_name(name: object) -> object:
+    """Strip this repository's own plugin namespace (``<plugin>:skill``); other namespaces stay foreign."""
+    prefix = PLUGIN_NAME + ':'
+    return name[len(prefix):] if isinstance(name, str) and name.startswith(prefix) else name
 
 
 def check_dispatch(event: dict) -> dict:
@@ -23,7 +30,7 @@ def check_dispatch(event: dict) -> dict:
     tool_input = event.get('tool_input', {})
     if not expansion and event.get('tool_name') != 'Skill':
         return {}
-    name = event.get('command_name', '') if expansion else tool_input.get('skill', '')
+    name = repository_skill_name(event.get('command_name', '') if expansion else tool_input.get('skill', ''))
     # A merged-away skill name is denied with its replacement instead of passing through as a foreign skill.
     if name in SKILL_ALIASES:
         route_id = SKILL_ALIASES[name]

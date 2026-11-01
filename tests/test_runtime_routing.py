@@ -275,3 +275,113 @@ def test_packet_lists_long_references_with_word_counts(tmp_path, monkeypatch):
     packet = _packet_with_reference(tmp_path, monkeypatch, 1600)
     assert 'reference_text' not in packet
     assert packet['required_reference_words']['ref.md'] > 1500
+
+
+# Task 21: the gate is evaluated for every matched route, not only the winner, because the specialist receives the
+# whole request. A request that also names a gated route is blocked by that route's gate as if it had won.
+def _not_passed_project(tmp_path, monkeypatch):
+    return _gated_workspace(tmp_path, monkeypatch, 'not_run')
+
+
+@pytest.mark.parametrize('request_text', [
+    pytest.param('Build a new pricing page, then do a pre-release check', marks=pytest.mark.xfail(
+        strict=True, reason='no website-build match phrase covers "pricing page"; only "pre-release check" matches. '
+                            'Match phrases are out of scope for Task 21 (reported).')),
+    'Do a pre-release check of the landing page and fix the hero',
+])
+def test_request_naming_a_gated_website_route_is_blocked_by_its_gate(tmp_path, monkeypatch, request_text):
+    _not_passed_project(tmp_path, monkeypatch)
+    alone = router.route_request('Build a landing page', project='venture', entry_mode='business_linked')
+    assert alone['route_id'] == 'website-build' and alone['gate_blocked']
+    packet = router.route_request(request_text, project='venture', entry_mode='business_linked')
+    assert packet['route_id'] == 'pre-release-regression'
+    assert 'website-build' in packet['matched_route_ids']
+    assert packet['gate_blocked'] is True and packet['gate'] == alone['gate']
+    assert packet['gate_route_id'] == 'website-build' and 'website-build' in packet['reason']
+
+
+def test_hook_envelope_naming_a_gated_route_is_denied(tmp_path, monkeypatch):
+    cwd = _not_passed_project(tmp_path, monkeypatch)
+    payload = _plain_event('', cwd, skill='site-testing')
+    payload['tool_input']['args'] = json.dumps({'route': {
+        'request': 'Do a pre-release check of the landing page and fix the hero', 'intent': 'pre-release-regression',
+        'task_scope': 'execution', 'project': 'venture', 'standalone': False}, 'input': 'check and fix'})
+    with pytest.raises(ValueError, match='website-build'):
+        hook.check_dispatch(payload)
+
+
+PAIN_GATED_EXTRA = 'Do a pre-release regression of the content calendar'
+
+
+def test_request_naming_a_pain_gated_route_is_blocked_by_the_pain_gate(tmp_path, monkeypatch):
+    _not_passed_project(tmp_path, monkeypatch)
+    packet = router.route_request(PAIN_GATED_EXTRA, project='venture')
+    assert packet['route_id'] == 'pre-release-regression'
+    assert packet['gate_blocked'] is True and packet['gate'] == 'pain_first'
+    assert packet['gate_route_id'] == 'social-marketing' and 'social-marketing' in packet['reason']
+    cwd = tmp_path / 'projects' / 'venture'
+    with pytest.raises(ValueError, match='pain-first'):
+        hook.check_dispatch(_plain_event(PAIN_GATED_EXTRA, cwd, skill='site-testing'))
+
+
+def test_one_audited_override_per_request_covers_the_matched_gated_route(tmp_path, monkeypatch):
+    manifest = _not_passed_project(tmp_path, monkeypatch) / 'cases/venture/market_research/manifest.json'
+    assert manifest.is_file()
+    with pytest.raises(ValueError, match='problem_validation'):
+        router.route_request(PAIN_GATED_EXTRA, project='venture', override_gate=True)
+    assert json.loads(manifest.read_text())['events'] == []
+    for _ in range(2):  # replay-safe: the same request records one event
+        packet = router.route_request(PAIN_GATED_EXTRA, project='venture', override_gate=True,
+                                      override_stages=['problem_validation'], override_reason='Founder: "skip it"')
+        assert not packet.get('gate_blocked') and packet['gate_override'] is True
+        assert packet['route_id'] == 'pre-release-regression'
+    events = json.loads(manifest.read_text())['events']
+    assert [e['event'] for e in events] == ['routing_gate_override:social-marketing']
+
+
+@pytest.mark.parametrize('project', ['', 'venture'])
+def test_request_matching_only_ungated_routes_is_unchanged(tmp_path, monkeypatch, project):
+    _not_passed_project(tmp_path, monkeypatch)
+    packet = router.route_request('Run a Playwright pre-release check of the app', project=project)
+    assert packet['route_id'] == 'pre-release-regression' and 'gate_blocked' not in packet
+    assert packet['matched_route_ids'] == ['webapp-testing', 'pre-release-regression']
+
+
+def test_standalone_brand_entry_without_project_keeps_todays_behaviour():
+    for text in ('Create a logo for my bakery', 'Create a brand identity for my landing page'):
+        packet = router.route_request(text)
+        assert packet['route_id'] == 'standalone-brand' and packet['entry_mode'] == 'standalone'
+        assert 'gate_blocked' not in packet
+
+
+def test_matched_routes_lists_every_phrase_match_once():
+    ids = [route['id'] for route in router.matched_routes('Do a pre-release check of the landing page, landing page')]
+    assert ids == ['website-build', 'pre-release-regression']
+    assert router.matched_routes("Don't build a landing page; run a pre-release check")[0]['id'] == 'pre-release-regression'
+
+
+def test_plugin_namespaced_skill_is_routed_like_the_bare_name():
+    def dispatch(skill):
+        return hook.check_dispatch({'hook_event_name': 'PreToolUse', 'tool_name': 'Skill', 'session_id': 's1',
+                                    'tool_use_id': 't1', 'cwd': str(ROOT), 'tool_input': {
+                                        'skill': skill, 'args': 'Research pain points of freelance translators'}})
+    plugin = json.loads((ROOT / '.claude-plugin/plugin.json').read_text())['name']
+    bare = dispatch('evidence-scout')['hookSpecificOutput']
+    namespaced = dispatch(f'{plugin}:evidence-scout')['hookSpecificOutput']
+    assert namespaced['additionalContext'] == bare['additionalContext']
+    assert '"route_id": "evidence-scout"' in namespaced['additionalContext']
+    assert dispatch('other-plugin:evidence-scout') == {}
+    with pytest.raises(ValueError, match='merged into'):
+        dispatch(f'{plugin}:interview-bridge')
+
+
+@pytest.mark.parametrize('intent', ['', 'smoke-test-design'])
+def test_phrase_inside_the_winners_phrase_is_not_a_second_request(tmp_path, monkeypatch, intent):
+    """"landing page" inside "landing page test" is the smoke test's own wording; a separate "landing page" is not."""
+    _not_passed_project(tmp_path, monkeypatch)
+    kwargs = dict(intent=intent, project='venture', entry_mode='business_linked')
+    packet = router.route_request('Design a landing page test', **kwargs)
+    assert packet['route_id'] == 'smoke-test-design' and not packet.get('gate_blocked')
+    assert packet['matched_route_ids'] == ['website-build', 'smoke-test-design']
+    packet = router.route_request('Design a landing page test for the landing page', **kwargs)
+    assert packet['gate_blocked'] and packet['gate_route_id'] == 'website-build'
