@@ -119,11 +119,22 @@ def check_dispatch(event: dict) -> dict:
     entry_mode = route.get('entry_mode')
     if entry_mode is None and 'standalone' in route:
         entry_mode = 'standalone' if route['standalone'] else 'business_linked'
+    standalone_reason = route.get('standalone_reason', '')
+    if not isinstance(standalone_reason, str):
+        raise ValueError('standalone_reason must be text')
     packet = route_request(route['request'], intent=route['intent'], task_scope=route['task_scope'],
-                           project=project, case_id=case_id, entry_mode=entry_mode, standalone_brief=route.get('standalone_brief', ''), subproject=route.get('subproject', ''), override_gate=route.get('override_gate', False), override_stages=route.get('override_stages', []), check_skill=name, override_id=override_id,
+                           project=project, case_id=case_id, entry_mode=entry_mode, standalone_brief=route.get('standalone_brief', ''),
+                           standalone_reason=standalone_reason, subproject=route.get('subproject', ''), override_gate=route.get('override_gate', False), override_stages=route.get('override_stages', []), check_skill=name, override_id=override_id,
                            override_source='agent_envelope', override_reason=override_reason)
     if packet.get('gate_blocked'):
         raise ValueError(packet['reason'])
+    if entry_mode == 'standalone' and packet.get('default_entry_mode') == 'business_linked':
+        # The envelope is agent-authored: leaving the gated business-linked default needs the user's own words,
+        # carried in the packet as the audit record (mirrors override_reason).
+        if not standalone_reason.strip():
+            raise ValueError("standalone inside a project requires a nonempty standalone_reason quoting the user's request "
+                             "for work independent of the business case; otherwise drop standalone and route business_linked")
+        packet['standalone_source'] = 'agent_envelope'
     if isinstance(event.get('session_id'), str) and event['session_id'] and project:
         hooks_dir = Path(__file__).resolve().parents[1] / '.claude/hooks'
         sys.path.insert(0, str(hooks_dir))

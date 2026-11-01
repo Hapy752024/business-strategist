@@ -15,7 +15,9 @@ def event(project='', standalone=True):
     return {'hook_event_name': 'PreToolUse', 'tool_name': 'Skill', 'session_id': 's1', 'tool_use_id': 't1',
             'cwd': str(ROOT), 'tool_input': {'skill': 'brand-website-designer-builder', 'args': json.dumps({
                 'route': {'request': 'build a landing page', 'intent': 'website-build', 'task_scope': 'execution',
-                          'project': project, 'standalone': standalone}, 'input': 'The page brief'})}}
+                          'project': project, 'standalone': standalone,
+                          'standalone_reason': 'user: "build it independent of the business case"'},
+                'input': 'The page brief'})}}
 
 
 def test_valid_dispatch_keeps_normal_permissions():

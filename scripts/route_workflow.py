@@ -389,6 +389,7 @@ def _route_request(
     override_reason: str = "",
     entry_mode: str | None = None,
     standalone_brief: str = '',
+    standalone_reason: str = '',
     subproject: str = '',
 ) -> dict[str, Any]:
     """Return a reproducible route packet from an explicit intent or phrase match."""
@@ -459,8 +460,8 @@ def _route_request(
             selected = {"id": "clarify", "skill": "business-strategist", "matched": []}
             reason = "multiple requested workflows; resolve scope before dispatch"
     packet_args = dict(outcome_text=outcome_text, task_scope=task_scope, project=project, case_id=case_id,
-                       entry_mode=entry_mode, standalone_brief=standalone_brief, override_gate=override_gate,
-                       override_stages=override_stages)
+                       entry_mode=entry_mode, standalone_brief=standalone_brief, standalone_reason=standalone_reason,
+                       override_gate=override_gate, override_stages=override_stages)
     # Overrides found while evaluating gates; recorded once per request after every matched route was checked.
     overrides: list[tuple[Path, str]] = []
     packet = _route_packet(selected, reason, former_skill=former_skill, check_skill=check_skill,
@@ -493,6 +494,9 @@ def _gate_matched_routes(packet: dict[str, Any], others: list[dict[str, Any]], o
                                   subproject="", overrides=overrides, **packet_args)
         except ValueError as exc:
             raise ValueError(f"matched route {route['id']} cannot run with this request: {exc}") from exc
+        if other.get("default_entry_mode") == "business_linked":
+            # Leaving the gated default for any matched route is the same choice as leaving it for the winner.
+            packet["default_entry_mode"] = "business_linked"
         if other.get("gate_blocked"):
             packet.update(gate_blocked=True, gate=other["gate"], gate_route_id=route["id"],
                           first_skill=other.get("first_skill"),
@@ -505,7 +509,7 @@ def _gate_matched_routes(packet: dict[str, Any], others: list[dict[str, Any]], o
 def _route_packet(selected: dict[str, Any], reason: str, *, former_skill: str,
                   check_skill: str, subproject: str, overrides: list[tuple[Path, str]], outcome_text: str,
                   task_scope: str, project: str, case_id: str, entry_mode: str | None, standalone_brief: str,
-                  override_gate: bool, override_stages: list[str] | None) -> dict[str, Any]:
+                  standalone_reason: str, override_gate: bool, override_stages: list[str] | None) -> dict[str, Any]:
     """Build the route packet for ``selected`` and apply its gates; a lifted override is appended to ``overrides``
     for the caller to record, never recorded here."""
     skill = selected["skill"]
@@ -565,11 +569,12 @@ def _route_packet(selected: dict[str, Any], reason: str, *, former_skill: str,
     marketing = (skill in {'earned-media-builder', 'marketing-campaign-operator'}
                  or (skill == 'marketing' and selected.get('mode') != 'channel-validation'))
     descriptive_campaign = skill == 'marketing-campaign-operator' and selected.get('mode') in {'import','connections'}
+    # Inside a project, brand, website and marketing work belongs to the business case and is gated;
+    # independent design work is an explicit choice (standalone: true / --entry-mode standalone).
+    gated_design = design and bool(selected.get('requires_pain_gate'))
+    default_entry_mode = 'business_linked' if (marketing or gated_design) and project else 'standalone'
     if entry_mode is None:
-        # Inside a project, brand, website and marketing work belongs to the business case and is gated;
-        # independent design work is an explicit choice (standalone: true / --entry-mode standalone).
-        gated_design = design and bool(selected.get('requires_pain_gate'))
-        entry_mode = 'business_linked' if (marketing or gated_design) and project else 'standalone'
+        entry_mode = default_entry_mode
     if entry_mode not in {'standalone', 'business_linked'}:
         raise ValueError('entry_mode must be standalone or business_linked')
     umbrella = ROOT / 'projects' / project if project else None
@@ -587,6 +592,9 @@ def _route_packet(selected: dict[str, Any], reason: str, *, former_skill: str,
         destination_name = subproject
     if design or marketing:
         packet['entry_mode'] = entry_mode
+        packet['default_entry_mode'] = default_entry_mode
+        if entry_mode == 'standalone' and standalone_reason.strip():
+            packet['standalone_reason'] = standalone_reason.strip()
         packet['subproject'] = destination_name
         if umbrella:
             owner = cases.locate_publication(umbrella)
@@ -821,6 +829,7 @@ def main() -> int:
     parser.add_argument("--project", default="", help="Project slug; enforces the pain-first gate on routes that require it.")
     parser.add_argument("--case", default="", help="Registered research case; execution resolves the selected case.")
     parser.add_argument('--entry-mode', choices=['standalone', 'business_linked'], default=None, help='Inside a project, gated brand/website routes and marketing default to business-linked; ungated brand research and work outside a project default to standalone. Use standalone only when the user asks for work independent of the business case.')
+    parser.add_argument('--standalone-reason', default='', help="The user's words asking for work independent of the business case; required from agent envelopes inside a project.")
     parser.add_argument('--standalone-brief', default='', help='Required when starting independent Marketing inside a project that also contains Business work.')
     parser.add_argument('--subproject', choices=[*subprojects.PATHS, 'business-analysis'], default='')
     parser.add_argument("--check-skill", default="", help="Reject dispatch unless this skill matches the selected route; blocked gates exit 2.")
@@ -833,7 +842,7 @@ def main() -> int:
     try:
         packet = route_request(args.request, intent=args.intent or "", active_manifest=manifest,
                                task_scope=args.task_scope, continue_workspace=args.continue_workspace,
-                               project=args.project, case_id=args.case, entry_mode=args.entry_mode, standalone_brief=args.standalone_brief, subproject=args.subproject, override_gate=args.override_gate, override_stages=args.override_stage, check_skill=args.check_skill)
+                               project=args.project, case_id=args.case, entry_mode=args.entry_mode, standalone_brief=args.standalone_brief, standalone_reason=args.standalone_reason, subproject=args.subproject, override_gate=args.override_gate, override_stages=args.override_stage, check_skill=args.check_skill)
     except ValueError as exc:
         parser.error(str(exc))
     print(json.dumps(packet, indent=2, sort_keys=True))
