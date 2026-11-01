@@ -10,6 +10,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from common import OUTPUT_DIR  # noqa: E402
 SCRIPTS = [
     "validate_serpapi_google_trends.py",
     "validate_dataforseo_google_trends.py",
@@ -85,6 +87,9 @@ def main() -> int:
     args = parser.parse_args()
     if args.out:
         os.environ["EVIDENCE_SCOUT_VALIDATION_DIR"] = str(args.out.absolute())
+    # Every validator, shims included, writes beside the summary: the directory provider_doctor,
+    # capability_lookup and provider_health read (common.OUTPUT_DIR).
+    os.environ.setdefault("EVIDENCE_SCOUT_VALIDATION_DIR", str(OUTPUT_DIR))
     results = []
     for script in SCRIPTS:
         name = script.removeprefix("validate_").removesuffix(".py")
@@ -114,7 +119,7 @@ def main() -> int:
             parsed["stderr"] = proc.stderr[-2000:]
         results.append(parsed)
 
-    out = Path(os.environ.get("EVIDENCE_SCOUT_VALIDATION_DIR", ROOT / "projects" / "_infra" / "api-validation")) / ("selected.summary.json" if args.provider else "all.summary.json")
+    out = Path(os.environ["EVIDENCE_SCOUT_VALIDATION_DIR"]) / ("selected.summary.json" if args.provider else "all.summary.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=2, sort_keys=True), encoding="utf-8")
     print(json.dumps(results, indent=2, sort_keys=True))

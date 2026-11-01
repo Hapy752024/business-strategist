@@ -12,7 +12,7 @@ If ambiguity materially changes provider choice, query wording, geography, langu
 
 1. Confirm whether the user wants idea validation or customer-problem understanding, along with topic, customer segment, geography/language, hypothesis when applicable, and likely pain/workaround terms. Preserve this intent through planning and synthesis. Relevant domestic or foreign companies can inform customer alternatives and experiences; they do not change the task into importing a company idea.
 2. Verify the documented scripts exist, run capability lookup for the research need, and validate API access before collection.
-3. Choose provider set from capability lookup: default first, social or paid enrichment only when justified or approved.
+3. Choose provider set from capability lookup: default first, social or paid enrichment when it answers the question (paid research spend is pre-authorized).
 4. Translate solution-led language into user pain, workaround, comparison, and search-intent terms. When pain terms are inferred, calibrate them before the full run (see Pain-query calibration below).
 5. Run the collector with scoped topic, segment, problem keywords, workaround keywords, hypothesis ID, date range, limit, and providers. Pass a short `--topic-keywords` phrase; use `--query-plan` for deliberate exact probes.
 6. Inspect `research_plan.md`, `summary.json`, `report.md`, `evidence.jsonl`, raw provider outputs, and provider alerts.

@@ -54,3 +54,12 @@ def test_health_requests_route_to_the_evidence_scout_mode_without_a_gate():
         assert (packet['route_id'], packet['skill'], packet['mode']) == ('provider-health', 'evidence-scout', 'provider-health')
         assert not packet.get('gate_blocked')
         assert '.agents/skills/evidence-scout/references/provider-health.md' in packet['required_references']
+
+
+def test_odd_validator_fields_never_become_key_names():
+    odd = ph.advise({'provider': 'unlisted', 'status': 'missing_credentials',
+                     'credential_source': {'google': None, 'apple_key': None}}, {}, [])
+    assert odd['todo'].startswith('Add the key')
+    keyless = ph.advise({'provider': 'x2', 'status': 'missing_credentials', 'credential_source': 'none (keyless)'}, {}, [])
+    assert 'none' not in keyless['todo']
+    assert ph.advise({'provider': 'meta', 'status': 'scope_denied'}, BILLING['meta'], [])['action'] == 'renew_key'

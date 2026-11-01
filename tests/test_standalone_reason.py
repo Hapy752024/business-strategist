@@ -56,3 +56,13 @@ def test_router_cli_records_the_reason_without_requiring_it(tmp_path, monkeypatc
     result = router.route_request('build a landing page', intent='website-build', task_scope='execution',
                                   project='venture', entry_mode='standalone', standalone_reason='founder asked')
     assert result['entry_mode'] == 'standalone' and result['standalone_reason'] == 'founder asked'
+
+
+def test_reason_is_recorded_when_a_co_matched_route_needed_it(tmp_path, monkeypatch):
+    request = 'discover the market and build a landing page'
+    with pytest.raises(ValueError, match='standalone_reason'):
+        dispatch(tmp_path, monkeypatch, request=request, intent='market-discovery', skill='market-problem-discovery',
+                 standalone=True)
+    result = packet(dispatch(tmp_path, monkeypatch, request=request, intent='market-discovery',
+                             skill='market-problem-discovery', standalone=True, standalone_reason='user: "independent"'))
+    assert (result['entry_mode'], result['standalone_reason']) == ('standalone', 'user: "independent"')

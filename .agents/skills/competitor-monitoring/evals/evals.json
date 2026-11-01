@@ -13,7 +13,7 @@
     {
       "id": 2,
       "prompt": "Track web traffic for my top 5 competitors using Similarweb data. Give me monthly reports.",
-      "expected_output": "A traffic-monitoring plan with approval gate for paid traffic actors (Similarweb-style). Must note that traffic estimates and bounce rates are not proof of churn or demand — they are competitive context only. Must recommend specific metrics and warn against over-interpreting estimates.",
+      "expected_output": "A traffic-monitoring plan that reviews the paid traffic actor and its schema before running it (Similarweb-style; paid research spend is pre-authorized). Must note that traffic estimates and bounce rates are not proof of churn or demand — they are competitive context only. Must recommend specific metrics and warn against over-interpreting estimates.",
       "must_mention": ["traffic", "estimate", "context", "not proof", "approval", "Similarweb"],
       "must_not_mention": ["proven demand", "market share", "revenue proof"],
       "required_artifacts": [],

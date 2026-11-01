@@ -16,14 +16,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATORS = ROOT / 'scripts/validate_apis'
-CACHE = ROOT / 'projects/_infra/api-validation'
 sys.path.insert(0, str(VALIDATORS))
+from common import OUTPUT_DIR as CACHE, redact_sensitive  # noqa: E402
 from readiness import load_latest  # noqa: E402
 
 # Validator status -> (action, priority). Lower priority sorts first.
 ACTIONS = {
     'insufficient_credits': ('fund', 0), 'billing_required': ('fund', 0), 'request_budget_exhausted': ('fund', 0),
     'missing_credentials': ('add_key', 1), 'permission_denied': ('renew_key', 1), 'token_expired': ('renew_key', 1),
+    'scope_denied': ('renew_key', 1),
     'account_verification_required': ('verify_account', 1), 'missing_cli': ('install', 3),
     'optional_unavailable': ('optional', 4), 'rate_limited': ('wait', 2), 'network_blocked_or_sandboxed': ('network', 2),
     'ok': ('ready', 5),
@@ -32,6 +33,13 @@ ACTIONS = {
 
 def load_config(name: str) -> dict:
     return json.loads((ROOT / 'config' / name).read_text(encoding='utf-8'))
+
+
+def _rel(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
 
 
 def capabilities_by_provider() -> dict[str, list[str]]:
@@ -43,8 +51,10 @@ def capabilities_by_provider() -> dict[str, list[str]]:
 
 
 def _env_names(result: dict, billing: dict) -> list[str]:
-    names = result.get('required_env') or result.get('credential_source') or billing.get('env') or []
-    return [names] if isinstance(names, str) else list(names)
+    # The billing file names keys reliably; validator fields vary (a dict of sources, or "none (keyless)").
+    names = billing.get('env') or result.get('required_env') or result.get('credential_source') or []
+    names = [names] if isinstance(names, str) else names if isinstance(names, list) else []
+    return [n for n in names if isinstance(n, str) and not n.startswith('none')]
 
 
 def advise(result: dict, billing: dict, feeds: list[str]) -> dict:
@@ -64,7 +74,7 @@ def advise(result: dict, billing: dict, feeds: list[str]) -> dict:
         'wait': 'Rate limited; rerun later',
         'network': 'Network blocked from this machine; rerun from a normal connection',
         'ready': '',
-        'check': f"Validator reported {status}; inspect projects/_infra/api-validation/{result.get('provider')}.json",
+        'check': f"Validator reported {status}; inspect {_rel(CACHE)}/{result.get('provider')}.json",
     }[action]
     if billing.get('note') and action != 'ready':
         todo += f" ({billing['note']})"
@@ -84,9 +94,12 @@ def collect(providers: list[str], cached: bool) -> list[dict]:
     command = [sys.executable, str(VALIDATORS / 'run_all.py')] + [a for p in providers for a in ('--provider', p)]
     proc = subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
     try:
-        return json.loads(proc.stdout)
+        parsed = json.loads(proc.stdout)
     except json.JSONDecodeError:
-        raise SystemExit(f'run_all.py produced no JSON (exit {proc.returncode}): {proc.stderr[-500:]}')
+        parsed = None
+    if not isinstance(parsed, list):
+        raise SystemExit(f'run_all.py produced no result list (exit {proc.returncode}): {redact_sensitive(proc.stderr[-500:])}')
+    return [r for r in parsed if isinstance(r, dict)]
 
 
 def report(results: list[dict]) -> list[dict]:

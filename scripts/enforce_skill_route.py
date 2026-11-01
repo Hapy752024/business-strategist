@@ -134,7 +134,7 @@ def check_dispatch(event: dict) -> dict:
         if not standalone_reason.strip():
             raise ValueError("standalone inside a project requires a nonempty standalone_reason quoting the user's request "
                              "for work independent of the business case; otherwise drop standalone and route business_linked")
-        packet['standalone_source'] = 'agent_envelope'
+        packet.update(entry_mode='standalone', standalone_reason=standalone_reason.strip(), standalone_source='agent_envelope')
     if isinstance(event.get('session_id'), str) and event['session_id'] and project:
         hooks_dir = Path(__file__).resolve().parents[1] / '.claude/hooks'
         sys.path.insert(0, str(hooks_dir))
