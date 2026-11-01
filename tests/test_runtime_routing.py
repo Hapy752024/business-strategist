@@ -451,10 +451,13 @@ def test_plain_text_outside_a_workspace_refuses_a_non_shadowed_gated_co_match(tm
 @pytest.mark.parametrize('phrase,text,expected', [
     ('FAL', 'falsify claims in the draft', False),
     ('FAL', 'generate the hero with fal', True),
-    ('landing page', 'build two landing pages', False),
-    ('landing pages', 'build two landing pages', True),
+    ('landing page', 'build two landing pages', True),
+    ('landing page', 'landing pagesx', False),
     ('A/B test', 'run an a/b test on pricing', True),
-    ('A/B test', 'run an a/b tests suite', False),
+    ('A/B test', 'run a/b testing and a/b tests', True),
+    ('A/B test', 'a/b testers', False),
+    ('marketing website', 'two marketing websites', True),
+    ('integrate GA4', 'integrate ga4s', False),
     ('go-to-market', 'a go to market plan', True),
     ("competitor's website", "review my competitor's website", True),
 ])
@@ -474,3 +477,26 @@ def test_plural_landing_pages_still_meets_the_website_gate(tmp_path, monkeypatch
     packet = router.route_request('Do a pre-release check of the landing pages', project='venture',
                                   entry_mode='business_linked')
     assert packet['gate_blocked'] is True and packet['gate_route_id'] == 'website-build'
+
+
+INFLECTED_GATED_REQUESTS = [
+    ('opportunity-risk-designer', 'Design a smoke test for the waitlist pages'),
+    ('opportunity-risk-designer', 'Design a smoke test for the validation pages'),
+    ('site-testing', 'Do a pre-release check of the marketing websites'),
+    ('competitor-research', 'Find competitors and write two social campaigns'),
+    ('evidence-scout', 'Find customer pain, then build A/B tests'),
+    ('opportunity-risk-designer', 'Rank assumptions, then design fintech pilots'),
+]
+
+
+@pytest.mark.parametrize('skill,text', INFLECTED_GATED_REQUESTS)
+def test_inflected_gated_phrase_still_needs_an_envelope_outside_a_workspace(tmp_path, skill, text):
+    with pytest.raises(ValueError, match='JSON route envelope'):
+        hook.check_dispatch(_plain_event(text, tmp_path, skill=skill))
+
+
+@pytest.mark.parametrize('skill,text', INFLECTED_GATED_REQUESTS)
+def test_inflected_gated_phrase_is_gated_in_a_not_passed_project(tmp_path, monkeypatch, skill, text):
+    _not_passed_project(tmp_path, monkeypatch)
+    packet = router.route_request(text, project='venture', entry_mode='business_linked')
+    assert packet['route_id'] == 'clarify' or packet.get('gate_blocked'), packet['route_id']

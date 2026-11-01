@@ -78,7 +78,10 @@ def _normalized(phrase: str) -> str:
 @functools.lru_cache(maxsize=None)
 def _phrase_pattern(phrase: str) -> re.Pattern[str]:
     # Lookarounds instead of \b so phrases that start or end with punctuation ("A/B test") still need word edges.
-    return re.compile(r"(?<!\w)" + re.escape(_normalized(phrase)) + r"(?!\w)")
+    # A phrase ending in a letter also matches its last word inflected (-s, -es, -ing): "A/B tests", "A/B testing".
+    normalized = _normalized(phrase)
+    inflection = r"(?:s|es|ing)?" if re.search(r"[^\W\d_]$", normalized) else ""
+    return re.compile(r"(?<!\w)" + re.escape(normalized) + inflection + r"(?!\w)")
 
 
 def _phrase_spans(phrase: str, text: str) -> list[tuple[int, int]]:
@@ -92,8 +95,9 @@ def _phrase_spans(phrase: str, text: str) -> list[tuple[int, int]]:
 
 
 def phrase_in(phrase: str, text: str) -> bool:
-    """The one routing matcher: the phrase occurs in normalized text as whole words, case-insensitively
-    (hyphens and dashes read as spaces); "FAL" does not match "falsify", "landing page" does not match "landing pages"."""
+    """The one routing matcher: the phrase occurs in normalized text as whole words, case-insensitively (hyphens and
+    dashes read as spaces), its last word optionally inflected with -s/-es/-ing when the phrase ends in a letter:
+    "landing page" matches "landing pages", "A/B test" matches "A/B testing", "FAL" does not match "falsify"."""
     return _phrase_pattern(phrase).search(text) is not None
 
 
@@ -332,8 +336,9 @@ def _phrase_hits(route: dict[str, Any], outcome_text: str) -> list[str]:
 
 
 def matched_routes(request: str) -> list[dict[str, Any]]:
-    """Every route whose match phrases occur in the request, by the router's own matching rules (normalized
-    case-insensitive substring of the outcome text), once per route ID, in route order, with ``matched`` hits."""
+    """Every route whose match phrases occur in the request, by the router's own matching rules (`phrase_in`:
+    whole words, optional -s/-es/-ing inflection, over the outcome text), once per route ID, in route order, with
+    ``matched`` hits."""
     _, _, outcome_text = _request_outcomes(request)
     matched = []
     for index, route in enumerate(load_routes()):

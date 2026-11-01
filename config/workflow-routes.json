@@ -35,7 +35,6 @@
       "id": "standalone-brand",
       "match": [
         "logo",
-        "logos",
         "brand identity",
         "brand guidelines",
         "branding",
@@ -53,7 +52,6 @@
       "id": "website-build",
       "match": [
         "landing page",
-        "landing pages",
         "branded website",
         "marketing website",
         "company website",
@@ -509,7 +507,6 @@
         "customer interview guide",
         "interview screener",
         "interview kit",
-        "interview kits",
         "interview tracker"
       ],
       "skill": "evidence-scout",
