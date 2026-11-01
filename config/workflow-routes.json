@@ -514,6 +514,22 @@
       "mode": "interview-kit"
     },
     {
+      "id": "provider-health",
+      "match": [
+        "provider health",
+        "data source health",
+        "data sources health",
+        "check the data sources",
+        "check data sources",
+        "which data sources work",
+        "research api credits",
+        "top up the data sources"
+      ],
+      "skill": "evidence-scout",
+      "forbidden": [],
+      "mode": "provider-health"
+    },
+    {
       "id": "saas-fintech-pilot-designer",
       "match": [
         "design a paid pilot",

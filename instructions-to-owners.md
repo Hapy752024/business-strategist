@@ -22,6 +22,7 @@ Do in this order. Time is a rough estimate.
 | 12 | Meta token (only when a paid campaign is near) | 15 min | paused-campaign creation |
 | 13 | Decide: statistics page and 7%-town checker for the site (agent plans from a brief) | decision | linkable content |
 | 14 | Add a "How did you hear about us?" question (with an AI-assistant option) to the booking flow; when analytics is on, add the AI-referrer channel | 30 min | AI attribution |
+| 15 | Run `python3 scripts/provider_health.py` (or ask "check the data sources") and fix what it lists: top-ups and missing or expired keys, each with its link | 5 min, then monthly | full research coverage |
 | Monthly | Re-run competitor backlinks, `diff`, `link_ledger check`, read the ledger report | 20 min | link gap and lost links |
 
 ## 1. Repository
@@ -107,6 +108,8 @@ sudo chmod 0755 ~/.config/business-strategist && sudo chmod 0644 ~/.config/busin
 **Postiz (step 11).** Install on GzaraNet, not locally: scheduled posts need an always-on host and the social logins need a public HTTPS callback. Clone `github.com/gitroomhq/postiz-docker-compose`, pin a version tag, set `MAIN_URL`, `FRONTEND_URL`, `NEXT_PUBLIC_BACKEND_URL` and a long `JWT_SECRET`, run behind your reverse proxy on a subdomain, create your account, then set `DISABLE_REGISTRATION=true`. Connect channels in the UI, copy the API key from Settings > Developers > Public API, and on your machine export `POSTIZ_BASE_URL` and `POSTIZ_API_KEY`. Back up Postgres and uploads.
 
 **Meta (step 12).** Only when a paid campaign is close: in Business Settings create an Employee-role system user (Admin tokens are unsupported), generate a token with `ads_read` and `ads_management`, export it as `META_ACCESS_TOKEN`. Campaigns are created paused with a spend cap (Meta minimum about 100 USD). Ad spend needs your explicit approval each time.
+
+**Research data sources (step 15).** `python3 scripts/provider_health.py` checks every research provider live and prints a "What to do" table: which account to top up (with its billing page), which key to add or replace in `~/.secrets` (with the page that issues it), and which research it blocks. Add `--cached` for the last saved results. The agents spend on paid research sources (DataForSEO and others) without asking; funding the accounts is your step. At the last check (late September), Serper was out of credits and the Meta token had expired.
 
 **ScrapeCreators (optional).** A second paid Reddit fallback besides Apify; `SCRAPE_CREATORS_API_KEY` in `~/.secrets`. Not required.
 

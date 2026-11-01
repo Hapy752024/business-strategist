@@ -1,0 +1,236 @@
+{
+  "purpose": "Where the founder funds a paid research provider or gets its key. Read by scripts/provider_health.py; keys are named, never stored here. URLs checked 2026-11-01.",
+  "billing_kinds": {
+    "prepaid": "prepaid credits or balance; top up when low",
+    "subscription": "monthly plan with a quota; upgrade or wait for the reset",
+    "pay_as_you_go": "billed on usage to a card on file",
+    "free_key": "free, but needs a registered key or token",
+    "free": "no key and no billing"
+  },
+  "providers": {
+    "dataforseo": {
+      "label": "DataForSEO (keyword volumes, backlinks)",
+      "billing": "prepaid",
+      "fund_url": "https://app.dataforseo.com/",
+      "keys_url": "https://app.dataforseo.com/api-access",
+      "env": [
+        "DATAFORSEO_LOGIN",
+        "DATAFORSEO_PASSWORD"
+      ]
+    },
+    "dataforseo_google_trends": {
+      "label": "DataForSEO Google Trends",
+      "billing": "prepaid",
+      "fund_url": "https://app.dataforseo.com/",
+      "keys_url": "https://app.dataforseo.com/api-access",
+      "env": [
+        "DATAFORSEO_LOGIN",
+        "DATAFORSEO_PASSWORD"
+      ]
+    },
+    "serpapi_google_trends": {
+      "label": "SerpApi (Google Trends, SERP landscape)",
+      "billing": "subscription",
+      "fund_url": "https://serpapi.com/pricing",
+      "keys_url": "https://serpapi.com/manage-api-key",
+      "env": [
+        "SERPAPI_API_KEY"
+      ]
+    },
+    "serper": {
+      "label": "Serper.dev (Google SERP)",
+      "billing": "prepaid",
+      "fund_url": "https://serper.dev/",
+      "keys_url": "https://serper.dev/",
+      "env": [
+        "SERPER_API_KEY"
+      ]
+    },
+    "firecrawl": {
+      "label": "Firecrawl (search and page extraction)",
+      "billing": "subscription",
+      "fund_url": "https://www.firecrawl.dev/app",
+      "keys_url": "https://www.firecrawl.dev/app",
+      "env": [
+        "FIRECRAWL_API_KEY_HGINVESTOR"
+      ]
+    },
+    "scrapecreators": {
+      "label": "ScrapeCreators (public social posts)",
+      "billing": "prepaid",
+      "fund_url": "https://app.scrapecreators.com/",
+      "keys_url": "https://app.scrapecreators.com/",
+      "env": [
+        "SCRAPECREATORS_API_KEY"
+      ]
+    },
+    "scrapecreators_reddit": {
+      "label": "ScrapeCreators Reddit lane",
+      "billing": "prepaid",
+      "fund_url": "https://app.scrapecreators.com/",
+      "keys_url": "https://app.scrapecreators.com/",
+      "env": [
+        "SCRAPECREATORS_API_KEY"
+      ]
+    },
+    "apify": {
+      "label": "Apify (actor fallbacks, ads)",
+      "billing": "pay_as_you_go",
+      "fund_url": "https://console.apify.com/billing",
+      "keys_url": "https://console.apify.com/settings/integrations",
+      "env": [
+        "APIFY_TOKEN"
+      ]
+    },
+    "apify_reddit": {
+      "label": "Apify Reddit lane",
+      "billing": "pay_as_you_go",
+      "fund_url": "https://console.apify.com/billing",
+      "keys_url": "https://console.apify.com/settings/integrations",
+      "env": [
+        "APIFY_TOKEN"
+      ]
+    },
+    "apify_review_lanes": {
+      "label": "Apify review-site lanes",
+      "billing": "pay_as_you_go",
+      "fund_url": "https://console.apify.com/billing",
+      "keys_url": "https://console.apify.com/settings/integrations",
+      "env": [
+        "APIFY_TOKEN"
+      ]
+    },
+    "brightdata": {
+      "label": "Bright Data (browser fallback)",
+      "billing": "pay_as_you_go",
+      "fund_url": "https://brightdata.com/cp/",
+      "keys_url": "https://brightdata.com/cp/",
+      "env": [
+        "BRIGHTDATA_SELENIUM_URL"
+      ]
+    },
+    "brave_search": {
+      "label": "Brave Search API",
+      "billing": "subscription",
+      "fund_url": "https://api-dashboard.search.brave.com/",
+      "keys_url": "https://api-dashboard.search.brave.com/",
+      "env": [
+        "BRAVE_SEARCH_API_KEY"
+      ]
+    },
+    "xai_x_search": {
+      "label": "xAI Grok X Search",
+      "billing": "prepaid",
+      "fund_url": "https://console.x.ai/",
+      "keys_url": "https://console.x.ai/",
+      "env": [
+        "GROK_API_KEY"
+      ]
+    },
+    "x": {
+      "label": "X API (recent posts)",
+      "billing": "prepaid",
+      "fund_url": "https://console.x.com/",
+      "keys_url": "https://console.x.com/",
+      "env": [
+        "X_BEARER_TOKEN"
+      ]
+    },
+    "sonar": {
+      "label": "Sonar (app-store enrichment)",
+      "billing": "subscription",
+      "fund_url": "https://trysonar.app/",
+      "keys_url": "https://trysonar.app/",
+      "env": [
+        "SONAR_API_KEY"
+      ]
+    },
+    "parsersvc": {
+      "label": "Parsers VC (investment signals)",
+      "billing": "prepaid",
+      "fund_url": "https://parsers.vc/",
+      "keys_url": "https://parsers.vc/",
+      "env": [
+        "PARSERSVC_API_KEY"
+      ]
+    },
+    "youtube": {
+      "label": "YouTube Data API",
+      "billing": "free_key",
+      "keys_url": "https://console.cloud.google.com/apis/credentials",
+      "env": [
+        "YOUTUBE_API_KEY"
+      ]
+    },
+    "reddit": {
+      "label": "Reddit API",
+      "billing": "free_key",
+      "keys_url": "https://www.reddit.com/prefs/apps",
+      "env": [
+        "REDDIT_CLIENT_ID",
+        "REDDIT_CLIENT_SECRET"
+      ]
+    },
+    "meta": {
+      "label": "Meta Ad Library",
+      "billing": "free_key",
+      "keys_url": "https://developers.facebook.com/tools/explorer/",
+      "env": [
+        "META_ACCESS_TOKEN"
+      ],
+      "note": "user tokens expire after about 60 days"
+    },
+    "tiktok": {
+      "label": "TikTok Research API",
+      "billing": "free_key",
+      "keys_url": "https://developers.tiktok.com/",
+      "env": [
+        "TIKTOK_CLIENT_KEY",
+        "TIKTOK_CLIENT_SECRET"
+      ]
+    },
+    "github": {
+      "label": "GitHub issue search",
+      "billing": "free",
+      "keys_url": "https://github.com/settings/tokens",
+      "env": [],
+      "note": "optional GITHUB_TOKEN raises the rate limit"
+    },
+    "producthunt": {
+      "label": "Product Hunt API",
+      "billing": "free_key",
+      "keys_url": "https://www.producthunt.com/v2/oauth/applications",
+      "env": []
+    },
+    "census": {
+      "label": "US Census API",
+      "billing": "free_key",
+      "keys_url": "https://api.census.gov/data/key_signup.html",
+      "env": []
+    },
+    "bls": {
+      "label": "US BLS API",
+      "billing": "free_key",
+      "keys_url": "https://data.bls.gov/registrationEngine/",
+      "env": []
+    },
+    "fred": {
+      "label": "FRED (St. Louis Fed)",
+      "billing": "free_key",
+      "keys_url": "https://fred.stlouisfed.org/docs/api/api_key.html",
+      "env": []
+    },
+    "companies_house": {
+      "label": "UK Companies House",
+      "billing": "free_key",
+      "keys_url": "https://developer.company-information.service.gov.uk/",
+      "env": []
+    },
+    "app_reviews": {
+      "label": "App Store / Google Play developer APIs",
+      "billing": "free_key",
+      "env": [],
+      "note": "only for your own apps' reviews"
+    }
+  }
+}

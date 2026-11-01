@@ -220,6 +220,24 @@
             }
           ],
           "excludes": []
+        },
+        "provider-health": {
+          "inputs": [
+            "optional provider names"
+          ],
+          "prerequisites": [],
+          "artifacts": [
+            "provider health report: ready sources, what to fund, which keys to add or renew"
+          ],
+          "side_effect": "research",
+          "cost": "low",
+          "required_references": [
+            ".agents/skills/evidence-scout/references/provider-health.md"
+          ],
+          "output_owner": "evidence-scout",
+          "consumes": [],
+          "produces": [],
+          "excludes": []
         }
       }
     },
