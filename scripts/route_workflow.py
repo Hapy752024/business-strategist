@@ -566,7 +566,9 @@ def _route_packet(selected: dict[str, Any], reason: str, *, former_skill: str,
                  or (skill == 'marketing' and selected.get('mode') != 'channel-validation'))
     descriptive_campaign = skill == 'marketing-campaign-operator' and selected.get('mode') in {'import','connections'}
     if entry_mode is None:
-        entry_mode = 'business_linked' if marketing and project else 'standalone'
+        # Inside a project, brand, website and marketing work belongs to the business case and is gated;
+        # independent design work is an explicit choice (standalone: true / --entry-mode standalone).
+        entry_mode = 'business_linked' if (marketing or design) and project else 'standalone'
     if entry_mode not in {'standalone', 'business_linked'}:
         raise ValueError('entry_mode must be standalone or business_linked')
     umbrella = ROOT / 'projects' / project if project else None

@@ -50,7 +50,10 @@ def test_interview_and_provisional_risk_not_deadlocked_by_missing_pain(tmp_path,
                           ('evidence-scout', 'evidence-scout')]:
         packet = route_workflow.route_request('repair and investigate', intent=intent, task_scope='focused', project=ws.name, check_skill=skill)
         assert not packet.get('gate_blocked')
-    assert not route_workflow.route_request('build a landing page', project=ws.name).get('gate_blocked')
+    # Inside a project, website work defaults to business-linked and waits for the gate;
+    # explicitly independent work does not.
+    assert route_workflow.route_request('build a landing page', project=ws.name)['gate_blocked']
+    assert not route_workflow.route_request('build a landing page', project=ws.name, entry_mode='standalone').get('gate_blocked')
     assert route_workflow.route_request('Create a social media plan', project=ws.name)['gate_blocked']
 
 

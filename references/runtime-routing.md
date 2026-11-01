@@ -30,7 +30,7 @@ For agent-driven specialist invocation, pass routing metadata in the skill's arg
 }
 ```
 
-Supply a `project` destination or `"standalone": true`; Brand/Website `entry_mode` defaults to `standalone` (set `business_linked` only for explicitly requested selected-business consumption). The calling agent fills this from the user's scope; never ask the user for technical JSON. Independent Branding/Website work inside a project needs no Business research; this does not let Business/GTM tasks bypass their gates. Unknown route IDs, mismatched skills, malformed metadata and blocked gates deny dispatch.
+Supply a `project` destination or `"standalone": true`; inside a project Brand/Website/Marketing `entry_mode` defaults to `business_linked` and is gated; outside a project it is `standalone`. Set `"standalone": true` only when the user asks for independent design work ("independent of the business case"). The calling agent fills this from the user's scope; never ask the user for technical JSON. Explicitly independent Branding/Website work needs no Business research; this does not let Business/GTM tasks bypass their gates. Unknown route IDs, mismatched skills, malformed metadata and blocked gates deny dispatch.
 
 Direct repository slash invocations follow the same plain-text rule below; when no route can be inferred they stop with a routing explanation. Users can use the `business-strategist` entrypoint with natural language to have the agent prepare the envelope. Foreign plugin slash commands are unaffected.
 

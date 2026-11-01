@@ -53,9 +53,12 @@ def test_independent_subprojects_start_without_upstream(first, tmp_path, monkeyp
     assert marketing_state['brief']['sha256']
     assert c.read_project(root / 'business-analysis')['project_id'] == 'topic'
     monkeypatch.setattr(routing, 'ROOT', tmp_path)
-    packet = routing.route_request('Build website', intent='website-build', project='topic')
+    # Independent website work inside a project is an explicit choice; the in-project default is gated.
+    packet = routing.route_request('Build website', intent='website-build', project='topic', entry_mode='standalone')
     assert packet['output_root'] == str(root / 'digital-assets/website')
     assert not packet.get('gate_blocked')
+    with pytest.raises(ValueError, match='selected'):
+        routing.route_request('Build website', intent='website-build', project='topic')
     with pytest.raises(ValueError, match='selected'):
         routing.route_request('Build GTM', intent='gtm-strategy', project='topic')
     monkeypatch.setattr(w, 'ROOT', tmp_path)

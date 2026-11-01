@@ -14,7 +14,7 @@ Marketing inside a project that also contains Business defaults to business-link
 An independent Marketing route inside that project must include an established-business brief; a routing flag alone does not bypass the gate.
 
 **Subprojects and scope.**
-Business, Branding, Marketing, Website and other Digital Assets are independently startable (repo-root `references/subprojects.md`); Brand and Website default to standalone entry and need no prior research.
+Business, Branding, Marketing, Website and other Digital Assets are independently startable (repo-root `references/subprojects.md`); inside a project, Brand and Website default to business-linked (gated); independent design work needs an explicit standalone request.
 Business-linked work (GTM, positioning, explicitly business-linked marketing/brand/website) routes with `scripts/route_workflow.py --project <slug>`; the gate returns `gate_blocked` with `first_skill: idea-grill` until the `problem_validation` receipt is current or the user records `--override-gate`.
 Keep simple requests simple: apply repo-root `references/task-scope.md` before dispatch; explicit user intent and exclusions override phrase matching.
 Select situational capabilities from the installed skill descriptions and `config/workflow-routes.json`; load the selected specialist, not the catalog.

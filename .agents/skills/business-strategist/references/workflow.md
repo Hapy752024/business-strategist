@@ -2,7 +2,7 @@
 
 **Subprojects.**
 Business, Branding, Marketing, Website and other Digital Assets are independently startable subprojects; follow repo-root `references/subprojects.md`.
-Brand and Website commands default to standalone entry and require no prior research, even inside a project that also has a Business subproject.
+Inside a project, Brand and Website commands default to business-linked entry and are gated by the selected Business plan; standalone entry (no prior research) is used only when the user explicitly asks for work independent of the business case, or outside a project.
 After a user explicitly selects a validated business handoff, branding may reuse its segment and positioning snapshot.
 A completed business validation may offer a brand handoff but never starts branding automatically.
 GTM, business positioning and explicitly business-linked marketing/brand/website work route with `scripts/route_workflow.py --project <slug>`:
