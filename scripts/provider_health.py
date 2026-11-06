@@ -62,6 +62,8 @@ def advise(result: dict, billing: dict, feeds: list[str]) -> dict:
     stale = result.get('status') == 'stale'
     status = result.get('observed_status', 'failed') if stale else result.get('status', 'failed')
     action, priority = ACTIONS.get(status, ('check', 2))
+    if status == 'missing_credentials' and billing.get('optional_when_missing'):
+        action, priority = ACTIONS['optional_unavailable']
     env = _env_names(result, billing)
     fund_url, keys_url = billing.get('fund_url'), billing.get('keys_url') or result.get('docs')
     todo = {

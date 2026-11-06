@@ -20,6 +20,13 @@ def test_status_maps_to_founder_action_with_where_to_go():
     assert row({'provider': 'unknown', 'status': 'weird'})['action'] == 'check'
 
 
+def test_sources_most_founders_cannot_get_are_optional_when_missing():
+    for provider in ('tiktok', 'app_reviews'):
+        assert row({'provider': provider, 'status': 'missing_credentials'})['action'] == 'optional'
+    assert row({'provider': 'tiktok', 'status': 'invalid_credentials'})['action'] != 'optional'
+    assert row({'provider': 'producthunt', 'status': 'missing_credentials'})['action'] == 'add_key'
+
+
 def test_stale_rows_keep_their_observed_status():
     stale = row({'provider': 'serper', 'status': 'stale', 'observed_status': 'insufficient_credits',
                  'validated_at': '2026-09-27T11:26:05Z'})

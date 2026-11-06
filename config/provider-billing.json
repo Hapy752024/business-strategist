@@ -187,7 +187,9 @@
       "env": [
         "TIKTOK_CLIENT_KEY",
         "TIKTOK_CLIENT_SECRET"
-      ]
+      ],
+      "optional_when_missing": true,
+      "note": "Research API approval is limited to eligible researchers; TikTok research falls back to ScrapeCreators and Apify"
     },
     "github": {
       "label": "GitHub issue search",
@@ -200,7 +202,9 @@
       "label": "Product Hunt API",
       "billing": "free_key",
       "keys_url": "https://www.producthunt.com/v2/oauth/applications",
-      "env": []
+      "env": [
+        "PRODUCTHUNT_TOKEN"
+      ]
     },
     "census": {
       "label": "US Census API",
@@ -230,7 +234,8 @@
       "label": "App Store / Google Play developer APIs",
       "billing": "free_key",
       "env": [],
-      "note": "only for your own apps' reviews"
+      "note": "only for your own apps' reviews",
+      "optional_when_missing": true
     }
   }
 }
